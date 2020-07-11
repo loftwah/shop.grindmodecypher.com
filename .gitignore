@@ -11,6 +11,7 @@
 wp-config.php
 sitemap.xml
 sitemap.xml.gz
+wp-content/et-cache/
 wp-content/uploads/
 wp-content/blogs.dir/
 wp-content/upgrade/
@@ -57,3 +58,7 @@ wp-includes/
 /xmlrpc.php
 wp-content/et-cache/DONOTCACHEPAGE
 wp-content/et-cache/71/et-core-unified-vb-tb-9-71-15944650109932.min.css
+wp-content/et-cache/9/et-core-unified-cpt-9-15944660872705.min.css
+wp-content/et-cache/9/et-core-unified-cpt-tb-for-71-9-15944650109932.min.css
+wp-content/et-cache/attachment_id_by_url.data
+wp-content/et-cache/en_US/definitions-page-15944650119878.js
