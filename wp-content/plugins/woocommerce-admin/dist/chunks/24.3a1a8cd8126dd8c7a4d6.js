@@ -799,7 +799,7 @@ var style = __webpack_require__(769);
 
 
 var LazyDashboardCharts = Object(external_this_wp_element_["lazy"])(function () {
-  return Promise.all(/* import() | dashboard-charts */[__webpack_require__.e(2), __webpack_require__.e(1), __webpack_require__.e(26)]).then(__webpack_require__.bind(null, 924));
+  return Promise.all(/* import() | dashboard-charts */[__webpack_require__.e(2), __webpack_require__.e(1), __webpack_require__.e(26)]).then(__webpack_require__.bind(null, 925));
 });
 var LazyLeaderboards = Object(external_this_wp_element_["lazy"])(function () {
   return Promise.all(/* import() | leaderboards */[__webpack_require__.e(4), __webpack_require__.e(32)]).then(__webpack_require__.bind(null, 929));

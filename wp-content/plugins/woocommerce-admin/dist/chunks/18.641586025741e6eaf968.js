@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[14],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[18],{
 
 /***/ 742:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -8,7 +8,11 @@
 __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
-__webpack_require__.d(__webpack_exports__, "default", function() { return /* binding */ orders_OrdersReport; });
+__webpack_require__.d(__webpack_exports__, "default", function() { return /* binding */ taxes_TaxesReport; });
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/defineProperty.js
+var defineProperty = __webpack_require__(17);
+var defineProperty_default = /*#__PURE__*/__webpack_require__.n(defineProperty);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
 var classCallCheck = __webpack_require__(38);
@@ -37,18 +41,24 @@ var external_this_wp_element_ = __webpack_require__(0);
 var prop_types = __webpack_require__(1);
 var prop_types_default = /*#__PURE__*/__webpack_require__.n(prop_types);
 
-// EXTERNAL MODULE: ./client/analytics/report/orders/config.js
-var config = __webpack_require__(780);
+// EXTERNAL MODULE: external {"this":["wp","i18n"]}
+var external_this_wp_i18n_ = __webpack_require__(3);
+
+// EXTERNAL MODULE: ./client/analytics/report/taxes/config.js
+var config = __webpack_require__(782);
 
 // EXTERNAL MODULE: ./client/lib/get-selected-chart/index.js
 var get_selected_chart = __webpack_require__(755);
 
+// EXTERNAL MODULE: ./client/analytics/components/report-chart/index.js + 1 modules
+var report_chart = __webpack_require__(754);
+
+// EXTERNAL MODULE: ./client/analytics/components/report-summary/index.js
+var report_summary = __webpack_require__(756);
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/assertThisInitialized.js
 var assertThisInitialized = __webpack_require__(62);
 var assertThisInitialized_default = /*#__PURE__*/__webpack_require__.n(assertThisInitialized);
-
-// EXTERNAL MODULE: external {"this":["wp","i18n"]}
-var external_this_wp_i18n_ = __webpack_require__(3);
 
 // EXTERNAL MODULE: external "lodash"
 var external_lodash_ = __webpack_require__(2);
@@ -56,28 +66,22 @@ var external_lodash_ = __webpack_require__(2);
 // EXTERNAL MODULE: external {"this":["wc","components"]}
 var external_this_wc_components_ = __webpack_require__(53);
 
+// EXTERNAL MODULE: external {"this":["wc","navigation"]}
+var external_this_wc_navigation_ = __webpack_require__(22);
+
+// EXTERNAL MODULE: ./client/analytics/report/taxes/utils.js
+var utils = __webpack_require__(752);
+
 // EXTERNAL MODULE: external {"this":["wc","number"]}
 var external_this_wc_number_ = __webpack_require__(201);
-
-// EXTERNAL MODULE: ./client/settings/index.js
-var settings = __webpack_require__(23);
-
-// EXTERNAL MODULE: ./client/lib/date.js
-var date = __webpack_require__(108);
 
 // EXTERNAL MODULE: ./client/analytics/components/report-table/index.js + 2 modules
 var report_table = __webpack_require__(759);
 
-// EXTERNAL MODULE: external {"this":["wc","navigation"]}
-var external_this_wc_navigation_ = __webpack_require__(22);
-
 // EXTERNAL MODULE: ./client/lib/currency-context.js
 var currency_context = __webpack_require__(200);
 
-// EXTERNAL MODULE: ./client/analytics/report/orders/style.scss
-var style = __webpack_require__(899);
-
-// CONCATENATED MODULE: ./client/analytics/report/orders/table.js
+// CONCATENATED MODULE: ./client/analytics/report/taxes/table.js
 
 
 
@@ -111,17 +115,15 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 
 
+var table_TaxesReportTable = /*#__PURE__*/function (_Component) {
+  inherits_default()(TaxesReportTable, _Component);
 
+  var _super = _createSuper(TaxesReportTable);
 
-var table_OrdersReportTable = /*#__PURE__*/function (_Component) {
-  inherits_default()(OrdersReportTable, _Component);
-
-  var _super = _createSuper(OrdersReportTable);
-
-  function OrdersReportTable() {
+  function TaxesReportTable() {
     var _this;
 
-    classCallCheck_default()(this, OrdersReportTable);
+    classCallCheck_default()(this, TaxesReportTable);
 
     _this = _super.call(this);
     _this.getHeadersContent = _this.getHeadersContent.bind(assertThisInitialized_default()(_this));
@@ -130,270 +132,162 @@ var table_OrdersReportTable = /*#__PURE__*/function (_Component) {
     return _this;
   }
 
-  createClass_default()(OrdersReportTable, [{
+  createClass_default()(TaxesReportTable, [{
     key: "getHeadersContent",
     value: function getHeadersContent() {
       return [{
-        label: Object(external_this_wp_i18n_["__"])('Date', 'woocommerce-admin'),
-        key: 'date',
+        label: Object(external_this_wp_i18n_["__"])('Tax Code', 'woocommerce-admin'),
+        key: 'tax_code',
         required: true,
-        defaultSort: true,
         isLeftAligned: true,
         isSortable: true
       }, {
-        label: Object(external_this_wp_i18n_["__"])('Order #', 'woocommerce-admin'),
-        screenReaderLabel: Object(external_this_wp_i18n_["__"])('Order Number', 'woocommerce-admin'),
-        key: 'order_number',
-        required: true
-      }, {
-        label: Object(external_this_wp_i18n_["__"])('Status', 'woocommerce-admin'),
-        key: 'status',
-        required: false,
-        isSortable: false
-      }, {
-        label: Object(external_this_wp_i18n_["__"])('Customer', 'woocommerce-admin'),
-        key: 'customer_id',
-        required: false,
-        isSortable: false
-      }, {
-        label: Object(external_this_wp_i18n_["__"])('Product(s)', 'woocommerce-admin'),
-        screenReaderLabel: Object(external_this_wp_i18n_["__"])('Products', 'woocommerce-admin'),
-        key: 'products',
-        required: false,
-        isSortable: false
-      }, {
-        label: Object(external_this_wp_i18n_["__"])('Items Sold', 'woocommerce-admin'),
-        key: 'num_items_sold',
-        required: false,
+        label: Object(external_this_wp_i18n_["__"])('Rate', 'woocommerce-admin'),
+        key: 'rate',
         isSortable: true,
         isNumeric: true
       }, {
-        label: Object(external_this_wp_i18n_["__"])('Coupon(s)', 'woocommerce-admin'),
-        screenReaderLabel: Object(external_this_wp_i18n_["__"])('Coupons', 'woocommerce-admin'),
-        key: 'coupons',
-        required: false,
-        isSortable: false
+        label: Object(external_this_wp_i18n_["__"])('Total Tax', 'woocommerce-admin'),
+        key: 'total_tax',
+        isSortable: true
       }, {
-        label: Object(external_this_wp_i18n_["__"])('Net Sales', 'woocommerce-admin'),
-        screenReaderLabel: Object(external_this_wp_i18n_["__"])('Net Sales', 'woocommerce-admin'),
-        key: 'net_total',
+        label: Object(external_this_wp_i18n_["__"])('Order Tax', 'woocommerce-admin'),
+        key: 'order_tax',
+        isSortable: true
+      }, {
+        label: Object(external_this_wp_i18n_["__"])('Shipping Tax', 'woocommerce-admin'),
+        key: 'shipping_tax',
+        isSortable: true
+      }, {
+        label: Object(external_this_wp_i18n_["__"])('Orders', 'woocommerce-admin'),
+        key: 'orders_count',
         required: true,
+        defaultSort: true,
         isSortable: true,
         isNumeric: true
       }];
     }
   }, {
-    key: "getCustomerType",
-    value: function getCustomerType(customerType) {
-      switch (customerType) {
-        case 'new':
-          return Object(external_this_wp_i18n_["_x"])('New', 'customer type', 'woocommerce-admin');
-
-        case 'returning':
-          return Object(external_this_wp_i18n_["_x"])('Returning', 'customer type', 'woocommerce-admin');
-
-        default:
-          return Object(external_this_wp_i18n_["_x"])('N/A', 'customer type', 'woocommerce-admin');
-      }
-    }
-  }, {
     key: "getRowsContent",
-    value: function getRowsContent(tableData) {
+    value: function getRowsContent(taxes) {
       var _this2 = this;
 
-      var query = this.props.query;
-      var persistedQuery = Object(external_this_wc_navigation_["getPersistedQuery"])(query);
-      var dateFormat = Object(settings["g" /* getSetting */])('dateFormat', date["c" /* defaultTableDateFormat */]);
       var _this$context = this.context,
           renderCurrency = _this$context.render,
+          getCurrencyFormatDecimal = _this$context.formatDecimal,
           getCurrency = _this$context.getCurrency;
-      return Object(external_lodash_["map"])(tableData, function (row) {
-        var currency = row.currency,
-            customerType = row.customer_type,
-            dateCreated = row.date_created,
-            netTotal = row.net_total,
-            numItemsSold = row.num_items_sold,
-            orderId = row.order_id,
-            orderNumber = row.order_number,
-            parentId = row.parent_id,
-            status = row.status;
-        var extendedInfo = row.extended_info || {};
-        var coupons = extendedInfo.coupons,
-            products = extendedInfo.products;
-        var formattedProducts = products.sort(function (itemA, itemB) {
-          return itemB.quantity - itemA.quantity;
-        }).map(function (item) {
-          return {
-            label: item.name,
-            quantity: item.quantity,
-            href: Object(external_this_wc_navigation_["getNewPath"])(persistedQuery, '/analytics/products', {
-              filter: 'single_product',
-              products: item.id
-            })
-          };
+      return Object(external_lodash_["map"])(taxes, function (tax) {
+        var query = _this2.props.query;
+        var orderTax = tax.order_tax,
+            ordersCount = tax.orders_count,
+            taxRate = tax.tax_rate,
+            taxRateId = tax.tax_rate_id,
+            totalTax = tax.total_tax,
+            shippingTax = tax.shipping_tax;
+        var taxCode = Object(utils["a" /* getTaxCode */])(tax);
+        var persistedQuery = Object(external_this_wc_navigation_["getPersistedQuery"])(query);
+        var ordersTaxLink = Object(external_this_wc_navigation_["getNewPath"])(persistedQuery, '/analytics/orders', {
+          filter: 'advanced',
+          tax_rate_includes: taxRateId
         });
-        var formattedCoupons = coupons.map(function (coupon) {
-          return {
-            label: coupon.code,
-            href: Object(external_this_wc_navigation_["getNewPath"])(persistedQuery, '/analytics/coupons', {
-              filter: 'single_coupon',
-              coupons: coupon.id
-            })
-          };
-        });
+        var taxLink = Object(external_this_wp_element_["createElement"])(external_this_wc_components_["Link"], {
+          href: ordersTaxLink,
+          type: "wc-admin"
+        }, taxCode);
         return [{
-          display: Object(external_this_wp_element_["createElement"])(external_this_wc_components_["Date"], {
-            date: dateCreated,
-            visibleFormat: dateFormat
-          }),
-          value: dateCreated
+          display: taxLink,
+          value: taxCode
         }, {
-          display: Object(external_this_wp_element_["createElement"])(external_this_wc_components_["Link"], {
-            href: 'post.php?post=' + (parentId ? parentId : orderId) + '&action=edit' + (parentId ? '#order_refunds' : ''),
-            type: "wp-admin"
-          }, orderNumber),
-          value: orderNumber
+          display: taxRate.toFixed(2) + '%',
+          value: taxRate
         }, {
-          display: Object(external_this_wp_element_["createElement"])(external_this_wc_components_["OrderStatus"], {
-            className: "woocommerce-orders-table__status",
-            order: {
-              status: status
-            },
-            orderStatusMap: Object(settings["g" /* getSetting */])('orderStatuses', {})
-          }),
-          value: status
+          display: renderCurrency(totalTax),
+          value: getCurrencyFormatDecimal(totalTax)
         }, {
-          display: _this2.getCustomerType(customerType),
-          value: customerType
+          display: renderCurrency(orderTax),
+          value: getCurrencyFormatDecimal(orderTax)
         }, {
-          display: _this2.renderList(formattedProducts.length ? [formattedProducts[0]] : [], formattedProducts.map(function (product) {
-            return {
-              label: Object(external_this_wp_i18n_["sprintf"])(Object(external_this_wp_i18n_["__"])('%s× %s', 'woocommerce-admin'), product.quantity, product.label),
-              href: product.href
-            };
-          })),
-          value: formattedProducts.map(function (_ref) {
-            var quantity = _ref.quantity,
-                label = _ref.label;
-            return Object(external_this_wp_i18n_["sprintf"])(Object(external_this_wp_i18n_["__"])('%s× %s', 'woocommerce-admin'), quantity, label);
-          }).join(', ')
+          display: renderCurrency(shippingTax),
+          value: getCurrencyFormatDecimal(shippingTax)
         }, {
-          display: Object(external_this_wc_number_["formatValue"])(getCurrency(), 'number', numItemsSold),
-          value: numItemsSold
-        }, {
-          display: _this2.renderList(formattedCoupons.length ? [formattedCoupons[0]] : [], formattedCoupons),
-          value: formattedCoupons.map(function (coupon) {
-            return coupon.label;
-          }).join(', ')
-        }, {
-          display: renderCurrency(netTotal, currency),
-          value: netTotal
+          display: Object(external_this_wc_number_["formatValue"])(getCurrency(), 'number', ordersCount),
+          value: ordersCount
         }];
       });
     }
   }, {
     key: "getSummary",
     value: function getSummary(totals) {
-      var _totals$orders_count = totals.orders_count,
-          ordersCount = _totals$orders_count === void 0 ? 0 : _totals$orders_count,
-          _totals$num_new_custo = totals.num_new_customers,
-          numNewCustomers = _totals$num_new_custo === void 0 ? 0 : _totals$num_new_custo,
-          _totals$num_returning = totals.num_returning_customers,
-          numReturningCustomers = _totals$num_returning === void 0 ? 0 : _totals$num_returning,
-          _totals$products = totals.products,
-          products = _totals$products === void 0 ? 0 : _totals$products,
-          _totals$num_items_sol = totals.num_items_sold,
-          numItemsSold = _totals$num_items_sol === void 0 ? 0 : _totals$num_items_sol,
-          _totals$coupons_count = totals.coupons_count,
-          couponsCount = _totals$coupons_count === void 0 ? 0 : _totals$coupons_count,
-          _totals$net_revenue = totals.net_revenue,
-          netRevenue = _totals$net_revenue === void 0 ? 0 : _totals$net_revenue;
+      var _totals$tax_codes = totals.tax_codes,
+          taxesCodes = _totals$tax_codes === void 0 ? 0 : _totals$tax_codes,
+          _totals$total_tax = totals.total_tax,
+          totalTax = _totals$total_tax === void 0 ? 0 : _totals$total_tax,
+          _totals$order_tax = totals.order_tax,
+          orderTax = _totals$order_tax === void 0 ? 0 : _totals$order_tax,
+          _totals$shipping_tax = totals.shipping_tax,
+          shippingTax = _totals$shipping_tax === void 0 ? 0 : _totals$shipping_tax,
+          _totals$orders_count = totals.orders_count,
+          ordersCount = _totals$orders_count === void 0 ? 0 : _totals$orders_count;
       var _this$context2 = this.context,
           formatCurrency = _this$context2.formatCurrency,
           getCurrency = _this$context2.getCurrency;
       var currency = getCurrency();
       return [{
+        label: Object(external_this_wp_i18n_["_n"])('tax code', 'tax codes', taxesCodes, 'woocommerce-admin'),
+        value: Object(external_this_wc_number_["formatValue"])(currency, 'number', taxesCodes)
+      }, {
+        label: Object(external_this_wp_i18n_["__"])('total tax', 'woocommerce-admin'),
+        value: formatCurrency(totalTax)
+      }, {
+        label: Object(external_this_wp_i18n_["__"])('order tax', 'woocommerce-admin'),
+        value: formatCurrency(orderTax)
+      }, {
+        label: Object(external_this_wp_i18n_["__"])('shipping tax', 'woocommerce-admin'),
+        value: formatCurrency(shippingTax)
+      }, {
         label: Object(external_this_wp_i18n_["_n"])('order', 'orders', ordersCount, 'woocommerce-admin'),
         value: Object(external_this_wc_number_["formatValue"])(currency, 'number', ordersCount)
-      }, {
-        label: Object(external_this_wp_i18n_["_n"])('new customer', 'new customers', numNewCustomers, 'woocommerce-admin'),
-        value: Object(external_this_wc_number_["formatValue"])(currency, 'number', numNewCustomers)
-      }, {
-        label: Object(external_this_wp_i18n_["_n"])('returning customer', 'returning customers', numReturningCustomers, 'woocommerce-admin'),
-        value: Object(external_this_wc_number_["formatValue"])(currency, 'number', numReturningCustomers)
-      }, {
-        label: Object(external_this_wp_i18n_["_n"])('product', 'products', products, 'woocommerce-admin'),
-        value: Object(external_this_wc_number_["formatValue"])(currency, 'number', products)
-      }, {
-        label: Object(external_this_wp_i18n_["_n"])('item sold', 'items sold', numItemsSold, 'woocommerce-admin'),
-        value: Object(external_this_wc_number_["formatValue"])(currency, 'number', numItemsSold)
-      }, {
-        label: Object(external_this_wp_i18n_["_n"])('coupon', 'coupons', couponsCount, 'woocommerce-admin'),
-        value: Object(external_this_wc_number_["formatValue"])(currency, 'number', couponsCount)
-      }, {
-        label: Object(external_this_wp_i18n_["__"])('net sales', 'woocommerce-admin'),
-        value: formatCurrency(netRevenue)
       }];
-    }
-  }, {
-    key: "renderLinks",
-    value: function renderLinks() {
-      var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      return items.map(function (item, i) {
-        return Object(external_this_wp_element_["createElement"])(external_this_wc_components_["Link"], {
-          href: item.href,
-          key: i,
-          type: "wc-admin"
-        }, item.label);
-      });
-    }
-  }, {
-    key: "renderList",
-    value: function renderList(visibleItems, popoverItems) {
-      return Object(external_this_wp_element_["createElement"])(external_this_wp_element_["Fragment"], null, this.renderLinks(visibleItems), popoverItems.length > 1 && Object(external_this_wp_element_["createElement"])(external_this_wc_components_["ViewMoreList"], {
-        items: this.renderLinks(popoverItems)
-      }));
     }
   }, {
     key: "render",
     value: function render() {
       var _this$props = this.props,
-          query = _this$props.query,
+          advancedFilters = _this$props.advancedFilters,
           filters = _this$props.filters,
-          advancedFilters = _this$props.advancedFilters;
+          isRequesting = _this$props.isRequesting,
+          query = _this$props.query;
       return Object(external_this_wp_element_["createElement"])(report_table["a" /* default */], {
-        endpoint: "orders",
+        compareBy: "taxes",
+        endpoint: "taxes",
         getHeadersContent: this.getHeadersContent,
         getRowsContent: this.getRowsContent,
         getSummary: this.getSummary,
-        summaryFields: ['orders_count', 'num_new_customers', 'num_returning_customers', 'products', 'num_items_sold', 'coupons_count', 'net_revenue'],
+        summaryFields: ['tax_codes', 'total_tax', 'order_tax', 'shipping_tax', 'orders_count'],
+        isRequesting: isRequesting,
+        itemIdField: "tax_rate_id",
         query: query,
+        searchBy: "taxes",
         tableQuery: {
-          extended_info: true
+          orderby: query.orderby || 'tax_rate_id'
         },
-        title: Object(external_this_wp_i18n_["__"])('Orders', 'woocommerce-admin'),
-        columnPrefsKey: "orders_report_columns",
+        title: Object(external_this_wp_i18n_["__"])('Taxes', 'woocommerce-admin'),
+        columnPrefsKey: "taxes_report_columns",
         filters: filters,
         advancedFilters: advancedFilters
       });
     }
   }]);
 
-  return OrdersReportTable;
+  return TaxesReportTable;
 }(external_this_wp_element_["Component"]);
 
-table_OrdersReportTable.contextType = currency_context["a" /* CurrencyContext */];
-/* harmony default export */ var table = (table_OrdersReportTable);
-// EXTERNAL MODULE: ./client/analytics/components/report-chart/index.js + 1 modules
-var report_chart = __webpack_require__(754);
-
-// EXTERNAL MODULE: ./client/analytics/components/report-summary/index.js
-var report_summary = __webpack_require__(756);
-
+table_TaxesReportTable.contextType = currency_context["a" /* CurrencyContext */];
+/* harmony default export */ var table = (table_TaxesReportTable);
 // EXTERNAL MODULE: ./client/analytics/components/report-filters/index.js
 var report_filters = __webpack_require__(757);
 
-// CONCATENATED MODULE: ./client/analytics/report/orders/index.js
+// CONCATENATED MODULE: ./client/analytics/report/taxes/index.js
 
 
 
@@ -401,13 +295,19 @@ var report_filters = __webpack_require__(757);
 
 
 
-function orders_createSuper(Derived) { var hasNativeReflectConstruct = orders_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
 
-function orders_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { defineProperty_default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function taxes_createSuper(Derived) { var hasNativeReflectConstruct = taxes_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
+
+function taxes_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /**
  * External dependencies
  */
+
 
 
 /**
@@ -421,45 +321,76 @@ function orders_isNativeReflectConstruct() { if (typeof Reflect === "undefined" 
 
 
 
-var orders_OrdersReport = /*#__PURE__*/function (_Component) {
-  inherits_default()(OrdersReport, _Component);
+var taxes_TaxesReport = /*#__PURE__*/function (_Component) {
+  inherits_default()(TaxesReport, _Component);
 
-  var _super = orders_createSuper(OrdersReport);
+  var _super = taxes_createSuper(TaxesReport);
 
-  function OrdersReport() {
-    classCallCheck_default()(this, OrdersReport);
+  function TaxesReport() {
+    classCallCheck_default()(this, TaxesReport);
 
     return _super.apply(this, arguments);
   }
 
-  createClass_default()(OrdersReport, [{
+  createClass_default()(TaxesReport, [{
+    key: "getChartMeta",
+    value: function getChartMeta() {
+      var query = this.props.query;
+      var isCompareTaxView = query.filter === 'compare-taxes';
+      var mode = isCompareTaxView ? 'item-comparison' : 'time-comparison';
+
+      var itemsLabel = Object(external_this_wp_i18n_["__"])('%d taxes', 'woocommerce-admin');
+
+      return {
+        itemsLabel: itemsLabel,
+        mode: mode
+      };
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this$props = this.props,
-          path = _this$props.path,
-          query = _this$props.query;
+          isRequesting = _this$props.isRequesting,
+          query = _this$props.query,
+          path = _this$props.path;
+
+      var _this$getChartMeta = this.getChartMeta(),
+          mode = _this$getChartMeta.mode,
+          itemsLabel = _this$getChartMeta.itemsLabel;
+
+      var chartQuery = _objectSpread({}, query);
+
+      if (mode === 'item-comparison') {
+        chartQuery.segmentby = 'tax_rate_id';
+      }
+
       return Object(external_this_wp_element_["createElement"])(external_this_wp_element_["Fragment"], null, Object(external_this_wp_element_["createElement"])(report_filters["a" /* default */], {
         query: query,
         path: path,
         filters: config["c" /* filters */],
         advancedFilters: config["a" /* advancedFilters */],
-        report: "orders"
+        report: "taxes"
       }), Object(external_this_wp_element_["createElement"])(report_summary["a" /* default */], {
         charts: config["b" /* charts */],
-        endpoint: "orders",
-        query: query,
+        endpoint: "taxes",
+        isRequesting: isRequesting,
+        query: chartQuery,
         selectedChart: Object(get_selected_chart["a" /* default */])(query.chart, config["b" /* charts */]),
         filters: config["c" /* filters */],
         advancedFilters: config["a" /* advancedFilters */]
       }), Object(external_this_wp_element_["createElement"])(report_chart["a" /* default */], {
         charts: config["b" /* charts */],
-        endpoint: "orders",
-        path: path,
-        query: query,
-        selectedChart: Object(get_selected_chart["a" /* default */])(query.chart, config["b" /* charts */]),
         filters: config["c" /* filters */],
-        advancedFilters: config["a" /* advancedFilters */]
+        advancedFilters: config["a" /* advancedFilters */],
+        mode: mode,
+        endpoint: "taxes",
+        query: chartQuery,
+        path: path,
+        isRequesting: isRequesting,
+        itemsLabel: itemsLabel,
+        selectedChart: Object(get_selected_chart["a" /* default */])(query.chart, config["b" /* charts */])
       }), Object(external_this_wp_element_["createElement"])(table, {
+        isRequesting: isRequesting,
         query: query,
         filters: config["c" /* filters */],
         advancedFilters: config["a" /* advancedFilters */]
@@ -467,12 +398,11 @@ var orders_OrdersReport = /*#__PURE__*/function (_Component) {
     }
   }]);
 
-  return OrdersReport;
+  return TaxesReport;
 }(external_this_wp_element_["Component"]);
 
 
-orders_OrdersReport.propTypes = {
-  path: prop_types_default.a.string.isRequired,
+taxes_TaxesReport.propTypes = {
   query: prop_types_default.a.object.isRequired
 };
 
@@ -1498,7 +1428,7 @@ ReportSummary.contextType = lib_currency_context__WEBPACK_IMPORTED_MODULE_18__[/
 
 /***/ }),
 
-/***/ 780:
+/***/ 782:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1509,12 +1439,12 @@ ReportSummary.contextType = lib_currency_context__WEBPACK_IMPORTED_MODULE_18__[/
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(48);
 /* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(23);
-/* harmony import */ var lib_async_requests__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(751);
+/* harmony import */ var lib_async_requests__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(751);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(752);
+/* harmony import */ var wc_api_constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(33);
 /**
  * External dependencies
  */
-
 
 
 /**
@@ -1522,31 +1452,37 @@ ReportSummary.contextType = lib_currency_context__WEBPACK_IMPORTED_MODULE_18__[/
  */
 
 
-var ORDERS_REPORT_CHARTS_FILTER = 'woocommerce_admin_orders_report_charts';
-var ORDERS_REPORT_FILTERS_FILTER = 'woocommerce_admin_orders_report_filters';
-var ORDERS_REPORT_ADVANCED_FILTERS_FILTER = 'woocommerce_admin_orders_report_advanced_filters';
-var charts = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__["applyFilters"])(ORDERS_REPORT_CHARTS_FILTER, [{
+
+
+var TAXES_REPORT_CHARTS_FILTER = 'woocommerce_admin_taxes_report_charts';
+var TAXES_REPORT_FILTERS_FILTER = 'woocommerce_admin_taxes_report_filters';
+var TAXES_REPORT_ADVANCED_FILTERS_FILTER = 'woocommerce_admin_taxes_report_advanced_filters';
+var charts = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__["applyFilters"])(TAXES_REPORT_CHARTS_FILTER, [{
+  key: 'total_tax',
+  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Total Tax', 'woocommerce-admin'),
+  order: 'desc',
+  orderby: 'total_tax',
+  type: 'currency'
+}, {
+  key: 'order_tax',
+  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Order Tax', 'woocommerce-admin'),
+  order: 'desc',
+  orderby: 'order_tax',
+  type: 'currency'
+}, {
+  key: 'shipping_tax',
+  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Shipping Tax', 'woocommerce-admin'),
+  order: 'desc',
+  orderby: 'shipping_tax',
+  type: 'currency'
+}, {
   key: 'orders_count',
   label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Orders', 'woocommerce-admin'),
+  order: 'desc',
+  orderby: 'orders_count',
   type: 'number'
-}, {
-  key: 'net_revenue',
-  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Net Sales', 'woocommerce-admin'),
-  order: 'desc',
-  orderby: 'net_total',
-  type: 'currency'
-}, {
-  key: 'avg_order_value',
-  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Average Order Value', 'woocommerce-admin'),
-  type: 'currency'
-}, {
-  key: 'avg_items_per_order',
-  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Average Items Per Order', 'woocommerce-admin'),
-  order: 'desc',
-  orderby: 'num_items_sold',
-  type: 'average'
 }]);
-var filters = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__["applyFilters"])(ORDERS_REPORT_FILTERS_FILTER, [{
+var filters = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__["applyFilters"])(TAXES_REPORT_FILTERS_FILTER, [{
   label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Show', 'woocommerce-admin'),
   staticParams: ['chartType', 'paged', 'per_page'],
   param: 'filter',
@@ -1554,191 +1490,31 @@ var filters = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__["applyFilters
     return true;
   },
   filters: [{
-    label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('All Orders', 'woocommerce-admin'),
+    label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('All Taxes', 'woocommerce-admin'),
     value: 'all'
   }, {
-    label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Advanced Filters', 'woocommerce-admin'),
-    value: 'advanced'
-  }]
-}]);
-/*eslint-disable max-len*/
-
-var advancedFilters = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__["applyFilters"])(ORDERS_REPORT_ADVANCED_FILTERS_FILTER, {
-  title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["_x"])('Orders Match {{select /}} Filters', 'A sentence describing filters for Orders. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ', 'woocommerce-admin'),
-  filters: {
-    status: {
+    label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Comparison', 'woocommerce-admin'),
+    value: 'compare-taxes',
+    chartMode: 'item-comparison',
+    settings: {
+      type: 'taxes',
+      param: 'taxes',
+      getLabels: Object(lib_async_requests__WEBPACK_IMPORTED_MODULE_2__[/* getRequestByIdString */ "e"])(wc_api_constants__WEBPACK_IMPORTED_MODULE_4__[/* NAMESPACE */ "c"] + '/taxes', function (tax) {
+        return {
+          id: tax.id,
+          label: Object(_utils__WEBPACK_IMPORTED_MODULE_3__[/* getTaxCode */ "a"])(tax)
+        };
+      }),
       labels: {
-        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Order Status', 'woocommerce-admin'),
-        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Remove order status filter', 'woocommerce-admin'),
-        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select an order status filter match', 'woocommerce-admin'),
-
-        /* translators: A sentence describing an Order Status filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
-        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('{{title}}Order Status{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
-        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select an order status', 'woocommerce-admin')
-      },
-      rules: [{
-        value: 'is',
-
-        /* translators: Sentence fragment, logical, "Is" refers to searching for orders matching a chosen order status. Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
-        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["_x"])('Is', 'order status', 'woocommerce-admin')
-      }, {
-        value: 'is_not',
-
-        /* translators: Sentence fragment, logical, "Is Not" refers to searching for orders that don\'t match a chosen order status. Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
-        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["_x"])('Is Not', 'order status', 'woocommerce-admin')
-      }],
-      input: {
-        component: 'SelectControl',
-        options: Object.keys(_woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_2__[/* ORDER_STATUSES */ "d"]).map(function (key) {
-          return {
-            value: key,
-            label: _woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_2__[/* ORDER_STATUSES */ "d"][key]
-          };
-        })
-      }
-    },
-    product: {
-      labels: {
-        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Products', 'woocommerce-admin'),
-        placeholder: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Search products', 'woocommerce-admin'),
-        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Remove products filter', 'woocommerce-admin'),
-        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select a product filter match', 'woocommerce-admin'),
-
-        /* translators: A sentence describing a Product filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
-        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('{{title}}Product{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
-        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select products', 'woocommerce-admin')
-      },
-      rules: [{
-        value: 'includes',
-
-        /* translators: Sentence fragment, logical, "Includes" refers to orders including a given product(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
-        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["_x"])('Includes', 'products', 'woocommerce-admin')
-      }, {
-        value: 'excludes',
-
-        /* translators: Sentence fragment, logical, "Excludes" refers to orders excluding a given product(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
-        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["_x"])('Excludes', 'products', 'woocommerce-admin')
-      }],
-      input: {
-        component: 'Search',
-        type: 'products',
-        getLabels: lib_async_requests__WEBPACK_IMPORTED_MODULE_3__[/* getProductLabels */ "d"]
-      }
-    },
-    coupon: {
-      labels: {
-        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Coupon Codes', 'woocommerce-admin'),
-        placeholder: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Search coupons', 'woocommerce-admin'),
-        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Remove coupon filter', 'woocommerce-admin'),
-        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select a coupon filter match', 'woocommerce-admin'),
-
-        /* translators: A sentence describing a Coupon filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
-        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('{{title}}Coupon Code{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
-        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select coupon codes', 'woocommerce-admin')
-      },
-      rules: [{
-        value: 'includes',
-
-        /* translators: Sentence fragment, logical, "Includes" refers to orders including a given coupon code(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
-        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["_x"])('Includes', 'coupon code', 'woocommerce-admin')
-      }, {
-        value: 'excludes',
-
-        /* translators: Sentence fragment, logical, "Excludes" refers to orders excluding a given coupon code(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
-        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["_x"])('Excludes', 'coupon code', 'woocommerce-admin')
-      }],
-      input: {
-        component: 'Search',
-        type: 'coupons',
-        getLabels: lib_async_requests__WEBPACK_IMPORTED_MODULE_3__[/* getCouponLabels */ "b"]
-      }
-    },
-    customer_type: {
-      labels: {
-        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Customer Type', 'woocommerce-admin'),
-        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Remove customer filter', 'woocommerce-admin'),
-        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select a customer filter match', 'woocommerce-admin'),
-
-        /* translators: A sentence describing a Customer filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
-        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('{{title}}Customer is{{/title}} {{filter /}}', 'woocommerce-admin'),
-        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select a customer type', 'woocommerce-admin')
-      },
-      input: {
-        component: 'SelectControl',
-        options: [{
-          value: 'new',
-          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('New', 'woocommerce-admin')
-        }, {
-          value: 'returning',
-          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Returning', 'woocommerce-admin')
-        }],
-        defaultOption: 'new'
-      }
-    },
-    refunds: {
-      labels: {
-        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Refunds', 'woocommerce-admin'),
-        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Remove refunds filter', 'woocommerce-admin'),
-        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select a refund filter match', 'woocommerce-admin'),
-        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('{{title}}Refunds{{/title}} {{filter /}}', 'woocommerce-admin'),
-        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select a refund type', 'woocommerce-admin')
-      },
-      input: {
-        component: 'SelectControl',
-        options: [{
-          value: 'all',
-          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('All', 'woocommerce-admin')
-        }, {
-          value: 'partial',
-          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Partially refunded', 'woocommerce-admin')
-        }, {
-          value: 'full',
-          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Fully refunded', 'woocommerce-admin')
-        }, {
-          value: 'none',
-          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('None', 'woocommerce-admin')
-        }],
-        defaultOption: 'all'
-      }
-    },
-    tax_rate: {
-      labels: {
-        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Tax Rates', 'woocommerce-admin'),
-        placeholder: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Search tax rates', 'woocommerce-admin'),
-        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Remove tax rate filter', 'woocommerce-admin'),
-        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select a tax rate filter match', 'woocommerce-admin'),
-
-        /* translators: A sentence describing a tax rate filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
-        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('{{title}}Tax Rate{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
-        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Select tax rates', 'woocommerce-admin')
-      },
-      rules: [{
-        value: 'includes',
-
-        /* translators: Sentence fragment, logical, "Includes" refers to orders including a given tax rate(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
-        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["_x"])('Includes', 'tax rate', 'woocommerce-admin')
-      }, {
-        value: 'excludes',
-
-        /* translators: Sentence fragment, logical, "Excludes" refers to orders excluding a given tax rate(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
-        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["_x"])('Excludes', 'tax rate', 'woocommerce-admin')
-      }],
-      input: {
-        component: 'Search',
-        type: 'taxes',
-        getLabels: lib_async_requests__WEBPACK_IMPORTED_MODULE_3__[/* getTaxRateLabels */ "f"]
+        helpText: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Check at least two tax codes below to compare', 'woocommerce-admin'),
+        placeholder: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Search for tax codes to compare', 'woocommerce-admin'),
+        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Compare Tax Codes', 'woocommerce-admin'),
+        update: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__["__"])('Compare', 'woocommerce-admin')
       }
     }
-  }
-});
-/*eslint-enable max-len*/
-
-/***/ }),
-
-/***/ 899:
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
+  }]
+}]);
+var advancedFilters = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__["applyFilters"])(TAXES_REPORT_ADVANCED_FILTERS_FILTER, {});
 
 /***/ })
 

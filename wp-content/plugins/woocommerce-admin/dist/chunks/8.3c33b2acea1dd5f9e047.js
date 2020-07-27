@@ -383,7 +383,7 @@ ActivityHeader.propTypes = {
 
 /***/ }),
 
-/***/ 926:
+/***/ 927:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -518,7 +518,7 @@ activity_outbound_link_ActivityOutboundLink.defaultProps = {
 var constants = __webpack_require__(33);
 
 // EXTERNAL MODULE: ./client/analytics/settings/config.js + 1 modules
-var config = __webpack_require__(270);
+var config = __webpack_require__(271);
 
 // EXTERNAL MODULE: ./client/wc-api/with-select.js
 var with_select = __webpack_require__(101);

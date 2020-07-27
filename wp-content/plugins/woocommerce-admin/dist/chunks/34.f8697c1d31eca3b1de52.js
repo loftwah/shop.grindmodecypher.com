@@ -534,7 +534,7 @@ KnowledgeBase.defaultProps = {
 
 /***/ }),
 
-/***/ 271:
+/***/ 270:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1639,7 +1639,7 @@ installed_extensions_InstalledExtensions.propTypes = {
   };
 }))(installed_extensions_InstalledExtensions));
 // EXTERNAL MODULE: ./client/marketing/components/recommended-extensions/index.js + 1 modules
-var recommended_extensions = __webpack_require__(271);
+var recommended_extensions = __webpack_require__(270);
 
 // EXTERNAL MODULE: ./client/marketing/components/knowledge-base/index.js
 var knowledge_base = __webpack_require__(269);

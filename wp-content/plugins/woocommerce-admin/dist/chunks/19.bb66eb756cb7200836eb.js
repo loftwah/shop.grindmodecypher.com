@@ -607,7 +607,7 @@ var external_this_wc_data_ = __webpack_require__(43);
 var settings = __webpack_require__(794);
 
 // EXTERNAL MODULE: ./client/analytics/settings/config.js + 1 modules
-var config = __webpack_require__(270);
+var config = __webpack_require__(271);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
 var classCallCheck = __webpack_require__(38);
