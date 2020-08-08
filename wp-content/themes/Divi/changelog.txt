@@ -1,3 +1,7 @@
+version 4.5.5 ( updated 08-08-2020 )
+- Fixed bottom section dividers appearing at the top of sections. 
+	* style.css
+	
 version 4.5.4 ( updated 08-07-2020 )
 - Fixed missing backward compatibility function to handle Gutenberg data for block editor.
 - Hide block inserter button when Divi Layout is not activated yet.

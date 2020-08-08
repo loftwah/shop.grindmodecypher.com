@@ -13611,7 +13611,6 @@ span.comment_date {
     box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.07); }
   .et-db #et-boc .et-l .et_pb_top_inside_divider,
   .et-db #et-boc .et-l .et_pb_bottom_inside_divider {
-    top: 0;
     display: block;
     background-repeat-y: no-repeat;
     height: 100%;
