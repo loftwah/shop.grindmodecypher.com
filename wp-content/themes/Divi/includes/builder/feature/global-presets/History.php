@@ -15,7 +15,7 @@ class ET_Builder_Global_Presets_History {
 	/**
 	 * Returns instance of the singleton class
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return ET_Builder_Global_Presets_History
 	 */
@@ -45,14 +45,17 @@ class ET_Builder_Global_Presets_History {
 	/**
 	 * Handles AJAX requests to save history of Global Presets settings changes
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return void
 	 */
 	public function ajax_save_global_presets_history() {
-		// Allow saving Global Presets for admins only
+		// Allow saving Global Presets for admins and support elevated users only
 		if ( ! et_core_security_check_passed( 'switch_themes', 'et_builder_save_global_presets_history' ) ) {
-			wp_send_json_error();
+			wp_send_json_error( array(
+				'code' => 'et_forbidden',
+				'message' => esc_html__( 'You do not have sufficient permissions to edit Divi Presets.', 'et_builder' ),
+			) );
 		}
 
 		$history = json_decode( stripslashes( $_POST['history'] ) );
@@ -79,7 +82,7 @@ class ET_Builder_Global_Presets_History {
 	/**
 	 * Handles AJAX requests to retrieve history of Global Presets settings changes
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return void
 	 */
@@ -98,7 +101,7 @@ class ET_Builder_Global_Presets_History {
 	/**
 	 * Adds a new Global Presets settings history record
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param {Object} $defaults
 	 */
@@ -133,7 +136,7 @@ class ET_Builder_Global_Presets_History {
 	 * Performs validation and sanitizing history object.
 	 * Returns false if data is invalid or corrupt.
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param $data
 	 *
@@ -201,7 +204,7 @@ class ET_Builder_Global_Presets_History {
 	/**
 	 * Handles theme version rollback.
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param string $product_name - The short name of the product rolling back.
 	 * @param string $rollback_from_version
@@ -220,7 +223,7 @@ class ET_Builder_Global_Presets_History {
 	/**
 	 * Returns the Global Presets history object from DB
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return object
 	 */
@@ -239,7 +242,7 @@ class ET_Builder_Global_Presets_History {
 	/**
 	 * Migrates Custom Defaults history format to Global Presets history format
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 */
 	public static function migrate_custom_defaults_history() {
 		if ( et_is_builder_plugin_active() || ET_Builder_Global_Presets_Settings::are_custom_defaults_migrated() ) {

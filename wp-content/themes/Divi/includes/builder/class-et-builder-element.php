@@ -1276,12 +1276,12 @@ class ET_Builder_Element {
 		}
 
 		// Legacy Defaults Rule #4 (AKA: longest-running undetected bug in the codebase):
-		// Fields listed in whitelisted_fields that aren't in fields_defaults lose their definitions
-		if ( isset( $this->whitelisted_fields ) ) {
-			$disable_whitelisted_fields = isset( $this->force_unwhitelisted_fields ) && $this->force_unwhitelisted_fields;
+		// Fields listed in allowlisted_fields that aren't in fields_defaults lose their definitions
+		if ( isset( $this->allowlisted_fields ) ) {
+			$disable_allowlisted_fields = isset( $this->force_unallowlisted_fields ) && $this->force_unallowlisted_fields;
 
-			if ( ! $disable_whitelisted_fields && ! is_admin() && ! et_fb_is_enabled() ) {
-				foreach ( $this->whitelisted_fields as $field ) {
+			if ( ! $disable_allowlisted_fields && ! is_admin() && ! et_fb_is_enabled() ) {
+				foreach ( $this->allowlisted_fields as $field ) {
 					if ( isset( $this->fields_defaults ) && array_key_exists( $field, $this->fields_defaults ) ) {
 						continue;
 					}
@@ -2926,40 +2926,40 @@ class ET_Builder_Element {
 
 			// don't set the default, unless, lol, the value is literally 'default'
 			if ( 'default' !== $value ) {
-				// handle 'preset' type of attributes
-				if ( isset( $fields[ $shortcode_attr_key ]['default'] ) && is_array( $fields[ $shortcode_attr_key ]['default'] ) ) {
-					$field = $fields[ $shortcode_attr_key ];
-					$preset_attribute_name  = $field['default'][0];
-					if ( 'filter' === $preset_attribute_name ) {
-						// Functional default.
-						if ( apply_filters( $field['default'][1], $shortcode_attr_key ) === $value ) {
-							$value = '';
-						}
-					} else {
-						$preset_default_value   = et_()->array_get( $fields[ $preset_attribute_name ], 'default', 'none' );
-						$preset_attribute_value = et_()->array_get( $this->props, $preset_attribute_name, $preset_default_value );
-						if ( ! empty( $preset_attribute_value ) ) {
-							$value_from_preset = et_()->array_get( $fields[ $shortcode_attr_key ]['default'][1], $preset_attribute_value, '' );
-							if ( $value == $value_from_preset ) {
+				$has_preset_value = isset( $module_preset_settings[ $shortcode_attr_key ] );
+
+				if ( $has_preset_value && isset( $atts[ $shortcode_attr_key ] ) ) {
+					$is_equal_to_preset_value = $atts[ $shortcode_attr_key ] === $module_preset_settings[ $shortcode_attr_key ];
+					$value                    = $is_equal_to_preset_value ? '' : $atts[ $shortcode_attr_key ];
+				} else {
+					// handle 'preset' type of attributes
+					if ( isset( $fields[ $shortcode_attr_key ]['default'] ) && is_array( $fields[ $shortcode_attr_key ]['default'] ) ) {
+						$field = $fields[ $shortcode_attr_key ];
+						$preset_attribute_name  = $field['default'][0];
+						if ( 'filter' === $preset_attribute_name ) {
+							// Functional default.
+							if ( apply_filters( $field['default'][1], $shortcode_attr_key ) === $value ) {
 								$value = '';
 							}
+						} else {
+							$preset_default_value   = et_()->array_get( $fields[ $preset_attribute_name ], 'default', 'none' );
+							$preset_attribute_value = et_()->array_get( $this->props, $preset_attribute_name, $preset_default_value );
+							if ( ! empty( $preset_attribute_value ) ) {
+								$value_from_preset = et_()->array_get( $fields[ $shortcode_attr_key ]['default'][1], $preset_attribute_value, '' );
+								if ( $value == $value_from_preset ) {
+									$value = '';
+								}
+							}
 						}
-					}
-				} else {
-					$is_equal_to_default          = isset( $fields[ $shortcode_attr_key ]['default'] ) && $value === $fields[ $shortcode_attr_key ]['default'];
-					$is_equal_to_default_on_front = isset( $fields[ $shortcode_attr_key ]['default_on_front'] ) && $value === $fields[ $shortcode_attr_key ]['default_on_front'];
-					$has_custom_default           = isset( $module_preset_settings[ $shortcode_attr_key ] );
-
-					if ( $has_custom_default && isset( $atts[ $shortcode_attr_key ] ) ) {
-						$is_equal_to_custom_default = $has_custom_default && $atts[ $shortcode_attr_key ] === $module_preset_settings[ $shortcode_attr_key ];
-						$value                      = $is_equal_to_custom_default ? '' : $atts[ $shortcode_attr_key ];
 					} else {
+						$is_equal_to_default          = isset( $fields[ $shortcode_attr_key ]['default'] ) && $value === $fields[ $shortcode_attr_key ]['default'];
+						$is_equal_to_default_on_front = isset( $fields[ $shortcode_attr_key ]['default_on_front'] ) && $value === $fields[ $shortcode_attr_key ]['default_on_front'];
+
 						if ( $is_equal_to_default || $is_equal_to_default_on_front ) {
 							$value = '';
 						}
 					}
 				}
-
 			} else {
 				if ( $shortcode_attr_key !== '_module_preset' ) {
 					$value = '';
@@ -5111,7 +5111,7 @@ class ET_Builder_Element {
 
 				$additional_options["{$option_name}_icon"] = array(
 					'label'               => sprintf( esc_html__( '%1$s Icon', 'et_builder' ), $option_settings['label'] ),
-					'description'         => esc_html__( 'Pick a color to be used for the button icon.', 'et_builder' ),
+					'description'         => esc_html__( 'Pick an icon to be used for the button.', 'et_builder' ),
 					'type'                => 'select_icon',
 					'option_category'     => 'button',
 					'class'               => array( 'et-pb-font-icon' ),
@@ -17075,16 +17075,28 @@ class ET_Builder_Element {
 			$mix_blend_mode = self::$data_utils->array_get( $this->props, "{$prefix}mix_blend_mode", '' );
 
 			// Filters
-			$filter = array(
-				'hue_rotate' => self::$data_utils->array_get( $this->props, "{$prefix}filter_hue_rotate{$suffix}", ''),
-				'saturate'   => self::$data_utils->array_get( $this->props, "{$prefix}filter_saturate{$suffix}", ''),
-				'brightness' => self::$data_utils->array_get( $this->props, "{$prefix}filter_brightness{$suffix}", ''),
-				'contrast'   => self::$data_utils->array_get( $this->props, "{$prefix}filter_contrast{$suffix}", ''),
-				'invert'     => self::$data_utils->array_get( $this->props, "{$prefix}filter_invert{$suffix}", ''),
-				'sepia'      => self::$data_utils->array_get( $this->props, "{$prefix}filter_sepia{$suffix}", ''),
-				'opacity'    => self::$data_utils->array_get( $this->props, "{$prefix}filter_opacity{$suffix}", ''),
-				'blur'       => self::$data_utils->array_get( $this->props, "{$prefix}filter_blur{$suffix}", ''),
+			$filter       = array();
+			$filter_names = array();
+			$filter_keys  = array(
+				'hue_rotate',
+				'saturate',
+				'brightness',
+				'contrast',
+				'invert',
+				'sepia',
+				'opacity',
+				'blur',
 			);
+
+			// Assign filter values and names.
+			foreach( $filter_keys as $filter_key ) {
+				$filter_name           = "{$prefix}filter_{$filter_key}";
+				$filter_names[]        = $filter_name;
+				$filter[ $filter_key ] = self::$data_utils->array_get( $this->props, "{$filter_name}{$suffix}", '');
+			}
+
+			$is_any_filter_responsive    = et_pb_responsive_options()->is_any_responsive_enabled( $this->props, $filter_names );
+			$is_any_filter_hover_enabled = et_pb_hover_options()->is_any_hover_enabled( $this->props, $filter_names );
 
 			// For mobile, it should return any value exist if current device value is empty.
 			if ( $is_mobile ) {
@@ -17094,16 +17106,12 @@ class ET_Builder_Element {
 
 				// Filters.
 				$filters_mobile = array();
-				$is_any_filter_responsive = false;
 
 				foreach( $filter as $filter_key => $filter_value ) {
 					if ( ! et_pb_responsive_options()->is_responsive_enabled( $this->props, "{$prefix}filter_{$filter_key}" ) ) {
 						continue;
 					}
-
 					$filters_mobile[ $filter_key ] = et_pb_responsive_options()->get_any_value( $this->props, "{$prefix}filter_{$filter_key}{$device_suffix}", '', true );
-
-					$is_any_filter_responsive = true;
 				}
 
 				// If any responsive settings active on filter settings, set desktop value as default.
@@ -17151,7 +17159,7 @@ class ET_Builder_Element {
 				// Check against our default settings, and only append the rule if it differs
 				// (only for default state since hover and mobile might be equal to default,
 				// ie. no filter on hover only)
-				if ( ET_Global_Settings::get_value( 'all_filter_' . $label, 'default' ) === $value && $hover_suffix !== $suffix && ! $is_mobile ) {
+				if ( ET_Global_Settings::get_value( 'all_filter_' . $label, 'default' ) === $value && $hover_suffix !== $suffix && ! $is_mobile && ! ( $is_any_filter_responsive && $is_any_filter_hover_enabled ) ) {
 					continue;
 				}
 
@@ -18020,7 +18028,7 @@ class ET_Builder_Element {
 		if ( $exists ) {
 			return $files[0];
 		} elseif ( $ajax_use_cache ) {
-			// Whitelisted AJAX requests aren't allowed to generate cache, only to use it.
+			// Allowlisted AJAX requests aren't allowed to generate cache, only to use it.
 			return false;
 		}
 

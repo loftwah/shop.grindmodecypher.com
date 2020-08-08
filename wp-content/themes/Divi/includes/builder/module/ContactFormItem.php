@@ -670,7 +670,7 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 					$radio_options  = json_decode( $radio_options );
 
 					foreach ( $radio_options as $index => $option ) {
-						$is_checked  = 1 === $option->checked ? true : false;
+						$is_checked  = ( isset( $option->checked ) && 1 === $option->checked ) ? true : false;
 						$drag_id     = isset( $option->dragID ) ? $option->dragID : '';
 						$option_id   = isset( $option->id ) ? $option->id : $drag_id;
 						$option_id   = sprintf( ' data-id="%1$s"', esc_attr( $option_id ) );
@@ -693,7 +693,7 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 							esc_attr( $field_title ), // #5
 							'off' === $required_mark ? 'not_required' : 'required',
 							esc_attr( $index ),
-							esc_attr( wp_strip_all_tags( $option->value ) ),
+							esc_attr( wp_strip_all_tags( isset( $option->value ) ? $option->value : '' ) ),
 							checked( $is_checked, true, false ),
 							esc_attr( $render_count ), // #10
 							$option_id,

@@ -766,13 +766,13 @@ add_action( 'et_head_meta', 'et_force_edge_compatibility_mode' );
 
 if ( ! function_exists( 'et_get_allowed_localization_html_elements' ) ) :
 function et_get_allowed_localization_html_elements() {
-	$whitelisted_attributes = array(
+	$allowlisted_attributes = array(
 		'id'    => array(),
 		'class' => array(),
 		'style' => array(),
 	);
 
-	$whitelisted_attributes = apply_filters( 'et_allowed_localization_html_attributes', $whitelisted_attributes );
+	$allowlisted_attributes = apply_filters( 'et_allowed_localization_html_attributes', $allowlisted_attributes );
 
 	$elements = array(
 		'a'      => array(
@@ -794,7 +794,7 @@ function et_get_allowed_localization_html_elements() {
 	$elements = apply_filters( 'et_allowed_localization_html_elements', $elements );
 
 	foreach ( $elements as $tag => $attributes ) {
-		$elements[ $tag ] = array_merge( $attributes, $whitelisted_attributes );
+		$elements[ $tag ] = array_merge( $attributes, $allowlisted_attributes );
 	}
 
 	return $elements;
@@ -1025,7 +1025,7 @@ endif;
 
 if ( ! function_exists( 'et_core_add_allowed_protocols' ) ) :
 /**
- * Extend the whitelist of allowed URL protocols
+ * Extend the allowlist of allowed URL protocols
  *
  * @param array $protocols List of URL protocols allowed by WordPress.
  *

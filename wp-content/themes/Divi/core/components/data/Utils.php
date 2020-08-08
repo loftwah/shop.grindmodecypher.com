@@ -359,6 +359,26 @@ class ET_Core_Data_Utils {
 		$this->array_set( $array, $path, array_merge( $current_value, $value ) );
 	}
 
+	/**
+	 * Whether or not a string ends with a substring.
+	 *
+	 * @since 4.5.3
+	 *
+	 * @param string $haystack The string to look in.
+	 * @param string $needle   The string to look for.
+	 *
+	 * @return bool
+	 */
+	public function ends_with( $haystack, $needle ) {
+		$length = strlen( $needle );
+
+		if ( 0 === $length ) {
+			return true;
+		}
+
+		return ( substr( $haystack, -$length ) === $needle );
+	}
+
 	public function ensure_directory_exists( $path ) {
 		if ( file_exists( $path ) ) {
 			return is_dir( $path );
@@ -966,7 +986,7 @@ class ET_Core_Data_Utils {
 	 * Returns RFC 4211 compliant Universally Unique Identifier (UUID) version 4
 	 * https://tools.ietf.org/html/rfc4122
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param array $random_sequence The initial random sequence. Mostly used for test purposes.
 	 *

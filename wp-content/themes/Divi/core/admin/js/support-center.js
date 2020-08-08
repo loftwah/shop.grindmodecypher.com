@@ -211,7 +211,7 @@
     if ('activate' === postData.support_update) {
       var safeModeProduct = $toggle.parents('#et_card_safe_mode').data('et-product');
 
-      // Continue only if the product is in our whitelist
+      // Continue only if the product is in our allowlist
       switch (safeModeProduct) {
         case 'divi_builder_plugin':
         case 'divi_theme':

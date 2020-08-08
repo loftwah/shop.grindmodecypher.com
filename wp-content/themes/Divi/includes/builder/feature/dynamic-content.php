@@ -892,7 +892,7 @@ function et_builder_wrap_dynamic_content( $post_id, $name, $value, $settings ) {
 	$user_id     = get_post_field( 'post_author', $cap_post_id );
 
 	if ( ! user_can( $user_id, 'unfiltered_html' ) ) {
-		$whitelist = array_merge(
+		$allowlist = array_merge(
 			wp_kses_allowed_html( '' ),
 			array(
 				'h1'   => array(),
@@ -909,8 +909,8 @@ function et_builder_wrap_dynamic_content( $post_id, $name, $value, $settings ) {
 			)
 		);
 
-		$before = wp_kses( $before, $whitelist );
-		$after  = wp_kses( $after, $whitelist );
+		$before = wp_kses( $before, $allowlist );
+		$after  = wp_kses( $after, $allowlist );
 	}
 
 	return $before . $value . $after;
@@ -1641,7 +1641,7 @@ function et_builder_clean_dynamic_content( $value ) {
  * @return ET_Builder_Value|null
  */
 function et_builder_parse_dynamic_content_json( $json ) {
-	$post_types         = et_builder_get_public_post_types();
+	$post_types         = array_keys( et_builder_get_public_post_types() );
 	$dynamic_content    = json_decode( $json, true );
 	$is_dynamic_content = is_array( $dynamic_content ) && isset( $dynamic_content['dynamic'] ) && (bool) $dynamic_content['dynamic'];
 	$has_content        = is_array( $dynamic_content ) && isset( $dynamic_content['content'] ) && is_string( $dynamic_content['content'] );
@@ -1656,7 +1656,7 @@ function et_builder_parse_dynamic_content_json( $json ) {
 	}
 
 	// Replaces layout_category with proper category_type depending on the post type on which the layout is added
-	if ( $has_category_type ) {
+	if ( $has_category_type && 'post_categories' === $dynamic_content['content'] && ! 0 === substr_compare( $dynamic_content['settings']['category_type'], "_tag", - 4 ) ) {
 		if ( $is_added_from_library ) {
 			$correct_post_type = sanitize_text_field( $_POST['et_post_type'] );
 			$correct_post_type = in_array( $correct_post_type, $post_types ) ? $correct_post_type : 'post';
@@ -1667,7 +1667,7 @@ function et_builder_parse_dynamic_content_json( $json ) {
 
 		if ( 'post' === $correct_post_type ) {
 			$dynamic_content['settings']['category_type'] = 'category';
-		} else if ( ! in_array( $correct_post_type, array( 'post', 'layout' ) ) ) {
+		} else {
 			$dynamic_content['settings']['category_type'] = $correct_post_type . '_category';
 		}
 	}

@@ -429,9 +429,15 @@
 				return;
 			}
 
-			$.each( requestData, function( name, value ) {
-				formData.append( name, value);
-			} );
+			$.each(requestData, function(name, value) {
+				if ('file' === name) {
+				  // Explicitly set the file name. 
+				  // Otherwise it'll be set to 'Blob' in case of Blob type, but we need actual filename here.
+				  formData.append('file', value, value.name);
+				} else {
+				  formData.append(name, value);
+				}
+			});
 
 			var importFBAjax = function( importData ) {
 				$.ajax( {

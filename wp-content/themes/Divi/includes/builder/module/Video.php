@@ -253,7 +253,7 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 		$video_src = '';
 
 		if ( false !== et_pb_check_oembed_provider( esc_url( $args['src'] ) ) ) {
-			$video_src = wp_oembed_get( esc_url( $args['src'] ) );
+			$video_src = et_builder_get_oembed( esc_url( $args['src'] ) );
 		} else {
 			$video_src = sprintf( '
 				<video controls>

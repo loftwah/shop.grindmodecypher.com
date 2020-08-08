@@ -61,7 +61,7 @@ return array(
 				'options_toggles'       => 'settings_modal_toggles',
 				'shortcode_atts'        => 'props',
 				'shortcode_content'     => 'content',
-				'whitelisted_fields'    => array(),
+				'allowlisted_fields'    => array(),
 				'no_shortcode_callback' => 'no_render',
 			),
 		),

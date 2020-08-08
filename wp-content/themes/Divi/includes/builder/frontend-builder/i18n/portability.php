@@ -21,4 +21,5 @@ return array(
 	'This file should not be imported in this context.' => esc_html__( 'This file should not be imported in this context.', 'et_builder' ),
 	'Override the Default Website Template.' => esc_html__( 'Override the Default Website Template.', 'et_builder' ),
 	'Portability'                            => esc_html__( 'Portability', 'et_builder' ),
+	'$invalid_file'                          => esc_html__( 'Invalid file format. You should be uploading a JSON file.', 'et_builder' ),
 );

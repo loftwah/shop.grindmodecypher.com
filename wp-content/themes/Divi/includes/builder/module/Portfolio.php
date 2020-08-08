@@ -463,12 +463,12 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 
 			$query->posts_next = array(
 				'label' => esc_html__( '&laquo; Older Entries', 'et_builder' ),
-				'url' => next_posts( $query->max_num_pages, false ),
+				'url'   => self::get_next_link( $et_paged, $query->max_num_pages ),
 			);
 
 			$query->posts_prev = array(
 				'label' => esc_html__( 'Next Entries &raquo;', 'et_builder' ),
-				'url' => ( $et_paged > 1 ) ? previous_posts( false ) : '',
+				'url'   => self::get_previous_link( $et_paged ),
 			);
 
 			// Added wp_pagenavi support
@@ -482,6 +482,37 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 		}
 
 		return $query;
+	}
+
+	/**
+	 * Get the next link
+	 *
+	 * @param int $paged Current page.
+	 * @param int $max Max number of pages.
+	 *
+	 * @return string|null
+	 */
+	private static function get_next_link( $paged, $max ) {
+		if ( ! $paged ) {
+			$paged = 1;
+		}
+
+		$next_page = (int) $paged + 1;
+
+		return $next_page <= $max ? get_pagenum_link( $next_page ) : null;
+	}
+
+	/**
+	 * Get the previous link
+	 *
+	 * @param int $paged Current page.
+	 *
+	 * @return string|null
+	 */
+	private static function get_previous_link( $paged ) {
+		$previous_page = (int) $paged - 1;
+
+		return $previous_page >= 1 ? get_pagenum_link( $previous_page ) : null;
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
@@ -556,13 +587,13 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 				array_push( $post->post_class_name, $item_class );
 
 				$items_count++;
-				
+
 				if ( 'on' !== $fullwidth ) {
 					array_push( $post->post_class_name, 'et_pb_grid_item' );
 				}
 
 				?>
-				<div id="post-<?php echo esc_attr( $post->ID ); ?>" class="<?php echo esc_attr( join( $post->post_class_name, ' ' ) ); ?>">
+				<div id="post-<?php echo esc_attr( $post->ID ); ?>" class="<?php echo esc_attr( join( ' ', $post->post_class_name ) ); ?>">
 
 					<?php if ( '' !== $post->post_thumbnail ) { ?>
 					<a href="<?php echo esc_url( $post->post_permalink ); ?>" title="<?php echo esc_attr( get_the_title() ); ?>">

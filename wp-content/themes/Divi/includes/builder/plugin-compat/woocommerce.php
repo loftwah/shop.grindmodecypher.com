@@ -108,7 +108,7 @@ class ET_Builder_Plugin_Compat_WooCommerce extends ET_Builder_Plugin_Compat_Base
 	}
 
 	/**
-	 * Whitelist hidden WooCommerce meta keys for dynamic content.
+	 * Allowlist hidden WooCommerce meta keys for dynamic content.
 	 *
 	 * @since 3.17.2
 	 *

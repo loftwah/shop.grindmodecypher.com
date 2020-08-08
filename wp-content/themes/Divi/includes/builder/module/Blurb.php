@@ -586,7 +586,7 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 			$icon_alignment_selector  = '%%order_class%% .et_pb_blurb_content';
 			$image_alignment_selector = '%%order_class%%.et_pb_blurb .et_pb_image_wrap';
 
-			if ( et_pb_get_responsive_status( $icon_alignment_last_edited ) && '' !== implode( $icon_alignment_values, '' ) ) {
+			if ( et_pb_get_responsive_status( $icon_alignment_last_edited ) && '' !== implode( '', $icon_alignment_values ) ) {
 				// Icon and less than wrapper width image alignment style
 				et_pb_responsive_options()->generate_responsive_css(
 					$icon_alignment_values,

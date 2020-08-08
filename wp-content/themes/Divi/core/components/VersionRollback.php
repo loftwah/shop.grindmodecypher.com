@@ -241,7 +241,7 @@ class ET_Core_VersionRollback {
 
 		if ( is_wp_error( $success ) ) {
 			$error = $success->get_error_message();
-			if ( $success->get_error_code() === 'et_version_rollback_blacklisted' ) {
+			if ( $success->get_error_code() === 'et_version_rollback_blocklisted' ) {
 				$error = '
 					<p>
 						' . et_get_safe_localization( sprintf(
@@ -258,7 +258,7 @@ class ET_Core_VersionRollback {
 			}
 
 			wp_send_json_error( array(
-				'errorIsUnrecoverable' => in_array( $success->get_error_code(), array( 'et_version_rollback_not_available', 'et_version_rollback_blacklisted' ) ),
+				'errorIsUnrecoverable' => in_array( $success->get_error_code(), array( 'et_version_rollback_not_available', 'et_version_rollback_blocklisted' ) ),
 				'errorCode'            => $success->get_error_code(),
 				'error'                => $error,
 			), 400 );

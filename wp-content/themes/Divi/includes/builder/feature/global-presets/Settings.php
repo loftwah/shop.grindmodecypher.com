@@ -87,7 +87,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Returns instance of the singleton class
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return ET_Builder_Global_Presets_Settings
 	 */
@@ -103,7 +103,7 @@ class ET_Builder_Global_Presets_Settings {
 	 * Returns the list of additional module slugs used to separate Global Presets settings.
 	 * For example defaults for sections must be separated depends on the section type (regular, fullwidth or specialty).
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param $module_slug - The module slug for which additional slugs are looked up
 	 *
@@ -120,7 +120,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Returns builder Global Presets settings.
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return object
 	 */
@@ -131,7 +131,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Checks if the gives preset ID exists
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param string $module_slug
 	 * @param string $preset_id
@@ -145,7 +145,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Returns a default preset ID for the given module type
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param string $module_slug
 	 *
@@ -161,7 +161,7 @@ class ET_Builder_Global_Presets_Settings {
 	 * Returns the module preset ID
 	 * If the preset ID doesn't exist it will return the default preset ID
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param string $module_slug
 	 * @param array $module_attrs
@@ -182,7 +182,7 @@ class ET_Builder_Global_Presets_Settings {
 	 * Returns the module preset by the given preset ID
 	 * Returns an empty object if no preset found
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param string $module_slug
 	 * @param string $preset_id
@@ -200,7 +200,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Returns Global Presets settings for the particular module.
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param string $module_slug - The module slug
 	 * @param array $attrs        - The module attributes
@@ -222,7 +222,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Checks whether customizer settings migrated or not
 	 * 
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return bool
 	 */
@@ -233,7 +233,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Checks whether Custom Defaults settings migrated or not
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return bool
 	 */
@@ -244,7 +244,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Migrates Module Customizer settings to Custom Defaults
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param array $defaults - The list of modules default settings
 	 *
@@ -274,7 +274,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Generates `_initial` module presets structure
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param string $module_slug
 	 * @param array $all_modules
@@ -306,7 +306,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Converts Custom Defaults to the new Global Presets format
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param object $custom_defaults - The previous Custom Defaults
 	 *
@@ -330,7 +330,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Migrates existing Custom Defaults to the Global Presets structure
 	 * 
-	 * @since ??
+	 * @since 4.5.0
 	 */
 	public function migrate_custom_defaults() {
 		if ( et_is_builder_plugin_active() || ET_Builder_Global_Presets_Settings::are_custom_defaults_migrated() ) {
@@ -354,7 +354,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Handles theme version rollback.
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param string $product_name - The short name of the product rolling back.
 	 * @param string $rollback_from_version
@@ -375,7 +375,7 @@ class ET_Builder_Global_Presets_Settings {
 	 * Used to separate Global Presets settings for modules sharing the same slug but having different meaning
 	 * For example: Regular, Fullwidth and Specialty section types
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param string $type - The module type (slug)
 	 * @param array $attrs - The module attributes
@@ -397,7 +397,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Converts Section module slug to appropriate slug used in Global Presets
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param array $attrs - The section attributes
 	 *
@@ -418,7 +418,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Converts Slide module slug to appropriate slug used in Global Presets
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return string - The converted slide type depends on the parent slider type
 	 */
@@ -435,7 +435,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Converts Column module slug to appropriate slug used in Global Presets
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @return string - The converted column type
 	 */
@@ -457,7 +457,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Filters Global Presets setting to avoid non plain values like arrays or objects
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param $value - The Global Presets setting value
 	 *
@@ -471,7 +471,7 @@ class ET_Builder_Global_Presets_Settings {
 	 * Performs Global Presets format normalization.
 	 * Usually used to cast format from array to object
 	 *
-	 * @since ??
+	 * @since 4.5.0
 	 *
 	 * @param $presets - The object representing Global Presets settings
 	 *

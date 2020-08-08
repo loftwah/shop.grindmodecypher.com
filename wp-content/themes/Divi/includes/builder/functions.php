@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.5.0' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.5.4' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -1396,7 +1396,7 @@ function et_pb_process_computed_property() {
 	$conditional_tags = $_POST['conditional_tags'];
 	$current_page     = $_POST['current_page'];
 
-	// whitelist keys
+	// allowlist keys
 	$conditional_tags = array_intersect_key( $conditional_tags, et_fb_conditional_tag_params() );
 	$current_page     = array_intersect_key( $current_page, et_fb_current_page_params() );
 
@@ -1694,7 +1694,7 @@ function et_fb_ajax_render_shortcode() {
 	$options = isset( $_POST['options'] ) ? $utils->sanitize_text_fields( $_POST['options'] ) : array();
 
 	// enforce valid module slugs only
-	// shortcode slugs need to be whitelisted so as to prevent malicious shortcodes from being generated and run through do_shortcode().
+	// shortcode slugs need to be allowlisted so as to prevent malicious shortcodes from being generated and run through do_shortcode().
 	$options['force_valid_slugs'] = true;
 
 	// convert shortcode array to shortcode string.
@@ -3096,6 +3096,38 @@ function et_pb_check_oembed_provider( $url ) {
 
 	return $oembed->get_provider( esc_url( $url ), array( 'discover' => false ) );
 }
+endif;
+
+/**
+ * Get cached embedded item on page load.
+ *
+ * Use the item source as the key, so some modules with the same item can share it.
+ *
+ * @since 4.5.2
+ *
+ * @param  string  $url      Item URL
+ * @param  string  $group    Item group to set different cache for the same key
+ * @param  boolean $is_cache Whether to use WordPress Object Cache or not
+ * @return string
+ */
+if ( ! function_exists( 'et_builder_get_oembed' ) ) :
+	function et_builder_get_oembed( $url, $group = 'video', $is_cache = true ) {
+		$item_src = esc_url( $url );
+
+		// Temporarily save embedded item on page load only. Use the item source as the
+		// key, so some modules with the same item can share it.
+		$item_embed = $is_cache ? wp_cache_get( $item_src, $group ) : false;
+
+		if ( ! $item_embed ) {
+			$item_embed = wp_oembed_get( $item_src );
+
+			if ( $is_cache ) {
+				wp_cache_set( $item_src, $item_embed, $group );
+			}
+		}
+
+		return apply_filters( 'et_builder_get_oembed', $item_embed, $url, $group, $is_cache );
+	}
 endif;
 
 if ( ! function_exists( 'et_pb_set_video_oembed_thumbnail_resolution' ) ) :
@@ -8864,7 +8896,7 @@ function et_pb_custom_search( $query = false ) {
 		if ( isset( $_GET['et_pb_include_pages'] ) ) $postTypes = array( 'page' );
 		if ( isset( $_GET['et_pb_include_posts'] ) ) $postTypes[] = 'post';
 
-		// $postTypes is whitelisted values only
+		// $postTypes is allowlisted values only
 		$query->set( 'post_type', $postTypes );
 
 		if ( ! empty( $_GET['et_pb_search_cat'] ) ) {
@@ -9789,7 +9821,7 @@ function et_fb_process_shortcode( $content, $parent_address = '', $global_parent
 	return $_matches;
 }
 
-// Whitelist any additional attributes
+// Allowlist any additional attributes
 function et_fb_add_additional_attrs( $processed_attrs, $output ) {
 	if ( empty( $output['attrs'] ) ) {
 		return $output;
@@ -9797,18 +9829,18 @@ function et_fb_add_additional_attrs( $processed_attrs, $output ) {
 
 	// A list of all the attributes that are already returned after the shortcode is processed
 	$safe_attrs           = array_keys( $output['attrs'] );
-	$whitelisted_attrs    = array();
+	$allowlisted_attrs    = array();
 
 	foreach ( $processed_attrs as $attr => $value ) {
 		if ( ! preg_match( '~_hover(_enabled)?$~', $attr ) ) {
 			continue;
 		}
 
-		$whitelisted_attrs[$attr] = $value;
+		$allowlisted_attrs[$attr] = $value;
 	}
 
-	if ( $whitelisted_attrs ) {
-		$output['attrs'] = array_merge( $output['attrs'], $whitelisted_attrs );
+	if ( $allowlisted_attrs ) {
+		$output['attrs'] = array_merge( $output['attrs'], $allowlisted_attrs );
 	}
 
 	return $output;
@@ -11224,9 +11256,9 @@ add_action( 'init', 'et_builder_register_assets', 11 );
 
 /**
  * Set border radius to parallax background wrapper.
- * 
+ *
  * @since 4.4.8
- * 
+ *
  * @param array  $props
  * @param string $module
  * @param string $order_class
@@ -11277,9 +11309,9 @@ endif;
 
 /**
  * Get formatted border radius of parallax background wrapper
- * 
+ *
  * @since 4.4.8
- * 
+ *
  * @param string $border_radius_values
  *
  * @return string

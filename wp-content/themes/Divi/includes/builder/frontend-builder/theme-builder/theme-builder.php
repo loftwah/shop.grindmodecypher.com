@@ -287,20 +287,20 @@ add_filter( 'et_builder_default_post_types', 'et_theme_builder_filter_builder_de
 add_filter( 'et_library_builder_post_types', 'et_theme_builder_filter_builder_default_post_types' );
 
 /**
- * Filter post types which should be blacklisted from appearing as options when enabling/disabling the builder.
+ * Filter post types which should be blocklisted from appearing as options when enabling/disabling the builder.
  *
  * @param $post_types
  *
  * @return array
  */
-function et_theme_builder_filter_builder_post_type_options_blacklist( $post_types ) {
+function et_theme_builder_filter_builder_post_type_options_blocklist( $post_types ) {
 	return array_merge(
 		$post_types,
 		et_theme_builder_get_layout_post_types(),
 		array( ET_THEME_BUILDER_TEMPLATE_POST_TYPE )
 	);
 }
-add_filter( 'et_builder_post_type_options_blacklist', 'et_theme_builder_filter_builder_default_post_types' );
+add_filter( 'et_builder_post_type_options_blocklist', 'et_theme_builder_filter_builder_default_post_types' );
 
 /**
  * Filter builder status for template area posts.
@@ -1528,7 +1528,7 @@ add_filter( 'et_builder_cache_post_type', 'et_theme_builder_cache_post_type' );
 /**
  * Clear cache of 3P caching plugins partially on the posts or all of them.
  *
- * @since ??
+ * @since 4.5.0
  *
  * @param string|array $post_ids 'all' or array of post IDs.
  *
@@ -1560,7 +1560,7 @@ function et_theme_builder_clear_wp_cache( $post_ids = 'all' ) {
  * - Used on archive, 404, or all posts
  * - Non static homepage
  *
- * @since ??
+ * @since 4.5.0
  *
  * @param int $layout_id
  *

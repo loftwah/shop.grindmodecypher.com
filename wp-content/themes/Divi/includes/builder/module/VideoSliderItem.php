@@ -250,7 +250,7 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 			if ( false !== et_pb_check_oembed_provider( esc_url( $args['src'] ) ) ) {
 				add_filter( 'oembed_dataparse', 'et_pb_video_oembed_data_parse', 10, 3 );
 				// Save thumbnail
-				$thumbnail_track_output = wp_oembed_get( esc_url( $args['src'] ) );
+				$thumbnail_track_output = et_builder_get_oembed( esc_url( $args['src'] ), 'image', true );
 				// Set back to normal
 				remove_filter( 'oembed_dataparse', 'et_pb_video_oembed_data_parse', 10, 3 );
 				return $thumbnail_track_output;
@@ -278,7 +278,7 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 		$args = wp_parse_args( $args, $defaults );
 
 		// Save thumbnail
-		$thumbnail_track_output = wp_oembed_get( esc_url( $args['src'] ) );
+		$thumbnail_track_output = et_builder_get_oembed( esc_url( $args['src'] ), 'image', true );
 
 		return $thumbnail_track_output;
  	}
@@ -288,13 +288,13 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 			 'src' => '',
 			 'src_webm' => '',
 		 );
- 
+
 		 $args = wp_parse_args( $args, $defaults );
- 
+
 		 $video_src = '';
- 
+
 		 if ( false !== et_pb_check_oembed_provider( esc_url( $args['src'] ) ) ) {
-			 $video_src = wp_oembed_get( esc_url( $args['src'] ) );
+			 $video_src = et_builder_get_oembed( esc_url( $args['src'] ) );
 		 } else {
 			 $video_src = sprintf( '
 				 <video controls>
@@ -304,11 +304,11 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 				 ( '' !== $args['src'] ? sprintf( '<source type="video/mp4" src="%1$s" />', esc_url( $args['src'] ) ) : '' ),
 				 ( '' !== $args['src_webm'] ? sprintf( '<source type="video/webm" src="%1$s" />', esc_url( $args['src_webm'] ) ) : '' )
 			 );
- 
+
 			 wp_enqueue_style( 'wp-mediaelement' );
 			 wp_enqueue_script( 'wp-mediaelement' );
 		 }
- 
+
 		 return $video_src;
 	 }
 
@@ -481,7 +481,7 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 			if ( false !== et_pb_check_oembed_provider( esc_url( $src ) ) ) {
 				add_filter( 'oembed_dataparse', 'et_pb_video_oembed_data_parse', 10, 3 );
 				// Save thumbnail
-				$thumbnail_track_output = wp_oembed_get( esc_url( $src ) );
+				$thumbnail_track_output = et_builder_get_oembed( esc_url( $src ), 'image', true );
 				$image_overlay_output = $thumbnail_track_output;
 				// Set back to normal
 				remove_filter( 'oembed_dataparse', 'et_pb_video_oembed_data_parse', 10, 3 );

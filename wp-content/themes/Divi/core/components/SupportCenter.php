@@ -153,7 +153,7 @@ class ET_Core_SupportCenter {
 	 *
 	 * @type array
 	 */
-	protected $safe_mode_plugins_whitelist = array(
+	protected $safe_mode_plugins_allowlist = array(
 		'etdev/etdev.php', // ET Development Workspace
 		'bloom/bloom.php', // ET Bloom Plugin
 		'monarch/monarch.php', // ET Monarch Plugin
@@ -212,8 +212,8 @@ class ET_Core_SupportCenter {
 		// Set the Site ID data via Elegant Themes API & token
 		$this->maybe_set_site_id();
 
-		// Set the plugins whitelist for Safe Mode
-		$this->set_safe_mode_plugins_whitelist();
+		// Set the plugins allowlist for Safe Mode
+		$this->set_safe_mode_plugins_allowlist();
 	}
 
 	/**
@@ -552,14 +552,14 @@ class ET_Core_SupportCenter {
 	}
 
 	/**
-	 * Safe Mode temporarily deactivates all plugins *except* those in the whitelist option set here
+	 * Safe Mode temporarily deactivates all plugins *except* those in the allowlist option set here
 	 *
 	 * @since 3.20
 	 *
 	 * @return void
 	 */
-	public function set_safe_mode_plugins_whitelist() {
-		update_option( 'et_safe_mode_plugins_whitelist', $this->safe_mode_plugins_whitelist );
+	public function set_safe_mode_plugins_allowlist() {
+		update_option( 'et_safe_mode_plugins_allowlist', $this->safe_mode_plugins_allowlist );
 	}
 
 	/**
@@ -792,10 +792,10 @@ class ET_Core_SupportCenter {
 		// Check the ET product that dismissing the card
 		$et_product = sanitize_key( $_POST['product'] );
 
-		// Confirm that this is a whitelisted product
-		$whitelisted_product = $this->is_whitelisted_product( $et_product );
+		// Confirm that this is a allowlisted product
+		$allowlisted_product = $this->is_allowlisted_product( $et_product );
 
-		if ( ! $whitelisted_product ) {
+		if ( ! $allowlisted_product ) {
 			// Send a failure code and exit the function
 			header( "HTTP/1.0 403 Forbidden" );
 			print 'Bad or malformed ET product name.';
@@ -1279,6 +1279,29 @@ class ET_Core_SupportCenter {
 			return $log;
 		}
 
+		/**
+		 * At this point, we know:
+		 * (1) `$wp_debug_log_path` is set,
+		 * (2) it points to a valid location, and
+		 * (3) what it points to is readable.
+		 *
+		 * Before we continue, we'll ensure `$wp_debug_log_path` does not point to a directory.
+		 */
+
+		// Early exit: debug log definition points to a directory, not a file.
+		if ( is_dir( $wp_debug_log_path ) ) {
+			$log['error'] = esc_attr__(
+				'Divi Support Center :: WordPress debug log setting points to a directory, but should point to a file.',
+				'et-core'
+			);
+
+			if ( defined( 'ET_DEBUG' ) ) {
+				et_error( $log['error'] );
+			}
+
+			return $log;
+		}
+
 		// Load the debug.log file
 		$file = new SplFileObject( $wp_debug_log_path );
 
@@ -1290,7 +1313,7 @@ class ET_Core_SupportCenter {
 		if ( $lines_to_return > 0 ) {
 			$file->seek( PHP_INT_MAX );
 			$total_lines = $file->key();
-			// If the file is smaller than the number of lines requested, return the entire file
+			// If the file is smaller than the number of lines requested, return the entire file.
 			$reader         = new LimitIterator( $file, max( 0, $total_lines - $lines_to_return ) );
 			$log['entries'] = '';
 			foreach ( $reader as $line ) {
@@ -2512,7 +2535,7 @@ class ET_Core_SupportCenter {
 	 */
 
 	/**
-	 * ET Product Whitelist
+	 * ET Product Allowlist
 	 *
 	 * @since 3.28
 	 *
@@ -2520,7 +2543,7 @@ class ET_Core_SupportCenter {
 	 *
 	 * @return string|false   If the product is on our list, we return the "nice name" we have for it. Otherwise, we return FALSE.
 	 */
-	protected function is_whitelisted_product( $product = '' ) {
+	protected function is_allowlisted_product( $product = '' ) {
 		switch ( $product ) {
 			case 'divi_builder_plugin':
 			case 'divi_theme':
@@ -2554,10 +2577,10 @@ class ET_Core_SupportCenter {
 			// Check the ET product that is activating Safe Mode
 			$safe_mode_activator = sanitize_key( $_POST['product'] );
 
-			// Confirm that this is a whitelisted product
-			$whitelisted_product = $this->is_whitelisted_product( $safe_mode_activator );
+			// Confirm that this is a allowlisted product
+			$allowlisted_product = $this->is_allowlisted_product( $safe_mode_activator );
 
-			if ( ! $whitelisted_product ) {
+			if ( ! $allowlisted_product ) {
 				// Send a failure code and exit the function
 				header( "HTTP/1.0 403 Forbidden" );
 				print 'Bad or malformed ET product name.';
@@ -2594,15 +2617,15 @@ class ET_Core_SupportCenter {
 	public function toggle_safe_mode( $activate = true, $product = '' ) {
 		$activate            = (bool) $activate;
 		$user_id             = get_current_user_id();
-		$whitelisted_product = $this->is_whitelisted_product( $product );
+		$allowlisted_product = $this->is_allowlisted_product( $product );
 
-		// Only proceed with an activation request if it comes from a whitelisted product
-		if ( $activate && ! $whitelisted_product ) {
+		// Only proceed with an activation request if it comes from a allowlisted product
+		if ( $activate && ! $allowlisted_product ) {
 			return;
 		}
 
 		update_user_meta( $user_id, '_et_support_center_safe_mode', $activate ? 'on' : 'off' );
-		update_user_meta( $user_id, '_et_support_center_safe_mode_product', $activate ? sanitize_text_field( $whitelisted_product ) : '' );
+		update_user_meta( $user_id, '_et_support_center_safe_mode_product', $activate ? sanitize_text_field( $allowlisted_product ) : '' );
 
 		$activate ? $this->maybe_add_mu_autoloader() : $this->maybe_remove_mu_autoloader();
 
@@ -2650,7 +2673,7 @@ class ET_Core_SupportCenter {
 
 		// Get the name of the ET product that activated Safe Mode
 		$safe_mode_activator = get_user_meta( get_current_user_id(), '_et_support_center_safe_mode_product', true );
-		$verified_activator  = $this->is_whitelisted_product( $safe_mode_activator );
+		$verified_activator  = $this->is_allowlisted_product( $safe_mode_activator );
 
 		?>
 		<script type="text/template" id="et-ajax-safe-mode-template">
@@ -2717,7 +2740,7 @@ class ET_Core_SupportCenter {
 		if ( et_core_is_safe_mode_active() ) {
 			// Get the name of the ET product that activated Safe Mode
 			$safe_mode_activator = get_user_meta( get_current_user_id(), '_et_support_center_safe_mode_product', true );
-			$verified_activator  = $this->is_whitelisted_product( $safe_mode_activator );
+			$verified_activator  = $this->is_allowlisted_product( $safe_mode_activator );
 
 			print sprintf( '<a class="%1$s" href="%2$s">%3$s</a>',
 				'et-safe-mode-indicator',
@@ -2998,8 +3021,8 @@ class ET_Core_SupportCenter {
 									continue;
 								}
 
-								// If it's not in our whitelist, add it to the list of plugins we'll disable
-								if ( ! in_array( $plugin, $this->safe_mode_plugins_whitelist ) ) {
+								// If it's not in our allowlist, add it to the list of plugins we'll disable
+								if ( ! in_array( $plugin, $this->safe_mode_plugins_allowlist ) ) {
 									$plugins_list[] = '<li>' . esc_html( $all_plugins[ $plugin ]['Name'] ) . '</li>';
 								}
 							}

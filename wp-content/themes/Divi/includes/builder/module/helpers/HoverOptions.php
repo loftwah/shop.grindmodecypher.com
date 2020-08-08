@@ -72,6 +72,33 @@ class ET_Builder_Module_Hover_Options {
 	}
 
 	/**
+	 * Check if hover settings are enabled on one of the options list.
+	 *
+	 * @since 4.5.1
+	 *
+	 * @param  array $attrs All module attributes.
+	 * @param  array $list  Options list.
+	 * @return boolean      Hover settings status.
+	 */
+	public function is_any_hover_enabled( $attrs, $list ) {
+		// Ensure list is not empty and valid array.
+		if ( empty( $list ) || ! is_array( $list ) ) {
+			return false;
+		}
+
+		// Check the hover status one by one.
+		$is_any_hover_enabled = false;
+		foreach( $list as $name ) {
+			if ( $this->is_enabled( $name, $attrs ) ) {
+				$is_any_hover_enabled = true;
+				break;
+			}
+		}
+
+		return $is_any_hover_enabled;
+	}
+
+	/**
 	 * Returns the hover setting field name
 	 * E.g.: get_hover_enabled_field('test') => 'test__hover'
 	 *

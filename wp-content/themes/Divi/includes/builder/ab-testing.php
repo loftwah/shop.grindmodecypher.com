@@ -305,7 +305,7 @@ function et_pb_ab_builder_data() {
 		die( -1 );
 	}
 
-	// Whitelist the duration value
+	// Allowlist the duration value
 	$duration = in_array( $_post['et_pb_ab_duration'], et_pb_ab_get_stats_data_duration() ) ? $_post['et_pb_ab_duration'] : $defaults['et_pb_ab_duration'];
 
 	// Get data
@@ -1219,7 +1219,7 @@ function et_pb_ab_clear_cache() {
 
 	// VB ask to load data to save request
 	if ( isset( $_POST['et_pb_ab_load_data'] ) && isset( $_POST['et_pb_test_id'] ) && isset( $_POST['et_pb_ab_duration'] ) ) {
-		// Whitelist the duration value
+		// Allowlist the duration value
 		$duration = in_array( $_POST['et_pb_ab_duration'], et_pb_ab_get_stats_data_duration() ) ? $_POST['et_pb_ab_duration'] : 'day';
 
 		// Get data

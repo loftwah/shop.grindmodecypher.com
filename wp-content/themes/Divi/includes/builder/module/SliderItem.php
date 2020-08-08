@@ -524,7 +524,7 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 		if ( $is_local_video ) {
 			$video_embed = wp_video_shortcode( array( 'src' => $video_url ) );
 		} else {
-			$video_embed = wp_oembed_get( $video_url );
+			$video_embed = et_builder_get_oembed( $video_url );
 
 			$video_embed = preg_replace( '/<embed /','<embed wmode="transparent" ', $video_embed );
 

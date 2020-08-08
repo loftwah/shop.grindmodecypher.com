@@ -584,8 +584,9 @@ function et_fb_get_static_backend_helpers($post_type) {
 		'coreModalTemplate'            => et_builder_get_core_modal_template(),
 		'coreModalButtonsTemplate'     => et_builder_get_core_modal_buttons_template(),
 		'unsavedNotification'          => et_builder_get_unsaved_notification_texts(),
-		'globalPresetsSaveFailure'    => et_builder_get_global_presets_save_failure_texts(),
-		'globalPresetsLoadFailure'    => et_builder_get_global_presets_load_failure_texts(),
+		'globalPresetsSaveFailure'     => et_builder_get_global_presets_save_failure_texts(),
+		'globalPresetsSaveForbidden'   => et_builder_get_global_presets_save_forbidden_texts(),
+		'globalPresetsLoadFailure'     => et_builder_get_global_presets_load_failure_texts(),
 		'backupLabel'                  => __( 'Backup of %s', 'et_builder' ),
 
 		'googleAPIKey'                 => et_pb_is_allowed( 'theme_options' ) ? get_option( 'et_google_api_settings' ) : '',

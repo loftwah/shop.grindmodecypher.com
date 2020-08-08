@@ -451,6 +451,13 @@ function et_theme_builder_api_import_theme_builder() {
 		'nonce'
 	);
 
+	if ( ! isset( $_FILES['file']['name'] ) || ! et_()->ends_with( sanitize_file_name( $_FILES['file']['name'] ), '.json' ) ) {
+		wp_send_json_error( array(
+			'code'  => ET_Theme_Builder_Api_Errors::PORTABILITY_IMPORT_INVALID_FILE,
+			'error' => $i18n['$invalid_file'],
+		) );
+	}
+
 	$_      = et_();
 	$upload = wp_handle_upload( $_FILES['file'], array(
 		'test_size' => false,
