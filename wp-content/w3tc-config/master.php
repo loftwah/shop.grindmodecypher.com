@@ -1,5 +1,5 @@
 <?php exit; ?>{
-    "version": "0.14.2",
+    "version": "0.14.3",
     "cluster.messagebus.debug": false,
     "cluster.messagebus.enabled": false,
     "cluster.messagebus.sns.region": "",
@@ -10,7 +10,7 @@
     "dbcache.debug": false,
     "dbcache.debug_purge": false,
     "dbcache.enabled": true,
-    "dbcache.engine": "memcached",
+    "dbcache.engine": "redis",
     "dbcache.file.gc": 3600,
     "dbcache.file.locking": false,
     "dbcache.lifetime": 180,
@@ -137,7 +137,7 @@
     "pgcache.comment_cookie_ttl": 1800,
     "pgcache.debug": false,
     "pgcache.debug_purge": false,
-    "pgcache.engine": "memcached",
+    "pgcache.engine": "redis",
     "pgcache.file.gc": 3600,
     "pgcache.file.nfs": false,
     "pgcache.file.locking": false,
@@ -266,7 +266,7 @@
     "minify.enabled": true,
     "minify.auto": true,
     "minify.debug": false,
-    "minify.engine": "memcached",
+    "minify.engine": "file",
     "minify.error.notification": "",
     "minify.file.gc": 86400,
     "minify.file.nfs": false,
@@ -893,5 +893,9 @@
     "plugin.type": "",
     "fragmentcache": {
         "engine": "memcached"
+    },
+    "pgcache.bad_behavior_path": "",
+    "newrelic": {
+        "monitoring_type": "apm"
     }
 }
