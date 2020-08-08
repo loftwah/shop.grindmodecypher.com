@@ -4680,6 +4680,48 @@ module.exports = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _asyncToGenerator; });
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
+
+/***/ }),
+/* 68 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* unused harmony export Button */
 /* harmony import */ var _babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
 /* harmony import */ var _babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
@@ -4827,48 +4869,6 @@ function Button(props, ref) {
 }
 /* harmony default export */ __webpack_exports__["a"] = (Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["forwardRef"])(Button));
 //# sourceMappingURL=index.js.map
-
-/***/ }),
-/* 68 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _asyncToGenerator; });
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
 
 /***/ }),
 /* 69 */
@@ -7318,7 +7318,7 @@ var detect_outside_PopoverDetectOutside = /*#__PURE__*/function (_Component) {
 /* harmony default export */ var detect_outside = (Object(with_focus_outside["a" /* default */])(detect_outside_PopoverDetectOutside));
 //# sourceMappingURL=detect-outside.js.map
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/components/build-module/scroll-lock/index.js
 
@@ -92788,7 +92788,7 @@ var external_this_wp_i18n_ = __webpack_require__(3);
 var select_control = __webpack_require__(720);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/dropdown/index.js
 var dropdown = __webpack_require__(721);
@@ -93603,7 +93603,7 @@ select_filter_SelectFilter.propTypes = {
 };
 /* harmony default export */ var select_filter = (select_filter_SelectFilter);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js
-var asyncToGenerator = __webpack_require__(68);
+var asyncToGenerator = __webpack_require__(67);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
 var esm_typeof = __webpack_require__(40);
@@ -115268,7 +115268,7 @@ function TextControl(_ref) {
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(266);
 /* harmony import */ var _navigable_container__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(418);
-/* harmony import */ var _button__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(67);
+/* harmony import */ var _button__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(68);
 
 
 

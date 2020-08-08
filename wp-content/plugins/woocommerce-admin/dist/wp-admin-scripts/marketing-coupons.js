@@ -1033,7 +1033,7 @@ var extends_default = /*#__PURE__*/__webpack_require__.n(helpers_extends);
 var external_this_wp_element_ = __webpack_require__(0);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(8);
@@ -5337,7 +5337,7 @@ module.exports.isShallowEqualArrays = isShallowEqualArrays;
 
 /***/ }),
 
-/***/ 67:
+/***/ 68:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7314,7 +7314,7 @@ var detect_outside_PopoverDetectOutside = /*#__PURE__*/function (_Component) {
 /* harmony default export */ var detect_outside = (Object(with_focus_outside["a" /* default */])(detect_outside_PopoverDetectOutside));
 //# sourceMappingURL=detect-outside.js.map
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/components/build-module/scroll-lock/index.js
 
