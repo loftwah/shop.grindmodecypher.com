@@ -328,7 +328,11 @@ abstract class Order_Document {
 
 	public function is_allowed() {
 		$allowed = true;
-		if ( !$this->exists() && !empty( $this->settings['disable_for_statuses'] ) && !empty( $this->order ) && is_callable( array( $this->order, 'get_status' ) ) ) {
+		// Check if document is enabled
+		if ( !$this->is_enabled() ) {
+			$allowed = false;
+		// Check disabled for statuses
+		} elseif ( !$this->exists() && !empty( $this->settings['disable_for_statuses'] ) && !empty( $this->order ) && is_callable( array( $this->order, 'get_status' ) ) ) {
 			$status = $this->order->get_status();
 
 			$disabled_statuses = array_map( function($status){
@@ -339,7 +343,7 @@ abstract class Order_Document {
 			if ( in_array( $status, $disabled_statuses ) ) {
 				$allowed = false;
 			}
-		}
+		} 
 		return apply_filters( 'wpo_wcpdf_document_is_allowed', $allowed, $this );
 	}
 
@@ -851,13 +855,14 @@ abstract class Order_Document {
 
 	// get list of WooCommerce statuses
 	public function get_wc_order_status_list() {
+		$order_statuses = array();
 		if ( version_compare( WOOCOMMERCE_VERSION, '2.2', '<' ) ) {
 			$statuses = (array) get_terms( 'shop_order_status', array( 'hide_empty' => 0, 'orderby' => 'id' ) );
 			foreach ( $statuses as $status ) {
 				$order_statuses[esc_attr( $status->slug )] = esc_html__( $status->name, 'woocommerce' );
 			}
 		} else {
-			$statuses = wc_get_order_statuses();
+			$statuses = function_exists('wc_get_order_statuses') ? wc_get_order_statuses() : array();
 			foreach ( $statuses as $status_slug => $status ) {
 				$status_slug   = 'wc-' === substr( $status_slug, 0, 3 ) ? substr( $status_slug, 3 ) : $status_slug;
 				$order_statuses[$status_slug] = $status;
