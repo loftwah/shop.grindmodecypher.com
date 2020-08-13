@@ -62,4 +62,4 @@ class ET_Builder_Plugin_Compat_The_Events_Calendar_Community_Events extends ET_B
 	}
 }
 
-new ET_Builder_Plugin_Compat_The_Events_Calendar_Community_Events;
+new ET_Builder_Plugin_Compat_The_Events_Calendar_Community_Events();

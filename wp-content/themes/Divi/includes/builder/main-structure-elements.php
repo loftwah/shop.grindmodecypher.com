@@ -19,9 +19,9 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		$this->vb_support = 'on';
 
 		$this->settings_modal_toggles = array(
-			'general' => array(
+			'general'    => array(
 				'toggles' => array(
-					'background'     => array(
+					'background' => array(
 						'title'       => et_builder_i18n( 'Background' ),
 						'sub_toggles' => array(
 							'main'     => '',
@@ -29,18 +29,18 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 							'column_2' => array( 'name' => esc_html__( 'Column 2', 'et_builder' ) ),
 							'column_3' => array( 'name' => esc_html__( 'Column 3', 'et_builder' ) ),
 						),
-						'priority' => 80,
+						'priority'    => 80,
 					),
 				),
 			),
-			'advanced' => array(
+			'advanced'   => array(
 				'toggles' => array(
-					'layout'          => et_builder_i18n( 'Layout' ),
-					'width'           => array(
+					'layout'         => et_builder_i18n( 'Layout' ),
+					'width'          => array(
 						'title'    => et_builder_i18n( 'Sizing' ),
 						'priority' => 65,
 					),
-					'margin_padding'  => array(
+					'margin_padding' => array(
 						'title'       => esc_html__( 'Spacing', 'et_builder' ),
 						'sub_toggles' => array(
 							'main'     => '',
@@ -48,14 +48,14 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 							'column_2' => array( 'name' => esc_html__( 'Column 2', 'et_builder' ) ),
 							'column_3' => array( 'name' => esc_html__( 'Column 3', 'et_builder' ) ),
 						),
-						'priority'   => 70,
+						'priority'    => 70,
 					),
 				),
 			),
 			'custom_css' => array(
 				'toggles' => array(
-					'classes' => array(
-						'title'  => esc_html__( 'CSS ID & Classes', 'et_builder' ),
+					'classes'    => array(
+						'title'       => esc_html__( 'CSS ID & Classes', 'et_builder' ),
 						'sub_toggles' => array(
 							'main'     => '',
 							'column_1' => array( 'name' => esc_html__( 'Column 1', 'et_builder' ) ),
@@ -64,7 +64,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 						),
 					),
 					'custom_css' => array(
-						'title'  => et_builder_i18n( 'Custom CSS' ),
+						'title'       => et_builder_i18n( 'Custom CSS' ),
 						'sub_toggles' => array(
 							'main'     => '',
 							'column_1' => array( 'name' => esc_html__( 'Column 1', 'et_builder' ) ),
@@ -77,7 +77,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		);
 
 		$this->advanced_fields = array(
-			'background' => array(
+			'background'      => array(
 				'use_background_color'          => 'fields_only',
 				'use_background_image'          => true,
 				'use_background_color_gradient' => true,
@@ -87,10 +87,10 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					'important' => 'all',
 					'main'      => 'div.et_pb_section%%order_class%%',
 				),
-				'options'    => array(
-					'background_color' => array(
+				'options'                       => array(
+					'background_color'   => array(
 						'default' => '',
-						'hover' => 'tabs',
+						'hover'   => 'tabs',
 					),
 					'allow_player_pause' => array(
 						'default_on_front' => 'off',
@@ -98,15 +98,15 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					'background_video_pause_outside_viewport' => array(
 						'default_on_front' => 'on',
 					),
-					'parallax' => array(
+					'parallax'           => array(
 						'default_on_front' => 'off',
 					),
-					'parallax_method' => array(
+					'parallax_method'    => array(
 						'default_on_front' => 'on',
 					),
 				),
 			),
-			'max_width'  => array(
+			'max_width'       => array(
 				'css'     => array(
 					'module_alignment' => '%%order_class%%',
 				),
@@ -117,16 +117,16 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				),
 				'extra'   => array(
 					'inner' => array(
-						'css' => array(
+						'css'     => array(
 							'main' => array( '%%order_class%% > .et_pb_row', '%%order_class%%.et_section_specialty > .et_pb_row' ),
 						),
 						'options' => array(
-							'width'     => array(
+							'width'            => array(
 								'label'           => esc_html__( 'Inner Width', 'et_builder' ),
 								'depends_show_if' => 'on',
 								'specialty_only'  => 'yes',
 							),
-							'max_width' => array(
+							'max_width'        => array(
 								'label'           => esc_html__( 'Inner Max Width', 'et_builder' ),
 								'depends_show_if' => 'on',
 								'specialty_only'  => 'yes',
@@ -136,14 +136,14 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 								'depends_show_if' => 'on',
 								'specialty_only'  => 'yes',
 							),
-						)
-					)
-				)
+						),
+					),
+				),
 			),
-			'fonts'      => false,
-			'text'       => false,
-			'button'     => false,
-			'position_fields'   => array(
+			'fonts'           => false,
+			'text'            => false,
+			'button'          => false,
+			'position_fields' => array(
 				'default' => 'relative',
 			),
 		);
@@ -158,52 +158,52 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 	function get_fields() {
 		$fields = array(
-			'inner_shadow' => array(
-				'label'           => esc_html__( 'Show Inner Shadow', 'et_builder' ),
+			'inner_shadow'               => array(
+				'label'            => esc_html__( 'Show Inner Shadow', 'et_builder' ),
+				'type'             => 'yes_no_button',
+				'option_category'  => 'configuration',
+				'options'          => array(
+					'off' => et_builder_i18n( 'No' ),
+					'on'  => et_builder_i18n( 'Yes' ),
+				),
+				'default'          => 'off',
+				'description'      => esc_html__( 'Here you can select whether or not your section has an inner shadow. This can look great when you have colored backgrounds or background images.', 'et_builder' ),
+				'tab_slug'         => 'advanced',
+				'toggle_slug'      => 'layout',
+				'default_on_front' => 'off',
+			),
+			'make_equal'                 => array(
+				'label'           => esc_html__( 'Equalize Column Heights', 'et_builder' ),
+				'description'     => esc_html__( 'Equalizing column heights will force all columns to assume the height of the tallest column in the row. All columns will have the same height, keeping their appearance uniform.', 'et_builder' ),
 				'type'            => 'yes_no_button',
-				'option_category' => 'configuration',
+				'option_category' => 'layout',
 				'options'         => array(
 					'off' => et_builder_i18n( 'No' ),
 					'on'  => et_builder_i18n( 'Yes' ),
 				),
 				'default'         => 'off',
-				'description'     => esc_html__( 'Here you can select whether or not your section has an inner shadow. This can look great when you have colored backgrounds or background images.', 'et_builder' ),
 				'tab_slug'        => 'advanced',
-				'toggle_slug'     => 'layout',
-				'default_on_front'=> 'off',
+				'toggle_slug'     => 'width',
+				'specialty_only'  => 'yes',
 			),
-			'make_equal' => array(
-				'label'             => esc_html__( 'Equalize Column Heights', 'et_builder' ),
-				'description'       => esc_html__( 'Equalizing column heights will force all columns to assume the height of the tallest column in the row. All columns will have the same height, keeping their appearance uniform.', 'et_builder' ),
-				'type'              => 'yes_no_button',
-				'option_category'   => 'layout',
-				'options'           => array(
+			'use_custom_gutter'          => array(
+				'label'           => esc_html__( 'Use Custom Gutter Width', 'et_builder' ),
+				'description'     => esc_html__( 'Enable this option to define custom gutter width for this section.', 'et_builder' ),
+				'type'            => 'yes_no_button',
+				'option_category' => 'layout',
+				'options'         => array(
 					'off' => et_builder_i18n( 'No' ),
 					'on'  => et_builder_i18n( 'Yes' ),
 				),
-				'default'           => 'off',
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'width',
-				'specialty_only'    => 'yes',
-			),
-			'use_custom_gutter' => array(
-				'label'             => esc_html__( 'Use Custom Gutter Width', 'et_builder' ),
-				'description'       => esc_html__( 'Enable this option to define custom gutter width for this section.', 'et_builder' ),
-				'type'              => 'yes_no_button',
-				'option_category'   => 'layout',
-				'options'           => array(
-					'off' => et_builder_i18n( 'No' ),
-					'on'  => et_builder_i18n( 'Yes' ),
-				),
-				'default'           => 'off',
-				'affects'           => array(
+				'default'         => 'off',
+				'affects'         => array(
 					'gutter_width',
 				),
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'width',
-				'specialty_only'    => 'yes',
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'width',
+				'specialty_only'  => 'yes',
 			),
-			'gutter_width' => array(
+			'gutter_width'               => array(
 				'label'            => esc_html__( 'Gutter Width', 'et_builder' ),
 				'type'             => 'range',
 				'option_category'  => 'layout',
@@ -224,14 +224,14 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'hover'            => 'tabs',
 				'description'      => esc_html__( 'Gutter width controls the space between each column in a row. Lowering the gutter width will cause modules to become closer together.', 'et_builder' ),
 			),
-			'columns_background' => array(
+			'columns_background'         => array(
 				'type'            => 'column_settings_background',
 				'option_category' => 'configuration',
 				'toggle_slug'     => 'background',
 				'specialty_only'  => 'yes',
 				'priority'        => 99,
 			),
-			'columns_padding' => array(
+			'columns_padding'            => array(
 				'type'            => 'column_settings_padding',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'advanced',
@@ -239,23 +239,23 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'specialty_only'  => 'yes',
 				'priority'        => 99,
 			),
-			'fullwidth' => array(
-				'type'    => 'hidden',
+			'fullwidth'                  => array(
+				'type'             => 'hidden',
 				'default_on_front' => 'off',
 			),
-			'specialty' => array(
-				'type'    => 'skip',
+			'specialty'                  => array(
+				'type'             => 'skip',
 				'default_on_front' => 'off',
-				'affects'          => array( 'inner_width', 'inner_max_width', ),
+				'affects'          => array( 'inner_width', 'inner_max_width' ),
 			),
-			'columns_css' => array(
+			'columns_css'                => array(
 				'type'            => 'column_settings_css',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
 				'toggle_slug'     => 'custom_css',
 				'priority'        => 20,
 			),
-			'columns_css_fields' => array(
+			'columns_css_fields'         => array(
 				'type'            => 'column_settings_css_fields',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
@@ -267,88 +267,9 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'tab_slug'       => 'advanced',
 				'specialty_only' => 'yes',
 			),
-			'__video_background' => array(
-				'type' => 'computed',
-				'computed_callback' => array( 'ET_Builder_Module_Helper_ResponsiveOptions', 'get_video_background' ),
-				'computed_depends_on' => array(
-					'background_video_mp4',
-					'background_video_webm',
-					'background_video_width',
-					'background_video_height',
-				),
-				'computed_minimum' => array(
-					'background_video_mp4',
-					'background_video_webm',
-				),
-			),
-			'prev_background_color' => array(
-				'type' => 'skip',
-			),
-			'next_background_color' => array(
-				'type' => 'skip',
-			),
-		);
-
-		$column_fields = $this->get_column_fields( 3, array(
-			'parallax'                                   => array(
-				'default_on_front' => 'off',
-			),
-			'parallax_method'                            => array(
-				'default_on_front' => 'on',
-			),
-			'background_color'                           => array(),
-			'bg_img'                                     => array(),
-			'background_size'                            => array(),
-			'background_position'                        => array(),
-			'background_repeat'                          => array(),
-			'background_blend'                           => array(),
-			'padding_top_bottom_link'                    => array(),
-			'padding_left_right_link'                    => array(),
-			'use_background_color_gradient'              => array(),
-			'background_color_gradient_start'            => array(),
-			'background_color_gradient_end'              => array(),
-			'background_color_gradient_type'             => array(),
-			'background_color_gradient_direction'        => array(),
-			'background_color_gradient_direction_radial' => array(),
-			'background_color_gradient_start_position'   => array(),
-			'background_color_gradient_end_position'     => array(),
-			'background_color_gradient_overlays_image'   => array(),
-			'background_video_mp4'                       => array(
-				'computed_affects' => array(
-					'__video_background',
-				),
-			),
-			'background_video_webm'                      => array(
-				'computed_affects' => array(
-					'__video_background',
-				),
-			),
-			'background_video_width'                     => array(
-				'computed_affects' => array(
-					'__video_background',
-				),
-			),
-			'background_video_height'                    => array(
-				'computed_affects' => array(
-					'__video_background',
-				),
-			),
-			'allow_player_pause'                         => array(
-				'computed_affects' => array(
-					'__video_background',
-				),
-			),
-			'background_video_pause_outside_viewport'    => array(
-				'computed_affects'   => array(
-					'__video_background',
-				),
-			),
-			'__video_background'                         => array(
+			'__video_background'         => array(
 				'type'                => 'computed',
-				'computed_callback'   => array(
-					'ET_Builder_Column',
-					'get_column_video_background'
-				),
+				'computed_callback'   => array( 'ET_Builder_Module_Helper_ResponsiveOptions', 'get_video_background' ),
 				'computed_depends_on' => array(
 					'background_video_mp4',
 					'background_video_webm',
@@ -360,30 +281,112 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					'background_video_webm',
 				),
 			),
-			'padding_top'                                => array( 'tab_slug' => 'advanced' ),
-			'padding_right'                              => array( 'tab_slug' => 'advanced' ),
-			'padding_bottom'                             => array( 'tab_slug' => 'advanced' ),
-			'padding_left'                               => array( 'tab_slug' => 'advanced' ),
-			'padding_top_bottom_link'                    => array( 'tab_slug' => 'advanced' ),
-			'padding_left_right_link'                    => array( 'tab_slug' => 'advanced' ),
-			'padding_%column_index%_tablet'              => array(
-				'has_custom_index_location' => true,
-				'tab_slug' => 'advanced',
+			'prev_background_color'      => array(
+				'type' => 'skip',
 			),
-			'padding_%column_index%_phone'               => array(
-				'has_custom_index_location' => true,
-				'tab_slug' => 'advanced',
+			'next_background_color'      => array(
+				'type' => 'skip',
 			),
-			'padding_%column_index%_last_edited'         => array(
-				'has_custom_index_location' => true,
-				'tab_slug' => 'advanced',
-			),
-			'module_id'                                  => array( 'tab_slug' => 'custom_css' ),
-			'module_class'                               => array( 'tab_slug' => 'custom_css' ),
-			'custom_css_before'                          => array( 'tab_slug' => 'custom_css' ),
-			'custom_css_main'                            => array( 'tab_slug' => 'custom_css' ),
-			'custom_css_after'                           => array( 'tab_slug' => 'custom_css' ),
-		) );
+		);
+
+		$column_fields = $this->get_column_fields(
+			3,
+			array(
+				'parallax'                                 => array(
+					'default_on_front' => 'off',
+				),
+				'parallax_method'                          => array(
+					'default_on_front' => 'on',
+				),
+				'background_color'                         => array(),
+				'bg_img'                                   => array(),
+				'background_size'                          => array(),
+				'background_position'                      => array(),
+				'background_repeat'                        => array(),
+				'background_blend'                         => array(),
+				'padding_top_bottom_link'                  => array(),
+				'padding_left_right_link'                  => array(),
+				'use_background_color_gradient'            => array(),
+				'background_color_gradient_start'          => array(),
+				'background_color_gradient_end'            => array(),
+				'background_color_gradient_type'           => array(),
+				'background_color_gradient_direction'      => array(),
+				'background_color_gradient_direction_radial' => array(),
+				'background_color_gradient_start_position' => array(),
+				'background_color_gradient_end_position'   => array(),
+				'background_color_gradient_overlays_image' => array(),
+				'background_video_mp4'                     => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
+				),
+				'background_video_webm'                    => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
+				),
+				'background_video_width'                   => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
+				),
+				'background_video_height'                  => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
+				),
+				'allow_player_pause'                       => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
+				),
+				'background_video_pause_outside_viewport'  => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
+				),
+				'__video_background'                       => array(
+					'type'                => 'computed',
+					'computed_callback'   => array(
+						'ET_Builder_Column',
+						'get_column_video_background',
+					),
+					'computed_depends_on' => array(
+						'background_video_mp4',
+						'background_video_webm',
+						'background_video_width',
+						'background_video_height',
+					),
+					'computed_minimum'    => array(
+						'background_video_mp4',
+						'background_video_webm',
+					),
+				),
+				'padding_top'                              => array( 'tab_slug' => 'advanced' ),
+				'padding_right'                            => array( 'tab_slug' => 'advanced' ),
+				'padding_bottom'                           => array( 'tab_slug' => 'advanced' ),
+				'padding_left'                             => array( 'tab_slug' => 'advanced' ),
+				'padding_top_bottom_link'                  => array( 'tab_slug' => 'advanced' ),
+				'padding_left_right_link'                  => array( 'tab_slug' => 'advanced' ),
+				'padding_%column_index%_tablet'            => array(
+					'has_custom_index_location' => true,
+					'tab_slug'                  => 'advanced',
+				),
+				'padding_%column_index%_phone'             => array(
+					'has_custom_index_location' => true,
+					'tab_slug'                  => 'advanced',
+				),
+				'padding_%column_index%_last_edited'       => array(
+					'has_custom_index_location' => true,
+					'tab_slug'                  => 'advanced',
+				),
+				'module_id'                                => array( 'tab_slug' => 'custom_css' ),
+				'module_class'                             => array( 'tab_slug' => 'custom_css' ),
+				'custom_css_before'                        => array( 'tab_slug' => 'custom_css' ),
+				'custom_css_main'                          => array( 'tab_slug' => 'custom_css' ),
+				'custom_css_after'                         => array( 'tab_slug' => 'custom_css' ),
+			)
+		);
 
 		return array_merge( $fields, $column_fields );
 	}
@@ -477,7 +480,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			$featured_image_src     = isset( $featured_image_src_obj[0] ) ? $featured_image_src_obj[0] : '';
 		}
 
-		foreach( $preview_modes as $suffix ) {
+		foreach ( $preview_modes as $suffix ) {
 			$is_hover = $hover_suffix === $suffix;
 
 			// A. Bail early if hover or responsive settings disabled on mobile/hover.
@@ -499,13 +502,13 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 			// B.1. Get inherited background value.
 			$background_image = et_pb_responsive_options()->get_inheritance_background_value( $this->props, "{$attr_prefix}image", $mode, $base_name, $this->fields_unprocessed );
-			$parallax         = $is_hover ? et_pb_hover_options()->get_raw_value( "parallax", $this->props ) : et_pb_responsive_options()->get_any_value( $this->props, "parallax{$suffix}", '', true );
-			$parallax_method  = $is_hover ? et_pb_hover_options()->get_raw_value( "parallax_method", $this->props ) : et_pb_responsive_options()->get_any_value( $this->props, "parallax_method{$suffix}", '', true );
+			$parallax         = $is_hover ? et_pb_hover_options()->get_raw_value( 'parallax', $this->props ) : et_pb_responsive_options()->get_any_value( $this->props, "parallax{$suffix}", '', true );
+			$parallax_method  = $is_hover ? et_pb_hover_options()->get_raw_value( 'parallax_method', $this->props ) : et_pb_responsive_options()->get_any_value( $this->props, "parallax_method{$suffix}", '', true );
 
 			// B.2. Set default value for parallax and parallax method on hover when they are empty.
 			if ( $is_hover ) {
-				$parallax        = empty( $parallax ) ? et_pb_responsive_options()->get_any_value( $this->props, "parallax", '', true ) : $parallax;
-				$parallax_method = empty( $parallax_method ) ? et_pb_responsive_options()->get_any_value( $this->props, "parallax_method", '', true ) : $parallax_method;
+				$parallax        = empty( $parallax ) ? et_pb_responsive_options()->get_any_value( $this->props, 'parallax', '', true ) : $parallax;
+				$parallax_method = empty( $parallax_method ) ? et_pb_responsive_options()->get_any_value( $this->props, 'parallax_method', '', true ) : $parallax_method;
 			}
 
 			// B.3. Override background image with featured image if needed.
@@ -744,7 +747,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			}
 		}
 
-		$gutter_class = '';
+		$gutter_class      = '';
 		$gutter_hover_data = '';
 
 		if ( 'on' === $specialty ) {
@@ -752,14 +755,14 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 			$et_pb_all_column_settings_backup = $et_pb_all_column_settings;
 
-			$et_pb_all_column_settings = ! isset( $et_pb_all_column_settings ) ?  array() : $et_pb_all_column_settings;
+			$et_pb_all_column_settings = ! isset( $et_pb_all_column_settings ) ? array() : $et_pb_all_column_settings;
 
-			if ('on' === $make_equal) {
+			if ( 'on' === $make_equal ) {
 				$this->add_classname( 'et_pb_equal_columns' );
 			}
 
 			if ( 'on' === $use_custom_gutter && '' !== $gutter_width ) {
-				$gutter_width = '0' === $gutter_width ? '1' : $gutter_width; // set the gutter to 1 if 0 entered by user
+				$gutter_width  = '0' === $gutter_width ? '1' : $gutter_width; // set the gutter to 1 if 0 entered by user
 				$gutter_class .= ' et_pb_gutters' . $gutter_width;
 
 				if ( et_builder_is_hover_enabled( 'gutter_width', $this->props ) && ! empty( $gutter_width_hover ) && $gutter_width !== $gutter_width_hover ) {
@@ -767,8 +770,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 					$gutter_hover_data = sprintf(
 						' data-original_gutter="%1$s" data-hover_gutter="%2$s"',
-						esc_attr($gutter_width),
-						esc_attr($gutter_width_hover)
+						esc_attr( $gutter_width ),
+						esc_attr( $gutter_width_hover )
 					);
 				}
 			}
@@ -777,10 +780,13 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			$column_hover_backgrounds = array();
 
 			for ( $i = 0; $i <= 3; $i ++ ) {
-				$column_hover_backgrounds = array_merge( $column_hover_backgrounds, array(
-					"column_{$i}_color_hover"         => $hover->get_value( "background_color_{$i}", $this->props, false ),
-					"column_{$i}_color_hover_enabled" => $hover->is_enabled( "background_color_{$i}", $this->props ),
-				) );
+				$column_hover_backgrounds = array_merge(
+					$column_hover_backgrounds,
+					array(
+						"column_{$i}_color_hover"         => $hover->get_value( "background_color_{$i}", $this->props, false ),
+						"column_{$i}_color_hover_enabled" => $hover->is_enabled( "background_color_{$i}", $this->props ),
+					)
+				);
 			}
 
 			$et_pb_column_backgrounds = array(
@@ -883,13 +889,16 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			$column_hover_paddings = array();
 
 			for ( $i = 0; $i <= 3; $i++ ) {
-				$column_hover_paddings = array_merge( $column_hover_paddings, array(
-					"column_{$i}_padding_hover_enabled" => $hover->is_enabled( "padding_{$i}", $this->props ),
-					"column_{$i}_padding_top"           => $hover->get_compose_value( "padding_top_{$i}", "padding_{$i}", $this->props ),
-					"column_{$i}_padding_right"         => $hover->get_compose_value( "padding_right_{$i}", "padding_{$i}", $this->props ),
-					"column_{$i}_padding_bottom"        => $hover->get_compose_value( "padding_bottom_{$i}", "padding_{$i}", $this->props ),
-					"column_{$i}_padding_left"          => $hover->get_compose_value( "padding_left_{$i}", "padding_{$i}", $this->props ),
-				) );
+				$column_hover_paddings = array_merge(
+					$column_hover_paddings,
+					array(
+						"column_{$i}_padding_hover_enabled" => $hover->is_enabled( "padding_{$i}", $this->props ),
+						"column_{$i}_padding_top"    => $hover->get_compose_value( "padding_top_{$i}", "padding_{$i}", $this->props ),
+						"column_{$i}_padding_right"  => $hover->get_compose_value( "padding_right_{$i}", "padding_{$i}", $this->props ),
+						"column_{$i}_padding_bottom" => $hover->get_compose_value( "padding_bottom_{$i}", "padding_{$i}", $this->props ),
+						"column_{$i}_padding_left"   => $hover->get_compose_value( "padding_left_{$i}", "padding_{$i}", $this->props ),
+					)
+				);
 			}
 
 			$et_pb_column_paddings = array(
@@ -930,18 +939,18 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 			$et_pb_column_paddings_mobile = array(
 				array(
-					'tablet' => explode( '|', $padding_1_tablet ),
-					'phone'  => explode( '|', $padding_1_phone ),
+					'tablet'      => explode( '|', $padding_1_tablet ),
+					'phone'       => explode( '|', $padding_1_phone ),
 					'last_edited' => $padding_1_last_edited,
 				),
 				array(
-					'tablet' => explode( '|', $padding_2_tablet ),
-					'phone'  => explode( '|', $padding_2_phone ),
+					'tablet'      => explode( '|', $padding_2_tablet ),
+					'phone'       => explode( '|', $padding_2_phone ),
 					'last_edited' => $padding_2_last_edited,
 				),
 				array(
-					'tablet' => explode( '|', $padding_3_tablet ),
-					'phone'  => explode( '|', $padding_3_phone ),
+					'tablet'      => explode( '|', $padding_3_tablet ),
+					'phone'       => explode( '|', $padding_3_phone ),
 					'last_edited' => $padding_3_last_edited,
 				),
 			);
@@ -1003,13 +1012,16 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		$bg_color = $hover->get_value( 'background_color', $this->props );
 		$bg_color = empty( $bg_color ) ? $background_color : $bg_color;
 		if ( $hover->is_enabled( 'background', $this->props ) && ! empty( $bg_color ) ) {
-			ET_Builder_Element::set_style( $function_name, array(
-				'selector'    => '%%order_class%%.et_pb_section:hover',
-				'declaration' => sprintf(
-					'background-color:%s !important;',
-					esc_attr( $bg_color )
-				),
-			) );
+			ET_Builder_Element::set_style(
+				$function_name,
+				array(
+					'selector'    => '%%order_class%%.et_pb_section:hover',
+					'declaration' => sprintf(
+						'background-color:%s !important;',
+						esc_attr( $bg_color )
+					),
+				)
+			);
 		}
 
 		// Transparent is default for Builder Plugin, but not for theme
@@ -1066,13 +1078,18 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				// Get all responsive values if it's exist and not empty.
 				$values = array();
 				if ( ! $is_desktop ) {
-					$values = et_pb_responsive_options()->get_any_responsive_values( $this->props, array(
-						"{$placement}_divider_color"       => '',
-						"{$placement}_divider_height"      => '',
-						"{$placement}_divider_repeat"      => '',
-						"{$placement}_divider_flip"        => '',
-						"{$placement}_divider_arrangement" => '',
-					), false, $device );
+					$values = et_pb_responsive_options()->get_any_responsive_values(
+						$this->props,
+						array(
+							"{$placement}_divider_color"  => '',
+							"{$placement}_divider_height" => '',
+							"{$placement}_divider_repeat" => '',
+							"{$placement}_divider_flip"   => '',
+							"{$placement}_divider_arrangement" => '',
+						),
+						false,
+						$device
+					);
 				}
 
 				// Get Divider Style.
@@ -1090,7 +1107,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					// Get the placeholder for the bottom/top.
 					if ( 'bottom' === $placement && '' === $bottom ) {
 						$bottom = $divider->get_svg( 'bottom' );
-					} else if ( 'top' === $placement && '' === $top ) {
+					} elseif ( 'top' === $placement && '' === $top ) {
 						$top = $divider->get_svg( 'top' );
 					}
 
@@ -1109,16 +1126,18 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			$this->add_classname( 'et_pb_section--fixed' );
 		}
 
-		$muti_view_attributes = $multi_view->render_attrs( array(
-			'classes' => array(
-				'et_pb_section--absolute' => array(
-					'positioning' => 'absolute',
-				),
-				'et_pb_section--fixed' => array(
-					'positioning' => 'fixed',
+		$muti_view_attributes = $multi_view->render_attrs(
+			array(
+				'classes' => array(
+					'et_pb_section--absolute' => array(
+						'positioning' => 'absolute',
+					),
+					'et_pb_section--fixed'    => array(
+						'positioning' => 'fixed',
+					),
 				),
 			)
-		) );
+		);
 
 		// Remove automatically added classnames
 		$this->remove_classname( 'et_pb_module' );
@@ -1169,24 +1188,30 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		/**
 		 * @var ET_Builder_Module_Field_BoxShadow $boxShadow
 		 */
-		$boxShadow = ET_Builder_Module_Fields_Factory::get( 'BoxShadow' );
-		$style = $boxShadow->get_value( $this->props );
+		$boxShadow   = ET_Builder_Module_Fields_Factory::get( 'BoxShadow' );
+		$style       = $boxShadow->get_value( $this->props );
 		$hover_style = $boxShadow->get_value( $this->props, array( 'hover' => true ) );
 
 		if ( ! empty( $style ) && 'none' !== $style && false === strpos( $style, 'inset' ) ) {
 			// Make section z-index higher if it has outer box shadow #4762
-			self::set_style( $function_name, array(
-				'selector'    => '%%order_class%%',
-				'declaration' => 'z-index: 10;'
-			) );
+			self::set_style(
+				$function_name,
+				array(
+					'selector'    => '%%order_class%%',
+					'declaration' => 'z-index: 10;',
+				)
+			);
 		}
 
 		if ( ! empty( $hover_style ) && 'none' !== $hover_style && false === strpos( $hover_style, 'inset' ) ) {
 			// Make section z-index higher if it has outer box shadow #4762
-			self::set_style( $function_name, array(
-				'selector'    => '%%order_class%%:hover',
-				'declaration' => 'z-index: 10;'
-			) );
+			self::set_style(
+				$function_name,
+				array(
+					'selector'    => '%%order_class%%:hover',
+					'declaration' => 'z-index: 10;',
+				)
+			);
 		}
 
 		parent::process_box_shadow( $function_name );
@@ -1221,7 +1246,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		return '';
 	}
 }
-new ET_Builder_Section;
+new ET_Builder_Section();
 
 class ET_Builder_Row extends ET_Builder_Structure_Element {
 	function init() {
@@ -1233,36 +1258,36 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		$this->child_item_text = esc_html__( 'Column', 'et_builder' );
 
 		$this->advanced_fields = array(
-			'background'            => array(
-				'use_background_color' => true,
-				'use_background_image' => true,
+			'background'      => array(
+				'use_background_color'          => true,
+				'use_background_image'          => true,
 				'use_background_color_gradient' => true,
-				'use_background_video' => true,
-				'options' => array(
-					'background_color' => array(
+				'use_background_video'          => true,
+				'options'                       => array(
+					'background_color'   => array(
 						'default' => '',
-						'hover' => 'tabs',
+						'hover'   => 'tabs',
 					),
 					'allow_player_pause' => array(
 						'default_on_front' => 'off',
 					),
-					'parallax' => array(
+					'parallax'           => array(
 						'default_on_front' => 'off',
 					),
-					'parallax_method' => array(
+					'parallax_method'    => array(
 						'default_on_front' => 'on',
 					),
 				),
 			),
-			'max_width'             => array(
-				'css'           => array(
+			'max_width'       => array(
+				'css'             => array(
 					'module_alignment' => '%%order_class%%.et_pb_row',
 				),
-				'options' => array(
-					'width' => array(
+				'options'         => array(
+					'width'            => array(
 						'default' => '80%',
 					),
-					'max_width' => array(
+					'max_width'        => array(
 						'default'        => '1080px',
 						'range_settings' => array(
 							'min'  => 0,
@@ -1271,7 +1296,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 						),
 					),
 					'module_alignment' => array(
-						'label' => esc_html__( 'Row Alignment', 'et_builder' ),
+						'label'          => esc_html__( 'Row Alignment', 'et_builder' ),
 						'mobile_options' => true,
 						'description'    => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
 					),
@@ -1280,22 +1305,22 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'toggle_title'    => esc_html__( 'Alignment', 'et_builder' ),
 				'toggle_priority' => 50,
 			),
-			'margin_padding' => array(
+			'margin_padding'  => array(
 				'css' => array(
-					'main' => '%%order_class%%.et_pb_row',
+					'main'      => '%%order_class%%.et_pb_row',
 					'important' => 'all',
 				),
 			),
-			'fonts'                 => false,
-			'text'                  => false,
-			'button'                => false,
-			'position_fields'       => array(
+			'fonts'           => false,
+			'text'            => false,
+			'button'          => false,
+			'position_fields' => array(
 				'default' => 'relative',
 			),
 		);
 
 		$this->settings_modal_toggles = array(
-			'general' => array(
+			'general'  => array(
 				'toggles' => array(
 					'column_structure' => array(
 						'title'       => esc_html__( 'Column Structure', 'et_builder' ),
@@ -1306,7 +1331,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			),
 			'advanced' => array(
 				'toggles' => array(
-					'width'          => array(
+					'width' => array(
 						'title'    => et_builder_i18n( 'Sizing' ),
 						'priority' => 65,
 					),
@@ -1324,12 +1349,12 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 
 	function get_fields() {
 		$fields = array(
-			'column_structure' => array(
+			'column_structure'           => array(
 				'label'       => esc_html__( 'Column Structure', 'et_builder' ),
 				'description' => esc_html__( 'Here you can choose the Column Structure for this Row.', 'et_builder' ),
 				'type'        => 'column-structure',
 				'default'     => '4_4',
-				'options'         => array(
+				'options'     => array(
 					'4_4'                     => et_pb_get_column_svg( '4_4' ),
 					'1_2,1_2'                 => et_pb_get_column_svg( '1_2,1_2' ),
 					'1_3,1_3,1_3'             => et_pb_get_column_svg( '1_3,1_3,1_3' ),
@@ -1354,23 +1379,23 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				),
 				'toggle_slug' => 'column_structure',
 			),
-			'use_custom_gutter' => array(
-				'label'             => esc_html__( 'Use Custom Gutter Width', 'et_builder' ),
-				'type'              => 'yes_no_button',
-				'option_category'   => 'layout',
-				'options'           => array(
+			'use_custom_gutter'          => array(
+				'label'           => esc_html__( 'Use Custom Gutter Width', 'et_builder' ),
+				'type'            => 'yes_no_button',
+				'option_category' => 'layout',
+				'options'         => array(
 					'off' => et_builder_i18n( 'No' ),
 					'on'  => et_builder_i18n( 'Yes' ),
 				),
-				'default'           => 'off',
-				'affects'           => array(
+				'default'         => 'off',
+				'affects'         => array(
 					'gutter_width',
 				),
-				'description'       => esc_html__( 'Enable this option to define custom gutter width for this row.', 'et_builder' ),
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'width',
+				'description'     => esc_html__( 'Enable this option to define custom gutter width for this row.', 'et_builder' ),
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'width',
 			),
-			'gutter_width' => array(
+			'gutter_width'               => array(
 				'label'            => esc_html__( 'Gutter Width', 'et_builder' ),
 				'type'             => 'range',
 				'option_category'  => 'layout',
@@ -1390,27 +1415,27 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'default_on_front' => (string) et_get_option( 'gutter_width', '3' ),
 				'hover'            => 'tabs',
 			),
-			'padding_mobile' => array(
-				'label' => esc_html__( 'Keep Custom Padding on Mobile', 'et_builder' ),
-				'type'        => 'skip', // Remaining attribute for backward compatibility
-				'tab_slug'    => 'advanced',
-				'toggle_slug' => 'margin_padding',
+			'padding_mobile'             => array(
+				'label'            => esc_html__( 'Keep Custom Padding on Mobile', 'et_builder' ),
+				'type'             => 'skip', // Remaining attribute for backward compatibility
+				'tab_slug'         => 'advanced',
+				'toggle_slug'      => 'margin_padding',
 				'default_on_front' => '',
 			),
-			'make_equal' => array(
-				'label'             => esc_html__( 'Equalize Column Heights', 'et_builder' ),
-				'description'       => esc_html__( 'Equalizing column heights will force all columns to assume the height of the tallest column in the row. All columns will have the same height, keeping their appearance uniform.', 'et_builder' ),
-				'type'              => 'yes_no_button',
-				'option_category'   => 'layout',
-				'options'           => array(
+			'make_equal'                 => array(
+				'label'           => esc_html__( 'Equalize Column Heights', 'et_builder' ),
+				'description'     => esc_html__( 'Equalizing column heights will force all columns to assume the height of the tallest column in the row. All columns will have the same height, keeping their appearance uniform.', 'et_builder' ),
+				'type'            => 'yes_no_button',
+				'option_category' => 'layout',
+				'options'         => array(
 					'off' => et_builder_i18n( 'No' ),
 					'on'  => et_builder_i18n( 'Yes' ),
 				),
-				'default'           => 'off',
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'width',
+				'default'         => 'off',
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'width',
 			),
-			'column_padding_mobile' => array(
+			'column_padding_mobile'      => array(
 				'label'            => esc_html__( 'Keep Column Padding on Mobile', 'et_builder' ),
 				'tab_slug'         => 'advanced',
 				'type'             => 'skip', // Remaining attribute for backward compatibility
@@ -1420,117 +1445,120 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'type'     => 'skip',
 				'tab_slug' => 'advanced',
 			),
-			'__video_background' => array(
-				'type' => 'computed',
-				'computed_callback' => array( 'ET_Builder_Module_Helper_ResponsiveOptions', 'get_video_background' ),
+			'__video_background'         => array(
+				'type'                => 'computed',
+				'computed_callback'   => array( 'ET_Builder_Module_Helper_ResponsiveOptions', 'get_video_background' ),
 				'computed_depends_on' => array(
 					'background_video_mp4',
 					'background_video_webm',
 					'background_video_width',
 					'background_video_height',
 				),
-				'computed_minimum' => array(
+				'computed_minimum'    => array(
 					'background_video_mp4',
 					'background_video_webm',
 				),
 			),
 		);
 
-		$column_fields = $this->get_column_fields( 6, array(
-			'background_color'                           => array(),
-			'bg_img'                                     => array(),
-			'padding_top_bottom_link'                    => array(),
-			'padding_left_right_link'                    => array(),
-			'parallax'                                   => array(
-				'default_on_front' => 'off',
-			),
-			'parallax_method'                            => array(
-				'default_on_front' => 'on',
-			),
-			'background_size'                            => array(),
-			'background_position'                        => array(),
-			'background_repeat'                          => array(),
-			'background_blend'                           => array(),
-			'use_background_color_gradient'              => array(),
-			'background_color_gradient_start'            => array(),
-			'background_color_gradient_end'              => array(),
-			'background_color_gradient_type'             => array(),
-			'background_color_gradient_direction'        => array(),
-			'background_color_gradient_direction_radial' => array(),
-			'background_color_gradient_start_position'   => array(),
-			'background_color_gradient_end_position'     => array(),
-			'background_color_gradient_overlays_image'   => array(),
-			'background_video_mp4'                       => array(
-				'computed_affects'   => array(
-					'__video_background',
+		$column_fields = $this->get_column_fields(
+			6,
+			array(
+				'background_color'                         => array(),
+				'bg_img'                                   => array(),
+				'padding_top_bottom_link'                  => array(),
+				'padding_left_right_link'                  => array(),
+				'parallax'                                 => array(
+					'default_on_front' => 'off',
 				),
-			),
-			'background_video_webm'                      => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'parallax_method'                          => array(
+					'default_on_front' => 'on',
 				),
-			),
-			'background_video_width'                     => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'background_size'                          => array(),
+				'background_position'                      => array(),
+				'background_repeat'                        => array(),
+				'background_blend'                         => array(),
+				'use_background_color_gradient'            => array(),
+				'background_color_gradient_start'          => array(),
+				'background_color_gradient_end'            => array(),
+				'background_color_gradient_type'           => array(),
+				'background_color_gradient_direction'      => array(),
+				'background_color_gradient_direction_radial' => array(),
+				'background_color_gradient_start_position' => array(),
+				'background_color_gradient_end_position'   => array(),
+				'background_color_gradient_overlays_image' => array(),
+				'background_video_mp4'                     => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-			),
-			'background_video_height'                    => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'background_video_webm'                    => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-			),
-			'allow_player_pause'                         => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'background_video_width'                   => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-			),
-			'background_video_pause_outside_viewport'    => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'background_video_height'                  => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-			),
-			'__video_background'                         => array(
-				'type' => 'computed',
-				'computed_callback' => array(
-					'ET_Builder_Column',
-					'get_column_video_background'
+				'allow_player_pause'                       => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-				'computed_depends_on' => array(
-					'background_video_mp4',
-					'background_video_webm',
-					'background_video_width',
-					'background_video_height',
+				'background_video_pause_outside_viewport'  => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-				'computed_minimum' => array(
-					'background_video_mp4',
-					'background_video_webm',
+				'__video_background'                       => array(
+					'type'                => 'computed',
+					'computed_callback'   => array(
+						'ET_Builder_Column',
+						'get_column_video_background',
+					),
+					'computed_depends_on' => array(
+						'background_video_mp4',
+						'background_video_webm',
+						'background_video_width',
+						'background_video_height',
+					),
+					'computed_minimum'    => array(
+						'background_video_mp4',
+						'background_video_webm',
+					),
 				),
-			),
-			'padding_top'                                => array( 'tab_slug' => 'advanced' ),
-			'padding_right'                              => array( 'tab_slug' => 'advanced' ),
-			'padding_bottom'                             => array( 'tab_slug' => 'advanced' ),
-			'padding_left'                               => array( 'tab_slug' => 'advanced' ),
-			'padding_top_bottom_link'                    => array( 'tab_slug' => 'advanced' ),
-			'padding_left_right_link'                    => array( 'tab_slug' => 'advanced' ),
-			'padding_%column_index%_tablet'              => array(
-				'has_custom_index_location' => true,
-				'tab_slug' => 'advanced',
-			),
-			'padding_%column_index%_phone'               => array(
-				'has_custom_index_location' => true,
-				'tab_slug' => 'advanced',
-			),
-			'padding_%column_index%_last_edited'         => array(
-				'has_custom_index_location' => true,
-				'tab_slug' => 'advanced',
-			),
-			'module_id'                                  => array( 'tab_slug' => 'custom_css' ),
-			'module_class'                               => array( 'tab_slug' => 'custom_css' ),
-			'custom_css_before'                          => array( 'tab_slug' => 'custom_css' ),
-			'custom_css_main'                            => array( 'tab_slug' => 'custom_css' ),
-			'custom_css_after'                           => array( 'tab_slug' => 'custom_css' ),
-		) );
+				'padding_top'                              => array( 'tab_slug' => 'advanced' ),
+				'padding_right'                            => array( 'tab_slug' => 'advanced' ),
+				'padding_bottom'                           => array( 'tab_slug' => 'advanced' ),
+				'padding_left'                             => array( 'tab_slug' => 'advanced' ),
+				'padding_top_bottom_link'                  => array( 'tab_slug' => 'advanced' ),
+				'padding_left_right_link'                  => array( 'tab_slug' => 'advanced' ),
+				'padding_%column_index%_tablet'            => array(
+					'has_custom_index_location' => true,
+					'tab_slug'                  => 'advanced',
+				),
+				'padding_%column_index%_phone'             => array(
+					'has_custom_index_location' => true,
+					'tab_slug'                  => 'advanced',
+				),
+				'padding_%column_index%_last_edited'       => array(
+					'has_custom_index_location' => true,
+					'tab_slug'                  => 'advanced',
+				),
+				'module_id'                                => array( 'tab_slug' => 'custom_css' ),
+				'module_class'                             => array( 'tab_slug' => 'custom_css' ),
+				'custom_css_before'                        => array( 'tab_slug' => 'custom_css' ),
+				'custom_css_main'                          => array( 'tab_slug' => 'custom_css' ),
+				'custom_css_after'                         => array( 'tab_slug' => 'custom_css' ),
+			)
+		);
 
 		return array_merge( $fields, $column_fields );
 	}
@@ -1539,32 +1567,32 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		$fields = parent::get_transition_fields_css_props();
 
 		for ( $i = 1; $i <= 6; $i ++ ) {
-			$selector = "%%order_class%% > .et_pb_column:nth-child({$i})";
-			$fields["background_color_{$i}"] = array( 'background-color' => $selector );
-			$fields["padding_{$i}"] = array( 'padding' => $selector );
+			$selector                          = "%%order_class%% > .et_pb_column:nth-child({$i})";
+			$fields[ "background_color_{$i}" ] = array( 'background-color' => $selector );
+			$fields[ "padding_{$i}" ]          = array( 'padding' => $selector );
 		}
 
 		return $fields;
 	}
 
 	function render( $atts, $content = null, $function_name ) {
-		$custom_padding                               = $this->props['custom_padding'];
-		$custom_padding_tablet                        = $this->props['custom_padding_tablet'];
-		$custom_padding_phone                         = $this->props['custom_padding_phone'];
-		$custom_padding_last_edited                   = $this->props['custom_padding_last_edited'];
-		$column_padding_mobile                        = $this->props['column_padding_mobile'];
-		$make_equal                                   = $this->props['make_equal'];
-		$padding_mobile                               = $this->props['padding_mobile'];
-		$gutter_width                                 = $this->props['gutter_width'];
-		$gutter_width_hover                           = $this->get_hover_value( 'gutter_width' );
-		$global_module                                = $this->props['global_module'];
-		$use_custom_gutter                            = $this->props['use_custom_gutter'];
+		$custom_padding             = $this->props['custom_padding'];
+		$custom_padding_tablet      = $this->props['custom_padding_tablet'];
+		$custom_padding_phone       = $this->props['custom_padding_phone'];
+		$custom_padding_last_edited = $this->props['custom_padding_last_edited'];
+		$column_padding_mobile      = $this->props['column_padding_mobile'];
+		$make_equal                 = $this->props['make_equal'];
+		$padding_mobile             = $this->props['padding_mobile'];
+		$gutter_width               = $this->props['gutter_width'];
+		$gutter_width_hover         = $this->get_hover_value( 'gutter_width' );
+		$global_module              = $this->props['global_module'];
+		$use_custom_gutter          = $this->props['use_custom_gutter'];
 
 		$hover = et_pb_hover_options();
 
 		global $et_pb_all_column_settings, $et_pb_rendering_column_content, $et_pb_rendering_column_content_row;
 
-		$et_pb_all_column_settings = ! isset( $et_pb_all_column_settings ) ?  array() : $et_pb_all_column_settings;
+		$et_pb_all_column_settings = ! isset( $et_pb_all_column_settings ) ? array() : $et_pb_all_column_settings;
 
 		$et_pb_all_column_settings_backup = $et_pb_all_column_settings;
 
@@ -1585,7 +1613,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			'phone'  => explode( '|', $custom_padding_phone ),
 		) : array(
 			'tablet' => false,
-			'phone' => false,
+			'phone'  => false,
 		);
 
 		$internal_columns_settings_array = array(
@@ -1616,12 +1644,11 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 
 				$gutter_hover_data = sprintf(
 					' data-original_gutter="%1$s" data-hover_gutter="%2$s"',
-					esc_attr($gutter_width),
-					esc_attr($gutter_width_hover)
+					esc_attr( $gutter_width ),
+					esc_attr( $gutter_width_hover )
 				);
 			}
 		}
-
 
 		$padding_values = explode( '|', $custom_padding );
 
@@ -1629,19 +1656,19 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			// old version of Rows support only top and bottom padding, so we need to handle it along with the full padding in the recent version
 			if ( 2 === count( $padding_values ) ) {
 				$padding_settings = array(
-					'top' => isset( $padding_values[0] ) ? $padding_values[0] : '',
+					'top'    => isset( $padding_values[0] ) ? $padding_values[0] : '',
 					'bottom' => isset( $padding_values[1] ) ? $padding_values[1] : '',
 				);
 			} else {
 				$padding_settings = array(
-					'top' => isset( $padding_values[0] ) ? $padding_values[0] : '',
-					'right' => isset( $padding_values[1] ) ? $padding_values[1] : '',
+					'top'    => isset( $padding_values[0] ) ? $padding_values[0] : '',
+					'right'  => isset( $padding_values[1] ) ? $padding_values[1] : '',
 					'bottom' => isset( $padding_values[2] ) ? $padding_values[2] : '',
-					'left' => isset( $padding_values[3] ) ? $padding_values[3] : '',
+					'left'   => isset( $padding_values[3] ) ? $padding_values[3] : '',
 				);
 			}
 
-			foreach( $padding_settings as $padding_side => $value ) {
+			foreach ( $padding_settings as $padding_side => $value ) {
 				if ( '' !== $value ) {
 					$element_style = array(
 						'selector'    => '%%order_class%%.et_pb_row',
@@ -1667,16 +1694,16 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		if ( ! empty( $padding_mobile_values['tablet'] ) || ! empty( $padding_values['phone'] ) ) {
 			$padding_mobile_values_processed = array();
 
-			foreach( array( 'tablet', 'phone' ) as $device ) {
-				if ( empty( $padding_mobile_values[$device] ) ) {
+			foreach ( array( 'tablet', 'phone' ) as $device ) {
+				if ( empty( $padding_mobile_values[ $device ] ) ) {
 					continue;
 				}
 
 				$padding_mobile_values_processed[ $device ] = array(
-					'padding-top'    => isset( $padding_mobile_values[$device][0] ) ? $padding_mobile_values[$device][0] : '',
-					'padding-right'  => isset( $padding_mobile_values[$device][1] ) ? $padding_mobile_values[$device][1] : '',
-					'padding-bottom' => isset( $padding_mobile_values[$device][2] ) ? $padding_mobile_values[$device][2] : '',
-					'padding-left'   => isset( $padding_mobile_values[$device][3] ) ? $padding_mobile_values[$device][3] : '',
+					'padding-top'    => isset( $padding_mobile_values[ $device ][0] ) ? $padding_mobile_values[ $device ][0] : '',
+					'padding-right'  => isset( $padding_mobile_values[ $device ][1] ) ? $padding_mobile_values[ $device ][1] : '',
+					'padding-bottom' => isset( $padding_mobile_values[ $device ][2] ) ? $padding_mobile_values[ $device ][2] : '',
+					'padding-left'   => isset( $padding_mobile_values[ $device ][3] ) ? $padding_mobile_values[ $device ][3] : '',
 				);
 			}
 
@@ -1685,7 +1712,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			}
 		}
 
-		$parallax_image = $this->get_parallax_image_background();
+		$parallax_image   = $this->get_parallax_image_background();
 		$background_video = $this->video_background();
 
 		// CSS Filters
@@ -1703,7 +1730,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		$module_classes = $this->module_classname( $function_name );
 
 		// Inner content shortcode parsing has to be done after all classname addition/removal
-		$inner_content = do_shortcode( et_pb_fix_shortcodes( $content ) );
+		$inner_content               = do_shortcode( et_pb_fix_shortcodes( $content ) );
 		$content_dependent_classname = '' === trim( $inner_content ) ? ' et_pb_row_empty' : '';
 
 		// reset the global column settings to make sure they are not affected by internal content
@@ -1734,7 +1761,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		return $output;
 	}
 }
-new ET_Builder_Row;
+new ET_Builder_Row();
 
 class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 	function init() {
@@ -1746,39 +1773,39 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		$this->child_item_text = esc_html__( 'Column', 'et_builder' );
 
 		$this->advanced_fields = array(
-			'background'            => array(
-				'use_background_color' => true,
-				'use_background_image' => true,
+			'background'      => array(
+				'use_background_color'          => true,
+				'use_background_image'          => true,
 				'use_background_color_gradient' => true,
-				'use_background_video' => true,
+				'use_background_video'          => true,
 			),
-			'margin_padding' => array(
-				'css'               => array(
-					'main' => '%%order_class%%.et_pb_row_inner',
+			'margin_padding'  => array(
+				'css' => array(
+					'main'      => '%%order_class%%.et_pb_row_inner',
 					'important' => 'all',
 				),
 			),
-			'max_width'             => array(
-				'css' => array(
+			'max_width'       => array(
+				'css'     => array(
 					'main' => '%%order_class%%.et_pb_row_inner',
 				),
 				'options' => array(
 					'module_alignment' => array(
-						'label' => esc_html__( 'Row Alignment', 'et_builder' ),
+						'label'       => esc_html__( 'Row Alignment', 'et_builder' ),
 						'description' => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
 					),
 				),
 			),
-			'fonts'                 => false,
-			'text'                  => false,
-			'button'                => false,
-			'position_fields'       => array(
+			'fonts'           => false,
+			'text'            => false,
+			'button'          => false,
+			'position_fields' => array(
 				'default' => 'relative',
 			),
 		);
 
 		$this->settings_modal_toggles = array(
-			'general' => array(
+			'general'  => array(
 				'toggles' => array(
 					'column_structure' => array(
 						'title'       => esc_html__( 'Column Structure', 'et_builder' ),
@@ -1789,7 +1816,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 			),
 			'advanced' => array(
 				'toggles' => array(
-					'width'         => array(
+					'width' => array(
 						'title'    => et_builder_i18n( 'Sizing' ),
 						'priority' => 65,
 					),
@@ -1807,7 +1834,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 
 	function get_fields() {
 		$fields = array(
-			'column_structure' => array(
+			'column_structure'           => array(
 				'label'       => esc_html__( 'Column Structure', 'et_builder' ),
 				'description' => esc_html__( 'Here you can choose the Column Structure for this Row.', 'et_builder' ),
 				'type'        => 'column-structure',
@@ -1820,29 +1847,29 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				),
 				'toggle_slug' => 'column_structure',
 			),
-			'padding_mobile' => array(
-				'label' => esc_html__( 'Keep Custom Padding on Mobile', 'et_builder' ),
+			'padding_mobile'             => array(
+				'label'       => esc_html__( 'Keep Custom Padding on Mobile', 'et_builder' ),
 				'type'        => 'skip', // Remaining attribute for backward compatibility
 				'tab_slug'    => 'advanced',
 				'toggle_slug' => 'margin_padding',
 			),
-			'use_custom_gutter' => array(
-				'label'             => esc_html__( 'Use Custom Gutter Width', 'et_builder' ),
-				'type'              => 'yes_no_button',
-				'option_category'   => 'layout',
-				'options'           => array(
+			'use_custom_gutter'          => array(
+				'label'           => esc_html__( 'Use Custom Gutter Width', 'et_builder' ),
+				'type'            => 'yes_no_button',
+				'option_category' => 'layout',
+				'options'         => array(
 					'off' => et_builder_i18n( 'No' ),
 					'on'  => et_builder_i18n( 'Yes' ),
 				),
-				'default'           => 'off',
-				'affects'           => array(
+				'default'         => 'off',
+				'affects'         => array(
 					'gutter_width',
 				),
-				'description'       => esc_html__( 'Enable this option to define custom gutter width for this row.', 'et_builder' ),
+				'description'     => esc_html__( 'Enable this option to define custom gutter width for this row.', 'et_builder' ),
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'width',
 			),
-			'gutter_width' => array(
+			'gutter_width'               => array(
 				'label'            => esc_html__( 'Gutter Width', 'et_builder' ),
 				'type'             => 'range',
 				'option_category'  => 'layout',
@@ -1862,20 +1889,20 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'default_on_front' => (string) et_get_option( 'gutter_width', '3' ),
 				'hover'            => 'tabs',
 			),
-			'make_equal' => array(
-				'label'             => esc_html__( 'Equalize Column Heights', 'et_builder' ),
-				'description'       => esc_html__( 'Equalizing column heights will force all columns to assume the height of the tallest column in the row. All columns will have the same height, keeping their appearance uniform.', 'et_builder' ),
-				'type'              => 'yes_no_button',
-				'option_category'   => 'layout',
-				'options'           => array(
+			'make_equal'                 => array(
+				'label'           => esc_html__( 'Equalize Column Heights', 'et_builder' ),
+				'description'     => esc_html__( 'Equalizing column heights will force all columns to assume the height of the tallest column in the row. All columns will have the same height, keeping their appearance uniform.', 'et_builder' ),
+				'type'            => 'yes_no_button',
+				'option_category' => 'layout',
+				'options'         => array(
 					'off' => et_builder_i18n( 'No' ),
 					'on'  => et_builder_i18n( 'Yes' ),
 				),
-				'default'           => 'off',
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'width',
+				'default'         => 'off',
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'width',
 			),
-			'column_padding_mobile' => array(
+			'column_padding_mobile'      => array(
 				'label'    => esc_html__( 'Keep Column Padding on Mobile', 'et_builder' ),
 				'tab_slug' => 'advanced',
 				'type'     => 'skip', // Remaining attribute for backward compatibility
@@ -1886,101 +1913,104 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 			),
 		);
 
-		$column_fields = $this->get_column_fields( 4, array(
-			'background_color'                           => array(),
-			'bg_img'                                     => array(),
-			'padding_top_bottom_link'                    => array(),
-			'padding_left_right_link'                    => array(),
-			'parallax'                                   => array(
-				'default_on_front' => 'off',
-			),
-			'parallax_method'                            => array(
-				'default_on_front' => 'on',
-			),
-			'background_size'                            => array(),
-			'background_position'                        => array(),
-			'background_repeat'                          => array(),
-			'background_blend'                           => array(),
-			'use_background_color_gradient'              => array(),
-			'background_color_gradient_start'            => array(),
-			'background_color_gradient_end'              => array(),
-			'background_color_gradient_type'             => array(),
-			'background_color_gradient_direction'        => array(),
-			'background_color_gradient_direction_radial' => array(),
-			'background_color_gradient_start_position'   => array(),
-			'background_color_gradient_end_position'     => array(),
-			'background_color_gradient_overlays_image'   => array(),
-			'background_video_mp4'                       => array(
-				'computed_affects'   => array(
-					'__video_background',
+		$column_fields = $this->get_column_fields(
+			4,
+			array(
+				'background_color'                         => array(),
+				'bg_img'                                   => array(),
+				'padding_top_bottom_link'                  => array(),
+				'padding_left_right_link'                  => array(),
+				'parallax'                                 => array(
+					'default_on_front' => 'off',
 				),
-			),
-			'background_video_webm'                      => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'parallax_method'                          => array(
+					'default_on_front' => 'on',
 				),
-			),
-			'background_video_width'                     => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'background_size'                          => array(),
+				'background_position'                      => array(),
+				'background_repeat'                        => array(),
+				'background_blend'                         => array(),
+				'use_background_color_gradient'            => array(),
+				'background_color_gradient_start'          => array(),
+				'background_color_gradient_end'            => array(),
+				'background_color_gradient_type'           => array(),
+				'background_color_gradient_direction'      => array(),
+				'background_color_gradient_direction_radial' => array(),
+				'background_color_gradient_start_position' => array(),
+				'background_color_gradient_end_position'   => array(),
+				'background_color_gradient_overlays_image' => array(),
+				'background_video_mp4'                     => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-			),
-			'background_video_height'                    => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'background_video_webm'                    => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-			),
-			'allow_player_pause'                         => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'background_video_width'                   => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-			),
-			'background_video_pause_outside_viewport'    => array(
-				'computed_affects'   => array(
-					'__video_background',
+				'background_video_height'                  => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-			),
-			'__video_background'                         => array(
-				'type' => 'computed',
-				'computed_callback' => array(
-					'ET_Builder_Column',
-					'get_column_video_background'
+				'allow_player_pause'                       => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-				'computed_depends_on' => array(
-					'background_video_mp4',
-					'background_video_webm',
-					'background_video_width',
-					'background_video_height',
+				'background_video_pause_outside_viewport'  => array(
+					'computed_affects' => array(
+						'__video_background',
+					),
 				),
-				'computed_minimum' => array(
-					'background_video_mp4',
-					'background_video_webm',
+				'__video_background'                       => array(
+					'type'                => 'computed',
+					'computed_callback'   => array(
+						'ET_Builder_Column',
+						'get_column_video_background',
+					),
+					'computed_depends_on' => array(
+						'background_video_mp4',
+						'background_video_webm',
+						'background_video_width',
+						'background_video_height',
+					),
+					'computed_minimum'    => array(
+						'background_video_mp4',
+						'background_video_webm',
+					),
 				),
-			),
-			'padding_top'                                => array( 'tab_slug' => 'advanced' ),
-			'padding_right'                              => array( 'tab_slug' => 'advanced' ),
-			'padding_bottom'                             => array( 'tab_slug' => 'advanced' ),
-			'padding_left'                               => array( 'tab_slug' => 'advanced' ),
-			'padding_top_bottom_link'                    => array( 'tab_slug' => 'advanced' ),
-			'padding_left_right_link'                    => array( 'tab_slug' => 'advanced' ),
-			'padding_%column_index%_tablet'              => array(
-				'has_custom_index_location' => true,
-				'tab_slug' => 'advanced',
-			),
-			'padding_%column_index%_phone'               => array(
-				'has_custom_index_location' => true,
-				'tab_slug' => 'advanced',
+				'padding_top'                              => array( 'tab_slug' => 'advanced' ),
+				'padding_right'                            => array( 'tab_slug' => 'advanced' ),
+				'padding_bottom'                           => array( 'tab_slug' => 'advanced' ),
+				'padding_left'                             => array( 'tab_slug' => 'advanced' ),
+				'padding_top_bottom_link'                  => array( 'tab_slug' => 'advanced' ),
+				'padding_left_right_link'                  => array( 'tab_slug' => 'advanced' ),
+				'padding_%column_index%_tablet'            => array(
+					'has_custom_index_location' => true,
+					'tab_slug'                  => 'advanced',
 				),
-			'padding_%column_index%_last_edited'         => array(
-				'has_custom_index_location' => true,
-				'tab_slug' => 'advanced',
+				'padding_%column_index%_phone'             => array(
+					'has_custom_index_location' => true,
+					'tab_slug'                  => 'advanced',
 				),
-			'module_id'                                  => array( 'tab_slug' => 'custom_css' ),
-			'module_class'                               => array( 'tab_slug' => 'custom_css' ),
-			'custom_css_before'                          => array( 'tab_slug' => 'custom_css' ),
-			'custom_css_main'                            => array( 'tab_slug' => 'custom_css' ),
-			'custom_css_after'                           => array( 'tab_slug' => 'custom_css' ),
-		) );
+				'padding_%column_index%_last_edited'       => array(
+					'has_custom_index_location' => true,
+					'tab_slug'                  => 'advanced',
+				),
+				'module_id'                                => array( 'tab_slug' => 'custom_css' ),
+				'module_class'                             => array( 'tab_slug' => 'custom_css' ),
+				'custom_css_before'                        => array( 'tab_slug' => 'custom_css' ),
+				'custom_css_main'                          => array( 'tab_slug' => 'custom_css' ),
+				'custom_css_after'                         => array( 'tab_slug' => 'custom_css' ),
+			)
+		);
 
 		return array_merge( $fields, $column_fields );
 	}
@@ -1989,32 +2019,32 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		$fields = parent::get_transition_fields_css_props();
 
 		for ( $i = 1; $i <= 6; $i ++ ) {
-			$selector = "%%order_class%% > .et_pb_column:nth-child({$i})";
-			$fields["background_color_{$i}"] = array( 'background-color' => $selector );
-			$fields["padding_{$i}"] = array( 'padding' => $selector );
+			$selector                          = "%%order_class%% > .et_pb_column:nth-child({$i})";
+			$fields[ "background_color_{$i}" ] = array( 'background-color' => $selector );
+			$fields[ "padding_{$i}" ]          = array( 'padding' => $selector );
 		}
 
 		return $fields;
 	}
 
 	function render( $atts, $content = null, $function_name ) {
-		$gutter_width                                 = $this->props['gutter_width'];
-		$gutter_width_hover                           = $this->get_hover_value( 'gutter_width' );
-		$make_equal                                   = $this->props['make_equal'];
-		$custom_padding                               = $this->props['custom_padding'];
-		$padding_mobile                               = $this->props['padding_mobile'];
-		$custom_padding_tablet                        = $this->props['custom_padding_tablet'];
-		$custom_padding_phone                         = $this->props['custom_padding_phone'];
-		$custom_padding_last_edited                   = $this->props['custom_padding_last_edited'];
-		$column_padding_mobile                        = $this->props['column_padding_mobile'];
-		$global_module                                = $this->props['global_module'];
-		$use_custom_gutter                            = $this->props['use_custom_gutter'];
+		$gutter_width               = $this->props['gutter_width'];
+		$gutter_width_hover         = $this->get_hover_value( 'gutter_width' );
+		$make_equal                 = $this->props['make_equal'];
+		$custom_padding             = $this->props['custom_padding'];
+		$padding_mobile             = $this->props['padding_mobile'];
+		$custom_padding_tablet      = $this->props['custom_padding_tablet'];
+		$custom_padding_phone       = $this->props['custom_padding_phone'];
+		$custom_padding_last_edited = $this->props['custom_padding_last_edited'];
+		$column_padding_mobile      = $this->props['column_padding_mobile'];
+		$global_module              = $this->props['global_module'];
+		$use_custom_gutter          = $this->props['use_custom_gutter'];
 
 		$hover = et_pb_hover_options();
 
 		global $et_pb_all_column_settings_inner, $et_pb_rendering_column_content, $et_pb_rendering_column_content_row;
 
-		$et_pb_all_column_settings_inner = ! isset( $et_pb_all_column_settings_inner ) ?  array() : $et_pb_all_column_settings_inner;
+		$et_pb_all_column_settings_inner = ! isset( $et_pb_all_column_settings_inner ) ? array() : $et_pb_all_column_settings_inner;
 
 		$et_pb_all_column_settings_backup = $et_pb_all_column_settings_inner;
 
@@ -2035,7 +2065,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 			'phone'  => explode( '|', $custom_padding_phone ),
 		) : array(
 			'tablet' => false,
-			'phone' => false,
+			'phone'  => false,
 		);
 
 		$et_pb_columns_inner_counter = 0;
@@ -2046,19 +2076,19 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 			// old version of Rows support only top and bottom padding, so we need to handle it along with the full padding in the recent version
 			if ( 2 === count( $padding_values ) ) {
 				$padding_settings = array(
-					'top' => isset( $padding_values[0] ) ? $padding_values[0] : '',
+					'top'    => isset( $padding_values[0] ) ? $padding_values[0] : '',
 					'bottom' => isset( $padding_values[1] ) ? $padding_values[1] : '',
 				);
 			} else {
 				$padding_settings = array(
-					'top' => isset( $padding_values[0] ) ? $padding_values[0] : '',
-					'right' => isset( $padding_values[1] ) ? $padding_values[1] : '',
+					'top'    => isset( $padding_values[0] ) ? $padding_values[0] : '',
+					'right'  => isset( $padding_values[1] ) ? $padding_values[1] : '',
 					'bottom' => isset( $padding_values[2] ) ? $padding_values[2] : '',
-					'left' => isset( $padding_values[3] ) ? $padding_values[3] : '',
+					'left'   => isset( $padding_values[3] ) ? $padding_values[3] : '',
 				);
 			}
 
-			foreach( $padding_settings as $padding_side => $value ) {
+			foreach ( $padding_settings as $padding_side => $value ) {
 				if ( '' !== $value ) {
 					$element_style = array(
 						'selector'    => '.et_pb_column %%order_class%%',
@@ -2084,16 +2114,16 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		if ( ! empty( $padding_mobile_values['tablet'] ) || ! empty( $padding_values['phone'] ) ) {
 			$padding_mobile_values_processed = array();
 
-			foreach( array( 'tablet', 'phone' ) as $device ) {
-				if ( empty( $padding_mobile_values[$device] ) ) {
+			foreach ( array( 'tablet', 'phone' ) as $device ) {
+				if ( empty( $padding_mobile_values[ $device ] ) ) {
 					continue;
 				}
 
 				$padding_mobile_values_processed[ $device ] = array(
-					'padding-top'    => isset( $padding_mobile_values[$device][0] ) ? $padding_mobile_values[$device][0] : '',
-					'padding-right'  => isset( $padding_mobile_values[$device][1] ) ? $padding_mobile_values[$device][1] : '',
-					'padding-bottom' => isset( $padding_mobile_values[$device][2] ) ? $padding_mobile_values[$device][2] : '',
-					'padding-left'   => isset( $padding_mobile_values[$device][3] ) ? $padding_mobile_values[$device][3] : '',
+					'padding-top'    => isset( $padding_mobile_values[ $device ][0] ) ? $padding_mobile_values[ $device ][0] : '',
+					'padding-right'  => isset( $padding_mobile_values[ $device ][1] ) ? $padding_mobile_values[ $device ][1] : '',
+					'padding-bottom' => isset( $padding_mobile_values[ $device ][2] ) ? $padding_mobile_values[ $device ][2] : '',
+					'padding-left'   => isset( $padding_mobile_values[ $device ][3] ) ? $padding_mobile_values[ $device ][3] : '',
 				);
 			}
 
@@ -2127,13 +2157,13 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 
 				$gutter_hover_data = sprintf(
 					' data-original_gutter="%1$s" data-hover_gutter="%2$s"',
-					esc_attr($gutter_width),
-					esc_attr($gutter_width_hover)
+					esc_attr( $gutter_width ),
+					esc_attr( $gutter_width_hover )
 				);
 			}
 		}
 
-		$parallax_image = $this->get_parallax_image_background();
+		$parallax_image   = $this->get_parallax_image_background();
 		$background_video = $this->video_background();
 
 		// CSS Filters
@@ -2151,7 +2181,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		$module_classes = $this->module_classname( $function_name );
 
 		// Inner content shortcode parsing has to be done after all classname addition/removal
-		$inner_content = do_shortcode( et_pb_fix_shortcodes( $content ) );
+		$inner_content               = do_shortcode( et_pb_fix_shortcodes( $content ) );
 		$content_dependent_classname = '' === trim( $inner_content ) ? ' et_pb_row_empty' : '';
 
 		// reset the global column settings to make sure they are not affected by internal content
@@ -2176,7 +2206,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		return $output;
 	}
 }
-new ET_Builder_Row_Inner;
+new ET_Builder_Row_Inner();
 
 class ET_Builder_Column extends ET_Builder_Structure_Element {
 	function init() {
@@ -2190,17 +2220,17 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		$this->type                        = 'child';
 
 		$this->advanced_fields = array(
-			'max_width'      => false,
-			'fonts'          => false,
-			'text'           => false,
-			'margin_padding' => array(
+			'max_width'       => false,
+			'fonts'           => false,
+			'text'            => false,
+			'margin_padding'  => array(
 				'use_margin' => false,
 			),
-			'z_index'        => array(
-				'default' => '2',
+			'z_index'         => array(
+				'default'   => '2',
 				'important' => true,
 			),
-			'position_fields'=> array(
+			'position_fields' => array(
 				'default' => 'relative',
 			),
 		);
@@ -2228,7 +2258,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		$fields = array(
 			'type'                        => array(
 				'default_on_front' => '4_4',
-				'type' => 'skip',
+				'type'             => 'skip',
 			),
 			'specialty_columns'           => array(
 				'type' => 'skip',
@@ -2236,7 +2266,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			'saved_specialty_column_type' => array(
 				'type' => 'skip',
 			),
-			'module_id'    => array(
+			'module_id'                   => array(
 				'label'           => esc_html__( 'CSS ID', 'et_builder' ),
 				'description'     => esc_html__( "Assign a unique CSS ID to the element which can be used to assign custom CSS styles from within your child theme or from within Divi's custom CSS inputs.", 'et_builder' ),
 				'type'            => 'text',
@@ -2245,7 +2275,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				'toggle_slug'     => 'classes',
 				'option_class'    => 'et_pb_custom_css_regular',
 			),
-			'module_class' => array(
+			'module_class'                => array(
 				'label'           => esc_html__( 'CSS Class', 'et_builder' ),
 				'description'     => esc_html__( "Assign any number of CSS Classes to the element, separated by spaces, which can be used to assign custom CSS styles from within your child theme or from within Divi's custom CSS inputs.", 'et_builder' ),
 				'type'            => 'text',
@@ -2254,7 +2284,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				'toggle_slug'     => 'classes',
 				'option_class'    => 'et_pb_custom_css_regular',
 			),
-			'admin_label'  => array(
+			'admin_label'                 => array(
 				'label'           => et_builder_i18n( 'Admin Label' ),
 				'type'            => 'text',
 				'option_category' => 'configuration',
@@ -2296,26 +2326,26 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			$column_css_array         = self::$_->array_get( $et_pb_all_column_settings, "{$current_row_position}.et_pb_column_css", array() );
 			$column_parallax          = self::$_->array_get( $et_pb_all_column_settings, "{$current_row_position}.et_pb_column_parallax", '' );
 
-			$background_color                   = isset( $backgrounds_array[$array_index]['color'] ) ? $backgrounds_array[$array_index]['color'] : '';
-			$background_img                     = isset( $backgrounds_array[$array_index]['image'] ) ? $backgrounds_array[$array_index]['image'] : '';
-			$background_size                    = isset( $backgrounds_array[$array_index]['image_size'] ) ? $backgrounds_array[$array_index]['image_size'] : '';
-			$background_position                = isset( $backgrounds_array[$array_index]['image_position'] ) ? $backgrounds_array[$array_index]['image_position'] : '';
-			$background_repeat                  = isset( $backgrounds_array[$array_index]['image_repeat'] ) ? $backgrounds_array[$array_index]['image_repeat'] : '';
-			$background_blend                   = isset( $backgrounds_array[$array_index]['image_blend'] ) ? $backgrounds_array[$array_index]['image_blend'] : '';
+			$background_color                   = isset( $backgrounds_array[ $array_index ]['color'] ) ? $backgrounds_array[ $array_index ]['color'] : '';
+			$background_img                     = isset( $backgrounds_array[ $array_index ]['image'] ) ? $backgrounds_array[ $array_index ]['image'] : '';
+			$background_size                    = isset( $backgrounds_array[ $array_index ]['image_size'] ) ? $backgrounds_array[ $array_index ]['image_size'] : '';
+			$background_position                = isset( $backgrounds_array[ $array_index ]['image_position'] ) ? $backgrounds_array[ $array_index ]['image_position'] : '';
+			$background_repeat                  = isset( $backgrounds_array[ $array_index ]['image_repeat'] ) ? $backgrounds_array[ $array_index ]['image_repeat'] : '';
+			$background_blend                   = isset( $backgrounds_array[ $array_index ]['image_blend'] ) ? $backgrounds_array[ $array_index ]['image_blend'] : '';
 			$background_gradient_overlays_image = isset( $background_gradient['overlays_image'] ) ? $background_gradient['overlays_image'] : '';
-			$background_color_hover             = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], "color_hover" ) : '';
-			$background_color_hover_enabled     = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], "color_hover_enabled" ) : '';
+			$background_color_hover             = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], 'color_hover' ) : '';
+			$background_color_hover_enabled     = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], 'color_hover_enabled' ) : '';
 
-			$padding_values            = isset( $paddings_array[$array_index] ) ? $paddings_array[$array_index] : array();
-			$padding_mobile_values     = isset( $paddings_mobile_array[$array_index] ) ? $paddings_mobile_array[$array_index] : array();
+			$padding_values            = isset( $paddings_array[ $array_index ] ) ? $paddings_array[ $array_index ] : array();
+			$padding_mobile_values     = isset( $paddings_mobile_array[ $array_index ] ) ? $paddings_mobile_array[ $array_index ] : array();
 			$padding_last_edited       = isset( $padding_mobile_values['last_edited'] ) ? $padding_mobile_values['last_edited'] : 'off|desktop';
 			$padding_responsive_active = et_pb_get_responsive_status( $padding_last_edited );
-			$parallax_method           = isset( $column_parallax[$array_index][0] ) && 'on' === $column_parallax[$array_index][0] ? $column_parallax[$array_index][1] : '';
-			$custom_css_class          = isset( $column_css_array['css_class'][$array_index] ) ? ' ' . $column_css_array['css_class'][$array_index] : '';
-			$custom_css_id             = isset( $column_css_array['css_id'][$array_index] ) ? $column_css_array['css_id'][$array_index] : '';
-			$custom_css_before         = isset( $column_css_array['custom_css_before'][$array_index] ) ? $column_css_array['custom_css_before'][$array_index] : '';
-			$custom_css_main           = isset( $column_css_array['custom_css_main'][$array_index] ) ? $column_css_array['custom_css_main'][$array_index] : '';
-			$custom_css_after          = isset( $column_css_array['custom_css_after'][$array_index] ) ? $column_css_array['custom_css_after'][$array_index] : '';
+			$parallax_method           = isset( $column_parallax[ $array_index ][0] ) && 'on' === $column_parallax[ $array_index ][0] ? $column_parallax[ $array_index ][1] : '';
+			$custom_css_class          = isset( $column_css_array['css_class'][ $array_index ] ) ? ' ' . $column_css_array['css_class'][ $array_index ] : '';
+			$custom_css_id             = isset( $column_css_array['css_id'][ $array_index ] ) ? $column_css_array['css_id'][ $array_index ] : '';
+			$custom_css_before         = isset( $column_css_array['custom_css_before'][ $array_index ] ) ? $column_css_array['custom_css_before'][ $array_index ] : '';
+			$custom_css_main           = isset( $column_css_array['custom_css_main'][ $array_index ] ) ? $column_css_array['custom_css_main'][ $array_index ] : '';
+			$custom_css_after          = isset( $column_css_array['custom_css_after'][ $array_index ] ) ? $column_css_array['custom_css_after'][ $array_index ] : '';
 
 			$custom_css_before_hover = self::$_->array_get( $column_css_array, "custom_css_before_hover.[$array_index]", '' );
 			$custom_css_main_hover   = self::$_->array_get( $column_css_array, "custom_css_main_hover.[$array_index]", '' );
@@ -2359,21 +2389,24 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			if ( '' !== $background_gradient && 'on' === $background_gradient['active'] ) {
 				$has_background_gradient = true;
 
-				$default_gradient = apply_filters( 'et_pb_default_gradient', array(
-					'type'             => ET_Global_Settings::get_value( 'all_background_gradient_type' ),
-					'direction'        => ET_Global_Settings::get_value( 'all_background_gradient_direction' ),
-					'radial_direction' => ET_Global_Settings::get_value( 'all_background_gradient_direction_radial' ),
-					'color_start'      => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
-					'color_end'        => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
-					'start_position'   => ET_Global_Settings::get_value( 'all_background_gradient_start_position' ),
-					'end_position'     => ET_Global_Settings::get_value( 'all_background_gradient_end_position' ),
-				) );
+				$default_gradient = apply_filters(
+					'et_pb_default_gradient',
+					array(
+						'type'             => ET_Global_Settings::get_value( 'all_background_gradient_type' ),
+						'direction'        => ET_Global_Settings::get_value( 'all_background_gradient_direction' ),
+						'radial_direction' => ET_Global_Settings::get_value( 'all_background_gradient_direction_radial' ),
+						'color_start'      => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
+						'color_end'        => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
+						'start_position'   => ET_Global_Settings::get_value( 'all_background_gradient_start_position' ),
+						'end_position'     => ET_Global_Settings::get_value( 'all_background_gradient_end_position' ),
+					)
+				);
 
 				$background_gradient = wp_parse_args( array_filter( $background_gradient ), $default_gradient );
 
 				$direction               = $background_gradient['type'] === 'linear' ? $background_gradient['direction'] : "circle at {$background_gradient['radial_direction']}";
 				$start_gradient_position = et_sanitize_input_unit( $background_gradient['start_position'], false, '%' );
-				$end_gradient_position   = et_sanitize_input_unit( $background_gradient['end_position'], false, '%');
+				$end_gradient_position   = et_sanitize_input_unit( $background_gradient['end_position'], false, '%' );
 				$background_images[]     = "{$background_gradient['type']}-gradient(
 					{$direction},
 					{$background_gradient['color_start']} ${start_gradient_position},
@@ -2390,43 +2423,55 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				);
 
 				if ( '' !== $background_size ) {
-					ET_Builder_Element::set_style( $function_name, array(
-						'selector'    => '%%order_class%%',
-						'declaration' => sprintf(
-							'background-size:%s;',
-							esc_attr( $background_size )
-						),
-					) );
+					ET_Builder_Element::set_style(
+						$function_name,
+						array(
+							'selector'    => '%%order_class%%',
+							'declaration' => sprintf(
+								'background-size:%s;',
+								esc_attr( $background_size )
+							),
+						)
+					);
 				}
 
 				if ( '' !== $background_position ) {
-					ET_Builder_Element::set_style( $function_name, array(
-						'selector'    => '%%order_class%%',
-						'declaration' => sprintf(
-							'background-position:%s;',
-							esc_attr( str_replace( '_', ' ', $background_position ) )
-						),
-					) );
+					ET_Builder_Element::set_style(
+						$function_name,
+						array(
+							'selector'    => '%%order_class%%',
+							'declaration' => sprintf(
+								'background-position:%s;',
+								esc_attr( str_replace( '_', ' ', $background_position ) )
+							),
+						)
+					);
 				}
 
 				if ( '' !== $background_repeat ) {
-					ET_Builder_Element::set_style( $function_name, array(
-						'selector'    => '%%order_class%%',
-						'declaration' => sprintf(
-							'background-repeat:%s;',
-							esc_attr( $background_repeat )
-						),
-					) );
+					ET_Builder_Element::set_style(
+						$function_name,
+						array(
+							'selector'    => '%%order_class%%',
+							'declaration' => sprintf(
+								'background-repeat:%s;',
+								esc_attr( $background_repeat )
+							),
+						)
+					);
 				}
 
 				if ( '' !== $background_blend ) {
-					ET_Builder_Element::set_style( $function_name, array(
-						'selector'    => '%%order_class%%',
-						'declaration' => sprintf(
-							'background-blend-mode:%s;',
-							esc_attr( $background_blend )
-						),
-					) );
+					ET_Builder_Element::set_style(
+						$function_name,
+						array(
+							'selector'    => '%%order_class%%',
+							'declaration' => sprintf(
+								'background-blend-mode:%s;',
+								esc_attr( $background_blend )
+							),
+						)
+					);
 				}
 			}
 
@@ -2441,44 +2486,56 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 					esc_html( implode( ', ', $background_images ) )
 				);
 
-				ET_Builder_Element::set_style( $function_name, array(
-					'selector'    => '%%order_class%%',
-					'declaration' => esc_attr( $backgorund_images_declaration ),
-				) );
+				ET_Builder_Element::set_style(
+					$function_name,
+					array(
+						'selector'    => '%%order_class%%',
+						'declaration' => esc_attr( $backgorund_images_declaration ),
+					)
+				);
 			}
 
 			if ( '' !== $background_color && 'rgba(0,0,0,0)' !== $background_color && ! isset( $has_background_gradient, $has_background_image ) ) {
-				ET_Builder_Element::set_style( $function_name, array(
-					'selector'    => '%%order_class%%',
-					'declaration' => sprintf(
-						'background-color:%s;',
-						esc_attr( $background_color )
-					),
-				) );
-
-				if ( $background_color_hover && $background_color_hover_enabled ) {
-					ET_Builder_Element::set_style( $function_name, array(
-						'selector'    => '%%order_class%%:hover',
+				ET_Builder_Element::set_style(
+					$function_name,
+					array(
+						'selector'    => '%%order_class%%',
 						'declaration' => sprintf(
 							'background-color:%s;',
-							esc_attr( $background_color_hover )
+							esc_attr( $background_color )
 						),
-					) );
+					)
+				);
+
+				if ( $background_color_hover && $background_color_hover_enabled ) {
+					ET_Builder_Element::set_style(
+						$function_name,
+						array(
+							'selector'    => '%%order_class%%:hover',
+							'declaration' => sprintf(
+								'background-color:%s;',
+								esc_attr( $background_color_hover )
+							),
+						)
+					);
 				}
-			} else if ( isset( $has_background_gradient, $has_background_image ) ) {
+			} elseif ( isset( $has_background_gradient, $has_background_image ) ) {
 				// Force background-color: initial
-				ET_Builder_Element::set_style( $function_name, array(
-					'selector'    => '%%order_class%%',
-					'declaration' => 'background-color: initial;'
-				) );
+				ET_Builder_Element::set_style(
+					$function_name,
+					array(
+						'selector'    => '%%order_class%%',
+						'declaration' => 'background-color: initial;',
+					)
+				);
 			}
 
 			if ( ! empty( $padding_values ) ) {
 				$padding_hover_enabled = self::$_->array_get( $padding_values, 'padding-hover-enabled', false );
 				unset( $padding_values['padding-hover-enabled'] );
 
-				foreach( $padding_values as $position => $value ) {
-					if ( in_array( $position, array('padding-top', 'padding-right', 'padding-bottom', 'padding-left' ) ) && !empty( $value ) ) {
+				foreach ( $padding_values as $position => $value ) {
+					if ( in_array( $position, array( 'padding-top', 'padding-right', 'padding-bottom', 'padding-left' ) ) && ! empty( $value ) ) {
 						$element_style = array(
 							'selector'    => '%%order_class%%',
 							'declaration' => sprintf(
@@ -2503,7 +2560,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 						&& null != self::$_->array_get( $padding_values, "{$position}-hover" )
 						&& '' != self::$_->array_get( $padding_values, "{$position}-hover" )
 					) {
-						$hover_value = $padding_values["{$position}-hover"];
+						$hover_value = $padding_values[ "{$position}-hover" ];
 
 						$element_style = array(
 							'selector'    => '%%order_class%%:hover',
@@ -2522,16 +2579,16 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			if ( $padding_responsive_active && ( ! empty( $padding_mobile_values['tablet'] ) || ! empty( $padding_values['phone'] ) ) ) {
 				$padding_mobile_values_processed = array();
 
-				foreach( array( 'tablet', 'phone' ) as $device ) {
-					if ( empty( $padding_mobile_values[$device] ) ) {
+				foreach ( array( 'tablet', 'phone' ) as $device ) {
+					if ( empty( $padding_mobile_values[ $device ] ) ) {
 						continue;
 					}
 
 					$padding_mobile_values_processed[ $device ] = array(
-						'padding-top'    => isset( $padding_mobile_values[$device][0] ) ? $padding_mobile_values[$device][0] : '',
-						'padding-right'  => isset( $padding_mobile_values[$device][1] ) ? $padding_mobile_values[$device][1] : '',
-						'padding-bottom' => isset( $padding_mobile_values[$device][2] ) ? $padding_mobile_values[$device][2] : '',
-						'padding-left'   => isset( $padding_mobile_values[$device][3] ) ? $padding_mobile_values[$device][3] : '',
+						'padding-top'    => isset( $padding_mobile_values[ $device ][0] ) ? $padding_mobile_values[ $device ][0] : '',
+						'padding-right'  => isset( $padding_mobile_values[ $device ][1] ) ? $padding_mobile_values[ $device ][1] : '',
+						'padding-bottom' => isset( $padding_mobile_values[ $device ][2] ) ? $padding_mobile_values[ $device ][2] : '',
+						'padding-left'   => isset( $padding_mobile_values[ $device ][3] ) ? $padding_mobile_values[ $device ][3] : '',
 					);
 				}
 
@@ -2541,45 +2598,63 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				}
 			}
 			if ( '' !== $custom_css_before ) {
-				ET_Builder_Element::set_style( $function_name, array(
-					'selector'    => '%%order_class%%:before',
-					'declaration' => trim( $custom_css_before ),
-				) );
+				ET_Builder_Element::set_style(
+					$function_name,
+					array(
+						'selector'    => '%%order_class%%:before',
+						'declaration' => trim( $custom_css_before ),
+					)
+				);
 			}
 
 			if ( '' !== $custom_css_main ) {
-				ET_Builder_Element::set_style( $function_name, array(
-					'selector'    => '%%order_class%%',
-					'declaration' => trim( $custom_css_main ),
-				) );
+				ET_Builder_Element::set_style(
+					$function_name,
+					array(
+						'selector'    => '%%order_class%%',
+						'declaration' => trim( $custom_css_main ),
+					)
+				);
 			}
 
 			if ( '' !== $custom_css_after ) {
-				ET_Builder_Element::set_style( $function_name, array(
-					'selector'    => '%%order_class%%:after',
-					'declaration' => trim( $custom_css_after ),
-				) );
+				ET_Builder_Element::set_style(
+					$function_name,
+					array(
+						'selector'    => '%%order_class%%:after',
+						'declaration' => trim( $custom_css_after ),
+					)
+				);
 			}
 
 			if ( '' !== $custom_css_before_hover ) {
-				ET_Builder_Element::set_style( $function_name, array(
-					'selector'    => '%%order_class%%:hover:before',
-					'declaration' => trim( $custom_css_before_hover ),
-				) );
+				ET_Builder_Element::set_style(
+					$function_name,
+					array(
+						'selector'    => '%%order_class%%:hover:before',
+						'declaration' => trim( $custom_css_before_hover ),
+					)
+				);
 			}
 
 			if ( '' !== $custom_css_main_hover ) {
-				ET_Builder_Element::set_style( $function_name, array(
-					'selector'    => '%%order_class%%:hover',
-					'declaration' => trim( $custom_css_main_hover ),
-				) );
+				ET_Builder_Element::set_style(
+					$function_name,
+					array(
+						'selector'    => '%%order_class%%:hover',
+						'declaration' => trim( $custom_css_main_hover ),
+					)
+				);
 			}
 
 			if ( '' !== $custom_css_after_hover ) {
-				ET_Builder_Element::set_style( $function_name, array(
-					'selector'    => '%%order_class%%:hover:after',
-					'declaration' => trim( $custom_css_after_hover ),
-				) );
+				ET_Builder_Element::set_style(
+					$function_name,
+					array(
+						'selector'    => '%%order_class%%:hover:after',
+						'declaration' => trim( $custom_css_after_hover ),
+					)
+				);
 			}
 		}
 
@@ -2617,7 +2692,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				case '3_4':
 					if ( '1_2' === $type ) {
 						$type = '3_8';
-					} else if ( '1_3' === $type ) {
+					} elseif ( '1_3' === $type ) {
 						$type = '1_4';
 					}
 
@@ -2666,10 +2741,12 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		$this->add_classname( $this->generate_css_filters( $function_name ) );
 
 		if ( '' !== $video_background ) {
-			$this->add_classname( array(
-				'et_pb_section_video',
-				'et_pb_preload',
-			) );
+			$this->add_classname(
+				array(
+					'et_pb_section_video',
+					'et_pb_preload',
+				)
+			);
 		}
 
 		if ( $is_last_column ) {
@@ -2710,7 +2787,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 	}
 
 }
-new ET_Builder_Column;
+new ET_Builder_Column();
 
 /**
  * Fires after the builder's structure element classes are loaded.

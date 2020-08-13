@@ -50,10 +50,10 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 			),
 			'advanced' => array(
 				'toggles' => array(
-					'overlay'       => et_builder_i18n( 'Overlay' ),
-					'image'         => et_builder_i18n( 'Image' ),
+					'overlay' => et_builder_i18n( 'Overlay' ),
+					'image'   => et_builder_i18n( 'Image' ),
 					// Avoid Text suffix by manually defining the `star` toggle slug.
-					'star'          => esc_html__( 'Star Rating', 'et_builder' ),
+					'star'    => esc_html__( 'Star Rating', 'et_builder' ),
 				),
 			),
 		);
@@ -178,7 +178,7 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 				),
 				'image'   => array(
 					'css'          => array(
-						'main' => array(
+						'main'      => array(
 							'border_radii'  => '%%order_class%%.et_pb_module .et_shop_image',
 							'border_styles' => '%%order_class%%.et_pb_module .et_shop_image',
 						),
@@ -299,7 +299,7 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 	 * {@inheritdoc}
 	 */
 	public function get_fields() {
-		$fields  = array(
+		$fields = array(
 			'product'             => ET_Builder_Module_Helper_Woocommerce_Modules::get_field(
 				'product',
 				array(
@@ -352,7 +352,7 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 					),
 				)
 			),
-			'sale_badge_color' => array(
+			'sale_badge_color'    => array(
 				'label'          => esc_html__( 'Sale Badge Color', 'et_builder' ),
 				'description'    => esc_html__( 'Pick a color to use for the sales bade that appears on products that are on sale.', 'et_builder' ),
 				'type'           => 'color-alpha',
@@ -625,7 +625,7 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 
 		if ( $is_shop ) {
 			$display_type = ET_Builder_Module_Helper_Woocommerce_Modules::set_display_type_to_render_only_products( 'woocommerce_shop_page_display' );
-		} else if ( $is_product_category ) {
+		} elseif ( $is_product_category ) {
 			$display_type = ET_Builder_Module_Helper_Woocommerce_Modules::set_display_type_to_render_only_products( 'woocommerce_category_archive_display' );
 		}
 
@@ -646,7 +646,7 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 
 		if ( $is_shop && isset( $display_type ) ) {
 			ET_Builder_Module_Helper_Woocommerce_Modules::reset_display_type( 'woocommerce_shop_page_display', $display_type );
-		} else if ( $is_product_category && isset( $display_type ) ) {
+		} elseif ( $is_product_category && isset( $display_type ) ) {
 			ET_Builder_Module_Helper_Woocommerce_Modules::reset_display_type( 'woocommerce_category_archive_display', $display_type );
 		}
 

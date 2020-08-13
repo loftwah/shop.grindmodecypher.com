@@ -8,17 +8,17 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 		$this->vb_support = 'on';
 
 		$this->settings_modal_toggles = array(
-			'general'  => array(
+			'general'    => array(
 				'toggles' => array(
 					'main_content' => esc_html__( 'Images', 'et_builder' ),
 					'elements'     => et_builder_i18n( 'Elements' ),
 				),
 			),
-			'advanced' => array(
+			'advanced'   => array(
 				'toggles' => array(
 					'layout'  => et_builder_i18n( 'Layout' ),
 					'overlay' => et_builder_i18n( 'Overlay' ),
-					'image' => array(
+					'image'   => array(
 						'title' => et_builder_i18n( 'Image' ),
 					),
 					'text'    => array(
@@ -38,11 +38,11 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 		);
 
 		$this->main_css_element = '%%order_class%%.et_pb_gallery';
-		$this->advanced_fields = array(
-			'fonts'                 => array(
-				'title'   => array(
-					'label'    => et_builder_i18n( 'Title' ),
-					'css'      => array(
+		$this->advanced_fields  = array(
+			'fonts'          => array(
+				'title'      => array(
+					'label'        => et_builder_i18n( 'Title' ),
+					'css'          => array(
 						'main'  => "{$this->main_css_element} .et_pb_gallery_title",
 						'hover' => "{$this->main_css_element} .et_pb_gallery_title:hover",
 					),
@@ -50,25 +50,25 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 						'default' => 'h3',
 					),
 				),
-				'caption' => array(
-					'label'    => esc_html__( 'Caption', 'et_builder' ),
-					'use_all_caps' => true,
-					'css'      => array(
+				'caption'    => array(
+					'label'           => esc_html__( 'Caption', 'et_builder' ),
+					'use_all_caps'    => true,
+					'css'             => array(
 						'main'  => "{$this->main_css_element} .mfp-title, {$this->main_css_element} .et_pb_gallery_caption",
 						'hover' => "{$this->main_css_element} .mfp-title:hover, {$this->main_css_element} .et_pb_gallery_caption:hover",
 					),
-					'line_height' => array(
+					'line_height'     => array(
 						'range_settings' => array(
 							'min'  => '1',
 							'max'  => '100',
 							'step' => '1',
 						),
 					),
-					'depends_show_if'   => 'off',
+					'depends_show_if' => 'off',
 				),
 				'pagination' => array(
-					'label' => esc_html__( 'Pagination', 'et_builder' ),
-					'css' => array(
+					'label'      => esc_html__( 'Pagination', 'et_builder' ),
+					'css'        => array(
 						'main'       => "{$this->main_css_element} .et_pb_gallery_pagination a",
 						'hover'      => "{$this->main_css_element} .et_pb_gallery_pagination a:hover",
 						'text_align' => "{$this->main_css_element} .et_pb_gallery_pagination ul",
@@ -78,7 +78,7 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 					),
 				),
 			),
-			'borders'               => array(
+			'borders'        => array(
 				'default' => array(
 					'css' => array(
 						'main' => array(
@@ -87,12 +87,12 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 						),
 					),
 				),
-				'image' => array(
-					'css' => array(
+				'image'   => array(
+					'css'             => array(
 						'main' => array(
 							'border_radii'  => "{$this->main_css_element} .et_pb_gallery_image",
 							'border_styles' => "{$this->main_css_element} .et_pb_gallery_image",
-						)
+						),
 					),
 					'label_prefix'    => et_builder_i18n( 'Image' ),
 					'tab_slug'        => 'advanced',
@@ -101,25 +101,25 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 					'depends_show_if' => 'off',
 				),
 			),
-			'box_shadow'            => array(
+			'box_shadow'     => array(
 				'default' => array(
 					'show_if' => array(
 						'fullwidth' => 'on',
 					),
 				),
 				'image'   => array(
-					'label'           => esc_html__( 'Image Box Shadow', 'et_builder' ),
-					'option_category' => 'layout',
-					'tab_slug'        => 'advanced',
-					'toggle_slug'     => 'image',
-					'show_if'         => array(
+					'label'             => esc_html__( 'Image Box Shadow', 'et_builder' ),
+					'option_category'   => 'layout',
+					'tab_slug'          => 'advanced',
+					'toggle_slug'       => 'image',
+					'show_if'           => array(
 						'fullwidth' => 'off',
 					),
-					'css' => array(
-						'main'         => '%%order_class%% .et_pb_gallery_image',
+					'css'               => array(
+						'main'    => '%%order_class%% .et_pb_gallery_image',
 						'overlay' => 'inset',
 					),
-					'default_on_fronts'  => array(
+					'default_on_fronts' => array(
 						'color'    => '',
 						'position' => '',
 					),
@@ -130,77 +130,80 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 					'important' => array( 'custom_margin' ), // needed to overwrite last module margin-bottom styling
 				),
 			),
-			'max_width'             => array(
+			'max_width'      => array(
 				'css' => array(
 					'module_alignment' => '%%order_class%%.et_pb_gallery.et_pb_module',
 				),
 			),
-			'text'                  => array(
+			'text'           => array(
 				'use_background_layout' => true,
-				'css'   => array(
-					'main' => implode(', ', array(
-						"{$this->main_css_element} .et_pb_gallery_title",
-						"{$this->main_css_element} .mfp-title",
-						"{$this->main_css_element} .et_pb_gallery_caption",
-						"{$this->main_css_element} .et_pb_gallery_pagination a",
-					)),
+				'css'                   => array(
+					'main'        => implode(
+						', ',
+						array(
+							"{$this->main_css_element} .et_pb_gallery_title",
+							"{$this->main_css_element} .mfp-title",
+							"{$this->main_css_element} .et_pb_gallery_caption",
+							"{$this->main_css_element} .et_pb_gallery_pagination a",
+						)
+					),
 					'text_shadow' => "{$this->main_css_element}.et_pb_gallery_grid",
 				),
-				'options' => array(
+				'options'               => array(
 					'background_layout' => array(
 						'default' => 'light',
-						'hover' => 'tabs',
+						'hover'   => 'tabs',
 					),
 				),
 			),
-			'filters'               => array(
-				'css' => array(
+			'filters'        => array(
+				'css'                  => array(
 					'main' => '%%order_class%%',
 				),
 				'child_filters_target' => array(
-					'tab_slug' => 'advanced',
+					'tab_slug'    => 'advanced',
 					'toggle_slug' => 'image',
 				),
 			),
-			'image'                 => array(
+			'image'          => array(
 				'css' => array(
-					'main'    => '%%order_class%% .et_pb_gallery_image img',
+					'main' => '%%order_class%% .et_pb_gallery_image img',
 				),
 			),
-			'scroll_effects'        => array(
+			'scroll_effects' => array(
 				'grid_support' => 'yes',
 			),
-			'button' => false,
+			'button'         => false,
 		);
 
 		$this->custom_css_fields = array(
-			'gallery_item' => array(
-				'label'       => esc_html__( 'Gallery Item', 'et_builder' ),
-				'selector'    => '.et_pb_gallery_item',
+			'gallery_item'              => array(
+				'label'    => esc_html__( 'Gallery Item', 'et_builder' ),
+				'selector' => '.et_pb_gallery_item',
 			),
-			'overlay' => array(
-				'label'       => et_builder_i18n( 'Overlay' ),
-				'selector'    => '.et_overlay',
+			'overlay'                   => array(
+				'label'    => et_builder_i18n( 'Overlay' ),
+				'selector' => '.et_overlay',
 			),
-			'overlay_icon' => array(
-				'label'       => esc_html__( 'Overlay Icon', 'et_builder' ),
-				'selector'    => '.et_overlay:before',
+			'overlay_icon'              => array(
+				'label'    => esc_html__( 'Overlay Icon', 'et_builder' ),
+				'selector' => '.et_overlay:before',
 			),
-			'gallery_item_title' => array(
-				'label'       => esc_html__( 'Gallery Item Title', 'et_builder' ),
-				'selector'    => '.et_pb_gallery_title',
+			'gallery_item_title'        => array(
+				'label'    => esc_html__( 'Gallery Item Title', 'et_builder' ),
+				'selector' => '.et_pb_gallery_title',
 			),
-			'gallery_item_caption' => array(
-				'label'       => esc_html__( 'Gallery Item Caption', 'et_builder' ),
-				'selector'    => '.et_pb_gallery_caption',
+			'gallery_item_caption'      => array(
+				'label'    => esc_html__( 'Gallery Item Caption', 'et_builder' ),
+				'selector' => '.et_pb_gallery_caption',
 			),
-			'gallery_pagination' => array(
-				'label'       => esc_html__( 'Gallery Pagination', 'et_builder' ),
-				'selector'    => '.et_pb_gallery_pagination',
+			'gallery_pagination'        => array(
+				'label'    => esc_html__( 'Gallery Pagination', 'et_builder' ),
+				'selector' => '.et_pb_gallery_pagination',
 			),
 			'gallery_pagination_active' => array(
-				'label'       => esc_html__( 'Pagination Active Page', 'et_builder' ),
-				'selector'    => '.et_pb_gallery_pagination a.active',
+				'label'    => esc_html__( 'Pagination Active Page', 'et_builder' ),
+				'selector' => '.et_pb_gallery_pagination a.active',
 			),
 		);
 
@@ -214,7 +217,7 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 
 	function get_fields() {
 		$fields = array(
-			'gallery_ids' => array(
+			'gallery_ids'            => array(
 				'label'            => esc_html__( 'Images', 'et_builder' ),
 				'description'      => esc_html__( 'Choose the images that you would like to appear in the image gallery.', 'et_builder' ),
 				'type'             => 'upload-gallery',
@@ -224,7 +227,7 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 				'option_category'  => 'basic_option',
 				'toggle_slug'      => 'main_content',
 			),
-			'gallery_orderby' => array(
+			'gallery_orderby'        => array(
 				'label'            => esc_html__( 'Image Order', 'et_builder' ),
 				'description'      => esc_html__( 'Select an ordering method for the gallery. This controls which gallery items appear first in the list.', 'et_builder' ),
 				'type'             => $this->is_loading_bb_data() ? 'hidden' : 'select',
@@ -239,24 +242,24 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 				),
 				'toggle_slug'      => 'main_content',
 			),
-			'gallery_captions' => array(
-				'type'  => 'hidden',
-				'class' => array( 'et-pb-gallery-captions-field' ),
-				'computed_affects'   => array(
+			'gallery_captions'       => array(
+				'type'             => 'hidden',
+				'class'            => array( 'et-pb-gallery-captions-field' ),
+				'computed_affects' => array(
 					'__gallery',
 				),
 			),
-			'fullwidth' => array(
-				'label'             => et_builder_i18n( 'Layout' ),
-				'type'              => 'select',
-				'option_category'   => 'layout',
-				'options'           => array(
+			'fullwidth'              => array(
+				'label'            => et_builder_i18n( 'Layout' ),
+				'type'             => 'select',
+				'option_category'  => 'layout',
+				'options'          => array(
 					'off' => esc_html__( 'Grid', 'et_builder' ),
 					'on'  => esc_html__( 'Slider', 'et_builder' ),
 				),
-				'default_on_front'  => 'off',
-				'description'       => esc_html__( 'Toggle between the various blog layout types.', 'et_builder' ),
-				'affects'           => array(
+				'default_on_front' => 'off',
+				'description'      => esc_html__( 'Toggle between the various blog layout types.', 'et_builder' ),
+				'affects'          => array(
 					'zoom_icon_color',
 					'caption_font',
 					'caption_text_color',
@@ -273,110 +276,110 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 					'border_radii_image',
 					'border_styles_image',
 				),
-				'computed_affects'   => array(
+				'computed_affects' => array(
 					'__gallery',
 				),
-				'tab_slug'    => 'advanced',
-				'toggle_slug' => 'layout',
+				'tab_slug'         => 'advanced',
+				'toggle_slug'      => 'layout',
 			),
-			'posts_number' => array(
-				'default'           => 4,
-				'label'             => esc_html__( 'Image Count', 'et_builder' ),
-				'type'              => 'text',
-				'option_category'   => 'configuration',
-				'description'       => esc_html__( 'Define the number of images that should be displayed per page.', 'et_builder' ),
-				'depends_show_if'   => 'off',
-				'toggle_slug'       => 'main_content',
+			'posts_number'           => array(
+				'default'         => 4,
+				'label'           => esc_html__( 'Image Count', 'et_builder' ),
+				'type'            => 'text',
+				'option_category' => 'configuration',
+				'description'     => esc_html__( 'Define the number of images that should be displayed per page.', 'et_builder' ),
+				'depends_show_if' => 'off',
+				'toggle_slug'     => 'main_content',
 			),
 			'orientation'            => array(
-				'label'              => esc_html__( 'Thumbnail Orientation', 'et_builder' ),
-				'type'               => 'select',
-				'options_category'   => 'configuration',
-				'options'            => array(
+				'label'            => esc_html__( 'Thumbnail Orientation', 'et_builder' ),
+				'type'             => 'select',
+				'options_category' => 'configuration',
+				'options'          => array(
 					'landscape' => esc_html__( 'Landscape', 'et_builder' ),
 					'portrait'  => esc_html__( 'Portrait', 'et_builder' ),
 				),
-				'default_on_front'            => 'landscape',
-				'description'        => sprintf(
+				'default_on_front' => 'landscape',
+				'description'      => sprintf(
 					'%1$s<br><small><em><strong>%2$s:</strong> %3$s <a href="//wordpress.org/plugins/force-regenerate-thumbnails" target="_blank">%4$s</a>.</em></small>',
 					esc_html__( 'Choose the orientation of the gallery thumbnails.', 'et_builder' ),
 					esc_html__( 'Note', 'et_builder' ),
 					esc_html__( 'If this option appears to have no effect, you might need to', 'et_builder' ),
 					esc_html__( 'regenerate your thumbnails', 'et_builder' )
 				),
-				'depends_show_if'    => 'off',
-				'computed_affects'   => array(
+				'depends_show_if'  => 'off',
+				'computed_affects' => array(
 					'__gallery',
 				),
-				'tab_slug'           => 'advanced',
-				'toggle_slug'        => 'layout',
+				'tab_slug'         => 'advanced',
+				'toggle_slug'      => 'layout',
 			),
 			'show_title_and_caption' => array(
-				'label'              => esc_html__( 'Show Title and Caption', 'et_builder' ),
-				'type'               => 'yes_no_button',
-				'option_category'    => 'configuration',
-				'options'            => array(
+				'label'            => esc_html__( 'Show Title and Caption', 'et_builder' ),
+				'type'             => 'yes_no_button',
+				'option_category'  => 'configuration',
+				'options'          => array(
 					'on'  => et_builder_i18n( 'Yes' ),
 					'off' => et_builder_i18n( 'No' ),
 				),
-				'default_on_front'   => 'on',
-				'description'        => esc_html__( 'Whether or not to show the title and caption for images (if available).', 'et_builder' ),
-				'depends_show_if'    => 'off',
-				'toggle_slug'        => 'elements',
-				'mobile_options'    => true,
-				'hover'             => 'tabs',
+				'default_on_front' => 'on',
+				'description'      => esc_html__( 'Whether or not to show the title and caption for images (if available).', 'et_builder' ),
+				'depends_show_if'  => 'off',
+				'toggle_slug'      => 'elements',
+				'mobile_options'   => true,
+				'hover'            => 'tabs',
 			),
-			'show_pagination' => array(
-				'label'             => esc_html__( 'Show Pagination', 'et_builder' ),
-				'type'              => 'yes_no_button',
-				'option_category'   => 'configuration',
-				'options'           => array(
+			'show_pagination'        => array(
+				'label'            => esc_html__( 'Show Pagination', 'et_builder' ),
+				'type'             => 'yes_no_button',
+				'option_category'  => 'configuration',
+				'options'          => array(
 					'on'  => et_builder_i18n( 'Yes' ),
 					'off' => et_builder_i18n( 'No' ),
 				),
-				'default_on_front'  => 'on',
-				'description'       => esc_html__( 'Enable or disable pagination for this feed.', 'et_builder' ),
-				'depends_show_if'   => 'off',
-				'toggle_slug'       => 'elements',
-				'computed_affects'  => array(
+				'default_on_front' => 'on',
+				'description'      => esc_html__( 'Enable or disable pagination for this feed.', 'et_builder' ),
+				'depends_show_if'  => 'off',
+				'toggle_slug'      => 'elements',
+				'computed_affects' => array(
 					'__gallery',
 				),
-				'mobile_options'    => true,
-				'hover'             => 'tabs',
+				'mobile_options'   => true,
+				'hover'            => 'tabs',
 			),
-			'zoom_icon_color' => array(
-				'label'             => esc_html__( 'Overlay Icon Color', 'et_builder' ),
-				'description'       => esc_html__( 'Here you can define a custom color for the zoom icon.', 'et_builder' ),
-				'type'              => 'color-alpha',
-				'custom_color'      => true,
-				'depends_show_if'   => 'off',
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'overlay',
-				'mobile_options'    => true,
+			'zoom_icon_color'        => array(
+				'label'           => esc_html__( 'Overlay Icon Color', 'et_builder' ),
+				'description'     => esc_html__( 'Here you can define a custom color for the zoom icon.', 'et_builder' ),
+				'type'            => 'color-alpha',
+				'custom_color'    => true,
+				'depends_show_if' => 'off',
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'overlay',
+				'mobile_options'  => true,
 			),
-			'hover_overlay_color' => array(
-				'label'             => esc_html__( 'Overlay Background Color', 'et_builder' ),
-				'description'       => esc_html__( 'Here you can define a custom color for the overlay', 'et_builder' ),
-				'type'              => 'color-alpha',
-				'custom_color'      => true,
-				'depends_show_if'   => 'off',
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'overlay',
-				'mobile_options'    => true,
+			'hover_overlay_color'    => array(
+				'label'           => esc_html__( 'Overlay Background Color', 'et_builder' ),
+				'description'     => esc_html__( 'Here you can define a custom color for the overlay', 'et_builder' ),
+				'type'            => 'color-alpha',
+				'custom_color'    => true,
+				'depends_show_if' => 'off',
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'overlay',
+				'mobile_options'  => true,
 			),
-			'hover_icon' => array(
-				'label'               => esc_html__( 'Overlay Icon', 'et_builder' ),
-				'description'         => esc_html__( 'Here you can define a custom icon for the overlay', 'et_builder' ),
-				'type'                => 'select_icon',
-				'option_category'     => 'configuration',
-				'class'               => array( 'et-pb-font-icon' ),
-				'tab_slug'            => 'advanced',
-				'toggle_slug'         => 'overlay',
-				'mobile_options'      => true,
+			'hover_icon'             => array(
+				'label'           => esc_html__( 'Overlay Icon', 'et_builder' ),
+				'description'     => esc_html__( 'Here you can define a custom icon for the overlay', 'et_builder' ),
+				'type'            => 'select_icon',
+				'option_category' => 'configuration',
+				'class'           => array( 'et-pb-font-icon' ),
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'overlay',
+				'mobile_options'  => true,
 			),
-			'__gallery' => array(
-				'type' => 'computed',
-				'computed_callback' => array( 'ET_Builder_Module_Gallery', 'get_gallery' ),
+			'__gallery'              => array(
+				'type'                => 'computed',
+				'computed_callback'   => array( 'ET_Builder_Module_Gallery', 'get_gallery' ),
 				'computed_depends_on' => array(
 					'gallery_ids',
 					'gallery_orderby',
@@ -444,7 +447,7 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 			$width  = 1080;
 			$height = 9999;
 		} else {
-			$width  =  400;
+			$width  = 400;
 			$height = ( 'landscape' === $args['orientation'] ) ? 284 : 516;
 		}
 
@@ -454,10 +457,10 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 		$_attachments = get_posts( $attachments_args );
 
 		foreach ( $_attachments as $key => $val ) {
-			$attachments[$key] = $_attachments[$key];
-			$attachments[$key]->image_alt_text  = get_post_meta( $val->ID, '_wp_attachment_image_alt', true);
-			$attachments[$key]->image_src_full  = wp_get_attachment_image_src( $val->ID, 'full' );
-			$attachments[$key]->image_src_thumb = wp_get_attachment_image_src( $val->ID, array( $width, $height ) );
+			$attachments[ $key ]                  = $_attachments[ $key ];
+			$attachments[ $key ]->image_alt_text  = get_post_meta( $val->ID, '_wp_attachment_image_alt', true );
+			$attachments[ $key ]->image_src_full  = wp_get_attachment_image_src( $val->ID, 'full' );
+			$attachments[ $key ]->image_src_thumb = wp_get_attachment_image_src( $val->ID, array( $width, $height ) );
 		}
 
 		return $attachments;
@@ -491,25 +494,25 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view                      = et_pb_multi_view_options( $this );
-		$gallery_ids                     = $this->props['gallery_ids'];
-		$fullwidth                       = $this->props['fullwidth'];
-		$show_title_and_caption          = $this->props['show_title_and_caption'];
-		$posts_number                    = $this->props['posts_number'];
-		$show_pagination                 = $this->props['show_pagination'];
-		$gallery_orderby                 = $this->props['gallery_orderby'];
-		$auto                            = $this->props['auto'];
-		$auto_speed                      = $this->props['auto_speed'];
-		$orientation                     = $this->props['orientation'];
-		$pagination_text_align           = $this->get_pagination_alignment();
-		$header_level                    = $this->props['title_level'];
-		$zoom_icon_color_values          = et_pb_responsive_options()->get_property_values( $this->props, 'zoom_icon_color' );
-		$hover_overlay_color_values      = et_pb_responsive_options()->get_property_values( $this->props, 'hover_overlay_color' );
+		$multi_view                 = et_pb_multi_view_options( $this );
+		$gallery_ids                = $this->props['gallery_ids'];
+		$fullwidth                  = $this->props['fullwidth'];
+		$show_title_and_caption     = $this->props['show_title_and_caption'];
+		$posts_number               = $this->props['posts_number'];
+		$show_pagination            = $this->props['show_pagination'];
+		$gallery_orderby            = $this->props['gallery_orderby'];
+		$auto                       = $this->props['auto'];
+		$auto_speed                 = $this->props['auto_speed'];
+		$orientation                = $this->props['orientation'];
+		$pagination_text_align      = $this->get_pagination_alignment();
+		$header_level               = $this->props['title_level'];
+		$zoom_icon_color_values     = et_pb_responsive_options()->get_property_values( $this->props, 'zoom_icon_color' );
+		$hover_overlay_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'hover_overlay_color' );
 
-		$hover_icon                      = $this->props['hover_icon'];
-		$hover_icon_values               = et_pb_responsive_options()->get_property_values( $this->props, 'hover_icon' );
-		$hover_icon_tablet               = isset( $hover_icon_values['tablet'] ) ? $hover_icon_values['tablet'] : '';
-		$hover_icon_phone                = isset( $hover_icon_values['phone'] ) ? $hover_icon_values['phone'] : '';
+		$hover_icon        = $this->props['hover_icon'];
+		$hover_icon_values = et_pb_responsive_options()->get_property_values( $this->props, 'hover_icon' );
+		$hover_icon_tablet = isset( $hover_icon_values['tablet'] ) ? $hover_icon_values['tablet'] : '';
+		$hover_icon_phone  = isset( $hover_icon_values['phone'] ) ? $hover_icon_values['phone'] : '';
 
 		// Zoom Icon Color.
 		et_pb_responsive_options()->generate_responsive_css( $zoom_icon_color_values, '%%order_class%% .et_overlay:before', 'color', $render_slug, ' !important;', 'color' );
@@ -519,12 +522,14 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 		et_pb_responsive_options()->generate_responsive_css( $hover_overlay_color_values, '%%order_class%% .et_overlay', 'border-color', $render_slug, '', 'color' );
 
 		// Get gallery item data
-		$attachments = $this->get_attachments( array(
-			'gallery_ids'     => $gallery_ids,
-			'gallery_orderby' => $gallery_orderby,
-			'fullwidth'       => $fullwidth,
-			'orientation'     => $orientation,
-		) );
+		$attachments = $this->get_attachments(
+			array(
+				'gallery_ids'     => $gallery_ids,
+				'gallery_orderby' => $gallery_orderby,
+				'fullwidth'       => $fullwidth,
+				'orientation'     => $orientation,
+			)
+		);
 
 		if ( empty( $attachments ) ) {
 			return '';
@@ -537,29 +542,35 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 		$posts_number              = 0 === intval( $posts_number ) ? 4 : intval( $posts_number );
 
 		// Module classnames
-		$this->add_classname( array(
-			$this->get_text_orientation_classname(),
-		) );
+		$this->add_classname(
+			array(
+				$this->get_text_orientation_classname(),
+			)
+		);
 
 		// Background layout class names.
 		$background_layout_class_names = et_pb_background_layout_options()->get_background_layout_class( $this->props );
 		$this->add_classname( $background_layout_class_names );
 
 		if ( 'on' === $fullwidth ) {
-			$this->add_classname( array(
-				'et_pb_slider',
-				'et_pb_gallery_fullwidth',
-			) );
+			$this->add_classname(
+				array(
+					'et_pb_slider',
+					'et_pb_gallery_fullwidth',
+				)
+			);
 		} else {
 			$this->add_classname( 'et_pb_gallery_grid' );
 		}
 
 		if ( 'on' === $auto && 'on' === $fullwidth ) {
-			$this->add_classname( array(
-				'et_slider_auto',
-				"et_slider_speed_{$auto_speed}",
-				'clearfix',
-			) );
+			$this->add_classname(
+				array(
+					'et_slider_auto',
+					"et_slider_speed_{$auto_speed}",
+					'clearfix',
+				)
+			);
 		}
 
 		// Background layout data attributes.
@@ -610,7 +621,7 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 				: '';
 
 			$image_attrs = array(
-				'alt'          => $attachment->image_alt_text,
+				'alt' => $attachment->image_alt_text,
 			);
 
 			if ( 'on' !== $fullwidth ) {
@@ -635,7 +646,7 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 			);
 
 			$gallery_order = self::_get_index( array( self::INDEX_MODULE_ORDER, $render_slug ) );
-			$item_class = sprintf( ' et_pb_gallery_item_%1$s_%2$s', $gallery_order, $images_count );
+			$item_class    = sprintf( ' et_pb_gallery_item_%1$s_%2$s', $gallery_order, $images_count );
 
 			$output .= sprintf(
 				'<div class="et_pb_gallery_item%2$s%1$s%3$s%4$s">',
@@ -644,9 +655,9 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 				$generate_css_filters_item,
 				$item_class
 			);
-			
+
 			$images_count++;
-			
+
 			$output .= "
 				<div class='et_pb_gallery_image {$orientation}'>
 					$image_output
@@ -654,34 +665,38 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 
 			if ( 'on' !== $fullwidth && $multi_view->has_value( 'show_title_and_caption', 'on' ) ) {
 				if ( trim( $attachment->post_title ) ) {
-					$output .= $multi_view->render_element( array(
-						'tag'     => et_pb_process_header_level( $header_level, 'h3' ),
-						'content' => wptexturize( $attachment->post_title ),
-						'attrs'   => array(
-							'class' => 'et_pb_gallery_title',
-						),
-						'visibility' => array(
-							'show_title_and_caption' => 'on',
-						),
-					) );
+					$output .= $multi_view->render_element(
+						array(
+							'tag'        => et_pb_process_header_level( $header_level, 'h3' ),
+							'content'    => wptexturize( $attachment->post_title ),
+							'attrs'      => array(
+								'class' => 'et_pb_gallery_title',
+							),
+							'visibility' => array(
+								'show_title_and_caption' => 'on',
+							),
+						)
+					);
 				}
 				if ( trim( $attachment->post_excerpt ) ) {
-					$output .= $multi_view->render_element( array(
-						'tag'     => 'p',
-						'content' => wptexturize( $attachment->post_excerpt ),
-						'attrs'   => array(
-							'class' => 'et_pb_gallery_caption',
-						),
-						'visibility' => array(
-							'show_title_and_caption' => 'on',
-						),
-					) );
+					$output .= $multi_view->render_element(
+						array(
+							'tag'        => 'p',
+							'content'    => wptexturize( $attachment->post_excerpt ),
+							'attrs'      => array(
+								'class' => 'et_pb_gallery_caption',
+							),
+							'visibility' => array(
+								'show_title_and_caption' => 'on',
+							),
+						)
+					);
 				}
 			}
-			$output .= "</div>";
+			$output .= '</div>';
 		}
 
-		$output .= "</div><!-- .et_pb_gallery_items -->";
+		$output .= '</div><!-- .et_pb_gallery_items -->';
 
 		if ( 'on' !== $fullwidth && $multi_view->has_value( 'show_pagination', 'on' ) ) {
 			$pagination_classes = array( 'et_pb_gallery_pagination' );
@@ -689,21 +704,23 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 				$pagination_classes[] = 'et_pb_gallery_pagination_justify';
 			}
 
-			$output .= $multi_view->render_element( array(
-				'tag'        => 'div',
-				'attrs'      => array(
-					'class' => implode( ' ', $pagination_classes ),
-				),
-				'visibility' => array(
-					'show_pagination' => 'on',
-				),
-			) );
+			$output .= $multi_view->render_element(
+				array(
+					'tag'        => 'div',
+					'attrs'      => array(
+						'class' => implode( ' ', $pagination_classes ),
+					),
+					'visibility' => array(
+						'show_pagination' => 'on',
+					),
+				)
+			);
 		}
 
-		$output .= "</div><!-- .et_pb_gallery -->";
+		$output .= '</div><!-- .et_pb_gallery -->';
 
 		return $output;
 	}
 }
 
-new ET_Builder_Module_Gallery;
+new ET_Builder_Module_Gallery();

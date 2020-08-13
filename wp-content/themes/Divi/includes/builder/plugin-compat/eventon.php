@@ -136,4 +136,4 @@ class ET_Builder_Plugin_Compat_Eventon extends ET_Builder_Plugin_Compat_Base {
 	}
 }
 
-new ET_Builder_Plugin_Compat_Eventon;
+new ET_Builder_Plugin_Compat_Eventon();

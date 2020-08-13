@@ -61,7 +61,7 @@ class ET_Builder_Module_Hover_Options {
 	 * Check if the setting has enabled hover options
 	 *
 	 * @param string $setting
-	 * @param array $attrs
+	 * @param array  $attrs
 	 *
 	 * @return bool
 	 */
@@ -88,7 +88,7 @@ class ET_Builder_Module_Hover_Options {
 
 		// Check the hover status one by one.
 		$is_any_hover_enabled = false;
-		foreach( $list as $name ) {
+		foreach ( $list as $name ) {
 			if ( $this->is_enabled( $name, $attrs ) ) {
 				$is_any_hover_enabled = true;
 				break;
@@ -127,8 +127,8 @@ class ET_Builder_Module_Hover_Options {
 	 * If it does not exist, return $default specified value
 	 *
 	 * @param string $setting
-	 * @param array $attrs
-	 * @param mixed $default
+	 * @param array  $attrs
+	 * @param mixed  $default
 	 *
 	 * @return mixed
 	 */
@@ -144,8 +144,8 @@ class ET_Builder_Module_Hover_Options {
 	 *
 	 * @param string $setting
 	 * @param string $option
-	 * @param array $attrs
-	 * @param mixed $default
+	 * @param array  $attrs
+	 * @param mixed  $default
 	 *
 	 * @return mixed
 	 */
@@ -160,8 +160,8 @@ class ET_Builder_Module_Hover_Options {
 	 * If it does not exist, return $default specified value
 	 *
 	 * @param string $setting
-	 * @param array $attrs
-	 * @param mixed $default
+	 * @param array  $attrs
+	 * @param mixed  $default
 	 *
 	 * @return mixed
 	 */

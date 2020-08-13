@@ -2,8 +2,8 @@
 
 class ET_Builder_Global_Presets_History {
 	const CUSTOM_DEFAULTS_HISTORY_OPTION = 'builder_custom_defaults_history';
-	const GLOBAL_PRESETS_HISTORY_OPTION = 'builder_global_presets_history';
-	const GLOBAL_PRESETS_HISTORY_LENGTH = 100;
+	const GLOBAL_PRESETS_HISTORY_OPTION  = 'builder_global_presets_history';
+	const GLOBAL_PRESETS_HISTORY_LENGTH  = 100;
 
 	private static $instance;
 
@@ -21,21 +21,27 @@ class ET_Builder_Global_Presets_History {
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
 	}
 
 	private function _register_ajax_callbacks() {
-		add_action( 'wp_ajax_et_builder_save_global_presets_history', array(
-			$this,
-			'ajax_save_global_presets_history'
-		) );
-		add_action( 'wp_ajax_et_builder_retrieve_global_presets_history', array(
-			$this,
-			'ajax_retrieve_global_presets_history'
-		) );
+		add_action(
+			'wp_ajax_et_builder_save_global_presets_history',
+			array(
+				$this,
+				'ajax_save_global_presets_history',
+			)
+		);
+		add_action(
+			'wp_ajax_et_builder_retrieve_global_presets_history',
+			array(
+				$this,
+				'ajax_retrieve_global_presets_history',
+			)
+		);
 	}
 
 	private function _register_hooks() {
@@ -52,10 +58,12 @@ class ET_Builder_Global_Presets_History {
 	public function ajax_save_global_presets_history() {
 		// Allow saving Global Presets for admins and support elevated users only
 		if ( ! et_core_security_check_passed( 'switch_themes', 'et_builder_save_global_presets_history' ) ) {
-			wp_send_json_error( array(
-				'code' => 'et_forbidden',
-				'message' => esc_html__( 'You do not have sufficient permissions to edit Divi Presets.', 'et_builder' ),
-			) );
+			wp_send_json_error(
+				array(
+					'code'    => 'et_forbidden',
+					'message' => esc_html__( 'You do not have sufficient permissions to edit Divi Presets.', 'et_builder' ),
+				)
+			);
 		}
 
 		$history = json_decode( stripslashes( $_POST['history'] ) );
@@ -255,12 +263,12 @@ class ET_Builder_Global_Presets_History {
 			return;
 		}
 
-		$all_modules = ET_Builder_Element::get_modules();
-		$migrated_history = (object) array();
+		$all_modules               = ET_Builder_Element::get_modules();
+		$migrated_history          = (object) array();
 		$migrated_history->history = array();
 
 		foreach ( $history->history as $record ) {
-			$migrated_record = (object) array();
+			$migrated_record           = (object) array();
 			$migrated_record->settings = (object) array();
 
 			foreach ( $record->settings as $module => $settings ) {
@@ -271,7 +279,7 @@ class ET_Builder_Global_Presets_History {
 				}
 			}
 
-			$migrated_record->time = $record->time;
+			$migrated_record->time  = $record->time;
 			$migrated_record->label = $record->label;
 
 			$migrated_history->history[] = $migrated_record;

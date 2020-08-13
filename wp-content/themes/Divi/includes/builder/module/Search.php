@@ -30,21 +30,21 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 				),
 			),
 		);
-		$this->advanced_fields = array(
-			'fonts'                 => array(
+		$this->advanced_fields        = array(
+			'fonts'          => array(
 				'button' => array(
-					'label'          => et_builder_i18n( 'Button' ),
-					'css'            => array(
+					'label'           => et_builder_i18n( 'Button' ),
+					'css'             => array(
 						'main'      => "{$this->main_css_element} input.et_pb_searchsubmit",
 						'important' => array( 'line-height', 'text-shadow' ),
 					),
-					'line_height'    => array(
+					'line_height'     => array(
 						'default' => '1em',
 					),
-					'font_size'      => array(
+					'font_size'       => array(
 						'default' => '14px',
 					),
-					'letter_spacing' => array(
+					'letter_spacing'  => array(
 						'default' => '0px',
 					),
 					'hide_text_align' => true,
@@ -59,21 +59,21 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 					'default' => '0.715em|0.715em|0.715em|0.715em|false|false',
 				),
 			),
-			'background'            => array(
+			'background'     => array(
 				'css' => array(
 					'main' => "{$this->main_css_element} input.et_pb_s",
 				),
 			),
-			'borders'               => array(
+			'borders'        => array(
 				'default' => array(
-					'css' => array(
+					'css'      => array(
 						'main' => array(
-							'border_radii' => "{$this->main_css_element}.et_pb_search, {$this->main_css_element} input.et_pb_s",
+							'border_radii'  => "{$this->main_css_element}.et_pb_search, {$this->main_css_element} input.et_pb_s",
 							'border_styles' => "{$this->main_css_element}.et_pb_search",
 						),
 					),
 					'defaults' => array(
-						'border_radii' => 'on|3px|3px|3px|3px',
+						'border_radii'  => 'on|3px|3px|3px|3px',
 						'border_styles' => array(
 							'width' => '1px',
 							'color' => '#dddddd',
@@ -82,28 +82,28 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 					),
 				),
 			),
-			'text'                  => array(
+			'text'           => array(
 				'use_background_layout' => true,
-				'css'              => array(
-					'main' => "{$this->main_css_element} input.et_pb_searchsubmit, {$this->main_css_element} input.et_pb_s",
+				'css'                   => array(
+					'main'        => "{$this->main_css_element} input.et_pb_searchsubmit, {$this->main_css_element} input.et_pb_s",
 					'text_shadow' => "{$this->main_css_element} input.et_pb_searchsubmit, {$this->main_css_element} input.et_pb_s",
 				),
-				'text_orientation' => array(
+				'text_orientation'      => array(
 					'exclude_options' => array( 'justified' ),
 				),
-				'options' => array(
+				'options'               => array(
 					'text_orientation'  => array(
-						'default'          => 'left',
+						'default' => 'left',
 					),
 					'background_layout' => array(
 						'default' => 'light',
-						'hover' => 'tabs',
+						'hover'   => 'tabs',
 					),
 				),
 			),
-			'button'                => false,
-			'link_options'          => false,
-			'form_field'           => array(
+			'button'         => false,
+			'link_options'   => false,
+			'form_field'     => array(
 				'form_field' => array(
 					'label'          => esc_html__( 'Field', 'et_builder' ),
 					'css'            => array(
@@ -117,14 +117,17 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 					'box_shadow'     => false,
 					'border_styles'  => false,
 					'font_field'     => array(
-						'css'         => array(
-							'main'        => implode(', ', array(
-								'%%order_class%% form input.et_pb_s',
-								'%%order_class%% form input.et_pb_s::placeholder',
-								'%%order_class%% form input.et_pb_s::-webkit-input-placeholder',
-								'%%order_class%% form input.et_pb_s::-ms-input-placeholder',
-								'%%order_class%% form input.et_pb_s::-moz-placeholder',
-							) ),
+						'css'            => array(
+							'main'        => implode(
+								', ',
+								array(
+									'%%order_class%% form input.et_pb_s',
+									'%%order_class%% form input.et_pb_s::placeholder',
+									'%%order_class%% form input.et_pb_s::-webkit-input-placeholder',
+									'%%order_class%% form input.et_pb_s::-ms-input-placeholder',
+									'%%order_class%% form input.et_pb_s::-moz-placeholder',
+								)
+							),
 							'placeholder' => true,
 							'important'   => array( 'line-height', 'text-shadow' ),
 						),
@@ -140,8 +143,8 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 					),
 				),
 			),
-			'overflow'=>array(
-				'default' =>'hidden',
+			'overflow'       => array(
+				'default' => 'hidden',
 			),
 		);
 
@@ -166,7 +169,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 
 	function get_fields() {
 		$fields = array(
-			'exclude_pages' => array(
+			'exclude_pages'      => array(
 				'label'           => esc_html__( 'Exclude Pages', 'et_builder' ),
 				'type'            => 'yes_no_button',
 				'option_category' => 'configuration',
@@ -177,7 +180,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 				'description'     => esc_html__( 'Turning this on will exclude Pages from search results', 'et_builder' ),
 				'toggle_slug'     => 'exceptions',
 			),
-			'exclude_posts' => array(
+			'exclude_posts'      => array(
 				'label'           => esc_html__( 'Exclude Posts', 'et_builder' ),
 				'type'            => 'yes_no_button',
 				'option_category' => 'configuration',
@@ -203,7 +206,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 				'description'      => esc_html__( 'Choose which categories you would like to exclude from the search results.', 'et_builder' ),
 				'toggle_slug'      => 'exceptions',
 			),
-			'show_button' => array(
+			'show_button'        => array(
 				'label'           => esc_html__( 'Show Button', 'et_builder' ),
 				'type'            => 'yes_no_button',
 				'option_category' => 'configuration',
@@ -217,7 +220,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 				'mobile_options'  => true,
 				'hover'           => 'tabs',
 			),
-			'placeholder' => array(
+			'placeholder'        => array(
 				'label'           => esc_html__( 'Input Placeholder', 'et_builder' ),
 				'type'            => 'text',
 				'description'     => esc_html__( 'Type the text you want to use as placeholder for the search field.', 'et_builder' ),
@@ -226,7 +229,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 				'mobile_options'  => true,
 				'hover'           => 'tabs',
 			),
-			'button_color' => array(
+			'button_color'       => array(
 				'label'          => esc_html__( 'Button and Border Color', 'et_builder' ),
 				'type'           => 'color-alpha',
 				'custom_color'   => true,
@@ -235,7 +238,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 				'hover'          => 'tabs',
 				'mobile_options' => true,
 			),
-			'placeholder_color' => array(
+			'placeholder_color'  => array(
 				'label'          => esc_html__( 'Placeholder Color', 'et_builder' ),
 				'description'    => esc_html__( 'Pick a color to be used for the placeholder written inside input fields.', 'et_builder' ),
 				'type'           => 'color-alpha',
@@ -253,39 +256,43 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 	public function get_transition_fields_css_props() {
 		$fields = parent::get_transition_fields_css_props();
 
-		$fields['placeholder_color'] = array('color' => array(
-			'%%order_class%% form input.et_pb_s::placeholder',
-			'%%order_class%% form input.et_pb_s::-webkit-input-placeholder',
-			'%%order_class%% form input.et_pb_s::-ms-input-placeholder',
-			'%%order_class%% form input.et_pb_s::-moz-placeholder',
-		));
+		$fields['placeholder_color'] = array(
+			'color' => array(
+				'%%order_class%% form input.et_pb_s::placeholder',
+				'%%order_class%% form input.et_pb_s::-webkit-input-placeholder',
+				'%%order_class%% form input.et_pb_s::-ms-input-placeholder',
+				'%%order_class%% form input.et_pb_s::-moz-placeholder',
+			),
+		);
 
 		return $fields;
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view                      = et_pb_multi_view_options( $this );
-		$exclude_categories              = $this->props['include_categories'];
-		$exclude_posts                   = $this->props['exclude_posts'];
-		$exclude_pages                   = $this->props['exclude_pages'];
-		$show_button                     = $this->props['show_button'];
-		$placeholder                     = $multi_view->render_element( array(
-			'tag'   => 'input',
-			'attrs' => array(
-				'type'        => 'text',
-				'name'        => 's',
-				'class'       => 'et_pb_s',
-				'placeholder' => '{{placeholder}}',
-			),
-		) );
-		$input_line_height               = $this->props['form_field_line_height'];
-		$button_color_hover              = $this->get_hover_value( 'button_color' );
-		$button_color_values             = et_pb_responsive_options()->get_property_values( $this->props, 'button_color' );
-		$placeholder_color_hover         = $this->get_hover_value( 'placeholder_color' );
-		$placeholder_color_values        = et_pb_responsive_options()->get_property_values( $this->props, 'placeholder_color' );
+		$multi_view               = et_pb_multi_view_options( $this );
+		$exclude_categories       = $this->props['include_categories'];
+		$exclude_posts            = $this->props['exclude_posts'];
+		$exclude_pages            = $this->props['exclude_pages'];
+		$show_button              = $this->props['show_button'];
+		$placeholder              = $multi_view->render_element(
+			array(
+				'tag'   => 'input',
+				'attrs' => array(
+					'type'        => 'text',
+					'name'        => 's',
+					'class'       => 'et_pb_s',
+					'placeholder' => '{{placeholder}}',
+				),
+			)
+		);
+		$input_line_height        = $this->props['form_field_line_height'];
+		$button_color_hover       = $this->get_hover_value( 'button_color' );
+		$button_color_values      = et_pb_responsive_options()->get_property_values( $this->props, 'button_color' );
+		$placeholder_color_hover  = $this->get_hover_value( 'placeholder_color' );
+		$placeholder_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'placeholder_color' );
 
-		$video_background                = $this->video_background();
-		$parallax_image_background       = $this->get_parallax_image_background();
+		$video_background          = $this->video_background();
+		$parallax_image_background = $this->get_parallax_image_background();
 
 		$this->content = et_builder_replace_code_content_entities( $this->content );
 
@@ -294,21 +301,27 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 		et_pb_responsive_options()->generate_responsive_css( $button_color_values, '%%order_class%% input.et_pb_s', 'border-color', $render_slug, ' !important;', 'color' );
 
 		if ( et_builder_is_hover_enabled( 'button_color', $this->props ) ) {
-			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '%%order_class%% input.et_pb_searchsubmit:hover',
-				'declaration' => sprintf(
-					'background: %1$s !important;border-color:%1$s !important;',
-					esc_html( $button_color_hover )
-				),
-			) );
+			ET_Builder_Element::set_style(
+				$render_slug,
+				array(
+					'selector'    => '%%order_class%% input.et_pb_searchsubmit:hover',
+					'declaration' => sprintf(
+						'background: %1$s !important;border-color:%1$s !important;',
+						esc_html( $button_color_hover )
+					),
+				)
+			);
 
-			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '%%order_class%% input.et_pb_s:hover',
-				'declaration' => sprintf(
-					'border-color:%1$s !important;',
-					esc_html( $button_color_hover )
-				),
-			) );
+			ET_Builder_Element::set_style(
+				$render_slug,
+				array(
+					'selector'    => '%%order_class%% input.et_pb_s:hover',
+					'declaration' => sprintf(
+						'border-color:%1$s !important;',
+						esc_html( $button_color_hover )
+					),
+				)
+			);
 		}
 
 		// Placeholder Color.
@@ -328,27 +341,31 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 			);
 
 			foreach ( $placeholder_selectors as $single_selector ) {
-				ET_Builder_Element::set_style( $render_slug, array(
+				$el_style = array(
 					'selector'    => $single_selector,
 					'declaration' => sprintf(
 						'color: %1$s !important;',
 						esc_html( $placeholder_color_hover )
 					),
-				) );
+				);
+				ET_Builder_Element::set_style( $render_slug, $el_style );
 			}
 		}
 
 		if ( '' !== $input_line_height ) {
-			ET_Builder_Element::set_style( $render_slug, array(
+			$el_style = array(
 				'selector'    => '%%order_class%% input.et_pb_s',
 				'declaration' => 'height: auto; min-height: 0;',
-			) );
+			);
+			ET_Builder_Element::set_style( $render_slug, $el_style );
 		}
 
 		// Module classnames
-		$this->add_classname( array(
-			$this->get_text_orientation_classname( true ),
-		) );
+		$this->add_classname(
+			array(
+				$this->get_text_orientation_classname( true ),
+			)
+		);
 
 		// Background layout class names.
 		$background_layout_class_names = et_pb_background_layout_options()->get_background_layout_class( $this->props );
@@ -361,13 +378,15 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 		// Background layout data attributes.
 		$data_background_layout = et_pb_background_layout_options()->get_background_layout_attrs( $this->props );
 
-		$multi_view_show_button_data_attr = $multi_view->render_attrs( array(
-			'classes' => array(
-				'et_pb_hide_search_button' => array(
-					'show_button' => 'off',
+		$multi_view_show_button_data_attr = $multi_view->render_attrs(
+			array(
+				'classes' => array(
+					'et_pb_hide_search_button' => array(
+						'show_button' => 'off',
+					),
 				),
-			),
-		) );
+			)
+		);
 
 		$output = sprintf(
 			'<div%3$s class="%2$s"%12$s%13$s>
@@ -404,4 +423,4 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Search;
+new ET_Builder_Module_Search();

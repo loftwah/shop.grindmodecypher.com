@@ -61,13 +61,13 @@ class ET_Builder_Plugin_Compat_WPML_Multilingual_CMS extends ET_Builder_Plugin_C
 			$missing_fields = array(
 				array(
 					'value' => '_et_pb_built_for_post_type',
-					'attr' => array(
+					'attr'  => array(
 						'action' => 'copy',
 					),
 				),
 			);
 
-			$seen = array();
+			$seen   = array();
 			$fields = $config['wpml-config']['custom-fields']['custom-field'];
 
 			foreach ( $fields as $field ) {
@@ -88,13 +88,13 @@ class ET_Builder_Plugin_Compat_WPML_Multilingual_CMS extends ET_Builder_Plugin_C
 		if ( ! empty( $config['wpml-config']['taxonomies']['taxonomy'] ) ) {
 
 			$taxonomy_replacements = array(
-				'scope' => array(
+				'scope'           => array(
 					'translate' => 0,
 				),
-				'layout_type' => array(
+				'layout_type'     => array(
 					'translate' => 0,
 				),
-				'module_width' => array(
+				'module_width'    => array(
 					'translate' => 0,
 				),
 				'layout_category' => array(
@@ -103,7 +103,7 @@ class ET_Builder_Plugin_Compat_WPML_Multilingual_CMS extends ET_Builder_Plugin_C
 			);
 
 			$fixed_taxonomies = array();
-			$taxonomies = $config['wpml-config']['taxonomies']['taxonomy'];
+			$taxonomies       = $config['wpml-config']['taxonomies']['taxonomy'];
 
 			foreach ( $taxonomies as $taxonomy ) {
 				if ( ! empty( $taxonomy_replacements[ $taxonomy['value'] ] ) ) {
@@ -125,8 +125,8 @@ class ET_Builder_Plugin_Compat_WPML_Multilingual_CMS extends ET_Builder_Plugin_C
 	 *
 	 * @internal
 	 *
-	 * @param array $shortcode_atts
-	 * @param array $atts
+	 * @param array  $shortcode_atts
+	 * @param array  $atts
 	 * @param string $slug
 	 * @param string $address
 	 *

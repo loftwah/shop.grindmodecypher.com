@@ -87,7 +87,7 @@ class ET_Builder_Plugin_Compat_Rank_Math_SEO extends ET_Builder_Plugin_Compat_Ba
 			),
 		);
 
-		foreach ( $modules_with_image as $module_name => $module_attrs  ) {
+		foreach ( $modules_with_image as $module_name => $module_attrs ) {
 			// Find all modules shortcodes with image from the content.
 			$modules = $this->_get_module_shortcode( $post->post_content, $module_name );
 			if ( empty( $modules ) ) {
@@ -215,4 +215,4 @@ class ET_Builder_Plugin_Compat_Rank_Math_SEO extends ET_Builder_Plugin_Compat_Ba
 	}
 }
 
-new ET_Builder_Plugin_Compat_Rank_Math_SEO;
+new ET_Builder_Plugin_Compat_Rank_Math_SEO();

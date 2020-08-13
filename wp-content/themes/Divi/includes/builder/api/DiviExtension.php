@@ -121,13 +121,13 @@ class DiviExtension {
 	 */
 	protected function _enqueue_bundles() {
 		// Frontend Bundle
-		$bundle_url   = "{$this->plugin_dir_url}scripts/frontend-bundle.min.js";
+		$bundle_url = "{$this->plugin_dir_url}scripts/frontend-bundle.min.js";
 
 		wp_enqueue_script( "{$this->name}-frontend-bundle", $bundle_url, $this->_bundle_dependencies['frontend'], $this->version, true );
 
 		if ( et_core_is_fb_enabled() ) {
 			// Builder Bundle
-			$bundle_url   = "{$this->plugin_dir_url}scripts/builder-bundle.min.js";
+			$bundle_url = "{$this->plugin_dir_url}scripts/builder-bundle.min.js";
 
 			wp_enqueue_script( "{$this->name}-builder-bundle", $bundle_url, $this->_bundle_dependencies['builder'], $this->version, true );
 		}
@@ -322,4 +322,4 @@ class DiviExtension {
 }
 
 
-new DiviExtension;
+new DiviExtension();

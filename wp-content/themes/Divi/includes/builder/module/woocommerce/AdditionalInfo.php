@@ -296,13 +296,18 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 	public function add_multi_view_attrs( $outer_wrapper_attrs, $this_class ) {
 		$multi_view = et_pb_multi_view_options( $this_class );
 
-		$multi_view_attrs = $multi_view->render_attrs( array(
-			'classes' => array(
-				'et_pb_hide_title' => array(
-					'show_title' => 'off',
+		$multi_view_attrs = $multi_view->render_attrs(
+			array(
+				'classes' => array(
+					'et_pb_hide_title' => array(
+						'show_title' => 'off',
+					),
 				),
 			),
-		), false, null, true );
+			false,
+			null,
+			true
+		);
 
 		if ( $multi_view_attrs && is_array( $multi_view_attrs ) ) {
 			$outer_wrapper_attrs = array_merge( $outer_wrapper_attrs, $multi_view_attrs );
@@ -325,10 +330,7 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 
 		$this->add_classname( $this->get_text_orientation_classname() );
 
-		add_filter( "et_builder_module_{$render_slug}_outer_wrapper_attrs", array(
-			$this,
-			'add_multi_view_attrs',
-		), 10, 2 );
+		add_filter( "et_builder_module_{$render_slug}_outer_wrapper_attrs", array( $this, 'add_multi_view_attrs' ), 10, 2 );
 
 		$output = self::get_additional_info( $this->props );
 

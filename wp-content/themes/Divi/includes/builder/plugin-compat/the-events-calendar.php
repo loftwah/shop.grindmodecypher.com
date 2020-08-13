@@ -154,4 +154,4 @@ class ET_Builder_Plugin_Compat_The_Events_Calendar extends ET_Builder_Plugin_Com
 	}
 }
 
-new ET_Builder_Plugin_Compat_The_Events_Calendar;
+new ET_Builder_Plugin_Compat_The_Events_Calendar();

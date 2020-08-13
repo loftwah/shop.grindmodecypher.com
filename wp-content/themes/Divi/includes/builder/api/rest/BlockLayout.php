@@ -23,7 +23,7 @@ class ET_Api_Rest_Block_Layout {
 	 */
 	public static function instance() {
 		if ( null === self::$_instance ) {
-			self::$_instance = new self;
+			self::$_instance = new self();
 		}
 
 		return self::$_instance;
@@ -48,10 +48,10 @@ class ET_Api_Rest_Block_Layout {
 			'divi/v1',
 			'get_layout_content',
 			array(
-				'methods'   => 'POST',
-				'callback' => array( $this, 'get_layout_content_callback' ),
-				'args'     => array(
-					'id' => array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'get_layout_content_callback' ),
+				'args'                => array(
+					'id'    => array(
 						// using intval directly doesn't work, hence the custom callback
 						'sanitize_callback'   => array( $this, 'sanitize_int' ),
 						'validation_callback' => 'is_numeric',
@@ -71,26 +71,27 @@ class ET_Api_Rest_Block_Layout {
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'process_builder_edit_data' ),
 				'args'                => array(
-					'action' => array(
+					'action'        => array(
 						'sanitize_callback'   => array( $this, 'sanitize_action' ), // update|delete|get
 						'validation_callback' => array( $this, 'validate_action' ),
 					),
-					'postId' => array(
+					'postId'        => array(
 						'sanitize_callback'   => array( $this, 'sanitize_int' ),
 						'validation_callback' => 'is_numeric',
 					),
-					'blockId' => array(
+					'blockId'       => array(
 						'sanitize_callback' => 'sanitize_title',
 					),
 					'layoutContent' => array(
 						'sanitize_callback' => 'wp_kses_post',
 					),
-					'nonce' => array(
+					'nonce'         => array(
 						'sanitize_callback' => 'sanitize_text_field',
 					),
 				),
 				'permission_callback' => array( $this, 'rest_api_layout_block_permission' ),
-		));
+			)
+		);
 	}
 
 	/**
@@ -292,7 +293,7 @@ class ET_Api_Rest_Block_Layout {
 		$valid_builder_edit_data_actions = array(
 			'get',
 			'update',
-			'delete'
+			'delete',
 		);
 
 		return in_array( $value, $valid_builder_edit_data_actions );

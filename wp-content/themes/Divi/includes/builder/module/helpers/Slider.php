@@ -14,11 +14,14 @@ class ET_Builder_Module_Helper_Slider {
 	 *
 	 * @return string
 	 */
-	public function get_arrows_selector($prefix = '%%order_class%%') {
-		return implode( ',', array(
-			"$prefix .et-pb-slider-arrows .et-pb-arrow-prev",
-			"$prefix .et-pb-slider-arrows .et-pb-arrow-next",
-		) );
+	public function get_arrows_selector( $prefix = '%%order_class%%' ) {
+		return implode(
+			',',
+			array(
+				"$prefix .et-pb-slider-arrows .et-pb-arrow-prev",
+				"$prefix .et-pb-slider-arrows .et-pb-arrow-next",
+			)
+		);
 	}
 
 	/**
@@ -30,7 +33,7 @@ class ET_Builder_Module_Helper_Slider {
 	 *
 	 * @return string
 	 */
-	public function get_dots_selector($prefix = '%%order_class%%') {
+	public function get_dots_selector( $prefix = '%%order_class%%' ) {
 		return "$prefix .et-pb-controllers a, $prefix .et-pb-controllers .et-pb-active-control";
 	}
 
@@ -100,7 +103,7 @@ class ET_Builder_Module_Helper_Slider {
 		}
 
 		// Process background
-		$props['background_image'] = $args['post_featured_image'];
+		$props['background_image']        = $args['post_featured_image'];
 		$props['background_enable_image'] = 'on';
 
 		// Background responsive is generally set via background_last_edited instead of each background
@@ -119,12 +122,14 @@ class ET_Builder_Module_Helper_Slider {
 			$props['background_image__hover'] = $args['post_featured_image'];
 		}
 
-		et_pb_background_options()->get_background_style( array(
-			'props'          => $props,
-			'selector'       => "%%order_class%% .{$slide_id_class}",
-			'selector_hover' => "%%order_class%%:hover .{$slide_id_class}",
-			'function_name'  => $args['render_slug'],
-		) );
+		et_pb_background_options()->get_background_style(
+			array(
+				'props'          => $props,
+				'selector'       => "%%order_class%% .{$slide_id_class}",
+				'selector_hover' => "%%order_class%%:hover .{$slide_id_class}",
+				'function_name'  => $args['render_slug'],
+			)
+		);
 
 		return;
 	}

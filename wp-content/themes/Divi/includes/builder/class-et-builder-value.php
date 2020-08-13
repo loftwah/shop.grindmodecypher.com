@@ -40,12 +40,12 @@ class ET_Builder_Value {
 	 * @since 3.17.2
 	 *
 	 * @param boolean $dynamic
-	 * @param string $content
-	 * @param array $settings
+	 * @param string  $content
+	 * @param array   $settings
 	 */
 	public function __construct( $dynamic, $content, $settings = array() ) {
-		$this->dynamic = $dynamic;
-		$this->content = $content;
+		$this->dynamic  = $dynamic;
+		$this->content  = $content;
 		$this->settings = $settings;
 	}
 

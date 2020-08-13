@@ -145,8 +145,8 @@ class ET_Builder_Plugin_Compat_Smush extends ET_Builder_Plugin_Compat_Base {
 	 *
 	 * @since 4.4.9
 	 *
-	 * @param array $data_resource
-	 * @param string $context
+	 * @param array                $data_resource
+	 * @param string               $context
 	 * @param ET_Core_PageResource $page_resource
 	 *
 	 * @return string
@@ -172,7 +172,7 @@ class ET_Builder_Plugin_Compat_Smush extends ET_Builder_Plugin_Compat_Base {
 		}
 
 		$new_data_resource = $data_resource;
-		$smush_parser      = new Smush\Core\Modules\Helpers\Parser;
+		$smush_parser      = new Smush\Core\Modules\Helpers\Parser();
 
 		$smush_parser->enable( 'cdn' );
 		$smush_parser->enable( 'background_images' );

@@ -448,16 +448,21 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 	public function add_multi_view_attrs( $outer_wrapper_attrs ) {
 		$multi_view = et_pb_multi_view_options( $this );
 
-		$multi_view_attrs = $multi_view->render_attrs( array(
-			'classes' => array(
-				'et_pb_hide_input_quantity' => array(
-					'show_quantity' => 'off',
-				),
-				'et_pb_hide_stock'          => array(
-					'show_stock' => 'off',
+		$multi_view_attrs = $multi_view->render_attrs(
+			array(
+				'classes' => array(
+					'et_pb_hide_input_quantity' => array(
+						'show_quantity' => 'off',
+					),
+					'et_pb_hide_stock'          => array(
+						'show_stock' => 'off',
+					),
 				),
 			),
-		), false, null, true );
+			false,
+			null,
+			true
+		);
 
 		if ( $multi_view_attrs && is_array( $multi_view_attrs ) ) {
 			$outer_wrapper_attrs = array_merge( $outer_wrapper_attrs, $multi_view_attrs );
@@ -472,7 +477,7 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 	 * Dropdown menu's Bottom & Left margin affects the Dropdown arrow placement.
 	 * This is handled using additional CSS.
 	 *
-	 * @param array $attrs
+	 * @param array  $attrs
 	 * @param string $render_slug
 	 *
 	 * @since 4.3.4
@@ -484,8 +489,8 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 
 		$prop = 'dropdown_menus_custom_margin';
 
-		$values      = et_pb_responsive_options()->get_property_values( $attrs, $prop );
-		$hover_value = et_pb_hover_options()->get_value( $prop, $attrs, '' );
+		$values           = et_pb_responsive_options()->get_property_values( $attrs, $prop );
+		$hover_value      = et_pb_hover_options()->get_value( $prop, $attrs, '' );
 		$processed_values = array();
 
 		foreach ( $values as $device => $value ) {
@@ -540,7 +545,7 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 	 * @return string
 	 */
 	public function render( $attrs, $content = null, $render_slug ) {
-		$multi_view = et_pb_multi_view_options( $this );
+		$multi_view             = et_pb_multi_view_options( $this );
 		$use_focus_border_color = $this->props['use_focus_border_color'];
 
 		// Module classnames.
@@ -563,10 +568,7 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 
 		$this->add_additional_css( $this->props, $render_slug );
 
-		add_filter( "et_builder_module_{$render_slug}_outer_wrapper_attrs", array(
-			$this,
-			'add_multi_view_attrs',
-		) );
+		add_filter( "et_builder_module_{$render_slug}_outer_wrapper_attrs", array( $this, 'add_multi_view_attrs' ) );
 
 		$output = self::get_add_to_cart( $this->props );
 

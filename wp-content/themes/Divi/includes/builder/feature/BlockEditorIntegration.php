@@ -27,7 +27,7 @@ class ET_Builder_Block_Editor_Integration {
 			return false;
 		}
 
-		return  use_block_editor_for_post( $post );
+		return use_block_editor_for_post( $post );
 	}
 
 	protected function _can_edit_post_type( $type ) {
@@ -59,10 +59,10 @@ class ET_Builder_Block_Editor_Integration {
 	/**
 	 * Filter on map_meta_cap.
 	 *
-	 * @param array $caps Capabilities.
+	 * @param array  $caps Capabilities.
 	 * @param string $cap Capability to check.
 	 * @param string $user_id User ID.
-	 * @param array $args Additional args.
+	 * @param array  $args Additional args.
 	 *
 	 * @return void
 	 */
@@ -98,10 +98,11 @@ class ET_Builder_Block_Editor_Integration {
 		 *
 		 * @param array user capabilities
 		 */
-		$relevant_capabilities = apply_filters( 'et_block_editor_relevant_capabilities', array(
+		$relevant_capabilities = array(
 			'divi_library',
 			'use_visual_builder',
-		) );
+		);
+		$relevant_capabilities = apply_filters( 'et_block_editor_relevant_capabilities', $relevant_capabilities );
 
 		$capabilities = array();
 
@@ -115,7 +116,7 @@ class ET_Builder_Block_Editor_Integration {
 	/**
 	 * Filter used to disable GB for certain post types.
 	 *
-	 * @param bool $can_edit
+	 * @param bool   $can_edit
 	 * @param string $post_type
 	 *
 	 * @return void
@@ -144,11 +145,12 @@ class ET_Builder_Block_Editor_Integration {
 		et_builder_enqueue_open_sans();
 
 		// Enqueue integration & blocks scripts
-		et_fb_enqueue_bundle( 'et-builder-gutenberg', 'gutenberg.js', array(
+		$deps = array(
 			'jquery',
 			'et_bfb_admin_date_addon_js',
 			'wp-hooks',
-		) );
+		);
+		et_fb_enqueue_bundle( 'et-builder-gutenberg', 'gutenberg.js', $deps );
 
 		// Enqueue top window style
 		wp_register_style(
@@ -159,26 +161,27 @@ class ET_Builder_Block_Editor_Integration {
 		);
 
 		// Enqueue integration & blocks styles
-		et_fb_enqueue_bundle( 'et-builder-gutenberg', 'gutenberg.css', array(
+		$deps = array(
 			'et-fb-top-window',
-		) );
+		);
+		et_fb_enqueue_bundle( 'et-builder-gutenberg', 'gutenberg.css', $deps );
 
 		// this enqueue bundle.css
 		et_builder_enqueue_assets_main();
 
-		$post_id         = get_the_ID();
-		$post_type       = get_post_type();
+		$post_id               = get_the_ID();
+		$post_type             = get_post_type();
 		$enabled_for_post_type = et_builder_enabled_for_post_type( $post_type );
-		$updates_options = get_site_option( 'et_automatic_updates_options', array() );
-		$et_account      = array(
+		$updates_options       = get_site_option( 'et_automatic_updates_options', array() );
+		$et_account            = array(
 			'et_username' => et_()->array_get( $updates_options, 'username', '' ),
 			'et_api_key'  => et_()->array_get( $updates_options, 'api_key', '' ),
 			'status'      => get_site_option( 'et_account_status', 'not_active' ),
 		);
 
 		// Set helpers needed by our own Gutenberg bundle.
-		wp_localize_script( 'et-builder-gutenberg', 'et_builder_gutenberg', array(
-			'helpers' => array(
+		$gutenberg = array(
+			'helpers'       => array(
 				'postID'             => $post_id,
 				'postType'           => $post_type,
 				'is3rdPartyPostType' => et_builder_is_post_type_custom( $post_type ) ? 'yes' : 'no',
@@ -209,29 +212,29 @@ class ET_Builder_Block_Editor_Integration {
 			),
 
 			// Loaded into ETBlockUserStore
-			'capabilities' => $this->get_current_user_capabilities(),
+			'capabilities'  => $this->get_current_user_capabilities(),
 
 			// Loaded into ETBlockLibraryStore
-			'etAccount' => $et_account,
+			'etAccount'     => $et_account,
 
 			// Loaded into ETBlockSettingsStore
-			'conditions' => array(
+			'conditions'    => array(
 				'isRtl' => is_rtl(),
 			),
-			'constants' => array(
+			'constants'     => array(
 				'emptyLayout' => '[et_pb_section admin_label="section"][et_pb_row admin_label="row"][/et_pb_row][/et_pb_section]',
 			),
-			'nonces' => array(
+			'nonces'        => array(
 				'et_builder_library_get_layouts_data' => wp_create_nonce( 'et_builder_library_get_layouts_data' ),
 				'et_builder_library_update_account'   => wp_create_nonce( 'et_builder_library_update_account' ),
 				'et_block_layout_preview'             => wp_create_nonce( 'et_block_layout_preview' ),
 				'et_rest_get_layout_content'          => wp_create_nonce( 'et_rest_get_layout_content' ),
 				'et_rest_process_builder_edit_data'   => wp_create_nonce( 'et_rest_process_builder_edit_data' ),
 			),
-			'urls' => array(
+			'urls'          => array(
 				'adminAjax'   => admin_url( 'admin-ajax.php' ),
 				'diviLibrary' => ET_BUILDER_DIVI_LIBRARY_URL,
-				'home'        => home_url('/'),
+				'home'        => home_url( '/' ),
 			),
 			/**
 			 * Make DOM selectors list filterable so third party can modified it if needed
@@ -240,9 +243,12 @@ class ET_Builder_Block_Editor_Integration {
 			 *
 			 * @param array list of selectors
 			 */
-			'selectors'     => apply_filters( 'et_gb_selectors', array(
-				'pageLayoutSelect' => '#et_pb_page_layout',
-			) ),
+			'selectors'     => apply_filters(
+				'et_gb_selectors',
+				array(
+					'pageLayoutSelect' => '#et_pb_page_layout',
+				)
+			),
 			/**
 			 * Make Content Widhts settings filterable so third party can modified it if needed
 			 *
@@ -250,16 +256,20 @@ class ET_Builder_Block_Editor_Integration {
 			 *
 			 * @param array content width configurations
 			 */
-			'contentWidths' => apply_filters( 'et_gb_content_widths', array(
-				// Intentionally set null for default and undefined if no saved content width found
-				// unless `et_gb_content_widths` is being filtered to handle Divi Builder Plugin
-				// situation which might not have deifined content width
-				'default' => null,
-				'current' => get_post_meta( $post_id, '_et_gb_content_width', true),
-				'min'     => 320,  // Min content width (small smartphone width)
-				'max'     => 2880, // Max content width (15" laptop * 2)
-			) ),
-		) );
+			'contentWidths' => apply_filters(
+				'et_gb_content_widths',
+				array(
+					// Intentionally set null for default and undefined if no saved content width found
+					// unless `et_gb_content_widths` is being filtered to handle Divi Builder Plugin
+					// situation which might not have deifined content width
+					'default' => null,
+					'current' => get_post_meta( $post_id, '_et_gb_content_width', true ),
+					'min'     => 320,  // Min content width (small smartphone width)
+					'max'     => 2880, // Max content width (15" laptop * 2)
+				)
+			),
+		);
+		wp_localize_script( 'et-builder-gutenberg', 'et_builder_gutenberg', $gutenberg );
 
 		// Set translated strings for the scripts
 		wp_set_script_translations( 'et-builder-gutenberg', 'et_builder', ET_BUILDER_DIR . 'languages' );
@@ -276,7 +286,7 @@ class ET_Builder_Block_Editor_Integration {
 			return;
 		}
 
-		$edit = 'post-new.php';
+		$edit  = 'post-new.php';
 		$edit .= 'post' !== $typenow ? "?post_type=$typenow" : '';
 
 		// Create a nonce to auto activate VB on a new Auto Draft
@@ -310,10 +320,12 @@ class ET_Builder_Block_Editor_Integration {
 		}
 
 		// Save the draft
-		wp_update_post( array(
-			'ID'          => $post->ID,
-			'post_status' => 'draft',
-		) );
+		wp_update_post(
+			array(
+				'ID'          => $post->ID,
+				'post_status' => 'draft',
+			)
+		);
 
 		// Add VB activation nonce
 		$url = add_query_arg(
@@ -333,7 +345,7 @@ class ET_Builder_Block_Editor_Integration {
 	/**
 	 * Add 'Edit With Divi Editor' links
 	 *
-	 * @param array $actions Currently defined actions for the row.
+	 * @param array  $actions Currently defined actions for the row.
 	 * @param object $post Current post object.
 	 *
 	 * @return void
@@ -341,7 +353,7 @@ class ET_Builder_Block_Editor_Integration {
 	public function add_edit_link( $actions, $post ) {
 		// Maybe change this with et_fb_current_user_can_save or equivalent
 
-		if ( ! $this->_can_edit_post( $post ) || ! et_builder_enabled_for_post_type( $post->post_type )) {
+		if ( ! $this->_can_edit_post( $post ) || ! et_builder_enabled_for_post_type( $post->post_type ) ) {
 			return $actions;
 		}
 
@@ -373,10 +385,12 @@ class ET_Builder_Block_Editor_Integration {
 			'divi' => sprintf(
 				'<a href="%s" aria-label="%s">%s</a>',
 				esc_url( $edit_url ),
-				esc_attr( sprintf(
-					__( 'Edit &#8220;%s&#8221; in Divi', 'et_builder' ),
-					_draft_or_post_title( $post->ID )
-				) ),
+				esc_attr(
+					sprintf(
+						__( 'Edit &#8220;%s&#8221; in Divi', 'et_builder' ),
+						_draft_or_post_title( $post->ID )
+					)
+				),
 				esc_html__( 'Edit With Divi', 'et_builder' )
 			),
 		);
@@ -386,9 +400,9 @@ class ET_Builder_Block_Editor_Integration {
 		// I'm leaving this here in case we wanna change item position.
 		// $edit_offset = array_search( 'edit', array_keys( $actions ), true );
 		// $actions     = array_merge(
-		// 	array_slice( $actions, 0, $edit_offset + 1 ),
-		// 	$edit_action,
-		// 	array_slice( $actions, $edit_offset + 1 )
+		// array_slice( $actions, 0, $edit_offset + 1 ),
+		// $edit_action,
+		// array_slice( $actions, $edit_offset + 1 )
 		// );
 
 		return $actions;
@@ -410,7 +424,7 @@ class ET_Builder_Block_Editor_Integration {
 	/**
 	 * Add 'Divi' to post states when builder is enabled for it.
 	 *
-	 * @param array $post_states Existing post states.
+	 * @param array  $post_states Existing post states.
 	 * @param object $post Current post object.
 	 *
 	 * @return array
@@ -439,7 +453,6 @@ class ET_Builder_Block_Editor_Integration {
 	 * Ensures that Divi enabled CPTs support 'custom-fields'.
 	 *
 	 * @since 3.19.12
-	 *
 	 */
 	public function ensure_post_type_supports() {
 		$post_types = et_builder_get_builder_post_types();
@@ -455,10 +468,10 @@ class ET_Builder_Block_Editor_Integration {
 	 * Alter update_post_metadata return value from during a REST API update
 	 * when meta value isn't changed.
 	 *
-	 * @param mixed $result Previous result.
-	 * @param int $object_id Post ID.
+	 * @param mixed  $result Previous result.
+	 * @param int    $object_id Post ID.
 	 * @param string $meta_key Meta key.
-	 * @param mixed $meta_value Meta value.
+	 * @param mixed  $meta_value Meta value.
 	 *
 	 * @return mixed
 	 */
@@ -527,7 +540,7 @@ class ET_Builder_Block_Editor_Integration {
 	/**
 	 * Check a specified post's content for GB gallery and, if present, return the first
 	 *
-	 * @param string $gallery Gallery data and srcs parsed from the expanded shortcode.
+	 * @param string      $gallery Gallery data and srcs parsed from the expanded shortcode.
 	 * @param int|WP_Post $post Post ID or object.
 	 *
 	 * @return string|array Gallery data and srcs parsed from the expanded shortcode.
@@ -559,7 +572,7 @@ class ET_Builder_Block_Editor_Integration {
 	 * Delete first GB gallery in content
 	 *
 	 * @param string $content Content.
-	 * @param bool $deleted Whether a gallery has been already deleted or not.;
+	 * @param bool   $deleted Whether a gallery has been already deleted or not.;
 	 * @return string
 	 */
 	public function et_delete_post_gallery( $content, $deleted ) {
@@ -610,8 +623,8 @@ class ET_Builder_Block_Editor_Integration {
 	 * Custom auth function for meta updates via REST API.
 	 *
 	 * @param boolean $allowed True if allowed to view the meta field by default, false if else.
-	 * @param string $meta_key The meta key.
-	 * @param int $id Post ID.
+	 * @param string  $meta_key The meta key.
+	 * @param int     $id Post ID.
 	 *
 	 * @return bool
 	 */
@@ -622,6 +635,7 @@ class ET_Builder_Block_Editor_Integration {
 	/**
 	 * Hook methods to WordPress
 	 * Latest plugin version: 1.5
+	 *
 	 * @return void
 	 */
 	public function init_hooks() {
@@ -676,28 +690,31 @@ class ET_Builder_Block_Editor_Integration {
 		// Editing a post meta via REST API is allowed by default unless its key is protected (starts with `_`)
 		// which is the case here so we also need to create a custom auth function.
 		$auth = array( $this, 'meta_auth' );
-		register_meta( 'post', '_et_pb_use_builder', array(
+		$args = array(
 			'auth_callback' => $auth,
 			'show_in_rest'  => true,
 			'single'        => true,
 			'type'          => 'string',
-		) );
-		register_meta( 'post', '_et_pb_old_content', array(
+		);
+		register_meta( 'post', '_et_pb_use_builder', $args );
+		$args = array(
 			'auth_callback' => $auth,
 			'show_in_rest'  => true,
 			'single'        => true,
 			'type'          => 'string',
-		) );
-		register_meta( 'post', '_et_gb_content_width', array(
+		);
+		register_meta( 'post', '_et_pb_old_content', $args );
+		$args = array(
 			'auth_callback' => $auth,
 			'show_in_rest'  => true,
 			'single'        => true,
 			'type'          => 'string',
-		) );
+		);
+		register_meta( 'post', '_et_gb_content_width', $args );
 	}
 }
 
 
 if ( et_core_is_gutenberg_active() ) {
-	new ET_Builder_Block_Editor_Integration;
+	new ET_Builder_Block_Editor_Integration();
 }

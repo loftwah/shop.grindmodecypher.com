@@ -338,8 +338,8 @@ class ET_Builder_Module_Woocommerce_Description extends ET_Builder_Module {
 				'toggle_slug'      => 'main_content',
 				'description'      => esc_html__( 'Here you can choose between Description and short description to display.', 'et_builder' ),
 				'default_on_front' => 'short_description',
-				'mobile_options'  => true,
-				'hover'           => 'tabs',
+				'mobile_options'   => true,
+				'hover'            => 'tabs',
 				'computed_affects' => array(
 					'__description',
 				),
@@ -374,11 +374,11 @@ class ET_Builder_Module_Woocommerce_Description extends ET_Builder_Module {
 	 * @return string
 	 */
 	public static function get_description( $args = array(), $conditional_tags = array(), $current_page = array() ) {
-		$defaults    = array(
+		$defaults = array(
 			'product'          => 'current',
 			'description_type' => 'short_description',
 		);
-		$args        = wp_parse_args( $args, $defaults );
+		$args     = wp_parse_args( $args, $defaults );
 
 		// Theme builder's description placeholder; short-circuit is cleaner and more efficient than
 		// global object element being modified. NOTE: $conditional_tags element value is string
@@ -393,8 +393,8 @@ class ET_Builder_Module_Woocommerce_Description extends ET_Builder_Module {
 			return et_core_intentionally_unescaped( $description, 'html' );
 		}
 
-		$post_id     = ET_Builder_Module_Helper_Woocommerce_Modules::get_product_id( $args['product'] );
-		$post        = get_post( $post_id );
+		$post_id = ET_Builder_Module_Helper_Woocommerce_Modules::get_product_id( $args['product'] );
+		$post    = get_post( $post_id );
 
 		if ( ! ( $post instanceof WP_Post ) ) {
 			return '';
@@ -429,7 +429,7 @@ class ET_Builder_Module_Woocommerce_Description extends ET_Builder_Module {
 	 * Since we do not have control over the WooCommerce Breadcrumb markup, we inject Multi view
 	 * attributes on to the Outer wrapper.
 	 *
-	 * @param array                                    $outer_wrapper_attrs
+	 * @param array                                     $outer_wrapper_attrs
 	 * @param ET_Builder_Module_Woocommerce_Description $this_class
 	 *
 	 * @return array
@@ -437,10 +437,12 @@ class ET_Builder_Module_Woocommerce_Description extends ET_Builder_Module {
 	public function add_multi_view_attrs( $outer_wrapper_attrs, $this_class ) {
 		$multi_view = et_pb_multi_view_options( $this_class );
 
-		$multi_view_attrs = $multi_view->render_attrs( array(
+		$contexts = array(
 			'content' => '{{description_type}}',
 			'target'  => '%%order_class%% .et_pb_module_inner',
-		), false, null, true );
+		);
+
+		$multi_view_attrs = $multi_view->render_attrs( $contexts, false, null, true );
 
 		if ( $multi_view_attrs && is_array( $multi_view_attrs ) ) {
 			$outer_wrapper_attrs = array_merge( $outer_wrapper_attrs, $multi_view_attrs );

@@ -7,7 +7,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		$this->slug                       = 'et_pb_toggle';
 		$this->vb_support                 = 'on';
 		$this->additional_shortcode_slugs = array( 'et_pb_accordion_item' );
-		$this->main_css_element = '%%order_class%%.et_pb_toggle';
+		$this->main_css_element           = '%%order_class%%.et_pb_toggle';
 
 		$this->settings_modal_toggles = array(
 			'general'  => array(
@@ -18,8 +18,8 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 			),
 			'advanced' => array(
 				'toggles' => array(
-					'icon' => esc_html__( 'Icon', 'et_builder' ),
-					'text' => array(
+					'icon'   => esc_html__( 'Icon', 'et_builder' ),
+					'text'   => array(
 						'title'    => et_builder_i18n( 'Text' ),
 						'priority' => 49,
 					),
@@ -29,33 +29,33 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		);
 
 		$this->advanced_fields = array(
-			'borders'               => array(
+			'borders'         => array(
 				'default' => array(
 					'css'      => array(
 						'main' => array(
 							'border_radii'  => ".et_pb_module{$this->main_css_element}",
 							'border_styles' => ".et_pb_module{$this->main_css_element}",
-						)
+						),
 					),
 					'defaults' => array(
-						'border_radii' => 'on||||',
+						'border_radii'  => 'on||||',
 						'border_styles' => array(
 							'width' => '1px',
 							'color' => '#d9d9d9',
 							'style' => 'solid',
 						),
-					)
+					),
 				),
 			),
-			'box_shadow'            => array(
+			'box_shadow'      => array(
 				'default' => array(
 					'css' => array(
 						'important' => true,
 					),
 				),
 			),
-			'fonts'                 => array(
-				'title' => array(
+			'fonts'           => array(
+				'title'        => array(
 					'label'            => et_builder_i18n( 'Title' ),
 					'css'              => array(
 						'main'      => "{$this->main_css_element} h5, {$this->main_css_element} h1.et_pb_toggle_title, {$this->main_css_element} h2.et_pb_toggle_title, {$this->main_css_element} h3.et_pb_toggle_title, {$this->main_css_element} h4.et_pb_toggle_title, {$this->main_css_element} h6.et_pb_toggle_title",
@@ -68,7 +68,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 						'title_text_color' => 9,
 					),
 				),
-				'closed_title'         => array(
+				'closed_title' => array(
 					'label'           => esc_html__( 'Closed Title', 'et_builder' ),
 					'css'             => array(
 						'main'      => "{$this->main_css_element}.et_pb_toggle_close h5, {$this->main_css_element}.et_pb_toggle_close h1.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h2.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h3.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h4.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h6.et_pb_toggle_title",
@@ -86,9 +86,9 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 					),
 				),
 				'closed_title' => array(
-					'label'    => esc_html__( 'Closed Title', 'et_builder' ),
-					'css'      => array(
-						'main' => "{$this->main_css_element}.et_pb_toggle_close h5, {$this->main_css_element}.et_pb_toggle_close h1.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h2.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h3.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h4.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h6.et_pb_toggle_title",
+					'label'           => esc_html__( 'Closed Title', 'et_builder' ),
+					'css'             => array(
+						'main'      => "{$this->main_css_element}.et_pb_toggle_close h5, {$this->main_css_element}.et_pb_toggle_close h1.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h2.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h3.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h4.et_pb_toggle_title, {$this->main_css_element}.et_pb_toggle_close h6.et_pb_toggle_title",
 						'important' => 'plugin_only',
 					),
 					'hide_text_color' => true,
@@ -103,7 +103,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 						'default' => '0px',
 					),
 				),
-				'body'                 => array(
+				'body'         => array(
 					'label'          => et_builder_i18n( 'Body' ),
 					'css'            => array(
 						'main'         => "{$this->main_css_element}",
@@ -117,36 +117,36 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 					),
 				),
 			),
-			'background'            => array(
+			'background'      => array(
 				'settings' => array(
 					'color' => 'alpha',
 				),
 			),
-			'margin_padding' => array(
+			'margin_padding'  => array(
 				'css' => array(
 					'important' => 'all',
 				),
 			),
-			'button'                => false,
-			'position_fields'       => array(
+			'button'          => false,
+			'position_fields' => array(
 				'default' => 'relative',
 			),
-			'z_index'               => array(
+			'z_index'         => array(
 				'default' => '1',
 			),
 		);
 
 		$this->custom_css_fields = array(
-			'open_toggle' => array(
-				'label'    => esc_html__( 'Open Toggle', 'et_builder' ),
-				'selector' => '.et_pb_toggle.et_pb_toggle_open',
+			'open_toggle'    => array(
+				'label'                    => esc_html__( 'Open Toggle', 'et_builder' ),
+				'selector'                 => '.et_pb_toggle.et_pb_toggle_open',
 				'no_space_before_selector' => true,
 			),
-			'toggle_title' => array(
+			'toggle_title'   => array(
 				'label'    => esc_html__( 'Toggle Title', 'et_builder' ),
 				'selector' => '.et_pb_toggle_title',
 			),
-			'toggle_icon' => array(
+			'toggle_icon'    => array(
 				'label'    => esc_html__( 'Toggle Icon', 'et_builder' ),
 				'selector' => '.et_pb_toggle_title:before',
 			),
@@ -166,7 +166,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 
 	function get_fields() {
 		$fields = array(
-			'title' => array(
+			'title'                          => array(
 				'label'           => et_builder_i18n( 'Title' ),
 				'type'            => 'text',
 				'option_category' => 'basic_option',
@@ -176,79 +176,79 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'mobile_options'  => true,
 				'hover'           => 'tabs',
 			),
-			'open' => array(
-				'label'           => esc_html__( 'State', 'et_builder' ),
-				'type'            => 'select',
-				'option_category' => 'basic_option',
-				'options'         => array(
+			'open'                           => array(
+				'label'            => esc_html__( 'State', 'et_builder' ),
+				'type'             => 'select',
+				'option_category'  => 'basic_option',
+				'options'          => array(
 					'off' => esc_html__( 'Close', 'et_builder' ),
 					'on'  => esc_html__( 'Open', 'et_builder' ),
 				),
 				'default_on_front' => 'off',
-				'toggle_slug'     => 'state',
-				'description'     => esc_html__( 'Choose whether or not this toggle should start in an open or closed state.', 'et_builder' ),
+				'toggle_slug'      => 'state',
+				'description'      => esc_html__( 'Choose whether or not this toggle should start in an open or closed state.', 'et_builder' ),
 			),
-			'content' => array(
-				'label'             => et_builder_i18n( 'Body' ),
-				'type'              => 'tiny_mce',
-				'option_category'   => 'basic_option',
-				'description'       => esc_html__( 'Input the main text content for your module here.', 'et_builder' ),
-				'toggle_slug'       => 'main_content',
-				'dynamic_content'   => 'text',
-				'mobile_options'    => true,
-				'hover'             => 'tabs',
+			'content'                        => array(
+				'label'           => et_builder_i18n( 'Body' ),
+				'type'            => 'tiny_mce',
+				'option_category' => 'basic_option',
+				'description'     => esc_html__( 'Input the main text content for your module here.', 'et_builder' ),
+				'toggle_slug'     => 'main_content',
+				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
-			'open_toggle_text_color' => array(
-				'label'             => esc_html__( 'Open Title Text Color', 'et_builder' ),
-				'description'       => esc_html__( 'You can pick unique text colors for toggle titles when they are open and closed. Choose the open state title color here.', 'et_builder' ),
-				'type'              => 'color-alpha',
-				'custom_color'      => true,
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'title',
-				'hover'             => 'tabs',
-				'mobile_options'    => true,
+			'open_toggle_text_color'         => array(
+				'label'          => esc_html__( 'Open Title Text Color', 'et_builder' ),
+				'description'    => esc_html__( 'You can pick unique text colors for toggle titles when they are open and closed. Choose the open state title color here.', 'et_builder' ),
+				'type'           => 'color-alpha',
+				'custom_color'   => true,
+				'tab_slug'       => 'advanced',
+				'toggle_slug'    => 'title',
+				'hover'          => 'tabs',
+				'mobile_options' => true,
 			),
-			'open_toggle_background_color' => array(
-				'label'             => esc_html__( 'Open Toggle Background Color', 'et_builder' ),
-				'description'       => esc_html__( 'You can pick unique background colors for toggles when they are in their open and closed states. Choose the open state background color here.', 'et_builder' ),
-				'type'              => 'color-alpha',
-				'custom_color'      => true,
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'toggle',
-				'hover'             => 'tabs',
-				'mobile_options'    => true,
+			'open_toggle_background_color'   => array(
+				'label'          => esc_html__( 'Open Toggle Background Color', 'et_builder' ),
+				'description'    => esc_html__( 'You can pick unique background colors for toggles when they are in their open and closed states. Choose the open state background color here.', 'et_builder' ),
+				'type'           => 'color-alpha',
+				'custom_color'   => true,
+				'tab_slug'       => 'advanced',
+				'toggle_slug'    => 'toggle',
+				'hover'          => 'tabs',
+				'mobile_options' => true,
 			),
-			'closed_toggle_text_color' => array(
-				'label'             => esc_html__( 'Closed Title Text Color', 'et_builder' ),
-				'description'       => esc_html__( 'You can pick unique text colors for toggle titles when they are open and closed. Choose the closed state title color here.', 'et_builder' ),
-				'type'              => 'color-alpha',
-				'custom_color'      => true,
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'closed_title',
-				'hover'             => 'tabs',
-				'mobile_options'    => true,
+			'closed_toggle_text_color'       => array(
+				'label'          => esc_html__( 'Closed Title Text Color', 'et_builder' ),
+				'description'    => esc_html__( 'You can pick unique text colors for toggle titles when they are open and closed. Choose the closed state title color here.', 'et_builder' ),
+				'type'           => 'color-alpha',
+				'custom_color'   => true,
+				'tab_slug'       => 'advanced',
+				'toggle_slug'    => 'closed_title',
+				'hover'          => 'tabs',
+				'mobile_options' => true,
 			),
 			'closed_toggle_background_color' => array(
-				'label'             => esc_html__( 'Closed Toggle Background Color', 'et_builder' ),
-				'description'       => esc_html__( 'You can pick unique background colors for toggles when they are in their open and closed states. Choose the closed state background color here.', 'et_builder' ),
-				'type'              => 'color-alpha',
-				'custom_color'      => true,
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'toggle',
-				'hover'             => 'tabs',
-				'mobile_options'    => true,
+				'label'          => esc_html__( 'Closed Toggle Background Color', 'et_builder' ),
+				'description'    => esc_html__( 'You can pick unique background colors for toggles when they are in their open and closed states. Choose the closed state background color here.', 'et_builder' ),
+				'type'           => 'color-alpha',
+				'custom_color'   => true,
+				'tab_slug'       => 'advanced',
+				'toggle_slug'    => 'toggle',
+				'hover'          => 'tabs',
+				'mobile_options' => true,
 			),
-			'icon_color' => array(
-				'label'             => esc_html__( 'Icon Color', 'et_builder' ),
-				'description'       => esc_html__( 'Here you can define a custom color for the toggle icon.', 'et_builder' ),
-				'type'              => 'color-alpha',
-				'custom_color'      => true,
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'icon',
-				'hover'             => 'tabs',
-				'mobile_options'    => true,
+			'icon_color'                     => array(
+				'label'          => esc_html__( 'Icon Color', 'et_builder' ),
+				'description'    => esc_html__( 'Here you can define a custom color for the toggle icon.', 'et_builder' ),
+				'type'           => 'color-alpha',
+				'custom_color'   => true,
+				'tab_slug'       => 'advanced',
+				'toggle_slug'    => 'icon',
+				'hover'          => 'tabs',
+				'mobile_options' => true,
 			),
-			'use_icon_font_size'    => array(
+			'use_icon_font_size'             => array(
 				'label'            => esc_html__( 'Use Custom Icon Size', 'et_builder' ),
 				'description'      => esc_html__( 'If you would like to control the size of the icon, you must first enable this option.', 'et_builder' ),
 				'type'             => 'yes_no_button',
@@ -265,7 +265,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'toggle_slug'      => 'icon',
 				'option_category'  => 'font_option',
 			),
-			'icon_font_size'        => array(
+			'icon_font_size'                 => array(
 				'label'            => esc_html__( 'Icon Font Size', 'et_builder' ),
 				'description'      => esc_html__( 'Control the size of the icon by increasing or decreasing the font size.', 'et_builder' ),
 				'type'             => 'range',
@@ -338,52 +338,58 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		et_pb_responsive_options()->generate_responsive_css( $open_toggle_background_color_values, '%%order_class%%.et_pb_toggle.et_pb_toggle_open', 'background-color', $render_slug, '', 'color' );
 
 		if ( et_builder_is_hover_enabled( 'open_toggle_background_color', $this->props ) ) {
-			ET_Builder_Element::set_style( $render_slug, array(
+			$style = array(
 				'selector'    => '%%order_class%%.et_pb_toggle.et_pb_toggle_open:hover',
 				'declaration' => sprintf(
 					'background-color: %1$s;',
 					esc_html( $open_toggle_background_color_hover )
 				),
-			) );
+			);
+			ET_Builder_Element::set_style( $render_slug, $style );
 		}
 
 		// Closed Toggle Background Color.
 		et_pb_responsive_options()->generate_responsive_css( $closed_toggle_background_color_values, '%%order_class%%.et_pb_toggle.et_pb_toggle_close', 'background-color', $render_slug, '', 'color' );
 
 		if ( et_builder_is_hover_enabled( 'closed_toggle_background_color', $this->props ) ) {
-			ET_Builder_Element::set_style( $render_slug, array(
+
+			$style = array(
 				'selector'    => '%%order_class%%.et_pb_toggle.et_pb_toggle_close:hover',
 				'declaration' => sprintf(
 					'background-color: %1$s;',
 					esc_html( $closed_toggle_background_color_hover )
 				),
-			) );
+			);
+			ET_Builder_Element::set_style( $render_slug, $style );
 		}
 
 		// Open Toggle Text Color.
 		et_pb_responsive_options()->generate_responsive_css( $open_toggle_text_color_values, '%%order_class%%.et_pb_toggle.et_pb_toggle_open h5.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h1.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h6.et_pb_toggle_title', 'color', $render_slug, ' !important;', 'color' );
 
 		if ( et_builder_is_hover_enabled( 'open_toggle_text_color', $this->props ) ) {
-			ET_Builder_Element::set_style( $render_slug, array(
+			$style = array(
 				'selector'    => '%%order_class%%.et_pb_toggle.et_pb_toggle_open h5.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_open h1.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_open:hover h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open:hover h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h4.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_open:hover h6.et_pb_toggle_title',
 				'declaration' => sprintf(
 					'color: %1$s !important;',
 					esc_html( $open_toggle_text_color_hover )
 				),
-			) );
+			);
+			ET_Builder_Element::set_style( $render_slug, $style );
 		}
 
 		// Closed Toggle Text Color.
 		et_pb_responsive_options()->generate_responsive_css( $closed_toggle_text_color_values, '%%order_class%%.et_pb_toggle.et_pb_toggle_close h5.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h1.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h6.et_pb_toggle_title', 'color', $render_slug, ' !important;', 'color' );
 
 		if ( et_builder_is_hover_enabled( 'closed_toggle_text_color', $this->props ) ) {
-			ET_Builder_Element::set_style( $render_slug, array(
+
+			$style = array(
 				'selector'    => '%%order_class%%.et_pb_toggle.et_pb_toggle_close h5.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_close h1.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_close:hover h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close:hover h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close:hover h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close:hover h6.et_pb_toggle_title',
 				'declaration' => sprintf(
 					'color: %1$s !important;',
 					esc_html( $closed_toggle_text_color_hover )
 				),
-			) );
+			);
+			ET_Builder_Element::set_style( $render_slug, $style );
 		}
 
 		// Icon Size.
@@ -418,22 +424,24 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				// 2 is representation of left & right sides. 0 is default toggle icon right position.
 				$icon_font_size_right_hover = 0 !== $icon_font_size_hover_diff ? round( $icon_font_size_hover_diff / 2 ) . $icon_font_size_hover_unit : 0;
 
-				ET_Builder_Element::set_style( $render_slug, array(
+				$style = array(
 					'selector'    => '%%order_class%%:hover .et_pb_toggle_title:before',
 					'declaration' => sprintf(
 						'right:%1$s;',
 						esc_html( $icon_font_size_right_hover )
 					),
-				) );
+				);
+				ET_Builder_Element::set_style( $render_slug, $style );
 
 				// Hover Icon Size.
-				ET_Builder_Element::set_style( $render_slug, array(
+				$style = array(
 					'selector'    => '%%order_class%%:hover .et_pb_toggle_title:before',
 					'declaration' => sprintf(
 						'font-size:%1$s;',
 						esc_html( $icon_font_size_hover )
 					),
-				) );
+				);
+				ET_Builder_Element::set_style( $render_slug, $style );
 			}
 		}
 
@@ -441,14 +449,15 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		et_pb_responsive_options()->generate_responsive_css( $icon_color_values, '%%order_class%% .et_pb_toggle_title:before', 'color', $render_slug, '', 'color', ET_Builder_Element::DEFAULT_PRIORITY + 1 );
 
 		if ( et_builder_is_hover_enabled( 'icon_color', $this->props ) ) {
-			ET_Builder_Element::set_style( $render_slug, array(
+			$style = array(
 				'selector'    => '%%order_class%%:hover .et_pb_toggle_title:before',
 				'priority'    => ET_Builder_Element::DEFAULT_PRIORITY + 1,
 				'declaration' => sprintf(
 					'color: %1$s;',
 					esc_html( $icon_color_hover )
 				),
-			) );
+			);
+			ET_Builder_Element::set_style( $render_slug, $style );
 		}
 
 		if ( 'et_pb_accordion_item' === $render_slug ) {
@@ -465,30 +474,36 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 
 		// Adding "_item" class for toggle module for customizer targetting. There's no proper selector
 		// for toggle module styles since both accordion and toggle module use the same selector
-		if( 'et_pb_toggle' === $render_slug ){
+		if ( 'et_pb_toggle' === $render_slug ) {
 			$this->add_classname( 'et_pb_toggle_item' );
 		}
 
-		$video_background = $this->video_background();
+		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
 
-		$heading = $multi_view->render_element( array(
-			'tag'     => et_pb_process_header_level( $header_level, 'h5' ),
-			'content' => '{{title}}',
-			'attrs'   => array(
-				'class' => 'et_pb_toggle_title',
-			),
-			'required' => false,
-		) );
+		$heading = $multi_view->render_element(
+			array(
+				'tag'      => et_pb_process_header_level( $header_level, 'h5' ),
+				'content'  => '{{title}}',
+				'attrs'    => array(
+					'class' => 'et_pb_toggle_title',
+				),
+				'required' => false,
+			)
+		);
 
-		$multi_view_content = $multi_view->render_attrs( array(
-			'content' => '{{content}}',
-		) );
+		$multi_view_content = $multi_view->render_attrs(
+			array(
+				'content' => '{{content}}',
+			)
+		);
 
 		// Module classnames
-		$this->add_classname( array(
-			$this->get_text_orientation_classname(),
-		) );
+		$this->add_classname(
+			array(
+				$this->get_text_orientation_classname(),
+			)
+		);
 
 		if ( 'on' === $open ) {
 			$this->add_classname( 'et_pb_toggle_open' );
@@ -522,9 +537,9 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 	 *
 	 * @see ET_Builder_Module_Helper_MultiViewOptions::filter_value
 	 *
-	 * @param mixed $raw_value Props raw value.
-	 * @param array $args {
-	 *     Context data.
+	 * @param mixed                                     $raw_value Props raw value.
+	 * @param array                                     $args {
+	 *                                         Context data.
 	 *
 	 *     @type string $context      Context param: content, attrs, visibility, classes.
 	 *     @type string $name         Module options props name.
@@ -536,7 +551,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 	 *
 	 * @return mixed
 	 */
-	public function multi_view_filter_value( $raw_value, $args, $multi_view  ) {
+	public function multi_view_filter_value( $raw_value, $args, $multi_view ) {
 		$name = isset( $args['name'] ) ? $args['name'] : '';
 		$mode = isset( $args['mode'] ) ? $args['mode'] : '';
 
@@ -548,4 +563,4 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Toggle;
+new ET_Builder_Module_Toggle();

@@ -33,7 +33,7 @@ class ET_Builder_Module_Woocommerce_Meta extends ET_Builder_Module {
 			'advanced' => array(
 				'toggles' => array(
 					'layout' => et_builder_i18n( 'Layout' ),
-					'body' => array(
+					'body'   => array(
 						'title'             => et_builder_i18n( 'Text' ),
 						'priority'          => 45,
 						'tabbed_subtoggles' => true,
@@ -115,12 +115,12 @@ class ET_Builder_Module_Woocommerce_Meta extends ET_Builder_Module {
 			),
 			'button'         => false,
 
-			'borders' => array(
+			'borders'        => array(
 				'default' => array(
 					'css'      => array(
 						'main' => array(
-							'border_radii'  => "%%order_class%% .product_meta",
-							'border_styles' => "%%order_class%% .product_meta",
+							'border_radii'  => '%%order_class%% .product_meta',
+							'border_styles' => '%%order_class%% .product_meta',
 						),
 					),
 					'defaults' => array(
@@ -139,7 +139,7 @@ class ET_Builder_Module_Woocommerce_Meta extends ET_Builder_Module {
 					),
 				),
 			),
-			'height' => array(
+			'height'         => array(
 				'css' => array(
 					'main' => '%%order_class%% .product_meta',
 				),
@@ -248,7 +248,7 @@ class ET_Builder_Module_Woocommerce_Meta extends ET_Builder_Module {
 				'toggle_slug'      => 'layout',
 				'description'      => esc_html__( 'Here you can choose how to position the product meta.', 'et_builder' ),
 				'default_on_front' => 'inline',
-				'affects'           => array(
+				'affects'          => array(
 					'separator',
 				),
 			),
@@ -307,19 +307,24 @@ class ET_Builder_Module_Woocommerce_Meta extends ET_Builder_Module {
 	public function add_multi_view_attrs( $outer_wrapper_attrs, $this_class ) {
 		$multi_view = et_pb_multi_view_options( $this_class );
 
-		$multi_view_attrs = $multi_view->render_attrs( array(
-			'classes' => array(
-				'et_pb_wc_no_sku'        => array(
-					'show_sku' => 'off',
-				),
-				'et_pb_wc_no_categories' => array(
-					'show_categories' => 'off',
-				),
-				'et_pb_wc_no_tags'       => array(
-					'show_tags' => 'off',
+		$multi_view_attrs = $multi_view->render_attrs(
+			array(
+				'classes' => array(
+					'et_pb_wc_no_sku'        => array(
+						'show_sku' => 'off',
+					),
+					'et_pb_wc_no_categories' => array(
+						'show_categories' => 'off',
+					),
+					'et_pb_wc_no_tags'       => array(
+						'show_tags' => 'off',
+					),
 				),
 			),
-		), false, null, true );
+			false,
+			null,
+			true
+		);
 
 		if ( $multi_view_attrs && is_array( $multi_view_attrs ) ) {
 			$outer_wrapper_attrs = array_merge( $outer_wrapper_attrs, $multi_view_attrs );
@@ -371,15 +376,14 @@ class ET_Builder_Module_Woocommerce_Meta extends ET_Builder_Module {
 					'%%order_class%%:not(.et_pb_wc_no_tags).et_pb_wc_meta_layout_inline .posted_in:after',
 				),
 				'declaration' => 'content: " ' . esc_html(
-						ET_Builder_Module_Helper_Woocommerce_Modules::escape_special_chars(
-							$this->props['separator'] ) ) . ' "',
+					ET_Builder_Module_Helper_Woocommerce_Modules::escape_special_chars(
+						$this->props['separator']
+					)
+				) . ' "',
 			)
 		);
 
-		add_filter( "et_builder_module_{$render_slug}_outer_wrapper_attrs", array(
-			$this,
-			'add_multi_view_attrs',
-		), 10, 2 );
+		add_filter( "et_builder_module_{$render_slug}_outer_wrapper_attrs", array( $this, 'add_multi_view_attrs' ), 10, 2 );
 
 		$output = self::get_meta( $this->props );
 

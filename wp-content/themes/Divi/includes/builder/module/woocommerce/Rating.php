@@ -61,13 +61,13 @@ class ET_Builder_Module_Woocommerce_Rating extends ET_Builder_Module {
 					'hide_font'        => true,
 					'hide_line_height' => true,
 					'hide_text_shadow' => true,
-					'text_align'         => array(
+					'text_align'       => array(
 						'label' => esc_html__( 'Star Rating Alignment', 'et_builder' ),
 					),
-					'font_size'          => array(
+					'font_size'        => array(
 						'label' => esc_html__( 'Star Rating Size', 'et_builder' ),
 					),
-					'text_color'         => array(
+					'text_color'       => array(
 						'label' => esc_html__( 'Star Rating Color', 'et_builder' ),
 					),
 					'toggle_slug'      => 'star',
@@ -77,10 +77,10 @@ class ET_Builder_Module_Woocommerce_Rating extends ET_Builder_Module {
 					'css'             => array(
 						'main' => '%%order_class%% a.woocommerce-review-link',
 					),
-					'font_size'        => array(
+					'font_size'       => array(
 						'default' => '14px',
 					),
-					'line_height'        => array(
+					'line_height'     => array(
 						'default' => '1.7em',
 					),
 					'hide_text_align' => true,
@@ -98,7 +98,7 @@ class ET_Builder_Module_Woocommerce_Rating extends ET_Builder_Module {
 				),
 			),
 			'margin_padding' => array(
-				'css' => array(
+				'css'           => array(
 					'important' => 'all',
 				),
 				'custom_margin' => array(
@@ -246,7 +246,7 @@ class ET_Builder_Module_Woocommerce_Rating extends ET_Builder_Module {
 			add_filter( 'comments_open', '__return_true' );
 		}
 
-		$rating   = et_builder_wc_render_module_template(
+		$rating = et_builder_wc_render_module_template(
 			'woocommerce_template_single_rating',
 			$args,
 			array( 'product', 'wp_query' )
@@ -273,16 +273,21 @@ class ET_Builder_Module_Woocommerce_Rating extends ET_Builder_Module {
 	public function add_multi_view_attrs( $outer_wrapper_attrs ) {
 		$multi_view = et_pb_multi_view_options( $this );
 
-		$multi_view_attrs = $multi_view->render_attrs( array(
-			'classes' => array(
-				'et_pb_wc_rating_no_rating'  => array(
-					'show_rating' => 'off',
-				),
-				'et_pb_wc_rating_no_reviews' => array(
-					'show_reviews_link' => 'off',
+		$multi_view_attrs = $multi_view->render_attrs(
+			array(
+				'classes' => array(
+					'et_pb_wc_rating_no_rating'  => array(
+						'show_rating' => 'off',
+					),
+					'et_pb_wc_rating_no_reviews' => array(
+						'show_reviews_link' => 'off',
+					),
 				),
 			),
-		), false, null, true );
+			false,
+			null,
+			true
+		);
 
 		if ( $multi_view_attrs && is_array( $multi_view_attrs ) ) {
 			$outer_wrapper_attrs = array_merge( $outer_wrapper_attrs, $multi_view_attrs );
@@ -325,10 +330,7 @@ class ET_Builder_Module_Woocommerce_Rating extends ET_Builder_Module {
 			$this->add_classname( "et_pb_wc_rating_layout_{$this->props['layout']}" );
 		}
 
-		add_filter( "et_builder_module_{$render_slug}_outer_wrapper_attrs", array(
-			$this,
-			'add_multi_view_attrs',
-		) );
+		add_filter( "et_builder_module_{$render_slug}_outer_wrapper_attrs", array( $this, 'add_multi_view_attrs' ) );
 
 		$output = self::get_rating( $this->props );
 

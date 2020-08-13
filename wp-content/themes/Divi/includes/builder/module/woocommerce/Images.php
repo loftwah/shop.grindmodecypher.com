@@ -74,10 +74,10 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 			'text_shadow'    => array(),
 			'text'           => false,
 			'fonts'          => array(
-				'sale_badge'    => array(
+				'sale_badge' => array(
 					'label'           => esc_html__( 'Sale Badge', 'et_builder' ),
 					'css'             => array(
-						'main'      => "%%order_class%% .et_pb_module_inner span.onsale",
+						'main'      => '%%order_class%% .et_pb_module_inner span.onsale',
 						'important' => 'all',
 					),
 					'hide_text_align' => true,
@@ -279,10 +279,13 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 
 		// Image force fullwidth.
 		if ( 'on' === $force_fullwidth ) {
-			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '%%order_class%% .woocommerce-product-gallery__image img',
-				'declaration' => 'width: 100%;',
-			) );
+			ET_Builder_Element::set_style(
+				$render_slug,
+				array(
+					'selector'    => '%%order_class%% .woocommerce-product-gallery__image img',
+					'declaration' => 'width: 100%;',
+				)
+			);
 		}
 
 		$output = self::get_images( $this->props );

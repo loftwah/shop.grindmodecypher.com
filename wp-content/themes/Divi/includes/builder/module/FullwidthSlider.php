@@ -15,12 +15,12 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 		$this->main_css_element = '%%order_class%%.et_pb_slider';
 
 		$this->settings_modal_toggles = array(
-			'general'  => array(
+			'general'    => array(
 				'toggles' => array(
-					'elements'   => et_builder_i18n( 'Elements' ),
+					'elements' => et_builder_i18n( 'Elements' ),
 				),
 			),
-			'advanced' => array(
+			'advanced'   => array(
 				'toggles' => array(
 					'overlay'    => et_builder_i18n( 'Overlay' ),
 					'navigation' => esc_html__( 'Navigation', 'et_builder' ),
@@ -39,13 +39,13 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 		);
 
 		$this->advanced_fields = array(
-			'fonts'                 => array(
+			'fonts'          => array(
 				'header' => array(
-					'label'    => et_builder_i18n( 'Title' ),
-					'css'      => array(
-						'main' => "{$this->main_css_element} .et_pb_slide_description .et_pb_slide_title",
+					'label'        => et_builder_i18n( 'Title' ),
+					'css'          => array(
+						'main'         => "{$this->main_css_element} .et_pb_slide_description .et_pb_slide_title",
 						'limited_main' => "{$this->main_css_element} .et_pb_slide_description .et_pb_slide_title, {$this->main_css_element} .et_pb_slide_description .et_pb_slide_title a",
-						'important' => array(
+						'important'    => array(
 							'color',
 							'size',
 							'font-size',
@@ -59,7 +59,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 				'body'   => array(
 					'label'          => et_builder_i18n( 'Body' ),
 					'css'            => array(
-						'main' => "{$this->main_css_element}.et_pb_module .et_pb_slides .et_pb_slide_content",
+						'main'        => "{$this->main_css_element}.et_pb_module .et_pb_slides .et_pb_slide_content",
 						'line_height' => "{$this->main_css_element} p",
 						'important'   => array( 'size', 'font-size' ),
 					),
@@ -69,14 +69,14 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 					),
 				),
 			),
-			'borders'               => array(
+			'borders'        => array(
 				'default' => array(),
 				'image'   => array(
 					'css'             => array(
 						'main' => array(
 							'border_radii'  => '%%order_class%% .et_pb_slide_image img',
 							'border_styles' => '%%order_class%% .et_pb_slide_image img',
-						)
+						),
 					),
 					'label_prefix'    => et_builder_i18n( 'Image' ),
 					'tab_slug'        => 'advanced',
@@ -92,7 +92,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 					),
 				),
 			),
-			'box_shadow'            => array(
+			'box_shadow'     => array(
 				'default' => array(
 					'css' => array(
 						'overlay' => 'inset',
@@ -112,16 +112,16 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 					),
 				),
 			),
-			'button'                => array(
+			'button'         => array(
 				'button' => array(
-					'label' => et_builder_i18n( 'Button' ),
-					'css' => array(
-						'main' => "{$this->main_css_element} .et_pb_more_button.et_pb_button",
+					'label'          => et_builder_i18n( 'Button' ),
+					'css'            => array(
+						'main'         => "{$this->main_css_element} .et_pb_more_button.et_pb_button",
 						'linited_main' => "{$this->main_css_element} .et_pb_more_button.et_pb_button",
-						'alignment' => "{$this->main_css_element} .et_pb_button_wrapper",
+						'alignment'    => "{$this->main_css_element} .et_pb_button_wrapper",
 					),
-					'use_alignment' => true,
-					'box_shadow' => array(
+					'use_alignment'  => true,
+					'box_shadow'     => array(
 						'css' => array(
 							'main' => '%%order_class%% .et_pb_button',
 						),
@@ -133,18 +133,16 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 					),
 				),
 			),
-			'background'            => array(
+			'background'     => array(
 				'use_background_color'          => 'fields_only',
 				'use_background_color_gradient' => 'fields_only',
 				'use_background_image'          => 'fields_only',
 				'options'                       => array(
-					'parallax_method' => array(
+					'parallax_method'     => array(
 						'default' => 'off',
 					),
-					'background_position' => array(
-					),
-					'background_size' => array(
-					),
+					'background_position' => array(),
+					'background_size'     => array(),
 				),
 			),
 			'margin_padding' => array(
@@ -154,23 +152,23 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 					'important' => array( 'custom_margin' ), // needed to overwrite last module margin-bottom styling
 				),
 			),
-			'text'                  => array(
-				'css'   => array(
+			'text'           => array(
+				'css'     => array(
 					'text_orientation' => '%%order_class%% .et_pb_slide .et_pb_slide_description',
 					'text_shadow'      => '%%order_class%% .et_pb_slide .et_pb_slide_description',
 				),
 				'options' => array(
-					'text_orientation'  => array(
-						'default'          => 'center',
+					'text_orientation' => array(
+						'default' => 'center',
 					),
 				),
 			),
-			'height' => array(
+			'height'         => array(
 				'css' => array(
 					'main' => '%%order_class%%, %%order_class%% .et_pb_slide',
-				)
+				),
 			),
-			'image'                 => array(
+			'image'          => array(
 				'css' => array(
 					'main' => array(
 						'%%order_class%% .et_pb_slide_image',
@@ -178,43 +176,43 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 					),
 				),
 			),
-			'max_width'             => array(
-				'extra'   => array(
+			'max_width'      => array(
+				'extra' => array(
 					'content' => array(
 						'use_module_alignment' => false,
-						'css' => array(
+						'css'                  => array(
 							'main' => '%%order_class%% .et_pb_slide > .et_pb_container',
 						),
-						'options' => array(
+						'options'              => array(
 							'width'     => array(
-								'label' => esc_html__( 'Content Width', 'et_builder' ),
+								'label'   => esc_html__( 'Content Width', 'et_builder' ),
 								'default' => '80%',
 							),
 							'max_width' => array(
-								'label' => esc_html__( 'Content Max Width', 'et_builder' ),
+								'label'   => esc_html__( 'Content Max Width', 'et_builder' ),
 								'default' => '1080px',
 							),
-						)
-					)
-				)
+						),
+					),
+				),
 			),
 		);
 
 		$this->custom_css_fields = array(
-			'slide_description' => array(
+			'slide_description'       => array(
 				'label'    => esc_html__( 'Slide Description', 'et_builder' ),
 				'selector' => '.et_pb_slide_description',
 			),
-			'slide_title' => array(
+			'slide_title'             => array(
 				'label'    => esc_html__( 'Slide Title', 'et_builder' ),
 				'selector' => '.et_pb_slide_description .et_pb_slide_title',
 			),
-			'slide_button' => array(
-				'label'    => esc_html__( 'Slide Button', 'et_builder' ),
-				'selector' => '.et_pb_slider .et_pb_slide .et_pb_slide_description a.et_pb_more_button.et_pb_button',
+			'slide_button'            => array(
+				'label'                    => esc_html__( 'Slide Button', 'et_builder' ),
+				'selector'                 => '.et_pb_slider .et_pb_slide .et_pb_slide_description a.et_pb_more_button.et_pb_button',
 				'no_space_before_selector' => true,
 			),
-			'slide_controllers' => array(
+			'slide_controllers'       => array(
 				'label'    => esc_html__( 'Slide Controllers', 'et_builder' ),
 				'selector' => '.et-pb-controllers',
 			),
@@ -222,11 +220,11 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 				'label'    => esc_html__( 'Slide Active Controller', 'et_builder' ),
 				'selector' => '.et-pb-controllers .et-pb-active-control',
 			),
-			'slide_image' => array(
+			'slide_image'             => array(
 				'label'    => esc_html__( 'Slide Image', 'et_builder' ),
 				'selector' => '.et_pb_slide_image',
 			),
-			'slide_arrows' => array(
+			'slide_arrows'            => array(
 				'label'    => esc_html__( 'Slide Arrows', 'et_builder' ),
 				'selector' => '.et-pb-slider-arrows a',
 			),
@@ -242,71 +240,71 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 
 	function get_fields() {
 		$fields = array(
-			'show_arrows' => array(
-				'label'           => esc_html__( 'Show Arrows', 'et_builder' ),
-				'type'            => 'yes_no_button',
-				'option_category' => 'configuration',
-				'options'         => array(
+			'show_arrows'             => array(
+				'label'            => esc_html__( 'Show Arrows', 'et_builder' ),
+				'type'             => 'yes_no_button',
+				'option_category'  => 'configuration',
+				'options'          => array(
 					'on'  => et_builder_i18n( 'Yes' ),
 					'off' => et_builder_i18n( 'No' ),
 				),
 				'default_on_front' => 'on',
-				'toggle_slug'     => 'elements',
-				'description'     => esc_html__( 'This setting allows you to turn the navigation arrows on or off.', 'et_builder' ),
-				'mobile_options'  => true,
-				'hover'           => 'tabs',
+				'toggle_slug'      => 'elements',
+				'description'      => esc_html__( 'This setting allows you to turn the navigation arrows on or off.', 'et_builder' ),
+				'mobile_options'   => true,
+				'hover'            => 'tabs',
 			),
-			'show_pagination' => array(
-				'label'           => esc_html__( 'Show Controls', 'et_builder' ),
-				'type'            => 'yes_no_button',
-				'option_category' => 'configuration',
-				'options'         => array(
+			'show_pagination'         => array(
+				'label'            => esc_html__( 'Show Controls', 'et_builder' ),
+				'type'             => 'yes_no_button',
+				'option_category'  => 'configuration',
+				'options'          => array(
 					'on'  => et_builder_i18n( 'Yes' ),
 					'off' => et_builder_i18n( 'No' ),
 				),
 				'default_on_front' => 'on',
-				'toggle_slug'     => 'elements',
-				'description'     => esc_html__( 'Disabling this option will remove the circle button at the bottom of the slider.', 'et_builder' ),
-				'mobile_options'  => true,
-				'hover'           => 'tabs',
+				'toggle_slug'      => 'elements',
+				'description'      => esc_html__( 'Disabling this option will remove the circle button at the bottom of the slider.', 'et_builder' ),
+				'mobile_options'   => true,
+				'hover'            => 'tabs',
 			),
-			'show_content_on_mobile' => array(
-				'label'           => esc_html__( 'Show Content On Mobile', 'et_builder' ),
-				'type'            => 'yes_no_button',
-				'option_category' => 'layout',
-				'options'         => array(
+			'show_content_on_mobile'  => array(
+				'label'            => esc_html__( 'Show Content On Mobile', 'et_builder' ),
+				'type'             => 'yes_no_button',
+				'option_category'  => 'layout',
+				'options'          => array(
 					'on'  => et_builder_i18n( 'Yes' ),
 					'off' => et_builder_i18n( 'No' ),
 				),
 				'default_on_front' => 'on',
-				'tab_slug'        => 'custom_css',
-				'toggle_slug'     => 'visibility',
+				'tab_slug'         => 'custom_css',
+				'toggle_slug'      => 'visibility',
 			),
-			'show_cta_on_mobile' => array(
-				'label'           => esc_html__( 'Show CTA On Mobile', 'et_builder' ),
-				'type'            => 'yes_no_button',
-				'option_category' => 'layout',
-				'options'         => array(
+			'show_cta_on_mobile'      => array(
+				'label'            => esc_html__( 'Show CTA On Mobile', 'et_builder' ),
+				'type'             => 'yes_no_button',
+				'option_category'  => 'layout',
+				'options'          => array(
 					'on'  => et_builder_i18n( 'Yes' ),
 					'off' => et_builder_i18n( 'No' ),
 				),
 				'default_on_front' => 'on',
-				'tab_slug'        => 'custom_css',
-				'toggle_slug'     => 'visibility',
+				'tab_slug'         => 'custom_css',
+				'toggle_slug'      => 'visibility',
 			),
 			'show_image_video_mobile' => array(
-				'label'           => esc_html__( 'Show Image / Video On Mobile', 'et_builder' ),
-				'type'            => 'yes_no_button',
-				'option_category' => 'layout',
-				'options'         => array(
+				'label'            => esc_html__( 'Show Image / Video On Mobile', 'et_builder' ),
+				'type'             => 'yes_no_button',
+				'option_category'  => 'layout',
+				'options'          => array(
 					'off' => et_builder_i18n( 'No' ),
 					'on'  => et_builder_i18n( 'Yes' ),
 				),
 				'default_on_front' => 'off',
-				'tab_slug'        => 'custom_css',
-				'toggle_slug'     => 'visibility',
+				'tab_slug'         => 'custom_css',
+				'toggle_slug'      => 'visibility',
 			),
-			'use_bg_overlay'      => array(
+			'use_bg_overlay'          => array(
 				'label'            => esc_html__( 'Use Background Overlay', 'et_builder' ),
 				'description'      => esc_html__( 'When enabled, a custom overlay color will be added above your background image and behind your slider content.', 'et_builder' ),
 				'type'             => 'yes_no_button',
@@ -323,7 +321,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 				'toggle_slug'      => 'overlay',
 				'option_category'  => 'configuration',
 			),
-			'bg_overlay_color'      => array(
+			'bg_overlay_color'        => array(
 				'label'           => esc_html__( 'Background Overlay Color', 'et_builder' ),
 				'description'     => esc_html__( 'Use the color picker to choose a color for the background overlay.', 'et_builder' ),
 				'type'            => 'color-alpha',
@@ -334,7 +332,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 				'option_category' => 'configuration',
 				'mobile_options'  => true,
 			),
-			'use_text_overlay'      => array(
+			'use_text_overlay'        => array(
 				'label'            => esc_html__( 'Use Text Overlay', 'et_builder' ),
 				'description'      => esc_html__( 'When enabled, a background color is added behind the slider text to make it more readable atop background images.', 'et_builder' ),
 				'type'             => 'yes_no_button',
@@ -352,7 +350,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 				'toggle_slug'      => 'overlay',
 				'option_category'  => 'configuration',
 			),
-			'text_overlay_color'    => array(
+			'text_overlay_color'      => array(
 				'label'           => esc_html__( 'Text Overlay Color', 'et_builder' ),
 				'description'     => esc_html__( 'Use the color picker to choose a color for the text overlay.', 'et_builder' ),
 				'type'            => 'color-alpha',
@@ -363,7 +361,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 				'option_category' => 'configuration',
 				'mobile_options'  => true,
 			),
-			'text_border_radius'    => array(
+			'text_border_radius'      => array(
 				'label'            => esc_html__( 'Text Overlay Border Radius', 'et_builder' ),
 				'description'      => esc_html__( 'Increasing the border radius will increase the roundness of the overlay corners. Setting this value to 0 will result in squared corners.', 'et_builder' ),
 				'type'             => 'range',
@@ -382,7 +380,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 				'toggle_slug'      => 'overlay',
 				'mobile_options'   => true,
 			),
-			'arrows_custom_color'   => array(
+			'arrows_custom_color'     => array(
 				'label'          => esc_html__( 'Arrow Color', 'et_builder' ),
 				'description'    => esc_html__( 'Pick a color to use for the slider arrows that are used to navigate through each slide.', 'et_builder' ),
 				'type'           => 'color-alpha',
@@ -392,7 +390,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 				'mobile_options' => true,
 				'hover'          => 'tabs',
 			),
-			'dot_nav_custom_color'  => array(
+			'dot_nav_custom_color'    => array(
 				'label'          => esc_html__( 'Dot Navigation Color', 'et_builder' ),
 				'description'    => esc_html__( 'Pick a color to use for the dot navigation that appears at the bottom of the slider to designate which slide is active.', 'et_builder' ),
 				'type'           => 'color-alpha',
@@ -412,19 +410,19 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 		global $et_pb_slider_parent_type;
 
 		$et_pb_slider_parent_type = $this->slug;
-		$et_pb_slider_item_num = 0;
+		$et_pb_slider_item_num    = 0;
 
-		$parallax        = $this->props['parallax'];
-		$parallax_method = $this->props['parallax_method'];
-		$show_content_on_mobile  = $this->props['show_content_on_mobile'];
-		$show_cta_on_mobile      = $this->props['show_cta_on_mobile'];
-		$button_rel              = $this->props['button_rel'];
-		$button_custom           = $this->props['custom_button'];
+		$parallax               = $this->props['parallax'];
+		$parallax_method        = $this->props['parallax_method'];
+		$show_content_on_mobile = $this->props['show_content_on_mobile'];
+		$show_cta_on_mobile     = $this->props['show_cta_on_mobile'];
+		$button_rel             = $this->props['button_rel'];
+		$button_custom          = $this->props['custom_button'];
 
-		$custom_icon_values      = et_pb_responsive_options()->get_property_values( $this->props, 'button_icon' );
-		$custom_icon             = isset( $custom_icon_values['desktop'] ) ? $custom_icon_values['desktop'] : '';
-		$custom_icon_tablet      = isset( $custom_icon_values['tablet'] ) ? $custom_icon_values['tablet'] : '';
-		$custom_icon_phone       = isset( $custom_icon_values['phone'] ) ? $custom_icon_values['phone'] : '';
+		$custom_icon_values = et_pb_responsive_options()->get_property_values( $this->props, 'button_icon' );
+		$custom_icon        = isset( $custom_icon_values['desktop'] ) ? $custom_icon_values['desktop'] : '';
+		$custom_icon_tablet = isset( $custom_icon_values['tablet'] ) ? $custom_icon_values['tablet'] : '';
+		$custom_icon_phone  = isset( $custom_icon_values['phone'] ) ? $custom_icon_values['phone'] : '';
 
 		$et_pb_slider_has_video = false;
 
@@ -433,15 +431,15 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 		$et_pb_slider_parallax_method = $parallax_method;
 
 		$et_pb_slider_show_mobile = array(
-			'show_content_on_mobile'  => $show_content_on_mobile,
-			'show_cta_on_mobile'      => $show_cta_on_mobile,
+			'show_content_on_mobile' => $show_content_on_mobile,
+			'show_cta_on_mobile'     => $show_cta_on_mobile,
 		);
 
 		$et_pb_slider_custom_icon        = 'on' === $button_custom ? $custom_icon : '';
 		$et_pb_slider_custom_icon_tablet = 'on' === $button_custom ? $custom_icon_tablet : '';
 		$et_pb_slider_custom_icon_phone  = 'on' === $button_custom ? $custom_icon_phone : '';
 
-		$et_pb_slider_button_rel  = $button_rel;
+		$et_pb_slider_button_rel = $button_rel;
 
 		// BG Overlay Color.
 		$bg_overlay_color        = $this->props['bg_overlay_color'];
@@ -477,135 +475,135 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 		global $et_pb_slider;
 
 		$et_pb_slider = array(
-			'background_last_edited'                            => $this->props['background_last_edited'],
-			'background__hover_enabled'                         => isset( $this->props['background__hover_enabled'] ) ? $this->props['background__hover_enabled'] : '',
+			'background_last_edited'                       => $this->props['background_last_edited'],
+			'background__hover_enabled'                    => isset( $this->props['background__hover_enabled'] ) ? $this->props['background__hover_enabled'] : '',
 			// Background Color.
-			'background_enable_color'                           => $this->props['background_enable_color'],
-			'background_enable_color_tablet'                    => $this->props['background_enable_color_tablet'],
-			'background_enable_color_phone'                     => $this->props['background_enable_color_phone'],
-			'background_enable_color__hover'                    => isset( $this->props['background_enable_color__hover'] ) ? $this->props['background_enable_color__hover'] : '',
-			'background_color'                                  => $this->props['background_color'],
-			'background_color_tablet'                           => $this->props['background_color_tablet'],
-			'background_color_phone'                            => $this->props['background_color_phone'],
-			'background_color__hover'                           => isset( $this->props['background_color__hover'] ) ? $this->props['background_color__hover'] : '',
+			'background_enable_color'                      => $this->props['background_enable_color'],
+			'background_enable_color_tablet'               => $this->props['background_enable_color_tablet'],
+			'background_enable_color_phone'                => $this->props['background_enable_color_phone'],
+			'background_enable_color__hover'               => isset( $this->props['background_enable_color__hover'] ) ? $this->props['background_enable_color__hover'] : '',
+			'background_color'                             => $this->props['background_color'],
+			'background_color_tablet'                      => $this->props['background_color_tablet'],
+			'background_color_phone'                       => $this->props['background_color_phone'],
+			'background_color__hover'                      => isset( $this->props['background_color__hover'] ) ? $this->props['background_color__hover'] : '',
 			// Background Gradient.
-			'use_background_color_gradient'                     => $this->props['use_background_color_gradient'],
-			'use_background_color_gradient_tablet'              => $this->props['use_background_color_gradient_tablet'],
-			'use_background_color_gradient_phone'               => $this->props['use_background_color_gradient_phone'],
-			'use_background_color_gradient__hover'              => isset( $this->props['use_background_color_gradient__hover'] ) ? $this->props['use_background_color_gradient__hover'] : '',
-			'background_color_gradient_type'                    => $this->props['background_color_gradient_type'],
-			'background_color_gradient_type_tablet'             => $this->props['background_color_gradient_type_tablet'],
-			'background_color_gradient_type_phone'              => $this->props['background_color_gradient_type_phone'],
-			'background_color_gradient_type__hover'             => isset( $this->props['background_color_gradient_type__hover'] ) ? $this->props['background_color_gradient_type__hover'] : '',
-			'background_color_gradient_direction'               => $this->props['background_color_gradient_direction'],
-			'background_color_gradient_direction_tablet'        => $this->props['background_color_gradient_direction_tablet'],
-			'background_color_gradient_direction_phone'         => $this->props['background_color_gradient_direction_phone'],
-			'background_color_gradient_direction__hover'        => isset( $this->props['background_color_gradient_direction__hover'] ) ? $this->props['background_color_gradient_direction__hover'] : '',
-			'background_color_gradient_direction_radial'        => $this->props['background_color_gradient_direction_radial'],
+			'use_background_color_gradient'                => $this->props['use_background_color_gradient'],
+			'use_background_color_gradient_tablet'         => $this->props['use_background_color_gradient_tablet'],
+			'use_background_color_gradient_phone'          => $this->props['use_background_color_gradient_phone'],
+			'use_background_color_gradient__hover'         => isset( $this->props['use_background_color_gradient__hover'] ) ? $this->props['use_background_color_gradient__hover'] : '',
+			'background_color_gradient_type'               => $this->props['background_color_gradient_type'],
+			'background_color_gradient_type_tablet'        => $this->props['background_color_gradient_type_tablet'],
+			'background_color_gradient_type_phone'         => $this->props['background_color_gradient_type_phone'],
+			'background_color_gradient_type__hover'        => isset( $this->props['background_color_gradient_type__hover'] ) ? $this->props['background_color_gradient_type__hover'] : '',
+			'background_color_gradient_direction'          => $this->props['background_color_gradient_direction'],
+			'background_color_gradient_direction_tablet'   => $this->props['background_color_gradient_direction_tablet'],
+			'background_color_gradient_direction_phone'    => $this->props['background_color_gradient_direction_phone'],
+			'background_color_gradient_direction__hover'   => isset( $this->props['background_color_gradient_direction__hover'] ) ? $this->props['background_color_gradient_direction__hover'] : '',
+			'background_color_gradient_direction_radial'   => $this->props['background_color_gradient_direction_radial'],
 			'background_color_gradient_direction_radial_tablet' => $this->props['background_color_gradient_direction_radial_tablet'],
-			'background_color_gradient_direction_radial_phone'  => $this->props['background_color_gradient_direction_radial_phone'],
+			'background_color_gradient_direction_radial_phone' => $this->props['background_color_gradient_direction_radial_phone'],
 			'background_color_gradient_direction_radial__hover' => isset( $this->props['background_color_gradient_direction_radial__hover'] ) ? $this->props['background_color_gradient_direction_radial__hover'] : '',
-			'background_color_gradient_start'                   => $this->props['background_color_gradient_start'],
-			'background_color_gradient_start_tablet'            => $this->props['background_color_gradient_start_tablet'],
-			'background_color_gradient_start_phone'             => $this->props['background_color_gradient_start_phone'],
-			'background_color_gradient_start__hover'            => isset( $this->props['background_color_gradient_start__hover'] ) ? $this->props['background_color_gradient_start__hover'] : '',
-			'background_color_gradient_end'                     => $this->props['background_color_gradient_end'],
-			'background_color_gradient_end_tablet'              => $this->props['background_color_gradient_end_tablet'],
-			'background_color_gradient_end_phone'               => $this->props['background_color_gradient_end_phone'],
-			'background_color_gradient_end__hover'              => isset( $this->props['background_color_gradient_end__hover'] ) ? $this->props['background_color_gradient_end__hover'] : '',
-			'background_color_gradient_start_position'          => $this->props['background_color_gradient_start_position'],
-			'background_color_gradient_start_position_tablet'   => $this->props['background_color_gradient_start_position_tablet'],
-			'background_color_gradient_start_position_phone'    => $this->props['background_color_gradient_start_position_phone'],
-			'background_color_gradient_start_position__hover'   => isset( $this->props['background_color_gradient_start_position__hover'] ) ? $this->props['background_color_gradient_start_position__hover'] : '',
-			'background_color_gradient_end_position'            => $this->props['background_color_gradient_end_position'],
-			'background_color_gradient_end_position_tablet'     => $this->props['background_color_gradient_end_position_tablet'],
-			'background_color_gradient_end_position_phone'      => $this->props['background_color_gradient_end_position_phone'],
-			'background_color_gradient_end_position__hover'     => isset( $this->props['background_color_gradient_end_position__hover'] ) ? $this->props['background_color_gradient_end_position__hover'] : '',
-			'background_color_gradient_overlays_image'          => $this->props['background_color_gradient_overlays_image'],
-			'background_color_gradient_overlays_image_tablet'   => $this->props['background_color_gradient_overlays_image_tablet'],
-			'background_color_gradient_overlays_image_phone'    => $this->props['background_color_gradient_overlays_image_phone'],
-			'background_color_gradient_overlays_image__hover'   => isset( $this->props['background_color_gradient_overlays_image__hover'] ) ? $this->props['background_color_gradient_overlays_image__hover'] : '',
+			'background_color_gradient_start'              => $this->props['background_color_gradient_start'],
+			'background_color_gradient_start_tablet'       => $this->props['background_color_gradient_start_tablet'],
+			'background_color_gradient_start_phone'        => $this->props['background_color_gradient_start_phone'],
+			'background_color_gradient_start__hover'       => isset( $this->props['background_color_gradient_start__hover'] ) ? $this->props['background_color_gradient_start__hover'] : '',
+			'background_color_gradient_end'                => $this->props['background_color_gradient_end'],
+			'background_color_gradient_end_tablet'         => $this->props['background_color_gradient_end_tablet'],
+			'background_color_gradient_end_phone'          => $this->props['background_color_gradient_end_phone'],
+			'background_color_gradient_end__hover'         => isset( $this->props['background_color_gradient_end__hover'] ) ? $this->props['background_color_gradient_end__hover'] : '',
+			'background_color_gradient_start_position'     => $this->props['background_color_gradient_start_position'],
+			'background_color_gradient_start_position_tablet' => $this->props['background_color_gradient_start_position_tablet'],
+			'background_color_gradient_start_position_phone' => $this->props['background_color_gradient_start_position_phone'],
+			'background_color_gradient_start_position__hover' => isset( $this->props['background_color_gradient_start_position__hover'] ) ? $this->props['background_color_gradient_start_position__hover'] : '',
+			'background_color_gradient_end_position'       => $this->props['background_color_gradient_end_position'],
+			'background_color_gradient_end_position_tablet' => $this->props['background_color_gradient_end_position_tablet'],
+			'background_color_gradient_end_position_phone' => $this->props['background_color_gradient_end_position_phone'],
+			'background_color_gradient_end_position__hover' => isset( $this->props['background_color_gradient_end_position__hover'] ) ? $this->props['background_color_gradient_end_position__hover'] : '',
+			'background_color_gradient_overlays_image'     => $this->props['background_color_gradient_overlays_image'],
+			'background_color_gradient_overlays_image_tablet' => $this->props['background_color_gradient_overlays_image_tablet'],
+			'background_color_gradient_overlays_image_phone' => $this->props['background_color_gradient_overlays_image_phone'],
+			'background_color_gradient_overlays_image__hover' => isset( $this->props['background_color_gradient_overlays_image__hover'] ) ? $this->props['background_color_gradient_overlays_image__hover'] : '',
 			// Background Image.
-			'background_enable_image'                           => $this->props['background_enable_image'],
-			'background_enable_image_tablet'                    => $this->props['background_enable_image_tablet'],
-			'background_enable_image_phone'                     => $this->props['background_enable_image_phone'],
-			'background_enable_image__hover'                    => isset( $this->props['background_enable_image__hover'] ) ? $this->props['background_enable_image__hover'] : '',
-			'background_image'                                  => $this->props['background_image'],
-			'background_image_tablet'                           => $this->props['background_image_tablet'],
-			'background_image_phone'                            => $this->props['background_image_phone'],
-			'background_image__hover'                           => isset( $this->props['background_image__hover'] ) ? $this->props['background_image__hover'] : '',
-			'background_size'                                   => $this->props['background_size'],
-			'background_size_tablet'                            => $this->props['background_size_tablet'],
-			'background_size_phone'                             => $this->props['background_size_phone'],
-			'background_size__hover'                            => isset( $this->props['background_size__hover'] ) ? $this->props['background_size__hover'] : '',
-			'background_position'                               => $this->props['background_position'],
-			'background_position_tablet'                        => $this->props['background_position_tablet'],
-			'background_position_phone'                         => $this->props['background_position_phone'],
-			'background_position__hover'                        => isset( $this->props['background_position__hover'] ) ? $this->props['background_position__hover'] : '',
-			'background_repeat'                                 => $this->props['background_repeat'],
-			'background_repeat_tablet'                          => $this->props['background_repeat_tablet'],
-			'background_repeat_phone'                           => $this->props['background_repeat_phone'],
-			'background_repeat__hover'                          => isset( $this->props['background_repeat__hover'] ) ? $this->props['background_repeat__hover'] : '',
-			'background_blend'                                  => $this->props['background_blend'],
-			'background_blend_tablet'                           => $this->props['background_blend_tablet'],
-			'background_blend_phone'                            => $this->props['background_blend_phone'],
-			'background_blend__hover'                           => isset( $this->props['background_blend__hover'] ) ? $this->props['background_blend__hover'] : '',
-			'parallax'                                          => $this->props['parallax'],
-			'parallax_tablet'                                   => $this->props['parallax_tablet'],
-			'parallax_phone'                                    => $this->props['parallax_phone'],
-			'parallax__hover'                                   => isset( $this->props['parallax__hover'] ) ? $this->props['parallax__hover'] : '',
-			'parallax_method'                                   => $this->props['parallax_method'],
-			'parallax_method_tablet'                            => $this->props['parallax_method_tablet'],
-			'parallax_method_phone'                             => $this->props['parallax_method_phone'],
-			'parallax_method__hover'                            => isset( $this->props['parallax_method__hover'] ) ? $this->props['parallax_method__hover'] : '',
+			'background_enable_image'                      => $this->props['background_enable_image'],
+			'background_enable_image_tablet'               => $this->props['background_enable_image_tablet'],
+			'background_enable_image_phone'                => $this->props['background_enable_image_phone'],
+			'background_enable_image__hover'               => isset( $this->props['background_enable_image__hover'] ) ? $this->props['background_enable_image__hover'] : '',
+			'background_image'                             => $this->props['background_image'],
+			'background_image_tablet'                      => $this->props['background_image_tablet'],
+			'background_image_phone'                       => $this->props['background_image_phone'],
+			'background_image__hover'                      => isset( $this->props['background_image__hover'] ) ? $this->props['background_image__hover'] : '',
+			'background_size'                              => $this->props['background_size'],
+			'background_size_tablet'                       => $this->props['background_size_tablet'],
+			'background_size_phone'                        => $this->props['background_size_phone'],
+			'background_size__hover'                       => isset( $this->props['background_size__hover'] ) ? $this->props['background_size__hover'] : '',
+			'background_position'                          => $this->props['background_position'],
+			'background_position_tablet'                   => $this->props['background_position_tablet'],
+			'background_position_phone'                    => $this->props['background_position_phone'],
+			'background_position__hover'                   => isset( $this->props['background_position__hover'] ) ? $this->props['background_position__hover'] : '',
+			'background_repeat'                            => $this->props['background_repeat'],
+			'background_repeat_tablet'                     => $this->props['background_repeat_tablet'],
+			'background_repeat_phone'                      => $this->props['background_repeat_phone'],
+			'background_repeat__hover'                     => isset( $this->props['background_repeat__hover'] ) ? $this->props['background_repeat__hover'] : '',
+			'background_blend'                             => $this->props['background_blend'],
+			'background_blend_tablet'                      => $this->props['background_blend_tablet'],
+			'background_blend_phone'                       => $this->props['background_blend_phone'],
+			'background_blend__hover'                      => isset( $this->props['background_blend__hover'] ) ? $this->props['background_blend__hover'] : '',
+			'parallax'                                     => $this->props['parallax'],
+			'parallax_tablet'                              => $this->props['parallax_tablet'],
+			'parallax_phone'                               => $this->props['parallax_phone'],
+			'parallax__hover'                              => isset( $this->props['parallax__hover'] ) ? $this->props['parallax__hover'] : '',
+			'parallax_method'                              => $this->props['parallax_method'],
+			'parallax_method_tablet'                       => $this->props['parallax_method_tablet'],
+			'parallax_method_phone'                        => $this->props['parallax_method_phone'],
+			'parallax_method__hover'                       => isset( $this->props['parallax_method__hover'] ) ? $this->props['parallax_method__hover'] : '',
 			// Background Video.
-			'background_enable_video_mp4'                       => $this->props['background_enable_video_mp4'],
-			'background_enable_video_mp4_tablet'                => $this->props['background_enable_video_mp4_tablet'],
-			'background_enable_video_mp4_phone'                 => $this->props['background_enable_video_mp4_phone'],
-			'background_enable_video_mp4__hover'                => isset( $this->props['background_enable_video_mp4__hover'] ) ? $this->props['background_enable_video_mp4__hover'] : '',
-			'background_enable_video_webm'                      => $this->props['background_enable_video_webm'],
-			'background_enable_video_webm_tablet'               => $this->props['background_enable_video_webm_tablet'],
-			'background_enable_video_webm_phone'                => $this->props['background_enable_video_webm_phone'],
-			'background_enable_video_webm__hover'               => isset( $this->props['background_enable_video_webm__hover'] ) ? $this->props['background_enable_video_webm__hover'] : '',
-			'background_video_mp4'                              => $this->props['background_video_mp4'],
-			'background_video_mp4_tablet'                       => $this->props['background_video_mp4_tablet'],
-			'background_video_mp4_phone'                        => $this->props['background_video_mp4_phone'],
-			'background_video_mp4__hover'                       => isset( $this->props['background_video_mp4__hover'] ) ? $this->props['background_video_mp4__hover'] : '',
-			'background_video_webm'                             => $this->props['background_video_webm'],
-			'background_video_webm_tablet'                      => $this->props['background_video_webm_tablet'],
-			'background_video_webm_phone'                       => $this->props['background_video_webm_phone'],
-			'background_video_webm__hover'                      => isset( $this->props['background_video_webm__hover'] ) ? $this->props['background_video_webm__hover'] : '',
-			'background_video_width'                            => $this->props['background_video_width'],
-			'background_video_width_tablet'                     => $this->props['background_video_width_tablet'],
-			'background_video_width_phone'                      => $this->props['background_video_width_phone'],
-			'background_video_width__hover'                     => isset( $this->props['background_video_width__hover'] ) ? $this->props['background_video_width__hover'] : '',
-			'background_video_height'                           => $this->props['background_video_height'],
-			'background_video_height_tablet'                    => $this->props['background_video_height_tablet'],
-			'background_video_height_phone'                     => $this->props['background_video_height_phone'],
-			'background_video_height__hover'                    => isset( $this->props['background_video_height__hover'] ) ? $this->props['background_video_height__hover'] : '',
-			'header_level'                                      => $this->props['header_level'],
-			'use_bg_overlay'                                    => $this->props['use_bg_overlay'],
-			'bg_overlay_color'                                  => $bg_overlay_color,
-			'bg_overlay_color_slider_last_edited'               => $this->props['bg_overlay_color_last_edited'],
-			'bg_overlay_color_tablet'                           => $bg_overlay_color_tablet,
-			'bg_overlay_color_phone'                            => $bg_overlay_color_phone,
-			'use_text_overlay'                                  => $this->props['use_text_overlay'],
-			'text_overlay_color'                                => $text_overlay_color,
-			'text_overlay_color_slider_last_edited'             => $this->props['text_overlay_color_last_edited'],
-			'text_overlay_color_tablet'                         => $text_overlay_color_tablet,
-			'text_overlay_color_phone'                          => $text_overlay_color_phone,
-			'text_border_radius'                                => $text_border_radius,
-			'text_border_radius_slider_last_edited'             => $this->props['text_border_radius_last_edited'],
-			'text_border_radius_tablet'                         => $text_border_radius_tablet,
-			'text_border_radius_phone'                          => $text_border_radius_phone,
-			'arrows_custom_color'                               => $arrows_custom_color,
-			'arrows_custom_color_slider_last_edited'            => $this->props['arrows_custom_color_last_edited'],
-			'arrows_custom_color_tablet'                        => $arrows_custom_color_tablet,
-			'arrows_custom_color_phone'                         => $arrows_custom_color_phone,
-			'dot_nav_custom_color'                              => $dot_nav_custom_color,
-			'dot_nav_custom_color_slider_last_edited'           => $this->props['dot_nav_custom_color_last_edited'],
-			'dot_nav_custom_color_tablet'                       => $dot_nav_custom_color_tablet,
-			'dot_nav_custom_color_phone'                        => $dot_nav_custom_color_phone,
+			'background_enable_video_mp4'                  => $this->props['background_enable_video_mp4'],
+			'background_enable_video_mp4_tablet'           => $this->props['background_enable_video_mp4_tablet'],
+			'background_enable_video_mp4_phone'            => $this->props['background_enable_video_mp4_phone'],
+			'background_enable_video_mp4__hover'           => isset( $this->props['background_enable_video_mp4__hover'] ) ? $this->props['background_enable_video_mp4__hover'] : '',
+			'background_enable_video_webm'                 => $this->props['background_enable_video_webm'],
+			'background_enable_video_webm_tablet'          => $this->props['background_enable_video_webm_tablet'],
+			'background_enable_video_webm_phone'           => $this->props['background_enable_video_webm_phone'],
+			'background_enable_video_webm__hover'          => isset( $this->props['background_enable_video_webm__hover'] ) ? $this->props['background_enable_video_webm__hover'] : '',
+			'background_video_mp4'                         => $this->props['background_video_mp4'],
+			'background_video_mp4_tablet'                  => $this->props['background_video_mp4_tablet'],
+			'background_video_mp4_phone'                   => $this->props['background_video_mp4_phone'],
+			'background_video_mp4__hover'                  => isset( $this->props['background_video_mp4__hover'] ) ? $this->props['background_video_mp4__hover'] : '',
+			'background_video_webm'                        => $this->props['background_video_webm'],
+			'background_video_webm_tablet'                 => $this->props['background_video_webm_tablet'],
+			'background_video_webm_phone'                  => $this->props['background_video_webm_phone'],
+			'background_video_webm__hover'                 => isset( $this->props['background_video_webm__hover'] ) ? $this->props['background_video_webm__hover'] : '',
+			'background_video_width'                       => $this->props['background_video_width'],
+			'background_video_width_tablet'                => $this->props['background_video_width_tablet'],
+			'background_video_width_phone'                 => $this->props['background_video_width_phone'],
+			'background_video_width__hover'                => isset( $this->props['background_video_width__hover'] ) ? $this->props['background_video_width__hover'] : '',
+			'background_video_height'                      => $this->props['background_video_height'],
+			'background_video_height_tablet'               => $this->props['background_video_height_tablet'],
+			'background_video_height_phone'                => $this->props['background_video_height_phone'],
+			'background_video_height__hover'               => isset( $this->props['background_video_height__hover'] ) ? $this->props['background_video_height__hover'] : '',
+			'header_level'                                 => $this->props['header_level'],
+			'use_bg_overlay'                               => $this->props['use_bg_overlay'],
+			'bg_overlay_color'                             => $bg_overlay_color,
+			'bg_overlay_color_slider_last_edited'          => $this->props['bg_overlay_color_last_edited'],
+			'bg_overlay_color_tablet'                      => $bg_overlay_color_tablet,
+			'bg_overlay_color_phone'                       => $bg_overlay_color_phone,
+			'use_text_overlay'                             => $this->props['use_text_overlay'],
+			'text_overlay_color'                           => $text_overlay_color,
+			'text_overlay_color_slider_last_edited'        => $this->props['text_overlay_color_last_edited'],
+			'text_overlay_color_tablet'                    => $text_overlay_color_tablet,
+			'text_overlay_color_phone'                     => $text_overlay_color_phone,
+			'text_border_radius'                           => $text_border_radius,
+			'text_border_radius_slider_last_edited'        => $this->props['text_border_radius_last_edited'],
+			'text_border_radius_tablet'                    => $text_border_radius_tablet,
+			'text_border_radius_phone'                     => $text_border_radius_phone,
+			'arrows_custom_color'                          => $arrows_custom_color,
+			'arrows_custom_color_slider_last_edited'       => $this->props['arrows_custom_color_last_edited'],
+			'arrows_custom_color_tablet'                   => $arrows_custom_color_tablet,
+			'arrows_custom_color_phone'                    => $arrows_custom_color_phone,
+			'dot_nav_custom_color'                         => $dot_nav_custom_color,
+			'dot_nav_custom_color_slider_last_edited'      => $this->props['dot_nav_custom_color_last_edited'],
+			'dot_nav_custom_color_tablet'                  => $dot_nav_custom_color_tablet,
+			'dot_nav_custom_color_phone'                   => $dot_nav_custom_color_phone,
 		);
 
 		// Hover Options attribute doesn't have field definition and rendered on the fly, thus the use of array_get()
@@ -626,7 +624,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view              = et_pb_multi_view_options($this);
+		$multi_view              = et_pb_multi_view_options( $this );
 		$show_arrows             = $this->props['show_arrows'];
 		$show_pagination         = $this->props['show_pagination'];
 		$parallax                = $this->props['parallax'];
@@ -645,17 +643,18 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 		if ( '' !== $background_position && 'default' !== $background_position && 'off' === $parallax ) {
 			$processed_position = str_replace( '_', ' ', $background_position );
 
-			ET_Builder_Module::set_style( $render_slug, array(
+			$style = array(
 				'selector'    => '%%order_class%% .et_pb_slide',
 				'declaration' => sprintf(
 					'background-position: %1$s;',
 					esc_html( $processed_position )
 				),
-			) );
+			);
+			ET_Builder_Module::set_style( $render_slug, $style );
 		}
 
 		if ( '' !== $background_size && 'default' !== $background_size && 'off' === $parallax ) {
-			ET_Builder_Module::set_style( $render_slug, array(
+			$style = array(
 				'selector'    => '%%order_class%% .et_pb_slide',
 				'declaration' => sprintf(
 					'-moz-background-size: %1$s;
@@ -663,7 +662,8 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 					background-size: %1$s;',
 					esc_html( $background_size )
 				),
-			) );
+			);
+			ET_Builder_Module::set_style( $render_slug, $style );
 		}
 
 		// Module classnames
@@ -688,10 +688,12 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 		}
 
 		if ( 'on' === $auto ) {
-			$this->add_classname( array(
-				'et_slider_auto',
-				"et_slider_speed_{$auto_speed}",
-			) );
+			$this->add_classname(
+				array(
+					'et_slider_auto',
+					"et_slider_speed_{$auto_speed}",
+				)
+			);
 		}
 
 		if ( 'on' === $auto_ignore_hover ) {
@@ -708,16 +710,18 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 		// Remove automatically added classnames
 		$this->remove_classname( 'et_pb_fullwidth_slider' );
 
-		$multi_view_data_attr = $multi_view->render_attrs( array(
-			'classes' => array(
-				'et_pb_slider_no_arrows' => array(
-					'show_arrows' => 'off',
+		$multi_view_data_attr = $multi_view->render_attrs(
+			array(
+				'classes' => array(
+					'et_pb_slider_no_arrows'     => array(
+						'show_arrows' => 'off',
+					),
+					'et_pb_slider_no_pagination' => array(
+						'show_pagination' => 'off',
+					),
 				),
-				'et_pb_slider_no_pagination' => array(
-					'show_pagination' => 'off',
-				),
-			),
-		) );
+			)
+		);
 
 		$output = sprintf(
 			'<div%3$s class="%1$s"%5$s>
@@ -756,7 +760,7 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 					. '-webkit-box-shadow: none; '
 					. '-moz-box-shadow: none; '
 					. 'box-shadow: none; '
-					.'}',
+					. '}',
 					esc_attr( $class )
 				)
 			);
@@ -780,4 +784,4 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Fullwidth_Slider;
+new ET_Builder_Module_Fullwidth_Slider();

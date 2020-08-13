@@ -2,19 +2,19 @@
 
 function _et_pb_autoload( $class ) {
 	switch ( $class ) {
-		case 'ET_Builder_Section' :
-		case 'ET_Builder_Row' :
-		case 'ET_Builder_Row_Inner' :
-		case 'ET_Builder_Column' :
+		case 'ET_Builder_Section':
+		case 'ET_Builder_Row':
+		case 'ET_Builder_Row_Inner':
+		case 'ET_Builder_Column':
 			require_once 'main-structure-elements.php';
 			break;
-		case 'ET_Builder_Module_Helper_Multi_Value' :
+		case 'ET_Builder_Module_Helper_Multi_Value':
 			require_once 'module/helpers/MultiValue.php';
 			break;
-		case 'ET_Builder_Module_Helper_Overflow' :
+		case 'ET_Builder_Module_Helper_Overflow':
 			require_once 'module/helpers/Overflow.php';
 			break;
-		case 'ET_Builder_Module_Helper_Alignment' :
+		case 'ET_Builder_Module_Helper_Alignment':
 			require_once 'module/helpers/Alignment.php';
 			break;
 		case 'ET_Builder_Module_Helper_Sizing':

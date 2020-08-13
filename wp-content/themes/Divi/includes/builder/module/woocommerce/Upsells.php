@@ -78,13 +78,13 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 					'hide_font'        => true,
 					'hide_line_height' => true,
 					'hide_text_shadow' => true,
-					'text_align'         => array(
+					'text_align'       => array(
 						'label' => esc_html__( 'Star Rating Alignment', 'et_builder' ),
 					),
-					'font_size'          => array(
+					'font_size'        => array(
 						'label' => esc_html__( 'Star Rating Size', 'et_builder' ),
 					),
-					'text_color'         => array(
+					'text_color'       => array(
 						'label' => esc_html__( 'Star Rating Color', 'et_builder' ),
 					),
 					'toggle_slug'      => 'star',
@@ -289,7 +289,7 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 	 * {@inheritdoc}
 	 */
 	public function get_fields() {
-		$fields  = array(
+		$fields = array(
 			'product'             => ET_Builder_Module_Helper_Woocommerce_Modules::get_field(
 				'product',
 				array(
@@ -436,13 +436,14 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 			// Set upsells id; adjust it with module's arguments. This is specifically needed if
 			// the module fetched the value via computed callback due to some fields no longer uses
 			// default value
-			ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder::set_tb_upsells_ids( array(
-				'limit' => et_()->array_get( $args, 'posts_number', 4 ),
-			) );
+			ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder::set_tb_upsells_ids(
+				array(
+					'limit' => et_()->array_get( $args, 'posts_number', 4 ),
+				)
+			);
 
 			add_filter( 'woocommerce_product_class', 'et_theme_builder_wc_product_class' );
 		}
-
 
 		add_filter(
 			'woocommerce_upsell_display_args',
@@ -607,7 +608,7 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 
 		if ( $is_shop ) {
 			$display_type = ET_Builder_Module_Helper_Woocommerce_Modules::set_display_type_to_render_only_products( 'woocommerce_shop_page_display' );
-		} else if ( is_product_category() ) {
+		} elseif ( is_product_category() ) {
 			$display_type = ET_Builder_Module_Helper_Woocommerce_Modules::set_display_type_to_render_only_products( 'woocommerce_category_archive_display' );
 		}
 
@@ -628,7 +629,7 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 
 		if ( $is_shop && isset( $display_type ) ) {
 			ET_Builder_Module_Helper_Woocommerce_Modules::reset_display_type( 'woocommerce_shop_page_display', $display_type );
-		} else if ( $is_product_category && isset( $display_type ) ) {
+		} elseif ( $is_product_category && isset( $display_type ) ) {
 			ET_Builder_Module_Helper_Woocommerce_Modules::reset_display_type( 'woocommerce_category_archive_display', $display_type );
 		}
 

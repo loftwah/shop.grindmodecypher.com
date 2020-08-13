@@ -30,12 +30,12 @@ class ET_Builder_Module_Code extends ET_Builder_Module {
 					'important' => array( 'custom_margin' ), // needed to overwrite last module margin-bottom styling
 				),
 			),
-			'text_shadow'           => array(
+			'text_shadow'    => array(
 				// Don't add text-shadow fields since they already are via font-options
 				'default' => false,
 			),
-			'fonts'                 => false,
-			'button'                => false,
+			'fonts'          => false,
+			'button'         => false,
 		);
 
 		$this->help_videos = array(
@@ -76,13 +76,15 @@ class ET_Builder_Module_Code extends ET_Builder_Module {
 		// Module classnames
 		$this->add_classname( $this->get_text_orientation_classname() );
 
-		$raw_content = $multi_view->render_element( array(
-			'tag' => 'div',
-			'content' => '{{raw_content}}',
-			'attrs' => array(
-				'class' => 'et_pb_code_inner',
-			),
-		) );
+		$raw_content = $multi_view->render_element(
+			array(
+				'tag'     => 'div',
+				'content' => '{{raw_content}}',
+				'attrs'   => array(
+					'class' => 'et_pb_code_inner',
+				),
+			)
+		);
 
 		$output = sprintf(
 			'<div%2$s class="%3$s">
@@ -104,7 +106,7 @@ class ET_Builder_Module_Code extends ET_Builder_Module {
 	 * Filter multi view value.
 	 *
 	 * @since 3.27.1
-	 * 
+	 *
 	 * @see ET_Builder_Module_Helper_MultiViewOptions::filter_value
 	 *
 	 * @param mixed $raw_value Props raw value.
@@ -136,4 +138,4 @@ class ET_Builder_Module_Code extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Code;
+new ET_Builder_Module_Code();

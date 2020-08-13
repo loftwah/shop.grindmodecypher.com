@@ -56,7 +56,7 @@ class ET_Builder_Plugin_Compat_Imagify extends ET_Builder_Plugin_Compat_Base {
 		$is_webp_picture = 'picture' === get_imagify_option( 'display_webp_method' );
 		if ( $is_webp && $is_webp_picture ) {
 			$logo_height = esc_attr( et_get_option( 'logo_height', '54' ) );
-			$style       .= "
+			$style      .= "
 				picture#logo {
 					display: inherit;
 				}
@@ -119,9 +119,9 @@ class ET_Builder_Plugin_Compat_Imagify extends ET_Builder_Plugin_Compat_Base {
 		}
 
 		if ( ! empty( $scripts ) ) {
-			wp_add_inline_script( 'divi-customizer-controls-js', $scripts);
+			wp_add_inline_script( 'divi-customizer-controls-js', $scripts );
 		}
 	}
 }
 
-new ET_Builder_Plugin_Compat_Imagify;
+new ET_Builder_Plugin_Compat_Imagify();

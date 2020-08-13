@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Load plugin compatibility file if supported plugins are activated
+ *
  * @since 0.7 (builder version)
  */
 class ET_Builder_Plugin_Compat_Loader {
@@ -33,12 +34,13 @@ class ET_Builder_Plugin_Compat_Loader {
 
 	/**
 	 * Hook methods to WordPress action and filter
+	 *
 	 * @return void
 	 */
 	private function init_hooks() {
 		// Load plugin.php for frontend usage
 		if ( ! function_exists( 'is_plugin_active' ) || ! function_exists( 'get_plugins' ) ) {
-			include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		// Loop plugin list and load active plugin compatibility file

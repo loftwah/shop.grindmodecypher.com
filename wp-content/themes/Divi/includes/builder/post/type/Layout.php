@@ -122,7 +122,7 @@ class ET_Builder_Post_Type_Layout extends ET_Core_Post_Type {
 	 */
 	public static function instance( $type = 'cpt', $name = 'et_pb_layout' ) {
 		if ( ! $instance = parent::instance( $type, $name ) ) {
-			$instance = new self;
+			$instance = new self();
 		}
 
 		return $instance;

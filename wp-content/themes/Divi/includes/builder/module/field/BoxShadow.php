@@ -82,7 +82,8 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 				'default_on_fronts'   => array(),
 				'show_if'             => null,
 				'show_if_not'         => null,
-			), $args
+			),
+			$args
 		);
 
 		if ( $this->template->is_enabled() && $this->template->has( 'box_shadow' ) ) {
@@ -283,8 +284,8 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 	 *
 	 * @since 3.23 Add support for responsive settings.
 	 *
-	 * @param  array  $atts Module attributes.
-	 * @param  array  $args Box-shadow arguments.
+	 * @param  array $atts Module attributes.
+	 * @param  array $args Box-shadow arguments.
 	 * @return string       Box shadow CSS declaration.
 	 */
 	public function get_value( $atts, array $args = array() ) {
@@ -294,7 +295,8 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 				'important' => false,
 				'hover'     => false,
 				'device'    => 'desktop',
-			), $args
+			),
+			$args
 		);
 		$suffix    = $args['suffix'];
 		$important = $args['important'] ? '!important' : '';
@@ -318,7 +320,8 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 				"box_shadow_blur{$suffix}"       => $preset['blur'],
 				"box_shadow_spread{$suffix}"     => $preset['spread'],
 				"box_shadow_color{$suffix}"      => 'rgba(0,0,0,0.3)',
-			), array_filter( $atts, 'strlen' )
+			),
+			array_filter( $atts, 'strlen' )
 		);
 
 		// All the values below sometime return null.

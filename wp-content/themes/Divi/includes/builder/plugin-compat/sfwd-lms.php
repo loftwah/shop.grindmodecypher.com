@@ -93,4 +93,4 @@ class ET_Builder_Plugin_Compat_LearnDash extends ET_Builder_Plugin_Compat_Base {
 	}
 }
 
-new ET_Builder_Plugin_Compat_LearnDash;
+new ET_Builder_Plugin_Compat_LearnDash();

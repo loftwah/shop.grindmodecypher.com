@@ -65,7 +65,7 @@ class ET_Builder_Ajax_Cache {
 	 *
 	 * @since 4.0.10
 	 *
-	 * @param array $deps Dependencies array.
+	 * @param array  $deps Dependencies array.
 	 * @param string $key Script handle.
 	 *
 	 * @return array
@@ -258,7 +258,7 @@ class ET_Builder_Ajax_Cache {
 	 */
 	public static function instance() {
 		if ( ! self::$_instance ) {
-			self::$_instance = new self;
+			self::$_instance = new self();
 		}
 
 		return self::$_instance;

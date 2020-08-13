@@ -125,7 +125,6 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
       et_header_style_left = $('body').hasClass('et_header_style_left'),
       $top_header = $('#top-header'),
       $main_header = $('#main-header'),
-      $mainContent = $('#main-content'),
       $main_container_wrapper = $('#page-container'),
       $et_main_content_first_row = $('#main-content .container:first-child'),
       $et_main_content_first_row_meta_wrapper = $et_main_content_first_row.find('.et_post_meta_wrapper:first'),
@@ -675,8 +674,9 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
                 $et_pb_first_row_first_module_slider_arrow = $et_pb_first_row_first_module.find('.et-pb-slider-arrows a'),
                 et_pb_first_row_slider_arrow_height = $et_pb_first_row_first_module_slider_arrow.height(); // Save current styling for the next resize cycle
 
-            et_save_initial_page_container_style($et_pb_first_row_first_module_slide, 'paddingTop');
-            $mainContent.css({
+            et_save_initial_page_container_style($et_pb_first_row_first_module_slide, 'paddingTop'); // Adding padding top to each slide so the transparency become useful
+
+            $et_pb_first_row_first_module_slide.css({
               'paddingTop': header_height
             }); // delete container's min-height
 

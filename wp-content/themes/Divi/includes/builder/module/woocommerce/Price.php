@@ -110,10 +110,10 @@ class ET_Builder_Module_Woocommerce_Price extends ET_Builder_Module {
 				),
 			),
 			'text'           => array(
-				'css'     => array(
+				'css'         => array(
 					'text_shadow' => '%%order_class%%',
 				),
-				'options' => array(
+				'options'     => array(
 					'background_layout' => array(
 						'default' => 'light',
 						'hover'   => 'tabs',

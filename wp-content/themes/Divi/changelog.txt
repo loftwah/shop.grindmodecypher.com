@@ -1,3 +1,9 @@
+version 4.5.6 ( updated 08-10-2020 )
+- Fixed issue with extra top padding getting added to the page.
+	* includes/builder/frontend-builder/bundle.js
+	* js/src/custom.js
+	* js/src/theme-customizer.js
+
 version 4.5.5 ( updated 08-08-2020 )
 - Fixed bottom section dividers appearing at the top of sections. 
 	* style.css

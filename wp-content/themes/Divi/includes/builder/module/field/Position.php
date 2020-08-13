@@ -119,7 +119,7 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 			$additional_options['position_origin_f']                      = $origin_option;
 			$additional_options['position_origin_f']['linked_responsive'] = array( 'positioning', 'position_origin_a', 'position_origin_r' );
 
-// For relative position
+			// For relative position
 			$additional_options['position_origin_r']                      = $origin_option;
 			$additional_options['position_origin_r']['label']             = $i18n['offset']['label'];
 			$additional_options['position_origin_r']['description']       = $i18n['offset']['description'];
@@ -190,9 +190,9 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 		}
 
 		foreach ( $responsive_options as $option ) {
-			$additional_options["${option}_tablet"]      = $skip;
-			$additional_options["${option}_phone"]       = $skip;
-			$additional_options["${option}_last_edited"] = $skip;
+			$additional_options[ "${option}_tablet" ]      = $skip;
+			$additional_options[ "${option}_phone" ]       = $skip;
+			$additional_options[ "${option}_last_edited" ] = $skip;
 		}
 
 		return $additional_options;
@@ -401,12 +401,14 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				$value = $this->get_value( $props, 'z_index', $z_index_default, $type, false );
 				if ( '' !== $value ) {
 					$type_selector = 'hover' === $type ? "${z_index_selector}:hover" : $z_index_selector;
-					ET_Builder_Element::set_style( $function_name,
-						array(
-							'selector'    => $type_selector,
-							'declaration' => "z-index: $value$z_important;",
-							'priority'    => $this->module->get_style_priority(),
-						) + $this->get_media_query( $type ) );
+
+					$el_style         = array(
+						'selector'    => $type_selector,
+						'declaration' => "z-index: $value$z_important;",
+						'priority'    => $this->module->get_style_priority(),
+					) + $this->get_media_query( $type );
+					ET_Builder_Element::set_style( $function_name, $el_style );
+
 					$has_z_index = true;
 				}
 			}
@@ -440,7 +442,7 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 					$important                 = ' !important';
 					$position_origins[ $type ] = 'none';
 				} else {
-					$suffix                    = sprintf( "_%s", substr( $value, 0, 1 ) );
+					$suffix                    = sprintf( '_%s', substr( $value, 0, 1 ) );
 					$position_origins[ $type ] = $this->get_value( $props, "position_origin$suffix", 'top_left', $type, true );
 				}
 				if ( $default_value === $value ) {
@@ -448,12 +450,14 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				}
 				if ( strpos( $position_origins[ $type ], '_is_default' ) === false ) {
 					$type_selector = 'hover' === $type ? "${position_selector}:hover" : $position_selector;
-					ET_Builder_Element::set_style( $function_name,
-						array(
-							'selector'    => $type_selector,
-							'declaration' => "position: $position_value$important;",
-							'priority'    => $this->module->get_style_priority(),
-						) + $this->get_media_query( $type ) );
+
+					$el_style = array(
+						'selector'    => $type_selector,
+						'declaration' => "position: $position_value$important;",
+						'priority'    => $this->module->get_style_priority(),
+					) + $this->get_media_query( $type );
+					ET_Builder_Element::set_style( $function_name, $el_style );
+
 					$has_position = true;
 				}
 			}
@@ -494,12 +498,12 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				}
 				if ( 'none' === $active_origin ) {
 					if ( ! $is_default_position ) {
-						ET_Builder_Element::set_style( $function_name,
-							array(
-								'selector'    => $type_selector,
-								'declaration' => "top:0px; right:auto; bottom:auto; left:0px;",
-								'priority'    => $this->module->get_style_priority(),
-							) + $this->get_media_query( $type ) );
+						$el_style = array(
+							'selector'    => $type_selector,
+							'declaration' => 'top:0px; right:auto; bottom:auto; left:0px;',
+							'priority'    => $this->module->get_style_priority(),
+						) + $this->get_media_query( $type );
+						ET_Builder_Element::set_style( $function_name, $el_style );
 					}
 					continue;
 				}
@@ -546,48 +550,48 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 							$admin_bar_declaration = "$property: calc($value + $admin_bar_height);";
 						}
 						if ( 'desktop' !== $type || 'fixed' === $active_position ) {
-							ET_Builder_Element::set_style( $function_name,
-								array(
-									'selector'    => "body.logged-in.admin-bar $type_selector",
-									'declaration' => $admin_bar_declaration,
-									'priority'    => $this->module->get_style_priority(),
-								) + $this->get_media_query( $type ) );
+							$el_style = array(
+								'selector'    => "body.logged-in.admin-bar $type_selector",
+								'declaration' => $admin_bar_declaration,
+								'priority'    => $this->module->get_style_priority(),
+							) + $this->get_media_query( $type );
+							ET_Builder_Element::set_style( $function_name, $el_style );
 						}
 					}
 					if ( 'top' === $inverse_property && ( 'desktop' !== $type || 'fixed' === $active_position ) ) {
-						ET_Builder_Element::set_style( $function_name,
-							array(
-								'selector'    => "body.logged-in.admin-bar $type_selector",
-								'declaration' => "$inverse_property: auto",
-								'priority'    => $this->module->get_style_priority(),
-							) + $this->get_media_query( $type ) );
+						$el_style = array(
+							'selector'    => "body.logged-in.admin-bar $type_selector",
+							'declaration' => "$inverse_property: auto",
+							'priority'    => $this->module->get_style_priority(),
+						) + $this->get_media_query( $type );
+						ET_Builder_Element::set_style( $function_name, $el_style );
 					}
 
-					ET_Builder_Element::set_style( $function_name,
-						array(
-							'selector'    => $type_selector,
-							'declaration' => "$property: $value;",
-							'priority'    => $this->module->get_style_priority(),
-						) + $this->get_media_query( $type ) );
+					$el_style = array(
+						'selector'    => $type_selector,
+						'declaration' => "$property: $value;",
+						'priority'    => $this->module->get_style_priority(),
+					) + $this->get_media_query( $type );
+					ET_Builder_Element::set_style( $function_name, $el_style );
 
-					ET_Builder_Element::set_style( $function_name,
-						array(
-							'selector'    => $type_selector,
-							'declaration' => "$inverse_property: auto;",
-							'priority'    => $this->module->get_style_priority(),
-						) + $this->get_media_query( $type ) );
+					$el_style = array(
+						'selector'    => $type_selector,
+						'declaration' => "$inverse_property: auto;",
+						'priority'    => $this->module->get_style_priority(),
+					) + $this->get_media_query( $type );
+					ET_Builder_Element::set_style( $function_name, $el_style );
 				}
 			}
 		}
 
 		if ( $has_z_index && ( ! is_array( $position_config ) || ! $has_position ) ) {
 			// Backwards compatibility. Before this feature if z-index was set, position got defaulted as relative
-			ET_Builder_Element::set_style( $function_name,
-				array(
-					'selector'    => '%%order_class%%',
-					'declaration' => "position: relative;",
-					'priority'    => $this->module->get_style_priority(),
-				) );
+			$el_style = array(
+				'selector'    => '%%order_class%%',
+				'declaration' => 'position: relative;',
+				'priority'    => $this->module->get_style_priority(),
+			);
+			ET_Builder_Element::set_style( $function_name, $el_style );
 		}
 	}
 }

@@ -55,14 +55,16 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 			// phpcs:enable
 		}
 
-		$settings = wp_parse_args( array(
+		$settings_args = array(
 			'option_category' => 'layout',
 			'tab_slug'        => 'advanced',
 			'toggle_slug'     => 'transform',
 			'depends_on'      => null,
 			'depends_show_if' => null,
 			'defaults'        => $this->defaults,
-		), $args );
+		);
+
+		$settings = wp_parse_args( $settings_args, $args );
 
 		$additional_options = array();
 		$defaults           = $settings['defaults'];
@@ -177,7 +179,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 			'composite_structure' => $tabs,
 		);
 
-		//Register responsive options
+		// Register responsive options
 		$skip       = array(
 			'type'        => 'skip',
 			'tab_slug'    => $settings['tab_slug'],
@@ -187,15 +189,15 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 
 		foreach ( $additional_options['transform_styles']['composite_structure'] as $tab_name => $tab ) {
 			foreach ( $tab['controls'] as $field_name => $field_options ) {
-				$controls                              = $additional_options['transform_styles']['composite_structure'][ $tab_name ]['controls'];
-				$controls["${field_name}_tablet"]      = $skip;
-				$controls["${field_name}_phone"]       = $skip;
-				$controls["${field_name}_last_edited"] = $skip;
+				$controls                                = $additional_options['transform_styles']['composite_structure'][ $tab_name ]['controls'];
+				$controls[ "${field_name}_tablet" ]      = $skip;
+				$controls[ "${field_name}_phone" ]       = $skip;
+				$controls[ "${field_name}_last_edited" ] = $skip;
 				if ( in_array( $field_name, array( 'transform_scale', 'transform_translate', 'transform_skew' ) ) ) {
-					$controls["${field_name}_linked"]        = $linkedSkip;
-					$controls["${field_name}_linked_tablet"] = $linkedSkip;
-					$controls["${field_name}_linked_phone"]  = $linkedSkip;
-					$controls["${field_name}_linked__hover"] = $linkedSkip;
+					$controls[ "${field_name}_linked" ]        = $linkedSkip;
+					$controls[ "${field_name}_linked_tablet" ] = $linkedSkip;
+					$controls[ "${field_name}_linked_phone" ]  = $linkedSkip;
+					$controls[ "${field_name}_linked__hover" ] = $linkedSkip;
 				}
 				$additional_options['transform_styles']['composite_structure'][ $tab_name ]['controls'] = $controls;
 			}
@@ -205,7 +207,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 		return $additional_options;
 	}
 
-	//Processing functions
+	// Processing functions
 
 	public function percent_to_unit( $percent = 0 ) {
 		if ( strpos( $percent, '%' ) === false ) {
@@ -230,7 +232,11 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 
 	public function get_option( $typeAxis, $type = 'desktop' ) {
 		$setting     = "transform_$typeAxis[0]";
-		$interpreter = array( 'X' => 0, 'Y' => 1, 'Z' => 2 );
+		$interpreter = array(
+			'X' => 0,
+			'Y' => 1,
+			'Z' => 2,
+		);
 		$index       = $interpreter[ $typeAxis[1] ];
 
 		$defaultValue = false;
@@ -286,7 +292,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 			if ( ! empty( $value ) ) {
 				if ( 'origin' === $typeAxis[0] ) {
 					if ( 'originY' === $option && empty( $originArray ) ) {
-						//default value of originX
+						// default value of originX
 						array_push( $originArray, '50%' );
 					}
 					array_push( $originArray, $value );
@@ -321,7 +327,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 				array_push( $declaration, '!important' );
 			}
 
-			return sprintf( "transform: %s;", implode( ' ', $declaration ) );
+			return sprintf( 'transform: %s;', implode( ' ', $declaration ) );
 		}
 
 		return '';
@@ -375,7 +381,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 				} else {
 					$originDeclaration = sprintf( 'transform-origin: %s;', implode( ' ', $elements['origin'] ) );
 				}
-				$newKeyframeRules  = "0%{ $startDeclaration }";
+				$newKeyframeRules   = "0%{ $startDeclaration }";
 				$newKeyframeRules  .= "100%{opacity:1;$transformDeclaration}";
 				$newAnimationRules .= $originDeclaration;
 				break;
@@ -400,8 +406,8 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 						$startElements['translateY'] = $translateY;
 						break;
 				}
-				$startDeclaration = $this->getTransformDeclaration( $startElements );
-				$newKeyframeRules = "0%{ $startDeclaration }";
+				$startDeclaration  = $this->getTransformDeclaration( $startElements );
+				$newKeyframeRules  = "0%{ $startDeclaration }";
 				$newKeyframeRules .= "100%{opacity:1;$transformDeclaration}";
 				break;
 			case 'bounce':
@@ -492,27 +498,27 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 				$rotateX = (float) str_replace( 'deg', '', $utils->array_get( $elements['transform'], 'rotateX', '0' ) );
 				$rotateY = (float) str_replace( 'deg', '', $utils->array_get( $elements['transform'], 'rotateY', '0' ) );
 				switch ( $direction ) {
-					default :
-					case 'top' :
+					default:
+					case 'top':
 						$intensityAngle         += $rotateX;
 						$startElement['rotateX'] = "{$intensityAngle}deg";
 						break;
-					case 'bottom' :
+					case 'bottom':
 						$intensityAngle         *= -1;
 						$intensityAngle         += $rotateX;
 						$startElement['rotateX'] = "{$intensityAngle}deg";
 						break;
-					case 'left' :
+					case 'left':
 						$intensityAngle         *= -1;
 						$intensityAngle         += $rotateY;
 						$startElement['rotateY'] = "{$intensityAngle}deg";
 						break;
-					case 'right' :
+					case 'right':
 						$intensityAngle         += $rotateY;
 						$startElement['rotateY'] = "{$intensityAngle}deg";
 						break;
 				}
-				$startDeclaration = $this->getTransformDeclaration( $startElement );
+				$startDeclaration  = $this->getTransformDeclaration( $startElement );
 				$newKeyframeRules  = "0%{ $startDeclaration }";
 				$newKeyframeRules .= "100%{opacity:1;$transformDeclaration}";
 				break;
@@ -524,21 +530,21 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 				$rotateX = (float) str_replace( 'deg', '', $utils->array_get( $elements['transform'], 'rotateX', '0' ) );
 				$rotateY = (float) str_replace( 'deg', '', $utils->array_get( $elements['transform'], 'rotateY', '0' ) );
 				switch ( $direction ) {
-					case 'top' :
+					case 'top':
 						$intensityAngle          *= -1;
 						$intensityAngle          += $rotateX;
 						$startElements['rotateX'] = "{$intensityAngle}deg";
 						break;
-					case 'bottom' :
+					case 'bottom':
 						$intensityAngle          += $rotateX;
 						$startElements['rotateX'] = "{$intensityAngle}deg";
 						break;
-					case 'left' :
+					case 'left':
 						$intensityAngle          += $rotateY;
 						$startElements['rotateY'] = "{$intensityAngle}deg";
 						break;
-					default :
-					case 'right' :
+					default:
+					case 'right':
 						$intensityAngle          *= -1;
 						$intensityAngle          += $rotateY;
 						$startElements['rotateY'] = "{$intensityAngle}deg";
@@ -561,9 +567,9 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 				$intensityAngle = ceil( ( 360 / 100 ) * $intensity );
 
 				if ( 'bottom' === $direction || 'right' === $direction ) {
-					$startElements['rotateZ'] = sprintf( "%sdeg", ( $intensityAngle * -1 ) + $rotateZ );
+					$startElements['rotateZ'] = sprintf( '%sdeg', ( $intensityAngle * -1 ) + $rotateZ );
 				} else {
-					$startElements['rotateZ'] = sprintf( "%sdeg", $intensityAngle + $rotateZ );
+					$startElements['rotateZ'] = sprintf( '%sdeg', $intensityAngle + $rotateZ );
 				}
 
 				$startDeclaration  = $this->getTransformDeclaration( $startElements );

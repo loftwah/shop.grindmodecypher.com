@@ -73,7 +73,7 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 			'custom_padding'      => '',
 			'custom_margin'       => '',
 			'depends_show_if'     => 'on',
-			'priority'            => 90
+			'priority'            => 90,
 		);
 	}
 
@@ -161,7 +161,7 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 
 		// Custom margin.
 		if ( $config['use_margin'] ) {
-			$fields[ $custom_margin ] = array(
+			$fields[ $custom_margin ]        = array(
 				'label'           => sprintf( esc_html__( '%1$s Margin', 'et_builder' ), $config['label'] ),
 				'description'     => esc_html__( 'Margin adds extra space to the outside of the element, increasing the distance between the element and other items on the page.', 'et_builder' ),
 				'type'            => 'custom_margin',
@@ -221,7 +221,7 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 
 		// Custom padding.
 		if ( $config['use_padding'] ) {
-			$fields[ $custom_padding ] = array(
+			$fields[ $custom_padding ]        = array(
 				'label'           => sprintf( esc_html__( '%1$s Padding', 'et_builder' ), $config['label'] ),
 				'description'     => esc_html__( 'Padding adds extra space to the inside of the element, increasing the distance between the edge of the element and its inner contents.', 'et_builder' ),
 				'type'            => 'custom_padding',
@@ -337,11 +337,12 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 					$padding_hover_selector_processed = $padding_hover_selector;
 				}
 
-				ET_Builder_Element::set_style( $function_name, array(
+				$el_style = array(
 					'selector'    => $padding_hover_selector_processed,
 					'declaration' => rtrim( et_builder_get_element_style_css( $custom_padding_hover, 'padding', true ) ),
 					'priority'    => 20,
-				) );
+				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
 			}
 		}
 
@@ -384,11 +385,12 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 					$margin_hover_selector_processed = $margin_hover_selector;
 				}
 
-				ET_Builder_Element::set_style( $function_name, array(
+				$el_style = array(
 					'selector'    => $margin_hover_selector_processed,
 					'declaration' => rtrim( et_builder_get_element_style_css( $custom_margin_hover, 'margin', true ) ),
 					'priority'    => 20,
-				) );
+				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
 			}
 		}
 	}
