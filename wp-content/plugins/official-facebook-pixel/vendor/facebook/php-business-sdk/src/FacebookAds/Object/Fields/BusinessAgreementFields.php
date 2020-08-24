@@ -35,25 +35,15 @@ use FacebookAds\Enum\AbstractEnum;
  *
  */
 
-class RequestHistoryFields extends AbstractEnum {
+class BusinessAgreementFields extends AbstractEnum {
 
-  const API_VERSION = 'api_version';
-  const CREATED_TIME = 'created_time';
-  const ERROR_CODE = 'error_code';
-  const GRAPH_PATH = 'graph_path';
-  const HTTP_METHOD = 'http_method';
-  const POST_PARAMS = 'post_params';
-  const QUERY_PARAMS = 'query_params';
+  const ID = 'id';
+  const REQUEST_STATUS = 'request_status';
 
   public function getFieldTypes() {
     return array(
-      'api_version' => 'string',
-      'created_time' => 'datetime',
-      'error_code' => 'unsigned int',
-      'graph_path' => 'string',
-      'http_method' => 'HttpMethod',
-      'post_params' => 'map<string, string>',
-      'query_params' => 'map<string, string>',
+      'id' => 'string',
+      'request_status' => 'string',
     );
   }
 }

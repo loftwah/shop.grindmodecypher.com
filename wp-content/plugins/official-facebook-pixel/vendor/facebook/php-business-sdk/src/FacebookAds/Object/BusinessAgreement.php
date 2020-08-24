@@ -28,7 +28,8 @@ use FacebookAds\ApiRequest;
 use FacebookAds\Cursor;
 use FacebookAds\Http\RequestInterface;
 use FacebookAds\TypeChecker;
-use FacebookAds\Object\Fields\InstagramCommentFields;
+use FacebookAds\Object\Fields\BusinessAgreementFields;
+use FacebookAds\Object\Values\BusinessAgreementRequestStatusValues;
 
 /**
  * This class is auto-generated.
@@ -39,92 +40,21 @@ use FacebookAds\Object\Fields\InstagramCommentFields;
  *
  */
 
-class InstagramComment extends AbstractCrudObject {
+class BusinessAgreement extends AbstractCrudObject {
 
   /**
-   * @return InstagramCommentFields
+   * @return BusinessAgreementFields
    */
   public static function getFieldsEnum() {
-    return InstagramCommentFields::getInstance();
+    return BusinessAgreementFields::getInstance();
   }
 
   protected static function getReferencedEnums() {
     $ref_enums = array();
+    $ref_enums['RequestStatus'] = BusinessAgreementRequestStatusValues::getInstance()->getValues();
     return $ref_enums;
   }
 
-
-  public function getReplies(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_GET,
-      '/replies',
-      new InstagramComment(),
-      'EDGE',
-      InstagramComment::getFieldsEnum()->getValues(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
-
-  public function createReply(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-      'ad_id' => 'Object',
-      'message' => 'string',
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_POST,
-      '/replies',
-      new InstagramComment(),
-      'EDGE',
-      InstagramComment::getFieldsEnum()->getValues(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
-
-  public function deleteSelf(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-      'ad_id' => 'Object',
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_DELETE,
-      '/',
-      new AbstractCrudObject(),
-      'NODE',
-      array(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
 
   public function getSelf(array $fields = array(), array $params = array(), $pending = false) {
     $this->assureId();
@@ -139,9 +69,9 @@ class InstagramComment extends AbstractCrudObject {
       $this->data['id'],
       RequestInterface::METHOD_GET,
       '/',
-      new InstagramComment(),
+      new BusinessAgreement(),
       'NODE',
-      InstagramComment::getFieldsEnum()->getValues(),
+      BusinessAgreement::getFieldsEnum()->getValues(),
       new TypeChecker($param_types, $enums)
     );
     $request->addParams($params);
@@ -153,10 +83,11 @@ class InstagramComment extends AbstractCrudObject {
     $this->assureId();
 
     $param_types = array(
-      'ad_id' => 'Object',
-      'hide' => 'bool',
+      'asset_id' => 'unsigned int',
+      'request_status' => 'request_status_enum',
     );
     $enums = array(
+      'request_status_enum' => BusinessAgreementRequestStatusValues::getInstance()->getValues(),
     );
 
     $request = new ApiRequest(
@@ -164,9 +95,9 @@ class InstagramComment extends AbstractCrudObject {
       $this->data['id'],
       RequestInterface::METHOD_POST,
       '/',
-      new InstagramComment(),
+      new BusinessAgreement(),
       'NODE',
-      InstagramComment::getFieldsEnum()->getValues(),
+      BusinessAgreement::getFieldsEnum()->getValues(),
       new TypeChecker($param_types, $enums)
     );
     $request->addParams($params);

@@ -108,6 +108,7 @@ class AdAccountTargetingUnifiedWhitelistedTypesValues extends AbstractEnum {
   const INDUSTRIES = 'industries';
   const INSTAGRAM_HASHTAGS = 'instagram_hashtags';
   const INSTAGRAM_POSITIONS = 'instagram_positions';
+  const INSTREAM_VIDEO_SKIPPABLE_EXCLUDED = 'instream_video_skippable_excluded';
   const INSTREAM_VIDEO_SPONSORSHIP_PLACEMENTS = 'instream_video_sponsorship_placements';
   const INTEREST_DEFAULTS_SOURCE = 'interest_defaults_source';
   const INTERESTED_IN = 'interested_in';
@@ -140,6 +141,7 @@ class AdAccountTargetingUnifiedWhitelistedTypesValues extends AbstractEnum {
   const RTB_FLAG = 'rtb_flag';
   const SITE_CATEGORY = 'site_category';
   const TARGETING_OPTIMIZATION = 'targeting_optimization';
+  const TARGETING_RELAXATION_TYPES = 'targeting_relaxation_types';
   const TIMEZONES = 'timezones';
   const TOPIC = 'topic';
   const TRENDING = 'trending';

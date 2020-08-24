@@ -67,6 +67,10 @@ class AdsInsightsFields extends AbstractEnum {
   const CAMPAIGN_NAME = 'campaign_name';
   const CANVAS_AVG_VIEW_PERCENT = 'canvas_avg_view_percent';
   const CANVAS_AVG_VIEW_TIME = 'canvas_avg_view_time';
+  const CATALOG_SEGMENT_VALUE = 'catalog_segment_value';
+  const CATALOG_SEGMENT_VALUE_MOBILE_PURCHASE_ROAS = 'catalog_segment_value_mobile_purchase_roas';
+  const CATALOG_SEGMENT_VALUE_OMNI_PURCHASE_ROAS = 'catalog_segment_value_omni_purchase_roas';
+  const CATALOG_SEGMENT_VALUE_WEBSITE_PURCHASE_ROAS = 'catalog_segment_value_website_purchase_roas';
   const CLICKS = 'clicks';
   const CONVERSION_RATE_RANKING = 'conversion_rate_ranking';
   const CONVERSION_VALUES = 'conversion_values';
@@ -123,6 +127,7 @@ class AdsInsightsFields extends AbstractEnum {
   const OUTBOUND_CLICKS_CTR = 'outbound_clicks_ctr';
   const PLACE_PAGE_NAME = 'place_page_name';
   const PURCHASE_ROAS = 'purchase_roas';
+  const QUALIFYING_QUESTION_QUALIFY_ANSWER_RATE = 'qualifying_question_qualify_answer_rate';
   const QUALITY_RANKING = 'quality_ranking';
   const QUALITY_SCORE_ECTR = 'quality_score_ectr';
   const QUALITY_SCORE_ECVR = 'quality_score_ecvr';
@@ -195,6 +200,10 @@ class AdsInsightsFields extends AbstractEnum {
       'campaign_name' => 'string',
       'canvas_avg_view_percent' => 'string',
       'canvas_avg_view_time' => 'string',
+      'catalog_segment_value' => 'list<AdsActionStats>',
+      'catalog_segment_value_mobile_purchase_roas' => 'list<AdsActionStats>',
+      'catalog_segment_value_omni_purchase_roas' => 'list<AdsActionStats>',
+      'catalog_segment_value_website_purchase_roas' => 'list<AdsActionStats>',
       'clicks' => 'string',
       'conversion_rate_ranking' => 'string',
       'conversion_values' => 'list<AdsActionStats>',
@@ -251,6 +260,7 @@ class AdsInsightsFields extends AbstractEnum {
       'outbound_clicks_ctr' => 'list<AdsActionStats>',
       'place_page_name' => 'string',
       'purchase_roas' => 'list<AdsActionStats>',
+      'qualifying_question_qualify_answer_rate' => 'string',
       'quality_ranking' => 'string',
       'quality_score_ectr' => 'string',
       'quality_score_ecvr' => 'string',

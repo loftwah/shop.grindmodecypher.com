@@ -22,9 +22,13 @@
  *
  */
 
-namespace FacebookAds\Object\Fields;
+namespace FacebookAds\Object;
 
-use FacebookAds\Enum\AbstractEnum;
+use FacebookAds\ApiRequest;
+use FacebookAds\Cursor;
+use FacebookAds\Http\RequestInterface;
+use FacebookAds\TypeChecker;
+use FacebookAds\Object\Fields\AdCreativeAdDisclaimerFields;
 
 /**
  * This class is auto-generated.
@@ -35,25 +39,19 @@ use FacebookAds\Enum\AbstractEnum;
  *
  */
 
-class InstagramCommentFields extends AbstractEnum {
+class AdCreativeAdDisclaimer extends AbstractObject {
 
-  const COMMENT_TYPE = 'comment_type';
-  const CREATED_AT = 'created_at';
-  const ID = 'id';
-  const INSTAGRAM_COMMENT_ID = 'instagram_comment_id';
-  const INSTAGRAM_USER = 'instagram_user';
-  const MENTIONED_INSTAGRAM_USERS = 'mentioned_instagram_users';
-  const MESSAGE = 'message';
-
-  public function getFieldTypes() {
-    return array(
-      'comment_type' => 'string',
-      'created_at' => 'datetime',
-      'id' => 'string',
-      'instagram_comment_id' => 'string',
-      'instagram_user' => 'InstagramUser',
-      'mentioned_instagram_users' => 'list<InstagramUser>',
-      'message' => 'string',
-    );
+  /**
+   * @return AdCreativeAdDisclaimerFields
+   */
+  public static function getFieldsEnum() {
+    return AdCreativeAdDisclaimerFields::getInstance();
   }
+
+  protected static function getReferencedEnums() {
+    $ref_enums = array();
+    return $ref_enums;
+  }
+
+
 }

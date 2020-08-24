@@ -35,17 +35,17 @@ use FacebookAds\Enum\AbstractEnum;
  *
  */
 
-class CustomAudiencePrefillStateFields extends AbstractEnum {
+class AdCreativeAdDisclaimerFields extends AbstractEnum {
 
-  const DESCRIPTION = 'description';
-  const NUM_ADDED = 'num_added';
-  const STATUS = 'status';
+  const TEXT = 'text';
+  const TITLE = 'title';
+  const URL = 'url';
 
   public function getFieldTypes() {
     return array(
-      'description' => 'string',
-      'num_added' => 'unsigned int',
-      'status' => 'string',
+      'text' => 'string',
+      'title' => 'string',
+      'url' => 'string',
     );
   }
 }

@@ -467,30 +467,6 @@ class User extends AbstractCrudObject {
     return $pending ? $request : $request->execute();
   }
 
-  public function getBooks(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-      'target_id' => 'string',
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_GET,
-      '/books',
-      new Page(),
-      'EDGE',
-      Page::getFieldsEnum()->getValues(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
-
   public function getBusinessUsers(array $fields = array(), array $params = array(), $pending = false) {
     $this->assureId();
 
@@ -961,30 +937,6 @@ class User extends AbstractCrudObject {
     return $pending ? $request : $request->execute();
   }
 
-  public function getGames(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-      'target_id' => 'string',
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_GET,
-      '/games',
-      new Page(),
-      'EDGE',
-      Page::getFieldsEnum()->getValues(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
-
   public function createGamesPlay(array $fields = array(), array $params = array(), $pending = false) {
     $this->assureId();
 
@@ -1029,32 +981,6 @@ class User extends AbstractCrudObject {
       $this->data['id'],
       RequestInterface::METHOD_POST,
       '/games_plays',
-      new AbstractCrudObject(),
-      'EDGE',
-      array(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
-
-  public function createGamesStat(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-      'inc' => 'unsigned int',
-      'set' => 'unsigned int',
-      'stat_name' => 'string',
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_POST,
-      '/games_stats',
       new AbstractCrudObject(),
       'EDGE',
       array(),
@@ -1306,30 +1232,6 @@ class User extends AbstractCrudObject {
       new LiveVideo(),
       'EDGE',
       LiveVideo::getFieldsEnum()->getValues(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
-
-  public function getMovies(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-      'target_id' => 'string',
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_GET,
-      '/movies',
-      new Page(),
-      'EDGE',
-      Page::getFieldsEnum()->getValues(),
       new TypeChecker($param_types, $enums)
     );
     $request->addParams($params);
@@ -1597,29 +1499,6 @@ class User extends AbstractCrudObject {
     return $pending ? $request : $request->execute();
   }
 
-  public function getRequestHistory(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_GET,
-      '/request_history',
-      new RequestHistory(),
-      'EDGE',
-      RequestHistory::getFieldsEnum()->getValues(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
-
   public function getRichMediaDocuments(array $fields = array(), array $params = array(), $pending = false) {
     $this->assureId();
 
@@ -1684,30 +1563,6 @@ class User extends AbstractCrudObject {
       new UserTaggableFriend(),
       'EDGE',
       UserTaggableFriend::getFieldsEnum()->getValues(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
-
-  public function getTelevision(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-      'target_id' => 'string',
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_GET,
-      '/television',
-      new Page(),
-      'EDGE',
-      Page::getFieldsEnum()->getValues(),
       new TypeChecker($param_types, $enums)
     );
     $request->addParams($params);

@@ -28,7 +28,7 @@ use FacebookAds\ApiRequest;
 use FacebookAds\Cursor;
 use FacebookAds\Http\RequestInterface;
 use FacebookAds\TypeChecker;
-use FacebookAds\Object\Fields\CustomAudiencePrefillStateFields;
+use FacebookAds\Object\Fields\CommerceOrderTransactionDetailFields;
 
 /**
  * This class is auto-generated.
@@ -39,13 +39,13 @@ use FacebookAds\Object\Fields\CustomAudiencePrefillStateFields;
  *
  */
 
-class CustomAudiencePrefillState extends AbstractObject {
+class CommerceOrderTransactionDetail extends AbstractCrudObject {
 
   /**
-   * @return CustomAudiencePrefillStateFields
+   * @return CommerceOrderTransactionDetailFields
    */
   public static function getFieldsEnum() {
-    return CustomAudiencePrefillStateFields::getInstance();
+    return CommerceOrderTransactionDetailFields::getInstance();
   }
 
   protected static function getReferencedEnums() {
@@ -53,5 +53,28 @@ class CustomAudiencePrefillState extends AbstractObject {
     return $ref_enums;
   }
 
+
+  public function getTaxDetails(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+    );
+    $enums = array(
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_GET,
+      '/tax_details',
+      new AbstractCrudObject(),
+      'EDGE',
+      array(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
 
 }

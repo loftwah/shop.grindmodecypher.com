@@ -88,25 +88,21 @@ class FacebookWordpressFormidableForm extends FacebookWordpressIntegrationBase {
 
     $field_values = $entry_values->get_field_values();
     if (!empty($field_values)) {
-      return array(
+      $user_data = array(
         'email' => self::getEmail($field_values),
         'first_name' => self::getFirstName($field_values),
-        'last_name' => self::getLastName($field_values)
+        'last_name' => self::getLastName($field_values),
+        'phone' => self::getPhone($field_values)
       );
+      $address_data = self::getAddressInformation($field_values);
+      return array_merge($user_data, $address_data);
     }
 
     return array();
   }
 
   private static function getEmail($field_values) {
-    foreach ($field_values as $field_value) {
-      $field = $field_value->get_field();
-      if ($field->type == 'email') {
-        return $field_value->get_saved_value();
-      }
-    }
-
-    return null;
+    return self::getFieldValueByType($field_values, 'email');
   }
 
   private static function getFirstName($field_values) {
@@ -115,6 +111,46 @@ class FacebookWordpressFormidableForm extends FacebookWordpressIntegrationBase {
 
   private static function getLastName($field_values) {
     return self::getFieldValue($field_values, 'text', 'Last', 'Last');
+  }
+
+  private static function getPhone($field_values) {
+    return self::getFieldValueByType($field_values, 'phone');
+  }
+
+  private static function getAddressInformation($field_values){
+    $address_saved_value = self::getFieldValueByType($field_values, 'address');
+    $address_data = array();
+    if($address_saved_value){
+      if(array_key_exists('city', $address_saved_value)){
+        $address_data['city'] = $address_saved_value['city'];
+      }
+      if(array_key_exists('state', $address_saved_value)){
+        $address_data['state'] = $address_saved_value['state'];
+      }
+      // Validating ISO code
+      // In current version, country field saves the full name
+      if(
+        array_key_exists('country', $address_saved_value)
+        && strlen($address_saved_value['country']) == 2
+      ){
+          $address_data['country'] = $address_saved_value['country'];
+      }
+      if(array_key_exists('zip', $address_saved_value)){
+        $address_data['zip'] = $address_saved_value['zip'];
+      }
+    }
+    return $address_data;
+  }
+
+  private static function getFieldValueByType($field_values, $type){
+    foreach ($field_values as $field_value) {
+      $field = $field_value->get_field();
+      if ($field->type == $type) {
+        return $field_value->get_saved_value();
+      }
+    }
+
+    return null;
   }
 
   private static function getFieldValue(

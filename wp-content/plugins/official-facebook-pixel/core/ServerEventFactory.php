@@ -163,6 +163,26 @@ class ServerEventFactory {
         if (!empty($data['phone'])) {
           $user_data->setPhone($data['phone']);
         }
+
+        if(!empty($data['state'])){
+          $user_data->setState($data['state']);
+        }
+
+        if(!empty($data['country'])){
+          $user_data->setCountryCode($data['country']);
+        }
+
+        if(!empty($data['city'])){
+          $user_data->setCity($data['city']);
+        }
+
+        if(!empty($data['zip'])){
+          $user_data->setZipCode($data['zip']);
+        }
+
+        if(!empty($data['gender'])){
+          $user_data->setGender($data['gender']);
+        }
       }
 
       $custom_data = $event->getCustomData();
@@ -190,6 +210,10 @@ class ServerEventFactory {
 
       if (!empty($data['num_items'])) {
         $custom_data->setNumItems($data['num_items']);
+      }
+
+      if (!empty($data['content_name'])) {
+        $custom_data->setContentName($data['content_name']);
       }
     } catch (\Exception $e) {
       // Need to log

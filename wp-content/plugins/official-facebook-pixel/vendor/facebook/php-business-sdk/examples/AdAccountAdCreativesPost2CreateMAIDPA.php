@@ -19,41 +19,31 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  */
 
-namespace FacebookAds\Object;
+require __DIR__ . '/vendor/autoload.php';
 
-use FacebookAds\ApiRequest;
-use FacebookAds\Cursor;
-use FacebookAds\Http\RequestInterface;
-use FacebookAds\TypeChecker;
-use FacebookAds\Object\Fields\RequestHistoryFields;
-use FacebookAds\Object\Values\RequestHistoryHttpMethodValues;
+use FacebookAds\Object\AdAccount;
+use FacebookAds\Object\AdCreative;
+use FacebookAds\Api;
+use FacebookAds\Logger\CurlLogger;
 
-/**
- * This class is auto-generated.
- *
- * For any issues or feature requests related to this class, please let us know
- * on github and we'll fix in our codegen framework. We'll not be able to accept
- * pull request for this class.
- *
- */
+$access_token = '<ACCESS_TOKEN>';
+$app_secret = '<APP_SECRET>';
+$app_id = '<APP_ID>';
+$id = '<AD_ACCOUNT_ID>';
 
-class RequestHistory extends AbstractObject {
+$api = Api::init($app_id, $app_secret, $access_token);
+$api->setLogger(new CurlLogger());
 
-  /**
-   * @return RequestHistoryFields
-   */
-  public static function getFieldsEnum() {
-    return RequestHistoryFields::getInstance();
-  }
-
-  protected static function getReferencedEnums() {
-    $ref_enums = array();
-    $ref_enums['HttpMethod'] = RequestHistoryHttpMethodValues::getInstance()->getValues();
-    return $ref_enums;
-  }
-
-
-}
+$fields = array(
+);
+$params = array(
+  'name' => 'Dynamic Ad Template Creative Sample',
+  'object_story_spec' => array('page_id' => '<pageID>','template_data' => array('call_to_action' => array('type' => 'INSTALL_MOBILE_APP','value' => array('link' => 'http://www.example.com/appstoreurl')),'message' => 'Test array(array(product.name | titleize))','link' => 'http://www.example.com/appstoreurl','name' => 'Headline array(array(product.price))','description' => 'Description array(array(product.description))')),
+  'product_set_id' => '<productSetID>',
+);
+echo json_encode((new AdAccount($id))->createAdCreative(
+  $fields,
+  $params
+)->exportAllData(), JSON_PRETTY_PRINT);

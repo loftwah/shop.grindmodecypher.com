@@ -43,6 +43,8 @@ class ProductCatalogVerticalValues extends AbstractEnum {
   const FLIGHTS = 'flights';
   const HOME_LISTINGS = 'home_listings';
   const HOTELS = 'hotels';
+  const JOBS = 'jobs';
+  const LOCAL_SERVICE_BUSINESSES = 'local_service_businesses';
   const OFFER_ITEMS = 'offer_items';
   const OFFLINE_COMMERCE = 'offline_commerce';
   const TICKETED_EXPERIENCES = 'ticketed_experiences';
