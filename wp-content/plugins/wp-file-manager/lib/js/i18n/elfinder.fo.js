@@ -101,7 +101,7 @@
 			'errFtpMkdir'          : 'Ikki ført fyri at stovna fjar-fílaskrá á FTP: "$1"',
 			'errArchiveExec'       : 'Villa íkomin undir arkiveran af fílar: "$1"',
 			'errExtractExec'       : 'Villa íkomin undir útpakking af fílum: "$1"',
-			'errNetUnMount'        : 'Unable to unmount', // from v2.1 added 30.04.2012
+			'errNetUnMount'        : 'Ekki hægt að taka af', // from v2.1 added 30.04.2012
 			'errConvUTF8'          : 'Kann ikki broytast til UTF-8', // from v2.1 added 08.04.2014
 			'errFolderUpload'      : 'Royn Google Chrome, um tú ynskir at leggja mappu innn.', // from v2.1 added 26.6.2015
 
@@ -133,10 +133,22 @@
 			'cmdview'      : 'Síggj',
 			'cmdresize'    : 'Tillaga stødd & Roter',
 			'cmdsort'      : 'Raða',
-			'cmdnetmount'  : 'Mount network volume', // added 18.04.2012
-			'cmdnetunmount': 'Unmount', // from v2.1 added 30.04.2012
+			'cmdnetmount'  : 'Festu hljóðstyrk netsins', // added 18.04.2012
+			'cmdnetunmount': 'Aftengja', // from v2.1 added 30.04.2012
 			'cmdplaces'    : 'Til støð', // added 28.12.2014
 			'cmdchmod'     : 'Broytir stíl', // from v2.1 added 20.6.2015
+			'cmdpreference': 'Val', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'Velja allt', // from v2.1.28 added 15.08.2017
+			'cmdselectnone' : 'Veldu Enginn', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'Hvolfdu valinu', // from v2.1.28 added 15.08.2017
+			'cmdhide': 'Fela (val)',
+			'cmdopennew':'Opna nýtt',
+			'cmdmkdirin':'Í nýju möppunni',
+			'cmdempty': 'Tómt',
+			'cmdfullscreen': 'Fullur skjár',
+			'cmdtrash':'Inni í ruslinu',
+			'cmdundo'      : 'Afturkalla', // from v2.1.27 added 31.07.2017
+			'cmdredo'      : 'Endurhæfa', // from v2.1.27 added 31.07.2017
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'Lat aftur',
@@ -146,9 +158,9 @@
 			'btnCancel' : 'Angra',
 			'btnNo'     : 'Nei',
 			'btnYes'    : 'Ja',
-			'btnMount'  : 'Mount',  // added 18.04.2012
+			'btnMount'  : 'Fjallið',  // added 18.04.2012
 			'btnApprove': 'Goto $1 & approve', // from v2.1 added 26.04.2012
-			'btnUnmount': 'Unmount', // from v2.1 added 30.04.2012
+			'btnUnmount': 'Aftengja', // from v2.1 added 30.04.2012
 			'btnConv'   : 'Konverter', // from v2.1 added 08.04.2014
 			'btnCwd'    : 'Her',      // from v2.1 added 22.5.2015
 			'btnVolume' : 'Volume',    // from v2.1 added 22.5.2015
@@ -178,8 +190,8 @@
 			'ntfresize'   : 'Broytir stødd á fílur',
 			'ntfsmth'     : '\'Ger okkurt >_<',
 			'ntfloadimg'  : 'Lesur mynd inn',
-			'ntfnetmount' : 'Mounting network volume', // added 18.04.2012
-			'ntfnetunmount': 'Unmounting network volume', // from v2.1 added 30.04.2012
+			'ntfnetmount' : 'Festir hljóðstyrk netsins', // added 18.04.2012
+			'ntfnetunmount': 'Aftengir rúmmál netsins', // from v2.1 added 30.04.2012
 			'ntfdim'      : 'Tekur mynda vídd', // added 20.05.2013
 			'ntfreaddir'  : 'Lesur mappu upplýsingar', // from v2.1 added 01.07.2013
 			'ntfurl'      : 'Far URL af leinkju', // from v2.1 added 11.03.2014
@@ -235,6 +247,7 @@
 			'sortsize'          : 'eftir stødd',
 			'sortdate'          : 'eftir dato',
 			'sortFoldersFirst'  : 'mappur fyrst',
+			'sortAlsoTreeview':'Einnig Treeview',
 
 			/********************************** new items **********************************/
 			'untitled file.txt' : 'NýggjaFílu.txt', // added 10.11.2015
@@ -314,13 +327,13 @@
 			'rotate-cw'       : 'Rotera 90 gradir við urið',
 			'rotate-ccw'      : 'otera 90 gradir móti urið',
 			'degree'          : '°',
-			'netMountDialogTitle' : 'Mount network volume', // added 18.04.2012
+			'netMountDialogTitle' : 'Festu hljóðstyrk netsins', // added 18.04.2012
 			'protocol'            : 'Protokol', // added 18.04.2012
 			'host'                : 'Host', // added 18.04.2012
 			'port'                : 'Port', // added 18.04.2012
 			'user'                : 'Brúkari', // added 18.04.2012
 			'pass'                : 'Loyniorð', // added 18.04.2012
-			'confirmUnmount'      : 'Are you unmount $1?',  // from v2.1 added 30.04.2012
+			'confirmUnmount'      : 'Ertu að taka af $1?',  // from v2.1 added 30.04.2012
 			'dropFilesBrowser': 'Hála ella set innn fílar frá kaga', // from v2.1 added 30.05.2012
 			'dropPasteFiles'  : 'Hála ella set inn fílar frá URls her', // from v2.1 added 07.04.2014
 			'encoding'        : 'Encoding', // from v2.1 added 19.12.2014
@@ -333,7 +346,13 @@
 			'execute'         : 'Útfør', // from v2.1 added 20.6.2015
 			'perm'            : 'Rættindi', // from v2.1 added 20.6.2015
 			'mode'            : 'Mode', // from v2.1 added 20.6.2015
-
+			'selectFolder' : 'Veldu möppu',
+			'dropFilesBrowser': 'Dreifa eða líma vafra skrár', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Sæktu skrár eða límdu vefslóðir eða myndir (úrklippur) hér',
+			'emptyFolderDrop' : 'Mappan er tóm \\ laus til að bæta við hlutum', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'Mappan er tóm \\ í langan smell til að bæta við hlutum', // from v2.1.6 added 30.12.2015
+			'Code Editor':'Kóðar ritstjóri',
+            'extentiontype' : 'tegund af útvíkkun',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Ókent',
 			'kindFolder'      : 'Mappa',
@@ -416,4 +435,3 @@
 		}
 	};
 }));
-

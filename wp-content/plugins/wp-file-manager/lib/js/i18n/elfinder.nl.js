@@ -120,7 +120,7 @@
 			'cmdback'              : 'Vorige',
 			'cmdcopy'              : 'Kopieer',
 			'cmdcut'               : 'Knip',
-			'cmddownload'          : 'Download',
+			'cmddownload'          : 'Downloaden',
 			'cmdduplicate'         : 'Dupliceer',
 			'cmdedit'              : 'Pas bestand aan',
 			'cmdextract'           : 'Bestanden uit archief uitpakken',
@@ -146,7 +146,7 @@
 			'cmdview'              : 'Bekijk',
 			'cmdresize'            : 'Formaat wijzigen',
 			'cmdsort'              : 'Sorteren',
-			'cmdnetmount'          : 'Mount netwerk volume', // added 18.04.2012
+			'cmdnetmount'          : 'Mount netwerkvolume', // added 18.04.2012
 			'cmdnetunmount'        : 'Unmount', // from v2.1 added 30.04.2012
 			'cmdplaces'            : 'Naar Plaatsen', // added 28.12.2014
 			'cmdchmod'             : 'Wijzig modus', // from v2.1 added 20.6.2015
@@ -374,7 +374,7 @@
 			'rotate-cw'            : 'Draai 90 graden rechtsom',
 			'rotate-ccw'           : 'Draai 90 graden linksom',
 			'degree'               : '°',
-			'netMountDialogTitle'  : 'Mount netwerk volume', // added 18.04.2012
+			'netMountDialogTitle'  : 'Mount netwerkvolume', // added 18.04.2012
 			'protocol'             : 'Protocol', // added 18.04.2012
 			'host'                 : 'Host', // added 18.04.2012
 			'port'                 : 'Poort', // added 18.04.2012
@@ -487,6 +487,7 @@
 			'email'                : 'Email', // from v2.1.43 added 19.10.2018
 			'license'              : 'Licensie', // from v2.1.43 added 19.10.2018
 			'exportToSave'         : 'Dit item kan niet worden opgeslagen, exporteer naar je pc om wijzingen te bewaren', // from v2.1.44 added 1.12.2018
+			'Code Editor':'Code-editor',
 
 			/********************************** mimetypes **********************************/
 			'kindUnknown'          : 'Onbekend',

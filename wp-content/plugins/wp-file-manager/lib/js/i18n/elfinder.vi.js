@@ -149,7 +149,7 @@
 			'cmdview'      : 'Xem',
 			'cmdresize'    : 'Thay đổi kích thước và xoay',
 			'cmdsort'      : 'Sắp xếp',
-			'cmdnetmount'  : 'Mount network volume', // added 18.04.2012
+			'cmdnetmount'  : 'Gắn kết âm lượng mạng', // added 18.04.2012
 			'cmdnetunmount': 'Gỡ mount', // from v2.1 added 30.04.2012
 			'cmdplaces'    : 'To Places', // added 28.12.2014
 			'cmdchmod'     : 'Thay đổi chế độ', // from v2.1 added 20.6.2015
@@ -175,22 +175,22 @@
 			'btnCancel' : 'Hủy bỏ',
 			'btnNo'     : 'Không',
 			'btnYes'    : 'Đồng ý',
-			'btnMount'  : 'Mount',  // added 18.04.2012
+			'btnMount'  : 'Núi',  // added 18.04.2012
 			'btnApprove': 'Goto $1 & approve', // from v2.1 added 26.04.2012
-			'btnUnmount': 'Unmount', // from v2.1 added 30.04.2012
-			'btnConv'   : 'Convert', // from v2.1 added 08.04.2014
-			'btnCwd'    : 'Here',      // from v2.1 added 22.5.2015
-			'btnVolume' : 'Volume',    // from v2.1 added 22.5.2015
-			'btnAll'    : 'All',       // from v2.1 added 22.5.2015
-			'btnMime'   : 'MIME Type', // from v2.1 added 22.5.2015
-			'btnFileName':'Filename',  // from v2.1 added 22.5.2015
-			'btnSaveClose': 'Save & Close', // from v2.1 added 12.6.2015
-			'btnBackup' : 'Backup', // fromv2.1 added 28.11.2015
-			'btnRename'    : 'Rename',      // from v2.1.24 added 6.4.2017
-			'btnRenameAll' : 'Rename(All)', // from v2.1.24 added 6.4.2017
-			'btnPrevious' : 'Prev ($1/$2)', // from v2.1.24 added 11.5.2017
-			'btnNext'     : 'Next ($1/$2)', // from v2.1.24 added 11.5.2017
-			'btnSaveAs'   : 'Save As', // from v2.1.25 added 24.5.2017
+			'btnUnmount': 'Vô song', // from v2.1 added 30.04.2012
+			'btnConv'   : 'Đổi', // from v2.1 added 08.04.2014
+			'btnCwd'    : 'Đây',      // from v2.1 added 22.5.2015
+			'btnVolume' : 'Âm lượng',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Tất cả',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'Loại MIME', // from v2.1 added 22.5.2015
+			'btnFileName':'Tên tệp',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Lưu và đóng', // from v2.1 added 12.6.2015
+			'btnBackup' : 'Sao lưu', // fromv2.1 added 28.11.2015
+			'btnRename'    : 'Đổi tên',      // from v2.1.24 added 6.4.2017
+			'btnRenameAll' : 'Đổi tên (Tất cả)', // from v2.1.24 added 6.4.2017
+			'btnPrevious' : 'Trước đó ($1/$2)', // from v2.1.24 added 11.5.2017
+			'btnNext'     : 'Kế tiếp ($1/$2)', // from v2.1.24 added 11.5.2017
+			'btnSaveAs'   : 'Lưu thành', // from v2.1.25 added 24.5.2017
 
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Mở thư mục',
@@ -212,22 +212,22 @@
 			'ntfresize'   : 'Resizing images',
 			'ntfsmth'     : 'Doing something >_<',
 			'ntfloadimg'  : 'Đang tải hình ảnh',
-			'ntfnetmount' : 'Mounting network volume', // added 18.04.2012
-			'ntfnetunmount': 'Unmounting network volume', // from v2.1 added 30.04.2012
-			'ntfdim'      : 'Acquiring image dimension', // added 20.05.2013
-			'ntfreaddir'  : 'Reading folder infomation', // from v2.1 added 01.07.2013
-			'ntfurl'      : 'Getting URL of link', // from v2.1 added 11.03.2014
-			'ntfchmod'    : 'Changing file mode', // from v2.1 added 20.6.2015
-			'ntfpreupload': 'Verifying upload file name', // from v2.1 added 31.11.2015
-			'ntfzipdl'    : 'Creating a file for download', // from v2.1.7 added 23.1.2016
-			'ntfparents'  : 'Getting path infomation', // from v2.1.17 added 2.11.2016
-			'ntfchunkmerge': 'Processing the uploaded file', // from v2.1.17 added 2.11.2016
-			'ntftrash'    : 'Doing throw in the trash', // from v2.1.24 added 2.5.2017
-			'ntfrestore'  : 'Doing restore from the trash', // from v2.1.24 added 3.5.2017
-			'ntfchkdir'   : 'Checking destination folder', // from v2.1.24 added 3.5.2017
-			'ntfundo'     : 'Undoing previous operation', // from v2.1.27 added 31.07.2017
-			'ntfredo'     : 'Redoing previous undone', // from v2.1.27 added 31.07.2017
-			'ntfchkcontent' : 'Checking contents', // from v2.1.41 added 3.8.2018
+			'ntfnetmount' : 'Gắn kết âm lượng mạng', // added 18.04.2012
+			'ntfnetunmount': 'Ngắt kết nối mạng', // from v2.1 added 30.04.2012
+			'ntfdim'      : 'Có được kích thước hình ảnh', // added 20.05.2013
+			'ntfreaddir'  : 'Đọc thông tin thư mục', // from v2.1 added 01.07.2013
+			'ntfurl'      : 'Lấy URL của liên kết', // from v2.1 added 11.03.2014
+			'ntfchmod'    : 'Thay đổi chế độ tập tin', // from v2.1 added 20.6.2015
+			'ntfpreupload': 'Xác minh tên tệp tải lên', // from v2.1 added 31.11.2015
+			'ntfzipdl'    : 'Tạo một tệp để tải xuống', // from v2.1.7 added 23.1.2016
+			'ntfparents'  : 'Nhận thông tin đường dẫn', // from v2.1.17 added 2.11.2016
+			'ntfchunkmerge': 'Xử lý tệp đã tải lên', // from v2.1.17 added 2.11.2016
+			'ntftrash'    : 'Ném vào thùng rác', // from v2.1.24 added 2.5.2017
+			'ntfrestore'  : 'Đang khôi phục từ thùng rác', // from v2.1.24 added 3.5.2017
+			'ntfchkdir'   : 'Kiểm tra thư mục đích', // from v2.1.24 added 3.5.2017
+			'ntfundo'     : 'Hoàn tác thao tác trước', // from v2.1.27 added 31.07.2017
+			'ntfredo'     : 'Làm lại trước đó hoàn tác', // from v2.1.27 added 31.07.2017
+			'ntfchkcontent' : 'Kiểm tra nội dung', // from v2.1.41 added 3.8.2018
 
 			/*********************************** volumes *********************************/
 			'volume_Trash' : 'Trash', //from v2.1.24 added 29.4.2017
@@ -285,7 +285,7 @@
 			'sortmode'          : 'theo chế độ',       // from v2.1.13 added 13.06.2016
 			'sortowner'         : 'theo người tạo',      // from v2.1.13 added 13.06.2016
 			'sortgroup'         : 'theo nhóm',      // from v2.1.13 added 13.06.2016
-			'sortAlsoTreeview'  : 'Also Treeview',  // from v2.1.15 added 01.08.2016
+			'sortAlsoTreeview'  : 'Ngoài ra Treeview',  // from v2.1.15 added 01.08.2016
 
 			/********************************** new items **********************************/
 			'untitled file.txt' : 'NewFile.txt', // added 10.11.2015
@@ -377,15 +377,15 @@
 			'rotate-cw'       : 'Xoay 90 độ CW',
 			'rotate-ccw'      : 'Xoay 90 độ CCW',
 			'degree'          : '°',
-			'netMountDialogTitle' : 'Mount network volume', // added 18.04.2012
+			'netMountDialogTitle' : 'Gắn kết âm lượng mạng', // added 18.04.2012
 			'protocol'            : 'Protocol', // added 18.04.2012
 			'host'                : 'Host', // added 18.04.2012
 			'port'                : 'Port', // added 18.04.2012
 			'user'                : 'User', // added 18.04.2012
 			'pass'                : 'Password', // added 18.04.2012
 			'confirmUnmount'      : 'Are you unmount $1?',  // from v2.1 added 30.04.2012
-			'dropFilesBrowser': 'Drop or Paste files from browser', // from v2.1 added 30.05.2012
-			'dropPasteFiles'  : 'Drop files, Paste URLs or images(clipboard) here', // from v2.1 added 07.04.2014
+			'dropFilesBrowser': 'Thả hoặc dán tệp từ trình duyệt', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Thả tập tin, Dán URL hoặc hình ảnh (clipboard) tại đây', // from v2.1 added 07.04.2014
 			'encoding'        : 'Mã hóa', // from v2.1 added 19.12.2014
 			'locale'          : 'Địa phương',   // from v2.1 added 19.12.2014
 			'searchTarget'    : 'Mục tiêu: $1',                // from v2.1 added 22.5.2015
@@ -457,15 +457,15 @@
 			'asPrefix'        : 'Thêm tiền tố', // from v2.1.31 added 8.12.2017
 			'asSuffix'        : 'Thêm hậu tố', // from v2.1.31 added 8.12.2017
 			'changeExtention' : 'Thay đổi phần mở rộng', // from v2.1.31 added 8.12.2017
-			'columnPref'      : 'Columns settings (List view)', // from v2.1.32 added 6.2.2018
-			'reflectOnImmediate' : 'All changes will reflect immediately to the archive.', // from v2.1.33 added 2.3.2018
-			'reflectOnUnmount'   : 'Any changes will not reflect until un-mount this volume.', // from v2.1.33 added 2.3.2018
-			'unmountChildren' : 'The following volume(s) mounted on this volume also unmounted. Are you sure to unmount it?', // from v2.1.33 added 5.3.2018
-			'selectionInfo'   : 'Selection Info', // from v2.1.33 added 7.3.2018
-			'hashChecker'     : 'Algorithms to show the file hash', // from v2.1.33 added 10.3.2018
-			'infoItems'       : 'Info Items (Selection Info Panel)', // from v2.1.38 added 28.3.2018
+			'columnPref'      : 'Cài đặt cột (Chế độ xem danh sách)', // from v2.1.32 added 6.2.2018
+			'reflectOnImmediate' : 'Tất cả các thay đổi sẽ phản ánh ngay lập tức đến kho lưu trữ.', // from v2.1.33 added 2.3.2018
+			'reflectOnUnmount'   : 'Mọi thay đổi sẽ không phản ánh cho đến khi bỏ gắn khối lượng này.', // from v2.1.33 added 2.3.2018
+			'unmountChildren' : 'Các âm lượng sau được gắn trên âm lượng này cũng không được đếm. Bạn có chắc chắn để ngắt kết nối nó?', // from v2.1.33 added 5.3.2018
+			'selectionInfo'   : 'Thông tin tuyển chọn', // from v2.1.33 added 7.3.2018
+			'hashChecker'     : 'Các thuật toán để hiển thị tệp băm', // from v2.1.33 added 10.3.2018
+			'infoItems'       : 'Mục thông tin (Bảng thông tin lựa chọn)', // from v2.1.38 added 28.3.2018
 			'pressAgainToExit': 'Nhấn một lần nữa để thoát.', // from v2.1.38 added 1.4.2018
-			'toolbar'         : 'Toolbar', // from v2.1.38 added 4.4.2018
+			'toolbar'         : 'Thanh công cụ', // from v2.1.38 added 4.4.2018
 			'workspace'       : 'Work Space', // from v2.1.38 added 4.4.2018
 			'dialog'          : 'Dialog', // from v2.1.38 added 4.4.2018
 			'all'             : 'All', // from v2.1.38 added 4.4.2018

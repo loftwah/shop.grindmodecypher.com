@@ -2,9 +2,9 @@
 Contributors: mndpsingh287
 Tags: wp-file-manager, elfinder,file manager, ftp, wp-filemanager,file manager, wp-filemanager, Upload Files, WP File Manager, File Manage, Edit Files, Delete Files, FTP, filemanager, wpfilemanager, ftp, file transfer, update, create, delete, view, rename, editor, Cpanel, Control Panel, Admin, Shortcode, explorer, file explorer, filemanager
 Requires at least: 4.0
-Tested up to: 5.4.2
+Tested up to: 5.5
 Requires PHP: 5.2.4
-Stable tag: 6.5
+Stable tag: 6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,7 +78,7 @@ Key Features in the Free File Manager plugin include:
 * **Admin Email Notifications.** Admin will get a Notification whenever a file is Downloaded. 
 * **Admin Email Notifications.** Admin will get a Notification whenever a file is Edited. 
 * **Google Drive Integration**   drag drop, copy paste all other operations between file manager and google drive.
-* **Dropbox Integration**        drag drop, copy paste all other operations between file manager and dropbox.   
+* **Dropbox Integration**        drag drop, copy paste all other operations between file manager and dropbox.
 
 
 > <strong>[Buy Pro Version](https://filemanagerpro.io/product/file-manager/?utm_source=Wordpress.org&utm_medium=Website&utm_campaign=File%20Manager%20Pro)</strong> with various features & support.
@@ -93,6 +93,7 @@ Key Features in the Free File Manager plugin include:
 <strong>[File Manager OneDrive](https://filemanagerpro.io/product/file-manager-one-drive/?utm_source=Wordpress.org&utm_medium=Website&utm_campaign=File%20Manager%20Pro)</strong> provides you ability to edit, delete, upload, download, copy and paste files and folders in OneDrive from File Manager.
 <strong>[File Manager Dropbox](https://filemanagerpro.io/product/file-manager-dropbox/?utm_source=Wordpress.org&utm_medium=Website&utm_campaign=File%20Manager%20Pro)</strong> provides you ability to edit, delete, upload, download, copy and paste files and folders in dropbox.
 <strong>[File Manager Box](https://filemanagerpro.io/product/file-manager-box/?utm_source=Wordpress.org&utm_medium=Website&utm_campaign=File%20Manager%20Pro)</strong> provides you ability to edit, delete, upload, download, copy and paste files and folders in Box.
+<strong>[File Manager AWS S3](https://filemanagerpro.io/product/file-manager-aws-s3/?utm_source=Wordpress.org&utm_medium=Website&utm_campaign=File%20Manager%20Pro)</strong> provides you ability to edit, delete, upload, download, copy and paste files and folders in AWS S3 bucket.
 <strong>[File Manager Git](https://filemanagerpro.io/product/file-manager-git/?utm_source=Wordpress.org&utm_medium=Website&utm_campaign=File%20Manager%20Pro)</strong> Github integration for file manager.
 <strong>[File Manager Slack](https://filemanagerpro.io/product/file-manager-slack/?utm_source=Wordpress.org&utm_medium=Website&utm_campaign=File%20Manager%20Pro)</strong> Slack incoming webhook integration to file manager.
 
@@ -135,6 +136,16 @@ Yes, You can achieve any files and folders as zip then simple download it. Pleas
 
 
 == Changelog ==
+
+= 6.7 (20th Aug, 2020) =
+
+* Fixed issue of deprecated function of jquery
+* Updated messages text 
+
+= 6.6 (18th Aug, 2020) =
+
+* Updated Translations
+* Added media title to the uploaded file when Files Upload to Media Library is enabled
 
 = 6.5 (18th Jun, 2020) =
 

@@ -128,7 +128,22 @@
 			'cmdview'      : 'Ogled',
 			'cmdresize'    : 'Povečaj (pomanjšaj) sliko',
 			'cmdsort'      : 'Razvrsti',
-			'cmdnetmount'  : 'Mount network volume',
+			'cmdnetmount'  : 'Priklopite glasnost omrežja',
+			'cmdnetunmount': 'Odstranite glasnost', // from v2.1 added 30.04.2012
+			'cmdplaces'    : 'V krajih', // added 28.12.2014
+			'cmdchmod'     : 'Spremeni način', // from v2.1 added 20.6.2015
+			'cmdfullscreen': 'celozaslonski način', // from v2.1.15 added 03.08.2016
+			'cmdmove'      : 'Gibanje', // from v2.1.15 added 21.08.2016
+			'cmdempty'     : 'Cilj mape', // from v2.1.25 added 22.06.2017
+			'cmdundo'      : 'Prekliči', // from v2.1.27 added 31.07.2017
+			'cmdredo'      : 'Na novo', // from v2.1.27 added 31.07.2017
+			'cmdpreference': 'Osebne nastavitve', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'izberi vse', // from v2.1.28 added 15.08.2017
+			'cmdselectnone': 'prekličevanje izbire', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'Povratna izbira', // from v2.1.28 added 15.08.2017
+			'cmdopennew'   : 'Odpre se v novem oknu', // from v2.1.38 added 3.4.2018
+			'cmdhide'      : 'Skrij (osebna nastavitev)', // from v2.1.41 added 24.7.2018
+			'cmdmkdirin':'V novi mapi',
 			
 			/*********************************** buttons ***********************************/ 
 			'btnClose'  : 'Zapri',
@@ -139,6 +154,15 @@
 			'btnNo'     : 'Ne',
 			'btnYes'    : 'Da',
 			'btnMount'  : 'Mount',
+			'btnApprove': 'Mergi la $1 și aprobă', // from v2.1 added 26.04.2012
+			'btnUnmount': 'Odstranite glasnost', // from v2.1 added 30.04.2012
+			'btnConv'   : 'pretvarja', // from v2.1 added 08.04.2014
+			'btnCwd'    : 'Tukaj',      // from v2.1 added 22.5.2015
+			'btnVolume' : 'Zvezek',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Vse',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'MIME vrste', // from v2.1 added 22.5.2015
+			'btnFileName':'Ime datoteke',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Shranite in zaprite', // from v2.1 added 12.6.2015
 			
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Odpri mapo',
@@ -160,8 +184,8 @@
 			'ntfresize'   : 'Resizing images',
 			'ntfsmth'     : 'Počakaj delam >_<',
 			'ntfloadimg'  : 'Nalagam sliko',
-			'ntfnetmount' : 'Mounting network volume', // added 18.04.2012
-			'ntfdim'      : 'Acquiring image dimension', // added 20.05.2013
+			'ntfnetmount' : 'Montaža glasnosti omrežja', // added 18.04.2012
+			'ntfdim'      : 'Pridobitev dimenzije slike', // added 20.05.2013
 			
 			/************************************ dates **********************************/
 			'dateUnknown' : 'neznan',
@@ -211,7 +235,8 @@
 			'sortkind'          : 'po vrsti', 
 			'sortsize'          : 'po velikosti',
 			'sortdate'          : 'po datumu',
-			'sortFoldersFirst'  : 'Folders first',
+			'sortFoldersFirst'  : 'Najprej mape',
+			'sortAlsoTreeview':'Tudi Treeview',
 			
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Zahtevana je potrditev',
@@ -284,13 +309,21 @@
 			'rotate-cw'       : 'Zavrti 90 st. v smeri ure',
 			'rotate-ccw'      : 'Zavrti 90 st. v obratni smeri ure',
 			'degree'          : 'Stopnja',
-			'netMountDialogTitle' : 'Mount network volume', // added 18.04.2012
+			'netMountDialogTitle' : 'Priklopite glasnost omrežja', // added 18.04.2012
 			'protocol'            : 'Protocol', // added 18.04.2012
 			'host'                : 'Host', // added 18.04.2012
 			'port'                : 'Port', // added 18.04.2012
 			'user'                : 'User', // added 18.04.2012
 			'pass'                : 'Password', // added 18.04.2012
-			
+			'selectFolder'    : 'Izberite mapo',
+			'emptyIncSearch'  : 'V trenutnem pogledu ni ustreznih člankov. \\ Tipka [Enter] za razširitev iskalnega cilja.', // from v2.1.16 added 5.10.2016
+			'emptyLetSearch'  : 'V trenutnem pogledu s podanim znakom ni predmetov.', // from v2.1.23 added 24.3.2017
+			'emptyFolder'     : 'Cilj mape', // from v2.1.6 added 30.12.2015
+			'emptyFolderDrop' : 'Tukaj dodajte prazno mapo \\ Predmet', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'Dolgo kliknite tukaj, da dodate prazno mapo \\ Predmet', // from v2.1.6 added 30.12.2015
+			'dropFilesBrowser': 'Povlecite in spustite ali prilepite iz brskalnika', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Tu povlecite in spustite ali prilepite datoteke', // from v2.1 added 07.04.2014
+			'extentiontype' : 'vrsta podaljška',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Neznan',
 			'kindFolder'      : 'Mapa',

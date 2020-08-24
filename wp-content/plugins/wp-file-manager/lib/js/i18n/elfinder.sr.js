@@ -128,7 +128,19 @@
 			'cmdview'      : 'Pogledaj',
 			'cmdresize'    : 'Promeni veličinu slike',
 			'cmdsort'      : 'Sortiraj',
-			'cmdnetmount'  : 'Mount network volume',
+			'cmdnetmount'  : 'Монтирајте јачину мреже',
+			'cmdfullscreen': 'Режим целог екрана', // from v2.1.15 added 03.08.2016
+			'cmdmove'      : 'Кретање', // from v2.1.15 added 21.08.2016
+			'cmdempty'     : 'Одредиште мапе', // from v2.1.25 added 22.06.2017
+			'cmdundo'      : 'Поништити, отказати', // from v2.1.27 added 31.07.2017
+			'cmdredo'      : 'Нова', // from v2.1.27 added 31.07.2017
+			'cmdpreference': 'Лична подешавања', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'Изабери све', // from v2.1.28 added 15.08.2017
+			'cmdselectnone': 'откажи избор', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'Повратна информација', // from v2.1.28 added 15.08.2017
+			'cmdopennew'   : 'Отвара се у новом прозору', // from v2.1.38 added 3.4.2018
+			'cmdhide'      : 'Сакриј (лично подешавање)', // from v2.1.41 added 24.7.2018
+			'cmdmkdirin':'У новој мапи',
 			
 			/*********************************** buttons ***********************************/ 
 			'btnClose'  : 'Zatvori',
@@ -138,7 +150,16 @@
 			'btnCancel' : 'Prekini',
 			'btnNo'     : 'Ne',
 			'btnYes'    : 'Da',
-			'btnMount'  : 'Mount',
+			'btnMount'  : 'Моунт',
+			'btnApprove': 'Идите на 1 УСД и одобрите', // from v2.1 added 26.04.2012
+			'btnUnmount': 'Уклоните јачину звука', // from v2.1 added 30.04.2012
+			'btnConv'   : 'претвара', // from v2.1 added 08.04.2014
+			'btnCwd'    : 'Ево',      // from v2.1 added 22.5.2015
+			'btnVolume' : 'Свеска',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Свашта',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'МИМЕ типови', // from v2.1 added 22.5.2015
+			'btnFileName':'Назив документа',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Сними и затвори', // from v2.1 added 12.6.2015
 			
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Otvaranje foldera',
@@ -212,6 +233,7 @@
 			'sortsize'          : 'po veličini',
 			'sortdate'          : 'po datumu',
 			'sortFoldersFirst'  : 'Prvo folderi',
+			'sortAlsoTreeview':'Такође Треевиев',
 			
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Potrebna potvrda',
@@ -289,11 +311,20 @@
 			'host'                : 'Host', 
 			'port'                : 'Port', 
 			'user'                : 'Korisničko Ime', 
-			'pass'                : 'Lozinka', 
-
+			'pass'                : 'Lozinka',
+			'selectFolder'    : 'Изаберите фасциклу',
+			'emptyIncSearch'  : 'У тренутном приказу нема релевантних чланака. \\ [Ентер] тастер за проширење одредишта за претрагу.', // from v2.1.16 added 5.10.2016
+			'emptyLetSearch'  : 'У тренутном приказу нема објеката са наведеним карактером.', // from v2.1.23 added 24.3.2017
+			'emptyFolder'     : 'Одредиште мапе', // from v2.1.6 added 30.12.2015
+			'emptyFolderDrop' : 'Овде додајте празну мапу \\ Предмет', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'Дуго кликните овде да бисте додали празну фасциклу \\ Предмет', // from v2.1.6 added 30.12.2015
+			'dropFilesBrowser': 'Превуците, испустите или залепите из прегледача', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Овде превуците и испустите или залепите датотеке', // from v2.1 added 07.04.2014
+			'Code Editor':'Едитор кода',
+            'extentiontype' :'тип екстензије',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Nepoznat',
-			'kindFolder'      : 'Folder',
+			'kindFolder'      : 'Фолдер',
 			'kindAlias'       : 'Nadimak',
 			'kindAliasBroken' : 'Neispravan nadimak',
 			// applications

@@ -90,22 +90,22 @@
 			'errResizeNoChange'    : 'Image size not changed.',  // added 7.3.2013
 			'errUsupportType'      : 'Unsupported file type.',
 			'errNotUTF8Content'    : 'File "$1" is not in UTF-8 and cannot be edited.',  // added 9.11.2011
-			'errNetMount'          : 'Unable to mount "$1".', // added 17.04.2012
-			'errNetMountNoDriver'  : 'Unsupported protocol.',     // added 17.04.2012
-			'errNetMountFailed'    : 'Mount failed.',         // added 17.04.2012
-			'errNetMountHostReq'   : 'Host required.', // added 18.04.2012
-			'errSessionExpires'    : 'Your session has expired due to inactivity.',
-			'errCreatingTempDir'   : 'Unable to create temporary directory: "$1"',
-			'errFtpDownloadFile'   : 'Unable to download file from FTP: "$1"',
-			'errFtpUploadFile'     : 'Unable to upload file to FTP: "$1"',
-			'errFtpMkdir'          : 'Unable to create remote directory on FTP: "$1"',
-			'errArchiveExec'       : 'Error while archiving files: "$1"',
-			'errExtractExec'       : 'Error while extracting files: "$1"',
-			'errNetUnMount'        : 'Unable to unmount', // from v2.1 added 30.04.2012
+			'errNetMount'          : 'Nem lehet felszerelni "$1".', // added 17.04.2012
+			'errNetMountNoDriver'  : 'Nem támogatott protokoll.',     // added 17.04.2012
+			'errNetMountFailed'    : 'A Mount nem sikerült.',         // added 17.04.2012
+			'errNetMountHostReq'   : 'Host szükséges.', // added 18.04.2012
+			'errSessionExpires'    : 'A szekció inaktivitás miatt lejárt.',
+			'errCreatingTempDir'   : 'Nem lehet ideiglenes könyvtárat létrehozni: "$1"',
+			'errFtpDownloadFile'   : 'Nem lehet letölteni a fájlt az FTP-ből: "$1"',
+			'errFtpUploadFile'     : 'Nem sikerült feltölteni a fájlt az FTP-re: "$1"',
+			'errFtpMkdir'          : 'Nem sikerült távoli könyvtárat létrehozni az FTP-n: "$1"',
+			'errArchiveExec'       : 'Hiba a fájlok archiválása közben: "$1"',
+			'errExtractExec'       : 'Hiba a fájlok kibontása során: "$1"',
+			'errNetUnMount'        : 'Nem lehet leszerelni', // from v2.1 added 30.04.2012
 			'errConvUTF8'          : 'Not convertible to UTF-8', // from v2.1 added 08.04.2014
 			'errFolderUpload'      : 'Try Google Chrome, If you\'d like to upload the folder.', // from v2.1 added 26.6.2015
 			'errSearchTimeout'     : 'Timed out while searching "$1". Search result is partial.', // from v2.1 added 12.1.2016
-			'errReauthRequire'     : 'Re-authorization is required.', // from v2.1.10 added 3.24.2016
+			'errReauthRequire'     : 'Új engedélyre van szükség.', // from v2.1.10 added 3.24.2016
 
 			/******************************* commands names ********************************/
 			'cmdarchive'   : 'Archívum létrehozása',
@@ -122,7 +122,6 @@
 			'cmdhome'      : 'Főkönyvtár',
 			'cmdinfo'      : 'Tulajdonságok',
 			'cmdmkdir'     : 'Új mappa',
-			'cmdmkdirin'   : 'Into new folder', // from v2.1.7 added 19.2.2016
 			'cmdmkfile'    : 'Új fájl',
 			'cmdopen'      : 'Megnyitás',
 			'cmdpaste'     : 'Beillesztés',
@@ -133,15 +132,24 @@
 			'cmdsearch'    : 'Keresés',
 			'cmdup'        : 'Ugrás a szülőmappába',
 			'cmdupload'    : 'Feltöltés',
-			'cmdview'      : 'View',
-			'cmdresize'    : 'Resize & Rotate',
-			'cmdsort'      : 'Sort',
-			'cmdnetmount'  : 'Mount network volume', // added 18.04.2012
-			'cmdnetunmount': 'Unmount', // from v2.1 added 30.04.2012
-			'cmdplaces'    : 'To Places', // added 28.12.2014
-			'cmdchmod'     : 'Change mode', // from v2.1 added 20.6.2015
-			'cmdopendir'   : 'Open a folder', // from v2.1 added 13.1.2016
-			'cmdcolwidth'  : 'Reset column width', // from v2.1.13 added 12.06.2016
+			'cmdview'      : 'Kilátás',
+			'cmdresize'    : 'Átméretezés és forgatás',
+			'cmdsort'      : 'Fajta',
+			'cmdnetmount'  : 'Csatlakoztassa a hálózat hangerejét', // added 18.04.2012
+			'cmdnetunmount': 'Leválaszt', // from v2.1 added 30.04.2012
+			'cmdplaces'    : 'Helyekhez', // added 28.12.2014
+			'cmdchmod'     : 'Módváltás', // from v2.1 added 20.6.2015
+			'cmdopendir'   : 'Nyisson meg egy mappát', // from v2.1 added 13.1.2016
+			'cmdcolwidth'  : 'Állítsa vissza az oszlop szélességét', // from v2.1.13 added 12.06.2016
+			'cmdpreference': 'Beállítások', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'Válasszon mindent', // from v2.1.28 added 15.08.2017
+			'cmdselectnone': 'Ne válasszon semmit', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'Fordított választás', // from v2.1.28 added 15.08.2017
+			'cmdhide': 'Elrejtés (preferencia)',
+			'cmdopennew':'Nyisson meg új',
+			'cmdmkdirin':'Új mappában',
+			'cmdempty':'Üres',
+			'cmdfullscreen': 'Teljes képernyő',
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'Bezár',
@@ -151,17 +159,17 @@
 			'btnCancel' : 'Mégsem',
 			'btnNo'     : 'Nem',
 			'btnYes'    : 'Igen',
-			'btnMount'  : 'Mount',  // added 18.04.2012
+			'btnMount'  : 'Hegy',  // added 18.04.2012
 			'btnApprove': 'Goto $1 & approve', // from v2.1 added 26.04.2012
-			'btnUnmount': 'Unmount', // from v2.1 added 30.04.2012
-			'btnConv'   : 'Convert', // from v2.1 added 08.04.2014
-			'btnCwd'    : 'Here',      // from v2.1 added 22.5.2015
-			'btnVolume' : 'Volume',    // from v2.1 added 22.5.2015
-			'btnAll'    : 'All',       // from v2.1 added 22.5.2015
-			'btnMime'   : 'MIME Type', // from v2.1 added 22.5.2015
-			'btnFileName':'Filename',  // from v2.1 added 22.5.2015
-			'btnSaveClose': 'Save & Close', // from v2.1 added 12.6.2015
-			'btnBackup' : 'Backup', // fromv2.1 added 28.11.2015
+			'btnUnmount': 'Leválaszt', // from v2.1 added 30.04.2012
+			'btnConv'   : 'Alakítani', // from v2.1 added 08.04.2014
+			'btnCwd'    : 'Itt',      // from v2.1 added 22.5.2015
+			'btnVolume' : 'Hangerő',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Összes',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'MIME típus', // from v2.1 added 22.5.2015
+			'btnFileName':'Fájl név',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Mentés és bezárás', // from v2.1 added 12.6.2015
+			'btnBackup' : 'biztonsági mentés', // fromv2.1 added 28.11.2015
 
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Mappa megnyitás',
@@ -183,14 +191,14 @@
 			'ntfresize'   : 'Resizing images',
 			'ntfsmth'     : 'Doing something >_<',
 			'ntfloadimg'  : 'Loading image',
-			'ntfnetmount' : 'Mounting network volume', // added 18.04.2012
-			'ntfnetunmount': 'Unmounting network volume', // from v2.1 added 30.04.2012
+			'ntfnetmount' : 'Beszerelési hálózat mennyisége', // added 18.04.2012
+			'ntfnetunmount': 'A hálózati mennyiség leszerelése', // from v2.1 added 30.04.2012
 			'ntfdim'      : 'Acquiring image dimension', // added 20.05.2013
 			'ntfreaddir'  : 'Reading folder infomation', // from v2.1 added 01.07.2013
 			'ntfurl'      : 'Getting URL of link', // from v2.1 added 11.03.2014
 			'ntfchmod'    : 'Changing file mode', // from v2.1 added 20.6.2015
-			'ntfpreupload': 'Verifying upload file name', // from v2.1 added 31.11.2015
-			'ntfzipdl'    : 'Creating a file for download', // from v2.1.7 added 23.1.2016
+			'ntfpreupload': 'A feltöltött fájlnév ellenőrzése', // from v2.1 added 31.11.2015
+			'ntfzipdl'    : 'Fájl létrehozása letöltésre', // from v2.1.7 added 23.1.2016
 
 			/************************************ dates **********************************/
 			'dateUnknown' : 'Ismeretlen',
@@ -236,20 +244,21 @@
 			'Sat'         : 'Sat',
 
 			/******************************** sort variants ********************************/
-			'sortname'          : 'by name',
-			'sortkind'          : 'by kind',
-			'sortsize'          : 'by size',
-			'sortdate'          : 'by date',
-			'sortFoldersFirst'  : 'Folders first',
-			'sortperm'          : 'by permission', // from v2.1.13 added 13.06.2016
-			'sortmode'          : 'by mode',       // from v2.1.13 added 13.06.2016
-			'sortowner'         : 'by owner',      // from v2.1.13 added 13.06.2016
-			'sortgroup'         : 'by group',      // from v2.1.13 added 13.06.2016
+			'sortname'          : 'név szerint',
+			'sortkind'          : 'kedvesen',
+			'sortsize'          : 'méret szerint',
+			'sortdate'          : 'dátum szerint',
+			'sortFoldersFirst'  : 'Először a mappák',
+			'sortAlsoTreeview':'A Treeview is',
+			'sortperm'          : 'engedély alapján', // from v2.1.13 added 13.06.2016
+			'sortmode'          : 'mód szerint',       // from v2.1.13 added 13.06.2016
+			'sortowner'         : 'a tulajdonos által',      // from v2.1.13 added 13.06.2016
+			'sortgroup'         : 'csoportonként',      // from v2.1.13 added 13.06.2016
 
 			/********************************** new items **********************************/
 			'untitled file.txt' : 'NewFile.txt', // added 10.11.2015
 			'untitled folder'   : 'NewFolder',   // added 10.11.2015
-			'Archive'           : 'NewArchive',  // from v2.1 added 10.11.2015
+			'Archive'           : 'Archív',  // from v2.1 added 10.11.2015
 
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Confirmation required',
@@ -322,17 +331,17 @@
 			'crop'            : 'Crop',
 			'rotate'          : 'Rotate',
 			'rotate-cw'       : 'Rotate 90 degrees CW',
-			'rotate-ccw'      : 'Rotate 90 degrees CCW',
+			'rotate-ccw'      : 'Forgassa el 90 fokkal CCW irányban',
 			'degree'          : '°',
-			'netMountDialogTitle' : 'Mount network volume', // added 18.04.2012
+			'netMountDialogTitle' : 'Csatlakoztassa a hálózat hangerejét', // added 18.04.2012
 			'protocol'            : 'Protocol', // added 18.04.2012
 			'host'                : 'Host', // added 18.04.2012
 			'port'                : 'Port', // added 18.04.2012
 			'user'                : 'User', // added 18.04.2012
 			'pass'                : 'Password', // added 18.04.2012
-			'confirmUnmount'      : 'Are you unmount $1?',  // from v2.1 added 30.04.2012
-			'dropFilesBrowser': 'Drop or Paste files from browser', // from v2.1 added 30.05.2012
-			'dropPasteFiles'  : 'Drop or Paste files and URLs here', // from v2.1 added 07.04.2014
+			'confirmUnmount'      : 'Leszereletlen vagy $1?',  // from v2.1 added 30.04.2012
+			'dropFilesBrowser': 'Fájlok dobása vagy beillesztése a böngészőből', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Dobja el vagy illessze be a fájlokat és URL-eket ide', // from v2.1 added 07.04.2014
 			'encoding'        : 'Encoding', // from v2.1 added 19.12.2014
 			'locale'          : 'Locale',   // from v2.1 added 19.12.2014
 			'searchTarget'    : 'Target: $1',                // from v2.1 added 22.5.2015
@@ -343,7 +352,7 @@
 			'execute'         : 'Execute', // from v2.1 added 20.6.2015
 			'perm'            : 'Permission', // from v2.1 added 20.6.2015
 			'mode'            : 'Mode', // from v2.1 added 20.6.2015
-			'emptyFolder'     : 'Folder is empty', // from v2.1.6 added 30.12.2015
+			'emptyFolder'     : 'A mappa üres', // from v2.1.6 added 30.12.2015
 			'emptyFolderDrop' : 'Folder is empty\\A Drop to add items', // from v2.1.6 added 30.12.2015
 			'emptyFolderLTap' : 'Folder is empty\\A Long tap to add items', // from v2.1.6 added 30.12.2015
 			'quality'         : 'Quality', // from v2.1.6 added 5.1.2016
@@ -355,13 +364,19 @@
 			'offlineAccess'   : 'Allow offline access', // from v2.1.10 added 3.25.2016
 			'reAuth'          : 'To re-authenticate', // from v2.1.10 added 3.25.2016
 			'nowLoading'      : 'Now loading...', // from v2.1.12 added 4.26.2016
-			'openMulti'       : 'Open multiple files', // from v2.1.12 added 5.14.2016
-			'openMultiConfirm': 'You are trying to open the $1 files. Are you sure you want to open in browser?', // from v2.1.12 added 5.14.2016
-			'emptySearch'     : 'Search results is empty', // from v2.1.12 added 5.16.2016
-			'editingFile'     : 'You are editing a file.', // from v2.1.13 added 6.3.2016
+			'openMulti'       : 'Több fájl megnyitása', // from v2.1.12 added 5.14.2016
+			'openMultiConfirm': 'Megpróbál megnyitni az 1 dolláros fájlokat. Biztosan megnyitja a böngészőt?', // from v2.1.12 added 5.14.2016
+			'emptySearch'     : 'A keresési eredmények üres', // from v2.1.12 added 5.16.2016
+			'editingFile'     : 'Szerkeszt egy fájlt.', // from v2.1.13 added 6.3.2016
 			'hasSelected'     : 'You have selected $1 items.', // from v2.1.13 added 6.3.2016
 			'hasClipboard'    : 'You have $1 items in the clipboard.', // from v2.1.13 added 6.3.2016
-
+			'emptyFolderDrop' : 'A mappa üres az elemek hozzáadásához', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'A mappa hosszú kattintással üres az elemek hozzáadásához', // from v2.1.6 added 30.12.2015
+			'selectFolder':'Mappa kiválasztása',
+			'dropFilesBrowser': 'Telepítse vagy illessze be a böngészőfájlokat', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Telepítsen itt fájlokat, vagy illessze be az URL-eket vagy képeket (kivágásokat)',
+			'Code Editor': 'Kódszerkesztő',
+            'extentiontype':'kiterjesztés típusa',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Ismeretlen',
 			'kindFolder'      : 'Mappa',
@@ -444,4 +459,3 @@
 		}
 	};
 }));
-

@@ -85,36 +85,36 @@
 			'errNoArchive'         : 'هذا الملف ليس ملف مضغوط أو ذو صيغة غير مدعومة.',
 			'errCmdNoSupport'      : 'الخادوم الخلفي لا يدعم هذا الأمر ',
 			'errReplByChild'       : 'لا يمكن استبدال الملف "$1" بعنصر محتوِ فيه.',
-			'errArcSymlinks'       : 'For security reason denied to unpack archives contains symlinks.', // edited 24.06.2012
+			'errArcSymlinks'       : 'لأسباب أمنية تم رفض فك المحفوظات تحتوي على روابط رمزية.', // edited 24.06.2012
 			'errArcMaxSize'        : 'الملفات المضغوطة تجاوزت السعة المسموح بها.',
-			'errResize'            : 'Unable to resize "$1".',
-			'errResizeDegree'      : 'Invalid rotate degree.',  // added 7.3.2013
-			'errResizeRotate'      : 'Unable to rotate image.',  // added 7.3.2013
-			'errResizeSize'        : 'Invalid image size.',  // added 7.3.2013
-			'errResizeNoChange'    : 'Image size not changed.',  // added 7.3.2013
+			'errResize'            : 'تعذر تغيير الحجم "$1".',
+			'errResizeDegree'      : 'درجة تدوير غير صالحة.',  // added 7.3.2013
+			'errResizeRotate'      : 'غير قادر على تدوير الصورة.',  // added 7.3.2013
+			'errResizeSize'        : 'حجم الصورة غير صالح.',  // added 7.3.2013
+			'errResizeNoChange'    : 'لم يتغير حجم الصورة.',  // added 7.3.2013
 			'errUsupportType'      : 'نوع ملف غير مدعوم.',
 			'errNotUTF8Content'    : 'File "$1" is not in UTF-8 and cannot be edited.',  // added 9.11.2011
-			'errNetMount'          : 'Unable to mount "$1".', // added 17.04.2012
-			'errNetMountNoDriver'  : 'Unsupported protocol.',     // added 17.04.2012
-			'errNetMountFailed'    : 'Mount failed.',         // added 17.04.2012
-			'errNetMountHostReq'   : 'Host required.', // added 18.04.2012
-			'errSessionExpires'    : 'Your session has expired due to inactivity.',
-			'errCreatingTempDir'   : 'Unable to create temporary directory: "$1"',
-			'errFtpDownloadFile'   : 'Unable to download file from FTP: "$1"',
-			'errFtpUploadFile'     : 'Unable to upload file to FTP: "$1"',
-			'errFtpMkdir'          : 'Unable to create remote directory on FTP: "$1"',
+			'errNetMount'          : 'تعذر التثبيت "$1".', // added 17.04.2012
+			'errNetMountNoDriver'  : 'بروتوكول غير مدعوم.',     // added 17.04.2012
+			'errNetMountFailed'    : 'فشل جبل.',         // added 17.04.2012
+			'errNetMountHostReq'   : 'مطلوب المضيف.', // added 18.04.2012
+			'errSessionExpires'    : 'لقد انتهت جلستك بسبب عدم النشاط.',
+			'errCreatingTempDir'   : 'تعذر إنشاء دليل مؤقت: "$1"',
+			'errFtpDownloadFile'   : 'غير قادر على تنزيل الملف من FTP: "$1"',
+			'errFtpUploadFile'     : 'تعذر تحميل الملف إلى FTP: "$1"',
+			'errFtpMkdir'          : 'تعذر إنشاء دليل بعيد على FTP: "$1"',
 			'errArchiveExec'       : 'Error while archiving files: "$1"',
 			'errExtractExec'       : 'Error while extracting files: "$1"',
-			'errNetUnMount'        : 'Unable to unmount.', // from v2.1 added 30.04.2012
+			'errNetUnMount'        : 'غير قادر على إلغاء تحميل.', // from v2.1 added 30.04.2012
 			'errConvUTF8'          : 'Not convertible to UTF-8', // from v2.1 added 08.04.2014
-			'errFolderUpload'      : 'Try the modern browser, If you\'d like to upload the folder.', // from v2.1 added 26.6.2015
+			'errFolderUpload'      : 'جرّب المتصفح الحديث ، إذا كنت ترغب في تحميل المجلد.', // from v2.1 added 26.6.2015
 			'errSearchTimeout'     : 'Timed out while searching "$1". Search result is partial.', // from v2.1 added 12.1.2016
-			'errReauthRequire'     : 'Re-authorization is required.', // from v2.1.10 added 24.3.2016
+			'errReauthRequire'     : 'مطلوب إعادة الترخيص.', // from v2.1.10 added 24.3.2016
 			'errMaxTargets'        : 'Max number of selectable items is $1.', // from v2.1.17 added 17.10.2016
-			'errRestore'           : 'Unable to restore from the trash. Can\'t identify the restore destination.', // from v2.1.24 added 3.5.2017
-			'errEditorNotFound'    : 'Editor not found to this file type.', // from v2.1.25 added 23.5.2017
-			'errServerError'       : 'Error occurred on the server side.', // from v2.1.25 added 16.6.2017
-			'errEmpty'             : 'Unable to empty folder "$1".', // from v2.1.25 added 22.6.2017
+			'errRestore'           : 'تعذرت الاستعادة من سلة المهملات. لا يمكن تحديد وجهة الاستعادة.', // from v2.1.24 added 3.5.2017
+			'errEditorNotFound'    : 'لم يتم العثور على المحرر لنوع الملف هذا.', // from v2.1.25 added 23.5.2017
+			'errServerError'       : 'حدث خطأ من جانب الخادم.', // from v2.1.25 added 16.6.2017
+			'errEmpty'             : 'غير قادر على إفراغ المجلد "$1".', // from v2.1.25 added 22.6.2017
 
 			/******************************* commands names ********************************/
 			'cmdarchive'   : 'أنشئ مجلد مضغوط',
@@ -140,28 +140,31 @@
 			'cmdrename'    : 'إعادة تسمية',
 			'cmdrm'        : 'حذف',
 			'cmdtrash'     : 'داخل سلة المهملات', //from v2.1.24 added 29.4.2017
-			'cmdrestore'   : 'Restore', //from v2.1.24 added 3.5.2017
+			'cmdrestore'   : 'استعادة', //from v2.1.24 added 3.5.2017
 			'cmdsearch'    : 'بحث عن ملفات',
 			'cmdup'        : 'تغيير المسار إلى مستوى أعلى',
 			'cmdupload'    : 'رفع ملفات',
 			'cmdview'      : 'عرض',
-			'cmdresize'    : 'Resize & Rotate',
+			'cmdresize'    : 'تغيير الحجم والتدوير',
 			'cmdsort'      : 'فرز',
-			'cmdnetmount'  : 'Mount network volume', // added 18.04.2012
-			'cmdnetunmount': 'Unmount', // from v2.1 added 30.04.2012
-			'cmdplaces'    : 'To Places', // added 28.12.2014
-			'cmdchmod'     : 'Change mode', // from v2.1 added 20.6.2015
+			'cmdnetmount'  : 'تحميل حجم الشبكة', // added 18.04.2012
+			'cmdnetunmount': 'إلغاء تحميل', // from v2.1 added 30.04.2012
+			'cmdplaces'    : 'إلى أماكن', // added 28.12.2014
+			'cmdchmod'     : 'غير الطريقة', // from v2.1 added 20.6.2015
 			'cmdopendir'   : 'فتح ملف', // from v2.1 added 13.1.2016
-			'cmdcolwidth'  : 'Reset column width', // from v2.1.13 added 12.06.2016
+			'cmdcolwidth'  : 'إعادة تعيين عرض العمود', // from v2.1.13 added 12.06.2016
 			'cmdfullscreen': 'ملء الشاشة', // from v2.1.15 added 03.08.2016
-			'cmdmove'      : 'Move', // from v2.1.15 added 21.08.2016
+			'cmdmove'      : 'نقل', // from v2.1.15 added 21.08.2016
 			'cmdempty'     : 'تفريغ الملف', // from v2.1.25 added 22.06.2017
 			'cmdundo'      : 'تراجع', // from v2.1.27 added 31.07.2017
 			'cmdredo'      : 'إعاجة', // from v2.1.27 added 31.07.2017
-			'cmdpreference': 'Preferences', // from v2.1.27 added 03.08.2017
-			'cmdselectall' : 'Select all', // from v2.1.28 added 15.08.2017
-			'cmdselectnone': 'Select none', // from v2.1.28 added 15.08.2017
-			'cmdselectinvert': 'Invert selection', // from v2.1.28 added 15.08.2017
+			'cmdpreference': 'التفضيلات', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'اختر الكل', // from v2.1.28 added 15.08.2017
+			'cmdselectnone': 'لا تختر شيء', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'اختيار المقلوب', // from v2.1.28 added 15.08.2017
+			'cmdhide': 'إخفاء (التفضيل)',
+			'cmdopennew':'افتح جديد',
+			'Code Editor':'محرر الكود',
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'إغلاق',
@@ -171,17 +174,17 @@
 			'btnCancel' : 'إلغاء',
 			'btnNo'     : 'لا',
 			'btnYes'    : 'نعم',
-			'btnMount'  : 'Mount',  // added 18.04.2012
+			'btnMount'  : 'تتعدد',  // added 18.04.2012
 			'btnApprove': 'Goto $1 & approve', // from v2.1 added 26.04.2012
-			'btnUnmount': 'Unmount', // from v2.1 added 30.04.2012
-			'btnConv'   : 'Convert', // from v2.1 added 08.04.2014
-			'btnCwd'    : 'Here',      // from v2.1 added 22.5.2015
-			'btnVolume' : 'Volume',    // from v2.1 added 22.5.2015
+			'btnUnmount': 'إلغاء تحميل', // from v2.1 added 30.04.2012
+			'btnConv'   : 'تحويل', // from v2.1 added 08.04.2014
+			'btnCwd'    : 'هنا',      // from v2.1 added 22.5.2015
+			'btnVolume' : 'الصوت',    // from v2.1 added 22.5.2015
 			'btnAll'    : 'All',       // from v2.1 added 22.5.2015
-			'btnMime'   : 'MIME Type', // from v2.1 added 22.5.2015
-			'btnFileName':'Filename',  // from v2.1 added 22.5.2015
-			'btnSaveClose': 'Save & Close', // from v2.1 added 12.6.2015
-			'btnBackup' : 'Backup', // fromv2.1 added 28.11.2015
+			'btnMime'   : 'نوع التمثيل الصامت', // from v2.1 added 22.5.2015
+			'btnFileName':'اسم الملف',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'حفظ وإغلاق', // from v2.1 added 12.6.2015
+			'btnBackup' : 'دعم', // fromv2.1 added 28.11.2015
 			'btnRename'    : 'إعادة تسمية',      // from v2.1.24 added 6.4.2017
 			'btnRenameAll' : 'إعادة تسمية (الجميع)', // from v2.1.24 added 6.4.2017
 			'btnPrevious' : 'Prev ($1/$2)', // from v2.1.24 added 11.5.2017
@@ -205,27 +208,27 @@
 			'ntfarchive'  : 'ينشئ ملف مضغوط',
 			'ntfextract'  : 'استخراج ملفات من الملف المضغوط ',
 			'ntfsearch'   : 'يبحث عن ملفات',
-			'ntfresize'   : 'Resizing images',
+			'ntfresize'   : 'تغيير حجم الصور',
 			'ntfsmth'     : 'يفعل شيئا',
 			'ntfloadimg'  : 'تحميل الصورة',
-			'ntfnetmount' : 'Mounting network volume', // added 18.04.2012
-			'ntfnetunmount': 'Unmounting network volume', // from v2.1 added 30.04.2012
-			'ntfdim'      : 'Acquiring image dimension', // added 20.05.2013
+			'ntfnetmount' : 'تصاعد حجم الشبكة', // added 18.04.2012
+			'ntfnetunmount': 'إلغاء تحميل حجم الشبكة', // from v2.1 added 30.04.2012
+			'ntfdim'      : 'اكتساب أبعاد الصورة', // added 20.05.2013
 			'ntfreaddir'  : 'قراءة معلومات الملف', // from v2.1 added 01.07.2013
-			'ntfurl'      : 'Getting URL of link', // from v2.1 added 11.03.2014
-			'ntfchmod'    : 'Changing file mode', // from v2.1 added 20.6.2015
-			'ntfpreupload': 'Verifying upload file name', // from v2.1 added 31.11.2015
-			'ntfzipdl'    : 'Creating a file for download', // from v2.1.7 added 23.1.2016
-			'ntfparents'  : 'Getting path infomation', // from v2.1.17 added 2.11.2016
-			'ntfchunkmerge': 'Processing the uploaded file', // from v2.1.17 added 2.11.2016
-			'ntftrash'    : 'Doing throw in the trash', // from v2.1.24 added 2.5.2017
-			'ntfrestore'  : 'Doing restore from tha trash', // from v2.1.24 added 3.5.2017
-			'ntfchkdir'   : 'Checking destination folder', // from v2.1.24 added 3.5.2017
-			'ntfundo'     : 'Undoing previous operation', // from v2.1.27 added 31.07.2017
-			'ntfredo'     : 'Redoing previous undone', // from v2.1.27 added 31.07.2017
+			'ntfurl'      : 'الحصول على عنوان URL للرابط', // from v2.1 added 11.03.2014
+			'ntfchmod'    : 'تغيير وضع الملف', // from v2.1 added 20.6.2015
+			'ntfpreupload': 'التحقق من اسم ملف التحميل', // from v2.1 added 31.11.2015
+			'ntfzipdl'    : 'إنشاء ملف للتحميل', // from v2.1.7 added 23.1.2016
+			'ntfparents'  : 'الحصول على معلومات المسار', // from v2.1.17 added 2.11.2016
+			'ntfchunkmerge': 'معالجة الملف الذي تم تحميله', // from v2.1.17 added 2.11.2016
+			'ntftrash'    : 'القيام برمي القمامة', // from v2.1.24 added 2.5.2017
+			'ntfrestore'  : 'القيام باستعادة من سلة المهملات', // from v2.1.24 added 3.5.2017
+			'ntfchkdir'   : 'فحص مجلد الوجهة', // from v2.1.24 added 3.5.2017
+			'ntfundo'     : 'التراجع عن العملية السابقة', // from v2.1.27 added 31.07.2017
+			'ntfredo'     : 'إعادة التراجع السابق', // from v2.1.27 added 31.07.2017
 
 			/*********************************** volumes *********************************/
-			'volume_Trash' : 'Trash', //from v2.1.24 added 29.4.2017
+			'volume_Trash' : 'قمامة، يدمر، يهدم', //from v2.1.24 added 29.4.2017
 
 			/************************************ dates **********************************/
 			'dateUnknown' : 'غير معلوم',
@@ -277,10 +280,10 @@
 			'sortdate'          : 'بالتاريخ',
 			'sortFoldersFirst'  : 'الملفات أولا',
 			'sortperm'          : 'بالصلاحيات', // from v2.1.13 added 13.06.2016
-			'sortmode'          : 'by mode',       // from v2.1.13 added 13.06.2016
-			'sortowner'         : 'by owner',      // from v2.1.13 added 13.06.2016
+			'sortmode'          : 'حسب الوضع',       // from v2.1.13 added 13.06.2016
+			'sortowner'         : 'بواسطة المالك',      // from v2.1.13 added 13.06.2016
 			'sortgroup'         : 'بالمجموعة',      // from v2.1.13 added 13.06.2016
-			'sortAlsoTreeview'  : 'Also Treeview',  // from v2.1.15 added 01.08.2016
+			'sortAlsoTreeview'  : 'أيضا Treeview',  // from v2.1.15 added 01.08.2016
 
 			/********************************** new items **********************************/
 			'untitled file.txt' : 'ملف_جديد.txt', // added 10.11.2015
@@ -295,7 +298,7 @@
 			'confirmConvUTF8' : 'Not in UTF-8<br/>Convert to UTF-8?<br/>Contents become UTF-8 by saving after conversion.', // from v2.1 added 08.04.2014
 			'confirmNonUTF8'  : 'Character encoding of this file couldn\'t be detected. It need to temporarily convert to UTF-8 for editting.<br/>Please select character encoding of this file.', // from v2.1.19 added 28.11.2016
 			'confirmNotSave'  : 'It has been modified.<br/>Losing work if you do not save changes.', // from v2.1 added 15.7.2015
-			'confirmTrash'    : 'Are you sure you want to move items to trash bin?', //from v2.1.24 added 29.4.2017
+			'confirmTrash'    : 'هل أنت متأكد أنك تريد نقل العناصر إلى سلة المهملات؟', //from v2.1.24 added 29.4.2017
 			'apllyAll'        : 'تطبيق على الكل',
 			'name'            : 'الاسم',
 			'size'            : 'الحجم',
@@ -316,7 +319,7 @@
 			'places'          : 'المواقع',
 			'calc'            : 'حساب',
 			'path'            : 'مسار',
-			'aliasfor'        : 'Alias for',
+			'aliasfor'        : 'الاسم المستعار ل',
 			'locked'          : 'مقفول',
 			'dim'             : 'الأبعاد',
 			'files'           : 'ملفات',
@@ -352,85 +355,85 @@
 			'selectForUpload' : 'اختر الملفات التي تريد رفعها',
 			'moveFiles'       : 'قص الملفات',
 			'copyFiles'       : 'نسخ الملفات',
-			'restoreFiles'    : 'Restore items', // from v2.1.24 added 5.5.2017
-			'rmFromPlaces'    : 'Remove from places',
-			'aspectRatio'     : 'Aspect ratio',
-			'scale'           : 'Scale',
+			'restoreFiles'    : 'استعادة العناصر', // from v2.1.24 added 5.5.2017
+			'rmFromPlaces'    : 'إزالة من الأماكن',
+			'aspectRatio'     : 'ابعاد متزنة',
+			'scale'           : 'مقياس',
 			'width'           : 'عرض',
 			'height'          : 'طول',
-			'resize'          : 'Resize',
-			'crop'            : 'Crop',
-			'rotate'          : 'Rotate',
-			'rotate-cw'       : 'Rotate 90 degrees CW',
-			'rotate-ccw'      : 'Rotate 90 degrees CCW',
+			'resize'          : 'تغيير الحجم',
+			'crop'            : 'ا & قتصاص',
+			'rotate'          : 'استدارة',
+			'rotate-cw'       : 'استدارة 90 درجة CW',
+			'rotate-ccw'      : 'استدارة 90 درجة CCW',
 			'degree'          : '°',
-			'netMountDialogTitle' : 'Mount network volume', // added 18.04.2012
-			'protocol'            : 'Protocol', // added 18.04.2012
-			'host'                : 'Host', // added 18.04.2012
-			'port'                : 'Port', // added 18.04.2012
+			'netMountDialogTitle' : 'تحميل حجم الشبكة', // added 18.04.2012
+			'protocol'            : 'بروتوكول', // added 18.04.2012
+			'host'                : 'مضيف', // added 18.04.2012
+			'port'                : 'ميناء', // added 18.04.2012
 			'user'                : 'مستخدم', // added 18.04.2012
 			'pass'                : 'كلمة العبور', // added 18.04.2012
-			'confirmUnmount'      : 'Are you unmount $1?',  // from v2.1 added 30.04.2012
-			'dropFilesBrowser': 'Drop or Paste files from browser', // from v2.1 added 30.05.2012
-			'dropPasteFiles'  : 'Drop files, Paste URLs or images(clipboard) here', // from v2.1 added 07.04.2014
-			'encoding'        : 'Encoding', // from v2.1 added 19.12.2014
-			'locale'          : 'Locale',   // from v2.1 added 19.12.2014
-			'searchTarget'    : 'Target: $1',                // from v2.1 added 22.5.2015
-			'searchMime'      : 'Search by input MIME Type', // from v2.1 added 22.5.2015
-			'owner'           : 'Owner', // from v2.1 added 20.6.2015
-			'group'           : 'Group', // from v2.1 added 20.6.2015
-			'other'           : 'Other', // from v2.1 added 20.6.2015
-			'execute'         : 'Execute', // from v2.1 added 20.6.2015
-			'perm'            : 'Permission', // from v2.1 added 20.6.2015
-			'mode'            : 'Mode', // from v2.1 added 20.6.2015
-			'emptyFolder'     : 'Folder is empty', // from v2.1.6 added 30.12.2015
-			'emptyFolderDrop' : 'Folder is empty\\A Drop to add items', // from v2.1.6 added 30.12.2015
-			'emptyFolderLTap' : 'Folder is empty\\A Long tap to add items', // from v2.1.6 added 30.12.2015
+			'confirmUnmount'      : 'هل إلغاء تحميل $1?',  // from v2.1 added 30.04.2012
+			'dropFilesBrowser': 'إسقاط أو لصق الملفات من المتصفح', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'أفلت الملفات أو الصق عناوين URL أو الصور (الحافظة) هنا', // from v2.1 added 07.04.2014
+			'encoding'        : 'التشفير', // from v2.1 added 19.12.2014
+			'locale'          : 'لغة',   // from v2.1 added 19.12.2014
+			'searchTarget'    : 'استهداف: $1',                // from v2.1 added 22.5.2015
+			'searchMime'      : 'البحث حسب نوع الإدخال MIME', // from v2.1 added 22.5.2015
+			'owner'           : 'صاحب', // from v2.1 added 20.6.2015
+			'group'           : 'مجموعة', // from v2.1 added 20.6.2015
+			'other'           : 'آخر', // from v2.1 added 20.6.2015
+			'execute'         : 'نفذ - اعدم', // from v2.1 added 20.6.2015
+			'perm'            : 'الإذن', // from v2.1 added 20.6.2015
+			'mode'            : 'الوضع', // from v2.1 added 20.6.2015
+			'emptyFolder'     : 'مجلد فارغ', // from v2.1.6 added 30.12.2015
+			'emptyFolderDrop' : 'المجلد فارغ \\ قطرة لإضافة عناصر', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'المجلد فارغ \\ نقرة طويلة لإضافة عناصر', // from v2.1.6 added 30.12.2015
 			'quality'         : 'Quality', // from v2.1.6 added 5.1.2016
-			'autoSync'        : 'Auto sync',  // from v2.1.6 added 10.1.2016
-			'moveUp'          : 'Move up',  // from v2.1.6 added 18.1.2016
-			'getLink'         : 'Get URL link', // from v2.1.7 added 9.2.2016
-			'selectedItems'   : 'Selected items ($1)', // from v2.1.7 added 2.19.2016
+			'autoSync'        : 'مزامنة آلية',  // from v2.1.6 added 10.1.2016
+			'moveUp'          : 'تحرك',  // from v2.1.6 added 18.1.2016
+			'getLink'         : 'احصل على رابط URL', // from v2.1.7 added 9.2.2016
+			'selectedItems'   : 'العناصر المحددة ($1)', // from v2.1.7 added 2.19.2016
 			'folderId'        : 'Folder ID', // from v2.1.10 added 3.25.2016
-			'offlineAccess'   : 'Allow offline access', // from v2.1.10 added 3.25.2016
-			'reAuth'          : 'To re-authenticate', // from v2.1.10 added 3.25.2016
-			'nowLoading'      : 'Now loading...', // from v2.1.12 added 4.26.2016
-			'openMulti'       : 'Open multiple files', // from v2.1.12 added 5.14.2016
-			'openMultiConfirm': 'You are trying to open the $1 files. Are you sure you want to open in browser?', // from v2.1.12 added 5.14.2016
-			'emptySearch'     : 'Search results is empty in search target.', // from v2.1.12 added 5.16.2016
-			'editingFile'     : 'It is editing a file.', // from v2.1.13 added 6.3.2016
+			'offlineAccess'   : 'السماح بالوصول بلا اتصال', // from v2.1.10 added 3.25.2016
+			'reAuth'          : 'لإعادة المصادقة', // from v2.1.10 added 3.25.2016
+			'nowLoading'      : 'يتم التحميل الان...', // from v2.1.12 added 4.26.2016
+			'openMulti'       : 'افتح ملفات متعددة', // from v2.1.12 added 5.14.2016
+			'openMultiConfirm': 'You are trying to open the $1 files. هل أنت متأكد أنك تريد فتح في المتصفح؟', // from v2.1.12 added 5.14.2016
+			'emptySearch'     : 'نتائج البحث فارغة في هدف البحث.', // from v2.1.12 added 5.16.2016
+			'editingFile'     : 'يقوم بتحرير ملف.', // from v2.1.13 added 6.3.2016
 			'hasSelected'     : 'You have selected $1 items.', // from v2.1.13 added 6.3.2016
 			'hasClipboard'    : 'You have $1 items in the clipboard.', // from v2.1.13 added 6.3.2016
-			'incSearchOnly'   : 'Incremental search is only from the current view.', // from v2.1.13 added 6.30.2016
+			'incSearchOnly'   : 'البحث المتزايد هو فقط من العرض الحالي.', // from v2.1.13 added 6.30.2016
 			'reinstate'       : 'Reinstate', // from v2.1.15 added 3.8.2016
 			'complete'        : '$1 complete', // from v2.1.15 added 21.8.2016
-			'contextmenu'     : 'Context menu', // from v2.1.15 added 9.9.2016
-			'pageTurning'     : 'Page turning', // from v2.1.15 added 10.9.2016
-			'volumeRoots'     : 'Volume roots', // from v2.1.16 added 16.9.2016
+			'contextmenu'     : 'قائمة السياق', // from v2.1.15 added 9.9.2016
+			'pageTurning'     : 'تحول الصفحة', // from v2.1.15 added 10.9.2016
+			'volumeRoots'     : 'جذور الحجم', // from v2.1.16 added 16.9.2016
 			'reset'           : 'Reset', // from v2.1.16 added 1.10.2016
 			'bgcolor'         : 'Background color', // from v2.1.16 added 1.10.2016
 			'colorPicker'     : 'Color picker', // from v2.1.16 added 1.10.2016
 			'8pxgrid'         : '8px Grid', // from v2.1.16 added 4.10.2016
 			'enabled'         : 'Enabled', // from v2.1.16 added 4.10.2016
 			'disabled'        : 'Disabled', // from v2.1.16 added 4.10.2016
-			'emptyIncSearch'  : 'Search results is empty in current view.\\APress [Enter] to expand search target.', // from v2.1.16 added 5.10.2016
-			'emptyLetSearch'  : 'First letter search results is empty in current view.', // from v2.1.23 added 24.3.2017
-			'textLabel'       : 'Text label', // from v2.1.17 added 13.10.2016
+			'emptyIncSearch'  : 'نتائج البحث فارغة في العرض الحالي.\\APress [Enter] to expand search target.', // from v2.1.16 added 5.10.2016
+			'emptyLetSearch'  : 'نتائج بحث الحرف الأول فارغة في العرض الحالي.', // from v2.1.23 added 24.3.2017
+			'textLabel'       : 'تسمية نصية', // from v2.1.17 added 13.10.2016
 			'minsLeft'        : '$1 mins left', // from v2.1.17 added 13.11.2016
-			'openAsEncoding'  : 'Reopen with selected encoding', // from v2.1.19 added 2.12.2016
-			'saveAsEncoding'  : 'Save with the selected encoding', // from v2.1.19 added 2.12.2016
-			'selectFolder'    : 'Select folder', // from v2.1.20 added 13.12.2016
-			'firstLetterSearch': 'First letter search', // from v2.1.23 added 24.3.2017
-			'presets'         : 'Presets', // from v2.1.25 added 26.5.2017
+			'openAsEncoding'  : 'إعادة الفتح باستخدام التشفير المحدد', // from v2.1.19 added 2.12.2016
+			'saveAsEncoding'  : 'حفظ بالترميز المحدد', // from v2.1.19 added 2.12.2016
+			'selectFolder'    : 'اختر مجلد', // from v2.1.20 added 13.12.2016
+			'firstLetterSearch': 'البحث بالحرف الأول', // from v2.1.23 added 24.3.2017
+			'presets'         : 'إعدادات مسبقة', // from v2.1.25 added 26.5.2017
 			'tooManyToTrash'  : 'It\'s too many items so it can\'t into trash.', // from v2.1.25 added 9.6.2017
 			'TextArea'        : 'TextArea', // from v2.1.25 added 14.6.2017
-			'folderToEmpty'   : 'Empty the folder "$1".', // from v2.1.25 added 22.6.2017
-			'filderIsEmpty'   : 'There are no items in a folder "$1".', // from v2.1.25 added 22.6.2017
-			'preference'      : 'Preference', // from v2.1.26 added 28.6.2017
-			'language'        : 'Language setting', // from v2.1.26 added 28.6.2017
-			'clearBrowserData': 'Initialize the settings saved in this browser', // from v2.1.26 added 28.6.2017
-			'toolbarPref'     : 'Toolbar setting', // from v2.1.27 added 2.8.2017
-
+			'folderToEmpty'   : 'إفراغ المجلد "$1".', // from v2.1.25 added 22.6.2017
+			'filderIsEmpty'   : 'لا توجد عناصر في مجلد "$1".', // from v2.1.25 added 22.6.2017
+			'preference'      : 'التفضيل', // from v2.1.26 added 28.6.2017
+			'language'        : 'إعدادات اللغة', // from v2.1.26 added 28.6.2017
+			'clearBrowserData': 'تهيئة الإعدادات المحفوظة في هذا المتصفح', // from v2.1.26 added 28.6.2017
+			'toolbarPref'     : 'إعداد شريط الأدوات', // from v2.1.27 added 2.8.2017
+            'extentiontype'   :'نوع الارشادية',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'غير معروف',
 			'kindRoot'        : 'Volume Root', // from v2.1.16 added 16.10.2016

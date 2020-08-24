@@ -82,23 +82,23 @@
 			'errArcSymlinks'       : 'Per raons de seguretat, no es permet extreure arxius que contenen enllaços simbòlics.',
 			'errArcMaxSize'        : 'Els fitxers de l\'arxiu excedeixen la mida màxima permesa.',
 			'errResize'            : 'No s\'ha pogut redimensionar "$1".',
-			'errResizeDegree' : 'Invalid rotate degree.',
-			'errResizeRotate' : 'Unable to rotate image.',
-			'errResizeSize' : 'Invalid image size.',
+			'errResizeDegree' : 'Grau de rotació no vàlid.',
+			'errResizeRotate' : 'No es pot rotar la imatge.',
+			'errResizeSize' : 'La mida de la imatge no és vàlida.',
 			'errResizeNoChange' : 'Image size not changed.',
 			'errUsupportType'      : 'El tipus de fitxer no està suportat.',
 			'errNotUTF8Content' : 'File "$1" is not in UTF-8 and cannot be edited.',
-			'errNetMount' : 'Unable to mount "$1".',
-			'errNetMountNoDriver' : 'Unsupported protocol.',
-			'errNetMountFailed' : 'Mount failed.',
-			'errNetMountHostReq' : 'Host required.',
-			'errSessionExpires' : 'Your session has expired due to inactivity.',
-			'errCreatingTempDir' : 'Unable to create temporary directory: "$1"',
-			'errFtpDownloadFile' : 'Unable to download file from FTP: "$1"',
-			'errFtpUploadFile' : 'Unable to upload file to FTP: "$1"',
-			'errFtpMkdir' : 'Unable to create remote directory on FTP: "$1"',
-			'errArchiveExec' : 'Error while archiving files: "$1"',
-			'errExtractExec' : 'Error while extracting files: "$1"',
+			'errNetMount' : 'No es pot muntar "$1".',
+			'errNetMountNoDriver' : 'Protocol no compatible',
+			'errNetMountFailed' : 'El muntatge ha fallat.',
+			'errNetMountHostReq' : 'Amfitrió necessari.',
+			'errSessionExpires' : 'La vostra sessió ha caducat per inactivitat.',
+			'errCreatingTempDir' : 'No es pot crear el directori temporal: "$1"',
+			'errFtpDownloadFile' : 'No es pot descarregar el fitxer des de FTP: "$1"',
+			'errFtpUploadFile' : 'No es pot carregar el fitxer a FTP: "$1"',
+			'errFtpMkdir' : 'No es pot crear un directori remot a FTP: "$1"',
+			'errArchiveExec' : 'Error al arxivar fitxers: "$1"',
+			'errExtractExec' : 'S\'ha produït un error en extreure fitxers: "$1"',
 			
 			/******************************* commands names ********************************/
 			'cmdarchive'   : 'Crea arxiu',
@@ -128,7 +128,19 @@
 			'cmdview'      : 'Visualitza',
 			'cmdresize'    : 'Redimensiona la imatge',
 			'cmdsort'      : 'Ordena',
-			'cmdnetmount'  : 'Mount network volume',
+			'cmdnetmount'  : 'Muntar el volum de xarxa',
+			'cmdpreference': 'Preferència', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'Seleccionar tot', // from v2.1.28 added 15.08.2017
+			'cmdselectnone' : 'Seleccioneu Cap',
+			'cmdselectinvert': 'Inverteix la selecció', // from v2.1.28 added 15.08.2017
+			'cmdhide': 'Amaga (preferència)',
+			'cmdopennew':'Obert nou',
+			'cmdmkdirin':'A la nova carpeta',
+			'cmdempty': 'Buit',
+			'cmdfullscreen': 'Pantalla completa',
+			'cmdtrash':'Dins de les escombraries',
+			'cmdundo'      : 'Desfer', // from v2.1.27 added 31.07.2017
+			'cmdredo'      : 'Rehabilita', // from v2.1.27 added 31.07.2017
 			
 			/*********************************** buttons ***********************************/ 
 			'btnClose'  : 'Tanca',
@@ -138,7 +150,13 @@
 			'btnCancel' : 'Cancel·la',
 			'btnNo'     : 'No',
 			'btnYes'    : 'Sí',
-			'btnMount'  : 'Mount',
+			'btnMount'  : 'Muntanya',
+			'btnCwd'    : 'Aquí',
+			'btnVolume' : 'Volum',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Tots',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'Tipus MIME', // from v2.1 added 22.5.2015
+			'btnFileName':'Nom de l\'arxiu',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Desa i tanca', // from v2.1 added 12.6.2015
 			
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'S\'està obrint la carpeta',
@@ -160,8 +178,8 @@
 			'ntfresize'   : 'Resizing images',
 			'ntfsmth'     : 'S\'estan realitzant operacions',
 			'ntfloadimg'  : 'S\'està carregant la imatge',
-			'ntfnetmount' : 'Mounting network volume',
-			'ntfdim'      : 'Acquiring image dimension',
+			'ntfnetmount' : 'Volum de xarxa de muntatge',
+			'ntfdim'      : 'Adquisició de la dimensió de la imatge',
 			
 			/************************************ dates **********************************/
 			'dateUnknown' : 'desconegut',
@@ -211,7 +229,8 @@
 			'sortkind'          : 'per tipus', 
 			'sortsize'          : 'per mida',
 			'sortdate'          : 'per data',
-			'sortFoldersFirst' : 'Folders first',
+			'sortFoldersFirst' : 'Carpetes primer',
+			'sortAlsoTreeview':'També Treeview',
 			
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Es necessita confirmació',
@@ -284,13 +303,19 @@
 			'rotate-cw'       : 'Rotate 90 degrees CW',
 			'rotate-ccw'      : 'Rotate 90 degrees CCW',
 			'degree'          : '°',
-			'netMountDialogTitle' : 'Mount network volume',
+			'netMountDialogTitle' : 'Muntar el volum de xarxa',
 			'protocol'        : 'Protocol',
 			'host'            : 'Host',
 			'port'            : 'Port',
 			'user'            : 'User',
-			'pass'            : 'Password',
-			
+			'pass'            : 'Contrasenya',
+			'selectFolder' : 'Seleccioneu Carpeta',
+			'dropFilesBrowser': 'Desplegueu o enganxeu fitxers del navegador', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Desplegueu fitxers o enganxeu URL o imatges (retalls) aquí',
+			'emptyFolderDrop' : 'La carpeta està buida \\ solta per afegir articles', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'La carpeta està buida \\ durant un clic llarg per afegir articles', // from v2.1.6 added 30.12.2015
+			'Code Editor':'Editor de codis',
+			'extentiontype' :'tipus d extensió',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Desconegut',
 			'kindFolder'      : 'Carpeta',
@@ -372,4 +397,3 @@
 		}
 	};
 }));
-

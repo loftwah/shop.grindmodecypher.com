@@ -4,7 +4,7 @@
   Plugin URI: https://wordpress.org/plugins/wp-file-manager
   Description: Manage your WP files.
   Author: mndpsingh287
-  Version: 6.5
+  Version: 6.7
   Author URI: https://profiles.wordpress.org/mndpsingh287
   License: GPLv2
  **/
@@ -16,7 +16,7 @@ if (!class_exists('mk_file_folder_manager')):
     class mk_file_folder_manager
     {
         protected $SERVER = 'http://ikon.digital/plugindata/api.php';
-        var $ver = '6.5';
+        var $ver = '6.7';
         /* Auto Load Hooks */
         public function __construct()
         {
@@ -1123,7 +1123,9 @@ if (!class_exists('mk_file_folder_manager')):
 					$post_id = 0;
 					$desc = "";
 					$file_array = array();     
-					$file_array['name'] = basename($matches[0]);					
+                    $file_array['name'] = basename($matches[0]);
+                    $file_info = pathinfo($file_array['name']);
+					$desc = $file_info['filename'];				
 					// If error storing temporarily, unlink
 					if ( is_wp_error( $tmp ) ) {
 						@unlink($file_array['tmp_name']);

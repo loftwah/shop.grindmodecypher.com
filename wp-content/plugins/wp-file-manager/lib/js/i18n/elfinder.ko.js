@@ -494,6 +494,7 @@
 			'exportToSave'    : '이 파일은 저장될 수 없습니다. 편집한 내용을 유지하려면 PC로 내보내시기 바랍니다.', // from v2.1.44 added 1.12.2018
 			'dblclickToSelect': '파일을 두 번 클릭하여 선택하세요.', // from v2.1.47 added 22.1.2019
 			'useFullscreen'   : '전체 화면 모드 사용', // from v2.1.47 added 19.2.2019
+			'Code Editor':'코드 에디터',
 
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : '알 수 없음',

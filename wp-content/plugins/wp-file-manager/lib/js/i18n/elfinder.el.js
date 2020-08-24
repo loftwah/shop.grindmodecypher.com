@@ -92,13 +92,13 @@
 			'errNetMountNoDriver'  : 'Μη υποστηριζόμενο πρωτόκολο.',     // added 17.04.2012
 			'errNetMountFailed'    : 'Η φόρτωση απέτυχε.',             // added 17.04.2012
 			'errNetMountHostReq'   : 'Απαιτείται host εξυπηρετητής.', // added 18.04.2012
-			'errSessionExpires'    : 'Your session has expired due to inactivity.',
-			'errCreatingTempDir'   : 'Unable to create temporary directory: "$1"',
-			'errFtpDownloadFile'   : 'Unable to download file from FTP: "$1"',
-			'errFtpUploadFile'     : 'Unable to upload file to FTP: "$1"',
-			'errFtpMkdir'          : 'Unable to create remote directory on FTP: "$1"',
-			'errArchiveExec'       : 'Error while archiving files: "$1"',
-			'errExtractExec'       : 'Error while extracting files: "$1"',
+			'errSessionExpires'    : 'Η συνεδρία σας έληξε λόγω αδράνειας.',
+			'errCreatingTempDir'   : 'Δεν είναι δυνατή η δημιουργία προσωρινού καταλόγου: "$1"',
+			'errFtpDownloadFile'   : 'Δεν είναι δυνατή η λήψη του αρχείου από το FTP: "$1"',
+			'errFtpUploadFile'     : 'Δεν είναι δυνατή η μεταφόρτωση αρχείου στο FTP: "$1"',
+			'errFtpMkdir'          : 'Δεν είναι δυνατή η δημιουργία απομακρυσμένου καταλόγου στο FTP: "$1"',
+			'errArchiveExec'       : 'Σφάλμα κατά την αρχειοθέτηση αρχείων: "$1"',
+			'errExtractExec'       : 'Σφάλμα κατά την εξαγωγή αρχείων: "$1"',
 			
 			/******************************* commands names ********************************/
 			'cmdarchive'   : 'Δημιουργία archive αρχείου',
@@ -128,7 +128,19 @@
 			'cmdview'      : 'Προβολή',
 			'cmdresize'    : 'Αλλαγή μεγέθους εικόνας',
 			'cmdsort'      : 'Ταξινόμηση',
-			'cmdnetmount'  : 'Mount network volume',
+			'cmdnetmount'  : 'Προσάρτηση τόμου δικτύου',
+			'cmdpreference': 'Προτίμηση', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'Επιλογή όλων', // from v2.1.28 added 15.08.2017
+			'cmdselectnone':'Επιλέξτε Κανένα',
+			'cmdselectinvert': 'Αντιστρέψτε την επιλογή', // from v2.1.28 added 15.08.2017
+			'cmdhide': 'Απόκρυψη (προτίμηση)',
+			'cmdopennew':'Άνοιγμα νέου',
+			'cmdmkdirin':'Στο νέο φάκελο',
+			'cmdempty': 'Αδειάζω',
+			'cmdfullscreen': 'ΠΛΗΡΗΣ ΟΘΟΝΗ',
+			'cmdtrash':'Μέσα στα σκουπίδια',
+			'cmdundo'      : 'Ξεκάνω', // from v2.1.27 added 31.07.2017
+			'cmdredo'      : 'Rehabilita', // from v2.1.27 added 31.07.2017
 			
 			/*********************************** buttons ***********************************/ 
 			'btnClose'  : 'Κλείσιμο',
@@ -138,7 +150,13 @@
 			'btnCancel' : 'Ακύρωση',
 			'btnNo'     : 'Όχι',
 			'btnYes'    : 'Ναι',
-			'btnMount'  : 'Mount',
+			'btnMount'  : 'Βουνό',
+			'btnCwd'    : 'Εδώ',
+			'btnVolume' : 'Ενταση ΗΧΟΥ',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Ολα',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'Τύπος MIME', // from v2.1 added 22.5.2015
+			'btnFileName':'Ονομα αρχείου',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Αποθήκευσε και κλείσε', // from v2.1 added 12.6.2015
 			
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Άνοιγμα φακέλου',
@@ -212,6 +230,7 @@
 			'sortsize'          : 'κατά μέγεθος',
 			'sortdate'          : 'κατά ημερομηνία',
 			'sortFoldersFirst'  : 'Πρώτα οι φάκελοι', // added 22.06.2012
+			'sortAlsoTreeview':'Επίσης Treeview',
 			
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Απαιτείται επιβεβαίωση',
@@ -290,7 +309,13 @@
 			'port'                : 'Port', // added 18.04.2012
 			'user'                : 'Χρήστης', // added 18.04.2012
 			'pass'                : 'Κωδικός', // added 18.04.2012
-			
+			'selectFolder' : 'Επιλέξτε φάκελο',
+			'dropFilesBrowser': 'Ανάπτυξη ή επικόλληση αρχείων προγράμματος περιήγησης', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Αναπτύξτε αρχεία ή επικολλήστε διευθύνσεις URL ή εικόνες (αποκόμματα) εδώ',
+			'emptyFolderDrop' : 'Ο φάκελος είναι άδειος \\ χαλαρός για προσθήκη στοιχείων', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'Ο φάκελος είναι κενός \\ για ένα μεγάλο κλικ για να προσθέσετε στοιχεία', // from v2.1.6 added 30.12.2015
+			'Code Editor':'Πρόγραμμα επεξεργασίας κώδικα',
+			'extentiontype':'τύπος επέκτασης',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Άγνωστο',
 			'kindFolder'      : 'Φάκελος',

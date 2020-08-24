@@ -165,6 +165,7 @@
 			'cmdselectnone': 'Annulla selezione', // from v2.1.28 added 15.08.2017
 			'cmdselectinvert': 'Inverti selezione', // from v2.1.28 added 15.08.2017
 			'cmdopennew'   : 'Apri in una nuova finestra', // from v2.1.38 added 3.4.2018
+			'cmdhide':'Nascondi (preferenza)',
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'Chiudi',
@@ -464,7 +465,8 @@
 			'dialog'          : 'Dialog', // from v2.1.38 added 4.4.2018
 			'all'             : 'Tutti', // from v2.1.38 added 4.4.2018
 			'iconSize'        : 'Dimensione icona (Visualizzazione icone)', // form v2.1.39 added 7.5.2018
-
+			'Code Editor':'Editor di codice',
+            'extentiontype':'Tipo di estensione',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Sconosciuto',
 			'kindRoot'        : 'Percorso base del volume', // from v2.1.16 added 16.10.2016
@@ -498,7 +500,7 @@
 			'kindText'        : 'Documento di testo',
 			'kindTextPlain'   : 'Testo Semplice',
 			'kindPHP'         : 'File PHP',
-			'kindCSS'         : 'File CSS (Cascading Style Sheet)',
+			'kindCSS'         : 'File CSS (foglio di stile a cascata)',
 			'kindHTML'        : 'Documento HTML',
 			'kindJS'          : 'File Javascript',
 			'kindRTF'         : 'File RTF (Rich Text Format)',
@@ -514,7 +516,7 @@
 			'kindSQL'         : 'File SQL',
 			'kindXML'         : 'File XML',
 			'kindAWK'         : 'File AWK',
-			'kindCSV'         : 'File CSV (Comma separated values)',
+			'kindCSV'         : 'File CSV (valori separati da virgola)',
 			'kindDOCBOOK'     : 'File Docbook XML',
 			'kindMarkdown'    : 'Testo markdown', // added 20.7.2015
 			// images
@@ -549,4 +551,3 @@
 		}
 	};
 }));
-

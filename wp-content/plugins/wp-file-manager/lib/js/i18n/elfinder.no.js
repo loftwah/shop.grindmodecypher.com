@@ -65,40 +65,40 @@
 			'errUploadFileSize'    : 'Filen vergår maksimum tillatt størrelse.',
 			'errUploadMime'        : 'Filtypen ikke tillatt.',
 			'errUploadTransfer'    : '"$1" overførings feil.',
-			'errNotReplace'        : 'Object "$1" already exists at this location and can not be replaced by object with another type.',
-			'errReplace'           : 'Unable to replace "$1".',
+			'errNotReplace'        : 'Objektet "$ 1" eksisterer allerede på dette stedet og kan ikke erstattes av objekt med en annen type.',
+			'errReplace'           : 'Kan ikke erstatte "$1".',
 			'errSave'              : 'Kunne ikke lagre "$1".',
 			'errCopy'              : 'Kunne ikke kopiere "$1".',
 			'errMove'              : 'Kunne ikke flytte "$1".',
 			'errCopyInItself'      : 'Kunne ikke kopiere "$1" til seg selv.',
 			'errRm'                : 'Kunne ikke slette "$1".',
-			'errRmSrc'             : 'Unable remove source file(s).',
+			'errRmSrc'             : 'Kan ikke fjerne kildefiler.',
 			'errExtract'           : 'Kunne ikke pakke ut filer fra "$1".',
 			'errArchive'           : 'Kunne ikke opprette arkiv.',
 			'errArcType'           : 'akriv-typen er ikke støttet.',
 			'errNoArchive'         : 'Filen er ikke et arkiv eller et arkiv som ikke er støttet.',
 			'errCmdNoSupport'      : 'Backend støtter ikke denne kommandoen.',
-			'errReplByChild'       : 'The folder “$1” can’t be replaced by an item it contains.',
-			'errArcSymlinks'       : 'For security reason denied to unpack archives contains symlinks or files with not allowed names.', // edited 24.06.2012
-			'errArcMaxSize'        : 'Archive files exceeds maximum allowed size.',
-			'errResize'            : 'Unable to resize "$1".',
-			'errResizeDegree'      : 'Invalid rotate degree.',  // added 7.3.2013
-			'errResizeRotate'      : 'Unable to rotate image.',  // added 7.3.2013
-			'errResizeSize'        : 'Invalid image size.',  // added 7.3.2013
-			'errResizeNoChange'    : 'Image size not changed.',  // added 7.3.2013
-			'errUsupportType'      : 'Unsupported file type.',
-			'errNotUTF8Content'    : 'File "$1" is not in UTF-8 and cannot be edited.',  // added 9.11.2011
-			'errNetMount'          : 'Unable to mount "$1".', // added 17.04.2012
-			'errNetMountNoDriver'  : 'Unsupported protocol.',     // added 17.04.2012
-			'errNetMountFailed'    : 'Mount failed.',         // added 17.04.2012
-			'errNetMountHostReq'   : 'Host required.', // added 18.04.2012
-			'errSessionExpires'    : 'Your session has expired due to inactivity.',
-			'errCreatingTempDir'   : 'Unable to create temporary directory: "$1"',
-			'errFtpDownloadFile'   : 'Unable to download file from FTP: "$1"',
-			'errFtpUploadFile'     : 'Unable to upload file to FTP: "$1"',
-			'errFtpMkdir'          : 'Unable to create remote directory on FTP: "$1"',
-			'errArchiveExec'       : 'Error while archiving files: "$1"',
-			'errExtractExec'       : 'Error while extracting files: "$1"',
+			'errReplByChild'       : 'Mappen "$ 1" kan ikke erstattes av et element den inneholder.',
+			'errArcSymlinks'       : 'Av sikkerhetsmessige grunner nektet for å pakke ut arkiver inneholder symlenker eller filer med ikke tillatte navn.', // edited 24.06.2012
+			'errArcMaxSize'        : 'Arkivfiler overstiger maksimalt tillatt størrelse.',
+			'errResize'            : 'Kan ikke endre størrelse "$1".',
+			'errResizeDegree'      : 'Ugyldig rotasjonsgrad.',  // added 7.3.2013
+			'errResizeRotate'      : 'Kan ikke rotere bildet.',  // added 7.3.2013
+			'errResizeSize'        : 'Ugyldig bildestørrelse.',  // added 7.3.2013
+			'errResizeNoChange'    : 'Bildestørrelse ikke endret.',  // added 7.3.2013
+			'errUsupportType'      : 'Ikke-støttet filtype.',
+			'errNotUTF8Content'    : 'Filen "$ 1" er ikke i UTF-8 og kan ikke redigeres.',  // added 9.11.2011
+			'errNetMount'          : 'Kan ikke montere "$ 1".', // added 17.04.2012
+			'errNetMountNoDriver'  : 'Protokoll som ikke støttes.',     // added 17.04.2012
+			'errNetMountFailed'    : 'Mount mislyktes.',         // added 17.04.2012
+			'errNetMountHostReq'   : 'Verten kreves.', // added 18.04.2012
+			'errSessionExpires'    : 'Økten din har gått ut på grunn av inaktivitet.',
+			'errCreatingTempDir'   : 'Kan ikke opprette midlertidig katalog: "$1"',
+			'errFtpDownloadFile'   : 'Kunne ikke laste ned filen fra FTP:"$1"',
+			'errFtpUploadFile'     : 'Kan ikke laste opp fil til FTP: "$1"',
+			'errFtpMkdir'          : 'Kan ikke opprette ekstern katalog på FTP: "$1"',
+			'errArchiveExec'       : 'Feil under arkivering av filer: "$1"',
+			'errExtractExec'       : 'Feil under utpakking av filer: "$1"',
 			
 			/******************************* commands names ********************************/
 			'cmdarchive'   : 'Opprett arkiv',
@@ -126,9 +126,20 @@
 			'cmdup'        : 'Opp et nivå',
 			'cmdupload'    : 'Last opp filer',
 			'cmdview'      : 'Vis',
-			'cmdresize'    : 'Resize & Rotate',
-			'cmdsort'      : 'Sort',
-			'cmdnetmount'  : 'Mount network volume',
+			'cmdresize'    : 'Endre størrelse på og roter',
+			'cmdsort'      : 'Sortere',
+			'cmdnetmount'  : 'Monter nettverksvolum',
+			'cmdpreference': 'Preference', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'Velg alle', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'Vend alternativet', // from v2.1.28 added 15.08.2017
+			'cmdhide': 'Skjul (preferanse)',
+			'cmdopennew':'Åpning av en ny',
+			'cmdmkdirin':'I den nye mappen',
+			'cmdempty': 'Tømme',
+			'cmdfullscreen': 'BETALING OTHONI',
+			'cmdtrash':'I søpla',
+			'cmdundo'      : 'Forkaste', // from v2.1.27 added 31.07.2017
+			'cmdredo'      : 'Rehabilitering', // from v2.1.27 added 31.07.2017
 			
 			/*********************************** buttons ***********************************/ 
 			'btnClose'  : 'Lukk',
@@ -139,6 +150,12 @@
 			'btnNo'     : 'Nei',
 			'btnYes'    : 'Ja',
 			'btnMount'  : 'Mount',
+			'btnCwd'    : 'Her',
+			'btnVolume' : 'Volum',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Alle',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'MIME-type', // from v2.1 added 22.5.2015
+			'btnFileName':'Filnavn',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Gem og luk', // from v2.1 added 12.6.2015
 			
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Åpne mappe',
@@ -157,11 +174,11 @@
 			'ntfarchive'  : 'Oppretter arkiv',
 			'ntfextract'  : 'Pakker ut filer fra arkiv',
 			'ntfsearch'   : 'Søker i filer',
-			'ntfresize'   : 'Resizing images',
+			'ntfresize'   : 'Endre størrelse på bilder',
 			'ntfsmth'     : 'Gjør noe... >_<',
-			'ntfloadimg'  : 'Loading image',
-			'ntfnetmount' : 'Mounting network volume', // added 18.04.2012
-			'ntfdim'      : 'Acquiring image dimension', // added 20.05.2013
+			'ntfloadimg'  : 'Laster inn bilde',
+			'ntfnetmount' : 'Montering av nettverksvolum', // added 18.04.2012
+			'ntfdim'      : 'Å skaffe bildedimensjon', // added 20.05.2013
 			
 			/************************************ dates **********************************/
 			'dateUnknown' : 'Ukjent',
@@ -207,17 +224,17 @@
 			'Sat'         : 'Sat',
 
 			/******************************** sort variants ********************************/
-			'sortname'          : 'by name', 
-			'sortkind'          : 'by kind', 
-			'sortsize'          : 'by size',
-			'sortdate'          : 'by date',
-			'sortFoldersFirst'  : 'Folders first',
+			'sortname'          : 'ved navn', 
+			'sortkind'          : 'etter slag', 
+			'sortsize'          : 'etter størrelse',
+			'sortdate'          : 'etter dato',
+			'sortFoldersFirst'  : 'Mapper først',
 			
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Bekreftelse nødvendig',
 			'confirmRm'       : 'Er du sikker på at du ønsker å slette filene?',
 			'confirmRepl'     : 'Erstatt fil?',
-			'apllyAll'        : 'Apply to all',
+			'apllyAll'        : 'Gjelder for alle',
 			'name'            : 'Navn',
 			'size'            : 'Størrelse',
 			'perms'           : 'Rettigheter',
@@ -260,37 +277,44 @@
 			'twitter'         : 'Follow us on twitter',
 			'facebook'        : 'Join us on facebook',
 			'team'            : 'Team',
-			'chiefdev'        : 'chief developer',
-			'developer'       : 'developer',
-			'contributor'     : 'contributor',
-			'maintainer'      : 'maintainer',
-			'translator'      : 'translator',
+			'chiefdev'        : 'hovedutvikler',
+			'developer'       : 'utvikleren',
+			'contributor'     : 'bidragsyter',
+			'maintainer'      : 'vedlikeholder',
+			'translator'      : 'oversetter',
 			'icons'           : 'Ikoner',
-			'dontforget'      : 'and don\'t forget to bring a towel',
+			'dontforget'      : 'og ikke glem å ta med et håndkle',
 			'shortcutsof'     : 'Snarveier avslått',
 			'dropFiles'       : 'Slipp filer her',
 			'or'              : 'eller',
 			'selectForUpload' : 'Velg filer til opplasting',
 			'moveFiles'       : 'Flytt filer',
 			'copyFiles'       : 'Kopier filer',
-			'rmFromPlaces'    : 'Remove from places',
-			'aspectRatio'     : 'Aspect ratio',
+			'rmFromPlaces'    : 'Fjern fra steder',
+			'aspectRatio'     : 'Størrelsesforholdet',
 			'scale'           : 'Scale',
-			'width'           : 'Width',
-			'height'          : 'Height',
+			'width'           : 'Bredde',
+			'height'          : 'Høyde',
 			'resize'          : 'Resize',
-			'crop'            : 'Crop',
-			'rotate'          : 'Rotate',
-			'rotate-cw'       : 'Rotate 90 degrees CW',
-			'rotate-ccw'      : 'Rotate 90 degrees CCW',
+			'crop'            : 'Avling',
+			'rotate'          : 'Rotere',
+			'rotate-cw'       : 'Roter 90 grader CW',
+			'rotate-ccw'      : 'Roter 90 grader CCW',
 			'degree'          : '°',
-			'netMountDialogTitle' : 'Mount network volume', // added 18.04.2012
-			'protocol'            : 'Protocol', // added 18.04.2012
-			'host'                : 'Host', // added 18.04.2012
-			'port'                : 'Port', // added 18.04.2012
-			'user'                : 'User', // added 18.04.2012
-			'pass'                : 'Password', // added 18.04.2012
-			
+			'netMountDialogTitle' : 'Monter nettverksvolum', // added 18.04.2012
+			'protocol'            : 'protokoll', // added 18.04.2012
+			'host'                : 'Vert', // added 18.04.2012
+			'port'                : 'Havn', // added 18.04.2012
+			'user'                : 'Bruker', // added 18.04.2012
+			'pass'                : 'Passord', // added 18.04.2012
+			'selectFolder' : 'Velg en mappe',
+			'dropFilesBrowser': 'Utvikle eller lime inn nettleserprogrammer', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Utvikle filer eller lim inn nettadresser eller bilder (utklipp) her',
+			'emptyFolderDrop' : 'Mappen er tom og løs for å legge til data', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'Mappen er tom \\ for et stort klikk for å legge til elementer', // from v2.1.6 added 30.12.2015
+			'Code Editor' :'Kodeditor',
+			'extentiontype' :'utvidelsestype',
+			'sortAlsoTreeview':'sorter ogsåTree-visning',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Ukjent',
 			'kindFolder'      : 'Mappe',

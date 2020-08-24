@@ -453,7 +453,7 @@
 			'columnPref'      : 'Настройки за колони (Изглед в списък)', // from v2.1.32 added 6.2.2018
 			'reflectOnImmediate' : 'Всички промени ще се отразят незабавно в архива.', // from v2.1.33 added 2.3.2018
 			'reflectOnUnmount'   : 'Промените няма да се отразят, докато не размонтирате този диск.', // from v2.1.33 added 2.3.2018
-			'unmountChildren' : 'The following volume(s) mounted on this volume also unmounted. Are you sure to unmount it?', // from v2.1.33 added 5.3.2018
+			'unmountChildren' : 'Следният обем (и), монтиран на този обем, също е изключен. Сигурен ли сте да го демонтирате?', // from v2.1.33 added 5.3.2018
 			'selectionInfo'   : 'Информация за селекцията', // from v2.1.33 added 7.3.2018
 			'hashChecker'     : 'Алгоритми за показване на файловия хеш', // from v2.1.33 added 10.3.2018
 			'infoItems'       : 'Info Items (Selection Info Panel)', // from v2.1.38 added 28.3.2018
@@ -472,7 +472,8 @@
 			'showHidden'      : 'Покажи скритите елементи', // from v2.1.41 added 24.7.2018
 			'hideHidden'      : 'Скрий скритите елементи', // from v2.1.41 added 24.7.2018
 			'toggleHidden'    : 'Покажи/скрий скритите елементи', // from v2.1.41 added 24.7.2018
-
+			'Code Editor' : 'Редактор на код',
+            'extentiontype' : 'тип разширение',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Непознат',
 			'kindRoot'        : 'Начало на ресурс', // from v2.1.16 added 16.10.2016

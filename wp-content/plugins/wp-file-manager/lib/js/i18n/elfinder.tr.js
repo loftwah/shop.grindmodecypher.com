@@ -117,7 +117,7 @@
 			'errEditorNotFound'    : 'Editör bu dosya türünü bulamıyor.', // from v2.1.25 added 23.5.2017
 			'errServerError'       : 'Sunucu tarafında beklenilmeyen bir hata oluştu.', // from v2.1.25 added 16.6.2017
 			'errEmpty'             : '"$1" klasörü boşaltılamıyor.', // from v2.1.25 added 22.6.2017
-			'moreErrors'           : 'There are $1 more errors.', // from v2.1.44 added 9.12.2018
+			'moreErrors'           : '1 $ hata daha var.', // from v2.1.44 added 9.12.2018
 
 			/******************************* commands names ********************************/
 			'cmdarchive'   : 'Arşiv oluştur',
@@ -305,7 +305,7 @@
 			'confirmNonUTF8'  : 'Bu dosyanın karakter kodlaması tespit edilemedi. Düzenleme için geçici olarak UTF-8\'e dönüştürülmesi gerekir.<br/>Lütfen bu dosyanın karakter kodlamasını seçin.', // from v2.1.19 added 28.11.2016
 			'confirmNotSave'  : 'Düzenlenmiş içerik.<br/>Değişiklikleri kaydetmek istemiyorsanız son yapılanlar kaybolacak.', // from v2.1 added 15.7.2015
 			'confirmTrash'    : 'Öğeleri çöp kutusuna taşımak istediğinizden emin misiniz?', //from v2.1.24 added 29.4.2017
-			'confirmMove'     : 'Are you sure you want to move items to "$1"?', //from v2.1.50 added 27.7.2019
+			'confirmMove'     : 'Öğeleri "1 $" değerine taşımak istediğinizden emin misiniz?', //from v2.1.50 added 27.7.2019
 			'apllyAll'        : 'Tümüne uygula',
 			'name'            : 'İsim',
 			'size'            : 'Boyut',
@@ -491,10 +491,10 @@
 			'author'          : 'Yazar', // from v2.1.43 added 19.10.2018
 			'email'           : 'E-mail', // from v2.1.43 added 19.10.2018
 			'license'         : 'Lisans', // from v2.1.43 added 19.10.2018
-			'exportToSave'    : 'This item can\'t be saved. To avoid losing the edits you need to export to your PC.', // from v2.1.44 added 1.12.2018
-			'dblclickToSelect': 'Double click on the file to select it.', // from v2.1.47 added 22.1.2019
-			'useFullscreen'   : 'Use fullscreen mode', // from v2.1.47 added 19.2.2019
-
+			'exportToSave'    : 'Bu öğe kaydedilemez. Düzenlemeleri kaybetmemek için PC nize dışa aktarmanız gerekir.', // from v2.1.44 added 1.12.2018
+			'dblclickToSelect': 'Seçmek için dosyayı çift tıklayın.', // from v2.1.47 added 22.1.2019
+			'useFullscreen'   : 'Tam ekran modunu kullan', // from v2.1.47 added 19.2.2019
+            'Code Editor'     : 'Kod Düzenleyici',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Bilinmiyor',
 			'kindRoot'        : 'Sürücü Kök dizini', // from v2.1.16 added 16.10.2016
@@ -579,4 +579,3 @@
 		}
 	};
 }));
-

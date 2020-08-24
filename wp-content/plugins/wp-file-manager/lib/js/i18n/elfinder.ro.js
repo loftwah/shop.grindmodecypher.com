@@ -137,6 +137,18 @@
 			'cmdnetunmount': 'Elimină volum', // from v2.1 added 30.04.2012
 			'cmdplaces'    : 'La Locuri', // added 28.12.2014
 			'cmdchmod'     : 'Schimbă mod', // from v2.1 added 20.6.2015
+			'cmdfullscreen': 'ecran complet', // from v2.1.15 added 03.08.2016
+			'cmdmove'      : 'Mișcare', // from v2.1.15 added 21.08.2016
+			'cmdempty'     : 'Folder gol', // from v2.1.25 added 22.06.2017
+			'cmdundo'      : 'Anula', // from v2.1.27 added 31.07.2017
+			'cmdredo'      : 'A reface', // from v2.1.27 added 31.07.2017
+			'cmdpreference': 'Setari personale', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'selectează tot', // from v2.1.28 added 15.08.2017
+			'cmdselectnone': 'deselectarea', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'Inverseaza selectia', // from v2.1.28 added 15.08.2017
+			'cmdopennew'   : 'Deschide într-o fereastră nouă', // from v2.1.38 added 3.4.2018
+			'cmdhide'      : 'Ascundeți (setare personală)', // from v2.1.41 added 24.7.2018
+			'cmdmkdirin':'Intr-un nou folder',
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'Închide',
@@ -233,6 +245,7 @@
 			'sortsize'          : 'după mărime',
 			'sortdate'          : 'după dată',
 			'sortFoldersFirst'  : 'Dosarele primele',
+			'sortAlsoTreeview':'De asemenea Treeview',
 
 			/********************************** new items **********************************/
 			'untitled file.txt' : 'FisierNou.txt', // added 10.11.2015
@@ -331,7 +344,13 @@
 			'execute'         : 'Execute', // from v2.1 added 20.6.2015
 			'perm'            : 'Permission', // from v2.1 added 20.6.2015
 			'mode'            : 'Mod', // from v2.1 added 20.6.2015
-
+			'selectFolder'    : 'Selectați folderul',
+			'emptyIncSearch'  : 'Nu există articole aplicabile în vizualizarea curentă. \\ O tasta [Enter] pentru a extinde ținta de căutare.', // from v2.1.16 added 5.10.2016
+			'emptyLetSearch'  : 'Nu există elemente din vizualizarea curentă cu caracterul specificat.', // from v2.1.23 added 24.3.2017
+			'emptyFolder'     : 'Folder gol', // from v2.1.6 added 30.12.2015
+			'emptyFolderDrop' : 'Treceți aici pentru a adăuga un folder gol \\ Un element', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'Apăsați lung aici pentru a adăuga un folder gol \\ Un element', // from v2.1.6 added 30.12.2015
+             'extentiontype'     :'tip de extensie',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Necunoscut',
 			'kindFolder'      : 'Dosar',
@@ -414,4 +433,3 @@
 		}
 	};
 }));
-

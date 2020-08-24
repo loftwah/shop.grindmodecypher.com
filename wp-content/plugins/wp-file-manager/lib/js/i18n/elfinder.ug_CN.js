@@ -129,6 +129,18 @@
 			'cmdresize'    : 'چوڭلىقىنى تەڭشەش',
 			'cmdsort'      : 'تەرتىپ',
 			'cmdnetmount'  : 'توردىن قوشۇش', // added 18.04.2012
+			'cmdfullscreen': 'تولۇق ئېكران', // from v2.1.15 added 03.08.2016
+			'cmdmove'      : 'يۆتكەڭ', // from v2.1.15 added 21.08.2016
+			'cmdempty'     : 'ھۆججەت قىسقۇچ', // from v2.1.25 added 22.06.2017
+			'cmdundo'      : 'بىكار قىلىش (ئەمەلدىن قالدۇرۇش)', // from v2.1.27 added 31.07.2017
+			'cmdredo'      : 'قايتا ئىشلەڭ ، قايتا قىلىڭ', // from v2.1.27 added 31.07.2017
+			'cmdpreference': 'مايىللىق', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'ھەممىنى تاللاڭ', // from v2.1.28 added 15.08.2017
+			'cmdselectnone': 'ھېچنىمىنى تاللىماڭ', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'ئەكسىچە تاللاڭ', // from v2.1.28 added 15.08.2017
+			'cmdopennew'   : 'يېڭى كۆزنەكتە ئېچىڭ', // from v2.1.38 added 3.4.2018
+			'cmdhide'      : 'يوشۇرۇش (مايىللىق)', // from v2.1.41 added 24.7.2018
+			'cmdmkdirin'   : 'يېڭى ھۆججەت قىسقۇچقا يۆتكىڭ',
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'تاقاش',
@@ -139,6 +151,21 @@
 			'btnNo'     : 'ياق',
 			'btnYes'    : 'ھەئە',
 			'btnMount'  : 'يۈكلەش',  // added 18.04.2012
+			'btnApprove': 'Goto $ 1 & تەستىق', // from v2.1 added 26.04.2012
+			'btnUnmount': 'تەڭداشسىز', // from v2.1 added 30.04.2012
+			'btnConv'   : 'ئۆزگەرتىش', // from v2.1 added 08.04.2014
+			'btnCwd'    : 'بۇ يەردە',      // from v2.1 added 22.5.2015
+			'btnVolume' : 'ھەجىم',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'ھەممىسى',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'MIME تىپى', // from v2.1 added 22.5.2015
+			'btnFileName':'ھۆججەت ئىسمى',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'ساقلاش ۋە تاقاش', // from v2.1 added 12.6.2015
+			'btnBackup' : 'زاپاسلاش', // fromv2.1 added 28.11.2015
+			'btnRename'    : 'ئىسىم ئۆزگەرتىش',      // from v2.1.24 added 6.4.2017
+			'btnRenameAll' : 'ئىسمى (ھەممىسى)', // from v2.1.24 added 6.4.2017
+			'btnPrevious' : 'ئىلگىرى ($1/$2)', // from v2.1.24 added 11.5.2017
+			'btnNext'     : 'كېيىنكى ($1/$2)', // from v2.1.24 added 11.5.2017
+			'btnSaveAs'   : 'ساقلاڭ', // from v2.1.25 added 24.5.2017
 
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'قىسقۇچنى ئېچىش',
@@ -284,13 +311,22 @@
 			'rotate-cw'       : 'سائەت ئىستىرىلكىسى بويىچە 90 گىرادۇس پىقىرىتىش',
 			'rotate-ccw'      : 'سائەت ئىستىرىلكىسىنى تەتۈر يۆنىلىشى بويىچە 90گىرادۇس پىقىرىتىش',
 			'degree'          : 'گىرادۇس',
-			'netMountDialogTitle' : 'Mount network volume', // added 18.04.2012
+			'netMountDialogTitle' : 'تور ئاۋازى', // added 18.04.2012
 			'protocol'            : 'پىروتوكڭل', // added 18.04.2012
 			'host'                : 'مۇلازىمىتىر', // added 18.04.2012
 			'port'            : 'پورت', // added 18.04.2012
 			'user'            : 'ئەزا', // added 18.04.2012
 			'pass'            : 'ئىم', // added 18.04.2012
-
+			'selectFolder'    : 'قىسقۇچنى تاللاڭ',
+			'emptyIncSearch'  : 'ھازىرقى قاراشتا مۇناسىۋەتلىك ماقالىلەر يوق. \\ [Enter] كۇنۇپكىسىنى ئىزدەپ نىشاننى كېڭەيتىڭ.', // from v2.1.16 added 5.10.2016
+			'emptyLetSearch'  : 'نۆۋەتتىكى كۆرۈنۈشتە كۆرسىتىلگەن ھەرپ-بەلگىلەر يوق.', // from v2.1.23 added 24.3.2017
+			'emptyFolder'     : 'نىشان خەرىتىسى', // from v2.1.6 added 30.12.2015
+			'emptyFolderDrop' : 'بۇ يەرگە قۇرۇق \\ تېما قىسقۇچى قوشۇڭ', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'بۇ يەرنى ئۇزۇن چېكىپ قۇرۇق \\ تېما قىسقۇچى قوشۇڭ', // from v2.1.6 added 30.12.2015
+			'dropFilesBrowser': 'توركۆرگۈدىن سۆرەپ تاشلاش ، تاشلاش ياكى چاپلاش', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'ھۆججەتلەرنى بۇ يەرگە سۆرەپ تاشلاڭ', // from v2.1 added 07.04.2014
+			'Code Editor':'كود تەھرىرلىگۈچى',
+            'extentiontype':'كېڭەيتىش تىپى',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'ئېنىق ئەمەس',
 			'kindFolder'      : 'ھۈججەت قىسقۇچ',

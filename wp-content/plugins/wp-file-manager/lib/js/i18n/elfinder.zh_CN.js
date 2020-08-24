@@ -497,7 +497,7 @@
 			'exportToSave'    : '本条目不能保存. 为避免丢失编辑数据,须要导出到你的电脑.', // from v2.1.44 added 1.12.2018
 			'dblclickToSelect': '在文件上双击以选中它.', // from v2.1.47 added 22.1.2019
 			'useFullscreen'   : '使用全屏模式', // from v2.1.47 added 19.2.2019
-
+            'Code Editor'     :'代码编辑器',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : '未知',
 			'kindRoot'        : '根目录', // from v2.1.16 added 16.10.2016
@@ -582,4 +582,3 @@
 		}
 	};
 }));
-

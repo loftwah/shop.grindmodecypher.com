@@ -492,6 +492,7 @@
 			'exportToSave'    : 'Tuto položku nelze uložit. Abyste se vyhnuli ztrátě úprav, musíte je exportovat do počítače.', // from v2.1.44 added 1.12.2018
 			'dblclickToSelect': 'Poklepáním na soubor jej vyberte.', // from v2.1.47 added 22.1.2019
 			'useFullscreen'   : 'Použít režim celé obrazovky', // from v2.1.47 added 19.2.2019
+			'Code Editor':'Editor kódu',
 
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Neznámý',

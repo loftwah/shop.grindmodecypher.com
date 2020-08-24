@@ -146,13 +146,21 @@
 			'cmdresize'    : 'Ubah ukuran & Putar',
 			'cmdsort'      : 'Urutkan',
 			'cmdnetmount'  : 'Baca-susun volume jaringan', // added 18.04.2012
-			'cmdnetunmount': 'Unmount', // from v2.1 added 30.04.2012
+			'cmdnetunmount': 'Lepas', // from v2.1 added 30.04.2012
 			'cmdplaces'    : 'Ke Tempat', // added 28.12.2014
 			'cmdchmod'     : 'Mode mengubah', // from v2.1 added 20.6.2015
 			'cmdopendir'   : 'Membuka folder', // from v2.1 added 13.1.2016
 			'cmdcolwidth'  : 'Reset column width', // from v2.1.13 added 12.06.2016
 			'cmdfullscreen': 'Layar Penuh', // from v2.1.15 added 03.08.2016
 			'cmdmove'      : 'Pindah', // from v2.1.15 added 21.08.2016
+			'cmdpreference': 'Pengaturan', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'Pilih semuanya', // from v2.1.28 added 15.08.2017
+			'cmdselectnone': 'Jangan memilih apa pun', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'Pilihan terbalik', // from v2.1.28 added 15.08.2017
+			'cmdhide': 'Sembunyikan (preferensi)',
+			'cmdopennew':'Buka yang baru',
+			'cmdempty':'Kosong',
+			'cmdfullscreen': 'Layar penuh',
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'Tutup',
@@ -200,7 +208,7 @@
 			'ntfsmth'     : 'Melakukan sesuatu',
 			'ntfloadimg'  : 'Memuat citra',
 			'ntfnetmount' : 'Membaca susunan volume jaringan', // added 18.04.2012
-			'ntfnetunmount': 'Unmounting network volume', // from v2.1 added 30.04.2012
+			'ntfnetunmount': 'Lepaskan volume jaringan', // from v2.1 added 30.04.2012
 			'ntfdim'      : 'Mendapatkan dimensi citra', // added 20.05.2013
 			'ntfreaddir'  : 'Membaca informasi folder', // from v2.1 added 01.07.2013
 			'ntfurl'      : 'Mendapatkan URL dari link', // from v2.1 added 11.03.2014
@@ -269,7 +277,7 @@
 			'sortmode'          : 'menurut mode',       // from v2.1.13 added 13.06.2016
 			'sortowner'         : 'menurut pemilik',      // from v2.1.13 added 13.06.2016
 			'sortgroup'         : 'menurut grup',      // from v2.1.13 added 13.06.2016
-			'sortAlsoTreeview'  : 'Also Treeview',  // from v2.1.15 added 01.08.2016
+			'sortAlsoTreeview'  : 'Juga Treeview',  // from v2.1.15 added 01.08.2016
 
 			/********************************** new items **********************************/
 			'untitled file.txt' : 'FileBaru.txt', // added 10.11.2015
@@ -411,7 +419,9 @@
 			'selectFolder'    : 'Select folder', // from v2.1.20 added 13.12.2016
 			'firstLetterSearch': 'First letter search', // from v2.1.23 added 24.3.2017
 			'presets'         : 'Presets', // from v2.1.25 added 26.5.2017
-
+			'selectFolder' : 'Pilih folder',
+			'Code Editor':'Editor Kode',
+            'extentiontype' :'Jenis ekstensi',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Tak diketahui',
 			'kindRoot'        : 'Volume Root', // from v2.1.16 added 16.10.2016
@@ -495,4 +505,3 @@
 		}
 	};
 }));
-

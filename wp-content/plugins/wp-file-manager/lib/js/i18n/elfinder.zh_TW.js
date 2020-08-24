@@ -163,6 +163,8 @@
 			'cmdselectall' : '全選', // from v2.1.28 added 15.08.2017
 			'cmdselectnone': '取消選取', // from v2.1.28 added 15.08.2017
 			'cmdselectinvert': '反向選取', // from v2.1.28 added 15.08.2017
+			'cmdopennew'   : '在新視窗開啟', // from v2.1.38 added 3.4.2018
+			'cmdhide'      : '隱藏（首選項）', // from v2.1.41 added 24.7.2018
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : '關閉',
@@ -432,7 +434,8 @@
 			'clearBrowserData': '初始化保存在此瀏覽器中的設置', // from v2.1.26 added 28.6.2017
 			'toolbarPref'     : '工具欄設置', // from v2.1.27 added 2.8.2017
 			'charsLeft'       : '... 剩下 $1 個字元',  // from v2.1.29 added 30.8.2017
-
+            'Code Editor'     :'代碼編輯器',
+			'extentiontype'   :'擴展類型',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : '未知',
 			'kindRoot'        : '磁碟根目錄', // from v2.1.16 added 16.10.2016
@@ -517,4 +520,3 @@
 		}
 	};
 }));
-

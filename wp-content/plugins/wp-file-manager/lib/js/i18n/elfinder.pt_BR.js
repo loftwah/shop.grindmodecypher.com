@@ -493,7 +493,7 @@
 			'exportToSave'    : 'Este item não pode ser salvo. Para evitar perder as edições, você precisa exportar para o seu PC.', // from v2.1.44 added 1.12.2018
 			'dblclickToSelect': 'Clique duas vezes no arquivo para selecioná-lo.', // from v2.1.47 added 22.1.2019
 			'useFullscreen'   : 'Usar o modo de tela cheia', // from v2.1.47 added 19.2.2019
-
+            'Code Editor'     :'Editor de código',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Desconhecio',
 			'kindRoot'        : 'Raiz do volume', // from v2.1.16 added 16.10.2016

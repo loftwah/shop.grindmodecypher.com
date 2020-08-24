@@ -495,6 +495,7 @@
 			'exportToSave'    : 'Dieses Element kann nicht gespeichert werden. Um Änderungen nicht zu verlieren, muss es auf den lokalen PC exportiert werden', // from v2.1.44 added 13.12.2019
 			'dblclickToSelect': 'Doppelt auf Datei klicken um auszuwählen', // from v2.1.47 added 13.12.2019
 			'useFullscreen'   : 'Gesamter Bildschirm', // from v2.1.47 added 13.12.2019
+			'Code Editor':'Code-Editor',
 
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Unbekannt',

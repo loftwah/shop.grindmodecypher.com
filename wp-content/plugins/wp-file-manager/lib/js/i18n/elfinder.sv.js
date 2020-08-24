@@ -128,8 +128,17 @@
 			'cmdview'      : 'Visa',
 			'cmdresize'    : 'Ändra bildstorlek',
 			'cmdsort'      : 'Sortera',
-			'cmdnetmount'  : 'Mount network volume',
-			
+			'cmdnetmount'  : 'Montera nätverksvolym',
+			'cmdhide'      : 'Dölj',
+			'cmdselectall' : 'Välj alla',
+			'cmdselectnone':'Välj ingen',
+			'cmdselectinvert' :'Välj invertera',
+			'cmdopennew' :     'öppna nytt',
+			'cmdempty'     : 'tömma',
+			'cmdfullscreen': 'Fullskärm',
+			'cmdpreference': 'Preferens',
+			'preference':'Preferens',
+
 			/*********************************** buttons ***********************************/ 
 			'btnClose'  : 'Stäng',
 			'btnSave'   : 'Spara',
@@ -138,7 +147,22 @@
 			'btnCancel' : 'Ångra',
 			'btnNo'     : 'Nej',
 			'btnYes'    : 'Ja',
-			'btnMount'  : 'Mount',
+			'btnMount'  : 'Montera',
+			'btnApprove': 'Gå till $ 1 & godkänn', // from v2.1 added 26.04.2012
+			'btnUnmount': 'oöverträffad', // from v2.1 added 30.04.2012
+			'btnConv'   : 'Förändra', // from v2.1 added 08.04.2014
+			'btnCwd'    : 'Här',      // from v2.1 added 22.5.2015
+			'btnVolume' : 'Volym',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Allt',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'MIME-typ', // from v2.1 added 22.5.2015
+			'btnFileName':'Filnamn',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Spara och stäng', // from v2.1 added 12.6.2015
+			'btnBackup' : 'Säkerhetskopiering', // fromv2.1 added 28.11.2015
+			'btnRename'    : 'Byt namn',      // from v2.1.24 added 6.4.2017
+			'btnRenameAll' : 'Byt namn (alla)', // from v2.1.24 added 6.4.2017
+			'btnPrevious' : 'Innan ($1/$2)', // from v2.1.24 added 11.5.2017
+			'btnNext'     : 'Nästa ($1/$2)', // from v2.1.24 added 11.5.2017
+			'btnSaveAs'   : 'Spara som', // from v2.1.25 added 24.5.2017
 			
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Öppnar mapp',
@@ -212,6 +236,7 @@
 			'sortsize'          : 'efter storlek',
 			'sortdate'          : 'efter datum',
 			'sortFoldersFirst'  : 'Mappar först', // added 22.06.2012
+			'sortAlsoTreeview':'Även Treeview',
 			
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Bekräftelse krävs',
@@ -290,7 +315,17 @@
 			'port'                : 'Port', // added 18.04.2012
 			'user'                : 'användare', // added 18.04.2012
 			'pass'                : 'Lösenord', // added 18.04.2012
-			
+			'Code Editor'         :'Kodredigerare',
+			'Visa Info'           :'Visainformation',
+			'selectFolder'    : 'Välj en mapp',
+			'emptyIncSearch'  : 'Det finns inga relevanta artiklar i den aktuella vyn. \\ [Enter] för att utöka sökdestinationen.', // from v2.1.16 added 5.10.2016
+			'emptyLetSearch'  : 'Det finns inga objekt med det angivna tecknet i den aktuella vyn.', // from v2.1.23 added 24.3.2017
+			'emptyFolder'     : 'Destinationskarta', // from v2.1.6 added 30.12.2015
+			'emptyFolderDrop' : 'Lägg till en tom \\ Ämnesmapp här', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'Länge klicka här för att lägga till en tom \\ Ämne-mapp', // from v2.1.6 added 30.12.2015
+			'dropFilesBrowser': 'Dra, släpp eller klistra in från webbläsaren', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Dra och släpp eller klistra in filer här', // from v2.1 added 07.04.2014
+            'extentiontype':'Typ av förlängning',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Okänd',
 			'kindFolder'      : 'Mapp',
@@ -372,4 +407,3 @@
 		}
 	};
 }));
-

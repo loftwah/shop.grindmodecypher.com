@@ -492,7 +492,7 @@
 			'exportToSave'    : 'Tego elementu nie można zapisać. Aby uniknąć utraty zmian, musisz wyeksportować go na swój komputer.', // from v2.1.44 added 1.12.2018
 			'dblclickToSelect': 'Kliknij dwukrotnie plik, aby go wybrać.', // from v2.1.47 added 22.1.2019
 			'useFullscreen'   : 'Użyj trybu pełnoekranowego', // from v2.1.47 added 19.2.2019
-
+            'Code Editor' :'Edytor kodu',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Nieznany',
 			'kindRoot'        : 'Główny Wolumin', // from v2.1.16 added 16.10.2016
@@ -577,4 +577,3 @@
 		}
 	};
 }));
-

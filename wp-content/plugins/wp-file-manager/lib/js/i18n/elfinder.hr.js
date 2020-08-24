@@ -57,7 +57,7 @@
 			'errRename'            : 'Ne mogu preimenovati "$1".',
 			'errCopyFrom'          : 'Kopiranje s diska "$1" nije dozvoljeno.',
 			'errCopyTo'            : 'Kopiranje na disk "$1" nije dozvoljeno.',
-			'errMkOutLink'         : 'Unable to create a link to outside the volume root.', // from v2.1 added 03.10.2015
+			'errMkOutLink'         : 'Nije moguće stvoriti vezu izvan korijena volumena.', // from v2.1 added 03.10.2015
 			'errUpload'            : 'Greška pri prebacivanju dokumenta na server.',  // old name - errUploadCommon
 			'errUploadFile'        : 'Ne mogu prebaciti "$1" na server', // old name - errUpload
 			'errUploadNoFiles'     : 'Nema dokumenata za prebacivanje na server',
@@ -66,7 +66,7 @@
 			'errUploadMime'        : 'Ovaj tip dokumenta nije dopušten.',
 			'errUploadTransfer'    : '"$1" greška pri prebacivanju',
 			'errUploadTemp'        : 'Ne mogu napraviti privremeni dokument za prijenos na server', // from v2.1 added 26.09.2015
-			'errNotReplace'        : 'Object "$1" already exists at this location and can not be replaced by object with another type.', // new
+			'errNotReplace'        : 'Objekt "$ 1" već postoji na ovom mjestu i ne može ga zamijeniti objekt s drugom vrstom.', // new
 			'errReplace'           : 'Ne mogu zamijeniti "$1".',
 			'errSave'              : 'Ne mogu spremiti "$1".',
 			'errCopy'              : 'Ne mogu kopirati "$1".',
@@ -74,37 +74,37 @@
 			'errCopyInItself'      : 'Ne mogu kopirati "$1" na isto mjesto.',
 			'errRm'                : 'Ne mogu ukloniti "$1".',
 			'errRmSrc'             : 'Ne mogu ukloniti izvorni kod.',
-			'errExtract'           : 'Unable to extract files from "$1".',
-			'errArchive'           : 'Unable to create archive.',
-			'errArcType'           : 'Unsupported archive type.',
-			'errNoArchive'         : 'File is not archive or has unsupported archive type.',
-			'errCmdNoSupport'      : 'Backend does not support this command.',
-			'errReplByChild'       : 'The folder "$1" can\'t be replaced by an item it contains.',
-			'errArcSymlinks'       : 'For security reason denied to unpack archives contains symlinks or files with not allowed names.', // edited 24.06.2012
-			'errArcMaxSize'        : 'Archive files exceeds maximum allowed size.',
-			'errResize'            : 'Unable to resize "$1".',
-			'errResizeDegree'      : 'Invalid rotate degree.',  // added 7.3.2013
-			'errResizeRotate'      : 'Unable to rotate image.',  // added 7.3.2013
-			'errResizeSize'        : 'Invalid image size.',  // added 7.3.2013
-			'errResizeNoChange'    : 'Image size not changed.',  // added 7.3.2013
-			'errUsupportType'      : 'Unsupported file type.',
-			'errNotUTF8Content'    : 'File "$1" is not in UTF-8 and cannot be edited.',  // added 9.11.2011
-			'errNetMount'          : 'Unable to mount "$1".', // added 17.04.2012
-			'errNetMountNoDriver'  : 'Unsupported protocol.',     // added 17.04.2012
-			'errNetMountFailed'    : 'Mount failed.',         // added 17.04.2012
-			'errNetMountHostReq'   : 'Host required.', // added 18.04.2012
-			'errSessionExpires'    : 'Your session has expired due to inactivity.',
-			'errCreatingTempDir'   : 'Unable to create temporary directory: "$1"',
-			'errFtpDownloadFile'   : 'Unable to download file from FTP: "$1"',
-			'errFtpUploadFile'     : 'Unable to upload file to FTP: "$1"',
-			'errFtpMkdir'          : 'Unable to create remote directory on FTP: "$1"',
-			'errArchiveExec'       : 'Error while archiving files: "$1"',
-			'errExtractExec'       : 'Error while extracting files: "$1"',
-			'errNetUnMount'        : 'Unable to unmount', // from v2.1 added 30.04.2012
-			'errConvUTF8'          : 'Not convertible to UTF-8', // from v2.1 added 08.04.2014
-			'errFolderUpload'      : 'Try Google Chrome, If you\'d like to upload the folder.', // from v2.1 added 26.6.2015
-			'errSearchTimeout'     : 'Timed out while searching "$1". Search result is partial.', // from v2.1 added 12.1.2016
-			'errReauthRequire'     : 'Re-authorization is required.', // from v2.1.10 added 3.24.2016
+			'errExtract'           : 'Nije moguće izdvojiti datoteke iz "$1".',
+			'errArchive'           : 'Arhiva nije moguća za stvaranje.',
+			'errArcType'           : 'Nepodržana vrsta arhive.',
+			'errNoArchive'         : 'Datoteka nije arhivska ili ima nepodržanu vrstu arhive.',
+			'errCmdNoSupport'      : 'Backend ne podržava ovu naredbu.',
+			'errReplByChild'       : 'Mapu "$ 1" ne može se zamijeniti stavkom koju sadrži.',
+			'errArcSymlinks'       : 'Iz sigurnosnih razloga kojima je odbijeno raspakiranje arhiva sadrži simboličke veze ili datoteke s nedozvoljenim imenima.', // edited 24.06.2012
+			'errArcMaxSize'        : 'Arhiv datoteka prelazi maksimalno dopuštenu veličinu.',
+			'errResize'            : 'Promjena veličine nije moguća "$1".',
+			'errResizeDegree'      : 'Nevažeći stupanj rotacije.',  // added 7.3.2013
+			'errResizeRotate'      : 'Nije moguće rotirati sliku.',  // added 7.3.2013
+			'errResizeSize'        : 'Nevažeća veličina slike.',  // added 7.3.2013
+			'errResizeNoChange'    : 'Veličina slike nije promijenjena.',  // added 7.3.2013
+			'errUsupportType'      : 'Nepodržana vrsta datoteke.',
+			'errNotUTF8Content'    : 'Datoteka "$ 1" nije u UTF-8 i ne može se uređivati.',  // added 9.11.2011
+			'errNetMount'          : 'Nije moguće montirati "$1".', // added 17.04.2012
+			'errNetMountNoDriver'  : 'Nepodržani protokol.',     // added 17.04.2012
+			'errNetMountFailed'    : 'Mount nije uspio.',         // added 17.04.2012
+			'errNetMountHostReq'   : 'Domaćin je potreban.', // added 18.04.2012
+			'errSessionExpires'    : 'Vaša sesija je istekla zbog neaktivnosti.',
+			'errCreatingTempDir'   : 'Privremeni direktorij nije moguće stvoriti: "$1"',
+			'errFtpDownloadFile'   : 'Preuzimanje datoteke s FTP-a nije moguće: "$1"',
+			'errFtpUploadFile'     : 'Prijenos datoteke na FTP nije moguće: "$1"',
+			'errFtpMkdir'          : 'Nije moguće stvoriti udaljeni direktorij na FTP-u: "$1"',
+			'errArchiveExec'       : 'Pogreška prilikom arhiviranja datoteka: "$1"',
+			'errExtractExec'       : 'Pogreška prilikom izdvajanja datoteka: "$1"',
+			'errNetUnMount'        : 'Deaktiviranje nije moguće', // from v2.1 added 30.04.2012
+			'errConvUTF8'          : 'Nije pretvarač u UTF-8', // from v2.1 added 08.04.2014
+			'errFolderUpload'      : 'Probajte Google Chrome, ako želite učitati mapu.', // from v2.1 added 26.6.2015
+			'errSearchTimeout'     : 'Isteklo vrijeme dok tražite "1 $". Rezultat pretraživanja je djelomičan.', // from v2.1 added 12.1.2016
+			'errReauthRequire'     : 'Potrebno je ponovno odobrenje.', // from v2.1.10 added 3.24.2016
 
 			/******************************* commands names ********************************/
 			'cmdarchive'   : 'Arhiviraj',
@@ -119,7 +119,7 @@
 			'cmdgetfile'   : 'Odaberi dokumente',
 			'cmdhelp'      : 'O programu',
 			'cmdhome'      : 'Početak',
-			'cmdinfo'      : 'Info',
+			'cmdinfo'      : 'informacija',
 			'cmdmkdir'     : 'Nova mapa',
 			'cmdmkdirin'   : 'U novu mapu', // from v2.1.7 added 19.2.2016
 			'cmdmkfile'    : 'Nova файл',
@@ -137,9 +137,16 @@
 			'cmdsort'      : 'Sortiraj',
 			'cmdnetmount'  : 'Spoji se na mrežni disk', // added 18.04.2012
 			'cmdnetunmount': 'Odspoji disk', // from v2.1 added 30.04.2012
-			'cmdplaces'    : 'To Places', // added 28.12.2014
-			'cmdchmod'     : 'Change mode', // from v2.1 added 20.6.2015
+			'cmdplaces'    : 'Do Mjesta', // added 28.12.2014
+			'cmdchmod'     : 'Promijenite način rada', // from v2.1 added 20.6.2015
 			'cmdopendir'   : 'Otvori mapu', // from v2.1 added 13.1.2016
+			'cmdhide':'Sakrij (prednost)',
+			'cmdselectall':'Označi sve',
+			'cmdselectnone':'Nevyber nič',
+			'cmdselectinvert':'Invert Izbor',
+			'cmdopennew':'Otvori novu',
+			'cmdempty':'Prazno',
+			'cmdfullscreen':'Celá obrazovka',
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'Zatvori',
@@ -149,17 +156,17 @@
 			'btnCancel' : 'Odustani',
 			'btnNo'     : 'Ne',
 			'btnYes'    : 'Da',
-			'btnMount'  : 'Mount',  // added 18.04.2012
+			'btnMount'  : 'montiranje',  // added 18.04.2012
 			'btnApprove': 'Goto $1 & approve', // from v2.1 added 26.04.2012
-			'btnUnmount': 'Unmount', // from v2.1 added 30.04.2012
-			'btnConv'   : 'Convert', // from v2.1 added 08.04.2014
-			'btnCwd'    : 'Here',      // from v2.1 added 22.5.2015
-			'btnVolume' : 'Volume',    // from v2.1 added 22.5.2015
-			'btnAll'    : 'All',       // from v2.1 added 22.5.2015
-			'btnMime'   : 'MIME Type', // from v2.1 added 22.5.2015
-			'btnFileName':'Filename',  // from v2.1 added 22.5.2015
+			'btnUnmount': 'isključivanje', // from v2.1 added 30.04.2012
+			'btnConv'   : 'Pretvoriti', // from v2.1 added 08.04.2014
+			'btnCwd'    : 'Evo',      // from v2.1 added 22.5.2015
+			'btnVolume' : 'Volumen',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Sve',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'MIME Tip', // from v2.1 added 22.5.2015
+			'btnFileName':'Ime dokumenta',  // from v2.1 added 22.5.2015
 			'btnSaveClose': 'Spremi i zatvori', // from v2.1 added 12.6.2015
-			'btnBackup' : 'Backup', // fromv2.1 added 28.11.2015
+			'btnBackup' : 'Rezervna kopija', // fromv2.1 added 28.11.2015
 
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Otvori mapu',
@@ -176,19 +183,19 @@
 			'ntfdownload' : 'Preuzimam dokumente',
 			'ntfsave'     : 'Spremi dokumente',
 			'ntfarchive'  : 'Radim arhivu',
-			'ntfextract'  : 'Extracting files from archive',
+			'ntfextract'  : 'Izdvajanje datoteka iz arhive',
 			'ntfsearch'   : 'Tražim dokumente',
-			'ntfresize'   : 'Resizing images',
+			'ntfresize'   : 'Promjena veličine slike',
 			'ntfsmth'     : 'Doing something',
 			'ntfloadimg'  : 'Učitavam sliku',
-			'ntfnetmount' : 'Mounting network volume', // added 18.04.2012
-			'ntfnetunmount': 'Unmounting network volume', // from v2.1 added 30.04.2012
-			'ntfdim'      : 'Acquiring image dimension', // added 20.05.2013
-			'ntfreaddir'  : 'Reading folder infomation', // from v2.1 added 01.07.2013
-			'ntfurl'      : 'Getting URL of link', // from v2.1 added 11.03.2014
-			'ntfchmod'    : 'Changing file mode', // from v2.1 added 20.6.2015
-			'ntfpreupload': 'Verifying upload file name', // from v2.1 added 31.11.2015
-			'ntfzipdl'    : 'Creating a file for download', // from v2.1.7 added 23.1.2016
+			'ntfnetmount' : 'Montaža volumena mreže', // added 18.04.2012
+			'ntfnetunmount': 'Isključivanje mrežnog volumena', // from v2.1 added 30.04.2012
+			'ntfdim'      : 'Stjecanje dimenzija slike', // added 20.05.2013
+			'ntfreaddir'  : 'Informacije o čitanju mape', // from v2.1 added 01.07.2013
+			'ntfurl'      : 'Dobivanje URL veze', // from v2.1 added 11.03.2014
+			'ntfchmod'    : 'Promjena načina rada datoteke', // from v2.1 added 20.6.2015
+			'ntfpreupload': 'Provjera naziva datoteke za prijenos', // from v2.1 added 31.11.2015
+			'ntfzipdl'    : 'Izrada datoteke za preuzimanje', // from v2.1.7 added 23.1.2016
 
 			/************************************ dates **********************************/
 			'dateUnknown' : 'nepoznato',
@@ -239,18 +246,20 @@
 			'sortsize'          : 'po veličini',
 			'sortdate'          : 'po datumu',
 			'sortFoldersFirst'  : 'Prvo mape',
+			'sortAlsoTreeview'  :'Tiež Treeview',
 
 			/********************************** new items **********************************/
 			'untitled file.txt' : 'NoviDokument.txt', // added 10.11.2015
 			'untitled folder'   : 'NovaMapa',   // added 10.11.2015
 			'Archive'           : 'NovaArhiva',  // from v2.1 added 10.11.2015
+			'fullscreen':'Celá obrazovka',
 
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Potvrda',
 			'confirmRm'       : 'Jeste li sigurni?',
 			'confirmRepl'     : 'Zamijeni stare dokumente novima?',
 			'confirmConvUTF8' : 'Not in UTF-8<br/>Convert to UTF-8?<br/>Contents become UTF-8 by saving after conversion.', // from v2.1 added 08.04.2014
-			'confirmNotSave'  : 'It has been modified.<br/>Losing work if you do not save changes.', // from v2.1 added 15.7.2015
+			'confirmNotSave'  : 'Izmijenjeno je. <br/> Izgubivanje posla ako ne spremite promjene.', // from v2.1 added 15.7.2015
 			'apllyAll'        : 'Primjeni na sve ',
 			'name'            : 'Ime',
 			'size'            : 'Veličina',
@@ -285,20 +294,20 @@
 			'about'           : 'Info',
 			'shortcuts'       : 'Prečaci',
 			'help'            : 'Pomoć',
-			'webfm'           : 'Web file manager',
+			'webfm'           : 'Upravitelj web datoteka',
 			'ver'             : 'Verzija',
-			'protocolver'     : 'protocol version',
-			'homepage'        : 'Project home',
+			'protocolver'     : 'verzija protokola',
+			'homepage'        : 'Projekt doma',
 			'docs'            : 'Dokumentacija',
 			'github'          : 'Fork us on Github',
-			'twitter'         : 'Follow us on twitter',
-			'facebook'        : 'Join us on facebook',
+			'twitter'         : 'Pratite nas na Twitteru',
+			'facebook'        : 'Pridruži nam se na Facebooku',
 			'team'            : 'Tim',
 			'chiefdev'        : 'glavni developer',
-			'developer'       : 'developer',
-			'contributor'     : 'contributor',
-			'maintainer'      : 'maintainer',
-			'translator'      : 'translator',
+			'developer'       : 'razvijač',
+			'contributor'     : 'suradnik',
+			'maintainer'      : 'održavatelj',
+			'translator'      : 'prevoditelj',
 			'icons'           : 'Ikone',
 			'dontforget'      : 'and don\'t forget to take your towel',
 			'shortcutsof'     : 'Prečaci isključeni',
@@ -312,25 +321,25 @@
 			'scale'           : 'Skaliraj',
 			'width'           : 'Širina',
 			'height'          : 'Visina',
-			'resize'          : 'Resize',
+			'resize'          : 'Promjena veličine',
 			'crop'            : 'Crop',
 			'rotate'          : 'Rotate',
 			'rotate-cw'       : 'Rotate 90 degrees CW',
 			'rotate-ccw'      : 'Rotate 90 degrees CCW',
 			'degree'          : '°',
-			'netMountDialogTitle' : 'Mount network volume', // added 18.04.2012
+			'netMountDialogTitle' : 'Montirajte glasnoću mreže', // added 18.04.2012
 			'protocol'            : 'Protocol', // added 18.04.2012
 			'host'                : 'Host', // added 18.04.2012
 			'port'                : 'Port', // added 18.04.2012
 			'user'                : 'User', // added 18.04.2012
 			'pass'                : 'Password', // added 18.04.2012
-			'confirmUnmount'      : 'Are you unmount $1?',  // from v2.1 added 30.04.2012
-			'dropFilesBrowser': 'Drop or Paste files from browser', // from v2.1 added 30.05.2012
-			'dropPasteFiles'  : 'Drop or Paste files and URLs here', // from v2.1 added 07.04.2014
+			'confirmUnmount'      : 'Jeste li isključeni $1?',  // from v2.1 added 30.04.2012
+			'dropFilesBrowser': 'Ispusti ili Zalijepi datoteke iz preglednika', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Ovdje baci ili zalijepi datoteke i URL-ove', // from v2.1 added 07.04.2014
 			'encoding'        : 'Encoding', // from v2.1 added 19.12.2014
 			'locale'          : 'Locale',   // from v2.1 added 19.12.2014
 			'searchTarget'    : 'Target: $1',                // from v2.1 added 22.5.2015
-			'searchMime'      : 'Search by input MIME Type', // from v2.1 added 22.5.2015
+			'searchMime'      : 'Traži unosom MIME tipa', // from v2.1 added 22.5.2015
 			'owner'           : 'Vlasnik', // from v2.1 added 20.6.2015
 			'group'           : 'Grupa', // from v2.1 added 20.6.2015
 			'other'           : 'Other', // from v2.1 added 20.6.2015
@@ -343,14 +352,17 @@
 			'quality'         : 'Kvaliteta', // from v2.1.6 added 5.1.2016
 			'autoSync'        : 'Auto sync',  // from v2.1.6 added 10.1.2016
 			'moveUp'          : 'Gore',  // from v2.1.6 added 18.1.2016
-			'getLink'         : 'Get URL link', // from v2.1.7 added 9.2.2016
-			'selectedItems'   : 'Selected items ($1)', // from v2.1.7 added 2.19.2016
+			'getLink'         : 'Preuzmi URL vezu', // from v2.1.7 added 9.2.2016
+			'selectedItems'   : 'Odabrani predmeti ($1)', // from v2.1.7 added 2.19.2016
 			'folderId'        : 'Folder ID', // from v2.1.10 added 3.25.2016
 			'offlineAccess'   : 'Allow offline access', // from v2.1.10 added 3.25.2016
 			'reAuth'          : 'To re-authenticate', // from v2.1.10 added 3.25.2016
-
+			'Code Editor'     :  'Uređivač koda',
+			'preference'      :'prednosť',
+			'fullscreen'      :'Celá obrazovka',
+            'extentiontype'   :'tip proširenja',
 			/********************************** mimetypes **********************************/
-			'kindUnknown'     : 'Unknown',
+			'kindUnknown'     : 'nepoznat',
 			'kindFolder'      : 'Mapa',
 			'kindAlias'       : 'Drugo ime',
 			'kindAliasBroken' : 'Broken alias',
@@ -431,4 +443,3 @@
 		}
 	};
 }));
-

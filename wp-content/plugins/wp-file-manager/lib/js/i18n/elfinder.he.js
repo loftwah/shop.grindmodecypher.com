@@ -129,6 +129,18 @@
 			'cmdresize'    : 'שינוי גודל והיפוך',
 			'cmdsort'      : 'מיון',
 			'cmdnetmount'  : 'עיגון כונן רשת', // added 18.04.2012
+			'cmdpreference': 'הַעֲדָפָה', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'בחר הכל', // from v2.1.28 added 15.08.2017
+			'cmdselectnone':'אל תבחר באף אחת מהאפשרויות',
+			'cmdselectinvert': 'הפוך את הבחירה', // from v2.1.28 added 15.08.2017
+			'cmdhide': 'הסתר (העדפה)',
+			'cmdopennew':'פתח חדש',
+			'cmdmkdirin':'בתיקיה החדשה',
+			'cmdempty': 'ריק',
+			'cmdfullscreen': 'מסך מלא',
+			'cmdtrash':'בתוך הזבל',
+			'cmdundo'      : 'לבטל', // from v2.1.27 added 31.07.2017
+			'cmdredo'      : 'לְשַׁקֵם', // from v2.1.27 added 31.07.2017
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'סגירה',
@@ -139,6 +151,12 @@
 			'btnNo'     : 'לא',
 			'btnYes'    : 'כן',
 			'btnMount'  : 'עיגון',  // added 18.04.2012
+			'btnCwd'    : 'פה',
+			'btnVolume' : 'כרך',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'את כל',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'סוג MIME', // from v2.1 added 22.5.2015
+			'btnFileName':'שם קובץ',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'שמור וסגור', // from v2.1 added 12.6.2015
 
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'פתיחת תיקייה',
@@ -212,6 +230,7 @@
 			'sortsize'          : 'לפי גודל',
 			'sortdate'          : 'לפי תאריך',
 			'sortFoldersFirst'  : 'תיקיות תחילה',
+			'sortAlsoTreeview'  : 'גם נוף',
 
 			/********************************** messages **********************************/
 			'confirmReq'      : 'נדרש אישור',
@@ -290,7 +309,13 @@
 			'port'                : 'פתחה', // added 18.04.2012
 			'user'                : 'משתמש', // added 18.04.2012
 			'pass'                : 'ססמה', // added 18.04.2012
-
+			'selectFolder':'בחר תיקייה',
+			'dropFilesBrowser': 'פרוס או הדבק קבצי דפדפן', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'פרוס כאן קבצים או הדבק כתובות URL או תמונות (קטעים)',
+			'emptyFolderDrop' : 'התיקיה ריקה \\ רופפת להוספת פריטים', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'התיקיה ריקה \\ לחיצה ארוכה כדי להוסיף פריטים', // from v2.1.6 added 30.12.2015
+			'Code Editor':'עורך קוד',
+            'extentiontype':'סוג הרחבה',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'בלתי ידוע',
 			'kindFolder'      : 'תיקייה',
@@ -372,4 +397,3 @@
 		}
 	};
 }));
-

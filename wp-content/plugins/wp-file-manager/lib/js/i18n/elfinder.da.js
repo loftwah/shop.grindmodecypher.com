@@ -105,7 +105,7 @@
 			'cmdback'      : 'Tilbage',
 			'cmdcopy'      : 'Kopier',
 			'cmdcut'       : 'Klip',
-			'cmddownload'  : 'Download',
+			'cmddownload'  : 'Hent',
 			'cmdduplicate' : 'Dupliker',
 			'cmdedit'      : 'Rediger Fil',
 			'cmdextract'   : 'Udpak filer fra arkiv',
@@ -128,7 +128,17 @@
 			'cmdview'      : 'Vis',
 			'cmdresize'    : 'Ændre størrelse',
 			'cmdsort'      : 'Sorter',
-			'cmdnetmount'  : 'Mount network volume',
+			'cmdnetmount'  : 'Monter netværksvolumen',
+			'cmdpreference': 'Indstillinger', // from v2.1.27 added 03.08.2017
+			'cmdselectall' : 'Vælg alt', // from v2.1.28 added 15.08.2017
+			'cmdselectnone': 'Vælg ikke noget', // from v2.1.28 added 15.08.2017
+			'cmdselectinvert': 'Omvendt valg', // from v2.1.28 added 15.08.2017
+			'cmdhide': 'Skjul (præference)',
+			'cmdopennew':'Åbn nyt',
+			'cmdmkdirin':'I ny mappe',
+			'cmdempty':'Tom',
+			'cmdfullscreen': 'Fuld skærm',
+
 			
 			/*********************************** buttons ***********************************/ 
 			'btnClose'  : 'Luk',
@@ -139,6 +149,12 @@
 			'btnNo'     : 'Nej',
 			'btnYes'    : 'Ja',
 			'btnMount'  : 'Mount',
+			'btnCwd'    : 'Her',
+			'btnVolume' : 'Bind',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Alle',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'MIME Type', // from v2.1 added 22.5.2015
+			'btnFileName':'Filnavn',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Gem og luk', // from v2.1 added 12.6.2015
 			
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Åben mappe',
@@ -161,7 +177,7 @@
 			'ntfsmth'     : 'Gør noget >_<',
 			'ntfloadimg'  : 'Loader billede',
 			'ntfnetmount' : 'Montere netværks volume', // added 18.04.2012
-			'ntfdim'      : 'Acquiring image dimension',
+			'ntfdim'      : 'Erhverver billeddimension',
 			
 			/************************************ dates **********************************/
 			'dateUnknown' : 'Ukendt',
@@ -212,6 +228,7 @@
 			'sortsize'          : 'efter størrelse',
 			'sortdate'          : 'efter dato',
 			'sortFoldersFirst'  : 'Mapper først', // added 22.06.2012
+			'sortAlsoTreeview':'Også Treeview',
 			
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Bekræftelse påkrævet',
@@ -284,13 +301,16 @@
 			'rotate-cw'       : 'Roter 90 grader med uret',
 			'rotate-ccw'      : 'Roter 90 grader imod uret',
 			'degree'          : 'Grader',
-			'netMountDialogTitle' : 'Monter netwærks volume', // added 18.04.2012
+			'netMountDialogTitle' : 'Forøg volumen netwærks', // added 18.04.2012
 			'protocol'            : 'Protokol', // added 18.04.2012
 			'host'                : 'Host', // added 18.04.2012
 			'port'                : 'Port', // added 18.04.2012
 			'user'                : 'Bruger', // added 18.04.2012
 			'pass'                : 'Kodeord', // added 18.04.2012
-			
+			'emptyFolderDrop' : 'Mappen er tom \\ løs for at tilføje varer', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'Mappen er tom \\ for et langt klik for at tilføje varer', // from v2.1.6 added 30.12.2015
+			'Code Editor':'Kodeditor',
+			'extentiontype':'udvidelsestype',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Ukendt',
 			'kindFolder'      : 'Mappe',
@@ -298,10 +318,10 @@
 			'kindAliasBroken' : 'Ødelagt alias',
 			// applications
 			'kindApp'         : 'Applikation',
-			'kindPostscript'  : 'Postscript dokument',
-			'kindMsOffice'    : 'Microsoft Office dokument',
-			'kindMsWord'      : 'Microsoft Word dokument',
-			'kindMsExcel'     : 'Microsoft Excel dokument',
+			'kindPostscript'  : 'Efterskrift dokument',
+			'kindMsOffice'    : 'Microsoft Office-dokument',
+			'kindMsWord'      : 'Microsoft Word-dokument',
+			'kindMsExcel'     : 'Microsoft Excel-dokument',
 			'kindMsPP'        : 'Microsoft Powerpoint præsentation',
 			'kindOO'          : 'Open Office dokument',
 			'kindAppFlash'    : 'Flash applikation',
@@ -322,8 +342,8 @@
 			'kindText'        : 'Tekst dokument',
 			'kindTextPlain'   : 'Ren tekst',
 			'kindPHP'         : 'PHP kode',
-			'kindCSS'         : 'Cascading style sheet',
-			'kindHTML'        : 'HTML document',
+			'kindCSS'         : 'Kaskaderende stilark',
+			'kindHTML'        : 'HTML-dokument',
 			'kindJS'          : 'Javascript kode',
 			'kindRTF'         : 'Rich Tekst Format',
 			'kindC'           : 'C kode',

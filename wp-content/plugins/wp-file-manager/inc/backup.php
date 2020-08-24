@@ -667,7 +667,7 @@ jQuery(document).ready(function(){
         var fm_bkp_other = jQuery('#fm_bkp_other').prop('checked');
         var fm_bkp_id = ''; // empty
         jQuery('.fmbkp_console_popup').show();
-        jQuery('#fmbkp_console').show().html('<p class="backup_wait">Backuping please wait...</p>');
+        jQuery('#fmbkp_console').show().html('<p class="backup_wait">Backup is running, please wait...</p>');
         wp_fm_backup(ajax_url, fm_bkp_database,fm_bkp_files,fm_bkp_plugins,fm_bkp_themes,fm_bkp_uploads,fm_bkp_other,fm_bkp_id);
   });
  function wp_fm_backup(ajax_url, fm_bkp_database,fm_bkp_files,fm_bkp_plugins,fm_bkp_themes,fm_bkp_uploads,fm_bkp_other,fm_bkp_id){

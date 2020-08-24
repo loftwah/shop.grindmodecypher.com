@@ -131,7 +131,7 @@
 			'cmdgetfile'   : 'Sélectionner les fichiers',
 			'cmdhelp'      : 'À propos de ce logiciel',
 			'cmdhome'      : 'Accueil',
-			'cmdinfo'      : 'Informations',
+			'cmdinfo'      : 'Information',
 			'cmdmkdir'     : 'Nouveau dossier',
 			'cmdmkdirin'   : 'Dans un nouveau dossier', // from v2.1.7 added 19.2.2016
 			'cmdmkfile'    : 'Nouveau fichier',
@@ -165,7 +165,7 @@
 			'cmdselectnone': 'Tout désélectionner', // from v2.1.28 added 15.08.2017
 			'cmdselectinvert': 'Inverser la sélection', // from v2.1.28 added 15.08.2017
 			'cmdopennew'   : 'Ouvrir dans une nouvelle fenêtre', // from v2.1.38 added 3.4.2018
-			'cmdhide'      : 'Hide (Preference)', // from v2.1.41 added 24.7.2018
+			'cmdhide'      : 'Masquer (préférence)', // from v2.1.41 added 24.7.2018
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'Fermer',
@@ -491,6 +491,7 @@
 			'exportToSave'    : 'This item can\'t be saved. To avoid losing the edits you need to export to your PC.', // from v2.1.44 added 1.12.2018
 			'dblclickToSelect': 'Double click on the file to select it.', // from v2.1.47 added 22.1.2019
 			'useFullscreen'   : 'Use fullscreen mode', // from v2.1.47 added 19.2.2019
+			'Code Editor':'Éditeur de code',
 
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Inconnu',

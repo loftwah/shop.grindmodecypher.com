@@ -165,6 +165,7 @@
 			'cmdselectnone': 'Seleccionar ninguno', // from v2.1.28 added 15.08.2017
 			'cmdselectinvert': 'Invertir selección', // from v2.1.28 added 15.08.2017
 			'cmdopennew'   : 'Abrir en nueva ventana', // from v2.1.38 added 3.4.2018
+			'cmdhide':'Ocultar (preferencia)',
 
 			/*********************************** buttons ***********************************/
 			'btnClose'  : 'Cerrar',
@@ -459,7 +460,8 @@
 			'workspace'       : 'Espacio de trabajo', // from v2.1.38 added 4.4.2018
 			'dialog'          : 'Diálogo', // from v2.1.38 added 4.4.2018
 			'all'             : 'Todo', // from v2.1.38 added 4.4.2018
-
+			'Code Editor': 'Editora de código',
+            'extentiontype' :'tipo de extensión',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Desconocido',
 			'kindRoot'        : 'Raíces del volumen', // from v2.1.16 added 16.10.2016

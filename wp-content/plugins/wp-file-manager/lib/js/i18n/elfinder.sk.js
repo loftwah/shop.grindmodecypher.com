@@ -492,7 +492,7 @@
 			'exportToSave'    : 'Túto položku nemožno uložiť. Ak chcete zabrániť strate úprav, musíte ju exportovať do počítača.', // from v2.1.44 added 1.12.2018
 			'dblclickToSelect': 'Dvakrát kliknite na súbor a vyberte ho.', // from v2.1.47 added 22.1.2019
 			'useFullscreen'   : 'Použiť režim celej obrazovky', // from v2.1.47 added 19.2.2019
-
+            'Code Editor':'Editor kódu',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Neznámy',
 			'kindRoot'        : 'Koreň média', // from v2.1.16 added 16.10.2016
@@ -577,4 +577,3 @@
 		}
 	};
 }));
-
