@@ -197,6 +197,11 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 		);
 	}
 
+	// WPML.
+	if ( class_exists( 'SitePress' ) ) {
+		$builder_load_requests['action'][] = 'et_builder_wpml_translate_layout';
+	}
+
 	// Merging third party exceptions; built-in exceptions should not be removable
 	$builder_custom_load_requests = apply_filters( 'et_builder_load_requests', array() );
 

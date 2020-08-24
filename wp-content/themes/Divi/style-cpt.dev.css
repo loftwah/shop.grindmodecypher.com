@@ -13613,7 +13613,6 @@ span.comment_date {
   .et-db #et-boc .et-l .et_pb_bottom_inside_divider {
     display: block;
     background-repeat-y: no-repeat;
-    height: 100%;
     position: absolute;
     pointer-events: none;
     width: 100%; }
@@ -16650,6 +16649,13 @@ span.comment_date {
         margin-right: 30px; }
       .et-db #et-boc .et-l .et_pb_column .et_pb_testimonial_description {
         display: block; }
+      .et-db #et-boc .et-l .et_pb_row_4col .et-last-child,
+      .et-db #et-boc .et-l .et_pb_row_4col .et-last-child-2 {
+        margin-bottom: 0; }
+      .et-db #et-boc .et-l .et_pb_row_6col .et-last-child,
+      .et-db #et-boc .et-l .et_pb_row_6col .et-last-child-2,
+      .et-db #et-boc .et-l .et_pb_row_6col .et-last-child-3 {
+        margin-bottom: 0; }
       .et-db #et-boc .et-l .et_pb_column_1_5 .et_pb_testimonial_portrait,
       .et-db #et-boc .et-l .et_pb_column_1_6 .et_pb_testimonial_portrait,
       .et-db #et-boc .et-l .et_pb_row_4col .et_pb_testimonial_portrait,

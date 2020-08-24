@@ -1416,7 +1416,7 @@ if ( ! function_exists( 'et_pb_submit_layout' ) ) :
 		$new_layout_id            = et_pb_create_layout( $args['layout_name'], $args['layout_content'], $meta, $tax_input, $args['layout_new_cat'] );
 		$new_post_data['post_id'] = (int) $new_layout_id;
 
-		$new_post_data['edit_link'] = htmlspecialchars_decode( get_edit_post_link( $new_layout_id ) );
+		$new_post_data['edit_link'] = esc_url_raw( get_edit_post_link( $new_layout_id ) );
 		$json_post_data             = wp_json_encode( $new_post_data );
 
 		return $json_post_data;

@@ -1119,9 +1119,12 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module_Type_Pos
 						'props'               => $this->props,
 					)
 				);
+
+				$should_apply_bg_image = $is_show_image && 'background' === $image_placement;
+				$inline_background     = $should_apply_bg_image && $query->posts[ $post_index ]->post_featured_image ? 'style="background-image: url(' . esc_url( $query->posts[ $post_index ]->post_featured_image ) . ');"' : '';
 				?>
-			<div class="et_pb_slide et_pb_media_alignment_center<?php echo esc_attr( $slide_class ); ?>" <?php echo et_core_esc_previously( $multi_view_attrs_wrapper ); ?>>
-				<?php if ( 'on' === $parallax && $is_show_image && 'background' === $image_placement ) { ?>
+			<div class="et_pb_slide et_pb_media_alignment_center<?php echo esc_attr( $slide_class ); ?>" <?php echo et_core_esc_previously( $multi_view_attrs_wrapper ); ?> <?php echo et_core_esc_previously( $inline_background ); ?>>
+				<?php if ( 'on' === $parallax && $should_apply_bg_image ) { ?>
 					<div class="et_parallax_bg_wrap">
 						<div class="et_parallax_bg
 						<?php
@@ -1147,7 +1150,7 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module_Type_Pos
 								?>
 								<div class="et_pb_text_overlay_wrapper"><?php endif; ?>
 								<<?php echo et_pb_process_header_level( $header_level, 'h2' ); ?> class="et_pb_slide_title"><a href="<?php esc_url( the_permalink() ); ?>"><?php the_title(); ?></a></<?php echo et_pb_process_header_level( $header_level, 'h2' ); ?>>
-								<div class="et_pb_slide_content 
+								<div class="et_pb_slide_content
 								<?php
 								if ( 'on' !== $show_content_on_mobile ) {
 									echo esc_attr( $hide_on_mobile_class ); }

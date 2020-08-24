@@ -187,16 +187,17 @@ class ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder extends WC_Produ
 	 * outputting product->children value. Filtering get_available_variations() can't be done so
 	 * extending WC_Product_Variable and set fixed value for get_available_variations() method
 	 *
-	 * @since 4.0.1
+	 * @since ?? Introduced $return arg to fix compatibility issue {@link https://github.com/elegantthemes/Divi/issues/20985}
 	 * @since 4.3.3 `Replaced ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder` with
-	 *              `ET_Theme_Builder_Woocommerce_Product_Variation_Placeholder` (which is now called
-	 *              at `get_available_variations()` method and similar to `WC_Product_Variation`'s
-	 *              method with no check). It has all variation-required methods and properties
-	 *              which makes it more reliable when WC add-ons are used
+	 *              `ET_Theme_Builder_Woocommerce_Product_Variation_Placeholder` (which is now
+	 *              called at `get_available_variations()` method and similar to
+	 *              `WC_Product_Variation`'s method with no check). It has all variation-required
+	 *              methods and properties which makes it more reliable when WC add-ons are used
+	 * @since 4.0.1
 	 *
 	 * @return array
 	 */
-	function get_available_variations() {
+	public function get_available_variations( $return = 'array' ) {
 		return array(
 			$this->get_available_variation(),
 		 );

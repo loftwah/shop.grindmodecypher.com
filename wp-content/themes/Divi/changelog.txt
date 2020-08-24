@@ -1,3 +1,21 @@
+version 4.5.7 ( updated 08-18-2020 )
+- Fixed the warning shown with WooCommerce v4.4.0 and WordPress v5.5.
+- Fixed issue preventing ability to create a translation for a Divi Library layout.
+- Fixed a problem in the post slider background which was not being displayed when the "Static CSS File Generation" option is enabled.
+- Fixed issue with Divider which was applying extra space in the end of the pages.
+- Fix for error being thrown when Google Translate extension is being used in the page.
+- Fixed the margin of the last columns when switching preview modes.
+	* functions.php
+	* includes/builder/core.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/WoocommerceProductVariablePlaceholder.php
+	* includes/builder/module/FullwidthPostSlider.php
+	* includes/builder/module/PostSlider.php
+	* includes/builder/plugin-compat/scripts/sitepress-multilingual-cms.js
+	* includes/builder/plugin-compat/sitepress-multilingual-cms.php
+	* includes/builder/scripts/src/library_scripts.js
+
 version 4.5.6 ( updated 08-10-2020 )
 - Fixed issue with extra top padding getting added to the page.
 	* includes/builder/frontend-builder/bundle.js
