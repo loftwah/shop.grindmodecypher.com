@@ -14,6 +14,16 @@ class Printful_Admin_Settings {
     const DEFAULT_PERSONALIZE_BUTTON_COLOR = '#eee';
     const DEFAULT_PERSONALIZE_MODAL_TITLE = 'Create a personalized design';
 
+    // Size guide modal settings
+    const DEFAULT_SIZE_GUIDE_BUTTON_TEXT = 'Size Guide';
+    const DEFAULT_SIZE_GUIDE_BUTTON_COLOR = '#1164A9';
+    const DEFAULT_SIZE_GUIDE_MODAL_TITLE = 'Size guide';
+    const DEFAULT_SIZE_GUIDE_MODAL_TEXT_COLOR = '#000';
+    const DEFAULT_SIZE_GUIDE_MODAL_BACKGROUND_COLOR = '#fff';
+    const DEFAULT_SIZE_GUIDE_TAB_BACKGROUND_COLOR = '#fff';
+    const DEFAULT_SIZE_GUIDE_ACTIVE_TAB_BACKGROUND_COLOR = '#fff';
+    const DEFAULT_SIZE_GUIDE_UNIT = 'inch';
+
     /**
      * @return array
      */
@@ -48,18 +58,24 @@ class Printful_Admin_Settings {
                 'label' => __( 'Use HTTP instead of HTTPS to connect to the Printful API (may be required if the plugin does not work for some hosting configurations)', 'printful' ),
                 'default' => 'no',
             ),
-	        'pfc_button_text' => array(
-		        'title' => __( 'Personalization button text', 'printful' ),
-		        'type' => 'text',
-		        'description' => __( 'Personalization button text', 'printful' ),
-		        'default' => self::DEFAULT_PERSONALIZE_BUTTON_TEXT
-	        ),
-	        'pfc_button_color' => array(
-		        'title' => __( 'Personalization button color', 'printful' ),
-		        'type' => 'color-picker',
-		        'description' => __( 'Personalization button background color', 'printful' ),
-		        'default' => self::DEFAULT_PERSONALIZE_BUTTON_COLOR,
-	        ),
+        );
+    }
+
+    public static function getPersonalizationFields()
+    {
+        return array(
+            'pfc_button_text' => array(
+                'title' => __( 'Personalization button text', 'printful' ),
+                'type' => 'text',
+                'description' => __( 'Personalization button text', 'printful' ),
+                'default' => self::DEFAULT_PERSONALIZE_BUTTON_TEXT
+            ),
+            'pfc_button_color' => array(
+                'title' => __( 'Personalization button color', 'printful' ),
+                'type' => 'color-picker',
+                'description' => __( 'Personalization button background color', 'printful' ),
+                'default' => self::DEFAULT_PERSONALIZE_BUTTON_COLOR,
+            ),
             'pfc_modal_title' => array(
                 'title' => __( 'Personalization popup title', 'printful' ),
                 'type' => 'text',
@@ -67,6 +83,72 @@ class Printful_Admin_Settings {
                 'default' => self::DEFAULT_PERSONALIZE_MODAL_TITLE,
             ),
         );
+    }
+
+    public static function getSizeGuideFields()
+    {
+        return array(
+            'pfsg_modal_title' => array(
+                'title' => __( 'Size guide popup title', 'printful' ),
+                'type' => 'text',
+                'description' => __( 'Size guide popup title text', 'printful' ),
+                'default' => self::DEFAULT_SIZE_GUIDE_MODAL_TITLE,
+            ),
+            'pfsg_modal_text_color' => array(
+                'title' => __( 'Size guide popup text color', 'printful' ),
+                'type' => 'color-picker',
+                'description' => __( 'Size guide popup text color', 'printful' ),
+                'default' => self::DEFAULT_SIZE_GUIDE_MODAL_TEXT_COLOR,
+            ),
+            'pfsg_modal_background_color' => array(
+                'title' => __( 'Size guide popup background color', 'printful' ),
+                'type' => 'color-picker',
+                'description' => __( 'Size guide popup background color', 'printful' ),
+                'default' => self::DEFAULT_SIZE_GUIDE_MODAL_BACKGROUND_COLOR,
+            ),
+            'pfsg_tab_background_color' => array(
+	            'title' => __( 'Size guide tab background color', 'printful' ),
+	            'type' => 'color-picker',
+	            'description' => __( 'Size guide tab background color', 'printful' ),
+	            'default' => self::DEFAULT_SIZE_GUIDE_TAB_BACKGROUND_COLOR,
+            ),
+            'pfsg_active_tab_background_color' => array(
+	            'title' => __( 'Size guide active tab background color', 'printful' ),
+	            'type' => 'color-picker',
+	            'description' => __( 'Size guide active tab background color', 'printful' ),
+	            'default' => self::DEFAULT_SIZE_GUIDE_ACTIVE_TAB_BACKGROUND_COLOR,
+            ),
+            'pfsg_button_text' => array(
+                'title' => __( 'Size guide button text', 'printful' ),
+                'type' => 'text',
+                'description' => __( 'Size guide button text', 'printful' ),
+                'default' => self::DEFAULT_SIZE_GUIDE_BUTTON_TEXT,
+            ),
+            'pfsg_button_color' => array(
+                'title' => __( 'Size guide button text color', 'printful' ),
+                'type' => 'color-picker',
+                'description' => __( 'Size guide button text color', 'printful' ),
+                'default' => self::DEFAULT_SIZE_GUIDE_BUTTON_COLOR,
+            ),
+            'pfsg_primary_unit' => array(
+                'title' => __( 'Primary measurement unit', 'printful' ),
+                'type' => 'dropdown',
+                'description' => __( 'Primary measurement unit (cm/inch)', 'printful' ),
+                'default' => self::DEFAULT_SIZE_GUIDE_UNIT,
+                'selected' => Printful_Integration::instance()->get_option( 'pfsg_primary_unit' ),
+                'items' => [
+                    'inch' => __('Inches', 'printful'),
+                    'centimeter' => __('Centimeters', 'printful'),
+                ],
+            ),
+        );
+    }
+
+	/**
+	 * @return array
+	 */
+	public static function getAllFields() {
+		return array_merge(self::getIntegrationFields(), self::getPersonalizationFields(), self::getSizeGuideFields());
     }
 
 	/**
@@ -99,9 +181,21 @@ class Printful_Admin_Settings {
 
 		echo '<form method="post" name="printful_settings" action="' . esc_url( admin_url( 'admin-ajax.php?action=save_printful_settings' ) ) . '">';
 
-		//integration settings
-		$integration_settings = $this->setup_integration_fields();
+		// Integration settings
+		$integration_settings = $this->setup_fields( __('Integration settings', 'printful'), '', self::getIntegrationFields() );
 		Printful_Admin::load_template( 'setting-group', $integration_settings );
+
+		// Product personalization settings
+        $personalization_settings = $this->setup_fields( __('Product personalization settings', 'printful'), '', self::getPersonalizationFields() );
+        Printful_Admin::load_template( 'setting-group', $personalization_settings );
+
+        // Size guide settings
+        $size_guide_settings = $this->setup_fields(
+            __('Size guide settings', 'printful'),
+            __('These settings control how the new size guide will look on your WooCommerce storefront. Products with an old size guide will not be affected.', 'printful'),
+            self::getSizeGuideFields()
+        );
+        Printful_Admin::load_template( 'setting-group', $size_guide_settings );
 
 		Printful_Admin::load_template( 'shipping-notification' );
 
@@ -129,25 +223,28 @@ class Printful_Admin_Settings {
 		exit;
 	}
 
-	/**
-	 * @return mixed
-	 * @internal param $integration_settings
-	 */
-	public function setup_integration_fields() {
+    /**
+     * @param string $title Settings section title
+     * @param string $description Section description
+     * @param array $fields
+     *
+     * @return array
+     */
+    public function setup_fields($title, $description = '', $fields = [])
+    {
+        $fieldGroup = array(
+            'title'       => $title,
+            'description' => $description,
+            'settings'    => $fields,
+        );
 
-		$integration_settings = array(
-			'title'       => 'Integration settings',
-			'description' => '',
-			'settings'    => self::getIntegrationFields(),
-		);
+        foreach ( $fieldGroup['settings'] as $key => $setting ) {
+            if ( $setting['type'] !== 'title' ) {
+                $fieldGroup['settings'][ $key ]['value'] = Printful_Integration::instance()->get_option( $key, $setting['default'] );
+            }
+        }
 
-		foreach ( $integration_settings['settings'] as $key => $setting ) {
-			if ( $setting['type'] !== 'title' ) {
-				$integration_settings['settings'][ $key ]['value'] = Printful_Integration::instance()->get_option( $key, $setting['default'] );
-			}
-		}
-
-		return $integration_settings;
+        return $fieldGroup;
 	}
 
     /**
@@ -253,7 +350,7 @@ class Printful_Admin_Settings {
 			$options = array();
 
 			//build save options list
-			foreach ( self::getIntegrationFields() as $key => $field ) {
+			foreach ( self::getAllFields() as $key => $field ) {
 
 				if ( $field['type'] == 'checkbox' ) {
 					if ( isset( $_POST[ $key ] ) ) {

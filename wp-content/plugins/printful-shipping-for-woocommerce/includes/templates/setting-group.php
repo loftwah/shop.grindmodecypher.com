@@ -73,7 +73,18 @@
 
                             <?php elseif ($setting['type'] == 'color-picker') : ?>
                                 <label for="<?php esc_attr_e($key); ?>">
-                                <input type="text" name="<?php esc_attr_e($key); ?>" class="<?php esc_attr_e($key); ?>" value="<?php esc_attr_e($setting['value'] ?: $setting['default']); ?>" data-default-color="<?php esc_attr_e($setting['default']); ?>" />
+                                <input type="text" name="<?php esc_attr_e($key); ?>" class="<?php esc_attr_e($key); ?> pf-color-picker" value="<?php esc_attr_e($setting['value'] ?: $setting['default']); ?>" data-default-color="<?php esc_attr_e($setting['default']); ?>" />
+
+                            <?php elseif ($setting['type'] == 'dropdown') : ?>
+                            <label for="<?php esc_attr_e($key); ?>">
+                                <select name="<?php esc_attr_e($key); ?>" id="<?php esc_attr_e($key); ?>">
+                                    <?php foreach ( $setting['items'] as $selectionKey => $selectionValue ) : ?>
+                                        <option <?php echo $setting['selected'] === $selectionKey ? 'selected' : ''; ?>
+                                                value="<?php esc_attr_e($selectionKey); ?>">
+                                            <?php esc_attr_e($selectionValue); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                             <?php endif; ?>
 
                         </fieldset>
@@ -89,6 +100,6 @@
 </div>
 <script>
     jQuery(document).ready(function($){
-        $('.pfc_button_color').wpColorPicker();
+        $('.pf-color-picker').wpColorPicker();
     });
 </script>

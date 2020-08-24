@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-03-09 10:02+0200\n"
+"POT-Creation-Date: 2020-08-17 14:22+0300\n"
 "PO-Revision-Date: 2018-04-26 13:50+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -25,23 +25,23 @@ msgstr ""
 msgid "Loading your orders..."
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:25
+#: includes/class-printful-admin-settings.php:35
 msgid "states where Printful applies sales tax"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:30
+#: includes/class-printful-admin-settings.php:40
 msgid "Printful store API key"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:33
+#: includes/class-printful-admin-settings.php:43
 msgid "Your store's Printful API key. Create it in the Prinful dashboard"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:37
+#: includes/class-printful-admin-settings.php:47
 msgid "Calculate sales tax"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:40
+#: includes/class-printful-admin-settings.php:50
 #, php-format
 msgid ""
 "Calculated for all products listed on your store (including non-Printful "
@@ -49,42 +49,114 @@ msgid ""
 "a seller permit in all these states."
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:46
+#: includes/class-printful-admin-settings.php:56
 msgid "Disable SSL"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:48
+#: includes/class-printful-admin-settings.php:58
 msgid ""
 "Use HTTP instead of HTTPS to connect to the Printful API (may be required if "
 "the plugin does not work for some hosting configurations)"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:52
-#: includes/class-printful-admin-settings.php:54
+#: includes/class-printful-admin-settings.php:68
+#: includes/class-printful-admin-settings.php:70
 msgid "Personalization button text"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:58
+#: includes/class-printful-admin-settings.php:74
 msgid "Personalization button color"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:60
+#: includes/class-printful-admin-settings.php:76
 msgid "Personalization button background color"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:64
+#: includes/class-printful-admin-settings.php:80
 msgid "Personalization popup title"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:66
+#: includes/class-printful-admin-settings.php:82
 msgid "Personalization popup title text"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:159
+#: includes/class-printful-admin-settings.php:92
+msgid "Size guide popup title"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:94
+msgid "Size guide popup title text"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:98
+#: includes/class-printful-admin-settings.php:100
+msgid "Size guide popup text color"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:104
+#: includes/class-printful-admin-settings.php:106
+msgid "Size guide popup background color"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:110
+#: includes/class-printful-admin-settings.php:112
+msgid "Size guide tab background color"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:116
+#: includes/class-printful-admin-settings.php:118
+msgid "Size guide active tab background color"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:122
+#: includes/class-printful-admin-settings.php:124
+msgid "Size guide button text"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:128
+#: includes/class-printful-admin-settings.php:130
+msgid "Size guide button text color"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:134
+msgid "Primary measurement unit"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:136
+msgid "Primary measurement unit (cm/inch)"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:140
+msgid "Inches"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:141
+msgid "Centimeters"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:185
+msgid "Integration settings"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:189
+msgid "Product personalization settings"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:194
+msgid "Size guide settings"
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:195
+msgid ""
+"These settings control how the new size guide will look on your WooCommerce "
+"storefront. Products with an old size guide will not be affected."
+msgstr ""
+
+#: includes/class-printful-admin-settings.php:256
 msgid "Shipping Methods"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:160
+#: includes/class-printful-admin-settings.php:257
 msgid ""
 "Here you can choose the shipping methods you want Printful to use for "
 "shipping your orders.\n"
@@ -93,15 +165,15 @@ msgid ""
 "method for each order."
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:166
+#: includes/class-printful-admin-settings.php:263
 msgid "You need to be connected to Printful API to edit carrier settings!"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:307
+#: includes/class-printful-admin-settings.php:404
 msgid "International from USA"
 msgstr ""
 
-#: includes/class-printful-admin-settings.php:313
+#: includes/class-printful-admin-settings.php:410
 msgid "International from EU"
 msgstr ""
 
@@ -316,6 +388,7 @@ msgid "Store Identifier"
 msgstr ""
 
 #: includes/class-printful-rest-api-controller.php:55
+#: includes/class-printful-rest-api-controller.php:75
 msgid "Unique identifier for the resource."
 msgstr ""
 
@@ -323,27 +396,31 @@ msgstr ""
 msgid "Printful size guide"
 msgstr ""
 
-#: includes/class-printful-rest-api-controller.php:122
+#: includes/class-printful-rest-api-controller.php:81
+msgid "Advanced Printful size guide"
+msgstr ""
+
+#: includes/class-printful-rest-api-controller.php:142
 msgid "No size chart was provided"
 msgstr ""
 
-#: includes/class-printful-rest-api-controller.php:128
+#: includes/class-printful-rest-api-controller.php:148
 msgid "The product ID is invalid"
 msgstr ""
 
-#: includes/class-printful-rest-api-controller.php:134
+#: includes/class-printful-rest-api-controller.php:155
 msgid "The product is not found"
 msgstr ""
 
-#: includes/class-printful-rest-api-controller.php:140
+#: includes/class-printful-rest-api-controller.php:161
 msgid "You do not have permission to edit the size chart"
 msgstr ""
 
-#: includes/class-printful-rest-api-controller.php:211
+#: includes/class-printful-rest-api-controller.php:241
 msgid "Sorry, you cannot list resources."
 msgstr ""
 
-#: includes/class-printful-rest-api-controller.php:228
+#: includes/class-printful-rest-api-controller.php:258
 msgid "Sorry, you are not allowed to edit this resource."
 msgstr ""
 
@@ -371,13 +448,21 @@ msgstr ""
 msgid "Display Printful status messages if rate API request fails"
 msgstr ""
 
-#: includes/class-printful-size-chart-tab.php:27
+#: includes/class-printful-size-chart-tab.php:32
 msgid "Size chart"
 msgstr ""
 
-#: includes/class-printful-size-chart-tab.php:38
-#: includes/class-printful-size-chart-tab.php:51
+#: includes/class-printful-size-chart-tab.php:43
+#: includes/class-printful-size-chart-tab.php:56
 msgid "Size Chart"
+msgstr ""
+
+#: includes/class-printful-size-guide.php:51
+msgid "Measure yourself"
+msgstr ""
+
+#: includes/class-printful-size-guide.php:52
+msgid "Product measurements"
 msgstr ""
 
 #: includes/class-printful-taxes.php:160

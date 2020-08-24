@@ -64,6 +64,26 @@ class Printful_REST_API_Controller extends WC_REST_Controller
             )
         ) );
 
+        register_rest_route( $this->namespace, '/' . $this->rest_base . '/products/(?P<product_id>\d+)/advanced-size-chart', array(
+            array(
+                'methods' => WP_REST_Server::EDITABLE,
+                'callback' => array( $this, 'post_size_guide' ),
+                'permission_callback' => array( $this, 'update_item_permissions_check' ),
+                'show_in_index' => false,
+                'args' => array(
+                    'product_id' => array(
+                        'description' => __( 'Unique identifier for the resource.', 'printful' ),
+                        'type'        => 'integer',
+                    ),
+                    'size_chart' => array(
+                        'required' => true,
+                        'type' => 'object',
+                        'description' => __( 'Advanced Printful size guide', 'printful' ),
+                    )
+                )
+            )
+        ) );
+
         register_rest_route( $this->namespace, '/' . $this->rest_base . '/version', array(
             array(
                 'methods' => WP_REST_Server::READABLE,
@@ -142,7 +162,16 @@ class Printful_REST_API_Controller extends WC_REST_Controller
         }
 
         //lets do this
-        update_post_meta( $product->get_id(), 'pf_size_chart', htmlspecialchars( $data['size_chart'] ) );
+        if( is_array( $data['size_chart']) ) {
+            // Advanced size guide
+            $payload = addslashes( json_encode( Printful_Size_Guide::process_size_guide_for_storage($data['size_chart'], $product_id ) ) );
+            $metaKey = 'pf_advanced_size_chart';
+        } else {
+            $payload = htmlspecialchars( $data['size_chart'] );
+            $metaKey = 'pf_size_chart';
+        }
+
+        update_post_meta( $product->get_id(), $metaKey, $payload );
 
         return array(
             'product'    => $product,

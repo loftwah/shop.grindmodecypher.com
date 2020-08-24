@@ -24,6 +24,11 @@ class Printful_Size_Chart_Tab {
 	 * Initialize meta boxes
 	 */
 	public function init_metabox() {
+		global $post;
+		// If product has advanced size chart we don't show basic size chart metabox at all
+		if (Printful_Size_Guide::get_size_guide_for_product($post)) {
+			return;
+		}
 		add_meta_box( 'pf_size_chart', __( 'Size chart', 'printful' ), array( $this, 'size_chart_metabox' ), 'product', 'normal' );
 	}
 
