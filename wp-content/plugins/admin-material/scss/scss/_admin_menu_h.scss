@@ -1,0 +1,131 @@
+@import '_variables_menu';
+@import 'variables';
+
+@media screen and (min-width: 782px) {
+	.admin-menu-h{
+		#wpcontent, 
+		#wpfooter{
+			margin-left: 0 !important;
+		}
+
+		#adminmenu, 
+		#adminmenuback, 
+		#adminmenuwrap{
+			width: 100% !important;
+			margin: 0;
+		}
+
+		#adminmenumain{
+			height: $menu-height;
+			box-shadow: 0 2px 2px rgba(0,0,0,0.05),0 0 1px rgba(0,0,0,0.15);
+		}
+
+		#adminmenuwrap,
+		#adminmenuback{
+			position: fixed !important;
+			top: $bar-height !important;
+			bottom: auto !important;
+		}
+
+		#adminmenu > li{
+			display: block;
+			width: auto !important;
+			float: left;
+			&:after,
+			> a:after{
+				display: none !important;
+			}
+			.wp-submenu{
+				position: absolute !important;
+				top: -1000em !important;
+				margin-top: 0 !important;
+			}
+			&:hover,
+			&:focus,
+			&:active{
+				> a{
+					color: $menu-highlight-text;
+				}
+				.wp-submenu{
+					top: 100% !important;
+					left: 0 !important;
+				}
+			}
+		}
+
+		#collapse-menu{
+			display: inline-block;
+			div{
+				height: 14px;
+			}
+			span{
+				display: none;
+			}
+		}
+
+		#adminmenu div.wp-menu-name{
+			white-space: nowrap;
+			display: inline-block;
+			padding-right: 8px;
+		}
+
+		&.folded{
+			#adminmenu div.wp-menu-name{
+				padding-left: 16px;
+				padding-right: 16px;
+				padding-top: 0;
+				margin-top: -4px;
+			}
+			#adminmenu div.wp-menu-image{
+				padding-bottom: 0;
+			}
+			#adminmenumain{
+				height: $menu-h-fold-height;
+			}
+			.edit-post-header{
+				top: $bar-height + $menu-h-fold-height;
+			}
+
+			.edit-post-sidebar{
+				top: $bar-height + $menu-h-fold-height + 56;
+			}
+		}
+
+		.wp-menu-arrow{
+			display: none;
+		}
+
+		.edit-post-header{
+			left: 0 !important;
+			top: $bar-height + $menu-height;
+		}
+
+		.components-notice-list{
+			left: 0 !important;
+		}
+
+		.edit-post-sidebar{
+			top: $bar-height + $menu-height + 56;
+		}
+	}
+
+}
+
+@media (max-width: 960px) and (min-width: 782px) {
+	.admin-menu-h{
+		&.auto-fold{
+			#adminmenu div.wp-menu-name{
+				padding-left: 16px;
+				padding-right: 16px;
+				padding-top: 0;
+				margin-top: -4px;
+			}
+			#adminmenu div.wp-menu-image{
+				padding-bottom: 0;
+			}
+			#adminmenumain{
+				height: $menu-h-fold-height;
+			}
+		}
+	}
+}
