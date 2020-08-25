@@ -82,7 +82,7 @@ this["wc"] = this["wc"] || {}; this["wc"]["data"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 714);
+/******/ 	return __webpack_require__(__webpack_require__.s = 723);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -103,7 +103,7 @@ this["wc"] = this["wc"] || {}; this["wc"]["data"] =
 __webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ _toConsumableArray; });
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
-var arrayLikeToArray = __webpack_require__(30);
+var arrayLikeToArray = __webpack_require__(31);
 
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
 
@@ -115,7 +115,7 @@ function _iterableToArray(iter) {
   if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
-var unsupportedIterableToArray = __webpack_require__(49);
+var unsupportedIterableToArray = __webpack_require__(51);
 
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js
 function _nonIterableSpread() {
@@ -132,7 +132,7 @@ function _toConsumableArray(arr) {
 
 /***/ }),
 
-/***/ 18:
+/***/ 19:
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["wp"]["data"]; }());
@@ -146,14 +146,14 @@ function _toConsumableArray(arr) {
 
 /***/ }),
 
-/***/ 21:
+/***/ 22:
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["wp"]["apiFetch"]; }());
 
 /***/ }),
 
-/***/ 27:
+/***/ 26:
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["wp"]["url"]; }());
@@ -174,7 +174,7 @@ function _toConsumableArray(arr) {
 
 /***/ }),
 
-/***/ 30:
+/***/ 31:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -191,12 +191,180 @@ function _arrayLikeToArray(arr, len) {
 
 /***/ }),
 
-/***/ 49:
+/***/ 429:
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Memize options object.
+ *
+ * @typedef MemizeOptions
+ *
+ * @property {number} [maxSize] Maximum size of the cache.
+ */
+
+/**
+ * Internal cache entry.
+ *
+ * @typedef MemizeCacheNode
+ *
+ * @property {?MemizeCacheNode|undefined} [prev] Previous node.
+ * @property {?MemizeCacheNode|undefined} [next] Next node.
+ * @property {Array<*>}                   args   Function arguments for cache
+ *                                               entry.
+ * @property {*}                          val    Function result.
+ */
+
+/**
+ * Properties of the enhanced function for controlling cache.
+ *
+ * @typedef MemizeMemoizedFunction
+ *
+ * @property {()=>void} clear Clear the cache.
+ */
+
+/**
+ * Accepts a function to be memoized, and returns a new memoized function, with
+ * optional options.
+ *
+ * @template {Function} F
+ *
+ * @param {F}             fn        Function to memoize.
+ * @param {MemizeOptions} [options] Options object.
+ *
+ * @return {F & MemizeMemoizedFunction} Memoized function.
+ */
+function memize( fn, options ) {
+	var size = 0;
+
+	/** @type {?MemizeCacheNode|undefined} */
+	var head;
+
+	/** @type {?MemizeCacheNode|undefined} */
+	var tail;
+
+	options = options || {};
+
+	function memoized( /* ...args */ ) {
+		var node = head,
+			len = arguments.length,
+			args, i;
+
+		searchCache: while ( node ) {
+			// Perform a shallow equality test to confirm that whether the node
+			// under test is a candidate for the arguments passed. Two arrays
+			// are shallowly equal if their length matches and each entry is
+			// strictly equal between the two sets. Avoid abstracting to a
+			// function which could incur an arguments leaking deoptimization.
+
+			// Check whether node arguments match arguments length
+			if ( node.args.length !== arguments.length ) {
+				node = node.next;
+				continue;
+			}
+
+			// Check whether node arguments match arguments values
+			for ( i = 0; i < len; i++ ) {
+				if ( node.args[ i ] !== arguments[ i ] ) {
+					node = node.next;
+					continue searchCache;
+				}
+			}
+
+			// At this point we can assume we've found a match
+
+			// Surface matched node to head if not already
+			if ( node !== head ) {
+				// As tail, shift to previous. Must only shift if not also
+				// head, since if both head and tail, there is no previous.
+				if ( node === tail ) {
+					tail = node.prev;
+				}
+
+				// Adjust siblings to point to each other. If node was tail,
+				// this also handles new tail's empty `next` assignment.
+				/** @type {MemizeCacheNode} */ ( node.prev ).next = node.next;
+				if ( node.next ) {
+					node.next.prev = node.prev;
+				}
+
+				node.next = head;
+				node.prev = null;
+				/** @type {MemizeCacheNode} */ ( head ).prev = node;
+				head = node;
+			}
+
+			// Return immediately
+			return node.val;
+		}
+
+		// No cached value found. Continue to insertion phase:
+
+		// Create a copy of arguments (avoid leaking deoptimization)
+		args = new Array( len );
+		for ( i = 0; i < len; i++ ) {
+			args[ i ] = arguments[ i ];
+		}
+
+		node = {
+			args: args,
+
+			// Generate the result from original function
+			val: fn.apply( null, args ),
+		};
+
+		// Don't need to check whether node is already head, since it would
+		// have been returned above already if it was
+
+		// Shift existing head down list
+		if ( head ) {
+			head.prev = node;
+			node.next = head;
+		} else {
+			// If no head, follows that there's no tail (at initial or reset)
+			tail = node;
+		}
+
+		// Trim tail if we're reached max size and are pending cache insertion
+		if ( size === /** @type {MemizeOptions} */ ( options ).maxSize ) {
+			tail = /** @type {MemizeCacheNode} */ ( tail ).prev;
+			/** @type {MemizeCacheNode} */ ( tail ).next = null;
+		} else {
+			size++;
+		}
+
+		head = node;
+
+		return node.val;
+	}
+
+	memoized.clear = function() {
+		head = null;
+		tail = null;
+		size = 0;
+	};
+
+	if ( false ) {}
+
+	// Ignore reason: There's not a clear solution to create an intersection of
+	// the function with additional properties, where the goal is to retain the
+	// function signature of the incoming argument and add control properties
+	// on the return value.
+
+	// @ts-ignore
+	return memoized;
+}
+
+module.exports = memize;
+
+
+/***/ }),
+
+/***/ 51:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _unsupportedIterableToArray; });
-/* harmony import */ var _arrayLikeToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
+/* harmony import */ var _arrayLikeToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(31);
 
 function _unsupportedIterableToArray(o, minLen) {
   if (!o) return;
@@ -231,7 +399,7 @@ function _defineProperty(obj, key, value) {
 
 /***/ }),
 
-/***/ 67:
+/***/ 68:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -274,7 +442,7 @@ function _asyncToGenerator(fn) {
 
 /***/ }),
 
-/***/ 714:
+/***/ 723:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -295,6 +463,7 @@ __webpack_require__.d(__webpack_exports__, "withCurrentUserHydration", function(
 __webpack_require__.d(__webpack_exports__, "useUserPreferences", function() { return /* reexport */ use_user_preferences_useUserPreferences; });
 __webpack_require__.d(__webpack_exports__, "OPTIONS_STORE_NAME", function() { return /* reexport */ OPTIONS_STORE_NAME; });
 __webpack_require__.d(__webpack_exports__, "withOptionsHydration", function() { return /* reexport */ with_options_hydration_withOptionsHydration; });
+__webpack_require__.d(__webpack_exports__, "__experimentalResolveSelect", function() { return /* reexport */ __experimentalResolveSelect; });
 
 // NAMESPACE OBJECT: ./packages/data/build-module/settings/selectors.js
 var selectors_namespaceObject = {};
@@ -304,7 +473,7 @@ __webpack_require__.d(selectors_namespaceObject, "getSettings", function() { ret
 __webpack_require__.d(selectors_namespaceObject, "getDirtyKeys", function() { return getDirtyKeys; });
 __webpack_require__.d(selectors_namespaceObject, "getIsDirty", function() { return selectors_getIsDirty; });
 __webpack_require__.d(selectors_namespaceObject, "getSettingsForGroup", function() { return selectors_getSettingsForGroup; });
-__webpack_require__.d(selectors_namespaceObject, "isGetSettingsRequesting", function() { return selectors_isGetSettingsRequesting; });
+__webpack_require__.d(selectors_namespaceObject, "isUpdateSettingsRequesting", function() { return selectors_isUpdateSettingsRequesting; });
 __webpack_require__.d(selectors_namespaceObject, "getSetting", function() { return getSetting; });
 __webpack_require__.d(selectors_namespaceObject, "getLastSettingsErrorForGroup", function() { return selectors_getLastSettingsErrorForGroup; });
 __webpack_require__.d(selectors_namespaceObject, "getSettingsError", function() { return selectors_getSettingsError; });
@@ -401,7 +570,7 @@ __webpack_require__.r(options_resolvers_namespaceObject);
 __webpack_require__.d(options_resolvers_namespaceObject, "getOption", function() { return resolvers_getOption; });
 
 // EXTERNAL MODULE: external {"this":["wp","data"]}
-var external_this_wp_data_ = __webpack_require__(18);
+var external_this_wp_data_ = __webpack_require__(19);
 
 // EXTERNAL MODULE: external {"this":["wp","dataControls"]}
 var external_this_wp_dataControls_ = __webpack_require__(29);
@@ -478,7 +647,7 @@ var selectors_getSettingsForGroup = function getSettingsForGroup(state, group, k
     return accumulator;
   }, {});
 };
-var selectors_isGetSettingsRequesting = function isGetSettingsRequesting(state, group) {
+var selectors_isUpdateSettingsRequesting = function isUpdateSettingsRequesting(state, group) {
   return state[group] && Boolean(state[group].isRequesting);
 };
 /**
@@ -526,6 +695,9 @@ var selectors_getSettingsError = function getSettingsError(state, group, id) {
 
   return state[getResourceName(group, id)].error || false;
 };
+// EXTERNAL MODULE: external {"this":["wp","i18n"]}
+var external_this_wp_i18n_ = __webpack_require__(3);
+
 // EXTERNAL MODULE: external "lodash"
 var external_lodash_ = __webpack_require__(2);
 
@@ -565,6 +737,7 @@ var _marked = /*#__PURE__*/regeneratorRuntime.mark(actions_updateAndPersistSetti
 /**
  * External Dependencies
  */
+
 
 
 
@@ -683,38 +856,44 @@ function actions_persistSettingsForGroup(group) {
 
         case 17:
           results = _context2.sent;
+          _context2.next = 20;
+          return setIsRequesting(group, false);
 
+        case 20:
           if (results) {
-            _context2.next = 20;
+            _context2.next = 22;
             break;
           }
 
-          throw new Error('settings did not update');
-
-        case 20:
-          _context2.next = 22;
-          return actions_clearIsDirty(group);
+          throw new Error(Object(external_this_wp_i18n_["__"])('There was a problem updating your settings.', 'woocommerce-admin'));
 
         case 22:
-          _context2.next = 28;
-          break;
+          _context2.next = 24;
+          return actions_clearIsDirty(group);
 
         case 24:
-          _context2.prev = 24;
+          _context2.next = 33;
+          break;
+
+        case 26:
+          _context2.prev = 26;
           _context2.t0 = _context2["catch"](14);
-          _context2.next = 28;
+          _context2.next = 30;
           return updateErrorForGroup(group, null, _context2.t0);
 
-        case 28:
-          _context2.next = 30;
+        case 30:
+          _context2.next = 32;
           return setIsRequesting(group, false);
 
-        case 30:
+        case 32:
+          throw _context2.t0;
+
+        case 33:
         case "end":
           return _context2.stop();
       }
     }
-  }, _marked2, null, [[14, 24]]);
+  }, _marked2, null, [[14, 26]]);
 }
 function clearSettings() {
   return {
@@ -1054,12 +1233,12 @@ var use_settings_useSettings = function useSettings(group) {
         getLastSettingsErrorForGroup = _select.getLastSettingsErrorForGroup,
         getSettingsForGroup = _select.getSettingsForGroup,
         getIsDirty = _select.getIsDirty,
-        isGetSettingsRequesting = _select.isGetSettingsRequesting;
+        isUpdateSettingsRequesting = _select.isUpdateSettingsRequesting;
 
     return {
       requestedSettings: getSettingsForGroup(group, settingsKeys),
       settingsError: Boolean(getLastSettingsErrorForGroup(group)),
-      isRequesting: isGetSettingsRequesting(group),
+      isRequesting: isUpdateSettingsRequesting(group),
       isDirty: getIsDirty(group, settingsKeys)
     };
   }, [group, settingsKeys]),
@@ -1094,9 +1273,6 @@ var use_settings_useSettings = function useSettings(group) {
     updateSettings: updateSettings
   });
 };
-// EXTERNAL MODULE: external {"this":["wp","i18n"]}
-var external_this_wp_i18n_ = __webpack_require__(3);
-
 // CONCATENATED MODULE: ./packages/data/build-module/plugins/constants.js
 /**
  * External dependencies
@@ -1377,7 +1553,7 @@ function formatErrors(response) {
   return response;
 }
 // EXTERNAL MODULE: external {"this":["wp","url"]}
-var external_this_wp_url_ = __webpack_require__(27);
+var external_this_wp_url_ = __webpack_require__(26);
 
 // CONCATENATED MODULE: ./packages/data/build-module/plugins/resolvers.js
 var plugins_resolvers_marked = /*#__PURE__*/regeneratorRuntime.mark(resolvers_getActivePlugins),
@@ -1878,6 +2054,9 @@ function updateProfileItems(items) {
           return onboarding_actions_setIsRequesting('updateProfileItems', false);
 
         case 21:
+          throw new Error();
+
+        case 22:
         case "end":
           return _context.stop();
       }
@@ -2139,7 +2318,7 @@ var with_current_user_hydration_withCurrentUserHydration = function withCurrentU
   };
 };
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js
-var asyncToGenerator = __webpack_require__(67);
+var asyncToGenerator = __webpack_require__(68);
 
 // CONCATENATED MODULE: ./packages/data/build-module/user-preferences/use-user-preferences.js
 
@@ -2549,7 +2728,7 @@ function updateOptions(data) {
   }, options_actions_marked, null, [[4, 13]]);
 }
 // EXTERNAL MODULE: external {"this":["wp","apiFetch"]}
-var external_this_wp_apiFetch_ = __webpack_require__(21);
+var external_this_wp_apiFetch_ = __webpack_require__(22);
 var external_this_wp_apiFetch_default = /*#__PURE__*/__webpack_require__.n(external_this_wp_apiFetch_);
 
 // CONCATENATED MODULE: ./packages/data/build-module/options/controls.js
@@ -2844,7 +3023,63 @@ var with_options_hydration_withOptionsHydration = function withOptionsHydration(
     };
   };
 };
+// EXTERNAL MODULE: ./node_modules/memize/index.js
+var memize = __webpack_require__(429);
+var memize_default = /*#__PURE__*/__webpack_require__.n(memize);
+
+// CONCATENATED MODULE: ./packages/data/build-module/registry.js
+/**
+ * External dependencies
+ */
+
+
+
+function __experimentalResolveSelect(reducerKey) {
+  return getResolveSelectors(Object(external_this_wp_data_["select"])(reducerKey));
+}
+/**
+ * Returns a promise that resolves once a selector has finished resolving.
+ * This is directly pulled from https://github.com/WordPress/gutenberg/blob/909c9274b2440de5f6049ffddfcc8e0e6158df2d/packages/data/src/registry.js#L91-L130
+ * and will be removed in favor of the @wordpress/data function.
+ */
+
+var getResolveSelectors = memize_default()(function (selectors) {
+  return Object(external_lodash_["mapValues"])(Object(external_lodash_["omit"])(selectors, ['getIsResolving', 'hasStartedResolution', 'hasFinishedResolution', 'isResolving', 'getCachedResolvers']), function (selector, selectorName) {
+    return function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return new Promise(function (resolve) {
+        var hasFinished = function hasFinished() {
+          return selectors.hasFinishedResolution(selectorName, args);
+        };
+
+        var getResult = function getResult() {
+          return selector.apply(null, args);
+        }; // trigger the selector (to trigger the resolver)
+
+
+        var result = getResult();
+
+        if (hasFinished()) {
+          return resolve(result);
+        }
+
+        var unsubscribe = Object(external_this_wp_data_["subscribe"])(function () {
+          if (hasFinished()) {
+            unsubscribe();
+            resolve(getResult());
+          }
+        });
+      });
+    };
+  });
+}, {
+  maxSize: 1
+});
 // CONCATENATED MODULE: ./packages/data/build-module/index.js
+
 
 
 

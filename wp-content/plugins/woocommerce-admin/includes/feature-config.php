@@ -11,7 +11,6 @@ if ( ! function_exists( 'wc_admin_get_feature_config' ) ) {
 			'coupons' => true,
 			'devdocs' => false,
 			'marketing' => true,
-			'navigation' => false,
 			'onboarding' => true,
 			'remote-inbox-notifications' => false,
 			'shipping-label-banner' => true,
