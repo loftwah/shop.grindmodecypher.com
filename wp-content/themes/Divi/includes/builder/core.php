@@ -75,7 +75,8 @@ add_action( 'init', 'et_builder_add_filters' );
 if ( ! function_exists( 'et_builder_should_load_framework' ) ) :
 	function et_builder_should_load_framework() {
 		global $pagenow;
-		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
+		// reason: Since we are accessing $_GET only for the comparision, nonce verification is not required.
+		// phpcs:disable WordPress.Security.NonceVerification
 
 		static $should_load = null;
 
@@ -104,7 +105,9 @@ if ( ! function_exists( 'et_builder_should_load_framework' ) ) :
 		$is_extra_builder             = $post_id && 'layout' === get_post_type( $post_id );
 		$is_edit_page_not_bfb         = in_array( $pagenow, array( 'post-new.php', 'post.php' ) ) && ! $is_bfb_used;
 		$is_role_editor_page          = 'admin.php' === $pagenow && isset( $_GET['page'] ) && apply_filters( 'et_divi_role_editor_page', 'et_divi_role_editor' ) === $_GET['page'];
-		$is_import_page               = 'admin.php' === $pagenow && isset( $_GET['import'] ) && 'WordPress' === $_GET['import']; // Page Builder files should be loaded on import page as well to register the et_pb_layout post type properly
+		// reason: $_GET['import'] variable does not contain the 'WordPress' string.
+		// phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled -- $_GET['import'] contain 'wordpress' string.
+		$is_import_page               = 'admin.php' === $pagenow && isset( $_GET['import'] ) && 'wordpress' === $_GET['import']; // Page Builder files should be loaded on import page as well to register the et_pb_layout post type properly.
 		$is_wpml_page                 = 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'sitepress-multilingual-cms/menu/languages.php' === $_GET['page']; // Page Builder files should be loaded on WPML clone page as well to register the custom taxonomies properly
 		$is_edit_layout_category_page = 'edit-tags.php' === $pagenow && isset( $_GET['taxonomy'] ) && ( 'layout_category' === $_GET['taxonomy'] || 'layout_pack' === $_GET['taxonomy'] );
 
@@ -2897,7 +2900,11 @@ function et_pb_save_role_settings() {
 	// Delete cached definitions / helpers
 	et_fb_delete_builder_assets();
 
-	die();
+	$response = array(
+		'success' => true,
+	);
+
+	wp_send_json( $response );
 }
 add_action( 'wp_ajax_et_pb_save_role_settings', 'et_pb_save_role_settings' );
 

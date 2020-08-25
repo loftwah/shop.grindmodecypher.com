@@ -6569,10 +6569,6 @@ function et_modify_shop_page_columns_num( $columns_num ) {
 		return $columns_num;
 	}
 
-	if ( ! get_queried_object() ) {
-		return $columns_num;
-	}
-
 	// WooCommerce plugin active check ensures that archive function can be used.
 	$is_archive_page = is_shop() || is_product_category() || is_product_tag();
 

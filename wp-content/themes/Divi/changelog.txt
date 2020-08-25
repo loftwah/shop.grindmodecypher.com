@@ -1,3 +1,24 @@
+version 4.5.8 ( updated 08-24-2020 )
+- Fixed unable to export Role Editor.
+- Fixed layout XML import.
+- Fixed module right-click contextual menu's wrong placement.
+- Fixed wrong styles in protected WordPress pages.
+- Fixed issue when working with links that contain special characters.
+- Fixed missing alt and title attributes in Post Title's featured image.
+- Removed border bottom on BFB panel header.
+- Fixed theme customizer range input doesn't update the value on the control itself.
+- Fixed issue when using the Woo Image module in the shop page.
+	* core/components/Updates.php
+	* functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/WoocommerceProductVariablePlaceholder.php
+	* includes/builder/functions.php
+	* includes/builder/module/FullwidthPostTitle.php
+	* includes/builder/module/PostTitle.php
+	* includes/builder/plugin-compat/sitepress-multilingual-cms.php
+	* includes/builder/scripts/src/builder.js
+
 version 4.5.7 ( updated 08-18-2020 )
 - Fixed the warning shown with WooCommerce v4.4.0 and WordPress v5.5.
 - Fixed issue preventing ability to create a translation for a Divi Library layout.

@@ -1141,7 +1141,7 @@ body.single .et_audio_content {
   margin: 8px auto 0;
   cursor: pointer; }
 
-.post-password-required .et_pb_row, .post-password-required p.nocomments.container {
+.post-password-required p.nocomments.container {
   max-width: 100%; }
 
 .post-password-required p.nocomments.container:before {
@@ -10839,10 +10839,6 @@ span.comment_date {
   .et-db #et-boc .et-l .et_pb_section_video .pagination,
   .et-db #et-boc .et-l .et_pb_section_parallax .pagination {
     position: relative; }
-  .et-db #et-boc .et-l .post-password-required .et_pb_section,
-  .et-db #et-boc .et-l .post-password-required .et_pb_row {
-    padding: 0;
-    width: 100%; }
   .et-db #et-boc .et-l .post-password-required .et_password_protected_form {
     min-height: 0;
     min-height: initial; }

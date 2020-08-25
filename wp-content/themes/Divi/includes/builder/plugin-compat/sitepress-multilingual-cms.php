@@ -182,7 +182,7 @@ class ET_Builder_Plugin_Compat_WPML_Multilingual_CMS extends ET_Builder_Plugin_C
 	/**
 	 * Enqueues admin related scripts and styles for WPML compatiblity.
 	 *
-	 * @since ??
+	 * @since 4.5.7
 	 */
 	public function maybe_enqueue_admin_scripts() {
 		global $typenow;
@@ -206,7 +206,7 @@ class ET_Builder_Plugin_Compat_WPML_Multilingual_CMS extends ET_Builder_Plugin_C
 	/**
 	 * Translate library layout on the background.
 	 *
-	 * @since ??
+	 * @since 4.5.7
 	 */
 	public function translate_layout() {
 		et_builder_security_check( 'divi_library', 'edit_posts', 'et_builder_wpml_translate_layout', 'nonce' );
@@ -330,7 +330,7 @@ class ET_Builder_Plugin_Compat_WPML_Multilingual_CMS extends ET_Builder_Plugin_C
 	 * Allow library layout with empty title and content to be inserted as new post for
 	 * translation purpose.
 	 *
-	 * @since ??
+	 * @since 4.5.7
 	 *
 	 * @param bool  $maybe_empty Original status.
 	 * @param array $postarr     Array of post data.

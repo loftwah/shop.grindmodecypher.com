@@ -462,14 +462,18 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 		$parallax_image_background = $this->get_parallax_image_background();
 
 		if ( $post_id && $multi_view->has_value( 'featured_image', 'on' ) && ( 'above' === $featured_placement || 'below' === $featured_placement ) ) {
-			$post_thumbnail_id  = get_post_thumbnail_id( $post_id );
-			$featured_image_src = et_()->array_get( wp_get_attachment_image_src( $post_thumbnail_id, 'full' ), 0 );
+			$post_thumbnail_id    = get_post_thumbnail_id( $post_id );
+			$featured_image_src   = et_()->array_get( wp_get_attachment_image_src( $post_thumbnail_id, 'full' ), 0 );
+			$featured_image_alt   = get_post_meta( $post_thumbnail_id, '_wp_attachment_image_alt', true );
+			$featured_image_title = get_the_title( $post_thumbnail_id );
 
 			$featured_image_content = $multi_view->render_element(
 				array(
 					'tag'   => 'img',
 					'attrs' => array(
-						'src' => $featured_image_src,
+						'src'   => $featured_image_src,
+						'alt'   => $featured_image_alt,
+						'title' => $featured_image_title,
 					),
 				)
 			);

@@ -1493,13 +1493,20 @@ class ET_Builder_Element {
 
 			// URLs are weird since they can allow non-ascii characters so we escape those separately.
 			if ( in_array( $attribute_key, array( 'url', 'button_link', 'button_url' ), true ) ) {
-				$shortcode_attributes[ $attribute_key ] = esc_url_raw(
-					str_replace(
+				$url        = $processed_attr_value;
+				$url_parsed = wp_parse_url( $url );
+
+				if ( isset( $url_parsed['query'] ) ) {
+					$replace = str_replace(
 						array( '%91', '%93' ),
 						array( '&#91;', '&#93;' ),
-						$processed_attr_value
-					)
-				);
+						$url_parsed['query']
+					);
+
+					$url = str_replace( $url_parsed['query'], $replace, $url );
+				}
+
+				$shortcode_attributes[ $attribute_key ] = esc_url_raw( $url );
 			} else {
 				// Manipulate string for font icon attribute with value "%%xx%%" to "##xx##".
 				$processed_attr_value = preg_replace( '/%%([0-9]+)%%/', '##$1##', $processed_attr_value );
