@@ -273,6 +273,7 @@ class ET_Builder_Module_Team_Member extends ET_Builder_Module {
 				'toggle_slug'    => 'icon',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'use_icon_font_size' => array(
 				'label'            => esc_html__( 'Use Icon Font Size', 'et_builder' ),
@@ -310,6 +311,7 @@ class ET_Builder_Module_Team_Member extends ET_Builder_Module {
 				'mobile_options'   => true,
 				'depends_show_if'  => 'on',
 				'responsive'       => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			),
 		);
@@ -327,8 +329,8 @@ class ET_Builder_Module_Team_Member extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view            = et_pb_multi_view_options( $this );
-		$name                  = $multi_view->render_element(
+		$multi_view         = et_pb_multi_view_options( $this );
+		$name               = $multi_view->render_element(
 			array(
 				'tag'     => et_pb_process_header_level( $this->props['header_level'], 'h4' ),
 				'content' => '{{name}}',
@@ -337,7 +339,7 @@ class ET_Builder_Module_Team_Member extends ET_Builder_Module {
 				),
 			)
 		);
-		$position              = $multi_view->render_element(
+		$position           = $multi_view->render_element(
 			array(
 				'tag'     => 'p',
 				'content' => '{{position}}',
@@ -346,33 +348,29 @@ class ET_Builder_Module_Team_Member extends ET_Builder_Module {
 				),
 			)
 		);
-		$image_url             = $this->props['image_url'];
-		$animation             = $this->props['animation'];
-		$facebook_url          = $this->props['facebook_url'];
-		$twitter_url           = $this->props['twitter_url'];
-		$google_url            = $this->props['google_url'];
-		$linkedin_url          = $this->props['linkedin_url'];
-		$hover                 = et_pb_hover_options();
-		$use_icon_font_size    = $this->props['use_icon_font_size'];
-		$icon_color_values     = et_pb_responsive_options()->get_property_values( $this->props, 'icon_color' );
-		$icon_font_size_values = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
-		$icon_font_size_hover  = $this->get_hover_value( 'icon_font_size' );
+		$image_url          = $this->props['image_url'];
+		$animation          = $this->props['animation'];
+		$facebook_url       = $this->props['facebook_url'];
+		$twitter_url        = $this->props['twitter_url'];
+		$google_url         = $this->props['google_url'];
+		$linkedin_url       = $this->props['linkedin_url'];
+		$use_icon_font_size = $this->props['use_icon_font_size'];
 
 		$image = $social_links = '';
 
 		// Icon Color.
-		et_pb_responsive_options()->generate_responsive_css( $icon_color_values, '%%order_class%% .et_pb_member_social_links a', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( $hover->is_enabled( 'icon_color', $this->props ) && $hover->get_value( 'icon_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_member_social_links a:hover',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $hover->get_value( 'icon_color', $this->props ) )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'icon_color',
+				'selector'                        => '%%order_class%% .et_pb_member_social_links a',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		if ( '' !== $facebook_url ) {
 			$social_links .= sprintf(
@@ -411,21 +409,18 @@ class ET_Builder_Module_Team_Member extends ET_Builder_Module {
 		}
 
 		// Icon Size.
-		$icon_selector = '%%order_class%% .et_pb_member_social_links .et_pb_font_icon';
 		if ( 'off' !== $use_icon_font_size ) {
-			et_pb_responsive_options()->generate_responsive_css( $icon_font_size_values, $icon_selector, 'font-size', $render_slug );
-
-			// Icon hover styles.
-			if ( et_builder_is_hover_enabled( 'icon_font_size', $this->props ) ) {
-				$el_style = array(
-					'selector'    => $this->add_hover_to_selectors( $icon_selector ),
-					'declaration' => sprintf(
-						'font-size: %1$s;',
-						esc_html( $icon_font_size_hover )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
+			$this->generate_styles(
+				array(
+					'base_attr_name'                  => 'icon_font_size',
+					'selector'                        => '%%order_class%% .et_pb_member_social_links .et_pb_font_icon',
+					'hover_pseudo_selector_location'  => 'suffix',
+					'sticky_pseudo_selector_location' => 'prefix',
+					'css_property'                    => 'font-size',
+					'render_slug'                     => $render_slug,
+					'type'                            => 'range',
+				)
+			);
 		}
 
 		// Added for backward compatibility

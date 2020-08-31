@@ -143,6 +143,9 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			'fonts'           => false,
 			'text'            => false,
 			'button'          => false,
+			'z_index'         => array(
+				'default' => 'auto',
+			),
 			'position_fields' => array(
 				'default' => 'relative',
 			),
@@ -579,6 +582,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 	function render( $atts, $content = null, $function_name ) {
 		$multi_view                                   = et_pb_multi_view_options( $this );
+		$hover                                        = et_pb_hover_options();
+		$sticky                                       = et_pb_sticky_options();
 		$background_video_mp4                         = $this->props['background_video_mp4'];
 		$background_video_webm                        = $this->props['background_video_webm'];
 		$inner_shadow                                 = $this->props['inner_shadow'];
@@ -660,6 +665,15 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		$custom_css_after_1_hover                     = $this->get_hover_value( 'custom_css_after_1' );
 		$custom_css_after_2_hover                     = $this->get_hover_value( 'custom_css_after_2' );
 		$custom_css_after_3_hover                     = $this->get_hover_value( 'custom_css_after_3' );
+		$custom_css_before_1_sticky                   = $sticky->get_value( 'custom_css_before_1', $this->props, '' );
+		$custom_css_before_2_sticky                   = $sticky->get_value( 'custom_css_before_2', $this->props, '' );
+		$custom_css_before_3_sticky                   = $sticky->get_value( 'custom_css_before_3', $this->props, '' );
+		$custom_css_main_1_sticky                     = $sticky->get_value( 'custom_css_main_1', $this->props, '' );
+		$custom_css_main_2_sticky                     = $sticky->get_value( 'custom_css_main_2', $this->props, '' );
+		$custom_css_main_3_sticky                     = $sticky->get_value( 'custom_css_main_3', $this->props, '' );
+		$custom_css_after_1_sticky                    = $sticky->get_value( 'custom_css_after_1', $this->props, '' );
+		$custom_css_after_2_sticky                    = $sticky->get_value( 'custom_css_after_2', $this->props, '' );
+		$custom_css_after_3_sticky                    = $sticky->get_value( 'custom_css_after_3', $this->props, '' );
 		$use_background_color_gradient_1              = $this->props['use_background_color_gradient_1'];
 		$use_background_color_gradient_2              = $this->props['use_background_color_gradient_2'];
 		$use_background_color_gradient_3              = $this->props['use_background_color_gradient_3'];
@@ -737,8 +751,6 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			$processed_background_color_phone  = $this->is_initial_background_color( 'phone' ) ? 'inherit' : $background_color_phone;
 		}
 
-		$hover = et_pb_hover_options();
-
 		if ( '' !== $global_module ) {
 			$global_content = et_pb_load_global_module( $global_module, '', $prev_background_color, $next_background_color );
 
@@ -777,7 +789,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			}
 
 			// Column hover backgrounds
-			$column_hover_backgrounds = array();
+			$column_hover_backgrounds  = array();
+			$column_sticky_backgrounds = array();
 
 			for ( $i = 0; $i <= 3; $i ++ ) {
 				$column_hover_backgrounds = array_merge(
@@ -787,38 +800,52 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 						"column_{$i}_color_hover_enabled" => $hover->is_enabled( "background_color_{$i}", $this->props ),
 					)
 				);
+
+				$column_sticky_backgrounds = array_merge(
+					$column_sticky_backgrounds,
+					array(
+						"column_{$i}_color_sticky"         => $sticky->get_value( "background_color_{$i}", $this->props, false ),
+						"column_{$i}_color_sticky_enabled" => $sticky->is_enabled( "background_color_{$i}", $this->props ),
+					)
+				);
 			}
 
 			$et_pb_column_backgrounds = array(
 				array(
-					'color'               => $background_color_1,
-					'color_hover'         => $column_hover_backgrounds['column_1_color_hover'],
-					'color_hover_enabled' => $column_hover_backgrounds['column_1_color_hover_enabled'],
-					'image'               => $bg_img_1,
-					'image_size'          => $background_size_1,
-					'image_position'      => $background_position_1,
-					'image_repeat'        => $background_repeat_1,
-					'image_blend'         => $background_blend_1,
+					'color'                => $background_color_1,
+					'color_hover'          => $column_hover_backgrounds['column_1_color_hover'],
+					'color_hover_enabled'  => $column_hover_backgrounds['column_1_color_hover_enabled'],
+					'color_sticky'         => $column_sticky_backgrounds['column_1_color_sticky'],
+					'color_sticky_enabled' => $column_sticky_backgrounds['column_1_color_sticky_enabled'],
+					'image'                => $bg_img_1,
+					'image_size'           => $background_size_1,
+					'image_position'       => $background_position_1,
+					'image_repeat'         => $background_repeat_1,
+					'image_blend'          => $background_blend_1,
 				),
 				array(
-					'color'               => $background_color_2,
-					'color_hover'         => $column_hover_backgrounds['column_2_color_hover'],
-					'color_hover_enabled' => $column_hover_backgrounds['column_2_color_hover_enabled'],
-					'image'               => $bg_img_2,
-					'image_size'          => $background_size_2,
-					'image_position'      => $background_position_2,
-					'image_repeat'        => $background_repeat_2,
-					'image_blend'         => $background_blend_2,
+					'color'                => $background_color_2,
+					'color_hover'          => $column_hover_backgrounds['column_2_color_hover'],
+					'color_hover_enabled'  => $column_hover_backgrounds['column_2_color_hover_enabled'],
+					'color_sticky'         => $column_sticky_backgrounds['column_2_color_sticky'],
+					'color_sticky_enabled' => $column_sticky_backgrounds['column_2_color_sticky_enabled'],
+					'image'                => $bg_img_2,
+					'image_size'           => $background_size_2,
+					'image_position'       => $background_position_2,
+					'image_repeat'         => $background_repeat_2,
+					'image_blend'          => $background_blend_2,
 				),
 				array(
-					'color'               => $background_color_3,
-					'color_hover'         => $column_hover_backgrounds['column_3_color_hover'],
-					'color_hover_enabled' => $column_hover_backgrounds['column_3_color_hover_enabled'],
-					'image'               => $bg_img_3,
-					'image_size'          => $background_size_3,
-					'image_position'      => $background_position_3,
-					'image_repeat'        => $background_repeat_3,
-					'image_blend'         => $background_blend_3,
+					'color'                => $background_color_3,
+					'color_hover'          => $column_hover_backgrounds['column_3_color_hover'],
+					'color_hover_enabled'  => $column_hover_backgrounds['column_3_color_hover_enabled'],
+					'color_sticky'         => $column_sticky_backgrounds['column_3_color_sticky'],
+					'color_sticky_enabled' => $column_sticky_backgrounds['column_3_color_sticky_enabled'],
+					'image'                => $bg_img_3,
+					'image_size'           => $background_size_3,
+					'image_position'       => $background_position_3,
+					'image_repeat'         => $background_repeat_3,
+					'image_blend'          => $background_blend_3,
 				),
 			);
 
@@ -886,7 +913,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			);
 
 			// Column hover paddings
-			$column_hover_paddings = array();
+			$column_hover_paddings  = array();
+			$column_sticky_paddings = array();
 
 			for ( $i = 0; $i <= 3; $i++ ) {
 				$column_hover_paddings = array_merge(
@@ -899,41 +927,68 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 						"column_{$i}_padding_left"   => $hover->get_compose_value( "padding_left_{$i}", "padding_{$i}", $this->props ),
 					)
 				);
+
+				$sticky_padding_values  = explode( '|', $sticky->get_value( "padding_{$i}", $this->props, '|||' ) );
+				$column_sticky_paddings = array_merge(
+					$column_sticky_paddings,
+					array(
+						"column_{$i}_padding_sticky_enabled" => $sticky->is_enabled( "padding_{$i}", $this->props ),
+						"column_{$i}_padding_top"    => $sticky_padding_values[0],
+						"column_{$i}_padding_right"  => $sticky_padding_values[1],
+						"column_{$i}_padding_bottom" => $sticky_padding_values[2],
+						"column_{$i}_padding_left"   => $sticky_padding_values[3],
+					)
+				);
 			}
 
 			$et_pb_column_paddings = array(
 				array(
-					'padding-top'           => $padding_top_1,
-					'padding-right'         => $padding_right_1,
-					'padding-bottom'        => $padding_bottom_1,
-					'padding-left'          => $padding_left_1,
-					'padding-hover-enabled' => $column_hover_paddings['column_1_padding_hover_enabled'],
-					'padding-top-hover'     => $column_hover_paddings['column_1_padding_top'],
-					'padding-right-hover'   => $column_hover_paddings['column_1_padding_right'],
-					'padding-bottom-hover'  => $column_hover_paddings['column_1_padding_bottom'],
-					'padding-left-hover'    => $column_hover_paddings['column_1_padding_left'],
+					'padding-top'            => $padding_top_1,
+					'padding-right'          => $padding_right_1,
+					'padding-bottom'         => $padding_bottom_1,
+					'padding-left'           => $padding_left_1,
+					'padding-hover-enabled'  => $column_hover_paddings['column_1_padding_hover_enabled'],
+					'padding-top-hover'      => $column_hover_paddings['column_1_padding_top'],
+					'padding-right-hover'    => $column_hover_paddings['column_1_padding_right'],
+					'padding-bottom-hover'   => $column_hover_paddings['column_1_padding_bottom'],
+					'padding-left-hover'     => $column_hover_paddings['column_1_padding_left'],
+					'padding-sticky-enabled' => $column_sticky_paddings['column_1_padding_sticky_enabled'],
+					'padding-top-sticky'     => $column_sticky_paddings['column_1_padding_top'],
+					'padding-right-sticky'   => $column_sticky_paddings['column_1_padding_right'],
+					'padding-bottom-sticky'  => $column_sticky_paddings['column_1_padding_bottom'],
+					'padding-left-sticky'    => $column_sticky_paddings['column_1_padding_left'],
 				),
 				array(
-					'padding-top'           => $padding_top_2,
-					'padding-right'         => $padding_right_2,
-					'padding-bottom'        => $padding_bottom_2,
-					'padding-left'          => $padding_left_2,
-					'padding-hover-enabled' => $column_hover_paddings['column_2_padding_hover_enabled'],
-					'padding-top-hover'     => $column_hover_paddings['column_2_padding_top'],
-					'padding-right-hover'   => $column_hover_paddings['column_2_padding_right'],
-					'padding-bottom-hover'  => $column_hover_paddings['column_2_padding_bottom'],
-					'padding-left-hover'    => $column_hover_paddings['column_2_padding_left'],
+					'padding-top'            => $padding_top_2,
+					'padding-right'          => $padding_right_2,
+					'padding-bottom'         => $padding_bottom_2,
+					'padding-left'           => $padding_left_2,
+					'padding-hover-enabled'  => $column_hover_paddings['column_2_padding_hover_enabled'],
+					'padding-top-hover'      => $column_hover_paddings['column_2_padding_top'],
+					'padding-right-hover'    => $column_hover_paddings['column_2_padding_right'],
+					'padding-bottom-hover'   => $column_hover_paddings['column_2_padding_bottom'],
+					'padding-left-hover'     => $column_hover_paddings['column_2_padding_left'],
+					'padding-sticky-enabled' => $column_sticky_paddings['column_2_padding_sticky_enabled'],
+					'padding-top-sticky'     => $column_sticky_paddings['column_2_padding_top'],
+					'padding-right-sticky'   => $column_sticky_paddings['column_2_padding_right'],
+					'padding-bottom-sticky'  => $column_sticky_paddings['column_2_padding_bottom'],
+					'padding-left-sticky'    => $column_sticky_paddings['column_2_padding_left'],
 				),
 				array(
-					'padding-top'           => $padding_top_3,
-					'padding-right'         => $padding_right_3,
-					'padding-bottom'        => $padding_bottom_3,
-					'padding-left'          => $padding_left_3,
-					'padding-hover-enabled' => $column_hover_paddings['column_3_padding_hover_enabled'],
-					'padding-top-hover'     => $column_hover_paddings['column_3_padding_top'],
-					'padding-right-hover'   => $column_hover_paddings['column_3_padding_right'],
-					'padding-bottom-hover'  => $column_hover_paddings['column_3_padding_bottom'],
-					'padding-left-hover'    => $column_hover_paddings['column_3_padding_left'],
+					'padding-top'            => $padding_top_3,
+					'padding-right'          => $padding_right_3,
+					'padding-bottom'         => $padding_bottom_3,
+					'padding-left'           => $padding_left_3,
+					'padding-hover-enabled'  => $column_hover_paddings['column_3_padding_hover_enabled'],
+					'padding-top-hover'      => $column_hover_paddings['column_3_padding_top'],
+					'padding-right-hover'    => $column_hover_paddings['column_3_padding_right'],
+					'padding-bottom-hover'   => $column_hover_paddings['column_3_padding_bottom'],
+					'padding-left-hover'     => $column_hover_paddings['column_3_padding_left'],
+					'padding-sticky-enabled' => $column_sticky_paddings['column_3_padding_sticky_enabled'],
+					'padding-top-sticky'     => $column_sticky_paddings['column_3_padding_top'],
+					'padding-right-sticky'   => $column_sticky_paddings['column_3_padding_right'],
+					'padding-bottom-sticky'  => $column_sticky_paddings['column_3_padding_bottom'],
+					'padding-left-sticky'    => $column_sticky_paddings['column_3_padding_left'],
 				),
 			);
 
@@ -962,14 +1017,17 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			);
 
 			$et_pb_column_css = array(
-				'css_class'               => array( $module_class_1, $module_class_2, $module_class_3 ),
-				'css_id'                  => array( $module_id_1, $module_id_2, $module_id_3 ),
-				'custom_css_before'       => array( $custom_css_before_1, $custom_css_before_2, $custom_css_before_3 ),
-				'custom_css_main'         => array( $custom_css_main_1, $custom_css_main_2, $custom_css_main_3 ),
-				'custom_css_after'        => array( $custom_css_after_1, $custom_css_after_2, $custom_css_after_3 ),
-				'custom_css_before_hover' => array( $custom_css_before_1_hover, $custom_css_before_2_hover, $custom_css_before_3_hover ),
-				'custom_css_main_hover'   => array( $custom_css_main_1_hover, $custom_css_main_2_hover, $custom_css_main_3_hover ),
-				'custom_css_after_hover'  => array( $custom_css_after_1_hover, $custom_css_after_2_hover, $custom_css_after_3_hover ),
+				'css_class'                => array( $module_class_1, $module_class_2, $module_class_3 ),
+				'css_id'                   => array( $module_id_1, $module_id_2, $module_id_3 ),
+				'custom_css_before'        => array( $custom_css_before_1, $custom_css_before_2, $custom_css_before_3 ),
+				'custom_css_main'          => array( $custom_css_main_1, $custom_css_main_2, $custom_css_main_3 ),
+				'custom_css_after'         => array( $custom_css_after_1, $custom_css_after_2, $custom_css_after_3 ),
+				'custom_css_before_hover'  => array( $custom_css_before_1_hover, $custom_css_before_2_hover, $custom_css_before_3_hover ),
+				'custom_css_main_hover'    => array( $custom_css_main_1_hover, $custom_css_main_2_hover, $custom_css_main_3_hover ),
+				'custom_css_after_hover'   => array( $custom_css_after_1_hover, $custom_css_after_2_hover, $custom_css_after_3_hover ),
+				'custom_css_before_sticky' => array( $custom_css_before_1_sticky, $custom_css_before_2_sticky, $custom_css_before_3_sticky ),
+				'custom_css_main_sticky'   => array( $custom_css_main_1_sticky, $custom_css_main_2_sticky, $custom_css_main_3_sticky ),
+				'custom_css_after_sticky'  => array( $custom_css_after_1_sticky, $custom_css_after_2_sticky, $custom_css_after_3_sticky ),
 			);
 
 			$internal_columns_settings_array = array(
@@ -1009,19 +1067,49 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		et_pb_responsive_options()->generate_responsive_css( $background_color_values, '%%order_class%%.et_pb_section', 'background-color', $function_name, ' !important;', 'color' );
 
 		// Background hover styles
-		$bg_color = $hover->get_value( 'background_color', $this->props );
-		$bg_color = empty( $bg_color ) ? $background_color : $bg_color;
-		if ( $hover->is_enabled( 'background', $this->props ) && ! empty( $bg_color ) ) {
-			ET_Builder_Element::set_style(
-				$function_name,
-				array(
-					'selector'    => '%%order_class%%.et_pb_section:hover',
+		$hover_background_color    = $hover->get_value( 'background_color', $this->props, $background_color );
+		$hover_background_selector = '%%order_class%%.et_pb_section:hover';
+
+		if ( $hover_background_color !== $background_color ) {
+			$el_style = array(
+				'selector'    => $hover_background_selector,
+				'declaration' => sprintf(
+					'background-color:%s !important;',
+					esc_attr( $hover_background_color )
+				),
+			);
+			ET_Builder_Element::set_style( $function_name, $el_style );
+		}
+
+		// Background sticky styles.
+		$sticky_background_color = $sticky->get_value( 'background_color', $this->props, $background_color );
+		if ( $sticky_background_color !== $background_color ) {
+			$el_style = array(
+				'selector'    => $sticky->add_sticky_to_order_class(
+					'%%order_class%%.et_pb_section',
+					$this->is_sticky_module
+				),
+				'declaration' => sprintf(
+					'background-color:%s !important;',
+					esc_attr( $sticky_background_color )
+				),
+			);
+			ET_Builder_Element::set_style( $function_name, $el_style );
+
+			// Add hover style in sticky state.
+			if ( $hover_background_color !== $background_color ) {
+				$el_style = array(
+					'selector'    => $sticky->add_sticky_to_order_class(
+						$hover_background_selector,
+						$this->is_sticky_module
+					),
 					'declaration' => sprintf(
 						'background-color:%s !important;',
-						esc_attr( $bg_color )
+						esc_attr( $hover_background_color )
 					),
-				)
-			);
+				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
+			}
 		}
 
 		// Transparent is default for Builder Plugin, but not for theme
@@ -1194,24 +1282,20 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 		if ( ! empty( $style ) && 'none' !== $style && false === strpos( $style, 'inset' ) ) {
 			// Make section z-index higher if it has outer box shadow #4762
-			self::set_style(
-				$function_name,
-				array(
-					'selector'    => '%%order_class%%',
-					'declaration' => 'z-index: 10;',
-				)
+			$el_style = array(
+				'selector'    => '%%order_class%%',
+				'declaration' => 'z-index: 10;',
 			);
+			self::set_style( $function_name, $el_style );
 		}
 
 		if ( ! empty( $hover_style ) && 'none' !== $hover_style && false === strpos( $hover_style, 'inset' ) ) {
 			// Make section z-index higher if it has outer box shadow #4762
-			self::set_style(
-				$function_name,
-				array(
-					'selector'    => '%%order_class%%:hover',
-					'declaration' => 'z-index: 10;',
-				)
+			$el_style = array(
+				'selector'    => '%%order_class%%:hover',
+				'declaration' => 'z-index: 10;',
 			);
+			self::set_style( $function_name, $el_style );
 		}
 
 		parent::process_box_shadow( $function_name );
@@ -1296,9 +1380,11 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 						),
 					),
 					'module_alignment' => array(
-						'label'          => esc_html__( 'Row Alignment', 'et_builder' ),
-						'mobile_options' => true,
-						'description'    => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
+						'label'            => esc_html__( 'Row Alignment', 'et_builder' ),
+						'mobile_options'   => true,
+						'description'      => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
+						'default'          => 'center',
+						'default_on_front' => '',
 					),
 				),
 				'toggle_slug'     => 'width',
@@ -1791,8 +1877,10 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				),
 				'options' => array(
 					'module_alignment' => array(
-						'label'       => esc_html__( 'Row Alignment', 'et_builder' ),
-						'description' => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
+						'label'            => esc_html__( 'Row Alignment', 'et_builder' ),
+						'description'      => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
+						'default'          => 'center',
+						'default_on_front' => '',
 					),
 				),
 			),
@@ -2315,6 +2403,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		$current_row_position         = $et_pb_rendering_column_content_row ? 'internal_row' : 'regular_row';
 		$array_index                  = self::$_->array_get( $gobal_column_settings_holder, "{$current_row_position}.et_pb_columns_counter", 0 );
 		$keep_column_padding_mobile   = self::$_->array_get( $gobal_column_settings_holder, "{$current_row_position}.keep_column_padding_mobile", 'on' );
+		$sticky                       = et_pb_sticky_options();
 
 		if ( $is_specialty_column ) {
 			$et_specialty_column_type = $type;
@@ -2335,6 +2424,8 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			$background_gradient_overlays_image = isset( $background_gradient['overlays_image'] ) ? $background_gradient['overlays_image'] : '';
 			$background_color_hover             = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], 'color_hover' ) : '';
 			$background_color_hover_enabled     = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], 'color_hover_enabled' ) : '';
+			$background_color_sticky            = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], 'color_sticky' ) : '';
+			$background_color_sticky_enabled    = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], 'color_sticky_enabled' ) : '';
 
 			$padding_values            = isset( $paddings_array[ $array_index ] ) ? $paddings_array[ $array_index ] : array();
 			$padding_mobile_values     = isset( $paddings_mobile_array[ $array_index ] ) ? $paddings_mobile_array[ $array_index ] : array();
@@ -2346,10 +2437,12 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			$custom_css_before         = isset( $column_css_array['custom_css_before'][ $array_index ] ) ? $column_css_array['custom_css_before'][ $array_index ] : '';
 			$custom_css_main           = isset( $column_css_array['custom_css_main'][ $array_index ] ) ? $column_css_array['custom_css_main'][ $array_index ] : '';
 			$custom_css_after          = isset( $column_css_array['custom_css_after'][ $array_index ] ) ? $column_css_array['custom_css_after'][ $array_index ] : '';
-
-			$custom_css_before_hover = self::$_->array_get( $column_css_array, "custom_css_before_hover.[$array_index]", '' );
-			$custom_css_main_hover   = self::$_->array_get( $column_css_array, "custom_css_main_hover.[$array_index]", '' );
-			$custom_css_after_hover  = self::$_->array_get( $column_css_array, "custom_css_after_hover.[$array_index]", '' );
+			$custom_css_before_hover   = self::$_->array_get( $column_css_array, "custom_css_before_hover.[$array_index]", '' );
+			$custom_css_main_hover     = self::$_->array_get( $column_css_array, "custom_css_main_hover.[$array_index]", '' );
+			$custom_css_after_hover    = self::$_->array_get( $column_css_array, "custom_css_after_hover.[$array_index]", '' );
+			$custom_css_before_sticky  = self::$_->array_get( $column_css_array, "custom_css_before_sticky.[$array_index]", '' );
+			$custom_css_main_sticky    = self::$_->array_get( $column_css_array, "custom_css_main_sticky.[$array_index]", '' );
+			$custom_css_after_sticky   = self::$_->array_get( $column_css_array, "custom_css_after_sticky.[$array_index]", '' );
 		} else {
 			$custom_css_id   = self::$_->array_get( $this->props, 'module_id', '' );
 			$parallax_method = self::$_->array_get( $this->props, 'parallax_method', '' );
@@ -2423,55 +2516,47 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				);
 
 				if ( '' !== $background_size ) {
-					ET_Builder_Element::set_style(
-						$function_name,
-						array(
-							'selector'    => '%%order_class%%',
-							'declaration' => sprintf(
-								'background-size:%s;',
-								esc_attr( $background_size )
-							),
-						)
+					$el_style = array(
+						'selector'    => '%%order_class%%',
+						'declaration' => sprintf(
+							'background-size:%s;',
+							esc_attr( $background_size )
+						),
 					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
 				}
 
 				if ( '' !== $background_position ) {
-					ET_Builder_Element::set_style(
-						$function_name,
-						array(
-							'selector'    => '%%order_class%%',
-							'declaration' => sprintf(
-								'background-position:%s;',
-								esc_attr( str_replace( '_', ' ', $background_position ) )
-							),
-						)
+					$el_style = array(
+						'selector'    => '%%order_class%%',
+						'declaration' => sprintf(
+							'background-position:%s;',
+							esc_attr( str_replace( '_', ' ', $background_position ) )
+						),
 					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
 				}
 
 				if ( '' !== $background_repeat ) {
-					ET_Builder_Element::set_style(
-						$function_name,
-						array(
-							'selector'    => '%%order_class%%',
-							'declaration' => sprintf(
-								'background-repeat:%s;',
-								esc_attr( $background_repeat )
-							),
-						)
+					$el_style = array(
+						'selector'    => '%%order_class%%',
+						'declaration' => sprintf(
+							'background-repeat:%s;',
+							esc_attr( $background_repeat )
+						),
 					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
 				}
 
 				if ( '' !== $background_blend ) {
-					ET_Builder_Element::set_style(
-						$function_name,
-						array(
-							'selector'    => '%%order_class%%',
-							'declaration' => sprintf(
-								'background-blend-mode:%s;',
-								esc_attr( $background_blend )
-							),
-						)
+					$el_style = array(
+						'selector'    => '%%order_class%%',
+						'declaration' => sprintf(
+							'background-blend-mode:%s;',
+							esc_attr( $background_blend )
+						),
 					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
 				}
 			}
 
@@ -2481,58 +2566,83 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 					$background_images = array_reverse( $background_images );
 				}
 
-				$backgorund_images_declaration = sprintf(
+				$background_images_declaration = sprintf(
 					'background-image: %1$s;',
 					esc_html( implode( ', ', $background_images ) )
 				);
 
-				ET_Builder_Element::set_style(
-					$function_name,
-					array(
-						'selector'    => '%%order_class%%',
-						'declaration' => esc_attr( $backgorund_images_declaration ),
-					)
+				$el_style = array(
+					'selector'    => '%%order_class%%',
+					'declaration' => esc_attr( $background_images_declaration ),
 				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
 			}
 
 			if ( '' !== $background_color && 'rgba(0,0,0,0)' !== $background_color && ! isset( $has_background_gradient, $has_background_image ) ) {
-				ET_Builder_Element::set_style(
-					$function_name,
-					array(
-						'selector'    => '%%order_class%%',
+				$el_style = array(
+					'selector'    => '%%order_class%%',
+					'declaration' => sprintf(
+						'background-color:%s;',
+						esc_attr( $background_color )
+					),
+				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
+
+				if ( $background_color_hover && $background_color_hover_enabled ) {
+					$el_style = array(
+						'selector'    => '%%order_class%%:hover',
 						'declaration' => sprintf(
 							'background-color:%s;',
 							esc_attr( $background_color )
 						),
-					)
-				);
+					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
+				}
 
-				if ( $background_color_hover && $background_color_hover_enabled ) {
-					ET_Builder_Element::set_style(
-						$function_name,
-						array(
-							'selector'    => '%%order_class%%:hover',
+				// Sticky.
+				if ( $background_color_sticky && $background_color_sticky_enabled ) {
+					$el_style = array(
+						'selector'    => $sticky->add_sticky_to_order_class(
+							'%%order_class%%',
+							$this->is_sticky_module
+						),
+						'declaration' => sprintf(
+							'background-color:%s;',
+							esc_attr( $background_color_sticky )
+						),
+					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
+
+					// Add hover styles in sticky state.
+					if ( $background_color_hover && $background_color_hover_enabled ) {
+						$el_style = array(
+							'selector'    => $sticky->add_sticky_to_order_class(
+								'%%order_class%%:hover',
+								$this->is_sticky_module
+							),
 							'declaration' => sprintf(
 								'background-color:%s;',
 								esc_attr( $background_color_hover )
 							),
-						)
-					);
+						);
+						ET_Builder_Element::set_style( $function_name, $el_style );
+					}
 				}
 			} elseif ( isset( $has_background_gradient, $has_background_image ) ) {
 				// Force background-color: initial
-				ET_Builder_Element::set_style(
-					$function_name,
-					array(
-						'selector'    => '%%order_class%%',
-						'declaration' => 'background-color: initial;',
-					)
+				$el_style = array(
+					'selector'    => '%%order_class%%',
+					'declaration' => 'background-color: initial;',
 				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
 			}
 
 			if ( ! empty( $padding_values ) ) {
-				$padding_hover_enabled = self::$_->array_get( $padding_values, 'padding-hover-enabled', false );
-				unset( $padding_values['padding-hover-enabled'] );
+				$padding_hover_enabled   = self::$_->array_get( $padding_values, 'padding-hover-enabled', false );
+				$padding_sticky_enabled  = self::$_->array_get( $padding_values, 'padding-sticky-enabled', false );
+				$sticky_padding_selector = $sticky->add_sticky_to_selectors( '%%order_class%%', $this->is_sticky_module );
+
+				unset( $padding_values['padding-hover-enabled'], $padding_values['padding-sticky-enabled'] );
 
 				foreach ( $padding_values as $position => $value ) {
 					if ( in_array( $position, array( 'padding-top', 'padding-right', 'padding-bottom', 'padding-left' ) ) && ! empty( $value ) ) {
@@ -2573,6 +2683,21 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 
 						ET_Builder_Element::set_style( $function_name, $element_style );
 					}
+
+					// Sticky.
+					$sticky_padding_value = self::$_->array_get( $padding_values, "{$position}-sticky", '' );
+					if ( $padding_sticky_enabled && ! empty( $sticky_padding_value ) ) {
+						$element_style = array(
+							'selector'    => $sticky_padding_selector,
+							'declaration' => sprintf(
+								'%1$s:%2$s;',
+								esc_html( $position ),
+								esc_html( et_builder_process_range_value( $sticky_padding_value ) )
+							),
+						);
+
+						ET_Builder_Element::set_style( $function_name, $element_style );
+					}
 				}
 			}
 
@@ -2598,63 +2723,121 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				}
 			}
 			if ( '' !== $custom_css_before ) {
-				ET_Builder_Element::set_style(
-					$function_name,
-					array(
-						'selector'    => '%%order_class%%:before',
-						'declaration' => trim( $custom_css_before ),
-					)
+				$el_style = array(
+					'selector'    => '%%order_class%%:before',
+					'declaration' => trim( $custom_css_before ),
 				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
 			}
 
 			if ( '' !== $custom_css_main ) {
-				ET_Builder_Element::set_style(
-					$function_name,
-					array(
-						'selector'    => '%%order_class%%',
-						'declaration' => trim( $custom_css_main ),
-					)
+				$el_style = array(
+					'selector'    => '%%order_class%%',
+					'declaration' => trim( $custom_css_main ),
 				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
 			}
 
 			if ( '' !== $custom_css_after ) {
-				ET_Builder_Element::set_style(
-					$function_name,
-					array(
-						'selector'    => '%%order_class%%:after',
-						'declaration' => trim( $custom_css_after ),
-					)
+				$el_style = array(
+					'selector'    => '%%order_class%%:after',
+					'declaration' => trim( $custom_css_after ),
 				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
 			}
 
 			if ( '' !== $custom_css_before_hover ) {
-				ET_Builder_Element::set_style(
-					$function_name,
-					array(
-						'selector'    => '%%order_class%%:hover:before',
-						'declaration' => trim( $custom_css_before_hover ),
-					)
+				$el_style = array(
+					'selector'    => '%%order_class%%:hover:before',
+					'declaration' => trim( $custom_css_before_hover ),
 				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
 			}
 
 			if ( '' !== $custom_css_main_hover ) {
-				ET_Builder_Element::set_style(
-					$function_name,
-					array(
-						'selector'    => '%%order_class%%:hover',
-						'declaration' => trim( $custom_css_main_hover ),
-					)
+				$el_style = array(
+					'selector'    => '%%order_class%%:hover',
+					'declaration' => trim( $custom_css_main_hover ),
 				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
 			}
 
 			if ( '' !== $custom_css_after_hover ) {
-				ET_Builder_Element::set_style(
-					$function_name,
-					array(
-						'selector'    => '%%order_class%%:hover:after',
-						'declaration' => trim( $custom_css_after_hover ),
-					)
+				$el_style = array(
+					'selector'    => '%%order_class%%:hover:after',
+					'declaration' => trim( $custom_css_after_hover ),
 				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
+			}
+
+			// Sticky.
+			if ( ! empty( $custom_css_before_sticky ) ) {
+				$el_style = array(
+					'selector'    => $sticky->add_sticky_to_order_class(
+						'%%order_class%%:before',
+						$this->is_sticky_module
+					),
+					'declaration' => trim( $custom_css_before_sticky ),
+				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
+
+				// Add hover styles in sticky state, in case some hover styles are overridden with sticky styles.
+				if ( ! empty( $custom_css_before_hover ) ) {
+					$el_style = array(
+						'selector'    => $sticky->add_sticky_to_order_class(
+							'%%order_class%%:hover:before',
+							$this->is_sticky_module
+						),
+						'declaration' => trim( $custom_css_before_hover ),
+					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
+				}
+			}
+
+			if ( ! empty( $custom_css_main_sticky ) ) {
+				$el_style = array(
+					'selector'    => $sticky->add_sticky_to_order_class(
+						'%%order_class%%',
+						$this->is_sticky_module
+					),
+					'declaration' => trim( $custom_css_main_sticky ),
+				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
+
+				// Add hover styles in sticky state, in case some hover styles are overridden with sticky styles.
+				if ( ! empty( $custom_css_main_hover ) ) {
+					$el_style = array(
+						'selector'    => $sticky->add_sticky_to_order_class(
+							'%%order_class%%:hover',
+							$this->is_sticky_module
+						),
+						'declaration' => trim( $custom_css_main_hover ),
+					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
+				}
+			}
+
+			if ( ! empty( $custom_css_after_sticky ) ) {
+				$el_style = array(
+					'selector'    => $sticky->add_sticky_to_order_class(
+						'%%order_class%%:after',
+						$this->is_sticky_module
+					),
+					'declaration' => trim( $custom_css_after_sticky ),
+				);
+				ET_Builder_Element::set_style( $function_name, $el_style );
+
+				// Add hover styles in sticky state, in case some hover styles are overridden with sticky styles.
+				if ( ! empty( $custom_css_after_hover ) ) {
+					$el_style = array(
+						'selector'    => $sticky->add_sticky_to_order_class(
+							'%%order_class%%:hover:after',
+							$this->is_sticky_module
+						),
+						'declaration' => trim( $custom_css_after_hover ),
+					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
+				}
 			}
 		}
 

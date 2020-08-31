@@ -96,6 +96,7 @@ class ET_Builder_Module_Divider extends ET_Builder_Module {
 				'toggle_slug'     => 'line',
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'show_divider'     => array(
 				'default'         => 'on',
@@ -155,6 +156,7 @@ class ET_Builder_Module_Divider extends ET_Builder_Module {
 				'default'         => $this->defaults['divider_weight'],
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 		);
 		return $fields;
@@ -200,7 +202,6 @@ class ET_Builder_Module_Divider extends ET_Builder_Module {
 		$parallax_image_background = $this->get_parallax_image_background();
 
 		$color        = $this->props['color'];
-		$color_hover  = $this->get_hover_value( 'color' );
 		$color_values = et_pb_responsive_options()->get_property_values( $this->props, 'color' );
 		$color_tablet = isset( $color_values['tablet'] ) ? $color_values['tablet'] : '';
 		$color_phone  = isset( $color_values['phone'] ) ? $color_values['phone'] : '';
@@ -212,7 +213,6 @@ class ET_Builder_Module_Divider extends ET_Builder_Module {
 		$divider_style_phone  = isset( $divider_style_values['phone'] ) ? $divider_style_values['phone'] : '';
 
 		$divider_weight        = $this->props['divider_weight'];
-		$divider_weight_hover  = $this->get_hover_value( 'divider_weight' );
 		$divider_weight_values = et_pb_responsive_options()->get_property_values( $this->props, 'divider_weight' );
 		$divider_weight_tablet = isset( $divider_weight_values['tablet'] ) ? $divider_weight_values['tablet'] : '';
 		$divider_weight_phone  = isset( $divider_weight_values['phone'] ) ? $divider_weight_values['phone'] : '';
@@ -291,32 +291,28 @@ class ET_Builder_Module_Divider extends ET_Builder_Module {
 			}
 		}
 
-		// Hover styles
-		$hover_style = '';
+		// Hover & sticky styles.
+		$this->generate_styles(
+			array(
+				'responsive'     => false,
+				'base_attr_name' => 'color',
+				'selector'       => '%%order_class%%:before',
+				'css_property'   => 'border-top-color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
 
-		if ( et_builder_is_hover_enabled( 'color', $this->props ) && 'on' === $show_divider ) {
-			$hover_style .= sprintf(
-				' border-top-color: %s;',
-				esc_attr( $color_hover )
-			);
-		}
-
-		if ( et_builder_is_hover_enabled( 'divider_weight', $this->props ) && '' !== $divider_weight_hover && $divider_weight !== $divider_weight_hover ) {
-			$divider_weight_hover_processed = false === strpos( $divider_weight_hover, 'px' ) ? $divider_weight_hover . 'px' : $divider_weight_hover;
-
-			$hover_style .= sprintf(
-				' border-top-width: %1$s;',
-				esc_attr( $divider_weight_hover_processed )
-			);
-		}
-
-		if ( '' !== $hover_style ) {
-			$el_style = array(
-				'selector'    => '%%order_class%%:hover:before',
-				'declaration' => ltrim( $hover_style ),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'responsive'     => false,
+				'base_attr_name' => 'divider_weight',
+				'selector'       => '%%order_class%%:before',
+				'css_property'   => 'border-top-width',
+				'render_slug'    => $render_slug,
+				'type'           => 'range',
+			)
+		);
 
 		if ( '' !== $custom_padding && '|||' !== $custom_padding ) {
 			$el_style = array(

@@ -42,59 +42,59 @@ function et_builder_ab_options( $post_id ) {
  */
 function et_builder_ab_labels() {
 	$ab_settings = array(
-		'alert_modal_defaults'                         => array(
+		'alert_modal_defaults'                          => array(
 			'proceed_label' => esc_html__( 'Ok', 'et_builder' ),
 		),
-		'select_subject'                               => array(
+		'select_subject'                                => array(
 			'title' => esc_html__( 'Select Split Testing Subject', 'et_builder' ),
 			'desc'  => esc_html__( 'You have activated the Divi Leads Split Testing System. Using split testing, you can create different element variations on your page to find out which variation most positively affects the conversion rate of your desired goal. After closing this window, please click on the section, row or module that you would like to split test.', 'et_builder' ),
 		),
-		'select_goal'                                  => array(
+		'select_goal'                                   => array(
 			'title'         => esc_html__( 'Select Your Goal', 'et_builder' ),
 			'desc'          => esc_html__( 'Congratulations, you have selected a split testing subject! Next you need to select your goal. After closing this window, please click the section, row or module that you want to use as your goal. Depending on the element you choose, Divi will track relevant conversion rates for clicks, reads or sales. For example, if you select a Call To Action module as your goal, then Divi will track how variations in your test subjects affect how often visitors read and click the button in your Call To Action module. The test subject itself can also be selected as your goal.', 'et_builder' ),
 			'proceed_label' => esc_html__( 'Ok', 'et_builder' ),
 		),
-		'configure_alternative'                        => array(
+		'configure_alternative'                         => array(
 			'title'         => esc_html__( 'Configure Subject Variations', 'et_builder' ),
 			'desc'          => esc_html__( 'Congratulations, your split test is ready to go! You will notice that your split testing subject has been duplicated. Each split testing variation will be displayed to your visitors and statistics will be collected to figure out which variation results in the highest goal conversion rate. Your test will begin when you save this page.', 'et_builder' ),
 			'proceed_label' => esc_html__( 'Ok', 'et_builder' ),
 		),
-		'select_winner_first'                          => array(
+		'select_winner_first'                           => array(
 			'title' => esc_html__( 'Select Split Testing Winner', 'et_builder' ),
 			'desc'  => esc_html__( 'Before ending your split test, you must choose which split testing variation to keep. Please select your favorite or highest converting subject. Alternative split testing subjects will be removed and stats will be cleared.', 'et_builder' ),
 		),
-		'select_subject_first'                         => array(
+		'select_subject_first'                          => array(
 			'title' => esc_html__( 'Select Split Testing Subject', 'et_builder' ),
 			'desc'  => esc_html__( 'You need to select a split testing subject first.', 'et_builder' ),
 		),
-		'select_goal_first'                            => array(
+		'select_goal_first'                             => array(
 			'title' => esc_html__( 'Select Split Testing Goal', 'et_builder' ),
 			'desc'  => esc_html__( 'You need to select a split testing goal first. ', 'et_builder' ),
 		),
-		'cannot_select_subject_parent_as_goal'         => array(
+		'cannot_select_subject_parent_as_goal'          => array(
 			'title'         => esc_html__( 'Select A Different Goal', 'et_builder' ),
 			'desc'          => esc_html__( 'This element cannot be used as a your split testing goal. Please select a different module, or section.', 'et_builder' ),
 			'proceed_label' => esc_html__( 'Ok', 'et_builder' ),
 		),
-		'cannot_select_global_children_as_subject'     => array(
+		'cannot_select_global_children_as_subject'      => array(
 			'title' => esc_html__( 'Select a Different Subject', 'et_builder' ),
 			'desc'  => esc_html__( 'This element cannot be used as split testing subject because it is part of global module. Please select different module, row, or section', 'et_builder' ),
 		),
-		'cannot_select_global_children_as_goal'        => array(
+		'cannot_select_global_children_as_goal'         => array(
 			'title' => esc_html__( 'Select a Different Goal', 'et_builder' ),
 			'desc'  => esc_html__( 'This element cannot be used as split testing goal because it is part of global module. Please select different module, row, or section', 'et_builder' ),
 		),
-		'cannot_publish_finish_configuration_first'    => array(
+		'cannot_publish_finish_configuration_first'     => array(
 			'title'         => esc_html__( 'Setup Split Test First', 'et_builder' ),
 			'desc'          => esc_html__( 'You cannot publish the layout right now because you have incomplete split test configuration. Please finish the split test configuration first, then try saving again.', 'et_builder' ),
 			'proceed_label' => esc_html__( 'Ok', 'et_builder' ),
 		),
-		'cannot_save_draft_finish_configuration_first' => array(
+		'cannot_save_draft_finish_configuration_first'  => array(
 			'title'         => esc_html__( 'Setup Split Test First', 'et_builder' ),
 			'desc'          => esc_html__( 'You cannot save the layout right now because you have incomplete split test configuration. Please finish the split test configuration first, then try save draft again.', 'et_builder' ),
 			'proceed_label' => esc_html__( 'Ok', 'et_builder' ),
 		),
-		'view_stats_thead_titles'                      => array(
+		'view_stats_thead_titles'                       => array(
 			'clicks'                => array(
 				esc_html__( 'ID', 'et_builder' ),
 				esc_html__( 'Subject', 'et_builder' ),
@@ -140,85 +140,85 @@ function et_builder_ab_labels() {
 		),
 
 		// Save to Library
-		'cannot_save_app_layout_has_ab_testing'        => array(
+		'cannot_save_app_layout_has_ab_testing'         => array(
 			'title' => esc_html__( 'Can\'t Save Layout', 'et_builder' ),
 			'desc'  => esc_html__( 'You cannot save layout while a split test is running. Please end your split test and then try again.', 'et_builder' ),
 		),
 
-		'cannot_save_section_layout_has_ab_testing'    => array(
+		'cannot_save_section_layout_has_ab_testing'     => array(
 			'title' => esc_html__( 'Can\'t Save Section', 'et_builder' ),
 			'desc'  => esc_html__( 'You cannot save this section while a split test is running. Please end your split test and then try again.', 'et_builder' ),
 		),
 
-		'cannot_save_row_layout_has_ab_testing'        => array(
+		'cannot_save_row_layout_has_ab_testing'         => array(
 			'title' => esc_html__( 'Can\'t Save Row', 'et_builder' ),
 			'desc'  => esc_html__( 'You cannot save this row while a split test is running. Please end your split test and then try again.', 'et_builder' ),
 		),
 
-		'cannot_save_row_inner_layout_has_ab_testing'  => array(
+		'cannot_save_row_inner_layout_has_ab_testing'   => array(
 			'title' => esc_html__( 'Can\'t Save Row', 'et_builder' ),
 			'desc'  => esc_html__( 'You cannot save this row while a split test is running. Please end your split test and then try again.', 'et_builder' ),
 		),
 
-		'cannot_save_module_layout_has_ab_testing'     => array(
+		'cannot_save_module_layout_has_ab_testing'      => array(
 			'title' => esc_html__( 'Can\'t Save Module', 'et_builder' ),
 			'desc'  => esc_html__( 'You cannot save this module while a split test is running. Please end your split test and then try again.', 'et_builder' ),
 		),
 
 		// Load / Clear Layout
-		'cannot_load_layout_has_ab_testing'            => array(
+		'cannot_load_layout_has_ab_testing'             => array(
 			'title' => esc_html__( 'Can\'t Load Layout', 'et_builder' ),
 			'desc'  => esc_html__( 'You cannot load a new layout while a split test is running. Please end your split test and then try again.', 'et_builder' ),
 		),
-		'cannot_clear_layout_has_ab_testing'           => array(
+		'cannot_clear_layout_has_ab_testing'            => array(
 			'title' => esc_html__( 'Can\'t Clear Layout', 'et_builder' ),
 			'desc'  => esc_html__( 'You cannot clear your layout while a split testing is running. Please end your split test before clearing your layout.', 'et_builder' ),
 		),
 
 		// Cannot Import / Export Layout (Portability)
-		'cannot_import_export_layout_has_ab_testing'   => array(
+		'cannot_import_export_layout_has_ab_testing'    => array(
 			'title' => esc_html__( 'Can\'t Import/Export Layout', 'et_builder' ),
 			'desc'  => esc_html__( 'You cannot import or export a layout while a split test is running. Please end your split test and then try again.', 'et_builder' ),
 		),
 
 		// Moving Goal / Subject
-		'cannot_move_module_goal_out_from_subject'     => array(
+		'cannot_move_module_goal_out_from_subject'      => array(
 			'title' => esc_html__( 'Can\'t Move Goal', 'et_builder' ),
 			'desc'  => esc_html__( 'Once set, a goal that has been placed inside a split testing subject cannot be moved outside the split testing subject. You can end your split test and start a new one if you would like to make this change.', 'et_builder' ),
 		),
-		'cannot_move_row_goal_out_from_subject'        => array(
+		'cannot_move_row_goal_out_from_subject'         => array(
 			'title' => esc_html__( 'Can\'t Move Goal', 'et_builder' ),
 			'desc'  => esc_html__( 'Once set, a goal that has been placed inside a split testing subject cannot be moved outside the split testing subject. You can end your split test and start a new one if you would like to make this change.', 'et_builder' ),
 		),
-		'cannot_move_goal_into_subject'                => array(
+		'cannot_move_goal_into_subject'                 => array(
 			'title' => esc_html__( 'Can\'t Move Goal', 'et_builder' ),
 			'desc'  => esc_html__( 'A split testing goal cannot be moved inside of a split testing subject. To perform this action you must first end your split test.', 'et_builder' ),
 		),
-		'cannot_move_subject_into_goal'                => array(
+		'cannot_move_subject_into_goal'                 => array(
 			'title' => esc_html__( 'Can\'t Move Subject', 'et_builder' ),
 			'desc'  => esc_html__( 'A split testing subject cannot be moved inside of a split testing goal. To perform this action you must first end your split test.', 'et_builder' ),
 		),
 
 		// Cannot Paste Goal / Subject
-		'cannot_paste_goal'                            => array(
+		'cannot_paste_goal'                             => array(
 			'title' => esc_html__( 'Can\'t Paste Goal', 'et_builder' ),
 			'desc'  => esc_html__( 'A split testing goal cannot be copied, cut, and pasted. To perform this action you must first end your split test.', 'et_builder' ),
 		),
-		'cannot_paste_row_has_subject_into_goal'       => array(
+		'cannot_paste_row_has_subject_into_goal'        => array(
 			'title' => esc_html__( 'Can\'t Paste Row', 'et_builder' ),
 			'desc'  => esc_html__( 'Row that has split testing subject cannot be pasted inside a split testing goal. To perform this action you must first end your split test.', 'et_builder' ),
 		),
-		'cannot_paste_subject_into_goal'               => array(
+		'cannot_paste_subject_into_goal'                => array(
 			'title' => esc_html__( 'Can\'t Paste Subject', 'et_builder' ),
 			'desc'  => esc_html__( 'A split testing subject cannot be pasted inside a split testing goal. To perform this action you must first end your split test.', 'et_builder' ),
 		),
 
 		// Removing + Has Goal
-		'cannot_remove_section_has_goal'               => array(
+		'cannot_remove_section_has_goal'                => array(
 			'title' => esc_html__( 'Can\'t Remove Section', 'et_builder' ),
 			'desc'  => esc_html__( 'This section cannot be removed because it contains a split testing goal. Goals cannot be deleted. You must first end your split test before performing this action.', 'et_builder' ),
 		),
-		'cannot_remove_row_has_goal'                   => array(
+		'cannot_remove_row_has_goal'                    => array(
 			'title' => esc_html__( 'Can\'t Remove Row', 'et_builder' ),
 			'desc'  => esc_html__( 'This row cannot be removed because it contains a split testing goal. Goals cannot be deleted. You must first end your split test before performing this action.', 'et_builder' ),
 		),
@@ -228,51 +228,51 @@ function et_builder_ab_labels() {
 			'title' => esc_html__( 'Can\'t Remove Section', 'et_builder' ),
 			'desc'  => esc_html__( 'Split testing requires at least 2 subject variations. This variation cannot be removed until additional variations have been added.', 'et_builder' ),
 		),
-		'cannot_remove_row_has_unremovable_subject'    => array(
+		'cannot_remove_row_has_unremovable_subject'     => array(
 			'title' => esc_html__( 'Can\'t Remove Row', 'et_builder' ),
 			'desc'  => esc_html__( 'Split testing requires at least 2 subject variations. This variation cannot be removed until additional variations have been added', 'et_builder' ),
 		),
 
 		// Cloning + Has Goal
-		'cannot_clone_section_has_goal'                => array(
+		'cannot_clone_section_has_goal'                 => array(
 			'title' => esc_html__( 'Can\'t Clone Section', 'et_builder' ),
 			'desc'  => esc_html__( 'This section cannot be duplicated because it contains a split testing goal. Goals cannot be duplicated. You must first end your split test before performing this action.', 'et_builder' ),
 		),
-		'cannot_clone_row_has_goal'                    => array(
+		'cannot_clone_row_has_goal'                     => array(
 			'title' => esc_html__( 'Can\'t Clone Row', 'et_builder' ),
 			'desc'  => esc_html__( 'This row cannot be duplicated because it contains a split testing goal. Goals cannot be duplicated. You must first end your split test before performing this action.', 'et_builder' ),
 		),
 
 		// Copy + Has Goal
-		'cannot_copy_section_has_goal'                 => array(
+		'cannot_copy_section_has_goal'                  => array(
 			'title' => esc_html__( 'Can\'t Copy Section', 'et_builder' ),
 			'desc'  => esc_html__( 'This section cannot be copied because it contains a split testing goal. Goals cannot be duplicated. You must first end your split test before performing this action.', 'et_builder' ),
 		),
-		'cannot_copy_row_has_goal'                     => array(
+		'cannot_copy_row_has_goal'                      => array(
 			'title' => esc_html__( 'Can\'t Copy Row', 'et_builder' ),
 			'desc'  => esc_html__( 'This row cannot be copied because it contains a split testing goal. Goals cannot be duplicated. You must first end your split test before performing this action.', 'et_builder' ),
 		),
 
 		// Copy Goal
-		'cannot_copy_goal'                             => array(
+		'cannot_copy_goal'                              => array(
 			'title' => esc_html__( 'Can\'t Copy Goal', 'et_builder' ),
 			'desc'  => esc_html__( 'Goal cannot be copied. You must first end your split test before performing this action.', 'et_builder' ),
 		),
 
 		// No AB Testing Permission
-		'has_no_ab_permission'                         => array(
+		'has_no_ab_permission'                          => array(
 			'title' => esc_html__( 'Can\'t Edit Split Test', $domain = 'default' ),
 			'desc'  => esc_html__( 'You do not have permission to edit the module, row or section in this split test.', 'et_builder' ),
 		),
 
 		// No AB Testing Report Yet
-		'no_report'                                    => array(
+		'no_report'                                     => array(
 			'title' => esc_html__( 'Statistics are being collected', 'et_builder' ),
 			'desc'  => esc_html__( 'Stats will be displayed upon sufficient data collection', 'et_builder' ), // 10
 		),
 
 		// Set Global Winner Status
-		'set_global_winner_status'                     => array(
+		'set_global_winner_status'                      => array(
 			'title'    => esc_html__( 'Set Winner Status', 'et_builder' ),
 			'desc'     => esc_html__( 'You were using global item as split testing winner. Consequently, you have to choose between:', 'et_builder' ),
 			'option_1' => esc_html__( 'Save winner as global item (selected subject will be synced and your global item will be updated in the Divi Library)', 'et_builder' ),

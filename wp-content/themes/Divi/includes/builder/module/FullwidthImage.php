@@ -181,6 +181,8 @@ class ET_Builder_Module_Fullwidth_Image extends ET_Builder_Module {
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
 				'description'     => esc_html__( 'Here you can define a custom color for the overlay icon', 'et_builder' ),
+				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'hover_overlay_color' => array(
 				'label'           => esc_html__( 'Hover Overlay Color', 'et_builder' ),
@@ -190,6 +192,8 @@ class ET_Builder_Module_Fullwidth_Image extends ET_Builder_Module {
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
 				'description'     => esc_html__( 'Here you can define a custom color for the overlay', 'et_builder' ),
+				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'hover_icon'          => array(
 				'label'           => esc_html__( 'Hover Icon Picker', 'et_builder' ),
@@ -200,6 +204,8 @@ class ET_Builder_Module_Fullwidth_Image extends ET_Builder_Module {
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
 				'description'     => esc_html__( 'Here you can define a custom icon for the overlay', 'et_builder' ),
+				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 		);
 
@@ -210,22 +216,27 @@ class ET_Builder_Module_Fullwidth_Image extends ET_Builder_Module {
 		$fields  = parent::get_transition_fields_css_props();
 		$filters = $this->get_transition_filters_fields_css_props( 'child_filters' );
 
+		// Note: overlay_icon_color and hover_overlay color requires transition but `.et_overlay`'s
+		// static class already set transition to all so no dynamic transition needs to be added.
+
 		return array_merge( $fields, $filters );
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view          = et_pb_multi_view_options( $this );
-		$src                 = $this->props['src'];
-		$alt                 = $this->props['alt'];
-		$title_text          = $this->props['title_text'];
-		$url                 = $this->props['url'];
-		$url_new_window      = $this->props['url_new_window'];
-		$show_in_lightbox    = $this->props['show_in_lightbox'];
-		$overlay_icon_color  = $this->props['overlay_icon_color'];
-		$hover_overlay_color = $this->props['hover_overlay_color'];
-		$hover_icon          = $this->props['hover_icon'];
-		$use_overlay         = $this->props['use_overlay'];
-		$animation_style     = $this->props['animation_style'];
+		$multi_view        = et_pb_multi_view_options( $this );
+		$sticky            = et_pb_sticky_options();
+		$src               = $this->props['src'];
+		$alt               = $this->props['alt'];
+		$title_text        = $this->props['title_text'];
+		$url               = $this->props['url'];
+		$url_new_window    = $this->props['url_new_window'];
+		$show_in_lightbox  = $this->props['show_in_lightbox'];
+		$hover_icon        = $this->props['hover_icon'];
+		$hover_icon_tablet = $this->props['hover_icon_tablet'];
+		$hover_icon_phone  = $this->props['hover_icon_phone'];
+		$hover_icon_sticky = $sticky->get_value( 'hover_icon', $this->props );
+		$use_overlay       = $this->props['use_overlay'];
+		$animation_style   = $this->props['animation_style'];
 
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
@@ -255,43 +266,39 @@ class ET_Builder_Module_Fullwidth_Image extends ET_Builder_Module {
 
 		// overlay can be applied only if image has link or if lightbox enabled
 		$is_overlay_applied = 'on' === $use_overlay && ( 'on' === $show_in_lightbox || ( 'off' === $show_in_lightbox && '' !== $url ) ) ? 'on' : 'off';
+		$is_sticky_module   = $sticky->is_sticky_module( $this->props );
 
 		if ( 'on' === $is_overlay_applied ) {
-			if ( '' !== $overlay_icon_color ) {
-				ET_Builder_Element::set_style(
-					$render_slug,
-					array(
-						'selector'    => '%%order_class%% .et_overlay:before',
-						'declaration' => sprintf(
-							'color: %1$s !important;',
-							esc_html( $overlay_icon_color )
-						),
-					)
-				);
-			}
-
-			if ( '' !== $hover_overlay_color ) {
-				$el_style = array(
-					'selector'    => '%%order_class%% .et_overlay',
-					'declaration' => sprintf(
-						'background-color: %1$s;',
-						esc_html( $hover_overlay_color )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
-
-			$data_icon = '' !== $hover_icon
-				? sprintf(
-					' data-icon="%1$s"',
-					esc_attr( et_pb_process_font_icon( $hover_icon ) )
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'base_attr_name' => 'overlay_icon_color',
+					'selector'       => '%%order_class%% .et_overlay:before',
+					'css_property'   => 'color',
+					'render_slug'    => $render_slug,
+					'important'      => true,
+					'type'           => 'color',
 				)
-				: '';
+			);
 
-			$overlay_output = sprintf(
-				'<span class="et_overlay%1$s"%2$s></span>',
-				( '' !== $hover_icon ? ' et_pb_inline_icon' : '' ),
-				$data_icon
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'base_attr_name' => 'hover_overlay_color',
+					'selector'       => '%%order_class%% .et_overlay',
+					'css_property'   => 'background-color',
+					'render_slug'    => $render_slug,
+					'type'           => 'color',
+				)
+			);
+
+			$overlay_output = ET_Builder_Module_Helper_Overlay::render(
+				array(
+					'icon'        => $hover_icon,
+					'icon_tablet' => $hover_icon_tablet,
+					'icon_phone'  => $hover_icon_phone,
+					'icon_sticky' => $hover_icon_sticky,
+				)
 			);
 		}
 

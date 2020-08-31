@@ -85,6 +85,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 						),
 						'context'        => 'transform_styles',
 						'mobile_options' => true,
+						'sticky'         => true,
 					),
 				),
 			),
@@ -103,6 +104,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 						),
 						'context'        => 'transform_styles',
 						'mobile_options' => true,
+						'sticky'         => true,
 					),
 				),
 			),
@@ -121,6 +123,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 						),
 						'context'        => 'transform_styles',
 						'mobile_options' => true,
+						'sticky'         => true,
 					),
 				),
 			),
@@ -141,6 +144,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 						),
 						'context'        => 'transform_styles',
 						'mobile_options' => true,
+						'sticky'         => true,
 					),
 				),
 			),
@@ -159,6 +163,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 						),
 						'context'        => 'transform_styles',
 						'mobile_options' => true,
+						'sticky'         => true,
 					),
 				),
 			),
@@ -173,6 +178,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 			'composite_type'      => 'transforms',
 			'hover'               => 'tabs',
 			'mobile_options'      => true,
+			'sticky'              => true,
 			'responsive'          => true,
 			'bb_support'          => false,
 			'description'         => $i18n['styles']['description'],
@@ -185,7 +191,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 			'tab_slug'    => $settings['tab_slug'],
 			'toggle_slug' => $settings['toggle_slug'],
 		);
-		$linkedSkip = $skip + array( 'default' => 'on' );
+		$linked_skip = $skip + array( 'default' => 'on' );
 
 		foreach ( $additional_options['transform_styles']['composite_structure'] as $tab_name => $tab ) {
 			foreach ( $tab['controls'] as $field_name => $field_options ) {
@@ -194,10 +200,11 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 				$controls[ "${field_name}_phone" ]       = $skip;
 				$controls[ "${field_name}_last_edited" ] = $skip;
 				if ( in_array( $field_name, array( 'transform_scale', 'transform_translate', 'transform_skew' ) ) ) {
-					$controls[ "${field_name}_linked" ]        = $linkedSkip;
-					$controls[ "${field_name}_linked_tablet" ] = $linkedSkip;
-					$controls[ "${field_name}_linked_phone" ]  = $linkedSkip;
-					$controls[ "${field_name}_linked__hover" ] = $linkedSkip;
+					$controls[ "${field_name}_linked" ]         = $linked_skip;
+					$controls[ "${field_name}_linked_tablet" ]  = $linked_skip;
+					$controls[ "${field_name}_linked_phone" ]   = $linked_skip;
+					$controls[ "${field_name}_linked__hover" ]  = $linked_skip;
+					$controls[ "${field_name}_linked__sticky" ] = $linked_skip;
 				}
 				$additional_options['transform_styles']['composite_structure'][ $tab_name ]['controls'] = $controls;
 			}
@@ -239,35 +246,38 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 		);
 		$index       = $interpreter[ $typeAxis[1] ];
 
-		$defaultValue = false;
-		$optionValue  = $this->get_setting( $setting, false );
+		$default_value = false;
+		$option_value  = $this->get_setting( $setting, false );
 
 		if ( 'hover' === $type ) {
-			$defaultValue = $this->get_setting( $setting, false );
-			$optionValue  = $this->get_setting( $setting . '__hover', false );
+			$default_value = $this->get_setting( $setting, false );
+			$option_value  = $this->get_setting( $setting . '__hover', false );
+		} elseif ( 'sticky' === $type ) {
+			$default_value = $this->get_setting( $setting, false );
+			$option_value  = $this->get_setting( $setting . '__sticky', false );
 		} elseif ( 'tablet' === $type ) {
-			$defaultValue = $this->get_setting( $setting, false );
-			$optionValue  = $this->get_setting( $setting . '_tablet', false );
+			$default_value = $this->get_setting( $setting, false );
+			$option_value  = $this->get_setting( $setting . '_tablet', false );
 		} elseif ( 'phone' === $type ) {
-			$defaultValue = $this->get_setting( $setting . '_tablet', false );
-			$optionValue  = $this->get_setting( $setting . '_phone', false );
-			if ( $defaultValue == false ) {
-				$defaultValue = $this->get_setting( $setting, false );
+			$default_value = $this->get_setting( $setting . '_tablet', false );
+			$option_value  = $this->get_setting( $setting . '_phone', false );
+			if ( false === $default_value ) {
+				$default_value = $this->get_setting( $setting, false );
 			}
 		}
 
-		if ( false === $optionValue ) {
-			if ( false !== $defaultValue ) {
-				$optionValue = $defaultValue;
+		if ( false === $option_value ) {
+			if ( false !== $default_value ) {
+				$option_value = $default_value;
 			}
 		}
 
-		if ( false === $optionValue ) {
+		if ( false === $option_value ) {
 			return '';
 		}
 
-		$valueArray = explode( '|', $optionValue );
-		$value      = $valueArray[ $index ];
+		$value_array = explode( '|', $option_value );
+		$value       = $value_array[ $index ];
 
 		if ( 'scale' === $typeAxis[0] ) {
 			return $this->percent_to_unit( $value );
@@ -323,7 +333,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 		}
 		if ( ! empty( $declaration ) ) {
 
-			if ( $this->processing_props['transforms_important'] || 'hover' === $view ) {
+			if ( $this->processing_props['transforms_important'] || 'hover' === $view || 'sticky' === $view ) {
 				array_push( $declaration, '!important' );
 			}
 
@@ -342,7 +352,7 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 	 * @return array
 	 */
 	public function transformedAnimation( $animationType, $elements, $function_name, $device ) {
-		if ( 'hover' === $device ) {
+		if ( 'hover' === $device || 'sticky' === $device ) {
 			return array();
 		}
 		$utils                = ET_Core_Data_Utils::instance();

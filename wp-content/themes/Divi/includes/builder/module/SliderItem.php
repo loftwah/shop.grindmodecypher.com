@@ -225,6 +225,7 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 			'height'          => false,
 			'scroll_effects'  => false,
 			'position_fields' => false,
+			'sticky'          => false,
 		);
 
 		$this->custom_css_fields = array(
@@ -344,6 +345,7 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'use_text_overlay'     => array(
 				'label'            => esc_html__( 'Use Text Overlay', 'et_builder' ),
@@ -372,6 +374,7 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				'toggle_slug'     => 'overlay',
 				'description'     => esc_html__( 'Use the color picker to choose a color for the text overlay.', 'et_builder' ),
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'alignment'            => array(
 				'label'            => esc_html__( 'Image Alignment', 'et_builder' ),
@@ -445,6 +448,7 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'navigation',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			),
 			'dot_nav_custom_color' => array(
@@ -455,6 +459,7 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'navigation',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			),
 			'admin_title'          => array(
@@ -481,6 +486,7 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				'tab_slug'         => 'advanced',
 				'toggle_slug'      => 'overlay',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'__video_embed'        => array(
 				'type'                => 'computed',
@@ -503,6 +509,10 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 			'background-color' => '%%order_class%% .et_pb_slide_overlay_container, %%order_class%% .et_pb_text_overlay_wrapper',
 			'color'            => self::$_->array_get( $this->advanced_fields, 'text.css.main', '%%order_class%%' ),
 		);
+
+		$fields['bg_overlay_color']   = array( 'background-color' => '%%order_class%%.et_pb_slide .et_pb_slide_overlay_container' );
+		$fields['text_overlay_color'] = array( 'background-color' => '%%order_class%%.et_pb_slide .et_pb_text_overlay_wrapper' );
+		$fields['text_border_radius'] = array( 'border-radius' => '%%order_class%%.et_pb_slide .et_pb_text_overlay_wrapper' );
 
 		$fields['dot_nav_custom_color'] = array( 'background-color' => et_pb_slider_options()->get_dots_selector() );
 		$fields['arrows_custom_color']  = array( 'all' => et_pb_slider_options()->get_arrows_selector() );
@@ -540,6 +550,9 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 	function maybe_inherit_values() {
 		// Inheriting slider attribute
 		global $et_pb_slider;
+
+		// Helper, makes things neater.
+		$sticky = et_pb_sticky_options();
 
 		// Check if current slide item version is made before Divi v3.2 (UI Improvement release). v3.2 changed default
 		// background color for slide item for usability and inheritance mechanism requires custom treatment on FE and VB
@@ -608,6 +621,14 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				$this->props['bg_overlay_color_last_edited'] = ! empty( $et_pb_slider['bg_overlay_color_slider_last_edited'] ) ? $et_pb_slider['bg_overlay_color_slider_last_edited'] : $this->props['bg_overlay_color_last_edited'];
 			}
 
+			// Inherit value from parent if current sticky value is empty.
+			$slide_bg_overlay_color__sticky = $sticky->get_value( 'bg_overlay_color', $this->props, '' );
+
+			if ( '' === $slide_bg_overlay_color__sticky && ! empty( $et_pb_slider['bg_overlay_color__sticky'] ) ) {
+				$this->props['bg_overlay_color__sticky_enabled'] = 'on';
+				$this->props['bg_overlay_color__sticky']         = $et_pb_slider['bg_overlay_color__sticky'];
+			}
+
 			// Text Overlay Color.
 			$is_text_overlay_color_slider_responsive = et_pb_responsive_options()->is_responsive_enabled( $et_pb_slider, 'text_overlay_color_slider' );
 			$is_text_overlay_color_responsive        = et_pb_responsive_options()->is_responsive_enabled( $this->props, 'text_overlay_color' );
@@ -616,6 +637,14 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				$this->props['text_overlay_color_tablet']      = ! empty( $et_pb_slider['text_overlay_color_tablet'] ) ? $et_pb_slider['text_overlay_color_tablet'] : $this->props['text_overlay_color_tablet'];
 				$this->props['text_overlay_color_phone']       = ! empty( $et_pb_slider['text_overlay_color_phone'] ) ? $et_pb_slider['text_overlay_color_phone'] : $this->props['text_overlay_color_phone'];
 				$this->props['text_overlay_color_last_edited'] = ! empty( $et_pb_slider['text_overlay_color_slider_last_edited'] ) ? $et_pb_slider['text_overlay_color_slider_last_edited'] : $this->props['text_overlay_color_last_edited'];
+			}
+
+			// Inherit value from parent if current sticky value is empty.
+			$slide_text_overlay_color__sticky = $sticky->get_value( 'text_overlay_color', $this->props, '' );
+
+			if ( '' === $slide_text_overlay_color__sticky && ! empty( $et_pb_slider['text_overlay_color__sticky'] ) ) {
+				$this->props['text_overlay_color__sticky_enabled'] = 'on';
+				$this->props['text_overlay_color__sticky']         = $et_pb_slider['text_overlay_color__sticky'];
 			}
 
 			// Text Border Radius.
@@ -628,6 +657,14 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				$this->props['text_border_radius_last_edited'] = ! empty( $et_pb_slider['text_border_radius_slider_last_edited'] ) ? $et_pb_slider['text_border_radius_slider_last_edited'] : $this->props['text_border_radius_last_edited'];
 			}
 
+			// Inherit value from parent if current sticky value is empty.
+			$slide_text_border_radius__sticky = $sticky->get_value( 'text_border_radius', $this->props, '' );
+
+			if ( '' === $slide_text_border_radius__sticky && ! empty( $et_pb_slider['text_border_radius__sticky'] ) ) {
+				$this->props['text_border_radius__sticky_enabled'] = 'on';
+				$this->props['text_border_radius__sticky']         = $et_pb_slider['text_border_radius__sticky'];
+			}
+
 			// Arrow Custom Color.
 			$is_arrows_custom_color_slider_responsive = et_pb_responsive_options()->is_responsive_enabled( $et_pb_slider, 'arrows_custom_color_slider' );
 			$is_arrows_custom_color_responsive        = et_pb_responsive_options()->is_responsive_enabled( $this->props, 'arrows_custom_color' );
@@ -638,6 +675,14 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				$this->props['arrows_custom_color_last_edited'] = ! empty( $et_pb_slider['arrows_custom_color_slider_last_edited'] ) ? $et_pb_slider['arrows_custom_color_slider_last_edited'] : $this->props['arrows_custom_color_last_edited'];
 			}
 
+			// Inherit value from parent if current sticky value is empty.
+			$slide_arrows_custom_color__sticky = $sticky->get_value( 'arrows_custom_color', $this->props, '' );
+
+			if ( '' === $slide_arrows_custom_color__sticky && ! empty( $et_pb_slider['arrows_custom_color__sticky'] ) ) {
+				$this->props['arrows_custom_color__sticky_enabled'] = 'on';
+				$this->props['arrows_custom_color__sticky']         = $et_pb_slider['arrows_custom_color__sticky'];
+			}
+
 			// Dot Navigation Color.
 			$is_dot_nav_custom_color_slider_responsive = et_pb_responsive_options()->is_responsive_enabled( $et_pb_slider, 'dot_nav_custom_color_slider' );
 			$is_dot_nav_custom_color_responsive        = et_pb_responsive_options()->is_responsive_enabled( $this->props, 'dot_nav_custom_color' );
@@ -646,6 +691,20 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				$this->props['dot_nav_custom_color_tablet']      = ! empty( $et_pb_slider['dot_nav_custom_color_tablet'] ) ? $et_pb_slider['dot_nav_custom_color_tablet'] : $this->props['dot_nav_custom_color_tablet'];
 				$this->props['dot_nav_custom_color_phone']       = ! empty( $et_pb_slider['dot_nav_custom_color_phone'] ) ? $et_pb_slider['dot_nav_custom_color_phone'] : $this->props['dot_nav_custom_color_phone'];
 				$this->props['dot_nav_custom_color_last_edited'] = ! empty( $et_pb_slider['dot_nav_custom_color_slider_last_edited'] ) ? $et_pb_slider['dot_nav_custom_color_slider_last_edited'] : $this->props['dot_nav_custom_color_last_edited'];
+			}
+
+			// Inherit value from parent if current sticky value is empty.
+			$slide_dot_nav_custom_color__sticky = $sticky->get_value( 'dot_nav_custom_color', $this->props, '' );
+
+			if ( '' === $slide_dot_nav_custom_color__sticky && ! empty( $et_pb_slider['dot_nav_custom_color__sticky'] ) ) {
+				$this->props['dot_nav_custom_color__sticky_enabled'] = 'on';
+				$this->props['dot_nav_custom_color__sticky']         = $et_pb_slider['dot_nav_custom_color__sticky'];
+			}
+
+			// Module item has no sticky option hence sticky_transition which is needed to setup
+			// transition needs to be inherited from parent (slider) module.
+			if ( ! empty( $et_pb_slider['sticky_transition'] ) ) {
+				$this->props['sticky_transition'] = $et_pb_slider['sticky_transition'];
 			}
 		}
 	}
@@ -669,14 +728,10 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
 		$background_color          = $this->props['background_color'];
-		$bg_overlay_color_values   = et_pb_responsive_options()->get_property_values( $this->props, 'bg_overlay_color' );
-		$text_overlay_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'text_overlay_color' );
-		$text_border_radius_values = et_pb_responsive_options()->get_property_values( $this->props, 'text_border_radius' );
-
-		$custom_icon_values = et_pb_responsive_options()->get_property_values( $this->props, 'button_icon' );
-		$custom_icon        = isset( $custom_icon_values['desktop'] ) ? $custom_icon_values['desktop'] : '';
-		$custom_icon_tablet = isset( $custom_icon_values['tablet'] ) ? $custom_icon_values['tablet'] : '';
-		$custom_icon_phone  = isset( $custom_icon_values['phone'] ) ? $custom_icon_values['phone'] : '';
+		$custom_icon_values        = et_pb_responsive_options()->get_property_values( $this->props, 'button_icon' );
+		$custom_icon               = isset( $custom_icon_values['desktop'] ) ? $custom_icon_values['desktop'] : '';
+		$custom_icon_tablet        = isset( $custom_icon_values['tablet'] ) ? $custom_icon_values['tablet'] : '';
+		$custom_icon_phone         = isset( $custom_icon_values['phone'] ) ? $custom_icon_values['phone'] : '';
 
 		global $et_pb_slider, $et_pb_slider_has_video, $et_pb_slider_parallax, $et_pb_slider_parallax_method, $et_pb_slider_show_mobile, $et_pb_slider_custom_icon, $et_pb_slider_custom_icon_tablet, $et_pb_slider_custom_icon_phone, $et_pb_slider_item_num, $et_pb_slider_button_rel;
 
@@ -744,7 +799,20 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 
 		if ( 'on' === $use_bg_overlay ) {
 			// Background Overlay Color.
-			et_pb_responsive_options()->generate_responsive_css( $bg_overlay_color_values, '%%order_class%%.et_pb_slide .et_pb_slide_overlay_container', 'background-color', $render_slug, '', 'color' );
+			$this->generate_styles(
+				array(
+					'hover'            => false,
+					'base_attr_name'   => 'bg_overlay_color',
+					'attrs'            => $this->props,
+					'selector'         => '%%order_class%%.et_pb_slide .et_pb_slide_overlay_container',
+					'css_property'     => 'background-color',
+					'render_slug'      => $render_slug,
+					'type'             => 'color',
+
+					// The selector points to module item, thus current module is definitely not sticky.
+					'is_sticky_module' => false,
+				)
+			);
 		}
 
 		if ( ! empty( $background_color ) && 'off' !== $this->props['background_enable_color'] ) {
@@ -762,11 +830,37 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 
 		if ( $is_text_overlay_applied ) {
 			// Text Overlay Color.
-			et_pb_responsive_options()->generate_responsive_css( $text_overlay_color_values, '%%order_class%%.et_pb_slide .et_pb_text_overlay_wrapper', 'background-color', $render_slug, '', 'color' );
+			$this->generate_styles(
+				array(
+					'hover'            => false,
+					'base_attr_name'   => 'text_overlay_color',
+					'attrs'            => $this->props,
+					'selector'         => '%%order_class%%.et_pb_slide .et_pb_text_overlay_wrapper',
+					'css_property'     => 'background-color',
+					'render_slug'      => $render_slug,
+					'type'             => 'color',
+
+					// The selector points to module item, thus current module is definitely not sticky.
+					'is_sticky_module' => false,
+				)
+			);
 		}
 
 		// Text Border Radius.
-		et_pb_responsive_options()->generate_responsive_css( $text_border_radius_values, '%%order_class%%.et_pb_slider_with_text_overlay .et_pb_text_overlay_wrapper', 'border-radius', $render_slug );
+		$this->generate_styles(
+			array(
+				'hover'            => false,
+				'base_attr_name'   => 'text_border_radius',
+				'attrs'            => $this->props,
+				'selector'         => '%%order_class%%.et_pb_slide .et_pb_text_overlay_wrapper',
+				'css_property'     => 'border-radius',
+				'render_slug'      => $render_slug,
+				'type'             => 'range',
+
+				// The selector points to module item, thus current module is definitely not sticky.
+				'is_sticky_module' => false,
+			)
+		);
 
 		$image = '';
 
@@ -850,8 +944,41 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 		$order_class  = self::get_module_order_class( $render_slug );
 		$prefix       = sprintf( '.%1$s[data-active-slide="%2$s"]', $parent_class, $order_class );
 
-		$this->generate_responsive_hover_style( 'arrows_custom_color', et_pb_slider_options()->get_arrows_selector( $prefix ), 'color' );
-		$this->generate_responsive_hover_style( 'dot_nav_custom_color', et_pb_slider_options()->get_dots_selector( $prefix ), 'background-color' );
+		$is_slider_sticky = et_()->array_get( $et_pb_slider, 'is_sticky_module', false );
+
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'arrows_custom_color',
+				'attrs'                           => $this->props,
+				'selector'                        => et_pb_slider_options()->get_arrows_selector( $prefix ),
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+
+				// Selector is started by slider parent's DOM, hence sticky classname prefix depends
+				// to whether the slider parent is sticky or not.
+				'is_sticky_module'                => $is_slider_sticky,
+			)
+		);
+
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'dot_nav_custom_color',
+				'attrs'                           => $this->props,
+				'selector'                        => et_pb_slider_options()->get_dots_selector( $prefix ),
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+
+				// Selector is started by slider parent's DOM, hence sticky classname prefix depends
+				// to whether the slider parent is sticky or not.
+				'is_sticky_module'                => $is_slider_sticky,
+			)
+		);
 
 		// Remove automatically added classnames
 		$this->remove_classname(

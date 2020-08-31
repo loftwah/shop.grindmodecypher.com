@@ -296,6 +296,7 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 					'featured_placement' => array( 'below', 'above' ),
 					'force_fullwidth'    => 'off',
 				),
+				'sticky'          => true,
 			),
 			'image_max_width'    => array(
 				'label'           => esc_html__( 'Featured Image Max Width', 'et_builder' ),
@@ -318,6 +319,7 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 					'featured_placement' => array( 'below', 'above' ),
 					'force_fullwidth'    => 'off',
 				),
+				'sticky'          => true,
 			),
 			'image_height'       => array(
 				'label'           => esc_html__( 'Featured Image Height', 'et_builder' ),
@@ -339,6 +341,7 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 					'featured_image'     => 'on',
 					'featured_placement' => array( 'below', 'above' ),
 				),
+				'sticky'          => true,
 			),
 			'image_max_height'   => array(
 				'label'           => esc_html__( 'Featured Image Max Height', 'et_builder' ),
@@ -360,6 +363,7 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 					'featured_image'     => 'on',
 					'featured_placement' => array( 'below', 'above' ),
 				),
+				'sticky'          => true,
 			),
 			'image_alignment'    => array(
 				'label'           => esc_html__( 'Image Alignment', 'et_builder' ),
@@ -417,6 +421,7 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 				'toggle_slug'     => 'text',
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 		);
 
@@ -426,7 +431,7 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 	public function get_transition_fields_css_props() {
 		$fields = parent::get_transition_fields_css_props();
 
-		$fields['text_color']    = array(
+		$fields['text_color']       = array(
 			'color' => implode(
 				', ',
 				array(
@@ -435,7 +440,11 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 				)
 			),
 		);
-		$fields['text_bg_color'] = array( 'background-color' => '%%order_class%% .et_pb_title_container' );
+		$fields['text_bg_color']    = array( 'background-color' => '%%order_class%% .et_pb_title_container' );
+		$fields['image_height']     = array( 'height' => '%%order_class%% .et_pb_title_featured_container img' );
+		$fields['image_max_height'] = array( 'max-height' => '%%order_class%% .et_pb_title_featured_container img' );
+		$fields['image_width']      = array( 'width' => '%%order_class%% .et_pb_title_featured_container' );
+		$fields['image_max_width']  = array( 'max-width' => '%%order_class%% .et_pb_title_featured_container' );
 
 		return $fields;
 	}
@@ -447,7 +456,6 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 		$text_color_hover   = et_pb_hover_options()->get_value( 'text_color', $this->props );
 		$text_background    = $this->props['text_background'];
 		$header_level       = $this->props['title_level'];
-		$text_bg_colors     = et_pb_responsive_options()->get_property_values( $this->props, 'text_bg_color' );
 		$post_id            = get_the_ID();
 
 		// display the shortcode only on singlular pages
@@ -491,17 +499,55 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 				)
 			);
 
-			$image_height     = et_pb_responsive_options()->get_property_values( $this->props, 'image_height', 'auto' );
-			$image_max_height = et_pb_responsive_options()->get_property_values( $this->props, 'image_max_height', 'none' );
+			// Image height.
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'base_attr_name' => 'image_height',
+					'selector'       => '%%order_class%% .et_pb_title_featured_container img',
+					'css_property'   => 'height',
+					'render_slug'    => $render_slug,
+					'type'           => 'range',
+				)
+			);
 
-			et_pb_responsive_options()->generate_responsive_css( $image_height, '%%order_class%% .et_pb_title_featured_container img', 'height', $render_slug );
-			et_pb_responsive_options()->generate_responsive_css( $image_max_height, '%%order_class%% .et_pb_title_featured_container img', 'max-height', $render_slug );
+			// Image max height.
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'base_attr_name' => 'image_max_height',
+					'selector'       => '%%order_class%% .et_pb_title_featured_container img',
+					'css_property'   => 'max-height',
+					'render_slug'    => $render_slug,
+					'type'           => 'range',
+				)
+			);
 
 			if ( 'off' === $this->props['force_fullwidth'] ) {
-				$image_width     = et_pb_responsive_options()->get_property_values( $this->props, 'image_width', '100%' );
-				$image_max_width = et_pb_responsive_options()->get_property_values( $this->props, 'image_max_width', 'none' );
-				et_pb_responsive_options()->generate_responsive_css( $image_width, '%%order_class%% .et_pb_title_featured_container', 'width', $render_slug );
-				et_pb_responsive_options()->generate_responsive_css( $image_max_width, '%%order_class%% .et_pb_title_featured_container', 'max-width', $render_slug );
+				// Image width.
+				$this->generate_styles(
+					array(
+						'hover'          => false,
+						'base_attr_name' => 'image_width',
+						'selector'       => '%%order_class%% .et_pb_title_featured_container',
+						'css_property'   => 'width',
+						'render_slug'    => $render_slug,
+						'type'           => 'range',
+					)
+				);
+
+				// Image max width.
+				$this->generate_styles(
+					array(
+						'hover'          => false,
+						'base_attr_name' => 'image_max_width',
+						'selector'       => '%%order_class%% .et_pb_title_featured_container',
+						'css_property'   => 'max-width',
+						'render_slug'    => $render_slug,
+						'type'           => 'range',
+					)
+				);
+
 				// Image alignment style
 				$image_alignment_values = et_pb_responsive_options()->get_property_values( $this->props, 'image_alignment', 'none' );
 
@@ -612,18 +658,16 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 
 		if ( 'on' === $text_background ) {
 			// Text Background Color.
-			et_pb_responsive_options()->generate_responsive_css( $text_bg_colors, '%%order_class%% .et_pb_title_container', 'background-color', $render_slug, '; padding: 1em 1.5em;', 'color' );
-
-			if ( et_pb_hover_options()->is_enabled( 'text_bg_color', $this->props ) ) {
-				$el_style = array(
-					'selector'    => '%%order_class%%:hover .et_pb_title_container',
-					'declaration' => sprintf(
-						'background-color: %1$s; padding: 1em 1.5em;',
-						esc_html( et_pb_hover_options()->get_value( 'text_bg_color', $this->props ) )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
+			$this->generate_styles(
+				array(
+					'base_attr_name' => 'text_bg_color',
+					'selector'       => '%%order_class%% .et_pb_title_container',
+					'css_property'   => 'background-color',
+					'render_slug'    => $render_slug,
+					'type'           => 'color',
+					'additional_css' => 'padding: 1em 1.5em;',
+				)
+			);
 		}
 
 		$video_background = $this->video_background();

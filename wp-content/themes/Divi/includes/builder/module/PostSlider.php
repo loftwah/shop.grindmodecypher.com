@@ -549,6 +549,7 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 				'description'     => esc_html__( 'Use the color picker to choose a color for the background overlay.', 'et_builder' ),
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'use_text_overlay'        => array(
 				'label'           => esc_html__( 'Use Text Overlay', 'et_builder' ),
@@ -577,6 +578,7 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 				'description'     => esc_html__( 'Use the color picker to choose a color for the text overlay.', 'et_builder' ),
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'show_content_on_mobile'  => array(
 				'label'            => esc_html__( 'Show Content On Mobile', 'et_builder' ),
@@ -632,6 +634,7 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 				'tab_slug'         => 'advanced',
 				'toggle_slug'      => 'overlay',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'arrows_custom_color'     => array(
 				'label'          => esc_html__( 'Arrow Color', 'et_builder' ),
@@ -641,6 +644,7 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'navigation',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			),
 			'dot_nav_custom_color'    => array(
@@ -651,6 +655,7 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'navigation',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			),
 			'__posts'                 => array(
@@ -696,6 +701,10 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 
 		$fields['text_overlay_color'] = array(
 			'background-color' => '%%order_class%% .et_pb_slide .et_pb_text_overlay_wrapper',
+		);
+
+		$fields['text_border_radius'] = array(
+			'border-radius' => '%%order_class%%.et_pb_slider_with_text_overlay .et_pb_text_overlay_wrapper',
 		);
 
 		$fields['dot_nav_custom_color'] = array( 'background-color' => et_pb_slider_options()->get_dots_selector() );
@@ -919,47 +928,42 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 	function render( $attrs, $content = null, $render_slug ) {
 		global $post;
 
-		$multi_view                = et_pb_multi_view_options( $this );
-		$use_current_loop          = isset( $this->props['use_current_loop'] ) ? $this->props['use_current_loop'] : 'off';
-		$show_arrows               = $this->props['show_arrows'];
-		$show_pagination           = $this->props['show_pagination'];
-		$parallax                  = $this->props['parallax'];
-		$parallax_method           = $this->props['parallax_method'];
-		$auto                      = $this->props['auto'];
-		$auto_speed                = $this->props['auto_speed'];
-		$auto_ignore_hover         = $this->props['auto_ignore_hover'];
-		$body_font_size            = $this->props['body_font_size'];
-		$show_content_on_mobile    = $this->props['show_content_on_mobile'];
-		$show_cta_on_mobile        = $this->props['show_cta_on_mobile'];
-		$show_image_video_mobile   = $this->props['show_image_video_mobile'];
-		$background_position       = $this->props['background_position'];
-		$background_size           = $this->props['background_size'];
-		$background_repeat         = $this->props['background_repeat'];
-		$background_blend          = $this->props['background_blend'];
-		$posts_number              = $this->props['posts_number'];
-		$include_categories        = $this->props['include_categories'];
-		$show_more_button          = $this->props['show_more_button'];
-		$more_text                 = $this->props['more_text'];
-		$content_source            = $this->props['content_source'];
-		$background_color          = $this->props['background_color'];
-		$show_image                = $this->props['show_image'];
-		$image_placement           = $this->props['image_placement'];
-		$background_image          = $this->props['background_image'];
-		$use_bg_overlay            = $this->props['use_bg_overlay'];
-		$use_text_overlay          = $this->props['use_text_overlay'];
-		$orderby                   = $this->props['orderby'];
-		$show_meta                 = $this->props['show_meta'];
-		$button_custom             = $this->props['custom_button'];
-		$use_manual_excerpt        = $this->props['use_manual_excerpt'];
-		$excerpt_length            = $this->props['excerpt_length'];
-		$button_rel                = $this->props['button_rel'];
-		$header_level              = $this->props['header_level'];
-		$offset_number             = $this->props['offset_number'];
-		$bg_overlay_color_hover    = $this->get_hover_value( 'bg_overlay_color' );
-		$bg_overlay_color_values   = et_pb_responsive_options()->get_property_values( $this->props, 'bg_overlay_color' );
-		$text_overlay_color_hover  = $this->get_hover_value( 'text_overlay_color' );
-		$text_overlay_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'text_overlay_color' );
-		$text_border_radius_values = et_pb_responsive_options()->get_property_values( $this->props, 'text_border_radius' );
+		$multi_view              = et_pb_multi_view_options( $this );
+		$use_current_loop        = isset( $this->props['use_current_loop'] ) ? $this->props['use_current_loop'] : 'off';
+		$show_arrows             = $this->props['show_arrows'];
+		$show_pagination         = $this->props['show_pagination'];
+		$parallax                = $this->props['parallax'];
+		$parallax_method         = $this->props['parallax_method'];
+		$auto                    = $this->props['auto'];
+		$auto_speed              = $this->props['auto_speed'];
+		$auto_ignore_hover       = $this->props['auto_ignore_hover'];
+		$body_font_size          = $this->props['body_font_size'];
+		$show_content_on_mobile  = $this->props['show_content_on_mobile'];
+		$show_cta_on_mobile      = $this->props['show_cta_on_mobile'];
+		$show_image_video_mobile = $this->props['show_image_video_mobile'];
+		$background_position     = $this->props['background_position'];
+		$background_size         = $this->props['background_size'];
+		$background_repeat       = $this->props['background_repeat'];
+		$background_blend        = $this->props['background_blend'];
+		$posts_number            = $this->props['posts_number'];
+		$include_categories      = $this->props['include_categories'];
+		$show_more_button        = $this->props['show_more_button'];
+		$more_text               = $this->props['more_text'];
+		$content_source          = $this->props['content_source'];
+		$background_color        = $this->props['background_color'];
+		$show_image              = $this->props['show_image'];
+		$image_placement         = $this->props['image_placement'];
+		$background_image        = $this->props['background_image'];
+		$use_bg_overlay          = $this->props['use_bg_overlay'];
+		$use_text_overlay        = $this->props['use_text_overlay'];
+		$orderby                 = $this->props['orderby'];
+		$show_meta               = $this->props['show_meta'];
+		$button_custom           = $this->props['custom_button'];
+		$use_manual_excerpt      = $this->props['use_manual_excerpt'];
+		$excerpt_length          = $this->props['excerpt_length'];
+		$button_rel              = $this->props['button_rel'];
+		$header_level            = $this->props['header_level'];
+		$offset_number           = $this->props['offset_number'];
 
 		$post_index              = 0;
 		$hide_on_mobile_class    = self::HIDE_ON_MOBILE;
@@ -972,42 +976,69 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 
 		if ( 'on' === $use_bg_overlay ) {
 			// Background Overlay color.
-			et_pb_responsive_options()->generate_responsive_css( $bg_overlay_color_values, '%%order_class%% .et_pb_slide .et_pb_slide_overlay_container', 'background-color', $render_slug, '', 'color' );
-
-			if ( '' !== $bg_overlay_color_hover ) {
-				$el_style = array(
-					'selector'    => $this->add_hover_to_order_class( '%%order_class%% .et_pb_slide .et_pb_slide_overlay_container' ),
-					'declaration' => sprintf(
-						'background-color: %1$s;',
-						esc_html( $bg_overlay_color_hover )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'base_attr_name' => 'bg_overlay_color',
+					'selector'       => '%%order_class%% .et_pb_slide .et_pb_slide_overlay_container',
+					'css_property'   => 'background-color',
+					'render_slug'    => $render_slug,
+					'type'           => 'color',
+				)
+			);
 		}
 
 		if ( $is_text_overlay_applied ) {
 			// Text Overlay color.
-			et_pb_responsive_options()->generate_responsive_css( $text_overlay_color_values, '%%order_class%% .et_pb_slide .et_pb_text_overlay_wrapper', 'background-color', $render_slug, '', 'color' );
-
-			if ( '' !== $text_overlay_color_hover ) {
-				$el_style = array(
-					'selector'    => $this->add_hover_to_order_class( '%%order_class%% .et_pb_slide .et_pb_text_overlay_wrapper' ),
-					'declaration' => sprintf(
-						'background-color: %1$s;',
-						esc_html( $text_overlay_color_hover )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'base_attr_name' => 'text_overlay_color',
+					'selector'       => '%%order_class%% .et_pb_slide .et_pb_text_overlay_wrapper',
+					'css_property'   => 'background-color',
+					'render_slug'    => $render_slug,
+					'type'           => 'color',
+				)
+			);
 		}
 
 		// Text Overlay Border Radius.
-		et_pb_responsive_options()->generate_responsive_css( $text_border_radius_values, '%%order_class%%.et_pb_slider_with_text_overlay .et_pb_text_overlay_wrapper', 'border-radius', $render_slug );
+		$this->generate_styles(
+			array(
+				'hover'          => false,
+				'base_attr_name' => 'text_border_radius',
+				'selector'       => '%%order_class%%.et_pb_slider_with_text_overlay .et_pb_text_overlay_wrapper',
+				'css_property'   => 'border-radius',
+				'render_slug'    => $render_slug,
+				'type'           => 'range',
+			)
+		);
 
-		$this->generate_responsive_hover_style( 'arrows_custom_color', et_pb_slider_options()->get_arrows_selector(), 'color' );
-		$this->generate_responsive_hover_style( 'dot_nav_custom_color', et_pb_slider_options()->get_dots_selector(), 'background-color' );
+		// Arrow Custom Color.
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'arrows_custom_color',
+				'selector'                        => et_pb_slider_options()->get_arrows_selector(),
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
+		// Dot Navigation Custom Color.
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'dot_nav_custom_color',
+				'selector'                        => et_pb_slider_options()->get_dots_selector(),
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
 

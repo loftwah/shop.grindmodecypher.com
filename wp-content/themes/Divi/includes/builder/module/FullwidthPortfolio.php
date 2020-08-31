@@ -283,6 +283,7 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'overlay',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'hover_overlay_color' => array(
 				'label'          => esc_html__( 'Overlay Background Color', 'et_builder' ),
@@ -292,6 +293,7 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'overlay',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'hover_icon'          => array(
 				'label'           => esc_html__( 'Overlay Icon', 'et_builder' ),
@@ -301,6 +303,8 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 				'class'           => array( 'et-pb-font-icon' ),
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
+				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'__projects'          => array(
 				'type'                => 'computed',
@@ -405,8 +409,9 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 	function render( $attrs, $content = null, $render_slug ) {
 		global $post;
 
-		$multi_view                 = et_pb_multi_view_options( $this );
-		$title                      = $multi_view->render_element(
+		$sticky             = et_pb_sticky_options();
+		$multi_view         = et_pb_multi_view_options( $this );
+		$title              = $multi_view->render_element(
 			array(
 				'tag'     => et_pb_process_header_level( $this->props['portfolio_header_level'], 'h2' ),
 				'content' => '{{title}}',
@@ -415,25 +420,58 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 				),
 			)
 		);
-		$fullwidth                  = $this->props['fullwidth'];
-		$include_categories         = $this->props['include_categories'];
-		$posts_number               = $this->props['posts_number'];
-		$show_title                 = $this->props['show_title'];
-		$show_date                  = $this->props['show_date'];
-		$auto                       = $this->props['auto'];
-		$auto_speed                 = $this->props['auto_speed'];
-		$hover_icon                 = $this->props['hover_icon'];
-		$header_level               = $this->props['title_level'];
-		$zoom_icon_color_values     = et_pb_responsive_options()->get_property_values( $this->props, 'zoom_icon_color' );
-		$hover_overlay_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'hover_overlay_color' );
+		$fullwidth          = $this->props['fullwidth'];
+		$include_categories = $this->props['include_categories'];
+		$posts_number       = $this->props['posts_number'];
+		$show_title         = $this->props['show_title'];
+		$show_date          = $this->props['show_date'];
+		$auto               = $this->props['auto'];
+		$auto_speed         = $this->props['auto_speed'];
+		$hover_icon         = $this->props['hover_icon'];
+		$header_level       = $this->props['title_level'];
 
 		$zoom_and_hover_selector = '.et_pb_fullwidth_portfolio%%order_class%% .et_pb_portfolio_image';
 
 		// Zoom Icon color.
-		et_pb_responsive_options()->generate_responsive_css( $zoom_icon_color_values, "{$zoom_and_hover_selector} .et_overlay:before", 'color', $render_slug, ' !important;', 'color' );
+		$this->generate_styles(
+			array(
+				'hover'          => false,
+				'base_attr_name' => 'zoom_icon_color',
+				'selector'       => "{$zoom_and_hover_selector} .et_overlay:before",
+				'css_property'   => 'color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+				'important'      => true,
+			)
+		);
 
 		// Hover Overlay color.
-		et_pb_responsive_options()->generate_responsive_css( $hover_overlay_color_values, "{$zoom_and_hover_selector} .et_overlay", array( 'background-color', 'border-color' ), $render_slug, '', 'color' );
+		$this->generate_styles(
+			array(
+				'hover'          => false,
+				'base_attr_name' => 'hover_overlay_color',
+				'selector'       => "{$zoom_and_hover_selector} .et_overlay",
+				'css_property'   => array( 'background-color', 'border-color' ),
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
+
+		// Overlay.
+		$hover_icon        = $this->props['hover_icon'];
+		$hover_icon_values = et_pb_responsive_options()->get_property_values( $this->props, 'hover_icon' );
+		$hover_icon_tablet = isset( $hover_icon_values['tablet'] ) ? $hover_icon_values['tablet'] : '';
+		$hover_icon_phone  = isset( $hover_icon_values['phone'] ) ? $hover_icon_values['phone'] : '';
+		$hover_icon_sticky = $sticky->get_value( 'hover_icon', $this->props );
+
+		$overlay = ET_Builder_Module_Helper_Overlay::render(
+			array(
+				'icon'        => $hover_icon,
+				'icon_tablet' => $hover_icon_tablet,
+				'icon_phone'  => $hover_icon_phone,
+				'icon_sticky' => $hover_icon_sticky,
+			)
+		);
 
 		$projects = self::get_portfolio_item(
 			array(
@@ -488,18 +526,7 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 							<div class="meta">
 							<a href="<?php esc_url( the_permalink() ); ?>">
 							<?php
-								$data_icon = '' !== $hover_icon
-									? sprintf(
-										' data-icon="%1$s"',
-										esc_attr( et_pb_process_font_icon( $hover_icon ) )
-									)
-									: '';
-
-								printf(
-									'<span class="et_overlay%1$s"%2$s></span>',
-									( '' !== $hover_icon ? ' et_pb_inline_icon' : '' ),
-									et_core_esc_previously( $data_icon )
-								);
+								echo et_core_esc_previously( $overlay );
 
 								$multi_view->render_element(
 									array(

@@ -1,7 +1,7 @@
 /*!
 Theme Name: Divi
 Theme URI: http://www.elegantthemes.com/gallery/divi/
-Version: 4.5.8
+Version: 4.6.0
 Description: Smart. Flexible. Beautiful. Divi is the most powerful theme in our collection.
 Author: Elegant Themes
 Author URI: http://www.elegantthemes.com
@@ -9242,6 +9242,10 @@ p.et_pb_gallery_caption {
   position: relative;
   text-align: center; }
 
+.et_pb_sticky_module .et_pb_main_blurb_image .et_pb_image_wrap {
+  width: 100%;
+  max-width: 100%; }
+
 .et_pb_blurb.et_pb_text_align_left .et_pb_blurb_content .et_pb_blurb_container {
   text-align: left; }
 
@@ -11491,6 +11495,10 @@ h1.et_pb_contact_main_title {
 .et_overlay.et_pb_inline_icon:before {
   content: attr(data-icon); }
 
+.et_pb_sticky .et_pb_inline_icon_sticky:before,
+.et_pb_sticky .et_overlay.et_pb_inline_icon_sticky:before {
+  content: attr(data-icon-sticky) !important; }
+
 /* Icon - Tablet */
 @media all and (max-width: 980px) {
   .et_pb_inline_icon_tablet:before,
@@ -13051,11 +13059,16 @@ body.rtl.et-db:not(.et-fb-no-rtl) .et_audio_container .mejs-controls div.mejs-ti
   display: block; }
 
 .et_parallax_bg.et_parallax_bg__hover,
+.et_parallax_bg.et_parallax_bg__sticky,
 .et_parallax_bg.et_parallax_bg_tablet,
 .et_parallax_bg.et_parallax_bg_phone,
+.et_pb_sticky .et_pb_section_parallax_sticky .et_parallax_bg:not(.et_parallax_bg__sticky),
+.et_pb_sticky.et_pb_section_parallax_sticky .et_parallax_bg:not(.et_parallax_bg__sticky),
 .et_pb_section_parallax_hover:hover .et_parallax_bg:not(.et_parallax_bg__hover) {
   display: none; }
 
+.et_pb_sticky .et_pb_section_parallax_sticky .et_parallax_bg.et_parallax_bg__sticky,
+.et_pb_sticky.et_pb_section_parallax_sticky .et_parallax_bg.et_parallax_bg__sticky,
 .et_pb_section_parallax_hover:hover .et_parallax_bg.et_parallax_bg__hover {
   display: block; }
 
@@ -18711,6 +18724,27 @@ body.woocommerce-page #content .et_builder_inner_content.product .et_pb_wc_image
 
 .et-pb-before-scroll-animation {
   opacity: 0; }
+
+/* Measurement - DOM that are temporary added for measurement */
+body .et-script-temporary-measurement {
+  opacity: 0; }
+
+/* Features */
+.et_builder_inner_content.has_et_pb_sticky {
+  z-index: inherit; }
+
+.et_pb_column.has_et_pb_sticky,
+.et-db #et-boc .et-l #et-fb-app .et_pb_column.has_et_pb_sticky {
+  z-index: 20; }
+  .et-l--header .et_pb_column.has_et_pb_sticky, .et-l--header
+  .et-db #et-boc .et-l #et-fb-app .et_pb_column.has_et_pb_sticky {
+    z-index: 30; }
+  .et-l--footer .et_pb_column.has_et_pb_sticky, .et-l--footer
+  .et-db #et-boc .et-l #et-fb-app .et_pb_column.has_et_pb_sticky {
+    z-index: 10; }
+
+.et_pb_sticky_placeholder {
+  opacity: 0 !important; }
 
 /*------------------------------------------------*/
 /*-------------------[SHORTCODES]-----------------*/

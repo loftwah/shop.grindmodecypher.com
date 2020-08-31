@@ -7,6 +7,11 @@ class ET_Builder_Module_Button extends ET_Builder_Module {
 		$this->slug             = 'et_pb_button';
 		$this->vb_support       = 'on';
 		$this->main_css_element = '%%order_class%%';
+		$this->wrapper_settings = array(
+			// Flag that indicates that this module's wrapper where order class is declared
+			// has another wrapper (mostly for button alignment purpose).
+			'order_class_wrapper' => true,
+		);
 
 		$this->custom_css_fields = array(
 			'main_element' => array(
@@ -155,10 +160,6 @@ class ET_Builder_Module_Button extends ET_Builder_Module {
 		$text_orientation = isset( $this->props[ "button_alignment{$suffix}" ] ) ? $this->props[ "button_alignment{$suffix}" ] : '';
 
 		return et_pb_get_alignment( $text_orientation );
-	}
-
-	public function get_transition_fields_css_props() {
-		return array();
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {

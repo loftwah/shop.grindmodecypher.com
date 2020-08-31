@@ -71,6 +71,7 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 				),
 			),
 			'button'         => false,
+			'sticky'         => false,
 			'height'         => array(
 				'css' => array(
 					'main' => '%%order_class%% .et_pb_counter_container, %%order_class%% .et_pb_counter_container .et_pb_counter_amount',
@@ -138,6 +139,7 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'bar',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 		);
 
@@ -298,7 +300,6 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 		$percent                       = $multi_view->get_value( 'percent' );
 		$bar_background_color          = self::$_->array_get( $this->props, 'bar_background_color' );
 		$bar_background_color          = empty( $bar_background_color ) ? $et_pb_counters_settings['bar_bg_color'] : $bar_background_color;
-		$bar_background_hover_color    = et_pb_hover_options()->get_value( 'bar_background_color', $this->props );
 		$background_image              = $this->props['background_image'];
 		$use_background_color_gradient = $this->props['use_background_color_gradient'];
 
@@ -306,7 +307,6 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 		$background_color        = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'desktop' );
 		$background_color_tablet = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'tablet' );
 		$background_color_phone  = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'phone' );
-		$background_color_hover  = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'hover' );
 
 		// Bar background color responsive. First of all, check if value from bar counters item is
 		// exist and responsive setting is enabled. If it doesn't exist, get it from bar counters
@@ -349,19 +349,6 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 		);
 		et_pb_responsive_options()->generate_responsive_css( $background_color_values, '%%order_class%% .et_pb_counter_container', 'background-color', $render_slug, '', 'color' );
 
-		if ( '' !== $background_color_hover ) {
-			ET_Builder_Element::set_style(
-				$render_slug,
-				array(
-					'selector'    => '%%order_class%% .et_pb_counter_container:hover',
-					'declaration' => sprintf(
-						'background-color: %1$s;',
-						esc_html( $background_color_hover )
-					),
-				)
-			);
-		}
-
 		// Bar background color.
 		$bar_background_color_values = array(
 			'desktop' => esc_html( $bar_background_color ),
@@ -371,29 +358,48 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 		et_pb_responsive_options()->generate_responsive_css( $bar_background_color_values, '%%order_class%% .et_pb_counter_amount', 'background-color', $render_slug, '', 'color' );
 		et_pb_responsive_options()->generate_responsive_css( $bar_background_color_values, '%%order_class%% .et_pb_counter_amount.overlay', 'color', $render_slug, '', 'color' );
 
-		if ( '' !== $bar_background_hover_color ) {
-			ET_Builder_Element::set_style(
-				$render_slug,
-				array(
-					'selector'    => '.et_pb_counters %%order_class%%:hover .et_pb_counter_amount',
-					'declaration' => sprintf(
-						'background-color: %1$s;',
-						esc_html( $bar_background_hover_color )
-					),
-				)
-			);
+		// Extended (hover & sticky) style of bar and its background color
+		// Background Color.
+		$this->generate_styles(
+			array(
+				'responsive'                      => false,
+				'render_slug'                     => $render_slug,
+				'base_attr_name'                  => 'background_color',
+				'css_property'                    => 'background-color',
+				'selector'                        => '.et_pb_counters %%order_class%% .et_pb_counter_container',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'is_sticky_module'                => $et_pb_counters_settings['is_sticky_module'],
+			)
+		);
 
-			ET_Builder_Element::set_style(
-				$render_slug,
-				array(
-					'selector'    => '.et_pb_counters %%order_class%%:hover .et_pb_counter_amount.overlay',
-					'declaration' => sprintf(
-						'color: %1$s;',
-						esc_html( $bar_background_hover_color )
-					),
-				)
-			);
-		}
+		// Bar Background Color.
+		$this->generate_styles(
+			array(
+				'responsive'                      => false,
+				'render_slug'                     => $render_slug,
+				'base_attr_name'                  => 'bar_background_color',
+				'css_property'                    => 'background-color',
+				'selector'                        => '.et_pb_counters %%order_class%% .et_pb_counter_amount',
+				'hover_pseudo_selector_location'  => 'order_class',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'is_sticky_module'                => $et_pb_counters_settings['is_sticky_module'],
+			)
+		);
+
+		$this->generate_styles(
+			array(
+				'responsive'                      => false,
+				'render_slug'                     => $render_slug,
+				'attrs'                           => $this->props,
+				'base_attr_name'                  => 'bar_background_color',
+				'css_property'                    => 'color',
+				'selector'                        => '.et_pb_counters %%order_class%% .et_pb_counter_amount.overlay',
+				'hover_pseudo_selector_location'  => 'order_class',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'is_sticky_module'                => $et_pb_counters_settings['is_sticky_module'],
+			)
+		);
 
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();

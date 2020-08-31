@@ -125,6 +125,7 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 				'fixed_range'    => true,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			)
 		);
 
@@ -234,6 +235,7 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 				'default'        => 'rgba(0,0,0,0.3)',
 				'field_template' => 'color',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'description'    => esc_html__( 'The color of the shadow.', 'et_builder' ),
 			)
 		);
@@ -294,6 +296,7 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 				'suffix'    => '',
 				'important' => false,
 				'hover'     => false,
+				'sticky'    => false,
 				'device'    => 'desktop',
 			),
 			$args
@@ -301,6 +304,7 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 		$suffix    = $args['suffix'];
 		$important = $args['important'] ? '!important' : '';
 		$hover     = $args['hover'];
+		$sticky    = $args['sticky'];
 		$device    = $args['device'];
 		$style     = $this->get_key_value( "style$suffix", $atts );
 
@@ -325,12 +329,12 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 		);
 
 		// All the values below sometime return null.
-		$position   = $this->get_key_value( "position{$suffix}", $atts, false, $device ) === 'inner' ? 'inset' : '';
-		$horizontal = $this->get_key_value( "horizontal{$suffix}", $atts, $hover, $device );
-		$vertical   = $this->get_key_value( "vertical{$suffix}", $atts, $hover, $device );
-		$blur       = $this->get_key_value( "blur{$suffix}", $atts, $hover, $device );
-		$strength   = $this->get_key_value( "spread{$suffix}", $atts, $hover, $device );
-		$color      = $this->get_key_value( "color{$suffix}", $atts, $hover, $device );
+		$position   = $this->get_key_value( "position{$suffix}", $atts, false, $device, $sticky ) === 'inner' ? 'inset' : '';
+		$horizontal = $this->get_key_value( "horizontal{$suffix}", $atts, $hover, $device, $sticky );
+		$vertical   = $this->get_key_value( "vertical{$suffix}", $atts, $hover, $device, $sticky );
+		$blur       = $this->get_key_value( "blur{$suffix}", $atts, $hover, $device, $sticky );
+		$strength   = $this->get_key_value( "spread{$suffix}", $atts, $hover, $device, $sticky );
+		$color      = $this->get_key_value( "color{$suffix}", $atts, $hover, $device, $sticky );
 
 		// CSS declaration.
 		$value = sprintf(
@@ -531,23 +535,27 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 	 * @param  array   $atts   All module attributes.
 	 * @param  boolean $hover  Hover mode status.
 	 * @param  string  $device Current device.
+	 * @param  boolean $sticky Sticky mode status.
+	 *
 	 * @return string          Box shadow property value.
 	 */
-	protected function get_key_value( $key, $atts = array(), $hover = false, $device = 'desktop' ) {
+	protected function get_key_value( $key, $atts = array(), $hover = false, $device = 'desktop', $sticky = false ) {
 		$hover_options = et_pb_hover_options();
 
 		// Add device name as suffix.
 		$is_desktop    = 'desktop' === $device;
 		$device_suffix = '';
-		if ( ! $hover && ! $is_desktop ) {
+		if ( ! $hover && ! $is_desktop && ! $sticky ) {
 			$device_suffix = "_{$device}";
 		}
 
 		// Get current active device value.
 		$attr_value = et_pb_responsive_options()->get_any_value( $atts, "box_shadow_{$key}{$device_suffix}", '', true );
 
-		// Bail early if current mode is hover or desktop mode.
-		if ( $hover ) {
+		// Bail early if current mode is sticky, hover or desktop mode.
+		if ( $sticky ) {
+			return et_pb_sticky_options()->get_value( "box_shadow_{$key}", $atts, $attr_value );
+		} elseif ( $hover ) {
 			return $hover_options->get_value( "box_shadow_{$key}", $atts, $attr_value );
 		} elseif ( $is_desktop ) {
 			return $attr_value;

@@ -312,6 +312,7 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 				'toggle_slug'         => $toggle_slug,
 				'depends_show_if_not' => 'none',
 				'mobile_options'      => true,
+				'sticky'              => true,
 			),
 			$text_shadow_vertical_length   => array(
 				'label'               => $labels[2],
@@ -335,6 +336,7 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 				'toggle_slug'         => $toggle_slug,
 				'depends_show_if_not' => 'none',
 				'mobile_options'      => true,
+				'sticky'              => true,
 			),
 			$text_shadow_blur_strength     => array(
 				'label'               => $labels[3],
@@ -358,6 +360,7 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 				'toggle_slug'         => $toggle_slug,
 				'depends_show_if_not' => 'none',
 				'mobile_options'      => true,
+				'sticky'              => true,
 			),
 			$text_shadow_color             => array(
 				'label'               => $labels[4],
@@ -372,6 +375,7 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 				'toggle_slug'         => $toggle_slug,
 				'depends_show_if_not' => 'none',
 				'mobile_options'      => true,
+				'sticky'              => true,
 			),
 		);
 
@@ -451,15 +455,18 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 	public function get_declaration( $label, $important, $all_values, $is_hover = false, $device = 'desktop' ) {
 		$prefix     = $label ? "{$label}_" : '';
 		$hover      = et_pb_hover_options();
+		$sticky     = et_pb_sticky_options();
 		$utils      = ET_Core_Data_Utils::instance();
 		$responsive = ET_Builder_Module_Helper_ResponsiveOptions::instance();
 		$is_desktop = 'desktop' === $device;
+		$is_sticky  = $sticky->get_suffix() === $device;
 		$suffix     = '';
 
 		// Responsive styles. Ensure to render when at least one of the fields activate responsive
 		// settings to avoid unnecessary CSS styles rendered.
 		$is_any_shadow_responsive = false;
-		if ( ! $is_desktop && ! $is_hover ) {
+
+		if ( ! $is_desktop && ! $is_hover && ! $is_sticky ) {
 			$is_any_shadow_responsive = $responsive->is_any_responsive_enabled(
 				$all_values,
 				array(
@@ -482,7 +489,7 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 		foreach ( $this->properties as $property ) {
 			// As default, we will return desktop value.
 			$prop  = "{$prefix}text_shadow_{$property}";
-			$value = $utils->array_get( $all_values, $prop, '' );
+			$value = et_()->array_get( $all_values, $prop, '' );
 
 			if ( $is_any_shadow_responsive ) {
 				// If current device is mobile (responsive settings is enabled already checked above),
@@ -490,6 +497,8 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 				$value = $responsive->is_responsive_enabled( $all_values, $prop ) ? $responsive->get_any_value( $all_values, "{$prop}{$suffix}", '', true ) : $value;
 			} elseif ( $is_hover ) {
 				$value = $hover->get_value( $prop, $all_values, $value );
+			} elseif ( $is_sticky ) {
+				$value = $sticky->get_value( $prop, $all_values, $value );
 			}
 
 			$text_shadow[] = $value;
@@ -517,26 +526,37 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 	 * @return void
 	 */
 	public function update_styles( $module, $label, $font, $function_name, $is_hover = false, $device = 'desktop' ) {
-		$utils                 = ET_Core_Data_Utils::instance();
 		$all_values            = $module->props;
 		$main_element_selector = $module->main_css_element;
 		$device                = '' === $device ? 'desktop' : $device;
+		$hover                 = et_pb_hover_options();
+		$sticky                = et_pb_sticky_options();
+		$is_sticky             = $device === $sticky->get_suffix();
 
 		// Use a different selector for plugin
 		$css_element = $this->is_plugin_active && isset( $font['css']['limited_main'] ) ? 'css.limited_main' : 'css.main';
 
 		// Use 'text_shadow' selector if defined, fallback to $css_element or default selector
-		$selector            = $utils->array_get( $font, 'css.text_shadow', $utils->array_get( $font, $css_element, $main_element_selector ) );
+		$selector            = et_()->array_get(
+			$font,
+			'css.text_shadow',
+			et_()->array_get( $font, $css_element, $main_element_selector )
+		);
 		$responsive_selector = $selector;
 
 		if ( $is_hover ) {
 			if ( is_array( $selector ) ) {
 				$selector = array_map( array( $this, 'add_hover_to_selectors' ), $selector );
 			} else {
-				$selector = et_pb_hover_options()->add_hover_to_selectors( $selector );
+				$selector = $hover->add_hover_to_selectors( $selector );
 			}
 
-			$selector = $utils->array_get( $font, 'css.text_shadow_hover', $utils->array_get( $font, 'css.hover', $selector ) );
+			$selector = et_()->array_get( $font, 'css.text_shadow_hover', et_()->array_get( $font, 'css.hover', $selector ) );
+		}
+
+		if ( $is_sticky ) {
+			$selector = $sticky->add_sticky_to_selectors( $selector, $sticky->is_sticky_module( $all_values ), is_string( $selector ) );
+			$selector = et_()->array_get( $font, 'css.text_shadow_sticky', et_()->array_get( $font, 'css.sticky', $selector ) );
 		}
 
 		// Get the text-shadow declaration (horizontal vertical blur color).
@@ -548,8 +568,8 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 			$device
 		);
 
-		// Do not provide hover style if it is the same as normal style
-		if ( $is_hover ) {
+		// Do not provide hover or sticky style if it is the same as normal style.
+		if ( $is_hover || $is_sticky ) {
 			$normal = $this->get_declaration(
 				$label,
 				$this->get_important( $font, 'text-shadow' ),
@@ -564,7 +584,7 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 
 		// Media query.
 		$media_query = array();
-		if ( 'desktop' !== $device && ! $is_hover ) {
+		if ( 'desktop' !== $device && ! $is_hover && ! $is_sticky ) {
 			$breakpoint  = 'tablet' === $device ? 'max_width_980' : 'max_width_767';
 			$media_query = array( 'media_query' => ET_Builder_Element::get_media_query( $breakpoint ) );
 		}
@@ -615,25 +635,29 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 	/**
 	 * Process Text Shadow options and adds CSS rules.
 	 *
+	 * @since ?? Add sticky style support
+	 *
 	 * @param ET_Builder_Element $module Module object.
 	 * @param string             $function_name Shortcode function.
 	 *
 	 * @return void
 	 */
 	public function process_advanced_css( $module, $function_name ) {
-		$utils           = ET_Core_Data_Utils::instance();
 		$all_values      = $module->props;
 		$advanced_fields = $module->advanced_fields;
+		$hover           = et_pb_hover_options();
+		$sticky          = et_pb_sticky_options();
 
 		// Disable if module doesn't set advanced_fields property and has no VB support
 		if ( ! $module->has_vb_support() && ! $module->has_advanced_fields ) {
 			return;
 		}
 
-		$suffixes = array( '', 'tablet', 'phone', et_pb_hover_options()->get_suffix() );
+		$suffixes = array( '', 'tablet', 'phone', $hover->get_suffix(), $sticky->get_suffix() );
 
 		foreach ( $suffixes as $suffix ) {
-			$is_hover = et_pb_hover_options()->get_suffix() === $suffix;
+			$is_hover  = $hover->get_suffix() === $suffix;
+			$is_sticky = $sticky->get_suffix() === $suffix;
 
 			// Check for text shadow settings in font-options
 			if ( ! empty( $advanced_fields['fonts'] ) ) {
@@ -642,22 +666,22 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 					// label can be header / body / toggle / etc
 					$shadow_style = "{$label}_text_shadow_style";
 
-					if ( 'none' !== $utils->array_get( $all_values, $shadow_style, 'none' ) ) {
+					if ( 'none' !== et_()->array_get( $all_values, $shadow_style, 'none' ) ) {
 						// We have a preset selected which isn't none, need to add text-shadow style
-						$this->update_styles( $module, $label, $font, $function_name, $is_hover, $suffix, $label );
+						$this->update_styles( $module, $label, $font, $function_name, $is_hover, $suffix );
 					}
 				}
 			}
 
 			// Check for text shadow settings in Advanced/Text toggle
-			if ( isset( $advanced_fields['text'] ) && 'none' !== $utils->array_get( $all_values, 'text_shadow_style', 'none' ) ) {
+			if ( isset( $advanced_fields['text'] ) && 'none' !== et_()->array_get( $all_values, 'text_shadow_style', 'none' ) ) {
 				// We have a preset selected which isn't none, need to add text-shadow style
 				$text = $advanced_fields['text'];
 				$this->update_styles( $module, '', $text, $function_name, $is_hover, $suffix );
 			}
 
 			// Check for text shadow settings in Advanced/Fields toggle
-			if ( isset( $advanced_fields['fields'] ) && 'none' !== $utils->array_get( $all_values, 'fields_text_shadow_style', 'none' ) ) {
+			if ( isset( $advanced_fields['fields'] ) && 'none' !== et_()->array_get( $all_values, 'fields_text_shadow_style', 'none' ) ) {
 				// We have a preset selected which isn't none, need to add text-shadow style
 				$fields = $advanced_fields['fields'];
 				$this->update_styles( $module, 'fields', $fields, $function_name, $is_hover, $suffix );
@@ -670,15 +694,15 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 					// label can be header / body / toggle / etc
 					$shadow_style = "{$label}_text_shadow_style";
 
-					if ( 'none' !== $utils->array_get( $all_values, $shadow_style, 'none' ) ) {
+					if ( 'none' !== et_()->array_get( $all_values, $shadow_style, 'none' ) ) {
 						// We have a preset selected which isn't none, need to add text-shadow style
 						// Build a selector to only target the button
-						$css_element = $utils->array_get( $button, 'css.main', "{$module->main_css_element} .et_pb_button" );
+						$css_element = et_()->array_get( $button, 'css.main', "{$module->main_css_element} .et_pb_button" );
 						// Make sure it has highest priority
-						$utils->array_set( $button, 'css.text_shadow', $css_element );
+						et_()->array_set( $button, 'css.text_shadow', $css_element );
 
 						if ( ! isset( $button['css.hover'] ) ) {
-							$utils->array_set( $button, 'css.hover', et_pb_hover_options()->add_hover_to_selectors( $css_element ) );
+							et_()->array_set( $button, 'css.hover', $hover->add_hover_to_selectors( $css_element ) );
 						}
 
 						$this->update_styles( $module, $label, $button, $function_name, $is_hover, $suffix );
@@ -691,11 +715,11 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 				// There are possibilities to have more than one field inputs.
 				foreach ( $advanced_fields['form_field'] as $label => $form_field ) {
 					// Ensure the text shadow style is selected before updating the styles.
-					if ( 'none' !== $utils->array_get( $all_values, $label . '_text_shadow_style', 'none' ) ) {
+					if ( 'none' !== et_()->array_get( $all_values, $label . '_text_shadow_style', 'none' ) ) {
 						// Build a selector to only target the field input.
 						$main_selector              = isset( $form_field['css']['main'] ) ? $form_field['css']['main'] : "{$module->main_css_element} .input";
 						$text_shadow_selector       = isset( $form_field['css']['text_shadow'] ) ? $form_field['css']['text_shadow'] : $main_selector;
-						$text_shadow_hover_selector = isset( $form_field['css']['text_shadow_hover'] ) ? $form_field['css']['text_shadow_hover'] : et_pb_hover_options()->add_hover_to_selectors( $text_shadow_selector );
+						$text_shadow_hover_selector = isset( $form_field['css']['text_shadow_hover'] ) ? $form_field['css']['text_shadow_hover'] : $hover->add_hover_to_selectors( $text_shadow_selector );
 
 						// Make sure it has highest priority.
 						$form_field['css']['text_shadow']       = $text_shadow_selector;

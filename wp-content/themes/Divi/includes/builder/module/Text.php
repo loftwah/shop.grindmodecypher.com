@@ -444,6 +444,7 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 					'step' => '1',
 				),
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			),
 			'quote_border_color'  => array(
@@ -458,6 +459,7 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'field_template'  => 'color',
 				'priority'        => 90,
 				'mobile_options'  => true,
+				'sticky'          => true,
 				'hover'           => 'tabs',
 			),
 		);
@@ -502,18 +504,13 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view                 = et_pb_multi_view_options( $this );
-		$ul_type_values             = et_pb_responsive_options()->get_property_values( $this->props, 'ul_type' );
-		$ul_position_values         = et_pb_responsive_options()->get_property_values( $this->props, 'ul_position' );
-		$ul_item_indent_values      = et_pb_responsive_options()->get_property_values( $this->props, 'ul_item_indent' );
-		$ol_type_values             = et_pb_responsive_options()->get_property_values( $this->props, 'ol_type' );
-		$ol_position_values         = et_pb_responsive_options()->get_property_values( $this->props, 'ol_position' );
-		$ol_item_indent_values      = et_pb_responsive_options()->get_property_values( $this->props, 'ol_item_indent' );
-		$quote_border_weight_values = et_pb_responsive_options()->get_property_values( $this->props, 'quote_border_weight' );
-		$quote_border_weight_hover  = et_pb_hover_options()->get_value( 'quote_border_weight', $this->props );
-		$quote_border_color_values  = et_pb_responsive_options()->get_property_values( $this->props, 'quote_border_color' );
-		$quote_border_color_hover   = et_pb_hover_options()->get_value( 'quote_border_color', $this->props );
-
+		$multi_view                      = et_pb_multi_view_options( $this );
+		$ul_type_values                  = et_pb_responsive_options()->get_property_values( $this->props, 'ul_type' );
+		$ul_position_values              = et_pb_responsive_options()->get_property_values( $this->props, 'ul_position' );
+		$ul_item_indent_values           = et_pb_responsive_options()->get_property_values( $this->props, 'ul_item_indent' );
+		$ol_type_values                  = et_pb_responsive_options()->get_property_values( $this->props, 'ol_type' );
+		$ol_position_values              = et_pb_responsive_options()->get_property_values( $this->props, 'ol_position' );
+		$ol_item_indent_values           = et_pb_responsive_options()->get_property_values( $this->props, 'ol_item_indent' );
 		$background_layout               = $this->props['background_layout'];
 		$background_layout_hover         = et_pb_hover_options()->get_value( 'background_layout', $this->props, 'light' );
 		$background_layout_hover_enabled = et_pb_hover_options()->is_enabled( 'background_layout', $this->props );
@@ -546,30 +543,31 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 		et_pb_responsive_options()->generate_responsive_css( $ol_item_indent_values, '%%order_class%% ol', 'padding-left', $render_slug, ' !important;' );
 
 		// Quote.
-		et_pb_responsive_options()->generate_responsive_css( $quote_border_weight_values, '%%order_class%% blockquote', 'border-width', $render_slug );
-		et_pb_responsive_options()->generate_responsive_css( $quote_border_color_values, '%%order_class%% blockquote', 'border-color', $render_slug, '', 'color' );
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'quote_border_weight',
+				'selector'                        => '%%order_class%% blockquote',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'border-width',
+				'important'                       => array( 'hover' ),
+				'render_slug'                     => $render_slug,
+				'type'                            => 'range',
+			)
+		);
 
-		if ( '' !== $quote_border_color_hover && et_builder_is_hover_enabled( 'quote_border_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% blockquote:hover',
-				'declaration' => sprintf(
-					'border-color: %1$s !important;',
-					esc_html( $quote_border_color_hover )
-				),
-			);
-			self::set_style( $render_slug, $el_style );
-		}
-
-		if ( '' !== $quote_border_weight_hover && et_builder_is_hover_enabled( 'quote_border_weight', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% blockquote:hover',
-				'declaration' => sprintf(
-					'border-width: %1$s !important;',
-					esc_html( $quote_border_weight_hover )
-				),
-			);
-			self::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'quote_border_color',
+				'selector'                        => '%%order_class%% blockquote',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'border-color',
+				'important'                       => array( 'hover' ),
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Module classnames
 		$this->add_classname(

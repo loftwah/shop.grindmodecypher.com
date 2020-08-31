@@ -351,6 +351,7 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 				'toggle_slug'    => 'sale_badge',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'icon_hover_color'    => array(
 				'label'          => esc_html__( 'Overlay Icon Color', 'et_builder' ),
@@ -360,6 +361,7 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'overlay',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'hover_overlay_color' => array(
 				'label'          => esc_html__( 'Overlay Background Color', 'et_builder' ),
@@ -369,6 +371,7 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'overlay',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'hover_icon'          => array(
 				'label'           => esc_html__( 'Overlay Icon', 'et_builder' ),
@@ -379,6 +382,7 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'__upsells'           => array(
 				'type'                => 'computed',
@@ -552,41 +556,42 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 			'%%order_class%% ul.products li.product:hover .star-rating'
 		);
 
-		$sale_badge_color_hover    = $this->get_hover_value( 'sale_badge_color' );
-		$sale_badge_color_values   = et_pb_responsive_options()->get_property_values( $this->props, 'sale_badge_color' );
-		$icon_hover_color_values   = et_pb_responsive_options()->get_property_values( $this->props, 'icon_hover_color' );
-		$hover_overlay_color_value = et_pb_responsive_options()->get_property_values( $this->props, 'hover_overlay_color' );
-
 		// Sale Badge Color.
-		et_pb_responsive_options()->generate_responsive_css( $sale_badge_color_values, '%%order_class%% span.onsale', 'background-color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'sale_badge_color', $this->props ) ) {
-			ET_Builder_Element::set_style(
-				$render_slug,
-				array(
-					'selector'    => '%%order_class%%:hover span.onsale',
-					'declaration' => sprintf(
-						'background-color: %1$s !important;',
-						esc_html( $sale_badge_color_hover )
-					),
-				)
-			);
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'sale_badge_color',
+				'selector'       => '%%order_class%% span.onsale',
+				'css_property'   => 'background-color',
+				'important'      => true,
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
 
 		// Icon Hover Color.
-		et_pb_responsive_options()->generate_responsive_css( $icon_hover_color_values, '%%order_class%% .et_overlay:before', 'color', $render_slug, ' !important;', 'color' );
+		$this->generate_styles(
+			array(
+				'hover'          => false,
+				'base_attr_name' => 'icon_hover_color',
+				'selector'       => '%%order_class%% .et_overlay:before',
+				'css_property'   => 'color',
+				'important'      => true,
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
 
 		// Hover Overlay Color.
-		et_pb_responsive_options()->generate_responsive_css(
-			$hover_overlay_color_value,
-			'%%order_class%% .et_overlay',
+		$this->generate_styles(
 			array(
-				'background-color',
-				'border-color',
-			),
-			$render_slug,
-			' !important;',
-			'color'
+				'hover'          => false,
+				'base_attr_name' => 'hover_overlay_color',
+				'selector'       => '%%order_class%% .et_overlay',
+				'css_property'   => array( 'background-color', 'border-color' ),
+				'important'      => true,
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
 		);
 
 		// Images: Add CSS Filters and Mix Blend Mode rules (if set).

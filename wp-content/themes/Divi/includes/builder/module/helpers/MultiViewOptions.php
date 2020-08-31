@@ -202,7 +202,7 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 	 * @return string
 	 */
 	public static function get_regex_suffix() {
-		return '/(__hover|__hover_enabled|_last_edited|_tablet|_phone)$/';
+		return '/(__hover|__hover_enabled|__sticky|__sticky_enabled|_last_edited|_tablet|_phone)$/';
 	}
 
 	/**

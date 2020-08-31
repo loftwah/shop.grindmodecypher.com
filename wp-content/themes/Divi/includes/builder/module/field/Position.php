@@ -90,6 +90,7 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				'tab_slug'          => self::TAB_SLUG,
 				'toggle_slug'       => self::TOGGLE_SLUG,
 				'mobile_options'    => true,
+				'sticky'            => true,
 				'hover'             => 'tabs',
 				'bb_support'        => false,
 				'linked_responsive' => array( 'position_origin_a', 'position_origin_f', 'position_origin_r' ),
@@ -107,6 +108,7 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				'tab_slug'         => self::TAB_SLUG,
 				'toggle_slug'      => self::TOGGLE_SLUG,
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 				'bb_support'       => false,
 			);
@@ -141,6 +143,7 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				'toggle_slug'      => self::TOGGLE_SLUG,
 				'responsive'       => true,
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -178,8 +181,10 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				'default_on_child' => true,
 				'tab_slug'         => self::TAB_SLUG,
 				'toggle_slug'      => self::TOGGLE_SLUG,
+				'allowed_values'   => et_builder_get_acceptable_css_string_values( 'z-index' ),
 				'unitless'         => true,
 				'hover'            => 'tabs',
+				'sticky'           => true,
 				'responsive'       => true,
 				'mobile_options'   => true,
 			);
@@ -258,6 +263,13 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 	 * @return mixed
 	 */
 	private function get_value( $attrs, $name, $default_value = '', $view = 'desktop', $force_return = false ) {
+		// Sticky style.
+		if ( 'sticky' === $view ) {
+			$sticky = et_pb_sticky_options();
+
+			return $sticky->get_value( $name, $attrs, $default_value );
+		}
+
 		$utils         = ET_Core_Data_Utils::instance();
 		$responsive    = ET_Builder_Module_Helper_ResponsiveOptions::instance();
 		$hover         = et_pb_hover_options();
@@ -363,10 +375,15 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 
 	/**
 	 * @param string $function_name
+	 *
+	 * @since ?? Add sticky style support.
 	 */
 	public function process( $function_name ) {
+		global $is_parent_sticky;
+
 		$utils           = ET_Core_Data_Utils::instance();
 		$hover           = et_pb_hover_options();
+		$sticky          = et_pb_sticky_options();
 		$responsive      = ET_Builder_Module_Helper_ResponsiveOptions::instance();
 		$position_config = $utils->array_get( $this->module->advanced_fields, self::TOGGLE_SLUG, array() );
 		$z_index_config  = $utils->array_get( $this->module->advanced_fields, 'z_index', array() );
@@ -397,18 +414,38 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				array_push( $views, 'tablet', 'phone' );
 			}
 
+			// If the module is sticky or inside a sticky module, we need to add z-index for sticky state
+			// with an `!important` flag to override sticky's default inline z-index: 10000 value when module enters sticky state.
+			if ( $sticky->is_sticky_module( $props ) || $is_parent_sticky ) {
+				array_push( $views, 'sticky' );
+			}
+
 			foreach ( $views as $type ) {
 				$value = $this->get_value( $props, 'z_index', $z_index_default, $type, false );
-				if ( '' !== $value ) {
-					$type_selector = 'hover' === $type ? "${z_index_selector}:hover" : $z_index_selector;
 
-					$el_style         = array(
+				if ( 'sticky' === $type ) {
+					$desktop_value = $this->get_value( $props, 'z_index', $z_index_default, 'desktop', false );
+					$value         = $sticky->get_value( 'z_index', $props, $desktop_value );
+					$z_important   = ' !important';
+				}
+
+				if ( '' !== $value ) {
+					$type_selector = $z_index_selector;
+
+					if ( 'hover' === $type ) {
+						$type_selector = $hover->add_hover_to_selectors( $z_index_selector );
+					}
+
+					if ( 'sticky' === $type ) {
+						$type_selector = $sticky->add_sticky_to_selectors( $z_index_selector, $sticky->is_sticky_module( $props ) );
+					}
+
+					$el_style = array(
 						'selector'    => $type_selector,
 						'declaration' => "z-index: $value$z_important;",
 						'priority'    => $this->module->get_style_priority(),
 					) + $this->get_media_query( $type );
 					ET_Builder_Element::set_style( $function_name, $el_style );
-
 					$has_z_index = true;
 				}
 			}
@@ -428,6 +465,10 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 
 			if ( $responsive->is_responsive_enabled( $props, 'positioning' ) ) {
 				array_push( $views, 'tablet', 'phone' );
+			}
+
+			if ( $is_parent_sticky ) {
+				array_push( $views, 'sticky' );
 			}
 
 			$position_origins = array();
@@ -472,6 +513,11 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				'vertical'   => $hover->is_enabled( 'vertical_offset', $props ),
 			);
 
+			$sticky_status = array(
+				'horizontal' => $is_parent_sticky ? $sticky->is_enabled( 'horizontal_offset', $props ) : false,
+				'vertical'   => $is_parent_sticky ? $sticky->is_enabled( 'vertical_offset', $props ) : false,
+			);
+
 			if ( $resp_status['horizontal'] || $resp_status['vertical'] ) {
 				if ( ! isset( $position_origins['tablet'] ) ) {
 					$position_origins['tablet'] = $position_origins['desktop'];
@@ -485,10 +531,27 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				$position_origins['hover'] = $position_origins['desktop'];
 			}
 
+			if ( ( $sticky_status['horizontal'] || $sticky_status['vertical'] ) && ! isset( $position_origins['sticky'] ) ) {
+				$position_origins['sticky'] = $position_origins['desktop'];
+			}
+
 			$this->module->set_position_locations( $position_origins );
 
 			foreach ( $position_origins as $type => $origin ) {
-				$type_selector       = 'hover' === $type ? "${position_selector}:hover" : $position_selector;
+				switch ( $type ) {
+					case 'hover':
+						$type_selector = $hover->add_hover_to_selectors( $position_selector );
+						break;
+
+					case 'sticky':
+						$type_selector = $sticky->add_sticky_to_selectors( $position_selector, false );
+						break;
+
+					default:
+						$type_selector = $position_selector;
+						break;
+				}
+
 				$active_origin       = $origin;
 				$is_default_position = false;
 				$default_strpos      = strpos( $origin, '_is_default' );
@@ -512,11 +575,17 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				foreach ( $offsets as $offsetSlug ) {
 					$field_slug    = "${offsetSlug}_offset";
 					$is_hover      = 'hover' === $type && $hover_status[ $offsetSlug ];
+					$is_sticky     = 'sticky' === $type;
 					$is_responsive = in_array( $type, array( 'tablet', 'phone' ) ) && $resp_status[ $offsetSlug ];
-					$offset_view   = $is_hover ? 'hover' : ( $is_responsive ? $type : 'desktop' );
+					$offset_view   = $is_hover || $is_sticky || $is_responsive ? $type : 'desktop';
 					$value         = esc_attr( $this->get_value( $props, $field_slug, '0px', $offset_view, true ) );
 
-					if ( 'desktop' === $offset_view && $is_default_position && 'top_left' === $active_origin && '0px' === $value ) {
+					if (
+						in_array( $offset_view, array( 'desktop', 'sticky' ), true )
+						&& $is_default_position
+						&& 'top_left' === $active_origin
+						&& '0px' === $value
+					) {
 						continue;
 					}
 

@@ -610,16 +610,17 @@ if ( et_is_woocommerce_plugin_active() ) {
 		 * @return array
 		 */
 		public static function output_data_icon_attrs( $outer_wrapper_attrs, $this_class ) {
-			$hover_icon        = et_()->array_get( $this_class->props, 'hover_icon', '' );
-			$hover_icon_values = et_pb_responsive_options()->get_property_values( $this_class->props, 'hover_icon' );
-			$hover_icon_tablet = et_()->array_get( $hover_icon_values, 'tablet', '' );
-			$hover_icon_phone  = et_()->array_get( $hover_icon_values, 'phone', '' );
-
+			$hover_icon         = et_()->array_get( $this_class->props, 'hover_icon', '' );
+			$hover_icon_values  = et_pb_responsive_options()->get_property_values( $this_class->props, 'hover_icon' );
+			$hover_icon_tablet  = et_()->array_get( $hover_icon_values, 'tablet', '' );
+			$hover_icon_phone   = et_()->array_get( $hover_icon_values, 'phone', '' );
+			$hover_icon_sticky  = et_pb_sticky_options()->get_value( 'hover_icon', $this_class->props );
 			$overlay_attributes = ET_Builder_Module_Helper_Overlay::get_attributes(
 				array(
 					'icon'        => $hover_icon,
 					'icon_tablet' => $hover_icon_tablet,
 					'icon_phone'  => $hover_icon_phone,
+					'icon_sticky' => $hover_icon_sticky,
 				)
 			);
 

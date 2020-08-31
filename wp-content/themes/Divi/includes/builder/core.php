@@ -6365,6 +6365,28 @@ if ( ! function_exists( 'et_maybe_enable_embed_shortcode' ) ) :
 endif;
 
 /**
+ * Calculate value which has unit on it.
+ *
+ * Might need to group this style rendering related utils function if there are more of them
+ *
+ * @used-by ET_Builder_Module_Helper_Overlay::process_icon_font_size()
+ *
+ * @param string         $value      base value which has unit.
+ * @param int|float      $multiplier multiplier (literally).
+ * @param bool|int|float $min_value  minimum $value to do calculation. set to false to skip.
+ *
+ * @return string
+ */
+function et_builder_multiply_value_has_unit( $value, $multiplier, $min_value = false ) {
+	$number           = (float) $value;
+	$unit             = str_replace( $number, '', $value );
+	$should_calculate = false === $min_value || $min_value < $number;
+	$product          = $should_calculate ? $number * (float) $multiplier : $min_value;
+
+	return (string) $product . $unit;
+}
+
+/**
  * Register custom sidebars.
  *
  * @since 4.4.8 Moved from builder/functions.php, so it can be loaded on wp_ajax_save_widget()

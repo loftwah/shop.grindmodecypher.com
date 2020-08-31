@@ -165,6 +165,7 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 				'toggle_slug'    => 'arrows_color',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'priority'       => 5,
 			),
 			'use_icon_font_size' => array(
@@ -202,6 +203,7 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 				'mobile_options'   => true,
 				'depends_show_if'  => 'on',
 				'responsive'       => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			),
 		);
@@ -314,7 +316,8 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		global $et_pb_slider_image_overlay;
+		global $et_pb_slider_image_overlay,
+			$et_pb_video_slider_sticky;
 
 		$multi_view = et_pb_multi_view_options( $this );
 		$multi_view->set_custom_prop( 'show_image_overlay', $et_pb_slider_image_overlay );
@@ -325,95 +328,43 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 		$video_src = '';
 
 		// Controls.
-		$use_icon_font_size     = $this->props['use_icon_font_size'];
-		$play_icon_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'play_icon_color' );
-		$play_icon_color_hover  = $this->get_hover_value( 'play_icon_color' );
-		$icon_font_size_values  = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
-		$icon_font_size_hover   = $this->get_hover_value( 'icon_font_size' );
-
-		// Responsive background layout.
-		$background_layout               = $this->props['background_layout'];
-		$background_layout_hover         = et_pb_hover_options()->get_value( 'background_layout', $this->props, 'light' );
-		$background_layout_hover_enabled = et_pb_hover_options()->is_enabled( 'background_layout', $this->props );
-		$background_layout_values        = et_pb_responsive_options()->get_property_values( $this->props, 'background_layout' );
-		$background_layout_tablet        = isset( $background_layout_values['tablet'] ) ? $background_layout_values['tablet'] : '';
-		$background_layout_phone         = isset( $background_layout_values['phone'] ) ? $background_layout_values['phone'] : '';
+		$use_icon_font_size = $this->props['use_icon_font_size'];
 
 		// Play Icon color.
-		et_pb_responsive_options()->generate_responsive_css( $play_icon_color_values, '%%order_class%%.et_pb_slide .et_pb_video_play', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'play_icon_color', $this->props ) ) {
-
-			$el_style = array(
-				'selector'    => '%%order_class%%.et_pb_slide .et_pb_video_play:hover',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $play_icon_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'play_icon_color',
+				'selector'                        => '%%order_class%%.et_pb_slide .et_pb_video_play',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Icon Size.
-		$icon_selector = '%%order_class%%.et_pb_slide .et_pb_video_play';
 		if ( 'off' !== $use_icon_font_size ) {
-			// Proccess for each devices.
-			foreach ( $icon_font_size_values as $font_size_key => $font_size_value ) {
-				if ( '' === $font_size_value ) {
-					continue;
-				}
+			// Icon Font Size.
+			$this->generate_styles(
+				array(
+					'base_attr_name'                  => 'icon_font_size',
+					'selector'                        => '.et_pb_video_slider %%order_class%%.et_pb_slide .et_pb_video_wrap .et_pb_video_overlay .et_pb_video_play',
+					'hover_pseudo_selector_location'  => 'suffix',
+					'sticky_pseudo_selector_location' => 'prefix',
+					'render_slug'                     => $render_slug,
+					'type'                            => 'range',
+					'is_sticky_module'                => $et_pb_video_slider_sticky,
 
-				$media_query = 'general';
-				if ( 'tablet' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_980' );
-				} elseif ( 'phone' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_767' );
-				}
-
-				$font_size_value_int  = (int) $font_size_value;
-				$font_size_value_unit = str_replace( $font_size_value_int, '', $font_size_value );
-				$font_size_value_half = 0 < $font_size_value_int ? -1 * $font_size_value_int / 2 : 0;
-				$font_size_value_half = (string) $font_size_value_half . $font_size_value_unit;
-
-				$el_style = array(
-					'selector'    => '%%order_class%%.et_pb_slide .et_pb_video_play',
-					'declaration' => sprintf(
-						'font-size:%1$s; line-height:%1$s; margin-top:%2$s;',
-						esc_html( $font_size_value ),
-						esc_html( $font_size_value_half )
+					// processed attr value can't be directly assigned to single css property so
+					// custom processor is needed to render this attr.
+					'processor'                       => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_overlay_icon_font_size',
 					),
-					'media_query' => $media_query,
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-
-				$el_style = array(
-					'selector'    => '%%order_class%%.et_pb_slide .et_pb_video_wrap .et_pb_video_overlay .et_pb_video_play',
-					'declaration' => sprintf(
-						'margin-left:%1$s;',
-						esc_html( $font_size_value_half )
-					),
-					'media_query' => $media_query,
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
-
-			// Icon hover styles.
-			if ( et_builder_is_hover_enabled( 'icon_font_size', $this->props ) && '' !== $icon_font_size_hover ) {
-				$icon_font_size_hover_int  = (int) $icon_font_size_hover;
-				$icon_font_size_hover_unit = str_replace( $icon_font_size_hover_int, '', $icon_font_size_hover );
-				$icon_font_size_hover_half = 0 < $icon_font_size_hover_int ? $icon_font_size_hover_int / 2 : 0;
-				$icon_font_size_hover_half = (string) $icon_font_size_hover_half . $icon_font_size_hover_unit;
-
-				$el_style = array(
-					'selector'    => $this->add_hover_to_selectors( $icon_selector ),
-					'declaration' => sprintf(
-						'font-size:%1$s; line-height:%1$s; margin-top:-%2$s; margin-left:-%2$s;',
-						esc_html( $icon_font_size_hover ),
-						esc_html( $icon_font_size_hover_half )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
+				)
+			);
 		}
 
 		global $et_pb_slider_image_overlay;
@@ -511,17 +462,12 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 		$this->add_classname(
 			array(
 				'et_pb_slide',
-				"et_pb_bg_layout_{$background_layout}",
 			)
 		);
 
-		if ( ! empty( $background_layout_tablet ) ) {
-			$this->add_classname( "et_pb_bg_layout_{$background_layout_tablet}_tablet" );
-		}
-
-		if ( ! empty( $background_layout_phone ) ) {
-			$this->add_classname( "et_pb_bg_layout_{$background_layout_phone}_phone" );
-		}
+		// Background layout class names.
+		$background_layout_class_names = et_pb_background_layout_options()->get_background_layout_class( $this->props );
+		$this->add_classname( $background_layout_class_names );
 
 		// Remove automatically added classnames
 		$this->remove_classname(
@@ -531,18 +477,8 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 			)
 		);
 
-		$data_background_layout       = '';
-		$data_background_layout_hover = '';
-		if ( $background_layout_hover_enabled ) {
-			$data_background_layout       = sprintf(
-				' data-background-layout="%1$s"',
-				esc_attr( $background_layout )
-			);
-			$data_background_layout_hover = sprintf(
-				' data-background-layout-hover="%1$s"',
-				esc_attr( $background_layout_hover )
-			);
-		}
+		// Background layout data attributes.
+		$data_background_layout = et_pb_background_layout_options()->get_background_layout_attrs( $this->props );
 
 		$multi_view_image_srcs_data_attr = $multi_view->render_attrs(
 			array(
@@ -553,7 +489,7 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 		);
 
 		$output = sprintf(
-			'<div class="%1$s"%3$s%4$s%5$s%6$s>
+			'<div class="%1$s"%3$s%4$s%5$s>
 				%2$s
 			</div> <!-- .et_pb_slide -->
 			',
@@ -561,7 +497,6 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 			( '' !== $video_output ? $video_output : '' ),
 			( '' !== $multi_view->get_value( 'image_srcs' ) ? sprintf( ' data-image="%1$s"', esc_attr( $multi_view->get_value( 'image_srcs' ) ) ) : '' ),
 			et_core_esc_previously( $data_background_layout ),
-			et_core_esc_previously( $data_background_layout_hover ), // #5
 			$multi_view_image_srcs_data_attr
 		);
 

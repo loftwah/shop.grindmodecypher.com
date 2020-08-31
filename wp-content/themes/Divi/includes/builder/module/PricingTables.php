@@ -300,6 +300,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 23,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'featured_table_header_background_color'       => array(
 				'label'          => esc_html__( 'Featured Header Background Color', 'et_builder' ),
@@ -311,6 +312,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 21,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'featured_table_header_text_color'             => array(
 				'label'          => esc_html__( 'Featured Title Text Color', 'et_builder' ),
@@ -322,6 +324,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 20,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'header_background_color'                      => array(
 				'label'          => esc_html__( 'Table Header Background Color', 'et_builder' ),
@@ -332,6 +335,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'toggle_slug'    => 'header',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'featured_table_subheader_text_color'          => array(
 				'label'          => esc_html__( 'Featured Subtitle Text Color', 'et_builder' ),
@@ -343,6 +347,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 20,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'featured_table_text_color'                    => array(
 				'label'          => esc_html__( 'Featured Body Text Color', 'et_builder' ),
@@ -355,6 +360,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 8,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'show_bullet'                                  => array(
 				'label'            => esc_html__( 'Show Bullets', 'et_builder' ),
@@ -383,6 +389,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 22,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'bullet_color'                                 => array(
 				'label'           => esc_html__( 'Bullet Color', 'et_builder' ),
@@ -394,6 +401,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'depends_show_if' => 'on',
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'show_featured_drop_shadow'                    => array(
 				'label'            => esc_html__( 'Show Featured Drop Shadow', 'et_builder' ),
@@ -420,6 +428,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 20,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'featured_table_price_background_color'        => array(
 				'label'          => esc_html__( 'Featured Pricing Area Background Color', 'et_builder' ),
@@ -431,6 +440,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 18,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'featured_table_price_color'                   => array(
 				'label'          => esc_html__( 'Featured Price Text Color', 'et_builder' ),
@@ -442,6 +452,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 19,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'featured_table_currency_frequency_text_color' => array(
 				'label'          => esc_html__( 'Featured Currency &amp; Frequency Text Color', 'et_builder' ),
@@ -453,6 +464,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 20,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'price_background_color'                       => array(
 				'label'          => esc_html__( 'Pricing Area Background Color', 'et_builder' ),
@@ -464,6 +476,7 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 				'priority'       => 21,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 		);
 		return $fields;
@@ -491,7 +504,15 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 	}
 
 	function before_render() {
-		global $et_pb_pricing_tables_num, $et_pb_pricing_tables_icon, $et_pb_pricing_tables_icon_tablet, $et_pb_pricing_tables_icon_phone, $et_pb_pricing_tab, $et_pb_pricing_tables_button_rel, $et_pb_pricing_tables_header_level;
+		global $et_pb_pricing_tables_num,
+			$et_pb_pricing_tables_icon,
+			$et_pb_pricing_tables_icon_tablet,
+			$et_pb_pricing_tables_icon_phone,
+			$et_pb_pricing_tab,
+			$et_pb_pricing_tables_button_rel,
+			$et_pb_pricing_tables_header_level,
+			$et_pb_pricing_tables_sticky,
+			$et_pb_pricing_tables_sticky_transition;
 
 		$button_custom = $this->props['custom_button'];
 
@@ -508,44 +529,23 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 
 		$et_pb_pricing_tables_button_rel   = $this->props['button_rel'];
 		$et_pb_pricing_tables_header_level = 'h2' === $this->props['header_level'] ? '' : $this->props['header_level'];
+
+		// Pass down sticky module status for correct selector suffix placement.
+		$et_pb_pricing_tables_sticky = et_pb_sticky_options()->is_sticky_module( $this->props );
+
+		// Module item has no sticky options hence this needs to be inherited to setup transition.
+		$et_pb_pricing_tables_sticky_transition = et_()->array_get( $this->props, 'sticky_transition', 'on' );
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view                                    = et_pb_multi_view_options( $this );
-		$featured_table                                = $this->get_featured_table( $content );
-		$featured_table_background_color_hover         = $this->get_hover_value( 'featured_table_background_color' );
-		$featured_table_background_color_values        = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_background_color' );
-		$featured_table_text_color_hover               = $this->get_hover_value( 'featured_table_text_color' );
-		$featured_table_text_color_values              = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_text_color' );
-		$header_background_color_hover                 = $this->get_hover_value( 'header_background_color' );
-		$header_background_color_values                = et_pb_responsive_options()->get_property_values( $this->props, 'header_background_color' );
-		$featured_table_header_background_color_hover  = $this->get_hover_value( 'featured_table_header_background_color' );
-		$featured_table_header_background_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_header_background_color' );
-		$featured_table_header_text_color_hover        = $this->get_hover_value( 'featured_table_header_text_color' );
-		$featured_table_header_text_color_values       = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_header_text_color' );
-		$featured_table_subheader_text_color_hover     = $this->get_hover_value( 'featured_table_subheader_text_color' );
-		$featured_table_subheader_text_color_values    = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_subheader_text_color' );
-		$featured_table_currency_text_color_hover      = $this->get_hover_value( 'featured_table_currency_frequency_text_color' );
-		$featured_table_currency_text_color_values     = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_currency_frequency_text_color' );
-		$featured_table_price_color_hover              = $this->get_hover_value( 'featured_table_price_color' );
-		$featured_table_price_color_values             = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_price_color' );
-		$bullet_color_hover                            = $this->get_hover_value( 'bullet_color' );
-		$bullet_color_values                           = et_pb_responsive_options()->get_property_values( $this->props, 'bullet_color' );
-		$featured_table_bullet_color_hover             = $this->get_hover_value( 'featured_table_bullet_color' );
-		$featured_table_bullet_color_values            = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_bullet_color' );
-		$featured_table_excluded_text_color_hover      = $this->get_hover_value( 'featured_table_excluded_text_color' );
-		$featured_table_excluded_text_color_values     = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_excluded_text_color' );
-		$featured_table_price_background_color_hover   = $this->get_hover_value( 'featured_table_price_background_color' );
-		$featured_table_price_background_color_values  = et_pb_responsive_options()->get_property_values( $this->props, 'featured_table_price_background_color' );
-		$price_background_color_hover                  = $this->get_hover_value( 'price_background_color' );
-		$price_background_color_values                 = et_pb_responsive_options()->get_property_values( $this->props, 'price_background_color' );
+		$multi_view     = et_pb_multi_view_options( $this );
+		$featured_table = $this->get_featured_table( $content );
 
 		$show_featured_drop_shadow        = $this->props['show_featured_drop_shadow'];
 		$show_featured_drop_shadow_values = et_pb_responsive_options()->get_property_values( $this->props, 'show_featured_drop_shadow' );
 		$show_featured_drop_shadow_tablet = isset( $show_featured_drop_shadow_values['tablet'] ) ? $show_featured_drop_shadow_values['tablet'] : '';
 		$show_featured_drop_shadow_phone  = isset( $show_featured_drop_shadow_values['phone'] ) ? $show_featured_drop_shadow_values['phone'] : '';
-
-		$body_text_align_values = et_pb_responsive_options()->get_property_values( $this->props, 'body_text_align' );
+		$body_text_align_values           = et_pb_responsive_options()->get_property_values( $this->props, 'body_text_align' );
 
 		global $et_pb_pricing_tables_num, $et_pb_pricing_tables_icon, $et_pb_pricing_tables_icon_tablet, $et_pb_pricing_tables_icon_phone;
 
@@ -593,190 +593,171 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 		et_pb_responsive_options()->generate_responsive_css( $featured_shadow_values, '%%order_class%% .et_pb_featured_table', array( '-moz-box-shadow', '-webkit-box-shadow', 'box-shadow' ), $render_slug, '', 'shadow' );
 
 		// Featured Table Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_background_color_values, '%%order_class%% .et_pb_featured_table', 'background-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_featured_table:hover',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $featured_table_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'featured_table_background_color',
+				'selector'                        => '%%order_class%% .et_pb_featured_table',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Header Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $header_background_color_values, '%%order_class%% .et_pb_pricing_heading', 'background-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'header_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_pricing_table:hover .et_pb_pricing_heading',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $header_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'header_background_color',
+				'selector'       => '%%order_class%% .et_pb_pricing_heading',
+				'hover_selector' => '%%order_class%% .et_pb_pricing_table:hover .et_pb_pricing_heading',
+				'css_property'   => 'background-color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
 
 		// Featured Table Header Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_header_background_color_values, '%%order_class%% .et_pb_featured_table .et_pb_pricing_heading', 'background-color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_header_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_heading',
-				'declaration' => sprintf(
-					'background-color: %1$s !important;',
-					esc_html( $featured_table_header_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'featured_table_header_background_color',
+				'selector'       => '%%order_class%% .et_pb_featured_table .et_pb_pricing_heading',
+				'hover_selector' => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_heading',
+				'css_property'   => 'background-color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+				'important'      => true,
+			)
+		);
 
 		// Featured Table Title Text Color.
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_header_text_color_values, '%%order_class%% .et_pb_featured_table .et_pb_pricing_heading h2, %%order_class%% .et_pb_featured_table .et_pb_pricing_heading .et_pb_pricing_title', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_header_text_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_heading h2, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing_heading .et_pb_pricing_title',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $featured_table_header_text_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'featured_table_header_text_color',
+				'selector'       => '%%order_class%% .et_pb_featured_table .et_pb_pricing_heading h2, %%order_class%% .et_pb_featured_table .et_pb_pricing_heading .et_pb_pricing_title',
+				'hover_selector' => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_heading h2, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing_heading .et_pb_pricing_title',
+				'css_property'   => 'color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+				'important'      => true,
+			)
+		);
 
 		// Featured Table Sutitle Text Color.
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_subheader_text_color_values, '%%order_class%% .et_pb_featured_table .et_pb_best_value', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_subheader_text_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_featured_table:hover .et_pb_best_value',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $featured_table_subheader_text_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'featured_table_subheader_text_color',
+				'selector'       => '%%order_class%% .et_pb_featured_table .et_pb_best_value',
+				'hover_selector' => '%%order_class%% .et_pb_featured_table:hover .et_pb_best_value',
+				'css_property'   => 'color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+				'important'      => true,
+			)
+		);
 
 		// Featured Table Price Text Color.
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_price_color_values, '%%order_class%% .et_pb_featured_table .et_pb_sum', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_price_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_featured_table:hover .et_pb_sum',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $featured_table_price_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'featured_table_price_color',
+				'selector'       => '%%order_class%% .et_pb_featured_table .et_pb_sum',
+				'hover_selector' => '%%order_class%% .et_pb_featured_table:hover .et_pb_sum',
+				'css_property'   => 'color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+				'important'      => true,
+			)
+		);
 
 		// Featured Table Body Text Color.
-		$featured_table_text_color_selector = et_builder_has_limitation( 'use_additional_limiting_styles' ) ? '%%order_class%% .et_pb_featured_table .et_pb_pricing_content li, %%order_class%% .et_pb_featured_table .et_pb_pricing_content li span, %%order_class%% .et_pb_featured_table .et_pb_pricing_content li a' : '%%order_class%% .et_pb_featured_table .et_pb_pricing_content li';
+		$featured_table_text_color_selector       = et_builder_has_limitation( 'use_additional_limiting_styles' ) ? '%%order_class%% .et_pb_featured_table .et_pb_pricing_content li, %%order_class%% .et_pb_featured_table .et_pb_pricing_content li span, %%order_class%% .et_pb_featured_table .et_pb_pricing_content li a' : '%%order_class%% .et_pb_featured_table .et_pb_pricing_content li';
+		$featured_table_text_color_selector_hover = et_is_builder_plugin_active() ? '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content li, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content li span, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content li a' : '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content li';
 
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_text_color_values, $featured_table_text_color_selector, 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_text_color', $this->props ) ) {
-			$featured_table_text_color_selector_hover = et_is_builder_plugin_active() ? '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content li, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content li span, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content li a' : '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content li';
-
-			$el_style = array(
-				'selector'    => $featured_table_text_color_selector_hover,
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $featured_table_text_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'featured_table_text_color',
+				'selector'       => $featured_table_text_color_selector,
+				'hover_selector' => $featured_table_text_color_selector_hover,
+				'css_property'   => 'color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+				'important'      => true,
+			)
+		);
 
 		// Bullet Color.
-		et_pb_responsive_options()->generate_responsive_css( $bullet_color_values, '%%order_class%% .et_pb_pricing li span:before', 'border-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'bullet_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_pricing:hover li span:before',
-				'declaration' => sprintf(
-					'border-color: %1$s;',
-					esc_html( $bullet_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'bullet_color',
+				'selector'       => '%%order_class%% .et_pb_pricing li span:before',
+				'hover_selector' => '%%order_class%% .et_pb_pricing:hover li span:before',
+				'css_property'   => 'border-color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
 
 		// Featured Table Bullet Color.
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_bullet_color_values, '%%order_class%% .et_pb_featured_table .et_pb_pricing li span:before', 'border-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_bullet_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing li span:before',
-				'declaration' => sprintf(
-					'border-color: %1$s;',
-					esc_html( $featured_table_bullet_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'featured_table_bullet_color',
+				'selector'       => '%%order_class%% .et_pb_featured_table .et_pb_pricing li span:before',
+				'hover_selector' => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing li span:before',
+				'css_property'   => 'border-color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
 
 		// Featured Table Currency Frequency Text Color.
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_currency_text_color_values, '%%order_class%% .et_pb_featured_table .et_pb_dollar_sign, %%order_class%% .et_pb_featured_table .et_pb_frequency', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_currency_frequency_text_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_featured_table:hover .et_pb_dollar_sign, %%order_class%% .et_pb_featured_table:hover .et_pb_frequency',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $featured_table_currency_text_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'featured_table_currency_frequency_text_color',
+				'selector'       => '%%order_class%% .et_pb_featured_table .et_pb_dollar_sign, %%order_class%% .et_pb_featured_table .et_pb_frequency',
+				'hover_selector' => '%%order_class%% .et_pb_featured_table:hover .et_pb_dollar_sign, %%order_class%% .et_pb_featured_table:hover .et_pb_frequency',
+				'css_property'   => 'color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+				'important'      => true,
+			)
+		);
 
 		// Featured Table Excluded Item Text Color.
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_excluded_text_color_values, '%%order_class%% .et_pb_featured_table .et_pb_pricing li.et_pb_not_available, %%order_class%% .et_pb_featured_table .et_pb_pricing li.et_pb_not_available span, %%order_class%% .et_pb_featured_table .et_pb_pricing li.et_pb_not_available a', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_excluded_text_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing li.et_pb_not_available, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing li.et_pb_not_available span, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing li.et_pb_not_available a',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $featured_table_excluded_text_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'featured_table_excluded_text_color',
+				'selector'       => '%%order_class%% .et_pb_featured_table .et_pb_pricing li.et_pb_not_available, %%order_class%% .et_pb_featured_table .et_pb_pricing li.et_pb_not_available span, %%order_class%% .et_pb_featured_table .et_pb_pricing li.et_pb_not_available a',
+				'hover_selector' => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing li.et_pb_not_available, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing li.et_pb_not_available span, %%order_class%% .et_pb_featured_table:hover .et_pb_pricing li.et_pb_not_available a',
+				'css_property'   => 'color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+				'important'      => true,
+			)
+		);
 
 		// Featured Table Price Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $featured_table_price_background_color_values, '%%order_class%% .et_pb_featured_table .et_pb_pricing_content_top', 'background-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'featured_table_price_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content_top',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $featured_table_price_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'featured_table_price_background_color',
+				'selector'       => '%%order_class%% .et_pb_featured_table .et_pb_pricing_content_top',
+				'hover_selector' => '%%order_class%% .et_pb_featured_table:hover .et_pb_pricing_content_top',
+				'css_property'   => 'background-color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
 
 		// Price Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $price_background_color_values, '%%order_class%% .et_pb_pricing_content_top', 'background-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'price_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%%:hover .et_pb_pricing_content_top',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $price_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'price_background_color',
+				'selector'       => '%%order_class%% .et_pb_pricing_content_top',
+				'hover_selector' => '%%order_class%%:hover .et_pb_pricing_content_top',
+				'css_property'   => 'background-color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
 
 		// Custom Padding Left On Center.
 		if ( ! empty( $body_text_align_values ) ) {

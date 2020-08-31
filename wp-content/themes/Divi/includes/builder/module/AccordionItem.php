@@ -118,6 +118,7 @@ class ET_Builder_Module_Accordion_Item extends ET_Builder_Module {
 				),
 			),
 			'button'          => false,
+			'sticky'          => false,
 			'height'          => array(
 				'css' => array(
 					'main' => '%%order_class%% .et_pb_toggle_content',
@@ -193,6 +194,7 @@ class ET_Builder_Module_Accordion_Item extends ET_Builder_Module {
 				'toggle_slug'    => 'toggle',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'open_toggle_background_color'   => array(
 				'label'          => esc_html__( 'Open Toggle Background Color', 'et_builder' ),
@@ -203,6 +205,7 @@ class ET_Builder_Module_Accordion_Item extends ET_Builder_Module {
 				'toggle_slug'    => 'toggle_layout',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'closed_toggle_text_color'       => array(
 				'label'          => esc_html__( 'Closed Title Text Color', 'et_builder' ),
@@ -213,6 +216,7 @@ class ET_Builder_Module_Accordion_Item extends ET_Builder_Module {
 				'toggle_slug'    => 'closed_toggle',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'closed_toggle_background_color' => array(
 				'label'          => esc_html__( 'Closed Toggle Background Color', 'et_builder' ),
@@ -223,6 +227,7 @@ class ET_Builder_Module_Accordion_Item extends ET_Builder_Module {
 				'toggle_slug'    => 'toggle_layout',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'icon_color'                     => array(
 				'label'          => esc_html__( 'Icon Color', 'et_builder' ),
@@ -233,6 +238,7 @@ class ET_Builder_Module_Accordion_Item extends ET_Builder_Module {
 				'toggle_slug'    => 'icon',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'use_icon_font_size'             => array(
 				'label'            => esc_html__( 'Use Icon Font Size', 'et_builder' ),
@@ -267,6 +273,7 @@ class ET_Builder_Module_Accordion_Item extends ET_Builder_Module {
 					'step' => '1',
 				),
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'depends_show_if'  => 'on',
 				'hover'            => 'tabs',
 			),

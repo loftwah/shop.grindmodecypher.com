@@ -112,6 +112,7 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 				'toggle_slug'    => 'tab',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'inactive_tab_background_color' => array(
 				'label'          => esc_html__( 'Inactive Tab Background Color', 'et_builder' ),
@@ -122,6 +123,7 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 				'toggle_slug'    => 'tab',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'active_tab_text_color'         => array(
 				'label'          => esc_html__( 'Active Tab Text Color', 'et_builder' ),
@@ -132,6 +134,7 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 				'toggle_slug'    => 'tab',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 		);
 		return $fields;
@@ -201,59 +204,50 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$active_tab_background_color_hover    = $this->get_hover_value( 'active_tab_background_color' );
-		$active_tab_background_color_values   = et_pb_responsive_options()->get_property_values( $this->props, 'active_tab_background_color' );
-		$inactive_tab_background_color_hover  = $this->get_hover_value( 'inactive_tab_background_color' );
-		$inactive_tab_background_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'inactive_tab_background_color' );
-		$active_tab_text_color_hover          = $this->get_hover_value( 'active_tab_text_color' );
-		$active_tab_text_color_values         = et_pb_responsive_options()->get_property_values( $this->props, 'active_tab_text_color' );
-
 		$all_tabs_content = $this->get_tabs_content();
 
 		global $et_pb_tab_titles;
 		global $et_pb_tab_classes;
 
 		// Inactive Tab Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $inactive_tab_background_color_values, '%%order_class%% .et_pb_tabs_controls li', 'background-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'inactive_tab_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_tabs_controls li:hover',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $inactive_tab_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'inactive_tab_background_color',
+				'selector'                        => '%%order_class%% .et_pb_tabs_controls li',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Active Tab Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $active_tab_background_color_values, '%%order_class%% .et_pb_tabs_controls li.et_pb_tab_active', 'background-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'active_tab_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_tabs_controls li.et_pb_tab_active:hover',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $active_tab_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'active_tab_background_color',
+				'selector'                        => '%%order_class%% .et_pb_tabs_controls li.et_pb_tab_active',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Active Text Color
-		et_pb_responsive_options()->generate_responsive_css( $active_tab_text_color_values, '%%order_class%%.et_pb_tabs .et_pb_tabs_controls li.et_pb_tab_active a', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'active_tab_text_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_tabs_controls li.et_pb_tab_active:hover a',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $active_tab_text_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'active_tab_text_color',
+				'selector'                        => '%%order_class%%.et_pb_tabs .et_pb_tabs_controls li.et_pb_tab_active a',
+				'hover_selector'                  => '%%order_class%% .et_pb_tabs_controls li.et_pb_tab_active:hover a',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		$tabs = $this->get_tabs_nav();
 

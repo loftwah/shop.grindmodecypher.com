@@ -59,8 +59,10 @@ return array(
 	'Your Existing Pages'      => esc_html__( 'Your Existing Pages', 'et_builder' ),
 	'Your Saved Layouts'       => esc_html__( 'Your Saved Layouts', 'et_builder' ),
 	'$apiKeyHelp'              => et_get_safe_localization( sprintf( __( 'You can find your API Key <a href="%s" target="_blank">here</a>.', 'et_builder' ), 'https://www.elegantthemes.com/members-area/api/' ) ),
-	'$expiredAccount'          => et_get_safe_localization( sprintf( __( 'Your %s subscription has expired. In order to download Premade Layouts from the %s Library you must <a href="%s" target="_blank">renew your subscription</a>.', 'et_builder' ), 'Elegant Themes', 'Divi', 'https://www.elegantthemes.com/members-area' ) ),
-	'$noAccount'               => sprintf( esc_html__( 'Before you can download Premade Layouts from the %s Library you must authenticate your %s subscription.', 'et_builder' ), 'Divi', 'Elegant Themes' ),
+	// Translators: %1$s = Elegant Themes; %2$s = Divi; %3$s = URL to member area.
+	'$expiredAccount'          => et_get_safe_localization( sprintf( __( 'Your %1$s subscription has expired. In order to download Premade Layouts from the %2$s Library you must <a href="%3$s" target="_blank">renew your subscription</a>.', 'et_builder' ), 'Elegant Themes', 'Divi', 'https://www.elegantthemes.com/members-area' ) ),
+	// Translators: %1$s = Divi; %2$s = Elegant Themes; %3$s = URL to member area.
+	'$noAccount'               => sprintf( esc_html__( 'Before you can download Premade Layouts from the %1$s Library you must authenticate your %2$s subscription.', 'et_builder' ), 'Divi', 'Elegant Themes' ),
 	'$usernameHelp'            => esc_html__( 'This is the username that you use to access the Members Area on elegantthemes.com.', 'et_builder' ),
 	'@categories'              => require $sub_directory . '/categories.php',
 	'@layoutsLong'             => require $sub_directory . '/layouts-long.php',

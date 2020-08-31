@@ -169,6 +169,7 @@ class ET_Builder_Module_Signup_Item extends ET_Builder_Module {
 					),
 				),
 			),
+			'sticky'         => false,
 		);
 	}
 

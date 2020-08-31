@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.5.8' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.6.0' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -2402,6 +2402,9 @@ function et_builder_get_acceptable_css_string_values( $property = 'all' ) {
 			'inherit',
 			'initial',
 			'unset',
+		),
+		'z-index'    => array(
+			'auto',
 		),
 		'font-size'  => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ex', 'vh', 'vw' ),
 	);

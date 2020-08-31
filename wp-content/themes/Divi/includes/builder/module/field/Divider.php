@@ -196,6 +196,7 @@ class ET_Builder_Module_Field_Divider extends ET_Builder_Module_Field_Base {
 							"{$placement}_divider_style" => 'none',
 						),
 						'mobile_options' => true,
+						'sticky'         => true,
 					),
 					"{$placement}_divider_repeat"      => array(
 						'label'          => esc_html__( 'Divider Horizontal Repeat', 'et_builder' ),
@@ -306,6 +307,7 @@ class ET_Builder_Module_Field_Divider extends ET_Builder_Module_Field_Base {
 	 * for the background-image property.
 	 *
 	 * @since 3.23 Pass values parameter to support responsive settings.
+	 * @since ?? Add sticky style support.
 	 *
 	 * @param  string $placement Whether it is the top or bottom divider.
 	 * @param  array  $atts      Associative array of shortcode and their
@@ -503,11 +505,36 @@ class ET_Builder_Module_Field_Divider extends ET_Builder_Module_Field_Base {
 			);
 		}
 
-		if ( false !== $height_hover ) {
+		// Print Hover / Sticky height.
+		$modes = array( 'hover', 'sticky' );
+
+		// sprintf() removes `%` while add_hover* and add_sticky* only recognize %%order_class%%.
+		// thus append mode selector before $placement is re-added to the selector.
+		$height_selector_base = '%%order_class%%.section_has_divider.et_pb_%1$s_divider .et_pb_%1$s_inside_divider';
+
+		foreach ( $modes as $mode ) {
+			switch ( $mode ) {
+				case 'hover':
+					$helper               = et_pb_hover_options();
+					$height_mode_selector = $helper->add_hover_to_order_class( $height_selector_base );
+					break;
+
+				case 'sticky':
+					$helper               = et_pb_sticky_options();
+					$height_mode_selector = $helper->add_sticky_to_order_class( $height_selector_base, $helper->is_sticky_module( $atts ) );
+					break;
+			}
+
+			$height_mode = $helper->get_value( "{$placement}_divider_height", $atts, false );
+
+			if ( false === $height_mode ) {
+				continue;
+			}
+
 			$css      = '';
-			$height   = $height_hover;
+			$height   = $height_mode;
 			$selector = sprintf(
-				'%%order_class%%:hover.section_has_divider.et_pb_%1$s_divider .et_pb_%1$s_inside_divider',
+				$height_mode_selector,
 				esc_attr( $placement )
 			);
 

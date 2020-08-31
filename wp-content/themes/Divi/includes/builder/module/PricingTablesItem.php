@@ -204,6 +204,7 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 			),
 			'max_width'      => false,
 			'height'         => false,
+			'sticky'         => false,
 		);
 
 		$this->custom_css_fields = array(
@@ -373,6 +374,7 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 				'toggle_slug'    => 'bullet',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'price_background_color'  => array(
 				'label'          => esc_html__( 'Pricing Area Background Color', 'et_builder' ),
@@ -384,6 +386,7 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 				'priority'       => 21,
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'header_background_color' => array(
 				'label'          => esc_html__( 'Table Header Background Color', 'et_builder' ),
@@ -393,6 +396,7 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 				'toggle_slug'    => 'header',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 		);
 		return $fields;
@@ -408,24 +412,47 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 		return $fields;
 	}
 
-	function render( $attrs, $content = null, $render_slug ) {
-		global $et_pb_pricing_tables_num, $et_pb_pricing_tables_icon, $et_pb_pricing_tables_icon_tablet, $et_pb_pricing_tables_icon_phone, $et_pb_pricing_tables_button_rel, $et_pb_pricing_tables_header_level;
+	/**
+	 * Inherit value from pricing tables (parent) module
+	 *
+	 * @since ??
+	 */
+	public function maybe_inherit_values() {
+		global $et_pb_pricing_tables_sticky_transition;
 
-		$multi_view                     = et_pb_multi_view_options( $this );
-		$featured                       = $this->props['featured'];
-		$button_url                     = $this->props['button_url'];
-		$button_rel                     = $this->props['button_rel'];
-		$button_text                    = $this->_esc_attr( 'button_text', 'limited' );
-		$url_new_window                 = $this->props['url_new_window'];
-		$button_custom                  = $this->props['custom_button'];
-		$header_level                   = $this->props['header_level'];
-		$bullet_color_hover             = $this->get_hover_value( 'bullet_color' );
-		$bullet_color_values            = et_pb_responsive_options()->get_property_values( $this->props, 'bullet_color' );
-		$header_background_color_hover  = $this->get_hover_value( 'header_background_color' );
-		$header_background_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'header_background_color' );
-		$price_background_color_hover   = $this->get_hover_value( 'price_background_color' );
-		$price_background_color_values  = et_pb_responsive_options()->get_property_values( $this->props, 'price_background_color' );
-		$body_text_align_values         = et_pb_responsive_options()->get_property_values( $this->props, 'body_text_align' );
+		// Module item has no sticky option so we can go ahead and inherit parent's sticky attr.
+		$this->props['sticky_transition'] = $et_pb_pricing_tables_sticky_transition;
+	}
+
+	/**
+	 * Generates the module's HTML output based on {@see self::$props}.
+	 *
+	 * @since 1.0
+	 *
+	 * @param array  $attrs       List of unprocessed attributes.
+	 * @param string $content     Content being processed.
+	 * @param string $render_slug Slug of module that is used for rendering output.
+	 *
+	 * @return string The module's HTML output.
+	 */
+	public function render( $attrs, $content = null, $render_slug ) {
+		global $et_pb_pricing_tables_num,
+			$et_pb_pricing_tables_icon,
+			$et_pb_pricing_tables_icon_tablet,
+			$et_pb_pricing_tables_icon_phone,
+			$et_pb_pricing_tables_button_rel,
+			$et_pb_pricing_tables_header_level,
+			$et_pb_pricing_tables_sticky;
+
+		$multi_view             = et_pb_multi_view_options( $this );
+		$featured               = $this->props['featured'];
+		$button_url             = $this->props['button_url'];
+		$button_rel             = $this->props['button_rel'];
+		$button_text            = $this->_esc_attr( 'button_text', 'limited' );
+		$url_new_window         = $this->props['url_new_window'];
+		$button_custom          = $this->props['custom_button'];
+		$header_level           = $this->props['header_level'];
+		$body_text_align_values = et_pb_responsive_options()->get_property_values( $this->props, 'body_text_align' );
 
 		$custom_icon_values = et_pb_responsive_options()->get_property_values( $this->props, 'button_icon' );
 		$custom_icon        = isset( $custom_icon_values['desktop'] ) ? $custom_icon_values['desktop'] : '';
@@ -444,50 +471,54 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 		$custom_table_icon_phone  = 'on' === $button_custom && '' !== $custom_icon_phone ? $custom_icon_phone : $et_pb_pricing_tables_icon_phone;
 
 		// Bullet color.
-		et_pb_responsive_options()->generate_responsive_css( $bullet_color_values, '%%order_class%% .et_pb_pricing_content ul.et_pb_pricing li span:before', 'border-color', $render_slug, '', 'color' );
+		$this->generate_styles(
+			array(
+				'base_attr_name'   => 'bullet_color',
+				'selector'         => '%%order_class%% .et_pb_pricing_content ul.et_pb_pricing li span:before',
+				'hover_selector'   => '%%order_class%% .et_pb_pricing_content ul.et_pb_pricing:hover li span:before',
+				'css_property'     => 'border-color',
+				'render_slug'      => $render_slug,
+				'type'             => 'color',
 
-		if ( et_builder_is_hover_enabled( 'bullet_color', $this->props ) ) {
-			ET_Builder_Element::set_style(
-				$render_slug,
-				array(
-					'selector'    => '%%order_class%% .et_pb_pricing_content ul.et_pb_pricing:hover li span:before',
-					'declaration' => sprintf(
-						'border-color: %1$s;',
-						esc_html( $bullet_color_hover )
-					),
-				)
-			);
-		}
+				// Selector begins with current module item selector so this will never be sticky.
+				'is_sticky_module' => false,
+			)
+		);
 
 		// Header Background Color. In the parent item, header BG color doesn't has higher selector
 		// because it uses .et_pb_pricing_table as hover location. So, we should append the same
 		// parent class here because there is no class can be used to make current selector higher.
-		et_pb_responsive_options()->generate_responsive_css( $header_background_color_values, '.et_pb_pricing %%order_class%%.et_pb_pricing_table .et_pb_pricing_heading', 'background-color', $render_slug, ' !important;', 'color' );
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'header_background_color',
+				'selector'                        => '.et_pb_pricing %%order_class%%.et_pb_pricing_table .et_pb_pricing_heading',
+				'hover_selector'                  => '.et_pb_pricing %%order_class%%.et_pb_pricing_table:hover .et_pb_pricing_heading',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
 
-		if ( et_builder_is_hover_enabled( 'header_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '.et_pb_pricing %%order_class%%.et_pb_pricing_table:hover .et_pb_pricing_heading',
-				'declaration' => sprintf(
-					'background-color: %1$s !important;',
-					esc_html( $header_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+				// Selector begins with parent module selector so this should use value inherited
+				// from the parent module for accuracy.
+				'is_sticky_module'                => $et_pb_pricing_tables_sticky,
+			)
+		);
 
 		// Pricing Area Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $price_background_color_values, '%%order_class%%.et_pb_pricing_table .et_pb_pricing_content_top', 'background-color', $render_slug, '', 'color' );
+		$this->generate_styles(
+			array(
+				'base_attr_name'   => 'price_background_color',
+				'selector'         => '%%order_class%%.et_pb_pricing_table .et_pb_pricing_content_top',
+				'hover_selector'   => '%%order_class%%.et_pb_pricing_table:hover .et_pb_pricing_content_top',
+				'css_property'     => 'background-color',
+				'render_slug'      => $render_slug,
+				'type'             => 'color',
 
-		if ( et_builder_is_hover_enabled( 'price_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%%.et_pb_pricing_table:hover .et_pb_pricing_content_top',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $price_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+				// Selector begins with current module item selector so this will never be sticky.
+				'is_sticky_module' => false,
+			)
+		);
 
 		// Custom Padding Left On Center.
 		if ( ! empty( $body_text_align_values ) ) {

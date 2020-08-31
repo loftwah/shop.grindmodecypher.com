@@ -89,6 +89,7 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 				),
 			),
 			'button'         => false,
+			'sticky'         => false,
 			'form_field'     => array(
 				'form_field' => array(
 					'label'          => esc_html__( 'Field', 'et_builder' ),

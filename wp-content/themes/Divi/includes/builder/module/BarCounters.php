@@ -136,6 +136,7 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 				'description'    => esc_html__( 'This will change the fill color for the bar.', 'et_builder' ),
 				'default'        => et_builder_accent_color(),
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'use_percentages' => array(
 				'label'            => esc_html__( 'Show Percentage', 'et_builder' ),
@@ -189,6 +190,9 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 		$background_color_hover        = et_pb_hover_options()->get_compose_value( 'background_color', 'background', $this->props, '' );
 		$background_enable_color_hover = et_pb_hover_options()->get_compose_value( 'background_enable_color', 'background', $this->props, '' );
 
+		// Sticky Element.
+		$is_sticky_module = et_pb_sticky_options()->is_sticky_module( $this->props );
+
 		$et_pb_counters_settings = array(
 			// Background Color.
 			'background_last_edited'                  => $background_last_edited,
@@ -216,12 +220,12 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 			'use_percentages'                         => $multi_view->get_values( 'use_percentages' ),
 			'background_video_pause_outside_viewport' => $background_video_pause_outside_viewport,
 			'use_background_color_gradient'           => $use_background_color_gradient,
+			'is_sticky_module'                        => $is_sticky_module,
 		);
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$bar_bg_hover_color = et_pb_hover_options()->get_value( 'bar_bg_color', $this->props );
-		$video_background   = $this->video_background();
+		$video_background = $this->video_background();
 
 		// Module classname
 		$this->add_classname(
@@ -239,15 +243,26 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 		// Background layout data attributes.
 		$data_background_layout = et_pb_background_layout_options()->get_background_layout_attrs( $this->props );
 
-		if ( ! empty( $bar_bg_hover_color ) ) {
-			self::set_style(
-				$render_slug,
-				array(
-					'selector'    => '%%order_class%%:hover .et_pb_counter_amount',
-					'declaration' => sprintf( 'background-color: %1$s;', esc_attr( $bar_bg_hover_color ) ),
-				)
-			);
-		}
+		// Sticky & Hover style rendering.
+		$this->generate_styles(
+			array(
+				'responsive'     => false,
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'background_color',
+				'css_property'   => 'background-color',
+				'selector'       => '%%order_class%% .et_pb_counter_container',
+			)
+		);
+
+		$this->generate_styles(
+			array(
+				'responsive'     => false,
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'bar_bg_color',
+				'css_property'   => 'background-color',
+				'selector'       => '%%order_class%% .et_pb_counter_amount',
+			)
+		);
 
 		$output = sprintf(
 			'<ul%3$s class="%2$s"%4$s>

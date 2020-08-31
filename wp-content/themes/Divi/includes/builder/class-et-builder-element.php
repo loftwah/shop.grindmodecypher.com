@@ -129,6 +129,15 @@ class ET_Builder_Element {
 	);
 
 	/**
+	 * Sticky element configuration
+	 *
+	 * @since ??
+	 *
+	 * @var array
+	 */
+	public static $sticky_elements = array();
+
+	/**
 	 * Number of times {@see self::render()} has been executed.
 	 *
 	 * @var int
@@ -272,6 +281,13 @@ class ET_Builder_Element {
 	 * @var boolean
 	 */
 	protected $is_rendering = false;
+
+	/**
+	 * Flag if current module is sticky or not
+	 *
+	 * @var boolean
+	 */
+	protected $is_sticky_module = false;
 
 	/**
 	 * List of props keys that need to inherit the value
@@ -1810,6 +1826,7 @@ class ET_Builder_Element {
 		}
 
 		foreach ( $values as $attr => $value ) {
+			// Inject module props with suffixes __hover|__hover_enabled|__sticky|__sticky_enabled|_last_edited|_tablet|_phone.
 			if ( ! preg_match( ET_Builder_Module_Helper_MultiViewOptions::get_regex_suffix(), $attr ) ) {
 				continue;
 			}
@@ -1821,6 +1838,7 @@ class ET_Builder_Element {
 			'fb_built',
 			'_builder_version',
 			'hover_enabled',
+			'sticky_enabled',
 		);
 
 		$base_names = array();
@@ -2007,17 +2025,17 @@ class ET_Builder_Element {
 	 * @since 3.1 Renamed from `_shortcode_callback()` to `_render()`.
 	 * @since 1.0
 	 *
-	 * @param  array  $attrs              List of attributes
-	 * @param  string $content            Content being processed
-	 * @param  string $render_slug        Slug of module that is used for rendering output
-	 * @param  string $parent_address     [description]
-	 * @param  string $global_parent      [description]
-	 * @param  string $global_parent_type [description]
+	 * @param array  $attrs              List of attributes.
+	 * @param string $content            Content being processed.
+	 * @param string $render_slug        Slug of module that is used for rendering output.
+	 * @param string $parent_address     Parent address.
+	 * @param string $global_parent      Global parent.
+	 * @param string $global_parent_type Global parent type.
 	 *
 	 * @return string                     The module's HTML output.
 	 */
 	function _render( $attrs, $content = null, $render_slug, $parent_address = '', $global_parent = '', $global_parent_type = '', $parent_type = '' ) {
-		global $et_fb_processing_shortcode_object, $et_pb_current_parent_type, $et_pb_parent_section_type;
+		global $et_fb_processing_shortcode_object, $et_pb_current_parent_type, $et_pb_parent_section_type, $is_parent_sticky;
 
 		if ( $this->is_rendering ) {
 			// Every module instance is a singleton so the TB Post Content module
@@ -2218,6 +2236,9 @@ class ET_Builder_Element {
 			$enabled_dynamic_attributes,
 			$et_fb_processing_shortcode_object
 		);
+
+		// Process sticky elements earlier to preserve the modules hierarchy during processing.
+		$this->process_sticky( $render_slug );
 
 		// Process scroll effects earlier to preserve the modules hierarchy during processing.
 		$this->process_scroll_effects( $render_slug );
@@ -2457,6 +2478,11 @@ class ET_Builder_Element {
 			$this->add_classname( 'et_hover_enabled' );
 		}
 
+		// Add sticky element module classname to determine nested sticky module.
+		if ( ! $et_fb_processing_shortcode_object && et_()->array_get( self::$sticky_elements, self::get_module_order_class( $render_slug ), false ) ) {
+			$this->add_classname( 'et_pb_sticky_module' );
+		}
+
 		// Setup link options
 		$link_option_url            = isset( $this->props['link_option_url'] ) ? $this->props['link_option_url'] : '';
 		$link_option_url_new_window = isset( $this->props['link_option_url_new_window'] ) ? $this->props['link_option_url_new_window'] : false;
@@ -2489,7 +2515,7 @@ class ET_Builder_Element {
 					// Video module is hidden for desktop the fullscreen
 					// won't work on mobile screen size.
 					$declaration = 'et_pb_video' === $render_slug ? 'height: 0; padding: 0; overflow: hidden;' : 'display: none !important;';
-					$el_style       = array(
+					$el_style    = array(
 						'selector'    => '%%order_class%%',
 						'declaration' => $declaration,
 						'media_query' => self::get_media_query( $current_media_query ),
@@ -2515,10 +2541,18 @@ class ET_Builder_Element {
 			}
 		}
 
+		if ( $this->is_sticky_module ) {
+			$is_parent_sticky = $this->is_sticky_module;
+		}
+
 		$this->is_rendering = true;
 		$render_method      = $et_fb_processing_shortcode_object ? 'render_as_builder_data' : 'render';
 		$output             = $this->{$render_method}( $attrs, $content, $render_slug, $parent_address, $global_parent, $global_parent_type, $parent_type );
 		$this->is_rendering = false;
+
+		if ( $this->is_sticky_module ) {
+			$is_parent_sticky = false;
+		}
 
 		// Wrap 3rd party module rendered output with proper module wrapper
 		// @TODO implement module wrapper on official module
@@ -3355,6 +3389,8 @@ class ET_Builder_Element {
 		// Add link options to all modules
 		$this->_add_link_options_fields();
 
+		$this->_add_sticky_fields();
+
 		$this->_add_scroll_effects_fields();
 
 		if ( ! isset( $this->_additional_fields_options ) ) {
@@ -3761,6 +3797,7 @@ class ET_Builder_Element {
 					'sub_toggle'      => $sub_toggle,
 					'hover'           => 'tabs',
 					'mobile_options'  => true,
+					'sticky'          => true,
 				);
 
 				// add reference to the obsolete color option if needed
@@ -3798,6 +3835,7 @@ class ET_Builder_Element {
 						'allowed_units'   => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ex', 'vh', 'vw' ),
 						'default_unit'    => 'px',
 						'mobile_options'  => true,
+						'sticky'          => true,
 						'range_settings'  => array(
 							'min'  => '1',
 							'max'  => '100',
@@ -3843,6 +3881,7 @@ class ET_Builder_Element {
 						'description'     => sprintf( $i18n['font']['letter_spacing']['description'], $option_settings['label'] ),
 						'type'            => 'range',
 						'mobile_options'  => true,
+						'sticky'          => true,
 						'option_category' => 'font_option',
 						'tab_slug'        => $tab_slug,
 						'toggle_slug'     => $toggle_slug,
@@ -3876,6 +3915,7 @@ class ET_Builder_Element {
 					'description'     => sprintf( $i18n['font']['line_height']['description'], $option_settings['label'] ),
 					'type'            => 'range',
 					'mobile_options'  => true,
+					'sticky'          => true,
 					'option_category' => 'font_option',
 					'tab_slug'        => $tab_slug,
 					'toggle_slug'     => $toggle_slug,
@@ -4144,6 +4184,7 @@ class ET_Builder_Element {
 						'step' => '1',
 					),
 					'mobile_options'   => true,
+					'sticky'           => true,
 					'hover'            => 'tabs',
 				);
 				$additional_options[ "{$option_name}_quote_border_color" ]  = array(
@@ -4158,6 +4199,7 @@ class ET_Builder_Element {
 					'field_template'  => 'color',
 					'priority'        => 90,
 					'mobile_options'  => true,
+					'sticky'          => true,
 					'hover'           => 'tabs',
 				);
 
@@ -4255,6 +4297,7 @@ class ET_Builder_Element {
 				'toggle_slug'     => $toggle_slug,
 				'description'     => esc_html__( 'Here you can choose whether background color setting above should be used or not.', 'et_builder' ),
 				'mobile_options'  => true,
+				'sticky'          => true,
 				'hover'           => 'tabs',
 			);
 		}
@@ -4384,6 +4427,7 @@ class ET_Builder_Element {
 				'hover'           => 'tabs',
 				'description'     => esc_html__( 'Here you can choose whether your text should be light or dark. If you are working with a dark background, then your text should be light. If your background is light, then your text should be set to dark.', 'et_builder' ),
 				'mobile_options'  => true,
+				'sticky'          => true,
 			);
 
 			if ( '' !== $sub_toggle ) {
@@ -4781,6 +4825,26 @@ class ET_Builder_Element {
 		);
 	}
 
+	/**
+	 * Add sticky fields to the additional fields options.
+	 *
+	 * @since ??
+	 *
+	 * @return void
+	 */
+	protected function _add_sticky_fields() {
+		if ( is_array( self::$_->array_get( $this->advanced_fields, 'sticky', array() ) ) ) {
+			$this->_additional_fields_options = array_merge(
+				$this->_additional_fields_options,
+				ET_Builder_Module_Fields_Factory::get( 'Sticky' )->get_fields(
+					array(
+						'module_slug' => $this->slug,
+					)
+				)
+			);
+		}
+	}
+
 	protected function _add_scroll_effects_fields() {
 		if ( is_array( self::$_->array_get( $this->advanced_fields, 'scroll_effects', array() ) ) ) {
 			$this->_additional_fields_options = array_merge(
@@ -4865,6 +4929,7 @@ class ET_Builder_Element {
 				'description'     => $i18n['margin']['margin']['description'],
 				'type'            => 'custom_margin',
 				'mobile_options'  => true,
+				'sticky'          => true,
 				'option_category' => 'layout',
 				'tab_slug'        => $tab_slug,
 				'toggle_slug'     => $toggle_slug,
@@ -4923,6 +4988,7 @@ class ET_Builder_Element {
 				'description'     => $i18n['margin']['padding']['description'],
 				'type'            => 'custom_padding',
 				'mobile_options'  => true,
+				'sticky'          => true,
 				'option_category' => 'layout',
 				'tab_slug'        => $tab_slug,
 				'toggle_slug'     => $toggle_slug,
@@ -5064,6 +5130,7 @@ class ET_Builder_Element {
 				'tab_slug'        => $tab_slug,
 				'toggle_slug'     => $toggle_slug,
 				'mobile_options'  => true,
+				'sticky'          => true,
 				'depends_show_if' => 'on',
 				'hover'           => 'tabs',
 			);
@@ -5080,6 +5147,7 @@ class ET_Builder_Element {
 				'depends_show_if' => 'on',
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			);
 
 			$additional_options[ "{$option_name}_bg_color" ] = array(
@@ -5098,6 +5166,7 @@ class ET_Builder_Element {
 				'background_fields' => $this->generate_background_options( "{$option_name}_bg", 'button', $tab_slug, $toggle_slug, "{$option_name}_bg_color" ),
 				'hover'             => 'tabs',
 				'mobile_options'    => true,
+				'sticky'            => true,
 			);
 
 			$additional_options[ "{$option_name}_bg_color" ]['background_fields'][ "{$option_name}_bg_color" ]['default'] = ET_Global_Settings::get_value( 'all_buttons_bg_color' );
@@ -5118,6 +5187,7 @@ class ET_Builder_Element {
 				'depends_show_if'  => 'on',
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			);
 
 			$additional_options[ "{$option_name}_border_color" ] = array(
@@ -5132,6 +5202,7 @@ class ET_Builder_Element {
 				'depends_show_if' => 'on',
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			);
 
 			$additional_options[ "{$option_name}_border_radius" ] = array(
@@ -5148,6 +5219,7 @@ class ET_Builder_Element {
 				'depends_show_if'  => 'on',
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			);
 
 			$additional_options[ "{$option_name}_letter_spacing" ] = array(
@@ -5161,6 +5233,7 @@ class ET_Builder_Element {
 				'tab_slug'         => $tab_slug,
 				'toggle_slug'      => $toggle_slug,
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'depends_show_if'  => 'on',
 				'hover'            => 'tabs',
 			);
@@ -5226,6 +5299,7 @@ class ET_Builder_Element {
 					'toggle_slug'         => $toggle_slug,
 					'depends_show_if_not' => 'off',
 					'mobile_options'      => true,
+					'sticky'              => true,
 				);
 
 				$additional_options[ "{$option_name}_icon_placement" ] = array(
@@ -6191,6 +6265,7 @@ class ET_Builder_Element {
 			'reset_animation'  => false,
 			'hover'            => 'tabs',
 			'mobile_options'   => true,
+			'sticky'           => true,
 		);
 
 		$additional_options['filter_saturate'] = array(
@@ -6213,6 +6288,7 @@ class ET_Builder_Element {
 			'reset_animation'  => false,
 			'hover'            => 'tabs',
 			'mobile_options'   => true,
+			'sticky'           => true,
 		);
 
 		$additional_options['filter_brightness'] = array(
@@ -6235,6 +6311,7 @@ class ET_Builder_Element {
 			'reset_animation'  => false,
 			'hover'            => 'tabs',
 			'mobile_options'   => true,
+			'sticky'           => true,
 		);
 
 		$additional_options['filter_contrast'] = array(
@@ -6257,6 +6334,7 @@ class ET_Builder_Element {
 			'reset_animation'  => false,
 			'hover'            => 'tabs',
 			'mobile_options'   => true,
+			'sticky'           => true,
 		);
 
 		$additional_options['filter_invert'] = array(
@@ -6279,6 +6357,7 @@ class ET_Builder_Element {
 			'reset_animation'  => false,
 			'hover'            => 'tabs',
 			'mobile_options'   => true,
+			'sticky'           => true,
 		);
 
 		$additional_options['filter_sepia'] = array(
@@ -6301,6 +6380,7 @@ class ET_Builder_Element {
 			'reset_animation'  => false,
 			'hover'            => 'tabs',
 			'mobile_options'   => true,
+			'sticky'           => true,
 		);
 
 		$additional_options['filter_opacity'] = array(
@@ -6325,6 +6405,7 @@ class ET_Builder_Element {
 			'reset_animation'  => false,
 			'hover'            => 'tabs',
 			'mobile_options'   => true,
+			'sticky'           => true,
 		);
 
 		$additional_options['filter_blur'] = array(
@@ -6349,6 +6430,7 @@ class ET_Builder_Element {
 			'reset_animation'  => false,
 			'hover'            => 'tabs',
 			'mobile_options'   => true,
+			'sticky'           => true,
 		);
 
 		$additional_options['mix_blend_mode'] = array(
@@ -6415,6 +6497,7 @@ class ET_Builder_Element {
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'child_filter_saturate'   => array(
 				'label'            => $child_filter_label . ' ' . et_builder_i18n( 'Saturation' ),
@@ -6436,6 +6519,7 @@ class ET_Builder_Element {
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'child_filter_brightness' => array(
 				'label'            => $child_filter_label . ' ' . $i18n['filter']['brightness']['label'],
@@ -6457,6 +6541,7 @@ class ET_Builder_Element {
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'child_filter_contrast'   => array(
 				'label'            => $child_filter_label . ' ' . $i18n['filter']['contrast']['label'],
@@ -6478,6 +6563,7 @@ class ET_Builder_Element {
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'child_filter_invert'     => array(
 				'label'            => $child_filter_label . ' ' . $i18n['filter']['invert']['label'],
@@ -6499,6 +6585,7 @@ class ET_Builder_Element {
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'child_filter_sepia'      => array(
 				'label'            => $child_filter_label . ' ' . $i18n['filter']['sepia']['label'],
@@ -6520,6 +6607,7 @@ class ET_Builder_Element {
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'child_filter_opacity'    => array(
 				'label'            => $child_filter_label . ' ' . $i18n['filter']['opacity']['label'],
@@ -6543,6 +6631,7 @@ class ET_Builder_Element {
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'child_filter_blur'       => array(
 				'label'            => $child_filter_label . ' ' . et_builder_i18n( 'Blur' ),
@@ -6565,6 +6654,7 @@ class ET_Builder_Element {
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'child_mix_blend_mode'    => array(
 				'label'            => $child_filter_label . ' ' . $i18n['filter']['blend']['label'],
@@ -6596,6 +6686,7 @@ class ET_Builder_Element {
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => false,
 			),
 		);
 
@@ -6813,6 +6904,7 @@ class ET_Builder_Element {
 						'toggle_slug'     => $toggle_slug,
 						'hover'           => 'tabs',
 						'mobile_options'  => true,
+						'sticky'          => true,
 					),
 					$bg_color_args
 				);
@@ -6829,6 +6921,7 @@ class ET_Builder_Element {
 				'toggle_slug'     => $toggle_slug,
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			);
 
 			// Focus Background Color.
@@ -6842,6 +6935,7 @@ class ET_Builder_Element {
 				'toggle_slug'     => $toggle_slug,
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			);
 
 			// Focus Text Color.
@@ -6855,6 +6949,7 @@ class ET_Builder_Element {
 				'toggle_slug'     => $toggle_slug,
 				'hover'           => 'tabs',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			);
 
 			// Font - Add current font settings into advanced fields. The font_field is basically
@@ -7483,40 +7578,63 @@ class ET_Builder_Element {
 			);
 		}
 
+		// Sticky module that has custom width for sticky style will need its `left` property to
+		// be animated as well due to fixed positioning used for sticky state.
+		if ( $this->is_sticky_module && in_array( 'width', $props, true ) ) {
+			$transition_css[] = sprintf(
+				'left %1$s %2$s %3$s',
+				esc_attr( $duration ),
+				esc_attr( $easing ),
+				esc_attr( $delay )
+			);
+		}
+
 		return 'transition: ' . implode( ', ', $transition_css ) . ';';
 	}
 
+	/**
+	 * Setup hover transitions.
+	 *
+	 * @param string $function_name Function name.
+	 *
+	 * @since ?? Add sticky style support
+	 */
 	function setup_hover_transitions( $function_name ) {
 
 		// List of all property names and their respective CSS property names
 		$transitions_map = $this->get_transition_fields_css_props();
 
-		$selectors      = array();
-		$transitions    = array();
-		$hover          = et_pb_hover_options();
-		$hover_suffix   = $hover->get_suffix();
-		$enabled_suffix = $hover->get_enabled_suffix();
+		$selectors             = array();
+		$transitions           = array();
+		$hover                 = et_pb_hover_options();
+		$hover_suffix          = $hover->get_suffix();
+		$hover_enabled_suffix  = $hover->get_enabled_suffix();
+		$sticky                = et_pb_sticky_options();
+		$sticky_suffix         = $sticky->get_suffix();
+		$sticky_enabled_suffix = $sticky->get_enabled_suffix();
 
 		// We need to loop transitions array so cases of prefixed prop names can also be caught
 		foreach ( $transitions_map as $prop_name => $css_props ) {
-			$key_hover   = "{$prop_name}{$hover_suffix}";
-			$key_enabled = "{$prop_name}{$enabled_suffix}";
+			$prop_name_hover  = "{$prop_name}{$hover_suffix}";
+			$prop_name_sticky = "{$prop_name}{$sticky_suffix}";
 
 			// Background is a special case because it also contains the "background_color" property
 			if ( 'background' === $prop_name ) {
 				// We can continue if hover background color is not set because it is the only animatable property
-				$hover_background_color_field = $hover->get_hover_field( 'background_color' );
-
-				if ( empty( $this->props[ $hover_background_color_field ] ) ) {
+				if ( ! $hover->get_value( 'background_color', $this->props ) && ! $sticky->get_value( 'background_color', $this->props ) ) {
 					continue;
 				}
-			} elseif ( empty( $this->props[ $key_hover ] ) ) {
-				// Continue if {property_name}__hover is empty (ie. no hover value is set)
+			} elseif ( empty( $this->props[ $prop_name_hover ] ) && empty( $this->props[ $prop_name_sticky ] ) ) {
+				// Continue if hover or sticky value is empty.
 				continue;
 			}
 
-			// Continue if {property_name}__hover_enabled is not defined/"on"
-			if ( empty( $this->props[ $key_enabled ] ) || 0 !== strpos( $this->props[ $key_enabled ], 'on' ) ) {
+			// Continue if sticky / hover option is not enabled.
+			$is_hover_option_enabled      = $hover->is_enabled( $prop_name, $this->props );
+			$is_sticky_option_enabled     = $sticky->is_enabled( $prop_name, $this->props );
+			$is_sticky_transition_enabled = 'on' === et_()->array_get( $this->props, 'sticky_transition' );
+
+			if ( ! $is_hover_option_enabled && ! ( $is_sticky_transition_enabled && $is_sticky_option_enabled ) ) {
 				continue;
 			}
 
@@ -7533,9 +7651,12 @@ class ET_Builder_Element {
 			return;
 		}
 
+		$transitions          = array_unique( $transitions );
+		$transition_selectors = implode( ', ', array_unique( $selectors ) );
+
 		$transition_style = $this->get_transition_style( $transitions );
-		$el_style            = array(
-			'selector'    => implode( ', ', array_unique( $selectors ) ),
+		$el_style         = array(
+			'selector'    => $transition_selectors,
 			'declaration' => esc_html( $transition_style ),
 		);
 		self::set_style( $function_name, $el_style );
@@ -7544,7 +7665,7 @@ class ET_Builder_Element {
 		$transition_style_tablet = $this->get_transition_style( $transitions, 'tablet' );
 		if ( $transition_style_tablet !== $transition_style ) {
 			$el_style = array(
-				'selector'    => implode( ', ', array_unique( $selectors ) ),
+				'selector'    => $transition_selectors,
 				'declaration' => esc_html( $transition_style_tablet ),
 				'media_query' => self::get_media_query( 'max_width_980' ),
 			);
@@ -7555,7 +7676,7 @@ class ET_Builder_Element {
 		$transition_style_phone = $this->get_transition_style( $transitions, 'phone' );
 		if ( $transition_style_phone !== $transition_style || $transition_style_phone !== $transition_style_tablet ) {
 			$el_style = array(
-				'selector'    => implode( ', ', array_unique( $selectors ) ),
+				'selector'    => $transition_selectors,
 				'declaration' => esc_html( $transition_style_phone ),
 				'media_query' => self::get_media_query( 'max_width_767' ),
 			);
@@ -8658,6 +8779,7 @@ class ET_Builder_Element {
 				'hover'           => 'tabs',
 				'last_edited'     => 'background',
 				'mobile_options'  => true,
+				'sticky'          => true,
 			);
 
 			// This option is used to enable or disable background color on VB or FE. This option has
@@ -8670,6 +8792,7 @@ class ET_Builder_Element {
 				'toggle_slug'    => $toggle_slug,
 				'default'        => 'on',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			);
 		}
@@ -8700,6 +8823,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'use_color_gradient',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -8715,6 +8839,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'color_gradient_start',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -8730,6 +8855,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'color_gradient_end',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -8754,6 +8880,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'color_gradient_type',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -8777,6 +8904,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'color_gradient_direction',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -8804,6 +8932,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'color_gradient_direction_radial',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -8828,6 +8957,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'color_gradient_start_position',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -8852,6 +8982,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'color_gradient_end_position',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -8871,6 +9002,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'color_gradient_overlays_image',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 		}
@@ -8887,6 +9019,7 @@ class ET_Builder_Element {
 				'toggle_slug'        => $toggle_slug,
 				'field_template'     => 'image',
 				'mobile_options'     => true,
+				'sticky'             => true,
 				'hover'              => 'tabs',
 			);
 
@@ -8899,6 +9032,7 @@ class ET_Builder_Element {
 				'toggle_slug'    => $toggle_slug,
 				'default'        => 'on',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			);
 
@@ -8925,6 +9059,7 @@ class ET_Builder_Element {
 					'toggle_slug'      => $toggle_slug,
 					'field_template'   => 'parallax',
 					'mobile_options'   => true,
+					'sticky'           => true,
 					'hover'            => 'tabs',
 				);
 
@@ -8944,6 +9079,7 @@ class ET_Builder_Element {
 					'toggle_slug'      => $toggle_slug,
 					'field_template'   => 'parallax_method',
 					'mobile_options'   => true,
+					'sticky'           => true,
 					'hover'            => 'tabs',
 				);
 			}
@@ -8965,6 +9101,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'size',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -8991,6 +9128,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'position',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -9014,6 +9152,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'repeat',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -9047,6 +9186,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'blend',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 		}
@@ -9068,6 +9208,7 @@ class ET_Builder_Element {
 				),
 				'field_template'     => 'video_mp4',
 				'mobile_options'     => true,
+				'sticky'             => true,
 				'hover'              => 'tabs',
 				'affects_mobile'     => true,
 			);
@@ -9081,6 +9222,7 @@ class ET_Builder_Element {
 				'toggle_slug'    => $toggle_slug,
 				'default'        => 'on',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			);
 
@@ -9100,6 +9242,7 @@ class ET_Builder_Element {
 				),
 				'field_template'     => 'video_webm',
 				'mobile_options'     => true,
+				'sticky'             => true,
 				'hover'              => 'tabs',
 				'affects_mobile'     => true,
 			);
@@ -9113,6 +9256,7 @@ class ET_Builder_Element {
 				'toggle_slug'    => $toggle_slug,
 				'default'        => 'on',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			);
 
@@ -9128,6 +9272,7 @@ class ET_Builder_Element {
 				),
 				'field_template'   => 'video_width',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 				'affects_mobile'   => true,
 			);
@@ -9144,6 +9289,7 @@ class ET_Builder_Element {
 				),
 				'field_template'   => 'video_height',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 				'affects_mobile'   => true,
 			);
@@ -9163,6 +9309,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'allow_player_pause',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -9181,6 +9328,7 @@ class ET_Builder_Element {
 				'toggle_slug'      => $toggle_slug,
 				'field_template'   => 'video_pause_outside_viewport',
 				'mobile_options'   => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			);
 
@@ -9201,6 +9349,7 @@ class ET_Builder_Element {
 					'base_name' => $base_name,
 				),
 				'mobile_options'      => true,
+				'sticky'              => true,
 				'hover'               => 'tabs',
 			);
 		}
@@ -11123,13 +11272,13 @@ class ET_Builder_Element {
 		$args           = wp_parse_args( array_filter( $args ), $defaults );
 		$direction      = $args['type'] === 'linear' ? $args['direction'] : "circle at {$args['radial_direction']}";
 		$start_position = et_sanitize_input_unit( $args['start_position'], false, '%' );
-		$end_Position   = et_sanitize_input_unit( $args['end_position'], false, '%' );
+		$end_position   = et_sanitize_input_unit( $args['end_position'], false, '%' );
 
 		return esc_html(
 			"{$args['type']}-gradient(
 			{$direction},
 			{$args['color_start']} ${start_position},
-			{$args['color_end']} ${end_Position}
+			{$args['color_end']} ${end_position}
 		)"
 		);
 	}
@@ -11288,6 +11437,10 @@ class ET_Builder_Element {
 			return;
 		}
 
+		// Flag if current module rendering is sticky module or not.
+		// This is frequently used on sticky style rendering for modifying selectors.
+		$this->is_sticky_module = et_pb_sticky_options()->is_sticky_module( $this->props );
+
 		$module->process_advanced_fonts_options( $function_name );
 
 		// Process Text Shadow CSS
@@ -11343,6 +11496,7 @@ class ET_Builder_Element {
 	 *
 	 * @since 3.23 Add support to generate responsive styles of font, text color, and text align.
 	 *           And also process styles of block elements sub options group.
+	 * @since ?? Add sticky style support
 	 *
 	 * @param  string $function_name Module slug.
 	 */
@@ -11397,6 +11551,7 @@ class ET_Builder_Element {
 		foreach ( $this->advanced_fields['fonts'] as $option_name => $option_settings ) {
 			$style             = '';
 			$hover_style       = '';
+			$sticky_style      = '';
 			$important_options = array();
 			$is_important_set  = isset( $option_settings['css']['important'] );
 			$is_placeholder    = isset( $option_settings['css']['placeholder'] );
@@ -11484,8 +11639,21 @@ class ET_Builder_Element {
 				);
 			}
 
-			$text_color_option_name = "{$option_name}_{$slugs[2]}";
+			// Sticky font size.
+			$size_sticky = trim( et_pb_sticky_options()->get_value( $size_option_name, $this->props, '' ) );
 
+			if ( ! in_array( $size_sticky, array( '', 'px', $size_option_value ), true ) ) {
+				$important = in_array( 'size', $important_options, true ) || $use_global_important ? ' !important' : '';
+
+				$sticky_style .= sprintf(
+					'font-size: %1$s%2$s; ',
+					esc_html( et_builder_process_range_value( $size_sticky ) ),
+					esc_html( $important )
+				);
+			}
+
+			$text_color_option_name = "{$option_name}_{$slugs[2]}";
+			$color_selector         = isset( $option_settings['css']['color'] ) ? $option_settings['css']['color'] : '';
 			// Ensure if text color option is not disabled on current font options.
 			$hide_text_color = isset( $option_settings['hide_text_color'] ) && true === $option_settings['hide_text_color'];
 
@@ -11498,9 +11666,9 @@ class ET_Builder_Element {
 				$important = ' !important';
 
 				if ( $default_value !== $font_options[ $text_color_option_name ] ) {
-					if ( isset( $option_settings['css']['color'] ) ) {
+					if ( ! empty( $color_selector ) ) {
 						$el_style = array(
-							'selector'    => $option_settings['css']['color'],
+							'selector'    => $color_selector,
 							'declaration' => sprintf(
 								'color: %1$s%2$s;',
 								esc_html( $font_options[ $text_color_option_name ] ),
@@ -11519,16 +11687,18 @@ class ET_Builder_Element {
 				}
 			}
 
-			$text_color_hover = et_pb_hover_options()->get_value( $text_color_option_name, $this->props );
+			// Text Color Hover.
+			$text_color_hover             = et_pb_hover_options()->get_value( $text_color_option_name, $this->props );
+			$hover_has_text_color         = $default_value !== $text_color_hover && ! empty( $text_color_hover ) && ! $hide_text_color;
+			$default_hover_color_selector = et_pb_hover_options()->add_hover_to_selectors( $color_selector );
+			$hover_text_color_selector    = self::$_->array_get( $option_settings, 'css.color_hover', $default_hover_color_selector );
 
-			if ( $default_value !== $text_color_hover && ! empty( $text_color_hover ) && ! $hide_text_color ) {
+			if ( $hover_has_text_color ) {
 				$important = ' !important';
 
-				if ( isset( $option_settings['css']['color'] ) ) {
-					$sel = et_pb_hover_options()->add_hover_to_selectors( $option_settings['css']['color'] );
-
+				if ( ! empty( $color_selector ) ) {
 					$el_style = array(
-						'selector'    => self::$_->array_get( $option_settings, 'css.color_hover', $sel ),
+						'selector'    => $hover_text_color_selector,
 						'declaration' => sprintf(
 							'color: %1$s%2$s;',
 							esc_html( $text_color_hover ),
@@ -11546,8 +11716,57 @@ class ET_Builder_Element {
 				}
 			}
 
+			// Text Color Sticky.
+			$text_color_sticky = et_pb_sticky_options()->get_value( $text_color_option_name, $this->props );
+
+			if ( $default_value !== $text_color_sticky && ! empty( $text_color_sticky ) && ! $hide_text_color ) {
+				$important = ' !important';
+
+				if ( ! empty( $color_selector ) ) {
+					$sel      = et_pb_sticky_options()->add_sticky_to_selectors(
+						$color_selector,
+						$this->is_sticky_module
+					);
+					$el_style = array(
+						'selector'    => et_()->array_get( $option_settings, 'css.color_sticky', $sel ),
+						'declaration' => sprintf(
+							'color: %1$s%2$s;',
+							esc_html( $text_color_sticky ),
+							esc_html( $important )
+						),
+						'priority'    => $this->_style_priority,
+					);
+
+					self::set_style( $function_name, $el_style );
+
+					// Add hover style in sticky state.
+					if ( $hover_has_text_color ) {
+						$el_style = array(
+							'selector'    => et_pb_sticky_options()->add_sticky_to_selectors(
+								$hover_text_color_selector,
+								$this->is_sticky_module
+							),
+							'declaration' => sprintf(
+								'color: %1$s%2$s;',
+								esc_html( $text_color_hover ),
+								esc_html( $important )
+							),
+							'priority'    => $this->_style_priority,
+						);
+						self::set_style( $function_name, $el_style );
+					}
+				} else {
+					$sticky_style .= sprintf(
+						'color: %1$s%2$s; ',
+						esc_html( $text_color_sticky ),
+						esc_html( $important )
+					);
+				}
+			}
+
 			$letter_spacing_option_name = "{$option_name}_{$slugs[3]}";
 			$default_letter_spacing     = isset( $this->fields_unprocessed[ $letter_spacing_option_name ]['default'] ) ? $this->fields_unprocessed[ $letter_spacing_option_name ]['default'] : '';
+			$letter_spacing_selector    = isset( $option_settings['css']['letter_spacing'] ) ? $option_settings['css']['letter_spacing'] : '';
 			$letter_spacing_value       = '';
 
 			if ( isset( $font_options[ $letter_spacing_option_name ] ) && ! in_array( trim( $font_options[ $letter_spacing_option_name ] ), array( '', 'px', $default_letter_spacing ) ) ) {
@@ -11561,9 +11780,9 @@ class ET_Builder_Element {
 					esc_html( $important )
 				);
 
-				if ( isset( $option_settings['css']['letter_spacing'] ) ) {
+				if ( ! empty( $letter_spacing_selector ) ) {
 					$el_style = array(
-						'selector'    => $option_settings['css']['letter_spacing'],
+						'selector'    => $letter_spacing_selector,
 						'declaration' => sprintf(
 							'letter-spacing: %1$s%2$s;',
 							esc_html( $letter_spacing_value ),
@@ -11576,15 +11795,16 @@ class ET_Builder_Element {
 			}
 
 			// Hover letter spacing
-			$letter_spacing_hover = trim( et_pb_hover_options()->get_value( $letter_spacing_option_name, $this->props, '' ) );
-
-			if ( ! in_array( $letter_spacing_hover, array( '', 'px', $letter_spacing_value ) ) ) {
+			$letter_spacing_hover          = trim( et_pb_hover_options()->get_value( $letter_spacing_option_name, $this->props, '' ) );
+			$hover_has_letter_spacing      = ! in_array( $letter_spacing_hover, array( '', 'px', $letter_spacing_value ), true );
+			$hover_letter_spacing_selector = isset( $option_settings['css']['letter_spacing_hover'] ) ? $option_settings['css']['letter_spacing_hover'] : '';
+			if ( $hover_has_letter_spacing ) {
 				$important = in_array( 'letter-spacing', $important_options ) || $use_global_important ? ' !important' : '';
 
 				if ( et_builder_is_hover_enabled( $letter_spacing_option_name, $this->props ) ) {
-					if ( isset( $option_settings['css']['letter_spacing_hover'] ) ) {
+					if ( ! empty( $hover_letter_spacing_selector ) ) {
 						$el_style = array(
-							'selector'    => $option_settings['css']['letter_spacing_hover'],
+							'selector'    => $hover_letter_spacing_selector,
 							'declaration' => sprintf(
 								'letter-spacing: %1$s%2$s;',
 								esc_html( et_builder_process_range_value( $letter_spacing_hover ) ),
@@ -11606,7 +11826,7 @@ class ET_Builder_Element {
 					if ( et_builder_is_hover_enabled( $letter_spacing_option_name, $this->props ) ) {
 						if ( $default_letter_spacing !== $letter_spacing_hover ) {
 							if ( isset( $option_settings['css']['color'] ) ) {
-								$sel   = et_pb_hover_options()->add_hover_to_selectors( $option_settings['css']['letter_spacing'] );
+								$sel      = et_pb_hover_options()->add_hover_to_selectors( $option_settings['css']['letter_spacing'] );
 								$el_style = array(
 									'selector'    => self::$_->array_get( $option_settings, 'css.letter_spacing_hover', $sel ),
 									'declaration' => sprintf(
@@ -11623,7 +11843,76 @@ class ET_Builder_Element {
 				}
 			}
 
+			// Sticky letter spacing.
+			$letter_spacing_sticky = trim( et_pb_sticky_options()->get_value( $letter_spacing_option_name, $this->props, '' ) );
+
+			if ( ! in_array( $letter_spacing_sticky, array( '', 'px', $letter_spacing_value ), true ) ) {
+				$important = in_array( 'letter-spacing', $important_options, true ) || $use_global_important ? ' !important' : '';
+
+				if ( et_pb_sticky_options()->is_enabled( $letter_spacing_option_name, $this->props ) ) {
+					if ( isset( $option_settings['css']['letter_spacing_sticky'] ) ) {
+						$el_style = array(
+							'selector'    => $option_settings['css']['letter_spacing_sticky'],
+							'declaration' => sprintf(
+								'letter-spacing: %1$s%2$s;',
+								esc_html( et_builder_process_range_value( $letter_spacing_sticky ) ),
+								esc_html( $important )
+							),
+							'priority'    => $this->_style_priority,
+						);
+						self::set_style( $function_name, $el_style );
+
+						// Add hover style in sticky state.
+						if ( $hover_has_letter_spacing && ! empty( $hover_letter_spacing_selector ) ) {
+							$el_style = array(
+								'selector'    => et_pb_sticky_options()->add_sticky_to_selectors(
+									$hover_letter_spacing_selector,
+									$this->is_sticky_module
+								),
+								'declaration' => sprintf(
+									'letter-spacing: %1$s%2$s;',
+									esc_html( et_builder_process_range_value( $letter_spacing_hover ) ),
+									esc_html( $important )
+								),
+								'priority'    => $this->_style_priority,
+							);
+							self::set_style( $function_name, $el_style );
+						}
+					} else {
+						$sticky_style .= sprintf(
+							'letter-spacing: %1$s%2$s; ',
+							esc_html( et_builder_process_range_value( $letter_spacing_sticky ) ),
+							esc_html( $important )
+						);
+					}
+				}
+
+				if ( isset( $option_settings['css']['letter_spacing'] ) ) {
+					if ( et_builder_is_sticky_enabled( $letter_spacing_option_name, $this->props ) ) {
+						if ( $default_letter_spacing !== $letter_spacing_sticky ) {
+							if ( isset( $option_settings['css']['color'] ) ) {
+								$sel      = et_pb_sticky_options()->add_sticky_to_selectors(
+									$option_settings['css']['letter_spacing'],
+									$this->is_sticky_module
+								);
+								$el_style = array(
+									'selector'    => self::$_->array_get( $option_settings, 'css.letter_spacing_sticky', $sel ),
+									'declaration' => sprintf(
+										'color: %1$s%2$s;',
+										esc_html( $letter_spacing_sticky ),
+										esc_html( $important )
+									),
+									'priority'    => $this->_style_priority,
+								);
+								self::set_style( $function_name, $el_style );
+							}
+						}
+					}
+				}
+			}
+
 			$line_height_option_name = "{$option_name}_{$slugs[4]}";
+			$line_height_selector    = isset( $option_settings['css']['line_height'] ) ? $option_settings['css']['line_height'] : '';
 			$line_height_value       = '';
 
 			if ( isset( $font_options[ $line_height_option_name ] ) ) {
@@ -11656,9 +11945,11 @@ class ET_Builder_Element {
 			}
 
 			// Hover line height
-			$line_height_hover = trim( et_pb_hover_options()->get_value( $line_height_option_name, $this->props, '' ) );
+			$line_height_hover          = trim( et_pb_hover_options()->get_value( $line_height_option_name, $this->props, '' ) );
+			$hover_has_line_height      = ! in_array( $line_height_hover, array( '', 'px', $line_height_value ), true );
+			$hover_line_height_selector = self::$_->array_get( $option_settings, 'css.line_height_hover', et_pb_hover_options()->add_hover_to_selectors( $line_height_selector ) );
 
-			if ( ! in_array( $line_height_hover, array( '', 'px', $line_height_value ) ) ) {
+			if ( $hover_has_line_height ) {
 				$important = in_array( 'line-height', $important_options ) || $use_global_important ? ' !important' : '';
 
 				if ( et_builder_is_hover_enabled( $line_height_option_name, $this->props ) ) {
@@ -11669,12 +11960,11 @@ class ET_Builder_Element {
 					);
 				}
 
-				if ( isset( $option_settings['css']['line_height'] ) ) {
+				if ( ! empty( $line_height_selector ) ) {
 					if ( et_builder_is_hover_enabled( $line_height_option_name, $this->props ) ) {
 						if ( isset( $option_settings['css']['color'] ) ) {
-							$sel   = et_pb_hover_options()->add_hover_to_selectors( $option_settings['css']['line_height'] );
 							$el_style = array(
-								'selector'    => self::$_->array_get( $option_settings, 'css.line_height_hover', $sel ),
+								'selector'    => $hover_line_height_selector,
 								'declaration' => sprintf(
 									'line-height: %1$s%2$s;',
 									esc_html( $line_height_hover ),
@@ -11683,6 +11973,60 @@ class ET_Builder_Element {
 								'priority'    => $this->_style_priority,
 							);
 							self::set_style( $function_name, $el_style );
+						}
+					}
+				}
+			}
+
+			// Sticky line height.
+			$line_height_sticky = trim( et_pb_sticky_options()->get_value( $line_height_option_name, $this->props, '' ) );
+
+			if ( ! in_array( $line_height_sticky, array( '', 'px', $line_height_value ), true ) ) {
+				$important = in_array( 'line-height', $important_options, true ) || $use_global_important ? ' !important' : '';
+
+				if ( et_pb_sticky_options()->is_enabled( $line_height_option_name, $this->props ) ) {
+					$sticky_style .= sprintf(
+						'line-height: %1$s%2$s; ',
+						esc_html( et_builder_process_range_value( $line_height_sticky, 'line_height' ) ),
+						esc_html( $important )
+					);
+				}
+
+				if ( ! empty( $line_height_selector ) ) {
+					if ( et_pb_sticky_options()->is_enabled( $line_height_option_name, $this->props ) ) {
+						if ( isset( $option_settings['css']['color'] ) ) {
+							$sel      = et_pb_sticky_options()->add_sticky_to_selectors(
+								$line_height_selector,
+								$this->is_sticky_module
+							);
+							$el_style = array(
+								'selector'    => et_()->array_get( $option_settings, 'css.line_height_sticky', $sel ),
+								'declaration' => sprintf(
+									'line-height: %1$s%2$s;',
+									esc_html( $line_height_sticky ),
+									esc_html( $important )
+								),
+								'priority'    => $this->_style_priority,
+							);
+
+							self::set_style( $function_name, $el_style );
+
+							// Add hover style in sticky state.
+							if ( $hover_has_line_height ) {
+								$el_style = array(
+									'selector'    => et_pb_sticky_options()->add_sticky_to_selectors(
+										$hover_line_height_selector,
+										$this->is_sticky_module
+									),
+									'declaration' => sprintf(
+										'line-height: %1$s%2$s;',
+										esc_html( $line_height_hover ),
+										esc_html( $important )
+									),
+									'priority'    => $this->_style_priority,
+								);
+								self::set_style( $function_name, $el_style );
+							}
 						}
 					}
 				}
@@ -11725,11 +12069,20 @@ class ET_Builder_Element {
 			}
 
 			// apply both default and hover styles
-			$style_states = array( 'default', 'hover' );
+			$style_states = array( 'default', 'hover', 'sticky' );
 
 			foreach ( $style_states as $style_state ) {
-				$is_hover = 'hover' === $style_state;
-				$style    = $is_hover ? $hover_style : $style;
+				$is_hover  = 'hover' === $style_state;
+				$is_sticky = 'sticky' === $style_state;
+				$style     = $is_hover ? $hover_style : $style;
+
+				if ( $is_hover ) {
+					$style = $hover_style;
+				}
+
+				if ( $is_sticky ) {
+					$style = $sticky_style;
+				}
 
 				if ( '' !== $style ) {
 					$css_element = ! empty( $option_settings['css']['main'] ) ? $option_settings['css']['main'] : $this->main_css_element;
@@ -11742,13 +12095,39 @@ class ET_Builder_Element {
 					// $css_element might be an array, for example to apply the css for placeholders
 					if ( is_array( $css_element ) ) {
 						foreach ( $css_element as $selector ) {
+							$hover_selector = self::$_->array_get( $option_settings, 'css.hover', $this->add_hover_to_selectors( $selector, $is_hover ) );
 							if ( $is_hover ) {
-								$selector = self::$_->array_get( $option_settings, 'css.hover', $this->add_hover_to_selectors( $selector, $is_hover ) );
+								$selector = $hover_selector;
+							}
+
+							if ( $is_sticky ) {
+								$selector = et_()->array_get(
+									$option_settings,
+									'css.sticky',
+									et_pb_sticky_options()->add_sticky_to_selectors(
+										$selector,
+										$this->is_sticky_module
+									)
+								);
+
+								// Add hover style in sticky state.
+								if ( '' !== $hover_style && '' !== $hover_selector ) {
+									$sticky_hover_selector = et_pb_sticky_options()->add_sticky_to_selectors(
+										$hover_selector,
+										$this->is_sticky_module
+									);
+									$el_style              = array(
+										'selector'    => $sticky_hover_selector,
+										'declaration' => et_core_esc_previously( rtrim( $hover_style ) ),
+										'priority'    => $this->_style_priority,
+									);
+									self::set_style( $function_name, $el_style );
+								}
 							}
 
 							$el_style = array(
 								'selector'    => $selector,
-								'declaration' => rtrim( $style ),
+								'declaration' => et_core_esc_previously( rtrim( $style ) ),
 								'priority'    => $this->_style_priority,
 							);
 							self::set_style( $function_name, $el_style );
@@ -11756,13 +12135,39 @@ class ET_Builder_Element {
 							$this->maybe_push_element_to_letter_spacing_fix_list( $selector, array( 'body.safari ', 'body.iphone ', 'body.uiwebview ' ), rtrim( $style ), $default_letter_spacing );
 						}
 					} else {
+						$hover_selector = self::$_->array_get( $option_settings, 'css.hover', $this->add_hover_to_selectors( $css_element, $is_hover ) );
 						if ( $is_hover ) {
-							$css_element = self::$_->array_get( $option_settings, 'css.hover', $this->add_hover_to_selectors( $css_element, $is_hover ) );
+							$css_element = $hover_selector;
+						}
+
+						if ( $is_sticky ) {
+							$css_element = et_()->array_get(
+								$option_settings,
+								'css.sticky',
+								et_pb_sticky_options()->add_sticky_to_selectors(
+									$css_element,
+									$this->is_sticky_module
+								)
+							);
+
+							// Add hover style in sticky state.
+							if ( '' !== $hover_style && '' !== $hover_selector ) {
+								$sticky_hover_selector = et_pb_sticky_options()->add_sticky_to_selectors(
+									$hover_selector,
+									$this->is_sticky_module
+								);
+								$el_style              = array(
+									'selector'    => $sticky_hover_selector,
+									'declaration' => et_core_esc_previously( rtrim( $hover_style ) ),
+									'priority'    => $this->_style_priority,
+								);
+								self::set_style( $function_name, $el_style );
+							}
 						}
 
 						$el_style = array(
 							'selector'    => $css_element,
-							'declaration' => rtrim( $style ),
+							'declaration' => et_core_esc_previously( rtrim( $style ) ),
 							'priority'    => $this->_style_priority,
 						);
 						self::set_style( $function_name, $el_style );
@@ -12124,6 +12529,7 @@ class ET_Builder_Element {
 	 * Process background CSS styles.
 	 *
 	 * @since 3.23 Add responsive support.
+	 * @since ?? Add sticky style support.
 	 *
 	 * @param string $function_name Module slug.
 	 */
@@ -12145,12 +12551,17 @@ class ET_Builder_Element {
 		$settings  = $this->advanced_fields['background'];
 		$important = isset( $settings['css']['important'] ) && $settings['css']['important'] ? ' !important' : '';
 
+		// Helpers.
+		$responsive = et_pb_responsive_options();
+		$hover      = et_pb_hover_options();
+		$sticky     = et_pb_sticky_options();
+
 		// Possible values for use_background_* variables are true, false, or 'fields_only'
 		$has_background_color_toggle_options   = $this->advanced_fields['background']['has_background_color_toggle'];
 		$use_background_color_gradient_options = $this->advanced_fields['background']['use_background_color_gradient'];
 		$use_background_image_options          = $this->advanced_fields['background']['use_background_image'];
 		$use_background_color_options          = $this->advanced_fields['background']['use_background_color'];
-		$use_background_color_reset_options    = self::$_->array_get( $this->advanced_fields, 'background.use_background_color_reset', true );
+		$use_background_color_reset_options    = et_()->array_get( $this->advanced_fields, 'background.use_background_color_reset', true );
 
 		// Place to store processed background. It will be compared with the smaller device background
 		// processed value to avoid rendering the same styles.
@@ -12167,8 +12578,11 @@ class ET_Builder_Element {
 			'phone'   => false,
 		);
 
+		$style_hover  = '';
+		$style_sticky = '';
+
 		// Background Desktop, Tablet, and Phone.
-		foreach ( et_pb_responsive_options()->get_modes() as $device ) {
+		foreach ( $responsive->get_modes() as $device ) {
 			$is_desktop = 'desktop' === $device;
 			$suffix     = ! $is_desktop ? "_{$device}" : '';
 			$style      = '';
@@ -12180,7 +12594,7 @@ class ET_Builder_Element {
 			$is_background_image_disabled          = false;
 
 			// Ensure responsive settings is enabled on mobile.
-			if ( ! $is_desktop && ! et_pb_responsive_options()->is_responsive_enabled( $this->props, 'background' ) ) {
+			if ( ! $is_desktop && ! $responsive->is_responsive_enabled( $this->props, 'background' ) ) {
 				continue;
 			}
 
@@ -12191,20 +12605,20 @@ class ET_Builder_Element {
 
 			// A. Background Gradient.
 			if ( $use_background_color_gradient_options && 'fields_only' !== $use_background_color_gradient_options ) {
-				$use_background_color_gradient = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'use_background_color_gradient', $device, 'background', $this->fields_unprocessed );
+				$use_background_color_gradient = $responsive->get_inheritance_background_value( $this->props, 'use_background_color_gradient', $device, 'background', $this->fields_unprocessed );
 
 				// 1. Ensure gradient color is active.
 				if ( 'on' === $use_background_color_gradient ) {
-					$background_color_gradient_overlays_image = et_pb_responsive_options()->get_any_value( $this->props, "background_color_gradient_overlays_image{$suffix}", '', true );
+					$background_color_gradient_overlays_image = $responsive->get_any_value( $this->props, "background_color_gradient_overlays_image{$suffix}", '', true );
 
 					$gradient_properties = array(
-						'type'             => et_pb_responsive_options()->get_any_value( $this->props, "background_color_gradient_type{$suffix}", '', true ),
-						'direction'        => et_pb_responsive_options()->get_any_value( $this->props, "background_color_gradient_direction{$suffix}", '', true ),
-						'radial_direction' => et_pb_responsive_options()->get_any_value( $this->props, "background_color_gradient_direction_radial{$suffix}", '', true ),
-						'color_start'      => et_pb_responsive_options()->get_any_value( $this->props, "background_color_gradient_start{$suffix}", '', true ),
-						'color_end'        => et_pb_responsive_options()->get_any_value( $this->props, "background_color_gradient_end{$suffix}", '', true ),
-						'start_position'   => et_pb_responsive_options()->get_any_value( $this->props, "background_color_gradient_start_position{$suffix}", '', true ),
-						'end_position'     => et_pb_responsive_options()->get_any_value( $this->props, "background_color_gradient_end_position{$suffix}", '', true ),
+						'type'             => $responsive->get_any_value( $this->props, "background_color_gradient_type{$suffix}", '', true ),
+						'direction'        => $responsive->get_any_value( $this->props, "background_color_gradient_direction{$suffix}", '', true ),
+						'radial_direction' => $responsive->get_any_value( $this->props, "background_color_gradient_direction_radial{$suffix}", '', true ),
+						'color_start'      => $responsive->get_any_value( $this->props, "background_color_gradient_start{$suffix}", '', true ),
+						'color_end'        => $responsive->get_any_value( $this->props, "background_color_gradient_end{$suffix}", '', true ),
+						'start_position'   => $responsive->get_any_value( $this->props, "background_color_gradient_start_position{$suffix}", '', true ),
+						'end_position'     => $responsive->get_any_value( $this->props, "background_color_gradient_end_position{$suffix}", '', true ),
 					);
 
 					// Will be used as default of Gradient hover.
@@ -12231,13 +12645,13 @@ class ET_Builder_Element {
 
 			// B. Background Image.
 			if ( $use_background_image_options && 'fields_only' !== $use_background_image_options ) {
-				$background_image = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_image', $device, 'background', $this->fields_unprocessed );
-				$parallax         = et_pb_responsive_options()->get_any_value( $this->props, "parallax{$suffix}", 'off' );
+				$background_image = $responsive->get_inheritance_background_value( $this->props, 'background_image', $device, 'background', $this->fields_unprocessed );
+				$parallax         = $responsive->get_any_value( $this->props, "parallax{$suffix}", 'off' );
 
 				// Featured image as background is in higher priority.
 				if ( $this->featured_image_background ) {
-					$featured_image         = self::$_->array_get( $this->props, 'featured_image', '' );
-					$featured_placement     = self::$_->array_get( $this->props, 'featured_placement', '' );
+					$featured_image         = et_()->array_get( $this->props, 'featured_image', '' );
+					$featured_placement     = et_()->array_get( $this->props, 'featured_placement', '' );
 					$featured_image_src_obj = wp_get_attachment_image_src( get_post_thumbnail_id( self::_get_main_post_id() ), 'full' );
 					$featured_image_src     = isset( $featured_image_src_obj[0] ) ? $featured_image_src_obj[0] : '';
 
@@ -12262,8 +12676,8 @@ class ET_Builder_Element {
 					}
 
 					// Size.
-					$background_size_default = self::$_->array_get( $this->fields_unprocessed, 'background_size.default', '' );
-					$background_size         = et_pb_responsive_options()->get_any_value( $this->props, "background_size{$suffix}", $background_size_default, ! $is_prev_background_image_active );
+					$background_size_default = et_()->array_get( $this->fields_unprocessed, 'background_size.default', '' );
+					$background_size         = $responsive->get_any_value( $this->props, "background_size{$suffix}", $background_size_default, ! $is_prev_background_image_active );
 
 					if ( '' !== $background_size ) {
 						$style .= sprintf(
@@ -12273,8 +12687,8 @@ class ET_Builder_Element {
 					}
 
 					// Position.
-					$background_position_default = self::$_->array_get( $this->fields_unprocessed, 'background_position.default', '' );
-					$background_position         = et_pb_responsive_options()->get_any_value( $this->props, "background_position{$suffix}", $background_position_default, ! $is_prev_background_image_active );
+					$background_position_default = et_()->array_get( $this->fields_unprocessed, 'background_position.default', '' );
+					$background_position         = $responsive->get_any_value( $this->props, "background_position{$suffix}", $background_position_default, ! $is_prev_background_image_active );
 
 					if ( '' !== $background_position ) {
 						$style .= sprintf(
@@ -12284,8 +12698,8 @@ class ET_Builder_Element {
 					}
 
 					// Repeat.
-					$background_repeat_default = self::$_->array_get( $this->fields_unprocessed, 'background_repeat.default', '' );
-					$background_repeat         = et_pb_responsive_options()->get_any_value( $this->props, "background_repeat{$suffix}", $background_repeat_default, ! $is_prev_background_image_active );
+					$background_repeat_default = et_()->array_get( $this->fields_unprocessed, 'background_repeat.default', '' );
+					$background_repeat         = $responsive->get_any_value( $this->props, "background_repeat{$suffix}", $background_repeat_default, ! $is_prev_background_image_active );
 
 					if ( '' !== $background_repeat ) {
 						$style .= sprintf(
@@ -12295,9 +12709,9 @@ class ET_Builder_Element {
 					}
 
 					// Blend.
-					$background_blend_default = self::$_->array_get( $this->fields_unprocessed, 'background_blend.default', '' );
-					$background_blend         = et_pb_responsive_options()->get_any_value( $this->props, "background_blend{$suffix}", $background_blend_default, ! $is_prev_background_image_active );
-					$background_blend_inherit = et_pb_responsive_options()->get_any_value( $this->props, "background_blend{$suffix}", '', true );
+					$background_blend_default = et_()->array_get( $this->fields_unprocessed, 'background_blend.default', '' );
+					$background_blend         = $responsive->get_any_value( $this->props, "background_blend{$suffix}", $background_blend_default, ! $is_prev_background_image_active );
+					$background_blend_inherit = $responsive->get_any_value( $this->props, "background_blend{$suffix}", '', true );
 
 					if ( '' !== $background_blend_inherit ) {
 						// Don't print the same image blend style.
@@ -12319,7 +12733,7 @@ class ET_Builder_Element {
 					}
 
 					// Only append background image when the image is exist.
-					$background_images[] = sprintf( 'url(%1$s)', esc_html( $background_image ) );
+					$background_images[] = sprintf( 'url(%1$s)', esc_url( $background_image ) );
 				} elseif ( '' === $background_image ) {
 					// Reset - If background image is disabled, ensure we reset prev background blend mode.
 					if ( '' !== $processed_background_blend ) {
@@ -12367,10 +12781,10 @@ class ET_Builder_Element {
 			// C. Background Color.
 			if ( $use_background_color_options && 'fields_only' !== $use_background_color_options ) {
 
-				$use_background_color_value = et_pb_responsive_options()->get_any_value( $this->props, "use_background_color{$suffix}", 'on', true );
+				$use_background_color_value = $responsive->get_any_value( $this->props, "use_background_color{$suffix}", 'on', true );
 
 				if ( ! $has_background_gradient_and_image && 'off' !== $use_background_color_value ) {
-					$background_color       = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', $device, 'background', $this->fields_unprocessed );
+					$background_color       = $responsive->get_inheritance_background_value( $this->props, 'background_color', $device, 'background', $this->fields_unprocessed );
 					$background_color       = ! $is_desktop && '' === $background_color ? 'initial' : $background_color;
 					$background_color_style = $background_color;
 
@@ -12423,10 +12837,8 @@ class ET_Builder_Element {
 		}
 
 		// Background Hover.
-		if ( et_builder_is_hover_enabled( 'background', $this->props ) ) {
-			$background_images_hover = array();
-			$style_hover             = '';
-
+		if ( $hover->is_enabled( 'background', $this->props ) ) {
+			$background_images_hover                     = array();
 			$has_background_color_gradient_hover         = false;
 			$has_background_image_hover                  = false;
 			$has_background_gradient_and_image_hover     = false;
@@ -12441,28 +12853,28 @@ class ET_Builder_Element {
 			// in function get_value() doesn't work in this case. Temporarily, we need to fetch the
 			// the value from get_raw_value().
 			if ( $use_background_color_gradient_options && 'fields_only' !== $use_background_color_gradient_options ) {
-				$use_background_color_gradient_hover = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'use_background_color_gradient', 'hover', 'background', $this->fields_unprocessed );
+				$use_background_color_gradient_hover = $responsive->get_inheritance_background_value( $this->props, 'use_background_color_gradient', 'hover', 'background', $this->fields_unprocessed );
 
 				// 1. Ensure gradient color is active and values are not null.
 				if ( 'on' === $use_background_color_gradient_hover ) {
 					// Desktop value as default.
-					$background_color_gradient_type_desktop             = self::$_->array_get( $gradient_properties_desktop, 'type', '' );
-					$background_color_gradient_direction_desktop        = self::$_->array_get( $gradient_properties_desktop, 'direction', '' );
-					$background_color_gradient_radial_direction_desktop = self::$_->array_get( $gradient_properties_desktop, 'radial_direction', '' );
-					$background_color_gradient_color_start_desktop      = self::$_->array_get( $gradient_properties_desktop, 'color_start', '' );
-					$background_color_gradient_color_end_desktop        = self::$_->array_get( $gradient_properties_desktop, 'color_end', '' );
-					$background_color_gradient_start_position_desktop   = self::$_->array_get( $gradient_properties_desktop, 'start_position', '' );
-					$background_color_gradient_end_position_desktop     = self::$_->array_get( $gradient_properties_desktop, 'end_position', '' );
+					$background_color_gradient_type_desktop             = et_()->array_get( $gradient_properties_desktop, 'type', '' );
+					$background_color_gradient_direction_desktop        = et_()->array_get( $gradient_properties_desktop, 'direction', '' );
+					$background_color_gradient_radial_direction_desktop = et_()->array_get( $gradient_properties_desktop, 'radial_direction', '' );
+					$background_color_gradient_color_start_desktop      = et_()->array_get( $gradient_properties_desktop, 'color_start', '' );
+					$background_color_gradient_color_end_desktop        = et_()->array_get( $gradient_properties_desktop, 'color_end', '' );
+					$background_color_gradient_start_position_desktop   = et_()->array_get( $gradient_properties_desktop, 'start_position', '' );
+					$background_color_gradient_end_position_desktop     = et_()->array_get( $gradient_properties_desktop, 'end_position', '' );
 
 					// Hover value.
-					$background_color_gradient_type_hover             = et_pb_hover_options()->get_raw_value( 'background_color_gradient_type', $this->props, $background_color_gradient_type_desktop );
-					$background_color_gradient_direction_hover        = et_pb_hover_options()->get_raw_value( 'background_color_gradient_direction', $this->props, $background_color_gradient_direction_desktop );
-					$background_color_gradient_direction_radial_hover = et_pb_hover_options()->get_raw_value( 'background_color_gradient_direction_radial', $this->props, $background_color_gradient_radial_direction_desktop );
-					$background_color_gradient_start_hover            = et_pb_hover_options()->get_raw_value( 'background_color_gradient_start', $this->props, $background_color_gradient_color_start_desktop );
-					$background_color_gradient_end_hover              = et_pb_hover_options()->get_raw_value( 'background_color_gradient_end', $this->props, $background_color_gradient_color_end_desktop );
-					$background_color_gradient_start_position_hover   = et_pb_hover_options()->get_raw_value( 'background_color_gradient_start_position', $this->props, $background_color_gradient_start_position_desktop );
-					$background_color_gradient_end_position_hover     = et_pb_hover_options()->get_raw_value( 'background_color_gradient_end_position', $this->props, $background_color_gradient_end_position_desktop );
-					$background_color_gradient_overlays_image_hover   = et_pb_hover_options()->get_raw_value( 'background_color_gradient_overlays_image', $this->props, $background_color_gradient_overlays_image_desktop );
+					$background_color_gradient_type_hover             = $hover->get_raw_value( 'background_color_gradient_type', $this->props, $background_color_gradient_type_desktop );
+					$background_color_gradient_direction_hover        = $hover->get_raw_value( 'background_color_gradient_direction', $this->props, $background_color_gradient_direction_desktop );
+					$background_color_gradient_direction_radial_hover = $hover->get_raw_value( 'background_color_gradient_direction_radial', $this->props, $background_color_gradient_radial_direction_desktop );
+					$background_color_gradient_start_hover            = $hover->get_raw_value( 'background_color_gradient_start', $this->props, $background_color_gradient_color_start_desktop );
+					$background_color_gradient_end_hover              = $hover->get_raw_value( 'background_color_gradient_end', $this->props, $background_color_gradient_color_end_desktop );
+					$background_color_gradient_start_position_hover   = $hover->get_raw_value( 'background_color_gradient_start_position', $this->props, $background_color_gradient_start_position_desktop );
+					$background_color_gradient_end_position_hover     = $hover->get_raw_value( 'background_color_gradient_end_position', $this->props, $background_color_gradient_end_position_desktop );
+					$background_color_gradient_overlays_image_hover   = $hover->get_raw_value( 'background_color_gradient_overlays_image', $this->props, $background_color_gradient_overlays_image_desktop );
 
 					// Flag to inform BG Color if current module has Gradient.
 					$has_background_color_gradient_hover = true;
@@ -12496,18 +12908,18 @@ class ET_Builder_Element {
 			// in function get_value() doesn't work in this case. Temporarily, we need to fetch the
 			// the value from get_raw_value().
 			if ( $use_background_image_options && 'fields_only' !== $use_background_image_options ) {
-				$background_image_hover = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_image', 'hover', 'background', $this->fields_unprocessed );
-				$parallax_hover         = et_pb_hover_options()->get_raw_value( 'parallax', $this->props );
+				$background_image_hover = $responsive->get_inheritance_background_value( $this->props, 'background_image', 'hover', 'background', $this->fields_unprocessed );
+				$parallax_hover         = $hover->get_raw_value( 'parallax', $this->props );
 
 				// Featured image as background is in higher priority.
 				if ( $this->featured_image_background ) {
-					$featured_image         = self::$_->array_get( $this->props, 'featured_image', '' );
-					$featured_placement     = self::$_->array_get( $this->props, 'featured_placement', '' );
+					$featured_image         = et_()->array_get( $this->props, 'featured_image', '' );
+					$featured_placement     = et_()->array_get( $this->props, 'featured_placement', '' );
 					$featured_image_src_obj = wp_get_attachment_image_src( get_post_thumbnail_id( self::_get_main_post_id() ), 'full' );
 					$featured_image_src     = isset( $featured_image_src_obj[0] ) ? $featured_image_src_obj[0] : '';
 
 					if ( 'on' === $featured_image && 'background' === $featured_placement && '' !== $featured_image_src ) {
-						$background_image = $featured_image_src;
+						$background_image_hover = $featured_image_src;
 					}
 				}
 
@@ -12516,8 +12928,8 @@ class ET_Builder_Element {
 					$has_background_image_hover = true;
 
 					// Size.
-					$background_size_hover   = et_pb_hover_options()->get_raw_value( 'background_size', $this->props );
-					$background_size_desktop = self::$_->array_get( $this->props, 'background_size', '' );
+					$background_size_hover   = $hover->get_raw_value( 'background_size', $this->props );
+					$background_size_desktop = et_()->array_get( $this->props, 'background_size', '' );
 					$is_same_background_size = $background_size_hover === $background_size_desktop;
 					if ( empty( $background_size_hover ) && ! empty( $background_size_desktop ) ) {
 						$background_size_hover = $background_size_desktop;
@@ -12531,8 +12943,8 @@ class ET_Builder_Element {
 					}
 
 					// Position.
-					$background_position_hover   = et_pb_hover_options()->get_raw_value( 'background_position', $this->props );
-					$background_position_desktop = self::$_->array_get( $this->props, 'background_position', '' );
+					$background_position_hover   = $hover->get_raw_value( 'background_position', $this->props );
+					$background_position_desktop = et_()->array_get( $this->props, 'background_position', '' );
 					$is_same_background_position = $background_position_hover === $background_position_desktop;
 					if ( empty( $background_position_hover ) && ! empty( $background_position_desktop ) ) {
 						$background_position_hover = $background_position_desktop;
@@ -12546,8 +12958,8 @@ class ET_Builder_Element {
 					}
 
 					// Repeat.
-					$background_repeat_hover   = et_pb_hover_options()->get_raw_value( 'background_repeat', $this->props );
-					$background_repeat_desktop = self::$_->array_get( $this->props, 'background_repeat', '' );
+					$background_repeat_hover   = $hover->get_raw_value( 'background_repeat', $this->props );
+					$background_repeat_desktop = et_()->array_get( $this->props, 'background_repeat', '' );
 					$is_same_background_repeat = $background_repeat_hover === $background_repeat_desktop;
 					if ( empty( $background_repeat_hover ) && ! empty( $background_repeat_desktop ) ) {
 						$background_repeat_hover = $background_repeat_desktop;
@@ -12561,9 +12973,9 @@ class ET_Builder_Element {
 					}
 
 					// Blend.
-					$background_blend_hover   = et_pb_hover_options()->get_raw_value( 'background_blend', $this->props );
-					$background_blend_default = self::$_->array_get( $this->fields_unprocessed, 'background_blend.default', '' );
-					$background_blend_desktop = self::$_->array_get( $this->props, 'background_blend', '' );
+					$background_blend_hover   = $hover->get_raw_value( 'background_blend', $this->props );
+					$background_blend_default = et_()->array_get( $this->fields_unprocessed, 'background_blend.default', '' );
+					$background_blend_desktop = et_()->array_get( $this->props, 'background_blend', '' );
 					$is_same_background_blend = $background_blend_hover === $background_blend_desktop;
 
 					if ( empty( $background_blend_hover ) && ! empty( $background_blend_desktop ) ) {
@@ -12587,7 +12999,7 @@ class ET_Builder_Element {
 					}
 
 					// Only append background image when the image is exist.
-					$background_images_hover[] = sprintf( 'url(%1$s)', esc_html( $background_image_hover ) );
+					$background_images_hover[] = sprintf( 'url(%1$s)', esc_url( $background_image_hover ) );
 				} elseif ( '' === $background_image_hover ) {
 					$is_background_image_hover_disabled = true;
 				}
@@ -12619,11 +13031,11 @@ class ET_Builder_Element {
 			// Background Color Hover.
 			if ( $use_background_color_options && 'fields_only' !== $use_background_color_options ) {
 
-				$use_background_color_hover_value = self::$_->array_get( $this->props, 'use_background_color__hover', '' );
-				$use_background_color_hover_value = ! empty( $use_background_color_hover_value ) ? $use_background_color_hover_value : self::$_->array_get( $this->props, 'use_background_color', 'on' );
+				$use_background_color_hover_value = et_()->array_get( $this->props, 'use_background_color__hover', '' );
+				$use_background_color_hover_value = ! empty( $use_background_color_hover_value ) ? $use_background_color_hover_value : et_()->array_get( $this->props, 'use_background_color', 'on' );
 
 				if ( ! $has_background_gradient_and_image_hover && 'off' !== $use_background_color_hover_value ) {
-					$background_color_hover = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'hover', 'background', $this->fields_unprocessed );
+					$background_color_hover = $responsive->get_inheritance_background_value( $this->props, 'background_color', 'hover', 'background', $this->fields_unprocessed );
 					$background_color_hover = '' !== $background_color_hover ? $background_color_hover : 'transparent';
 
 					if ( '' !== $background_color_hover ) {
@@ -12645,8 +13057,8 @@ class ET_Builder_Element {
 
 			// Render background hover styles.
 			if ( '' !== $style_hover ) {
-				$css_element_main  = self::$_->array_get( $settings, 'css.main', $this->main_css_element );
-				$css_element_hover = self::$_->array_get( $settings, 'css.hover', et_pb_hover_options()->add_hover_to_order_class( $css_element_main ) );
+				$css_element_main  = et_()->array_get( $settings, 'css.main', $this->main_css_element );
+				$css_element_hover = et_()->array_get( $settings, 'css.hover', $hover->add_hover_to_order_class( $css_element_main ) );
 
 				$el_style = array(
 					'selector'    => $css_element_hover,
@@ -12654,6 +13066,240 @@ class ET_Builder_Element {
 					'priority'    => $this->_style_priority,
 				);
 				self::set_style( $function_name, $el_style );
+			}
+		}
+
+		// Background Sticky.
+		// Mostly similar with how hover works but there are edge cases where different logic is applied.
+		if ( $sticky->is_enabled( 'background', $this->props ) ) {
+			$background_images_sticky                        = array();
+			$has_background_color_gradient_sticky            = false;
+			$has_background_image_sticky                     = false;
+			$has_background_gradient_and_image_sticky        = false;
+			$is_background_color_gradient_sticky_disabled    = false;
+			$is_background_image_sticky_disabled             = false;
+			$background_color_gradient_overlays_image_sticky = 'off';
+
+			// Background Gradient Sticky.
+			if ( $use_background_color_gradient_options && 'fields_only' !== $use_background_color_gradient_options ) {
+				$use_background_color_gradient_sticky = $responsive->get_inheritance_background_value( $this->props, 'use_background_color_gradient', 'sticky', 'background', $this->fields_unprocessed );
+
+				// 1. Ensure gradient color is active and values are not null.
+				if ( 'on' === $use_background_color_gradient_sticky ) {
+					// Desktop value as default.
+					$background_color_gradient_type_desktop             = et_()->array_get( $gradient_properties_desktop, 'type', '' );
+					$background_color_gradient_direction_desktop        = et_()->array_get( $gradient_properties_desktop, 'direction', '' );
+					$background_color_gradient_radial_direction_desktop = et_()->array_get( $gradient_properties_desktop, 'radial_direction', '' );
+					$background_color_gradient_color_start_desktop      = et_()->array_get( $gradient_properties_desktop, 'color_start', '' );
+					$background_color_gradient_color_end_desktop        = et_()->array_get( $gradient_properties_desktop, 'color_end', '' );
+					$background_color_gradient_start_position_desktop   = et_()->array_get( $gradient_properties_desktop, 'start_position', '' );
+					$background_color_gradient_end_position_desktop     = et_()->array_get( $gradient_properties_desktop, 'end_position', '' );
+
+					// sticky value.
+					$background_color_gradient_type_sticky             = $sticky->get_raw_value( 'background_color_gradient_type', $this->props, $background_color_gradient_type_desktop );
+					$background_color_gradient_direction_sticky        = $sticky->get_raw_value( 'background_color_gradient_direction', $this->props, $background_color_gradient_direction_desktop );
+					$background_color_gradient_direction_radial_sticky = $sticky->get_raw_value( 'background_color_gradient_direction_radial', $this->props, $background_color_gradient_radial_direction_desktop );
+					$background_color_gradient_start_sticky            = $sticky->get_raw_value( 'background_color_gradient_start', $this->props, $background_color_gradient_color_start_desktop );
+					$background_color_gradient_end_sticky              = $sticky->get_raw_value( 'background_color_gradient_end', $this->props, $background_color_gradient_color_end_desktop );
+					$background_color_gradient_start_position_sticky   = $sticky->get_raw_value( 'background_color_gradient_start_position', $this->props, $background_color_gradient_start_position_desktop );
+					$background_color_gradient_end_position_sticky     = $sticky->get_raw_value( 'background_color_gradient_end_position', $this->props, $background_color_gradient_end_position_desktop );
+					$background_color_gradient_overlays_image_sticky   = $sticky->get_raw_value( 'background_color_gradient_overlays_image', $this->props, $background_color_gradient_overlays_image_desktop );
+
+					// Flag to inform BG Color if current module has Gradient.
+					$has_background_color_gradient_sticky = true;
+
+					$gradient_values_sticky = array(
+						'type'             => '' !== $background_color_gradient_type_sticky ? $background_color_gradient_type_sticky : $background_color_gradient_type_desktop,
+						'direction'        => '' !== $background_color_gradient_direction_sticky ? $background_color_gradient_direction_sticky : $background_color_gradient_direction_desktop,
+						'radial_direction' => '' !== $background_color_gradient_direction_radial_sticky ? $background_color_gradient_direction_radial_sticky : $background_color_gradient_radial_direction_desktop,
+						'color_start'      => '' !== $background_color_gradient_start_sticky ? $background_color_gradient_start_sticky : $background_color_gradient_color_start_desktop,
+						'color_end'        => '' !== $background_color_gradient_end_sticky ? $background_color_gradient_end_sticky : $background_color_gradient_color_end_desktop,
+						'start_position'   => '' !== $background_color_gradient_start_position_sticky ? $background_color_gradient_start_position_sticky : $background_color_gradient_start_position_desktop,
+						'end_position'     => '' !== $background_color_gradient_end_position_sticky ? $background_color_gradient_end_position_sticky : $background_color_gradient_end_position_desktop,
+					);
+
+					$background_gradient_sticky = $this->get_gradient( $gradient_values_sticky );
+
+					$background_images_sticky[] = $background_gradient_sticky;
+
+					// Save resulted gradient into property for later usage.
+					if ( $this->save_processed_background ) {
+						et_()->array_set( $this->processed_background, 'sticky.gradient', $background_gradient_sticky );
+					}
+				} elseif ( 'off' === $use_background_color_gradient_sticky ) {
+					$is_background_color_gradient_sticky_disabled = true;
+				}
+			}
+
+			// Background Image Sticky.
+			if ( $use_background_image_options && 'fields_only' !== $use_background_image_options ) {
+				$background_image_sticky = $responsive->get_inheritance_background_value( $this->props, 'background_image', 'sticky', 'background', $this->fields_unprocessed );
+				$parallax_sticky         = $sticky->get_raw_value( 'parallax', $this->props );
+
+				// Featured image as background is in higher priority.
+				if ( $this->featured_image_background ) {
+					$featured_image         = et_()->array_get( $this->props, 'featured_image', '' );
+					$featured_placement     = et_()->array_get( $this->props, 'featured_placement', '' );
+					$featured_image_src_obj = wp_get_attachment_image_src( get_post_thumbnail_id( self::_get_main_post_id() ), 'full' );
+					$featured_image_src     = isset( $featured_image_src_obj[0] ) ? $featured_image_src_obj[0] : '';
+
+					if ( 'on' === $featured_image && 'background' === $featured_placement && '' !== $featured_image_src ) {
+						$background_image_sticky = $featured_image_src;
+					}
+				}
+
+				if ( '' !== $background_image_sticky && null !== $background_image_sticky && 'on' !== $parallax_sticky ) {
+					// Flag to inform BG Color if current module has Image.
+					$has_background_image_sticky = true;
+
+					// Size.
+					$background_size_sticky  = $sticky->get_raw_value( 'background_size', $this->props );
+					$background_size_desktop = et_()->array_get( $this->props, 'background_size', '' );
+					$is_same_background_size = $background_size_sticky === $background_size_desktop;
+
+					if ( empty( $background_size_sticky ) && ! empty( $background_size_desktop ) ) {
+						$background_size_sticky = $background_size_desktop;
+					}
+
+					if ( ! empty( $background_size_sticky ) && ! $is_same_background_size ) {
+						$style_sticky .= sprintf(
+							'background-size: %1$s; ',
+							esc_html( $background_size_sticky )
+						);
+					}
+
+					// Position.
+					$background_position_sticky  = $sticky->get_raw_value( 'background_position', $this->props );
+					$background_position_desktop = et_()->array_get( $this->props, 'background_position', '' );
+					$is_same_background_position = $background_position_sticky === $background_position_desktop;
+
+					if ( empty( $background_position_sticky ) && ! empty( $background_position_desktop ) ) {
+						$background_position_sticky = $background_position_desktop;
+					}
+
+					if ( ! empty( $background_position_sticky ) && ! $is_same_background_position ) {
+						$style_sticky .= sprintf(
+							'background-position: %1$s; ',
+							esc_html( str_replace( '_', ' ', $background_position_sticky ) )
+						);
+					}
+
+					// Repeat.
+					$background_repeat_sticky  = $sticky->get_raw_value( 'background_repeat', $this->props );
+					$background_repeat_desktop = et_()->array_get( $this->props, 'background_repeat', '' );
+					$is_same_background_repeat = $background_repeat_sticky === $background_repeat_desktop;
+
+					if ( empty( $background_repeat_sticky ) && ! empty( $background_repeat_desktop ) ) {
+						$background_repeat_sticky = $background_repeat_desktop;
+					}
+
+					if ( ! empty( $background_repeat_sticky ) && ! $is_same_background_repeat ) {
+						$style_sticky .= sprintf(
+							'background-repeat: %1$s; ',
+							esc_html( $background_repeat_sticky )
+						);
+					}
+
+					// Blend.
+					$background_blend_sticky  = $sticky->get_raw_value( 'background_blend', $this->props );
+					$background_blend_default = et_()->array_get( $this->fields_unprocessed, 'background_blend.default', '' );
+					$background_blend_desktop = et_()->array_get( $this->props, 'background_blend', '' );
+					$is_same_background_blend = $background_blend_sticky === $background_blend_desktop;
+
+					if ( empty( $background_blend_sticky ) && ! empty( $background_blend_desktop ) ) {
+						$background_blend_sticky = $background_blend_desktop;
+					}
+
+					if ( ! empty( $background_blend_sticky ) ) {
+						// Don't print the same background blend.
+						if ( ! $is_same_background_blend ) {
+							$style_sticky .= sprintf(
+								'background-blend-mode: %1$s; ',
+								esc_html( $background_blend_sticky )
+							);
+						}
+
+						// Force background-color value to initial.
+						if ( $has_background_color_gradient_sticky && $has_background_image_sticky && $background_blend_sticky !== $background_blend_default ) {
+							$has_background_gradient_and_image_sticky = true;
+							$style_sticky                            .= sprintf( 'background-color: initial%1$s; ', esc_html( $important ) );
+						}
+					}
+
+					// Only append background image when the image is exist.
+					$background_images_sticky[] = sprintf( 'url(%1$s)', esc_url( $background_image_sticky ) );
+				} elseif ( '' === $background_image_sticky ) {
+					$is_background_image_sticky_disabled = true;
+				}
+			}
+
+			if ( ! empty( $background_images_sticky ) ) {
+				// The browsers stack the images in the opposite order to what you'd expect.
+				if ( 'on' !== $background_color_gradient_overlays_image_sticky ) {
+					$background_images_sticky = array_reverse( $background_images_sticky );
+				} else {
+					// Save gradient setting into property for later usage.
+					if ( $this->save_processed_background ) {
+						et_()->array_set( $this->processed_background, 'sticky.gradient_overlays_image', true );
+					}
+				}
+
+				$style_sticky .= sprintf(
+					'background-image: %1$s%2$s;',
+					esc_html( join( ', ', $background_images_sticky ) ),
+					$important
+				);
+			} elseif ( $is_background_color_gradient_sticky_disabled && $is_background_image_sticky_disabled ) {
+				$style_sticky .= sprintf(
+					'background-image: initial %1$s;',
+					$important
+				);
+			}
+
+			// Background Color Sticky.
+			if ( $use_background_color_options && 'fields_only' !== $use_background_color_options ) {
+				$use_background_color_sticky_value = et_()->array_get( $this->props, 'use_background_color__sticky', '' );
+				$use_background_color_sticky_value = ! empty( $use_background_color_sticky_value ) ? $use_background_color_sticky_value : et_()->array_get( $this->props, 'use_background_color', 'on' );
+
+				if ( ! $has_background_gradient_and_image_sticky && 'off' !== $use_background_color_sticky_value ) {
+					$background_color_sticky = $responsive->get_inheritance_background_value( $this->props, 'background_color', 'sticky', 'background', $this->fields_unprocessed );
+					$background_color_sticky = '' !== $background_color_sticky ? $background_color_sticky : '';
+
+					if ( '' !== $background_color_sticky ) {
+						$style_sticky .= sprintf(
+							'background-color: %1$s%2$s; ',
+							esc_html( $background_color_sticky ),
+							esc_html( $important )
+						);
+					}
+				}
+			}
+
+			// Render Background Sticky styles.
+			if ( '' !== $style_sticky ) {
+				$css_element_main   = et_()->array_get( $settings, 'css.main', $this->main_css_element );
+				$css_element_sticky = $sticky->add_sticky_to_order_class( $css_element_main, $this->is_sticky_module );
+				$css_element_sticky = et_()->array_get( $settings, 'css.sticky', $css_element_sticky );
+
+				$el_style = array(
+					'selector'    => $css_element_sticky,
+					'declaration' => rtrim( $style_sticky ),
+					'priority'    => $this->_style_priority,
+				);
+				self::set_style( $function_name, $el_style );
+
+				// Add hover styles in sticky state.
+				if ( '' !== $style_hover ) {
+					$el_style = array(
+						'selector'    => $sticky->add_sticky_to_order_class(
+							$css_element_hover,
+							$this->is_sticky_module
+						),
+						'declaration' => rtrim( $style_hover ),
+						'priority'    => $this->_style_priority,
+					);
+					self::set_style( $function_name, $el_style );
+				}
 			}
 		}
 	}
@@ -12665,8 +13311,8 @@ class ET_Builder_Element {
 	 *
 	 * @param  string $function_name Module slug.
 	 */
-	function process_advanced_text_options( $function_name ) {
-		// Disable if module doesn't set advanced_fields property and has no VB support
+	public function process_advanced_text_options( $function_name ) {
+		// Disable if module doesn't set advanced_fields property and has no VB support.
 		if ( ! $this->has_vb_support() && ! $this->has_advanced_fields ) {
 			return;
 		}
@@ -12686,7 +13332,7 @@ class ET_Builder_Element {
 
 			// Normally, text orientation attr adds et_pb_text_align_* class name to its module wrapper
 			// In some cases, it needs to target particular children inside the module. Thus, only prints
-			// styling if selector is given
+			// styling if selector is given.
 			if ( isset( $text_css['text_orientation'] ) ) {
 				$text_orientation_values = array(
 					'desktop' => esc_attr( $text_orientation ),
@@ -12702,10 +13348,13 @@ class ET_Builder_Element {
 	/**
 	 * Output border and border radius styling
 	 *
+	 * @param string $function_name Function name.
+	 *
 	 * @since 3.23 Add support to generate responsive styles of border styles and radii.]
+	 * @since ?? Add sticky style support.
 	 */
-	function process_advanced_borders_options( $function_name ) {
-		// Disable if module doesn't set advanced_fields property and has no VB support
+	public function process_advanced_borders_options( $function_name ) {
+		// Disable if module doesn't set advanced_fields property and has no VB support.
 		if ( ! $this->has_vb_support() && ! $this->has_advanced_fields ) {
 			return;
 		}
@@ -12714,6 +13363,7 @@ class ET_Builder_Element {
 
 		$borders      = self::$_->array_get( $this->advanced_fields, 'borders', array( 'default' => array() ) );
 		$border_field = ET_Builder_Module_Fields_Factory::get( 'Border' );
+		$sticky       = et_pb_sticky_options();
 
 		if ( is_array( $borders ) && ! empty( $borders ) ) {
 			foreach ( $borders as $border_name => $border ) {
@@ -12812,6 +13462,28 @@ class ET_Builder_Element {
 					self::set_style( $function_name, $el_style );
 				}
 
+				if ( $sticky->is_enabled( "border_radii$suffix", $this->props ) ) {
+					$main     = et_()->array_get( $border, 'css.sticky', $this->main_css_element );
+					$main     = et_()->array_get( $border, 'css.main.border_radii', $main );
+					$main     = 'default' !== $border_name ? $sticky->add_sticky_to_selectors( $main, $this->is_sticky_module ) : $sticky->add_sticky_to_order_class( $main, $this->is_sticky_module );
+					$selector = et_()->array_get( $border, 'css.main.border_radii_sticky', $main );
+
+					$el_style = array(
+						'selector'    => $selector,
+						'declaration' => $border_field->get_radii_style(
+							$this->props,
+							$this->advanced_fields,
+							$suffix,
+							$overflow,
+							false,
+							'desktop',
+							true
+						),
+						'priority'    => $this->_style_priority,
+					);
+					self::set_style( $function_name, $el_style );
+				}
+
 				// Render border styles for all devices.
 				foreach ( et_pb_responsive_options()->get_modes() as $device ) {
 					$border_styles_attrs = array(
@@ -12840,6 +13512,18 @@ class ET_Builder_Element {
 					'declaration' => $border_field->get_borders_style( $this->props, $this->advanced_fields, $suffix, true ),
 					'priority'    => $this->_style_priority,
 				);
+
+				$main = et_()->array_get( $border, 'css.sticky', $this->main_css_element );
+				$main = et_()->array_get( $border, 'css.main.border_styles', $main );
+				$main = 'default' !== $border_name ? $sticky->add_sticky_to_selectors( $main, $this->is_sticky_module ) : $sticky->add_sticky_to_order_class( $main, $this->is_sticky_module );
+
+				$selector = et_()->array_get( $border, 'css.main.border_styles_sticky', $main );
+				$el_style = array(
+					'selector'    => $selector,
+					'declaration' => $border_field->get_borders_style( $this->props, $this->advanced_fields, $suffix, false, 'desktop', true ),
+					'priority'    => $this->_style_priority,
+				);
+
 				self::set_style( $function_name, $el_style );
 			}
 		}
@@ -12868,6 +13552,13 @@ class ET_Builder_Element {
 		$this->position_locations = $locations;
 	}
 
+	/**
+	 * Process transform options.
+	 *
+	 * @param string $function_name Function name.
+	 *
+	 * @since ?? Add sticky style support.
+	 */
 	function process_transform( $function_name ) {
 		$transform = self::$_->array_get( $this->advanced_fields, 'transform', array() );
 
@@ -12875,15 +13566,15 @@ class ET_Builder_Element {
 			return;
 		}
 
-		$selector            = self::$_->array_get( $transform, 'css.main', '%%order_class%%' );
-		$important           = self::$_->array_get( $transform, 'css.important', false );
-		$hover               = et_pb_hover_options();
-		$isHoverEnabled      = $hover->is_enabled( 'transform_styles', $this->props );
-		$isResponsiveEnabled = isset( $this->props['transform_styles_last_edited'] )
-							   && et_pb_get_responsive_status( $this->props['transform_styles_last_edited'] );
-		$responsiveDirection = isset( $this->props['animation_direction_last_edited'] )
-							   && et_pb_get_responsive_status( $this->props['animation_direction_last_edited'] );
-		$animationType       = self::$_->array_get( $this->props, 'animation_style', 'none' );
+		$selector              = self::$_->array_get( $transform, 'css.main', '%%order_class%%' );
+		$important             = self::$_->array_get( $transform, 'css.important', false );
+		$hover                 = et_pb_hover_options();
+		$sticky                = et_pb_sticky_options();
+		$is_hover_enabled      = $hover->is_enabled( 'transform_styles', $this->props );
+		$is_sticky_enabled     = $sticky->is_enabled( 'transform_styles', $this->props );
+		$is_responsive_enabled = isset( $this->props['transform_styles_last_edited'] ) && et_pb_get_responsive_status( $this->props['transform_styles_last_edited'] );
+		$responsive_direction  = isset( $this->props['animation_direction_last_edited'] ) && et_pb_get_responsive_status( $this->props['animation_direction_last_edited'] );
+		$animation_type        = self::$_->array_get( $this->props, 'animation_style', 'none' );
 
 		/** @var $class ET_Builder_Module_Field_Transform */
 		$class = ET_Builder_Module_Fields_Factory::get( 'Transform' );
@@ -12891,24 +13582,29 @@ class ET_Builder_Element {
 
 		$position_locations = $this->get_position_locations();
 		$views              = array( 'desktop' );
-		if ( $isHoverEnabled || isset( $position_locations['hover'] ) ) {
+		if ( $is_hover_enabled || isset( $position_locations['hover'] ) ) {
 			array_push( $views, 'hover' );
 		}
-		if ( $isResponsiveEnabled || ( 'none' !== $animationType && $responsiveDirection )
+		if ( $is_sticky_enabled || isset( $position_locations['sticky'] ) ) {
+			array_push( $views, 'sticky' );
+		}
+		if ( $is_responsive_enabled || ( 'none' !== $animation_type && $responsive_direction )
 			 || ( isset( $position_locations['hover'] ) || isset( $position_locations['phone'] ) ) ) {
 			array_push( $views, 'tablet', 'phone' );
 		}
 		foreach ( $views as $view ) {
-			$viewSelector = $selector;
+			$view_selector = $selector;
 			$device       = $view;
-			if ( ! $isResponsiveEnabled && in_array( $view, array( 'phone', 'tablet' ) ) || ( 'hover' === $view && ! $isHoverEnabled ) ) {
+			if ( ! $is_responsive_enabled && in_array( $view, array( 'phone', 'tablet' ), true ) || ( 'hover' === $view && ! $is_hover_enabled ) || ( 'sticky' === $view && ! $is_sticky_enabled ) ) {
 				$device = 'desktop';
 			}
 			$elements    = $class->get_elements( $device );
 			$media_query = array();
 
 			if ( 'hover' === $view ) {
-				$viewSelector = $selector . ':hover';
+				$view_selector = $selector . ':hover';
+			} elseif ( 'sticky' === $view ) {
+				$view_selector = $sticky->add_sticky_to_selectors( $selector, $this->is_sticky_module );
 			} elseif ( 'tablet' === $view ) {
 				$media_query = array(
 					'media_query' => self::get_media_query( 'max_width_980' ),
@@ -12943,16 +13639,16 @@ class ET_Builder_Element {
 
 			if ( ! empty( $elements['transform'] ) || ! empty( $elements['origin'] ) ) {
 
-				if ( 'hover' !== $view && ! empty( $animationType ) && 'none' !== $animationType && 'fade' !== $animationType ) {
+				if ( 'hover' !== $view && 'sticky' !== $view && ! empty( $animation_type ) && 'none' !== $animation_type && 'fade' !== $animation_type ) {
 
-					$transformedAnimation = $class->transformedAnimation( $animationType, $elements, $function_name, $device );
+					$transformed_animation = $class->transformedAnimation( $animation_type, $elements, $function_name, $device );
 
-					if ( ! empty( $transformedAnimation ) ) {
-						self::set_style( $function_name, $transformedAnimation['keyframe'] + $media_query );
-						self::set_style( $function_name, $transformedAnimation['animationRules'] + $media_query );
+					if ( ! empty( $transformed_animation ) ) {
+						self::set_style( $function_name, $transformed_animation['keyframe'] + $media_query );
+						self::set_style( $function_name, $transformed_animation['animationRules'] + $media_query );
 						$el_style = array(
-							'selector'    => $viewSelector,
-							'declaration' => $transformedAnimation['declaration'],
+							'selector'    => $view_selector,
+							'declaration' => $transformed_animation['declaration'],
 							'priority'    => $this->_style_priority,
 						) + $media_query;
 						self::set_style( $function_name, $el_style );
@@ -12971,17 +13667,26 @@ class ET_Builder_Element {
 					}
 
 					$el_style = array(
-						'selector'    => $viewSelector,
+						'selector'    => $view_selector,
 						'declaration' => $declaration,
 						'priority'    => $this->_style_priority,
 					) + $media_query;
 					self::set_style( $function_name, $el_style );
+
+					// Flag sticky module that uses transform uses classname on module wrapper
+					// so its offset calculation can be adjusted (jQuery offsets() gets the edge
+					// of transformed module so its offset will be outside its parent).
+					if ( 'sticky' !== $view && $this->is_sticky_module ) {
+						$this->add_classname( 'et_pb_sticky--has-transform' );
+					}
 				}
 			}
 		}
 	}
 
 	function process_position( $function_name ) {
+		global $et_fb_processing_shortcode_object;
+
 		/** @var $position_class ET_Builder_Module_Field_Position */
 		$position_class = ET_Builder_Module_Fields_Factory::get( 'Position' );
 		$position_class->set_module( $this );
@@ -12995,6 +13700,58 @@ class ET_Builder_Element {
 				self::$layout_block_assistive_settings['position'][] = array(
 					'selector' => '.' . self::get_module_order_class( $function_name ),
 					'settings' => $layout_block_settings,
+				);
+			}
+		}
+
+		// Exposes `position: relative` offsets settings. Offsets need to be rendered as inline
+		// style because `top`, `right`, `bottom`, and `left` are used to render sticky state
+		// in the module as inline module.
+		$responsive   = et_pb_responsive_options();
+		$sticky       = et_pb_sticky_options();
+		$positioning  = $responsive->get_checked_property_value( $this->props, 'positioning', '', true );
+		$is_relative  = is_string( $positioning ) && 'relative' === $positioning;
+		$has_relative = is_array( $positioning ) && in_array( 'relative', $positioning, true );
+
+		if ( ! $et_fb_processing_shortcode_object && $this->is_sticky_module && ( $is_relative || $has_relative ) ) {
+			$order_class = self::get_module_order_class( $this->slug );
+
+			// Set position style.
+			et_()->array_set(
+				self::$sticky_elements,
+				$order_class . '.styles.positioning',
+				$positioning
+			);
+
+			// Attributes list.
+			$relative_attributes = array(
+				'position_origin_r' => array(
+					'default' => 'top_left',
+				),
+				'horizontal_offset' => array(
+					'default' => '',
+				),
+				'vertical_offset'   => array(
+					'default' => '',
+				),
+			);
+
+			// Loop over attributes list and save sticky style.
+			foreach ( $relative_attributes as $attr_name => $attr ) {
+				// Position origin should fallback to non-sticky value to avoid broken calculation.
+				$is_relative        = 'position_origin_r' === $attr_name;
+				$attr_value_default = $is_relative ? et_()->array_get( $this->props, $attr_name, '' ) : '';
+
+				$attr_value = $sticky->get_value(
+					$attr_name,
+					$this->props,
+					$attr_value_default
+				);
+
+				et_()->array_set(
+					self::$sticky_elements,
+					$order_class . '.stickyStyles.' . $attr_name,
+					$attr_value
 				);
 			}
 		}
@@ -13019,7 +13776,16 @@ class ET_Builder_Element {
 		return $this->generate_css_filters( $function_name );
 	}
 
+	/**
+	 * Process max width options
+	 *
+	 * @param string $function_name Function name.
+	 *
+	 * @since ?? Add sticky style support.
+	 */
 	function process_max_width_options( $function_name ) {
+		global $is_parent_sticky, $et_fb_processing_shortcode_object;
+
 		// Disable if module doesn't set advanced_fields property and has no VB support
 		if ( ! $this->has_vb_support() && ! $this->has_advanced_fields ) {
 			return;
@@ -13029,12 +13795,14 @@ class ET_Builder_Element {
 			return;
 		}
 
-		$max_width = self::$_->array_get( $this->advanced_fields, 'max_width', array() );
-		$fields    = array_merge( array( '' => $max_width ), self::$_->array_get( $max_width, 'extra', array() ) );
+		$max_width   = self::$_->array_get( $this->advanced_fields, 'max_width', array() );
+		$fields      = array_merge( array( '' => $max_width ), self::$_->array_get( $max_width, 'extra', array() ) );
+		$order_class = self::get_module_order_class( $this->slug );
 
 		foreach ( $fields as $prefix => $field ) {
 			$is_customized = ! self::$_->array_get( $field, 'use_max_width', true ) && ! self::$_->array_get( $field, 'use_width', true );
 			$hover         = et_pb_hover_options();
+			$sticky        = et_pb_sticky_options();
 
 			if ( 'et_pb_section' === $this->slug && 'inner' === $prefix && 'on' !== $this->prop( 'specialty' ) ) {
 				// https://github.com/elegantthemes/Divi/issues/14445
@@ -13069,6 +13837,7 @@ class ET_Builder_Element {
 				$default_phone = self::$_->array_get( $option, 'default_phone', $width_tablet );
 				$width_phone   = $this->prop( "{$slug}_phone", $default_phone );
 				$width_hover   = $hover->get_value( $slug, $this->props, '' );
+				$width_sticky  = $sticky->get_value( $slug, $this->props, '' );
 
 				$width_last_edited       = $this->prop( "{$slug}_last_edited", '' );
 				$width_responsive_active = et_pb_get_responsive_status( $width_last_edited );
@@ -13118,12 +13887,23 @@ class ET_Builder_Element {
 						$function_name,
 						$additional_css
 					);
+
+					// Set module width and max-width into moduleSettings. These properties are
+					// rendered as inline style for constructing sticky behaviour thus it needs
+					// special adjustment to work correctly.
+					if ( ! $et_fb_processing_shortcode_object && $this->is_sticky_module ) {
+						et_()->array_set(
+							self::$sticky_elements,
+							self::get_module_order_class( $this->slug ) . '.styles.' . $css_prop,
+							$width_values
+						);
+					}
 				} elseif ( '' !== $default && '100%' !== $default && ! in_array( $default, array( 'auto', 'none' ) ) ) {
 					$is_customized = true;
 				}
 
-				// Hover styles
-				if ( '' !== $width_hover ) {
+				// Hover and/or Sticky styles.
+				if ( '' !== $width_hover || '' !== $width_sticky ) {
 					// Apply 100% max-width if there is only hover max-width set so that transition works.
 					$selector      = isset( $width_options_css['main'] ) ? $width_options_css['main'] : '%%order_class%%';
 					$is_customized = true;
@@ -13138,15 +13918,65 @@ class ET_Builder_Element {
 						self::set_style( $function_name, $hover_base );
 					}
 
-					$selector_hover = et_pb_hover_options()->add_hover_to_order_class( $selector );
+					// Hover style.
 					$additional_css = $this->get_max_width_additional_css();
 
-					$hover_style = array(
-						'selector'    => $selector_hover,
-						'declaration' => esc_html( "$css_prop: {$width_hover}{$additional_css};" ),
-					);
+					if ( '' !== $width_hover ) {
+						$selector_hover = $hover->add_hover_to_order_class( $selector );
 
-					self::set_style( $function_name, $hover_style );
+						$hover_style = array(
+							'selector'    => $selector_hover,
+							'declaration' => esc_html( "$css_prop: {$width_hover}{$additional_css};" ),
+						);
+
+						self::set_style( $function_name, $hover_style );
+					}
+
+					// Sticky style should be printed if module is INSIDE sticky module.
+					if ( $is_parent_sticky && '' !== $width_sticky ) {
+						$sticky_child_selector = $sticky->add_sticky_to_selectors( $selector, false );
+						$sticky_child_style    = array(
+							'selector'    => $sticky_child_selector,
+							'declaration' => esc_html( "$css_prop: {$width_sticky}{$additional_css};" ),
+						);
+
+						self::set_style( $function_name, $sticky_child_style );
+					}
+
+					// Sticky style on sticky module: pass it to frontend as variables. Sticky style
+					// should not be rendered on page because it will be dynamically calculated
+					// and inserted as inline style.
+					if ( ! $et_fb_processing_shortcode_object && $this->is_sticky_module && '' !== $width_sticky ) {
+						et_()->array_set(
+							self::$sticky_elements,
+							$order_class . '.stickyStyles.' . $css_prop,
+							$width_sticky
+						);
+
+						// Adjustment for max-width.
+						if ( 'max-width' === $css_prop ) {
+							// Get sticky style width; fallback to desktop width if empty.
+							$sticky_style_width = et_()->array_get(
+								self::$sticky_elements,
+								$order_class . '.stickyStyles.width',
+								et_()->array_get(
+									self::$sticky_elements,
+									$order_class . '.styles.width',
+									''
+								)
+							);
+
+							// Force define width style using default value if max-width sticky
+							// style is used to handle various possible scenarios.
+							if ( '' !== $width_sticky && ! $sticky_style_width ) {
+								et_()->array_set(
+									self::$sticky_elements,
+									$order_class . '.styles.width',
+									et_()->array_get( $this->get_default_props(), 'width', '' )
+								);
+							}
+						}
+					}
 				}
 			}
 
@@ -13202,8 +14032,113 @@ class ET_Builder_Element {
 					);
 					self::set_style( $function_name, $el_style );
 				}
+
+				// Set module alignment setting for sticky element.
+				if ( ! $et_fb_processing_shortcode_object && $this->is_sticky_module ) {
+					// Get default field value even if `default_on_front` is set to '' to avoid
+					// empty string being passed as module_alignment setting which will cause
+					// module with center-alignment by default (eg. row) to be incorrectly rendered
+					// when custom width is set for sticky state.
+					$module_alignment_default = et_()->array_get(
+						$this->fields_unprocessed,
+						'module_alignment.default',
+						''
+					);
+
+					et_()->array_set(
+						self::$sticky_elements,
+						self::get_module_order_class( $this->slug ) . '.styles.module_alignment',
+						array(
+							'desktop' => '' !== $module_alignment ? $module_alignment : $module_alignment_default,
+							'tablet'  => $module_alignment_tablet,
+							'phone'   => $module_alignment_phone,
+						)
+					);
+				}
 			}
 		}
+	}
+
+	/**
+	 * Return unique identifier for sticky element. For frontend, order class is considered unique
+	 * and sufficient as identifier
+	 *
+	 * @since ??
+	 *
+	 * @param string $render_slug Render slug.
+	 *
+	 * @return string
+	 */
+	public function get_sticky_id( $render_slug = '' ) {
+		return self::get_module_order_class( $render_slug );
+	}
+
+	/**
+	 * Process sticky element
+	 *
+	 * Append current module's sticky setting into static variable which will be exposed for js files
+	 * Sticky element UX is fully handled via javascript; Module simply exposes the configuration
+	 * for JS to initialized
+	 *
+	 * @since ??
+	 *
+	 * @param string $render_slug Render slug.
+	 */
+	public function process_sticky( $render_slug ) {
+		global $et_fb_processing_shortcode_object;
+
+		// Skip if current request is visual builder page.
+		if ( $et_fb_processing_shortcode_object ) {
+			return;
+		}
+
+		// Check if sticky is intentionally disabled or not.
+		if ( ! is_array( self::$_->array_get( $this->advanced_fields, 'sticky', array() ) ) ) {
+			return;
+		}
+
+		// Get sticky prefix.
+		$prefix = ET_Builder_Module_Fields_Factory::get( 'Sticky' )->get_default( 'prefix' );
+
+		// Bail if sticky option is not used OR there are incompatible attrs being used.
+		if ( ! et_pb_sticky_options()->is_sticky_module( $this->props ) ) {
+			return;
+		}
+
+		$responsive = et_pb_responsive_options();
+		$position   = $responsive->get_checked_property_value(
+			$this->props,
+			$prefix . '_position',
+			'',
+			true
+		);
+
+		// Module's order class.
+		$selector = '.' . self::get_module_order_class( $render_slug );
+
+		// Some modules (eg. button module) have their order class wrapper wrapped by additional
+		// wrapper for alignment purpose. The selector needs to be adjusted to the most outer wrapper.
+		if ( et_()->array_get( $this->wrapper_settings, 'order_class_wrapper', false ) ) {
+			$selector .= '_wrapper';
+		}
+
+		// Generate sticky element settings that will be usedby stickyElement class.
+		// Can't directly pass attribute value because technically $prefix can be different.
+		// Settings' array element need to be fixed then.
+		$settings = array(
+			'id'                => $this->get_sticky_id( $render_slug ),
+			'selector'          => $selector,
+			'position'          => et_core_intentionally_unescaped( $position, 'fixed_string' ),
+			'topOffset'         => et_core_intentionally_unescaped( $responsive->get_checked_property_value( $this->props, $prefix . '_offset_top', '', true ), 'fixed_string' ),
+			'bottomOffset'      => et_core_intentionally_unescaped( $responsive->get_checked_property_value( $this->props, $prefix . '_offset_bottom', '', true ), 'fixed_string' ),
+			'topLimit'          => et_core_intentionally_unescaped( $responsive->get_checked_property_value( $this->props, $prefix . '_limit_top', '', true ), 'fixed_string' ),
+			'bottomLimit'       => et_core_intentionally_unescaped( $responsive->get_checked_property_value( $this->props, $prefix . '_limit_bottom', '', true ), 'fixed_string' ),
+			'offsetSurrounding' => et_core_intentionally_unescaped( $responsive->get_checked_property_value( $this->props, $prefix . '_offset_surrounding', '', true ), 'fixed_string' ),
+			'transition'        => et_core_intentionally_unescaped( $responsive->get_checked_property_value( $this->props, $prefix . '_transition', '', true ), 'fixed_string' ),
+		);
+
+		// Populate sticky element settings.
+		self::$sticky_elements[ self::get_module_order_class( $render_slug ) ] = $settings;
 	}
 
 	function process_scroll_effects( $function_name ) {
@@ -13309,12 +14244,20 @@ class ET_Builder_Element {
 		}
 	}
 
+	/**
+	 * Process height options
+	 *
+	 * @param string $function_name Function name.
+	 *
+	 * @since ?? Add sticky style support.
+	 */
 	public function process_height_options( $function_name ) {
 		if ( ! is_array( self::$_->array_get( $this->advanced_fields, 'height' ) ) ) {
 			return;
 		}
 
 		$hover      = et_pb_hover_options();
+		$sticky     = et_pb_sticky_options();
 		$responsive = et_pb_responsive_options();
 		$settings   = self::$_->array_get( $this->advanced_fields, 'height', array() );
 		$fields     = array_merge( array( '' => $settings ), self::$_->array_get( $settings, 'extra', array() ) );
@@ -13352,13 +14295,11 @@ class ET_Builder_Element {
 					$value   = $helper->get_value( $this->props, $default );
 
 					if ( $value !== '' && $value !== $default ) {
-						self::set_style(
-							$function_name,
-							array(
-								'selector'    => $selector,
-								'declaration' => sprintf( '%1$s: %2$s;', $css_props, esc_attr( $value ) ),
-							)
+						$el_style = array(
+							'selector'    => $selector,
+							'declaration' => sprintf( '%1$s: %2$s;', $css_props, esc_attr( $value ) ),
 						);
+						self::set_style( $function_name, $el_style );
 					}
 				}
 
@@ -13376,10 +14317,39 @@ class ET_Builder_Element {
 						self::set_style( $function_name, $el_style );
 					}
 				}
+
+				if ( $sticky->is_enabled( $slug, $this->props ) ) {
+					$default      = self::$_->array_get( $field, 'default' );
+					$value        = $helper->get_value( $this->props, $default );
+					$sticky_value = $sticky->get_value( $slug, $this->props, $value );
+					$selector     = $sticky->add_sticky_to_selectors(
+						$selector,
+						$this->is_sticky_module
+					);
+
+					if ( '' !== $sticky_value && $value !== $sticky_value ) {
+						$el_style = array(
+							'selector'    => $selector,
+							'declaration' => sprintf(
+								'%1$s: %2$s;',
+								$css_props,
+								esc_attr( $sticky_value )
+							),
+						);
+						self::set_style( $function_name, $el_style );
+					}
+				}
 			}
 		}
 	}
 
+	/**
+	 * Process overflow options
+	 *
+	 * @param string $function_name Function name.
+	 *
+	 * @since ?? Add sticky style support.
+	 */
 	public function process_overflow_options( $function_name ) {
 		if ( ! is_array( self::$_->array_get( $this->advanced_fields, 'overflow', array() ) ) ) {
 			return;
@@ -13387,6 +14357,7 @@ class ET_Builder_Element {
 
 		$overflow   = et_pb_overflow();
 		$hover      = et_pb_hover_options();
+		$sticky     = et_pb_sticky_options();
 		$responsive = et_pb_responsive_options();
 		$selector   = self::$_->array_get(
 			$this->advanced_fields,
@@ -13413,18 +14384,35 @@ class ET_Builder_Element {
 				$value = $hover->get_value( $field, $this->props, '' );
 
 				if ( '' !== $value ) {
-					self::set_style(
-						$function_name,
-						array(
-							'selector'    => $hover->add_hover_to_selectors( $selector ),
-							'declaration' => sprintf( '%1$s: %2$s;', $field, esc_attr( $value ) ),
-						)
+					$el_style = array(
+						'selector'    => $hover->add_hover_to_selectors( $selector ),
+						'declaration' => sprintf( '%1$s: %2$s;', $field, esc_attr( $value ) ),
 					);
+					self::set_style( $function_name, $el_style );
+				}
+			}
+
+			if ( $sticky->is_enabled( $field, $this->props ) ) {
+				$value = $sticky->get_value( $field, $this->props, '' );
+
+				if ( '' !== $value ) {
+					$el_style = array(
+						'selector'    => $sticky->add_sticky_to_selectors( $selector, $this->is_sticky_module ),
+						'declaration' => sprintf( '%1$s: %2$s;', $field, esc_attr( $value ) ),
+					);
+					self::set_style( $function_name, $el_style );
 				}
 			}
 		}
 	}
 
+	/**
+	 * Process margin options
+	 *
+	 * @param string $function_name Function name.
+	 *
+	 * @since ?? Add sticky style support
+	 */
 	function process_advanced_custom_margin_options( $function_name ) {
 		// Disable if module doesn't set advanced_fields property and has no VB support
 		if ( ! $this->has_vb_support() && ! $this->has_advanced_fields ) {
@@ -13436,6 +14424,7 @@ class ET_Builder_Element {
 		}
 
 		$hover                = et_pb_hover_options();
+		$sticky               = et_pb_sticky_options();
 		$style                = '';
 		$style_padding        = '';
 		$style_margin         = '';
@@ -13590,7 +14579,7 @@ class ET_Builder_Element {
 			$has_margin_selector = isset( $this->advanced_fields['margin_padding']['css'] ) && isset( $this->advanced_fields['margin_padding']['css']['margin'] );
 			$margin_styling      = '' !== $custom_margin ? et_builder_get_element_style_css( $custom_margin, 'margin', $important ) : '';
 
-			if ( $has_margin_selector ) {
+			if ( $has_margin_selector || $this->is_sticky_module ) {
 				$style_margin .= $margin_styling;
 			} else {
 				$style .= $margin_styling;
@@ -13600,7 +14589,7 @@ class ET_Builder_Element {
 				foreach ( $custom_margin_mobile as $device => $settings ) {
 					$margin_mobile_styling = '' !== $settings ? et_builder_get_element_style_css( $settings, 'margin', $important ) : '';
 
-					if ( $has_margin_selector ) {
+					if ( $has_margin_selector || $this->is_sticky_module ) {
 						$style_mobile_margin[ $device ][] = $margin_mobile_styling;
 					} else {
 						$style_mobile[ $device ][] = $margin_mobile_styling;
@@ -13621,7 +14610,19 @@ class ET_Builder_Element {
 		}
 
 		if ( '' !== $style_margin ) {
-			$css_element_margin = $this->advanced_fields['margin_padding']['css']['margin'];
+			$css_element_margin = et_()->array_get(
+				$this->advanced_fields,
+				'margin_padding.css.margin',
+				$this->main_css_element
+			);
+
+			// Sticky Element "pause" / stop when hit the limit relies on margin applied to the
+			// module. Builder module's margin is often use `!important which nullify sticky
+			// element reset; Thus if current module is sticky and margin is known to be rendered,
+			// Add :not() suffix to ensure that the margin won't be applied when module enter sticky.
+			if ( $this->is_sticky_module ) {
+				$css_element_margin .= ':not(.et_pb_sticky)';
+			}
 
 			$el_style = array(
 				'selector'    => $css_element_margin,
@@ -13651,10 +14652,28 @@ class ET_Builder_Element {
 		}
 
 		if ( ! empty( $style_mobile_margin ) ) {
+			$css_element_margin_mobile = et_()->array_get(
+				$this->advanced_fields,
+				'margin_padding.css.margin',
+				et_()->array_get(
+					$this->advanced_fields,
+					'margin_padding.css.main',
+					$this->main_css_element
+				)
+			);
+
+			// Sticky Element "pause" / stop when hit the limit relies on margin applied to the
+			// module. Builder module's margin is often use `!important which nullify sticky
+			// element reset; Thus if current module is sticky and margin is known to be rendered,
+			// Add :not() suffix to ensure that the margin won't be applied when module enter sticky.
+			if ( $this->is_sticky_module ) {
+				$css_element_margin_mobile .= ':not(.et_pb_sticky)';
+			}
+
 			$this->process_advanced_mobile_margin_options(
 				$function_name,
 				$style_mobile_margin,
-				$this->advanced_fields['margin_padding']['css']['margin']
+				$css_element_margin_mobile
 			);
 		}
 
@@ -13668,7 +14687,7 @@ class ET_Builder_Element {
 			);
 		}
 
-		// Hover styles
+		// Hover styles.
 		$custom_margin_hover = $hover->get_value( 'custom_margin', $this->props );
 
 		if ( '' !== $custom_margin_hover && et_builder_is_hover_enabled( 'custom_margin', $this->props ) ) {
@@ -13686,9 +14705,34 @@ class ET_Builder_Element {
 
 		if ( '' !== $custom_padding_hover && et_builder_is_hover_enabled( 'custom_padding', $this->props ) ) {
 			$css_element_padding = self::$_->array_get( $this->advanced_fields, 'margin_padding.css.padding', $this->main_css_element );
-			$el_style               = array(
+			$el_style            = array(
 				'selector'    => $this->add_hover_to_order_class( $css_element_padding ),
 				'declaration' => rtrim( et_builder_get_element_style_css( $custom_padding_hover, 'padding', true ) ),
+				'priority'    => 20,
+			);
+			self::set_style( $function_name, $el_style );
+		}
+
+		// Sticky styles.
+		$custom_margin_sticky = $sticky->get_value( 'custom_margin', $this->props );
+
+		if ( '' !== $custom_margin_sticky && $sticky->is_enabled( 'custom_margin', $this->props ) ) {
+			$css_element_margin = et_()->array_get( $this->advanced_fields, 'margin_padding.css.margin', $this->main_css_element );
+			$el_style           = array(
+				'selector'    => $sticky->add_sticky_to_order_class( $css_element_margin, $this->is_sticky_module ),
+				'declaration' => rtrim( et_builder_get_element_style_css( $custom_margin_sticky, 'margin', true ) ),
+				'priority'    => 20,
+			);
+			self::set_style( $function_name, $el_style );
+		}
+
+		$custom_padding_sticky = $sticky->get_value( 'custom_padding', $this->props, '' );
+
+		if ( '' !== $custom_padding_sticky && $sticky->is_enabled( 'custom_padding', $this->props ) ) {
+			$css_element_padding = et_()->array_get( $this->advanced_fields, 'margin_padding.css.padding', $this->main_css_element );
+			$el_style            = array(
+				'selector'    => $sticky->add_sticky_to_order_class( $css_element_padding, $this->is_sticky_module ),
+				'declaration' => rtrim( et_builder_get_element_style_css( $custom_padding_sticky, 'padding', true ) ),
 				'priority'    => 20,
 			);
 			self::set_style( $function_name, $el_style );
@@ -13731,6 +14775,8 @@ class ET_Builder_Element {
 	 * Process advanced button options.
 	 *
 	 * @since 3.23 Add support to generate responsive styles of padding and button alignment.
+	 * @since ?? Add sticky style support.
+	 * @since ?? Background rendering is refactored; it now uses et_pb_background_options().
 	 *
 	 * @param  string $function_name Module slug.
 	 */
@@ -13744,7 +14790,8 @@ class ET_Builder_Element {
 			return;
 		}
 
-		$hover = et_pb_hover_options();
+		$hover  = et_pb_hover_options();
+		$sticky = et_pb_sticky_options();
 
 		foreach ( $this->advanced_fields['button'] as $option_name => $option_settings ) {
 			$button_custom   = $this->props[ "custom_{$option_name}" ];
@@ -13820,6 +14867,7 @@ class ET_Builder_Element {
 
 			// Button Icon Color.
 			$button_icon_color_hover  = et_pb_hover_options()->get_value( "{$option_name}_icon_color", $this->props );
+			$button_icon_color_sticky = $sticky->get_value( "{$option_name}_icon_color", $this->props );
 			$button_icon_color_values = et_pb_responsive_options()->get_property_values( $this->props, "{$option_name}_icon_color" );
 			$button_icon_color        = isset( $button_icon_color_values['desktop'] ) ? $button_icon_color_values['desktop'] : '';
 			$button_icon_color_tablet = isset( $button_icon_color_values['tablet'] ) ? $button_icon_color_values['tablet'] : '';
@@ -13991,37 +15039,99 @@ class ET_Builder_Element {
 						$on_hover_padding_left
 					);
 
-				// Avoid adding useless style when value equals its default
+				// Avoid adding useless style when value equals its default.
 				$button_letter_spacing_hover = $this->_is_field_default( $hover->get_hover_field( 'button_letter_spacing' ), $button_letter_spacing_hover ) ? '' : $button_letter_spacing_hover;
 
-				$main_element_styles_hover = sprintf(
-					'%1$s
-					%2$s
-					%3$s
-					%4$s
-					%5$s
-					%6$s
-					%7$s',
-					! empty( $button_text_color_hover ) ? sprintf( 'color:%1$s !important;', $button_text_color_hover ) : '',
-					! empty( $button_border_color_hover ) ? sprintf( 'border-color:%1$s !important;', $button_border_color_hover ) : '',
-					'' !== $button_border_radius_hover_processed ? sprintf( 'border-radius:%1$s;', $button_border_radius_hover_processed ) : '',
-					! empty( $button_letter_spacing_hover ) && 'px' !== $button_letter_spacing_hover && $button_letter_spacing_hover !== $button_letter_spacing ? sprintf( 'letter-spacing:%1$s;', et_builder_process_range_value( $button_letter_spacing_hover ) ) : '',
-					'off' === $button_on_hover || $hide_custom_padding_setting ? '' : $on_hover_padding,
-					'' !== $button_text_size_hover_processed ? sprintf( 'font-size:%1$s !important;', $button_text_size_hover_processed ) : '',
-					! empty( $button_border_width_hover ) ? sprintf( 'border-width:%1$s !important;', $button_border_width_hover ) : ''
+				// Render hover and sticky style.
+				$modes            = array( 'hover', 'sticky' );
+				$modes_properties = array(
+					'color'          => 'text_color',
+					'border-color'   => 'border_color',
+					'border-radius'  => 'border_radius',
+					'letter-spacing' => 'letter_spacing',
+					'on-hover'       => 'on_hover', // hover only.
+					'font-size'      => 'text_size',
+					'border-width'   => 'border_width',
 				);
 
-				$main_element_styles_hover_declaration = rtrim( $main_element_styles_hover );
+				foreach ( $modes as $mode ) {
+					$helper                  = et_builder_get_helper( $mode );
+					$mode_styles_declaration = '';
 
-				if ( $main_element_styles_hover_declaration ) {
-					$el_style = array(
-						'selector'    => $css_element_processed . ':hover',
-						'declaration' => $main_element_styles_hover_declaration,
-					);
-					self::set_style( $function_name, $el_style );
+					foreach ( $modes_properties as $mode_attr => $mode_property ) {
+						$mode_property_value = $helper->get_value(
+							$option_name . '_' . $mode_property,
+							$this->props,
+							''
+						);
+
+						// Further evaluation and process; some property needs it.
+						switch ( $mode_property ) {
+							case 'letter_spacing':
+								if ( 'px' === $mode_property_value ) {
+									$mode_property_value = '';
+								} elseif ( '' !== $mode_property_value ) {
+									$mode_property_value = et_builder_process_range_value( $mode_property_value );
+								}
+								break;
+							case 'on_hover':
+								if ( 'hover' === $mode ) {
+									$mode_property_value = 'off' === $button_on_hover || $hide_custom_padding_setting ? '' : $on_hover_padding;
+								} else {
+									$mode_property_value = '';
+								}
+								break;
+						}
+
+						// Concatenate the style.
+						if ( '' !== $mode_property_value ) {
+							if ( 'on_hover' === $mode_property ) {
+								$mode_styles_declaration .= $mode_property_value;
+							} else {
+								$mode_styles_declaration .= sprintf(
+									'%1$s:%2$s !important;',
+									esc_attr( $mode_attr ),
+									esc_attr( $mode_property_value )
+								);
+							}
+						}
+					}
+
+					// Trim unwanted whitespace from the output.
+					$mode_styles_declaration = rtrim( $mode_styles_declaration );
+
+					if ( '' !== $mode_styles_declaration ) {
+						switch ( $mode ) {
+							case 'sticky':
+								$mode_selector = $helper->add_sticky_to_order_class(
+									$css_element_processed,
+									$helper->is_sticky_module( $this->props )
+								);
+								break;
+
+							case 'hover':
+								$mode_selector = $helper->add_hover_to_selectors( $css_element_processed );
+								break;
+
+							default:
+								$mode_selector = false;
+								break;
+						}
+
+						if ( ! $mode_selector ) {
+							continue;
+						}
+
+						$el_style = array(
+							'selector'    => $mode_selector,
+							'declaration' => $mode_styles_declaration,
+						);
+						self::set_style( $function_name, $el_style );
+					}
 				}
 
-				$main_element_styles_after_hover = '';
+				$main_element_styles_after_hover  = '';
+				$main_element_styles_after_sticky = '';
 
 				if ( 'off' === $button_use_icon ) {
 					$main_element_styles_after = 'display:none !important;';
@@ -14089,7 +15199,11 @@ class ET_Builder_Element {
 					);
 
 					if ( ! empty( $button_icon_color_hover ) && $button_icon_color_hover !== $button_icon_color ) {
-						$main_element_styles_after_hover = sprintf( 'color: %1$s', $button_icon_color_hover );
+						$main_element_styles_after_hover = sprintf( 'color: %1$s', esc_html( $button_icon_color_hover ) );
+					}
+
+					if ( ! empty( $button_icon_color_sticky ) && $button_icon_color_sticky !== $button_icon_color ) {
+						$main_element_styles_after_sticky = sprintf( 'color: %1$s', esc_html( $button_icon_color_sticky ) );
 					}
 
 					// Reverse icon position
@@ -14190,6 +15304,12 @@ class ET_Builder_Element {
 				$el_style = array(
 					'selector'    => et_pb_hover_options()->add_hover_to_selectors( $selector ),
 					'declaration' => rtrim( $main_element_styles_after_hover ),
+				);
+				self::set_style( $function_name, $el_style );
+
+				$el_style = array(
+					'selector'    => $sticky->add_sticky_to_order_class( $selector, $this->is_sticky_module ),
+					'declaration' => rtrim( $main_element_styles_after_sticky ),
 				);
 				self::set_style( $function_name, $el_style );
 
@@ -14507,416 +15627,26 @@ class ET_Builder_Element {
 					$prev_icon = $current_icon;
 				}
 
-				// Place to store processed background. It will be compared with the smaller device
-				// background processed value to avoid rendering the same styles.
-				$processed_background_color  = '';
-				$processed_background_image  = '';
-				$gradient_properties_desktop = '';
-				$processed_background_blend  = '';
+				// Button background base prop name.
+				$base_prop_name = "{$option_name}_bg";
 
-				// Store background images status because the process is extensive.
-				$background_image_status = array(
-					'desktop' => false,
-					'tablet'  => false,
-					'phone'   => false,
+				// Render button background style. Button background uses different prop name for
+				// activating gradient and activating hover + sticky mode thuse some aliases needs
+				// to be defined.
+				et_pb_background_options()->get_background_style(
+					array(
+						'base_prop_name'       => $base_prop_name,
+						'props'                => $this->props,
+						'selector'             => $css_element_processed,
+						'function_name'        => $function_name,
+						'important'            => et_()->array_get( $option_settings, 'css.important', false ) ? ' !important' : '',
+						'use_background_video' => false,
+						'prop_name_aliases'    => array(
+							"use_{$base_prop_name}_color_gradient" => "{$base_prop_name}_use_color_gradient",
+							"{$base_prop_name}" => "{$base_prop_name}_color",
+						),
+					)
 				);
-
-				$background_color_gradient_overlays_image_desktop = 'off';
-
-				// Background Options Styling.
-				foreach ( et_pb_responsive_options()->get_modes() as $device ) {
-					$background_base_name = "{$option_name}_bg";
-					$background_prefix    = "{$background_base_name}_";
-					$background_style     = '';
-					$is_desktop           = 'desktop' === $device;
-					$suffix               = ! $is_desktop ? "_{$device}" : '';
-
-					$background_color_style = '';
-					$background_image_style = '';
-					$background_images      = array();
-
-					$has_background_color_gradient         = false;
-					$has_background_image                  = false;
-					$has_background_gradient_and_image     = false;
-					$is_background_color_gradient_disabled = false;
-					$is_background_image_disabled          = false;
-
-					$background_color_gradient_overlays_image = 'off';
-
-					// Ensure responsive is active.
-					if ( ! $is_desktop && ! et_pb_responsive_options()->is_responsive_enabled( $this->props, "{$option_name}_bg_color" ) ) {
-						continue;
-					}
-
-					// A. Background Gradient.
-					$use_background_color_gradient = et_pb_responsive_options()->get_inheritance_background_value( $this->props, "{$background_prefix}use_color_gradient", $device, $background_base_name, $this->fields_unprocessed );
-
-					if ( 'on' === $use_background_color_gradient ) {
-						$background_color_gradient_overlays_image = et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}color_gradient_overlays_image{$suffix}", '', true );
-
-						$gradient_properties = array(
-							'type'             => et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}color_gradient_type{$suffix}", '', true ),
-							'direction'        => et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}color_gradient_direction{$suffix}", '', true ),
-							'radial_direction' => et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}color_gradient_direction_radial{$suffix}", '', true ),
-							'color_start'      => et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}color_gradient_start{$suffix}", '', true ),
-							'color_end'        => et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}color_gradient_end{$suffix}", '', true ),
-							'start_position'   => et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}color_gradient_start_position{$suffix}", '', true ),
-							'end_position'     => et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}color_gradient_end_position{$suffix}", '', true ),
-						);
-
-						// Will be used as hover default.
-						if ( 'desktop' === $device ) {
-							$gradient_properties_desktop                      = $gradient_properties;
-							$background_color_gradient_overlays_image_desktop = $background_color_gradient_overlays_image;
-						}
-
-						// Save background gradient into background images list.
-						$background_images[] = $this->get_gradient( $gradient_properties );
-
-						// Flag to inform BG Color if current module has Gradient.
-						$has_background_color_gradient = true;
-					} elseif ( 'off' === $use_background_color_gradient ) {
-						$is_background_color_gradient_disabled = true;
-					}
-
-					// B. Background Image.
-					$background_image = et_pb_responsive_options()->get_inheritance_background_value( $this->props, "{$background_prefix}image", $device, $background_base_name, $this->fields_unprocessed );
-					$parallax         = et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}parallax{$suffix}", 'off' );
-
-					// BG image and parallax status.
-					$is_background_image_active         = '' !== $background_image && 'on' !== $parallax;
-					$background_image_status[ $device ] = $is_background_image_active;
-
-					if ( $is_background_image_active ) {
-						// Flag to inform BG Color if current module has Image.
-						$has_background_image = true;
-
-						// Check previous BG image status. Needed to get the correct value.
-						$is_prev_background_image_active = true;
-						if ( ! $is_desktop ) {
-							$is_prev_background_image_active = 'tablet' === $device ? $background_image_status['desktop'] : $background_image_status['tablet'];
-						}
-
-						// Size.
-						$background_size_default = self::$_->array_get( $this->fields_unprocessed, "{$background_prefix}size.default", '' );
-						$background_size         = et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}size{$suffix}", $background_size_default, ! $is_prev_background_image_active );
-
-						if ( '' !== $background_size ) {
-							$background_style .= sprintf(
-								'background-size: %1$s; ',
-								esc_html( $background_size )
-							);
-						}
-
-						// Position.
-						$background_position_default = self::$_->array_get( $this->fields_unprocessed, "{$background_prefix}position.default", '' );
-						$background_position         = et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}position{$suffix}", $background_position_default, ! $is_prev_background_image_active );
-
-						if ( '' !== $background_position ) {
-							$background_style .= sprintf(
-								'background-position: %1$s; ',
-								esc_html( str_replace( '_', ' ', $background_position ) )
-							);
-						}
-
-						// Repeat.
-						$background_repeat_default = self::$_->array_get( $this->fields_unprocessed, "{$background_prefix}repeat.default", '' );
-						$background_repeat         = et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}repeat{$suffix}", $background_repeat_default, ! $is_prev_background_image_active );
-
-						if ( '' !== $background_repeat ) {
-							$background_style .= sprintf(
-								'background-repeat: %1$s; ',
-								esc_html( $background_repeat )
-							);
-						}
-
-						// Blend.
-						$background_blend_default = self::$_->array_get( $this->fields_unprocessed, "{$background_prefix}blend.default", '' );
-						$background_blend         = et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}blend{$suffix}", $background_blend_default, ! $is_prev_background_image_active );
-						$background_blend_inherit = et_pb_responsive_options()->get_any_value( $this->props, "{$background_prefix}blend{$suffix}", '', true );
-
-						if ( '' !== $background_blend_inherit ) {
-							// Don't print the same image blend style.
-							if ( '' !== $background_blend ) {
-								$background_style .= sprintf(
-									'background-blend-mode: %1$s; ',
-									esc_html( $background_blend )
-								);
-							}
-
-							// Reset - If background has image and gradient, force background-color: initial.
-							if ( $has_background_color_gradient && $has_background_image && $background_blend_inherit !== $background_blend_default ) {
-								$has_background_gradient_and_image = true;
-								$background_color_style            = 'initial';
-								$background_style                 .= 'background-color: initial; ';
-							}
-
-							$processed_background_blend = $background_blend;
-						}
-
-						// Only append background image when the image is exist.
-						$background_images[] = sprintf( 'url(%1$s)', esc_html( $background_image ) );
-					} elseif ( '' === $background_image ) {
-						// Reset - If background image is disabled, ensure we reset prev background blend mode.
-						if ( '' !== $processed_background_blend ) {
-							$background_style          .= 'background-blend-mode: normal; ';
-							$processed_background_blend = '';
-						}
-
-						$is_background_image_disabled = true;
-					}
-
-					if ( ! empty( $background_images ) ) {
-						// The browsers stack the images in the opposite order to what you'd expect.
-						if ( 'on' !== $background_color_gradient_overlays_image ) {
-							$background_images = array_reverse( $background_images );
-						}
-
-						// Set background image styles only it's different compared to the larger device.
-						$background_image_style = join( ', ', $background_images );
-						if ( $processed_background_image !== $background_image_style ) {
-							$background_style .= sprintf(
-								'background-image: %1$s !important;',
-								esc_html( $background_image_style )
-							);
-						}
-					} elseif ( ! $is_desktop && $is_background_color_gradient_disabled && $is_background_image_disabled ) {
-						// Reset - If background image and gradient are disabled, reset current background image.
-						$background_image_style = 'initial';
-						$background_style      .= 'background-image: initial !important;';
-					}
-
-					// Save processed background images.
-					$processed_background_image = $background_image_style;
-
-					// C. Background Color.
-					if ( ! $has_background_gradient_and_image ) {
-						// Background color `initial` was added by default to reset button background
-						// color when user disable it on mobile preview mode. However, it should
-						// be applied only when the background color is really disabled because user
-						// may use theme customizer to setup global button background color. We also
-						// need to ensure user still able to disable background color on mobile.
-						$background_color_enable  = self::$_->array_get( $this->props, "{$background_prefix}enable_color{$suffix}", '' );
-						$background_color_initial = 'off' === $background_color_enable && ! $is_desktop ? 'initial' : '';
-
-						$background_color       = et_pb_responsive_options()->get_inheritance_background_value( $this->props, "{$background_prefix}color", $device, $background_base_name, $this->fields_unprocessed );
-						$background_color       = '' !== $background_color ? $background_color : $background_color_initial;
-						$background_color_style = $background_color;
-
-						if ( '' !== $background_color && $processed_background_color !== $background_color ) {
-							$background_style .= sprintf(
-								'background-color: %1$s%2$s; ',
-								esc_html( $background_color ),
-								esc_html( $important )
-							);
-						}
-					}
-
-					// Save processed background color.
-					$processed_background_color = $background_color_style;
-
-					// Print background gradient and image styles.
-					if ( '' !== $background_style ) {
-						$background_style_attrs = array(
-							'selector'    => $css_element_processed,
-							'declaration' => rtrim( $background_style ),
-							'priority'    => $this->_style_priority,
-						);
-
-						// Add media query attribute to background style attrs.
-						if ( 'desktop' !== $device ) {
-							$current_media_query                   = 'tablet' === $device ? 'max_width_980' : 'max_width_767';
-							$background_style_attrs['media_query'] = self::get_media_query( $current_media_query );
-						}
-
-						self::set_style( $function_name, $background_style_attrs );
-					}
-				}
-
-				// Background Hover.
-				if ( et_builder_is_hover_enabled( "{$option_name}_bg_color", $this->props ) ) {
-					$background_base_name    = "{$option_name}_bg";
-					$background_prefix       = "{$background_base_name}_";
-					$background_images_hover = array();
-					$background_hover_style  = '';
-
-					$has_background_color_gradient_hover         = false;
-					$has_background_image_hover                  = false;
-					$has_background_gradient_and_image_hover     = false;
-					$is_background_color_gradient_hover_disabled = false;
-					$is_background_image_hover_disabled          = false;
-
-					$background_color_gradient_overlays_image_hover = 'off';
-
-					// Background Gradient Hover.
-					// This part is little bit different compared to other hover implementation. In
-					// this case, hover is enabled on the background field, not on the each of those
-					// fields. So, built in function get_value() doesn't work in this case.
-					// Temporarily, we need to fetch the the value from get_raw_value().
-					$use_background_color_gradient_hover = et_pb_responsive_options()->get_inheritance_background_value( $this->props, "{$background_prefix}use_color_gradient", 'hover', $background_base_name, $this->fields_unprocessed );
-
-					if ( 'on' === $use_background_color_gradient_hover ) {
-						// Desktop value as default.
-						$background_color_gradient_type_desktop             = self::$_->array_get( $gradient_properties_desktop, 'type', '' );
-						$background_color_gradient_direction_desktop        = self::$_->array_get( $gradient_properties_desktop, 'direction', '' );
-						$background_color_gradient_radial_direction_desktop = self::$_->array_get( $gradient_properties_desktop, 'radial_direction', '' );
-						$background_color_gradient_color_start_desktop      = self::$_->array_get( $gradient_properties_desktop, 'color_start', '' );
-						$background_color_gradient_color_end_desktop        = self::$_->array_get( $gradient_properties_desktop, 'color_end', '' );
-						$background_color_gradient_start_position_desktop   = self::$_->array_get( $gradient_properties_desktop, 'start_position', '' );
-						$background_color_gradient_end_position_desktop     = self::$_->array_get( $gradient_properties_desktop, 'end_position', '' );
-
-						// Hover value.
-						$background_color_gradient_type_hover             = et_pb_hover_options()->get_raw_value( "{$background_prefix}color_gradient_type", $this->props, $background_color_gradient_type_desktop );
-						$background_color_gradient_direction_hover        = et_pb_hover_options()->get_raw_value( "{$background_prefix}color_gradient_direction", $this->props, $background_color_gradient_direction_desktop );
-						$background_color_gradient_direction_radial_hover = et_pb_hover_options()->get_raw_value( "{$background_prefix}color_gradient_direction_radial", $this->props, $background_color_gradient_radial_direction_desktop );
-						$background_color_gradient_start_hover            = et_pb_hover_options()->get_raw_value( "{$background_prefix}color_gradient_start", $this->props, $background_color_gradient_color_start_desktop );
-						$background_color_gradient_end_hover              = et_pb_hover_options()->get_raw_value( "{$background_prefix}color_gradient_end", $this->props, $background_color_gradient_color_end_desktop );
-						$background_color_gradient_start_position_hover   = et_pb_hover_options()->get_raw_value( "{$background_prefix}color_gradient_start_position", $this->props, $background_color_gradient_start_position_desktop );
-						$background_color_gradient_end_position_hover     = et_pb_hover_options()->get_raw_value( "{$background_prefix}color_gradient_end_position", $this->props, $background_color_gradient_end_position_desktop );
-						$background_color_gradient_overlays_image_hover   = et_pb_hover_options()->get_raw_value( "{$background_prefix}color_gradient_overlays_image", $this->props, $background_color_gradient_overlays_image_desktop );
-
-						$has_background_color_gradient_hover = true;
-
-						$gradient_values_hover = array(
-							'type'             => '' !== $background_color_gradient_type_hover ? $background_color_gradient_type_hover : $background_color_gradient_type_desktop,
-							'direction'        => '' !== $background_color_gradient_direction_hover ? $background_color_gradient_direction_hover : $background_color_gradient_direction_desktop,
-							'radial_direction' => '' !== $background_color_gradient_direction_radial_hover ? $background_color_gradient_direction_radial_hover : $background_color_gradient_radial_direction_desktop,
-							'color_start'      => '' !== $background_color_gradient_start_hover ? $background_color_gradient_start_hover : $background_color_gradient_color_start_desktop,
-							'color_end'        => '' !== $background_color_gradient_end_hover ? $background_color_gradient_end_hover : $background_color_gradient_color_end_desktop,
-							'start_position'   => '' !== $background_color_gradient_start_position_hover ? $background_color_gradient_start_position_hover : $background_color_gradient_start_position_desktop,
-							'end_position'     => '' !== $background_color_gradient_end_position_hover ? $background_color_gradient_end_position_hover : $background_color_gradient_end_position_desktop,
-						);
-
-						$background_images_hover[] = $this->get_gradient( $gradient_values_hover );
-					} elseif ( 'off' === $use_background_color_gradient_hover ) {
-						$is_background_color_gradient_hover_disabled = true;
-					}
-
-					// Background Image Hover.
-					// This part is little bit different compared to other hover implementation. In
-					// this case, hover is enabled on the background field, not on the each of those
-					// fields. So, built in function get_value() doesn't work in this case.
-					// Temporarily, we need to fetch the the value from get_raw_value().
-					$background_image_hover = et_pb_responsive_options()->get_inheritance_background_value( $this->props, "{$background_prefix}image", 'hover', $background_base_name, $this->fields_unprocessed );
-					$parallax_hover         = et_pb_hover_options()->get_raw_value( "{$background_prefix}parallax", $this->props );
-
-					if ( '' !== $background_image_hover && null !== $background_image_hover && 'on' !== $parallax_hover ) {
-						// Flag to inform BG Color if current module has Image.
-						$has_background_image_hover = true;
-
-						// Size.
-						$background_size_hover   = et_pb_hover_options()->get_raw_value( "{$background_prefix}size", $this->props );
-						$background_size_desktop = self::$_->array_get( $this->props, "{$background_prefix}size", '' );
-						$is_same_background_size = $background_size_hover === $background_size_desktop;
-						if ( empty( $background_size_hover ) && ! empty( $background_size_desktop ) ) {
-							$background_size_hover = $background_size_desktop;
-						}
-
-						if ( ! empty( $background_size_hover ) && ! $is_same_background_size ) {
-							$background_hover_style .= sprintf(
-								'background-size: %1$s; ',
-								esc_html( $background_size_hover )
-							);
-						}
-
-						// Position.
-						$background_position_hover   = et_pb_hover_options()->get_raw_value( "{$background_prefix}position", $this->props );
-						$background_position_desktop = self::$_->array_get( $this->props, "{$background_prefix}position", '' );
-						$is_same_background_position = $background_position_hover === $background_position_desktop;
-						if ( empty( $background_position_hover ) && ! empty( $background_position_desktop ) ) {
-							$background_position_hover = $background_position_desktop;
-						}
-
-						if ( ! empty( $background_position_hover ) && ! $is_same_background_position ) {
-							$background_hover_style .= sprintf(
-								'background-position: %1$s; ',
-								esc_html( str_replace( '_', ' ', $background_position_hover ) )
-							);
-						}
-
-						// Repeat.
-						$background_repeat_hover   = et_pb_hover_options()->get_raw_value( "{$background_prefix}repeat", $this->props );
-						$background_repeat_desktop = self::$_->array_get( $this->props, "{$background_prefix}repeat", '' );
-						$is_same_background_repeat = $background_repeat_hover === $background_repeat_desktop;
-						if ( empty( $background_repeat_hover ) && ! empty( $background_repeat_desktop ) ) {
-							$background_repeat_hover = $background_repeat_desktop;
-						}
-
-						if ( ! empty( $background_repeat_hover ) && ! $is_same_background_repeat ) {
-							$background_hover_style .= sprintf(
-								'background-repeat: %1$s; ',
-								esc_html( $background_repeat_hover )
-							);
-						}
-
-						// Blend.
-						$background_blend_hover   = et_pb_hover_options()->get_raw_value( "{$background_prefix}blend", $this->props );
-						$background_blend_default = self::$_->array_get( $this->fields_unprocessed, "{$background_prefix}blend.default", '' );
-						$background_blend_desktop = self::$_->array_get( $this->props, "{$background_prefix}blend", '' );
-						$is_same_background_blend = $background_blend_hover === $background_blend_desktop;
-						if ( empty( $background_blend_hover ) && ! empty( $background_blend_desktop ) ) {
-							$background_blend_hover = $background_blend_desktop;
-						}
-
-						if ( ! empty( $background_blend_hover ) ) {
-							if ( ! $is_same_background_blend ) {
-								$background_hover_style .= sprintf(
-									'background-blend-mode: %1$s; ',
-									esc_html( $background_blend_hover )
-								);
-							}
-
-							// Force background-color: initial;
-							if ( $has_background_color_gradient_hover && $has_background_image_hover && $background_blend_hover !== $background_blend_default ) {
-								$has_background_gradient_and_image_hover = true;
-								$background_hover_style                 .= 'background-color: initial !important;';
-							}
-						}
-
-						// Only append background image when the image exists.
-						$background_images_hover[] = sprintf( 'url(%1$s)', esc_html( $background_image_hover ) );
-					} elseif ( '' === $background_image_hover ) {
-						$is_background_image_hover_disabled = true;
-					}
-
-					if ( ! empty( $background_images_hover ) ) {
-						// The browsers stack the images in the opposite order to what you'd expect.
-						if ( 'on' !== $background_color_gradient_overlays_image_hover ) {
-							$background_images_hover = array_reverse( $background_images_hover );
-						}
-
-						$background_hover_style .= sprintf(
-							'background-image: %1$s !important;',
-							esc_html( join( ', ', $background_images_hover ) )
-						);
-					} elseif ( $is_background_color_gradient_hover_disabled && $is_background_image_hover_disabled ) {
-						$background_hover_style .= 'background-image: initial !important;';
-					}
-
-					// Background Color Hover.
-					if ( ! $has_background_gradient_and_image_hover ) {
-						$background_color_hover = et_pb_responsive_options()->get_inheritance_background_value( $this->props, "{$background_prefix}color", 'hover', $background_base_name, $this->fields_unprocessed );
-						$background_color_hover = '' !== $background_color_hover ? $background_color_hover : 'transparent';
-
-						if ( '' !== $background_color_hover ) {
-							$background_hover_style .= sprintf(
-								'background-color: %1$s !important; ',
-								esc_html( $background_color_hover )
-							);
-						}
-					}
-
-					// Print background hover gradient and image styles.
-					if ( '' !== $background_hover_style ) {
-						$background_hover_style_attrs = array(
-							'selector'    => $css_element_processed . ':hover',
-							'declaration' => rtrim( $background_hover_style ),
-							'priority'    => $this->_style_priority,
-						);
-
-						self::set_style( $function_name, $background_hover_style_attrs );
-					}
-				}
 			}
 		}
 	}
@@ -14932,6 +15662,7 @@ class ET_Builder_Element {
 	 * - Text Focus Color       -> Hover -> Form field & placeholder focus selector
 	 *
 	 * @since 3.23
+	 * @since ?? Add sticky style support
 	 *
 	 * @param  string $function_name Module slug.
 	 */
@@ -14946,6 +15677,9 @@ class ET_Builder_Element {
 			return;
 		}
 
+		// Helpers.
+		$sticky = et_pb_sticky_options();
+
 		// Fetch every single form field instances.
 		foreach ( $this->advanced_fields['form_field'] as $option_name => $option_settings ) {
 			// 1.a. Build main element selector.
@@ -14958,6 +15692,9 @@ class ET_Builder_Element {
 			$element_hover_selector       = ! empty( $option_settings['css']['hover'] ) ? $option_settings['css']['hover'] : "{$element_selector}:hover";
 			$element_focus_selector       = ! empty( $option_settings['css']['focus'] ) ? $option_settings['css']['focus'] : "{$element_selector}:focus";
 			$element_focus_hover_selector = ! empty( $option_settings['css']['focus_hover'] ) ? $option_settings['css']['focus_hover'] : "{$element_selector}:focus:hover";
+
+			$element_sticky_selector       = $sticky->add_sticky_to_order_class( $element_selector, $this->is_sticky_module );
+			$element_focus_sticky_selector = $sticky->add_sticky_to_order_class( $element_focus_selector, $this->is_sticky_module );
 
 			// 1.c. Build custom form field selector.
 			$bg_color_selector             = ! empty( $option_settings['css']['background_color'] ) ? $option_settings['css']['background_color'] : $element_selector;
@@ -14977,6 +15714,9 @@ class ET_Builder_Element {
 			$placeholder_hover_selector       = ! empty( $option_settings['css']['placeholder_hover'] ) ? $option_settings['css']['placeholder_hover'] : "{$base_selector}:hover::placeholder, {$base_selector}:hover::-webkit-input-placeholder, {$base_selector}:hover::-moz-placeholder, {$base_selector}:hover::-ms-input-placeholder";
 			$placeholder_focus_selector       = ! empty( $option_settings['css']['placeholder_focus'] ) ? $option_settings['css']['placeholder_focus'] : "{$base_selector}:focus::placeholder, {$base_selector}:focus::-webkit-input-placeholder, {$base_selector}:focus::-moz-placeholder, {$base_selector}:focus::-ms-input-placeholder";
 			$placeholder_focus_hover_selector = ! empty( $option_settings['css']['placeholder_focus_hover'] ) ? $option_settings['css']['placeholder_focus_hover'] : "{$base_selector}:focus:hover::placeholder, {$base_selector}:focus:hover::-webkit-input-placeholder, {$base_selector}:focus:hover::-moz-placeholder, {$base_selector}:focus:hover::-ms-input-placeholder";
+
+			$placeholder_sticky_selector       = $sticky->add_sticky_to_order_class( $placeholder_selector, $this->is_sticky_module );
+			$placeholder_focus_sticky_selector = $sticky->add_sticky_to_order_class( $placeholder_focus_selector, $this->is_sticky_module );
 
 			// 2. Default important status.
 			$force_global_important = et_builder_has_limitation( 'force_use_global_important' );
@@ -15004,6 +15744,24 @@ class ET_Builder_Element {
 				self::set_style( $function_name, $el_style );
 			}
 
+			// 3.a.3. Field Background Sticky Color
+			$field_bg_color_sticky = $sticky->get_value(
+				"{$option_name}_background_color",
+				$this->props
+			);
+
+			if ( ! empty( $field_bg_color_sticky ) ) {
+				$el_style = array(
+					'selector'    => $element_sticky_selector,
+					'declaration' => sprintf(
+						'background-color:%1$s%2$s;',
+						$field_bg_color_sticky,
+						$field_bg_color_important
+					),
+				);
+				self::set_style( $function_name, $el_style );
+			}
+
 			// 3.b.1. Field Focus Background Color.
 			$is_field_focus_bg_color_responsive = et_pb_responsive_options()->is_responsive_enabled( $this->props, "{$option_name}_focus_background_color" );
 			$field_focus_bg_color_values        = array(
@@ -15026,6 +15784,24 @@ class ET_Builder_Element {
 				self::set_style( $function_name, $el_style );
 			}
 
+			// 3.b.3. Field Focus Background Sticky Color
+			$field_focus_bg_color_sticky = $sticky->get_value(
+				"{$option_name}_focus_background_color",
+				$this->props
+			);
+
+			if ( ! empty( $field_focus_bg_color_sticky ) ) {
+				$el_style = array(
+					'selector'    => $element_focus_sticky_selector,
+					'declaration' => sprintf(
+						'background-color:%1$s%2$s;',
+						$field_focus_bg_color_sticky,
+						$field_focus_bg_color_important
+					),
+				);
+				self::set_style( $function_name, $el_style );
+			}
+
 			// 3.c.1. Field Text Color.
 			$is_field_text_color_responsive = et_pb_responsive_options()->is_responsive_enabled( $this->props, "{$option_name}_text_color" );
 			$field_text_color_values        = array(
@@ -15039,13 +15815,32 @@ class ET_Builder_Element {
 
 			et_pb_responsive_options()->generate_responsive_css( $field_text_color_values, $text_color_selector, 'color', $function_name, $field_text_color_important, 'color' );
 
-			// 3.c.2. Field Text Color.
+			// 3.c.2. Field Text Hover Color.
 			$field_text_color_hover = $this->get_hover_value( "{$option_name}_text_color" );
 			if ( ! empty( $field_text_color_hover ) ) {
 				$text_color_hover_selector = $placeholder_option ? "{$text_color_hover_selector}, {$placeholder_hover_selector}" : $text_color_hover_selector;
-				$el_style                     = array(
+				$el_style                  = array(
 					'selector'    => $text_color_hover_selector,
 					'declaration' => sprintf( 'color:%1$s%2$s;', $field_text_color_hover, $field_text_color_important ),
+				);
+				self::set_style( $function_name, $el_style );
+			}
+
+			// 3.c.3. Field Text Sticky Color
+			$field_text_color_sticky = $sticky->get_value( "{$option_name}_text_color", $this->props );
+
+			if ( ! empty( $field_text_color_sticky ) ) {
+				$text_color_sticky_selector = $placeholder_option ?
+					"{$element_sticky_selector}, {$placeholder_sticky_selector}" :
+					$element_sticky_selector;
+
+				$el_style = array(
+					'selector'    => $text_color_sticky_selector,
+					'declaration' => sprintf(
+						'color:%1$s%2$s;',
+						$field_text_color_sticky,
+						$field_text_color_important
+					),
 				);
 				self::set_style( $function_name, $el_style );
 			}
@@ -15067,9 +15862,28 @@ class ET_Builder_Element {
 			$field_focus_text_color_hover = $this->get_hover_value( "{$option_name}_focus_text_color" );
 			if ( ! empty( $field_focus_text_color_hover ) ) {
 				$text_color_focus_hover_selector = $placeholder_option ? "{$text_color_focus_hover_selector}, {$placeholder_focus_hover_selector}" : $text_color_focus_hover_selector;
-				$el_style                           = array(
+				$el_style                        = array(
 					'selector'    => $text_color_focus_hover_selector,
 					'declaration' => sprintf( 'color:%1$s%2$s;', $field_focus_text_color_hover, $field_focus_text_color_important ),
+				);
+				self::set_style( $function_name, $el_style );
+			}
+
+			// 3.d.3. Field Focus Text Sticky Color
+			$field_focus_text_color_sticky = $sticky->get_value( "{$option_name}_focus_text_color", $this->props );
+
+			if ( ! empty( $field_focus_text_color_sticky ) ) {
+				$text_color_focus_sticky_selector = $placeholder_option ?
+					"{$element_focus_sticky_selector}, {$placeholder_focus_sticky_selector}" :
+					$element_focus_sticky_selector;
+
+				$el_style = array(
+					'selector'    => $text_color_focus_sticky_selector,
+					'declaration' => sprintf(
+						'color:%1$s%2$s;',
+						$field_focus_text_color_sticky,
+						$field_focus_text_color_important
+					),
 				);
 				self::set_style( $function_name, $el_style );
 			}
@@ -15080,6 +15894,11 @@ class ET_Builder_Element {
 		if ( empty( $this->custom_css_fields ) ) {
 			return false;
 		}
+
+		// Helpers.
+		$responsive = et_pb_responsive_options();
+		$hover      = et_pb_hover_options();
+		$sticky     = et_pb_sticky_options();
 
 		foreach ( $this->custom_css_fields as $slug => $option ) {
 			$css         = $this->props[ "custom_css_{$slug}" ];
@@ -15094,8 +15913,8 @@ class ET_Builder_Element {
 				$selector = "{$order_class}{$selector}";
 			}
 
-			if ( et_pb_responsive_options()->is_responsive_enabled( $this->props, "custom_css_{$slug}" ) ) {
-				$responsive_values = et_pb_responsive_options()->get_property_values( $this->props, "custom_css_{$slug}" );
+			if ( $responsive->is_responsive_enabled( $this->props, "custom_css_{$slug}" ) ) {
+				$responsive_values = $responsive->get_property_values( $this->props, "custom_css_{$slug}" );
 
 				// Desktop mode custom CSS.
 				if ( '' !== $css ) {
@@ -15108,7 +15927,7 @@ class ET_Builder_Element {
 				}
 
 				// Tablet mode custom CSS.
-				$tablet_css = et_pb_responsive_options()->get_tablet_value( "custom_css_{$slug}", $this->props );
+				$tablet_css = $responsive->get_tablet_value( "custom_css_{$slug}", $this->props );
 				if ( ! empty( $tablet_css ) ) {
 					$el_style = array(
 						'selector'    => $selector,
@@ -15119,7 +15938,7 @@ class ET_Builder_Element {
 				}
 
 				// Phone mode custom CSS.
-				$phone_css = et_pb_responsive_options()->get_phone_value( "custom_css_{$slug}", $this->props );
+				$phone_css = $responsive->get_phone_value( "custom_css_{$slug}", $this->props );
 				if ( ! empty( $phone_css ) ) {
 					$el_style = array(
 						'selector'    => $selector,
@@ -15140,13 +15959,26 @@ class ET_Builder_Element {
 			}
 
 			// Hover mode custom CSS.
-			if ( et_pb_hover_options()->is_enabled( "custom_css_{$slug}", $this->props ) ) {
-				$hover_css = et_pb_hover_options()->get_value( "custom_css_{$slug}", $this->props );
+			if ( $hover->is_enabled( "custom_css_{$slug}", $this->props ) ) {
+				$hover_css = $hover->get_value( "custom_css_{$slug}", $this->props );
 
 				if ( ! empty( $hover_css ) ) {
 					$el_style = array(
-						'selector'    => $this->add_hover_to_selectors( $selector ),
+						'selector'    => $hover->add_hover_to_selectors( $selector ),
 						'declaration' => trim( $hover_css ),
+					);
+					self::set_style( $function_name, $el_style );
+				}
+			}
+
+			// Sticky mode custom CSS.
+			if ( $sticky->is_enabled( "custom_css_{$slug}", $this->props ) ) {
+				$sticky_css = $sticky->get_value( "custom_css_{$slug}", $this->props );
+
+				if ( ! empty( $sticky_css ) ) {
+					$el_style = array(
+						'selector'    => $sticky->add_sticky_to_order_class( $selector, $this->is_sticky_module ),
+						'declaration' => trim( $sticky_css ),
 					);
 					self::set_style( $function_name, $el_style );
 				}
@@ -15159,10 +15991,13 @@ class ET_Builder_Element {
 	 *
 	 * @since 3.23 Add responsive support. Pass device attributes and make sure no duplicate styles
 	 *           are rendered.
+	 * @since ?? Add sticky style support.
 	 *
 	 * @param  string $function_name Module slug.
 	 */
 	function process_box_shadow( $function_name ) {
+		global $is_parent_sticky;
+
 		/**
 		 * @var ET_Builder_Module_Field_BoxShadow $box_shadow
 		 */
@@ -15319,6 +16154,48 @@ class ET_Builder_Element {
 						array_merge( $declaration_args, array( 'hover' => true ) )
 					)
 				);
+			}
+
+			// Sticky style.
+			if ( $this->is_sticky_module || $is_parent_sticky ) {
+				$sticky          = et_pb_sticky_options();
+				$inset_sticky    = $box_shadow->is_inset(
+					$box_shadow->get_value(
+						$this->props,
+						array_merge( $declaration_args, array( 'sticky' => true ) )
+					)
+				);
+				$sticky_selector = 'default' === $option_name ?
+					$sticky->add_sticky_to_order_class( $selector, $this->is_sticky_module ) :
+					$sticky->add_sticky_to_selectors( $selector, $this->is_sticky_module );
+
+				// Custom box shadow sticky selector.
+				$custom_sticky = self::$_->array_get( $option_settings, 'css.sticky', '' );
+
+				if ( '' !== $custom_sticky ) {
+					$sticky_selector = $custom_sticky;
+				}
+
+				if ( ( $inset_sticky && 'inset' === $overlay ) || 'always' === $overlay || $has_video_bg ) {
+					self::set_style(
+						$function_name,
+						$box_shadow->get_overlay_style(
+							$function_name,
+							$sticky_selector,
+							$this->props,
+							array_merge( $declaration_args, array( 'sticky' => true ) )
+						)
+					);
+				} else {
+					self::set_style(
+						$function_name,
+						$box_shadow->get_style(
+							$sticky_selector,
+							$this->props,
+							array_merge( $declaration_args, array( 'sticky' => true ) )
+						)
+					);
+				}
 			}
 		}
 	}
@@ -16355,6 +17232,7 @@ class ET_Builder_Element {
 			foreach ( $module_fields[ $_module_slug ] as &$item ) {
 				$item['hover']          = self::$_->array_get( $item, 'hover', 'tabs' );
 				$item['mobile_options'] = self::$_->array_get( $item, 'mobile_options', true );
+				$item['sticky']         = self::$_->array_get( $item, 'sticky', true );
 			}
 
 			// Automatically added module ID and module class fields to setting modal's CSS tab
@@ -16827,6 +17705,261 @@ class ET_Builder_Element {
 	}
 
 	/**
+	 * Check if the style processor allowed to be executed.
+	 * Currently, we only use a custom processor from the method inside `ET_Builder_Module_Helper_Style_Processor`,
+	 *
+	 * NOTE: If there are more processors introduced, this needs to be updated
+	 *
+	 * @since ??
+	 *
+	 * @param array $processor Style processor.
+	 *
+	 * @return bool
+	 */
+	protected static function _is_style_processor_allowed( $processor ) {
+		$allow_list = array(
+			'ET_Builder_Module_Helper_Style_Processor',
+		);
+
+		return in_array( et_()->array_get( $processor, '0' ), $allow_list, true );
+	}
+
+	/**
+	 * Generate responsive + hover + sticky style using the same configuration at once
+	 * {
+	 *    @type string       $mode
+	 *    @type string       $render_slug
+	 *    @type string       $base_attr_name
+	 *    @type array        $attrs
+	 *    @type string       $css_property
+	 *    @type string       $selector
+	 *    @type bool         $is_sticky_module
+	 *    @type bool|array   $important Allowed value ​​is boolean or array of mode, e.g ['sticky', 'hover'].
+	 *    @type string       $additional_css
+	 *    @type int          $priority
+	 *    @type bool         $responsive
+	 *    @type bool         $hover
+	 *    @type string       $hover_selector
+	 *    @type string       $hover_pseudo_selector_location
+	 *    @type bool         $sticky
+	 *    @type string       $sticky_pseudo_selector_location
+	 * }
+	 *
+	 * NOTE: If there are more mode besides sticky and hover introduced, this needs to be updated.
+	 *
+	 * @since ??
+	 *
+	 * @param array $args Function arguments.
+	 *
+	 * @return void
+	 */
+	public function generate_styles( $args = array() ) {
+		$defaults       = array(
+			'mode'                            => 'sticky',
+			'render_slug'                     => '',
+			'base_attr_name'                  => '',
+			'attrs'                           => $this->props,
+			'css_property'                    => '',
+			'selector'                        => '%%order_class%%',
+			'is_sticky_module'                => $this->is_sticky_module,
+			'important'                       => false,
+			'additional_css'                  => '',
+			'type'                            => '',
+			'priority'                        => '',
+			'responsive'                      => true,
+			'hover'                           => true,
+			'hover_selector'                  => '',
+			'hover_pseudo_selector_location'  => 'order_class',
+			'sticky'                          => true,
+			'sticky_pseudo_selector_location' => 'order_class',
+			'processor'                       => false,
+			'responsive_processor'            => false,
+			'hover_processor'                 => false,
+			'sticky_processor'                => false,
+			'processor_declaration_format'    => '',
+		);
+		$args           = wp_parse_args( $args, $defaults );
+		$attrs          = $args['attrs'];
+		$base_attr_name = $args['base_attr_name'];
+		$selector       = $args['selector'];
+
+		// Responsive Options.
+		if ( $args['responsive'] ) {
+			$responsive           = et_pb_responsive_options();
+			$responsive_values    = $responsive->get_property_values( $attrs, $base_attr_name );
+			$responsive_processor = $args['responsive_processor'];
+
+			// Custom processor fallback, if there's any.
+			if ( ! $responsive_processor && $args['processor'] ) {
+				$responsive_processor = $args['processor'];
+			}
+
+			if ( $responsive_processor && self::_is_style_processor_allowed( $responsive_processor ) ) {
+				// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Need to be able to use a custom processor, the callback function is checked in the _is_style_processor_allowed
+				call_user_func(
+					$responsive_processor,
+					$selector,
+					$responsive_values,
+					$args,
+					'responsive'
+				);
+			} else {
+				// Append important tag to responsive's additional css.
+				$responsive_additional_css = '; ' . $args['additional_css'];
+				$responsive_important      = is_array( $args['important'] ) ? in_array( 'responsive', $args['important'], true ) : $args['important'];
+				if ( $responsive_important ) {
+					$responsive_additional_css = ' !important;' . $args['additional_css'];
+				}
+
+				// Responsive Options.
+				$responsive->generate_responsive_css(
+					$responsive_values,
+					$selector,
+					$args['css_property'],
+					$args['render_slug'],
+					$responsive_additional_css,
+					$args['type'],
+					$args['priority']
+				);
+			}
+		}
+
+		// Hover Option.
+		if ( $args['hover'] ) {
+			$hover           = et_pb_hover_options();
+			$hover_value     = $hover->get_value( $base_attr_name, $attrs );
+			$hover_processor = $args['hover_processor'];
+			$hover_important = is_array( $args['important'] ) ? in_array( 'hover', $args['important'], true ) : $args['important'];
+
+			// Custom processor fallback, if there's any.
+			if ( ! $hover_processor && $args['processor'] ) {
+				$hover_processor = $args['processor'];
+			}
+
+			// Generate hover selector.
+			if ( '' !== $args['hover_selector'] ) {
+				$hover_selector = $args['hover_selector'];
+			} elseif ( 'order_class' === $args['hover_pseudo_selector_location'] ) {
+				$hover_selector = $hover->add_hover_to_order_class( $selector );
+			} else {
+				$hover_selector = $hover->add_hover_to_selectors( $selector );
+			}
+
+			if ( $hover_processor && self::_is_style_processor_allowed( $hover_processor ) ) {
+				// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Need to be able to use a custom processor, the callback function is checked in the _is_style_processor_allowed
+				call_user_func(
+					$hover_processor,
+					$hover_selector,
+					$hover_value,
+					$args,
+					'hover'
+				);
+			} elseif ( ! empty( $hover_value ) ) {
+				$declaration = $this->generate_declaration(
+					$args['css_property'],
+					$hover_value,
+					$hover_important,
+					$args['additional_css']
+				);
+				$el_style    = array(
+					'selector'    => $hover_selector,
+					'declaration' => $declaration,
+				);
+				self::set_style( $args['render_slug'], $el_style );
+			}
+		}
+
+		// Sticky Option.
+		if ( $args['sticky'] ) {
+			$sticky           = et_pb_sticky_options();
+			$sticky_value     = $sticky->get_value( $base_attr_name, $attrs );
+			$sticky_processor = $args['sticky_processor'];
+			$sticky_important = is_array( $args['important'] ) ? in_array( 'sticky', $args['important'], true ) : $args['important'];
+
+			// Custom processor fallback, if there's any.
+			if ( ! $sticky_processor && $args['processor'] ) {
+				$sticky_processor = $args['processor'];
+			}
+
+			// If generate_styles() is called multiple times, check for it once then pass
+			// it down as param to skip sticky module check on this method level.
+			$is_sticky_module = null === $args['is_sticky_module'] ?
+				$sticky->is_sticky_module( $attrs ) :
+				$args['is_sticky_module'];
+
+			// Generate sticky selector.
+			if ( 'order_class' === $args['sticky_pseudo_selector_location'] ) {
+				$sticky_selector = $sticky->add_sticky_to_order_class( $selector, $is_sticky_module );
+			} else {
+				$sticky_selector = $sticky->add_sticky_to_selectors( $selector, $is_sticky_module );
+			}
+
+			if ( $sticky_processor && self::_is_style_processor_allowed( $sticky_processor ) ) {
+				// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Need to be able to use a custom processor, the callback function is checked in the _is_style_processor_allowed
+				call_user_func(
+					$sticky_processor,
+					$sticky_selector,
+					$sticky_value,
+					$args,
+					'sticky'
+				);
+			} elseif ( ! empty( $sticky_value ) ) {
+				$sticky_declaration = self::generate_declaration(
+					$args['css_property'],
+					$sticky_value,
+					$sticky_important,
+					$args['additional_css']
+				);
+				$el_style           = array(
+					'selector'    => $sticky_selector,
+					'declaration' => $sticky_declaration,
+				);
+				self::set_style( $args['render_slug'], $el_style );
+			}
+		}
+	}
+
+	/**
+	 * Generate CSS declaration.
+	 *
+	 * @since ??
+	 *
+	 * @param array|string $css_property   CSS Property.
+	 * @param string       $value          Value.
+	 * @param bool         $important      Use important tag.
+	 * @param string       $additional_css Additional CSS.
+	 *
+	 * @return string
+	 */
+	public function generate_declaration( $css_property, $value = '', $important = false, $additional_css = '' ) {
+		$important_tag = $important ? ' !important' : '';
+		$declaration   = '';
+
+		// Assign value to one or more properties.
+		if ( is_string( $css_property ) ) {
+			$declaration = sprintf(
+				'%1$s: %2$s%3$s;%4$s',
+				esc_attr( $css_property ),
+				esc_attr( $value ),
+				esc_attr( $important_tag ),
+				esc_attr( $additional_css )
+			);
+		} elseif ( is_array( $css_property ) ) {
+			foreach ( $css_property as $property ) {
+				$declaration .= sprintf(
+					'%1$s: %2$s%3$s;%4$s',
+					esc_attr( $property ),
+					esc_attr( $value ),
+					esc_attr( $important_tag ),
+					esc_attr( $additional_css )
+				);
+			}
+		}
+
+		return $declaration;
+	}
+
+	/**
 	 * Applies the responsive and hover style for a specified option
 	 *
 	 * @since 3.25.3
@@ -17237,7 +18370,8 @@ class ET_Builder_Element {
 		$parallax_processed  = array();
 		$parallax_background = '';
 		$hover_suffix        = et_pb_hover_options()->get_suffix();
-		$preview_modes       = array( $hover_suffix, '_phone', '_tablet', '' );
+		$sticky_suffix       = et_pb_sticky_options()->get_suffix();
+		$preview_modes       = array( $hover_suffix, $sticky_suffix, '_phone', '_tablet', '' );
 
 		// Featured Image as Background.
 		$featured_image     = '';
@@ -17251,12 +18385,13 @@ class ET_Builder_Element {
 		}
 
 		foreach ( $preview_modes as $suffix ) {
-			$is_hover = $hover_suffix === $suffix;
+			$is_hover  = $hover_suffix === $suffix;
+			$is_sticky = $sticky_suffix === $suffix;
 
 			// A. Bail early if hover or responsive settings disabled on mobile/hover.
 			if ( '' !== $suffix ) {
 				// Ensure responsive settings is enabled on mobile.
-				if ( ! $is_hover && ! et_pb_responsive_options()->is_responsive_enabled( $this->props, $base_name ) ) {
+				if ( ! $is_hover && ! $is_sticky && ! et_pb_responsive_options()->is_responsive_enabled( $this->props, $base_name ) ) {
 					continue;
 				}
 
@@ -17264,19 +18399,36 @@ class ET_Builder_Element {
 				if ( $is_hover && ! et_pb_hover_options()->is_enabled( $base_name, $this->props ) ) {
 					continue;
 				}
+
+				// Ensure sticky setting is enabled.
+				if ( $is_sticky && ! et_pb_sticky_options()->is_enabled( $base_name, $this->props ) ) {
+					continue;
+				}
 			}
 
 			// Prepare preview mode.
 			$mode = '' !== $suffix ? str_replace( '_', '', $suffix ) : 'desktop';
 			$mode = $is_hover ? 'hover' : $mode;
+			$mode = $is_sticky ? 'sticky' : $mode;
 
 			// B.1. Get inherited background value.
 			$background_image = et_pb_responsive_options()->get_inheritance_background_value( $this->props, "{$attr_prefix}image", $mode, $base_name, $this->fields_unprocessed );
-			$parallax         = $is_hover ? et_pb_hover_options()->get_raw_value( "{$custom_prefix}parallax", $this->props ) : et_pb_responsive_options()->get_any_value( $this->props, "{$custom_prefix}parallax{$suffix}", '', true );
-			$parallax_method  = $is_hover ? et_pb_hover_options()->get_raw_value( "{$custom_prefix}parallax_method", $this->props ) : et_pb_responsive_options()->get_any_value( $this->props, "{$custom_prefix}parallax_method{$suffix}", '', true );
 
-			// B.2. Set default value for parallax and parallax method on hover when they are empty.
+			$parallax        = et_pb_responsive_options()->get_any_value( $this->props, "{$custom_prefix}parallax{$suffix}", '', true );
+			$parallax_method = et_pb_responsive_options()->get_any_value( $this->props, "{$custom_prefix}parallax_method{$suffix}", '', true );
+
+			// B.2. Set default value for parallax and parallax method on hover and sticky when they are empty.
 			if ( $is_hover ) {
+				$parallax        = et_pb_hover_options()->get_raw_value( "{$custom_prefix}parallax", $this->props );
+				$parallax_method = et_pb_hover_options()->get_raw_value( "{$custom_prefix}parallax_method", $this->props );
+			}
+
+			if ( $is_sticky ) {
+				$parallax        = et_pb_sticky_options()->get_raw_value( "{$custom_prefix}parallax", $this->props );
+				$parallax_method = et_pb_sticky_options()->get_raw_value( "{$custom_prefix}parallax_method", $this->props );
+			}
+
+			if ( $is_hover || $is_sticky ) {
 				$parallax        = empty( $parallax ) ? et_pb_responsive_options()->get_any_value( $this->props, "{$custom_prefix}parallax", '', true ) : $parallax;
 				$parallax_method = empty( $parallax_method ) ? et_pb_responsive_options()->get_any_value( $this->props, "{$custom_prefix}parallax_method", '', true ) : $parallax_method;
 			}
@@ -17298,6 +18450,10 @@ class ET_Builder_Element {
 
 			if ( in_array( $hover_suffix, $parallax_processed ) ) {
 				$parallax_classname[] = 'et_parallax_bg_hover_exist';
+			}
+
+			if ( in_array( $sticky_suffix, $parallax_processed, true ) ) {
+				$parallax_classname[] = 'et_parallax_bg_sticky_exist';
 			}
 
 			// C.2. Set up parallax class and wrapper.
@@ -17331,6 +18487,11 @@ class ET_Builder_Element {
 				$this->add_classname( 'et_pb_section_parallax_hover' );
 			}
 
+			// C.4. Sticky parallax class.
+			if ( '' !== $background_image && $is_sticky ) {
+				$this->add_classname( 'et_pb_section_parallax_sticky' );
+			}
+
 			array_push( $parallax_processed, $suffix );
 		}
 
@@ -17348,6 +18509,7 @@ class ET_Builder_Element {
 	 * function reads options set by the 'Filters' and 'Image Filters' builder menu fields.)
 	 *
 	 * @since 3.23 Add responsive setting styling processing here.
+	 * @since ?? Add sticky style support.
 	 *
 	 * @param string $function_name Builder module's function name (keeps the CSS rules straight)
 	 * @param string $prefix        Optional string prepended to the field name (i.e., `filter_saturate` -> `child_filter_saturate`)
@@ -17377,13 +18539,27 @@ class ET_Builder_Element {
 		}
 
 		$hover_suffix       = et_pb_hover_options()->get_suffix();
-		$field_suffixes     = array( '', 'tablet', 'phone', $hover_suffix );
+		$sticky             = et_pb_sticky_options();
+		$sticky_suffix      = $sticky->get_suffix();
+		$field_suffixes     = array( '', 'tablet', 'phone', $hover_suffix, $sticky_suffix );
 		$filters_default    = array();
 		$filters_default_fb = array();
+		$filters_hover      = array();
+		$hover_selectors    = array();
 
 		foreach ( $field_suffixes as $suffix ) {
+			$sticky_mode = $sticky_suffix === $suffix;
+
 			if ( $hover_suffix === $suffix ) {
 				$selectors_prepared = array_map( array( $this, 'add_hover_to_selectors' ), $selectors_prepared );
+			}
+
+			if ( $sticky_mode ) {
+				$selectors_prepared = $sticky->add_sticky_to_selectors(
+					$selectors,
+					$this->is_sticky_module,
+					false
+				);
 			}
 
 			// Mobile parameters. Update suffix and add media query argument for styles declaration.
@@ -17403,8 +18579,8 @@ class ET_Builder_Element {
 
 			// Some web browser glitches with filters and blend modes can be improved this way
 			// see https://bugs.chromium.org/p/chromium/issues/detail?id=157218 for more info
-			$backfaceVisibility      = 'backface-visibility:hidden;';
-			$backfaceVisibilityAdded = array();
+			$backface_visibility       = 'backface-visibility:hidden;';
+			$backface_visibility_added = array();
 
 			$additional_classes = '';
 
@@ -17465,20 +18641,23 @@ class ET_Builder_Element {
 
 			// Optional: CSS `mix-blend-mode` rule
 			$mix_blend_mode_default = ET_Global_Settings::get_value( 'all_mix_blend_mode', 'default' );
+
 			if ( $mix_blend_mode && $mix_blend_mode !== $mix_blend_mode_default ) {
-				foreach ( $selectors_prepared as $selector ) {
-					$el_style = array_merge(
-						array(
-							'selector'    => $selector,
-							'declaration' => sprintf(
-								'mix-blend-mode: %1$s;',
-								esc_html( $mix_blend_mode )
-							) . $backfaceVisibility,
-						),
-						$media_query
-					);
-					self::set_style( $function_name, $el_style );
-					$backfaceVisibilityAdded[] = $selector;
+				if ( ! $sticky_mode ) {
+					foreach ( $selectors_prepared as $selector ) {
+						$el_style = array_merge(
+							array(
+								'selector'    => $selector,
+								'declaration' => sprintf(
+									'mix-blend-mode: %1$s;',
+									esc_html( $mix_blend_mode )
+								) . $backface_visibility,
+							),
+							$media_query
+						);
+						self::set_style( $function_name, $el_style );
+						$backface_visibility_added[] = $selector;
+					}
 				}
 				$additional_classes .= ' et_pb_css_mix_blend_mode';
 			} elseif ( 'et_pb_column' === $function_name ) {
@@ -17499,13 +18678,18 @@ class ET_Builder_Element {
 			foreach ( $filter as $label => $value ) {
 				// Check against our default settings, and only append the rule if it differs
 				// (only for default state since hover and mobile might be equal to default,
-				// ie. no filter on hover only)
-				if ( ET_Global_Settings::get_value( 'all_filter_' . $label, 'default' ) === $value && $hover_suffix !== $suffix && ! $is_mobile && ! ( $is_any_filter_responsive && $is_any_filter_hover_enabled ) ) {
+				// ie. no filter on hover only).
+				if ( ET_Global_Settings::get_value( 'all_filter_' . $label, 'default' ) === $value && $hover_suffix !== $suffix && ! $sticky_mode && ! $is_mobile && ! ( $is_any_filter_responsive && $is_any_filter_hover_enabled ) ) {
 					continue;
 				}
 
 				// Don't apply hover filter if it is not enabled
 				if ( $hover_suffix === $suffix && ! et_pb_hover_options()->is_enabled( "{$prefix}filter_{$label}{$suffix}", $this->props ) ) {
+					continue;
+				}
+
+				// Don't apply sticky filter if it is not enabled.
+				if ( $sticky_mode && ! $sticky->is_enabled( "{$prefix}filter_{$label}{$suffix}", $this->props ) ) {
 					continue;
 				}
 
@@ -17530,15 +18714,19 @@ class ET_Builder_Element {
 				// Merge the hover filters onto the default filters so that filters that
 				// have no hover option set are not removed from the CSS declaration
 				if ( $hover_suffix === $suffix ) {
-					$css_value = array_merge( $filters_default, $css_value );
+					$css_value     = array_merge( $filters_default, $css_value );
+					$filters_hover = $css_value;
 				}
 
 				foreach ( $selectors_prepared as $selector ) {
-					$backfaceVisibilityDeclaration = in_array( $selector, $backfaceVisibilityAdded ) ? '' : $backfaceVisibility;
+					$backface_visibility_declaration = in_array( $selector, $backface_visibility_added, true ) ? '' : $backface_visibility;
 
-					// Allow custom child filter target hover selector
-					if ( 'child_' == $prefix && $hover_suffix === $suffix ) {
-						$selector = self::$_->array_get( $this->advanced_fields, 'filters.child_filters_target.css.hover', $selector );
+					// Allow custom child filter target hover selector.
+					if ( $hover_suffix === $suffix ) {
+						if ( 'child_' === $prefix ) {
+							$selector = self::$_->array_get( $this->advanced_fields, 'filters.child_filters_target.css.hover', $selector );
+						}
+						$hover_selectors[] = $selector;
 					}
 
 					$el_style = array_merge(
@@ -17547,12 +18735,35 @@ class ET_Builder_Element {
 							'declaration' => sprintf(
 								'filter: %1$s;',
 								implode( ' ', $css_value )
-							) . $backfaceVisibilityDeclaration,
+							) . $backface_visibility_declaration,
 						),
 						$media_query
 					);
 					self::set_style( $function_name, $el_style );
 				}
+
+				// Add css for hover styles in sticky state.
+				if ( $sticky_mode && ! empty( $filters_hover ) && ! empty( $hover_selectors ) ) {
+					$sticky_hover_css_value = implode( ' ', $filters_hover );
+					foreach ( $hover_selectors as $hover_selector ) {
+						$sticky_hover_selector = $sticky->add_sticky_to_order_class(
+							$hover_selector,
+							$this->is_sticky_module
+						);
+						$el_style              = array_merge(
+							array(
+								'selector'    => $sticky_hover_selector,
+								'declaration' => sprintf(
+									'filter: %1$s;',
+									$sticky_hover_css_value
+								) . $backface_visibility_declaration,
+							),
+							$media_query
+						);
+						self::set_style( $function_name, $el_style );
+					}
+				}
+
 				$additional_classes .= ' et_pb_css_filters';
 			}
 
@@ -17569,23 +18780,24 @@ class ET_Builder_Element {
 					$css_value_fb_hover = array_merge( $filters_default_fb, $css_value_fb_hover );
 				}
 
-				foreach ( $selectors_prepared as $selector ) {
-					$selector_hover = str_replace(
-						'%%order_class%%',
-						'html:not(.et_fb_edit_enabled) #et-fb-app %%order_class%%:hover',
-						$selector
-					);
-
-					$el_style = array(
-						'selector'    => $selector_hover,
-						'declaration' => esc_html(
-							sprintf(
-								'filter: %1$s;',
-								implode( ' ', $css_value_fb_hover )
-							)
-						),
-					);
-					self::set_style( $function_name, $el_style );
+				if ( ! $sticky_mode ) {
+					foreach ( $selectors_prepared as $selector ) {
+						$selector_hover = str_replace(
+							'%%order_class%%',
+							'html:not(.et_fb_edit_enabled) #et-fb-app %%order_class%%:hover',
+							$selector
+						);
+						$el_style       = array(
+							'selector'    => $selector_hover,
+							'declaration' => esc_html(
+								sprintf(
+									'filter: %1$s;',
+									implode( ' ', $css_value_fb_hover )
+								)
+							),
+						);
+						self::set_style( $function_name, $el_style );
+					}
 				}
 				$additional_classes .= ' et_pb_css_filters_hover';
 			}
@@ -18557,10 +19769,18 @@ class ET_Builder_Element {
 	}
 
 	public static function enqueue_scroll_effects_fields() {
+		// Motion Effects.
 		wp_localize_script(
 			apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' ),
 			'et_pb_motion_elements',
 			self::$_scroll_effects_fields
+		);
+
+		// Sticky Elements.
+		wp_localize_script(
+			apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' ),
+			'et_pb_sticky_elements',
+			self::$sticky_elements
 		);
 	}
 

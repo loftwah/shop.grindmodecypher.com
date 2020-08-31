@@ -447,6 +447,29 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 	}
 
 	/**
+	 * Get property value after checking whether it uses responsive or not
+	 *
+	 * If responsive is used, automatically return array of all devices value.
+	 * If responsive is not used, return string of desktop value
+	 *
+	 * @since ??
+	 *
+	 * @param array   $attrs         List of all attributes and values.
+	 * @param string  $name          Property name.
+	 * @param mixed   $default_value Default value.
+	 * @param boolean $force_return  Force to return any values found.
+	 *
+	 * @return string|array String if not responsive, Pair of devices and the values if responsive.
+	 */
+	public function get_checked_property_value( $attrs, $name, $default_value = '', $force_return = false ) {
+		$is_responsive = $this->is_responsive_enabled( $attrs, $name );
+
+		return $is_responsive ?
+			$this->get_property_values( $attrs, $name, $default_value, $force_return ) :
+			$this->get_property_value( $attrs, $name, $default_value, 'desktop', $force_return );
+	}
+
+	/**
 	 * Get composite property's value for requested device.
 	 *
 	 * This function is added to summarize how we fetch desktop/hover/tablet/phone value. This
@@ -1125,6 +1148,7 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 		$map_slugs = array(
 			'desktop' => array( '' ),
 			'hover'   => array( '__hover', '' ),
+			'sticky'  => array( '__sticky', '' ),
 			'tablet'  => array( '_tablet', '' ),
 			'phone'   => array( '_phone', '_tablet', '' ),
 		);

@@ -237,6 +237,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 				'toggle_slug'    => 'button',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'placeholder_color'  => array(
 				'label'          => esc_html__( 'Placeholder Color', 'et_builder' ),
@@ -247,6 +248,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 				'toggle_slug'    => 'form_field',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 		);
 
@@ -255,6 +257,14 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 
 	public function get_transition_fields_css_props() {
 		$fields = parent::get_transition_fields_css_props();
+
+		$fields['button_color'] = array(
+			'background-color' => '%%order_class%% input.et_pb_searchsubmit',
+			'border-color'     => array(
+				'%%order_class%% input.et_pb_searchsubmit',
+				'%%order_class%% input.et_pb_s',
+			),
+		);
 
 		$fields['placeholder_color'] = array(
 			'color' => array(
@@ -269,12 +279,12 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view               = et_pb_multi_view_options( $this );
-		$exclude_categories       = $this->props['include_categories'];
-		$exclude_posts            = $this->props['exclude_posts'];
-		$exclude_pages            = $this->props['exclude_pages'];
-		$show_button              = $this->props['show_button'];
-		$placeholder              = $multi_view->render_element(
+		$multi_view                = et_pb_multi_view_options( $this );
+		$exclude_categories        = $this->props['include_categories'];
+		$exclude_posts             = $this->props['exclude_posts'];
+		$exclude_pages             = $this->props['exclude_pages'];
+		$show_button               = $this->props['show_button'];
+		$placeholder               = $multi_view->render_element(
 			array(
 				'tag'   => 'input',
 				'attrs' => array(
@@ -285,44 +295,38 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 				),
 			)
 		);
-		$input_line_height        = $this->props['form_field_line_height'];
-		$button_color_hover       = $this->get_hover_value( 'button_color' );
-		$button_color_values      = et_pb_responsive_options()->get_property_values( $this->props, 'button_color' );
-		$placeholder_color_hover  = $this->get_hover_value( 'placeholder_color' );
-		$placeholder_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'placeholder_color' );
-
+		$input_line_height         = $this->props['form_field_line_height'];
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
 
 		$this->content = et_builder_replace_code_content_entities( $this->content );
 
 		// Button Color.
-		et_pb_responsive_options()->generate_responsive_css( $button_color_values, '%%order_class%% input.et_pb_searchsubmit', array( 'background-color', 'border-color' ), $render_slug, ' !important;', 'color' );
-		et_pb_responsive_options()->generate_responsive_css( $button_color_values, '%%order_class%% input.et_pb_s', 'border-color', $render_slug, ' !important;', 'color' );
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'button_color',
+				'selector'                        => '%%order_class%% input.et_pb_searchsubmit',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => array( 'background-color', 'border-color' ),
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
-		if ( et_builder_is_hover_enabled( 'button_color', $this->props ) ) {
-			ET_Builder_Element::set_style(
-				$render_slug,
-				array(
-					'selector'    => '%%order_class%% input.et_pb_searchsubmit:hover',
-					'declaration' => sprintf(
-						'background: %1$s !important;border-color:%1$s !important;',
-						esc_html( $button_color_hover )
-					),
-				)
-			);
-
-			ET_Builder_Element::set_style(
-				$render_slug,
-				array(
-					'selector'    => '%%order_class%% input.et_pb_s:hover',
-					'declaration' => sprintf(
-						'border-color:%1$s !important;',
-						esc_html( $button_color_hover )
-					),
-				)
-			);
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'button_color',
+				'selector'                        => '%%order_class%% input.et_pb_s',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'border-color',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Placeholder Color.
 		$placeholder_selectors = array(
@@ -331,26 +335,18 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 			'%%order_class%% form input.et_pb_s:-ms-input-placeholder',
 		);
 
-		et_pb_responsive_options()->generate_responsive_css( $placeholder_color_values, join( ', ', $placeholder_selectors ), 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'placeholder_color', $this->props ) ) {
-			$placeholder_selectors = array(
-				'%%order_class%% form input.et_pb_s:hover::-webkit-input-placeholder',
-				'%%order_class%% form input.et_pb_s:hover::-moz-placeholder',
-				'%%order_class%% form input.et_pb_s:hover:-ms-input-placeholder',
-			);
-
-			foreach ( $placeholder_selectors as $single_selector ) {
-				$el_style = array(
-					'selector'    => $single_selector,
-					'declaration' => sprintf(
-						'color: %1$s !important;',
-						esc_html( $placeholder_color_hover )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'placeholder_color',
+				'selector'                        => join( ', ', $placeholder_selectors ),
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		if ( '' !== $input_line_height ) {
 			$el_style = array(

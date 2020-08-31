@@ -321,6 +321,7 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 				'toggle_slug'    => 'icon',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'quote_icon_background_color' => array(
 				'label'            => esc_html__( 'Quote Icon Background Color', 'et_builder' ),
@@ -333,6 +334,7 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 				'default_on_front' => '',
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 			'portrait_width'              => array(
 				'label'           => esc_html__( 'Image Width', 'et_builder' ),
@@ -349,6 +351,7 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 					'step' => '1',
 				),
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'portrait_height'             => array(
 				'label'           => esc_html__( 'Image Height', 'et_builder' ),
@@ -364,6 +367,7 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 					'step' => '1',
 				),
 				'mobile_options'  => true,
+				'sticky'          => true,
 			),
 			'use_icon_font_size'          => array(
 				'label'            => esc_html__( 'Use Custom Quote Icon Size', 'et_builder' ),
@@ -400,6 +404,7 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 				'mobile_options'   => true,
 				'depends_show_if'  => 'on',
 				'responsive'       => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			),
 		);
@@ -410,6 +415,8 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 	public function get_transition_fields_css_props() {
 		$fields = parent::get_transition_fields_css_props();
 
+		$fields['portrait_width']              = array( 'width' => '%%order_class%% .et_pb_testimonial_portrait' );
+		$fields['portrait_height']             = array( 'height' => '%%order_class%% .et_pb_testimonial_portrait' );
 		$fields['quote_icon_color']            = array( 'color' => '%%order_class%%.et_pb_testimonial:before' );
 		$fields['quote_icon_background_color'] = array( 'background-color' => '%%order_class%%.et_pb_testimonial:before' );
 		$fields['icon_font_size']              = array(
@@ -438,107 +445,92 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 		$job_title    = $this->_esc_attr( 'job_title' );
 		$portrait_url = $this->props['portrait_url'];
 		// Allowing full html for backwards compatibility.
-		$company_name                      = $this->_esc_attr( 'company_name', 'full' );
-		$url                               = $this->props['url'];
-		$quote_icon                        = $this->props['quote_icon'];
-		$url_new_window                    = $this->props['url_new_window'];
-		$use_background_color              = $this->props['use_background_color'];
-		$background_color                  = $this->props['background_color'];
-		$background_color_hover            = $this->get_hover_value( 'background_color' );
-		$use_icon_font_size                = $this->props['use_icon_font_size'];
-		$quote_icon_color_hover            = $this->get_hover_value( 'quote_icon_color' );
-		$quote_icon_color_values           = et_pb_responsive_options()->get_property_values( $this->props, 'quote_icon_color' );
-		$quote_icon_background_color_hover = $this->get_hover_value( 'quote_icon_background_color' );
-		$quote_icon_background_colors      = et_pb_responsive_options()->get_property_values( $this->props, 'quote_icon_background_color' );
-		$portrait_width_values             = et_pb_responsive_options()->get_property_values( $this->props, 'portrait_width' );
-		$portrait_height_values            = et_pb_responsive_options()->get_property_values( $this->props, 'portrait_height' );
-		$icon_font_size_hover              = $this->get_hover_value( 'icon_font_size' );
-		$icon_font_size_values             = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
+		$company_name           = $this->_esc_attr( 'company_name', 'full' );
+		$url                    = $this->props['url'];
+		$quote_icon             = $this->props['quote_icon'];
+		$url_new_window         = $this->props['url_new_window'];
+		$use_background_color   = $this->props['use_background_color'];
+		$background_color       = $this->props['background_color'];
+		$background_color_hover = $this->get_hover_value( 'background_color' );
+		$use_icon_font_size     = $this->props['use_icon_font_size'];
+		$icon_font_size_values  = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
 
 		// Potrait Width.
-		et_pb_responsive_options()->generate_responsive_css( $portrait_width_values, '%%order_class%% .et_pb_testimonial_portrait', 'width', $render_slug, ' !important;' );
+		$this->generate_styles(
+			array(
+				'hover'                           => false,
+				'base_attr_name'                  => 'portrait_width',
+				'selector'                        => '%%order_class%% .et_pb_testimonial_portrait',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'width',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'range',
+			)
+		);
 
 		// Potrait Height.
-		et_pb_responsive_options()->generate_responsive_css( $portrait_height_values, '%%order_class%% .et_pb_testimonial_portrait', 'height', $render_slug, ' !important;' );
+		$this->generate_styles(
+			array(
+				'hover'                           => false,
+				'base_attr_name'                  => 'portrait_height',
+				'selector'                        => '%%order_class%% .et_pb_testimonial_portrait',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'height',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'range',
+			)
+		);
 
 		// Quote Icon Color.
-		et_pb_responsive_options()->generate_responsive_css( $quote_icon_color_values, '%%order_class%%.et_pb_testimonial:before', 'color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'quote_icon_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%%.et_pb_testimonial:hover:before',
-				'declaration' => sprintf(
-					'color: %1$s;',
-					esc_html( $quote_icon_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'quote_icon_color',
+				'selector'                        => '%%order_class%%.et_pb_testimonial:before',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Quote Icon Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $quote_icon_background_colors, '%%order_class%%.et_pb_testimonial:before', 'background-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'quote_icon_background_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%%.et_pb_testimonial:hover:before',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $quote_icon_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'quote_icon_background_color',
+				'selector'                        => '%%order_class%%.et_pb_testimonial:before',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Icon Size.
-		$icon_selector = '%%order_class%%:before';
+		// $icon_selector = '%%order_class%%:before';.
 		if ( 'off' !== $quote_icon && 'off' !== $use_icon_font_size ) {
-			// Proccess for each devices.
-			foreach ( $icon_font_size_values as $font_size_key => $font_size_value ) {
-				if ( '' === $font_size_value ) {
-					continue;
-				}
+			// Icon Font Size.
+			$this->generate_styles(
+				array(
+					'base_attr_name'                  => 'icon_font_size',
+					'selector'                        => '%%order_class%%:before',
+					'hover_pseudo_selector_location'  => 'suffix',
+					'sticky_pseudo_selector_location' => 'prefix',
+					'render_slug'                     => $render_slug,
+					'type'                            => 'range',
+					'processor_declaration_format'    => 'font-size:%1$s; border-radius:%1$s; top:-%2$s; margin-left:-%2$s;',
 
-				$media_query = 'general';
-				if ( 'tablet' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_980' );
-				} elseif ( 'phone' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_767' );
-				}
-
-				$font_size_value_int  = (int) $font_size_value;
-				$font_size_value_unit = str_replace( $font_size_value_int, '', $font_size_value );
-				$font_size_value_half = 0 < $font_size_value_int ? $font_size_value_int / 2 : 0;
-				$font_size_value_half = (string) $font_size_value_half . $font_size_value_unit;
-
-				$el_style = array(
-					'selector'    => $icon_selector,
-					'declaration' => sprintf(
-						'font-size:%1$s; border-radius:%1$s; top:-%2$s; margin-left:-%2$s;',
-						esc_html( $font_size_value ),
-						esc_html( $font_size_value_half )
+					// processed attr value can't be directly assigned to single css property so
+					// custom processor is needed to render this attr.
+					'processor'                       => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_overlay_icon_font_size',
 					),
-					'media_query' => $media_query,
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
-
-			// Icon hover styles.
-			if ( et_builder_is_hover_enabled( 'icon_font_size', $this->props ) && '' !== $icon_font_size_hover ) {
-				$icon_font_size_hover_int  = (int) $icon_font_size_hover;
-				$icon_font_size_hover_unit = str_replace( $icon_font_size_hover_int, '', $icon_font_size_hover );
-				$icon_font_size_hover_half = 0 < $icon_font_size_hover_int ? $icon_font_size_hover_int / 2 : 0;
-				$icon_font_size_hover_half = (string) $icon_font_size_hover_half . $icon_font_size_hover_unit;
-
-				$el_style = array(
-					'selector'    => $this->add_hover_to_order_class( $icon_selector ),
-					'declaration' => sprintf(
-						'font-size:%1$s; border-radius:%1$s; top:-%2$s; margin-left:-%2$s;',
-						esc_html( $icon_font_size_hover ),
-						esc_html( $icon_font_size_hover_half )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
+				)
+			);
 		}
 
 		$video_background          = $this->video_background();

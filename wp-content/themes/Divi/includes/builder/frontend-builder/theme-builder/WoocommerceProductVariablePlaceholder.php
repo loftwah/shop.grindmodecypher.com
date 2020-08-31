@@ -200,7 +200,7 @@ class ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder extends WC_Produ
 	public function get_available_variations( $return = 'array' ) {
 		return array(
 			$this->get_available_variation(),
-		 );
+		);
 	}
 
 	/**
@@ -231,14 +231,14 @@ class ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder extends WC_Produ
 		$defaults = array(
 			'limit' => 4,
 		);
-		$args = wp_parse_args( $args, $defaults );
+		$args     = wp_parse_args( $args, $defaults );
 
 		// Get recent products for upsells product; Any product will do since its purpose is
 		// for visual preview only
 		$recent_products_query = new WC_Product_Query( $args );
 		$recent_product_ids    = array();
 
-		foreach( $recent_products_query->get_products() as $recent_product ) {
+		foreach ( $recent_products_query->get_products() as $recent_product ) {
 			$recent_product_ids[] = $recent_product->get_id();
 		}
 

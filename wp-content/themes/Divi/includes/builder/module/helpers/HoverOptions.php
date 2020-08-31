@@ -173,6 +173,9 @@ class ET_Builder_Module_Hover_Options {
 	 * Adds `:hover` in selector at the end of the selector
 	 * E.g: add_hover_to_selectors('%%order_class%%% .image') >>> '%%order_class%%% .image:hover'
 	 *
+	 * @since ?? moved the order of `-` in capturing group 4's character set so it captures
+	 *           `::-` prefixed pseudo selector like `::-moz-placeholder` correctly
+	 *
 	 * @param string $selector
 	 *
 	 * @return string
@@ -182,7 +185,7 @@ class ET_Builder_Module_Hover_Options {
 		$selectors = array_map( 'trim', $selectors );
 		// Add hover to the end of the selector, but prevent specific situations like this:
 		// .my-class:after => .my-class:after:hover, should be .my-class:hover:after
-		$selectors = preg_replace( '/(.+\s)*([^\::?]+)((::?[a-z|-|\(|\)|\[|\]]+)+)?$/i', '$1$2:hover$3', $selectors );
+		$selectors = preg_replace( '/(.+\s)*([^\::?]+)((::?[-|a-z|\(|\)|\[|\]]+)+)?$/i', '$1$2:hover$3', $selectors );
 
 		return implode( ', ', $selectors );
 	}

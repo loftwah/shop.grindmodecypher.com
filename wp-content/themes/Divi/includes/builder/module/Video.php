@@ -149,6 +149,7 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 				'toggle_slug'    => 'play_icon',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'__video'                 => array(
 				'type'                => 'computed',
@@ -207,6 +208,7 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 				'mobile_options'   => true,
 				'depends_show_if'  => 'on',
 				'responsive'       => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			),
 			'thumbnail_overlay_color' => array(
@@ -218,6 +220,7 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 				'toggle_slug'      => 'overlay',
 				'default_on_front' => 'rgba(0,0,0,.6)',
 				'mobile_options'   => true,
+				'sticky'           => true,
 			),
 
 		);
@@ -297,16 +300,11 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view               = et_pb_multi_view_options( $this );
-		$src                      = $this->props['src'];
-		$src_webm                 = $this->props['src_webm'];
-		$image_src                = $this->props['image_src'];
-		$use_icon_font_size       = $this->props['use_icon_font_size'];
-		$play_icon_color_values   = et_pb_responsive_options()->get_property_values( $this->props, 'play_icon_color' );
-		$play_icon_color_hover    = $this->get_hover_value( 'play_icon_color' );
-		$icon_font_size_values    = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
-		$icon_font_size_hover     = $this->get_hover_value( 'icon_font_size' );
-		$thumbnail_overlay_colors = et_pb_responsive_options()->get_property_values( $this->props, 'thumbnail_overlay_color' );
+		$multi_view         = et_pb_multi_view_options( $this );
+		$src                = $this->props['src'];
+		$src_webm           = $this->props['src_webm'];
+		$image_src          = $this->props['image_src'];
+		$use_icon_font_size = $this->props['use_icon_font_size'];
 
 		foreach ( $multi_view->get_modes() as $mode ) {
 			$video_srcs[ $mode ] = self::get_video(
@@ -332,73 +330,53 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 		$parallax_image_background = $this->get_parallax_image_background();
 
 		// Play Icon color.
-		et_pb_responsive_options()->generate_responsive_css( $play_icon_color_values, '%%order_class%% .et_pb_video_overlay .et_pb_video_play', 'color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'play_icon_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% .et_pb_video_overlay .et_pb_video_play:hover',
-				'declaration' => sprintf(
-					'color: %1$s;',
-					esc_html( $play_icon_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'play_icon_color',
+				'selector'                        => '%%order_class%% .et_pb_video_overlay .et_pb_video_play',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Icon Size.
-		$icon_selector = '%%order_class%% .et_pb_video_overlay .et_pb_video_play';
 		if ( 'off' !== $use_icon_font_size ) {
-			// Proccess for each devices.
-			foreach ( $icon_font_size_values as $font_size_key => $font_size_value ) {
-				if ( '' === $font_size_value ) {
-					continue;
-				}
+			// Icon Font Size.
+			$this->generate_styles(
+				array(
+					'base_attr_name'                  => 'icon_font_size',
+					'selector'                        => '%%order_class%% .et_pb_video_overlay .et_pb_video_play',
+					'hover_pseudo_selector_location'  => 'suffix',
+					'sticky_pseudo_selector_location' => 'prefix',
+					'render_slug'                     => $render_slug,
+					'type'                            => 'range',
 
-				$media_query = 'general';
-				if ( 'tablet' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_980' );
-				} elseif ( 'phone' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_767' );
-				}
-
-				$font_size_value_int  = (int) $font_size_value;
-				$font_size_value_unit = str_replace( $font_size_value_int, '', $font_size_value );
-				$font_size_value_half = 0 < $font_size_value_int ? $font_size_value_int / 2 : 0;
-				$font_size_value_half = (string) $font_size_value_half . $font_size_value_unit;
-
-				$el_style = array(
-					'selector'    => $icon_selector,
-					'declaration' => sprintf(
-						'font-size:%1$s; line-height:%1$s; margin-top:-%2$s; margin-left:-%2$s;',
-						esc_html( $font_size_value ),
-						esc_html( $font_size_value_half )
+					// processed attr value can't be directly assigned to single css property so
+					// custom processor is needed to render this attr.
+					'processor'                       => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_overlay_icon_font_size',
 					),
-					'media_query' => $media_query,
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
-
-			// Icon hover styles.
-			if ( et_builder_is_hover_enabled( 'icon_font_size', $this->props ) && '' !== $icon_font_size_hover ) {
-				$icon_font_size_hover_int  = (int) $icon_font_size_hover;
-				$icon_font_size_hover_unit = str_replace( $icon_font_size_hover_int, '', $icon_font_size_hover );
-				$icon_font_size_hover_half = 0 < $icon_font_size_hover_int ? $icon_font_size_hover_int / 2 : 0;
-				$icon_font_size_hover_half = (string) $icon_font_size_hover_half . $icon_font_size_hover_unit;
-
-				$el_style = array(
-					'selector'    => $this->add_hover_to_selectors( $icon_selector ),
-					'declaration' => sprintf(
-						'font-size:%1$s; line-height:%1$s; margin-top:-%2$s; margin-left:-%2$s;',
-						esc_html( $icon_font_size_hover ),
-						esc_html( $icon_font_size_hover_half )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
+				)
+			);
 		}
 
 		// Thumbnail Overlay Color.
-		et_pb_responsive_options()->generate_responsive_css( $thumbnail_overlay_colors, '%%order_class%% .et_pb_video_overlay_hover:hover', 'background-color', $render_slug, '', 'color' );
+		$this->generate_styles(
+			array(
+				'hover'                           => 'false',
+				'base_attr_name'                  => 'thumbnail_overlay_color',
+				'selector'                        => '%%order_class%% .et_pb_video_overlay_hover:hover',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		$muti_view_video_overlay = $multi_view->render_element(
 			array(

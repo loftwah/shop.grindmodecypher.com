@@ -86,24 +86,370 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./core/admin/js/frame-helpers.js":
+/*!****************************************!*\
+  !*** ./core/admin/js/frame-helpers.js ***!
+  \****************************************/
+/*! exports provided: top_window, is_iframe */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "top_window", function() { return top_window; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "is_iframe", function() { return is_iframe; });
+/*                    ,-,-
+                     / / |
+   ,-'             _/ / /
+  (-_          _,-' `Z_/
+   "#:      ,-'_,-.    \  _
+    #'    _(_-'_()\     \" |
+  ,--_,--'                 |
+ / ""                      L-'\
+ \,--^---v--v-._        /   \ |
+   \_________________,-'      |
+                    \
+                     \
+                      \
+ NOTE: The code in this file will be executed multiple times! */
+var top_window = window;
+var is_iframe = false;
+var top;
+
+try {
+  // Have to access top window's prop (document) to trigger same-origin DOMException
+  // so we can catch it and act accordingly.
+  top = window.top.document ? window.top : false;
+} catch (e) {
+  // Can't access top, it means we're inside a different domain iframe.
+  top = false;
+}
+
+if (top && top.__Cypress__) {
+  if (window.parent === top) {
+    top_window = window;
+    is_iframe = false;
+  } else {
+    top_window = window.parent;
+    is_iframe = true;
+  }
+} else if (top) {
+  top_window = top;
+  is_iframe = top !== window.self;
+}
+
+
+
+/***/ }),
+
+/***/ "./includes/builder/scripts/utils/utils.js":
+/*!*************************************************!*\
+  !*** ./includes/builder/scripts/utils/utils.js ***!
+  \*************************************************/
+/*! exports provided: isBuilderType, is, isFE, isVB, isBFB, isTB, isLBB, isDiviTheme, isExtraTheme, isLBP, isBlockEditor, isBuilder, getOffsets, maybeIncreaseEmitterMaxListeners, maybeDecreaseEmitterMaxListeners, registerFrontendComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isBuilderType", function() { return isBuilderType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "is", function() { return is; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isFE", function() { return isFE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isVB", function() { return isVB; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isBFB", function() { return isBFB; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTB", function() { return isTB; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLBB", function() { return isLBB; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isDiviTheme", function() { return isDiviTheme; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isExtraTheme", function() { return isExtraTheme; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLBP", function() { return isLBP; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isBlockEditor", function() { return isBlockEditor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isBuilder", function() { return isBuilder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOffsets", function() { return getOffsets; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "maybeIncreaseEmitterMaxListeners", function() { return maybeIncreaseEmitterMaxListeners; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "maybeDecreaseEmitterMaxListeners", function() { return maybeDecreaseEmitterMaxListeners; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerFrontendComponent", function() { return registerFrontendComponent; });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "jquery");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _core_admin_js_frame_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @core/admin/js/frame-helpers */ "./core/admin/js/frame-helpers.js");
+/**
+ * IMPORTANT: Keep external dependencies as low as possible since this utils might be
+ * imported by various frontend scripts; need to keep frontend script size low
+ */
+
+// External dependencies
+
+
+// Internal dependencies
+
+
+/**
+ * Check current page's builder Type
+ *
+ * @since ??
+ *
+ * @param {string} builderType fe|vb|bfb|tb|lbb|lbp
+ *
+ * @return {bool}
+ */
+const isBuilderType = builderType => builderType === window.et_builder_utils_params.builderType;
+
+/**
+ * Return condition value
+ *
+ * @since ??
+ *
+ * @param {string} conditionName
+ *
+ * @return {bool}
+ */
+const is = conditionName => window.et_builder_utils_params.condition[conditionName];
+
+/**
+ * Is current page Frontend
+ *
+ * @since ??
+ *
+ * @type {bool}
+ */
+const isFE = isBuilderType('fe');
+
+/**
+ * Is current page Visual Builder
+ *
+ * @since ??
+ *
+ * @type {bool}
+ */
+const isVB = isBuilderType('vb');
+
+/**
+ * Is current page BFB / New Builder Experience
+ *
+ * @since ??
+ *
+ * @type {bool}
+ */
+const isBFB = isBuilderType('bfb');
+
+/**
+ * Is current page Theme Builder
+ *
+ * @since ??
+ *
+ * @type {bool}
+ */
+const isTB = isBuilderType('tb');
+
+/**
+ * Is current page Layout Block Builder
+ *
+ * @type {bool}
+ */
+const isLBB = isBuilderType('lbb');
+
+/**
+ * Is current page uses Divi Theme
+ *
+ * @since ??
+ *
+ * @type {bool}
+ */
+const isDiviTheme = is('diviTheme');
+
+/**
+ * Is current page uses Extra Theme
+ *
+ * @since ??
+ *
+ * @type {bool}
+ */
+const isExtraTheme = is('extraTheme');
+
+/**
+ * Is current page Layout Block Preview
+ *
+ * @since ??
+ *
+ * @type {bool}
+ */
+const isLBP = isBuilderType('lbp');
+
+/**
+ * Check if current window is block editor window (gutenberg editing page)
+ *
+ * @since ??
+ *
+ * @type {bool}
+ */
+const isBlockEditor = jquery__WEBPACK_IMPORTED_MODULE_0___default()(_core_admin_js_frame_helpers__WEBPACK_IMPORTED_MODULE_1__["top_window"].document).find('.edit-post-layout__content').length > 0;
+
+/**
+ * Check if current window is builder window (VB, BFB, TB, LBB)
+ *
+ * @since ??
+ *
+ * @type {bool}
+ */
+const isBuilder = ['vb', 'bfb', 'tb', 'lbb'].includes(window.et_builder_utils_params.builderType);
+
+/**
+ * Get offsets value of all sides
+ *
+ * @since ??
+ *
+ * @param {object} $selector jQuery selector instance
+ * @param {number} height
+ * @param {number} width
+ *
+ * @return {object}
+ */
+const getOffsets = ($selector, width = 0, height = 0) => {
+  // Return previously saved offset if sticky tab is active; retrieving actual offset contain risk
+  // of incorrect offsets if sticky horizontal / vertical offset of relative position is modified.
+  const isStickyTabActive = isBuilder && $selector.hasClass('et_pb_sticky') && 'fixed' !== $selector.css('position');
+
+  if (isStickyTabActive) {
+    return $selector.data('et-offsets');
+  }
+
+  // Get top & left offsets
+  const offsets = $selector.offset();
+
+  // If no offsets found, return empty object
+  if ('undefined' === typeof offsets) {
+    return {};
+  }
+
+  // FE sets the flag for sticky module which uses transform as classname on module wrapper while
+  // VB, BFB, TB, and LB sets the flag on CSS output's <style> element because it can't modify
+  // its parent. This compromises avoids the needs to extract transform rendering logic
+  const hasTransform = isBuilder ?
+    $selector.children('.et-fb-custom-css-output[data-sticky-has-transform="on"]').length > 0 :
+    $selector.hasClass('et_pb_sticky--has-transform');
+
+  let top  = 'undefined' === typeof offsets.top ? 0 : offsets.top;
+  let left = 'undefined' === typeof offsets.left ? 0 : offsets.left;
+
+  // If module is sticky module that uses transform, its offset calculation needs to be adjusted
+  // because transform tends to modify the positioning of the module
+  if (hasTransform) {
+    // Calculate offset (relative to selector's parent) AFTER it is affected by transform
+    // NOTE: Can't use jQuery's position() because it considers margin-left `auto` which causes issue
+    // on row thus this manually calculate the difference between element and its parent's offset
+    // @see https://github.com/jquery/jquery/blob/1.12-stable/src/offset.js#L149-L155
+    const parentOffsets    = $selector.parent().offset();
+
+    const transformedPosition = {
+      top: offsets.top - parentOffsets.top,
+      left: offsets.left - parentOffsets.left,
+    };
+
+    // Calculate offset (relative to selector's parent) BEFORE it is affected by transform
+    const preTransformedPosition = {
+      top: $selector[0].offsetTop,
+      left: $selector[0].offsetLeft,
+    }
+
+    // Update offset's top value
+    top = top + (preTransformedPosition.top - transformedPosition.top);
+    offsets.top = top;
+
+    // Update offset's left value
+    left = left + (preTransformedPosition.left - transformedPosition.left);
+    offsets.left = left;
+  }
+
+  // Manually calculate right & bottom offsets
+  offsets.right  = left + width;
+  offsets.bottom = top + height;
+
+  // Save copy of the offset on element's .data() in case of scenario where retrieving actual
+  // offset value will lead to incorrect offset value (eg. sticky tab active with position offset)
+  $selector.data('et-offsets', offsets);
+
+  return offsets;
+}
+
+/**
+ * Increase EventEmitter's max listeners if lister count is about to surpass the max listeners limit
+ * IMPORTANT: Need to be placed BEFORE `.on()`
+ *
+ * @since ??
+ *
+ * @param {EventEmitter} emitter
+ * @param {string} EventName
+ */
+const maybeIncreaseEmitterMaxListeners = (emitter, eventName) => {
+  const currentCount = emitter.listenerCount(eventName);
+  const maxListeners = emitter.getMaxListeners();
+
+  if (currentCount === maxListeners) {
+    emitter.setMaxListeners(maxListeners + 1);
+  }
+}
+
+/**
+ * Decrease EventEmitter's max listeners if listener count is less than max listener limit and above
+ * 10 (default max listener limit). If listener count is less than 10, max listener limit will
+ * remain at 10
+ * IMPORTANT: Need to be placed AFTER `.removeListener()`
+ *
+ * @since ??
+ *
+ * @param {EventEmitter} emitter
+ * @param {string} eventName
+ */
+const maybeDecreaseEmitterMaxListeners = (emitter, eventName) => {
+  const currentCount = emitter.listenerCount(eventName);
+  const maxListeners = emitter.getMaxListeners();
+
+  if (maxListeners > 10) {
+    emitter.setMaxListeners(currentCount);
+  }
+}
+
+/**
+ * Expose frontend (FE) component via global object so it can be accessed and reused externally
+ * Note: window.ET_Builder is for builder app's component; window.ET_FE is for frontend component
+ *
+ * @since ??
+ *
+ * @param {string} type
+ * @param {string} name
+ * @param {mixed} component
+ */
+const registerFrontendComponent = (type, name, component) => {
+  // Make sure that ET_FE is available
+  if ('undefined' === typeof window.ET_FE) {
+    window.ET_FE = {};
+  }
+
+  if ('object' !== typeof window.ET_FE[type]) {
+    window.ET_FE[type] = {};
+  }
+
+  window.ET_FE[type][name] = component;
+}
+
+
+/***/ }),
+
 /***/ "./js/src/custom.js":
 /*!**************************!*\
   !*** ./js/src/custom.js ***!
   \**************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var builder_scripts_utils_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! builder/scripts/utils/utils */ "./includes/builder/scripts/utils/utils.js");
+// Internal dependencies
 
-// Check whether current page is inside (visual) builder or not
-var isBuilder = 'object' === _typeof(window.ET_Builder);
 /*! ET custom.js */
-
 
 (function ($) {
   window.et_calculating_scroll_position = false;
   window.et_side_nav_links_initialized = false;
-  var top_window = isBuilder ? ET_Builder.Frames.top : window;
+  var top_window = builder_scripts_utils_utils__WEBPACK_IMPORTED_MODULE_0__["isBuilder"] ? ET_Builder.Frames.top : window;
 
   function et_get_first_section() {
     return $('.et-l:not(.et-l--footer) .et_pb_section:visible:first');
@@ -357,14 +703,14 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
     function et_change_primary_nav_position(delay) {
       setTimeout(function () {
         var $body = $('body'),
-            $wpadminbar = isBuilder ? top_window.jQuery('#wpadminbar') : $('#wpadminbar'),
+            $wpadminbar = builder_scripts_utils_utils__WEBPACK_IMPORTED_MODULE_0__["isBuilder"] ? top_window.jQuery('#wpadminbar') : $('#wpadminbar'),
             $top_header = $('#top-header'),
             et_primary_header_top = 0;
 
         if ($wpadminbar.length) {
           var adminbarHeight = $wpadminbar.innerHeight(); // Adjust admin bar height for builder's preview mode zoom since admin bar is rendered on top window
 
-          if (isBuilder && top_window.jQuery('html').is('.et-fb-preview--zoom:not(.et-fb-preview--desktop)')) {
+          if (builder_scripts_utils_utils__WEBPACK_IMPORTED_MODULE_0__["isBuilder"] && top_window.jQuery('html').is('.et-fb-preview--zoom:not(.et-fb-preview--desktop)')) {
             adminbarHeight = adminbarHeight * 2;
           }
 
@@ -930,7 +1276,7 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
           // $et_container.width() doesn't recognize pixel or percentage unit. It's our duty to understand what it returns and convert it properly
       containerWidthChanged = $et_container.length && et_container_previous_width !== et_container_actual_width,
           $slide_menu_container = $('.et_slide_in_menu_container'),
-          $adminbar = isBuilder ? top_window.jQuery('#wpadminbar') : $('#wpadminbar'),
+          $adminbar = builder_scripts_utils_utils__WEBPACK_IMPORTED_MODULE_0__["isBuilder"] ? top_window.jQuery('#wpadminbar') : $('#wpadminbar'),
           is_rtl = $('body').hasClass('rtl'),
           page_container_margin;
 
@@ -945,7 +1291,7 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
       } // Update header and primary adjustment when transitioning across breakpoints or inside visual builder
 
 
-      if ($adminbar.length && et_is_fixed_nav && window_width >= 740 && window_width <= 782 || isBuilder) {
+      if ($adminbar.length && et_is_fixed_nav && window_width >= 740 && window_width <= 782 || builder_scripts_utils_utils__WEBPACK_IMPORTED_MODULE_0__["isBuilder"]) {
         et_calculate_header_values();
         et_change_primary_nav_position(0);
       }
@@ -1020,7 +1366,7 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
       et_set_right_vertical_menu();
     });
 
-    if (isBuilder && jQuery('.et_header_style_fullscreen .et_slide_in_menu_container').length > 0) {
+    if (builder_scripts_utils_utils__WEBPACK_IMPORTED_MODULE_0__["isBuilder"] && jQuery('.et_header_style_fullscreen .et_slide_in_menu_container').length > 0) {
       jQuery(window).resize(et_pb_resize_fullscreen_menu);
     }
 
@@ -1179,13 +1525,26 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
                   $('.et_header_clone').remove();
                 }
               } else {
+                fix_padding = 1;
                 $main_header.removeClass('et-fixed-header');
                 $top_header.removeClass('et-fixed-header');
-                $main_container_wrapper.css('margin-top', '-1px');
-              }
+                $main_container_wrapper.css('margin-top', -fix_padding);
+              } // Dispatch event when fixed header height transition starts
 
+
+              window.dispatchEvent(new CustomEvent('ETDiviFixedHeaderTransitionStart', {
+                detail: {
+                  marginTop: -fix_padding
+                }
+              }));
               setTimeout(function () {
-                et_set_search_form_css();
+                et_set_search_form_css(); // Dispatch another event when fixed header height transition ends
+
+                window.dispatchEvent(new CustomEvent('ETDiviFixedHeaderTransitionEnd', {
+                  detail: {
+                    marginTop: -fix_padding
+                  }
+                }));
               }, 400);
             }
           });
@@ -1242,7 +1601,7 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
       var $inTBBody = $('.et-l--body .et_pb_section').not('.et-l--post .et_pb_section');
       var $inPost;
 
-      if (isBuilder) {
+      if (builder_scripts_utils_utils__WEBPACK_IMPORTED_MODULE_0__["isBuilder"]) {
         $inPost = $postRoot.find('.et-fb-post-content > .et_pb_section');
       } else {
         $inPost = $postRoot.find('.et_builder_inner_content > .et_pb_section');
@@ -1720,7 +2079,7 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
   }
 
   function et_pb_resize_fullscreen_menu(e) {
-    if (isBuilder) {
+    if (builder_scripts_utils_utils__WEBPACK_IMPORTED_MODULE_0__["isBuilder"]) {
       var $menu = jQuery('.et_header_style_fullscreen .et_slide_in_menu_container.et_pb_fullscreen_menu_opened');
 
       if ($menu.length > 0) {
@@ -1799,6 +2158,17 @@ var isBuilder = 'object' === _typeof(window.ET_Builder);
     }
   });
 })(jQuery);
+
+/***/ }),
+
+/***/ "jquery":
+/*!*************************!*\
+  !*** external "jQuery" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = jQuery;
 
 /***/ })
 

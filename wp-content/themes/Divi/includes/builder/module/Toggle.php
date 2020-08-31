@@ -207,6 +207,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'toggle_slug'    => 'title',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'open_toggle_background_color'   => array(
 				'label'          => esc_html__( 'Open Toggle Background Color', 'et_builder' ),
@@ -217,6 +218,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'toggle_slug'    => 'toggle',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'closed_toggle_text_color'       => array(
 				'label'          => esc_html__( 'Closed Title Text Color', 'et_builder' ),
@@ -227,6 +229,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'toggle_slug'    => 'closed_title',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'closed_toggle_background_color' => array(
 				'label'          => esc_html__( 'Closed Toggle Background Color', 'et_builder' ),
@@ -237,6 +240,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'toggle_slug'    => 'toggle',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'icon_color'                     => array(
 				'label'          => esc_html__( 'Icon Color', 'et_builder' ),
@@ -247,6 +251,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'toggle_slug'    => 'icon',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'use_icon_font_size'             => array(
 				'label'            => esc_html__( 'Use Custom Icon Size', 'et_builder' ),
@@ -283,6 +288,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'mobile_options'   => true,
 				'depends_show_if'  => 'on',
 				'responsive'       => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			),
 		);
@@ -316,149 +322,101 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$multi_view                            = et_pb_multi_view_options( $this );
-		$open                                  = $this->props['open'];
-		$header_level                          = $this->props['title_level'];
-		$open_toggle_background_color_values   = et_pb_responsive_options()->get_property_values( $this->props, 'open_toggle_background_color' );
-		$open_toggle_background_color_hover    = $this->get_hover_value( 'open_toggle_background_color' );
-		$closed_toggle_background_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'closed_toggle_background_color' );
-		$closed_toggle_background_color_hover  = $this->get_hover_value( 'closed_toggle_background_color' );
-		$icon_color_values                     = et_pb_responsive_options()->get_property_values( $this->props, 'icon_color' );
-		$icon_color_hover                      = $this->get_hover_value( 'icon_color' );
-		$use_icon_font_size                    = $this->props['use_icon_font_size'];
-		$icon_font_size_values                 = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
-		$icon_font_size_any_values             = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size', '16px', true ); // 16px is default toggle icon size.
-		$icon_font_size_hover                  = $this->get_hover_value( 'icon_font_size' );
-		$closed_toggle_text_color_values       = et_pb_responsive_options()->get_property_values( $this->props, 'closed_toggle_text_color' );
-		$closed_toggle_text_color_hover        = $this->get_hover_value( 'closed_toggle_text_color' );
-		$open_toggle_text_color_values         = et_pb_responsive_options()->get_property_values( $this->props, 'open_toggle_text_color' );
-		$open_toggle_text_color_hover          = $this->get_hover_value( 'open_toggle_text_color' );
+		$multi_view                = et_pb_multi_view_options( $this );
+		$open                      = $this->props['open'];
+		$header_level              = $this->props['title_level'];
+		$use_icon_font_size        = $this->props['use_icon_font_size'];
+		$icon_font_size_values     = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
+		$icon_font_size_any_values = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size', '16px', true ); // 16px is default toggle icon size.
+		$icon_font_size_hover      = $this->get_hover_value( 'icon_font_size' );
 
 		// Open Toggle Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $open_toggle_background_color_values, '%%order_class%%.et_pb_toggle.et_pb_toggle_open', 'background-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'open_toggle_background_color', $this->props ) ) {
-			$style = array(
-				'selector'    => '%%order_class%%.et_pb_toggle.et_pb_toggle_open:hover',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $open_toggle_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'open_toggle_background_color',
+				'selector'                        => '%%order_class%%.et_pb_toggle.et_pb_toggle_open',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Closed Toggle Background Color.
-		et_pb_responsive_options()->generate_responsive_css( $closed_toggle_background_color_values, '%%order_class%%.et_pb_toggle.et_pb_toggle_close', 'background-color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'closed_toggle_background_color', $this->props ) ) {
-
-			$style = array(
-				'selector'    => '%%order_class%%.et_pb_toggle.et_pb_toggle_close:hover',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $closed_toggle_background_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'closed_toggle_background_color',
+				'selector'                        => '%%order_class%%.et_pb_toggle.et_pb_toggle_close',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'background-color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Open Toggle Text Color.
-		et_pb_responsive_options()->generate_responsive_css( $open_toggle_text_color_values, '%%order_class%%.et_pb_toggle.et_pb_toggle_open h5.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h1.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h6.et_pb_toggle_title', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'open_toggle_text_color', $this->props ) ) {
-			$style = array(
-				'selector'    => '%%order_class%%.et_pb_toggle.et_pb_toggle_open h5.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_open h1.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_open:hover h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open:hover h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h4.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_open:hover h6.et_pb_toggle_title',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $open_toggle_text_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'open_toggle_text_color',
+				'selector'                        => '%%order_class%%.et_pb_toggle.et_pb_toggle_open h5.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h1.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h6.et_pb_toggle_title',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Closed Toggle Text Color.
-		et_pb_responsive_options()->generate_responsive_css( $closed_toggle_text_color_values, '%%order_class%%.et_pb_toggle.et_pb_toggle_close h5.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h1.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h6.et_pb_toggle_title', 'color', $render_slug, ' !important;', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'closed_toggle_text_color', $this->props ) ) {
-
-			$style = array(
-				'selector'    => '%%order_class%%.et_pb_toggle.et_pb_toggle_close h5.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_close h1.et_pb_toggle_title:hover, %%order_class%%.et_pb_toggle.et_pb_toggle_close:hover h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close:hover h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close:hover h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close:hover h6.et_pb_toggle_title',
-				'declaration' => sprintf(
-					'color: %1$s !important;',
-					esc_html( $closed_toggle_text_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'closed_toggle_text_color',
+				'selector'                        => '%%order_class%%.et_pb_toggle.et_pb_toggle_close h5.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h1.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h6.et_pb_toggle_title',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'important'                       => true,
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Icon Size.
 		if ( 'off' !== $use_icon_font_size ) {
-			et_pb_responsive_options()->generate_responsive_css( $icon_font_size_values, '%%order_class%% .et_pb_toggle_title:before', 'font-size', $render_slug );
+			// Calculate icon font size and its right position.
+			$this->generate_styles(
+				array(
+					'base_attr_name'                  => 'icon_font_size',
+					'selector'                        => '%%order_class%% .et_pb_toggle_title:before',
+					'hover_pseudo_selector_location'  => 'suffix',
+					'sticky_pseudo_selector_location' => 'prefix',
+					'render_slug'                     => $render_slug,
+					'type'                            => 'range',
+					'css_property'                    => 'font-size',
 
-			// Calculate right position.
-			$is_icon_font_size_responsive = et_pb_responsive_options()->is_responsive_enabled( $this->props, 'icon_font_size' );
-			$icon_font_size_default       = '16px';  // Default toggle icon size.
-			$icon_font_size_right_values  = array();
-
-			foreach ( $icon_font_size_values as $device => $value ) {
-				$icon_font_size_active = isset( $icon_font_size_any_values[ $device ] ) ? $icon_font_size_any_values[ $device ] : 0;
-				if ( ! empty( $icon_font_size_active ) ) {
-					$icon_font_size_active_int  = (int) $icon_font_size_active;
-					$icon_font_size_active_unit = str_replace( $icon_font_size_active_int, '', $icon_font_size_active );
-					$icon_font_size_active_diff = (int) $icon_font_size_default - $icon_font_size_active_int;
-
-					// 2 is representation of left & right sides. 0 is default toggle icon right position.
-					$icon_font_size_right_values[ $device ] = 0 !== $icon_font_size_active_diff ? round( $icon_font_size_active_diff / 2 ) . $icon_font_size_active_unit : 0;
-				}
-			}
-
-			et_pb_responsive_options()->generate_responsive_css( $icon_font_size_right_values, '%%order_class%% .et_pb_toggle_title:before', 'right', $render_slug );
-
-			// Hover.
-			if ( et_builder_is_hover_enabled( 'icon_font_size', $this->props ) && '' !== $icon_font_size_hover ) {
-				$icon_font_size_hover_int  = (int) $icon_font_size_hover;
-				$icon_font_size_hover_unit = str_replace( $icon_font_size_hover_int, '', $icon_font_size_hover );
-				$icon_font_size_hover_diff = (int) $icon_font_size_default - $icon_font_size_hover_int;
-
-				// 2 is representation of left & right sides. 0 is default toggle icon right position.
-				$icon_font_size_right_hover = 0 !== $icon_font_size_hover_diff ? round( $icon_font_size_hover_diff / 2 ) . $icon_font_size_hover_unit : 0;
-
-				$style = array(
-					'selector'    => '%%order_class%%:hover .et_pb_toggle_title:before',
-					'declaration' => sprintf(
-						'right:%1$s;',
-						esc_html( $icon_font_size_right_hover )
+					// processed attr value can't be directly assigned to single css property so
+					// custom processor is needed to render this attr.
+					'processor'                       => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_toggle_title_icon_font_size',
 					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $style );
-
-				// Hover Icon Size.
-				$style = array(
-					'selector'    => '%%order_class%%:hover .et_pb_toggle_title:before',
-					'declaration' => sprintf(
-						'font-size:%1$s;',
-						esc_html( $icon_font_size_hover )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $style );
-			}
+				)
+			);
 		}
 
 		// Icon Color.
-		et_pb_responsive_options()->generate_responsive_css( $icon_color_values, '%%order_class%% .et_pb_toggle_title:before', 'color', $render_slug, '', 'color', ET_Builder_Element::DEFAULT_PRIORITY + 1 );
-
-		if ( et_builder_is_hover_enabled( 'icon_color', $this->props ) ) {
-			$style = array(
-				'selector'    => '%%order_class%%:hover .et_pb_toggle_title:before',
-				'priority'    => ET_Builder_Element::DEFAULT_PRIORITY + 1,
-				'declaration' => sprintf(
-					'color: %1$s;',
-					esc_html( $icon_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'icon_color',
+				'selector'       => '%%order_class%% .et_pb_toggle_title:before',
+				'css_property'   => 'color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
 
 		if ( 'et_pb_accordion_item' === $render_slug ) {
 			global $et_pb_accordion_item_number, $et_pb_accordion_header_level;
@@ -473,7 +431,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		}
 
 		// Adding "_item" class for toggle module for customizer targetting. There's no proper selector
-		// for toggle module styles since both accordion and toggle module use the same selector
+		// for toggle module styles since both accordion and toggle module use the same selector.
 		if ( 'et_pb_toggle' === $render_slug ) {
 			$this->add_classname( 'et_pb_toggle_item' );
 		}
@@ -498,7 +456,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 			)
 		);
 
-		// Module classnames
+		// Module classnames.
 		$this->add_classname(
 			array(
 				$this->get_text_orientation_classname(),

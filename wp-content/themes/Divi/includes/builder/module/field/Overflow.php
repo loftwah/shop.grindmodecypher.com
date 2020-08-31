@@ -9,6 +9,7 @@ class ET_Builder_Module_Field_Overflow extends ET_Builder_Module_Field_Base {
 			'toggle_slug'    => 'visibility',
 			'hover'          => 'tabs',
 			'mobile_options' => true,
+			'sticky'         => true,
 			'default'        => ET_Builder_Module_Helper_Overflow::OVERFLOW_DEFAULT,
 		);
 	}
@@ -70,6 +71,7 @@ class ET_Builder_Module_Field_Overflow extends ET_Builder_Module_Field_Base {
 			'type'           => 'select',
 			'hover'          => $args['hover'],
 			'mobile_options' => $args['mobile_options'],
+			'sticky'         => $args['sticky'],
 			'default'        => $args['default'],
 			'tab_slug'       => $args['tab_slug'],
 			'toggle_slug'    => $args['toggle_slug'],

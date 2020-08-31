@@ -176,6 +176,7 @@ class ET_Builder_Module_Field_MaxWidth extends ET_Builder_Module_Field_Base {
 			'hover'            => 'tabs',
 			'default_on_child' => true,
 			'mobile_options'   => true,
+			'sticky'           => true,
 			'validate_unit'    => true,
 			'default_unit'     => '%',
 			'allow_empty'      => true,

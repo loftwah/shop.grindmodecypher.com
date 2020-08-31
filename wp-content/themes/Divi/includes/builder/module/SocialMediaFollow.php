@@ -173,6 +173,7 @@ class ET_Builder_Module_Social_Media_Follow extends ET_Builder_Module {
 				'toggle_slug'    => 'icon',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'use_icon_font_size' => array(
 				'label'            => esc_html__( 'Use Custom Icon Size', 'et_builder' ),
@@ -210,6 +211,7 @@ class ET_Builder_Module_Social_Media_Follow extends ET_Builder_Module {
 				'mobile_options'   => true,
 				'depends_show_if'  => 'on',
 				'responsive'       => true,
+				'sticky'           => true,
 				'hover'            => 'tabs',
 			),
 		);
@@ -233,7 +235,8 @@ class ET_Builder_Module_Social_Media_Follow extends ET_Builder_Module {
 	}
 
 	function before_render() {
-		global $et_pb_social_media_follow_link;
+		global $et_pb_social_media_follow_link,
+			$et_pb_social_media_follow_sticky;
 
 		$url_new_window = $this->props['url_new_window'];
 		$follow_button  = et_pb_multi_view_options( $this )->get_values( 'follow_button' );
@@ -242,6 +245,8 @@ class ET_Builder_Module_Social_Media_Follow extends ET_Builder_Module {
 			'url_new_window' => $url_new_window,
 			'follow_button'  => $follow_button,
 		);
+
+		$et_pb_social_media_follow_sticky = et_pb_sticky_options()->is_sticky_module( $this->props );
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
@@ -251,97 +256,44 @@ class ET_Builder_Module_Social_Media_Follow extends ET_Builder_Module {
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
 		$use_icon_font_size        = $this->props['use_icon_font_size'];
-		$icon_color_hover          = $this->get_hover_value( 'icon_color' );
-		$icon_color_values         = et_pb_responsive_options()->get_property_values( $this->props, 'icon_color' );
-		$icon_font_size_hover      = $this->get_hover_value( 'icon_font_size' );
 		$icon_font_size_values     = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
 
 		// Icon Color.
-		et_pb_responsive_options()->generate_responsive_css( $icon_color_values, '%%order_class%% li.et_pb_social_icon a.icon:before', 'color', $render_slug, '', 'color' );
-
-		if ( ! empty( $icon_color_hover ) && et_builder_is_hover_enabled( 'icon_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '%%order_class%% li.et_pb_social_icon a.icon:hover:before',
-				'declaration' => sprintf(
-					'color: %1$s;',
-					esc_html( $icon_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'icon_color',
+				'selector'                        => '%%order_class%% li.et_pb_social_icon a.icon:before',
+				'selector_wrapper'                => '%%order_class%% li a.icon',
+				'hover_pseudo_selector_location'  => 'suffix',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+			)
+		);
 
 		// Icon Size.
 		if ( 'off' !== $use_icon_font_size ) {
-			// Proccess for each devices.
-			foreach ( $icon_font_size_values as $font_size_key => $font_size_value ) {
-				if ( '' === $font_size_value ) {
-					continue;
-				}
+			// Calculate icon size + its wrapper dimension.
+			$this->generate_styles(
+				array(
+					'base_attr_name'                  => 'icon_font_size',
+					'selector'                        => '%%order_class%% li a.icon:before',
+					'selector_wrapper'                => '%%order_class%% li a.icon',
+					'hover_pseudo_selector_location'  => 'suffix',
+					'sticky_pseudo_selector_location' => 'prefix',
+					'render_slug'                     => $render_slug,
+					'type'                            => 'range',
+					'css_property'                    => 'right',
 
-				$media_query = 'general';
-				if ( 'tablet' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_980' );
-				} elseif ( 'phone' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_767' );
-				}
-
-				$font_size_value_int    = (int) $font_size_value;
-				$font_size_value_unit   = str_replace( $font_size_value_int, '', $font_size_value );
-				$font_size_value_double = 0 < $font_size_value_int ? $font_size_value_int * 2 : 0;
-				$font_size_value_double = (string) $font_size_value_double . $font_size_value_unit;
-
-				$el_style = array(
-					'selector'    => '%%order_class%% li a.icon:before',
-					'declaration' => sprintf(
-						'font-size:%1$s; line-height:%2$s; height:%2$s; width:%2$s;',
-						esc_html( $font_size_value ),
-						esc_html( $font_size_value_double )
+					// processed attr value can't be directly assigned to single css property so
+					// custom processor is needed to render this attr.
+					'processor'                       => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_social_media_icon_font_size',
 					),
-					'media_query' => $media_query,
-				);
-				// Icon.
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-
-				// Icon Wrapper.
-				$el_style = array(
-					'selector'    => '%%order_class%% li a.icon',
-					'declaration' => sprintf(
-						'height:%1$s; width:%1$s;',
-						esc_html( $font_size_value_double )
-					),
-					'media_query' => $media_query,
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
-
-			// Icon hover styles.
-			if ( et_builder_is_hover_enabled( 'icon_font_size', $this->props ) && ! empty( $icon_font_size_hover ) ) {
-				$icon_font_size_hover_int    = (int) $icon_font_size_hover;
-				$icon_font_size_hover_unit   = str_replace( $icon_font_size_hover_int, '', $icon_font_size_hover );
-				$icon_font_size_hover_double = 0 < $icon_font_size_hover_int ? $icon_font_size_hover_int * 2 : 0;
-				$icon_font_size_hover_double = (string) $icon_font_size_hover_double . $icon_font_size_hover_unit;
-
-				// Icon.
-				$el_style = array(
-					'selector'    => '%%order_class%% li a.icon:hover:before',
-					'declaration' => sprintf(
-						'font-size:%1$s; line-height:%2$s; height:%2$s; width:%2$s;',
-						esc_html( $icon_font_size_hover ),
-						esc_html( $icon_font_size_hover_double )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-
-				// Icon Wrapper.
-				$el_style = array(
-					'selector'    => '%%order_class%% li a.icon:hover',
-					'declaration' => sprintf(
-						'height:%1$s; width:%1$s;',
-						esc_html( $icon_font_size_hover_double )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
+				)
+			);
 		}
 
 		// Get custom borders, if any

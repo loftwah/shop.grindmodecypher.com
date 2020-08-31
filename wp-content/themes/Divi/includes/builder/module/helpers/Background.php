@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * image).
  *
  * @since 4.3.3
+ * @since ?? Add sticky style support
  *
  * @todo Use `ET_Builder_Module_Helper_Background->get_background_style()` for `ET_Builder_Element->process_advanced_background_options()`
  *
@@ -23,6 +24,26 @@ class ET_Builder_Module_Helper_Background {
 		static $instance;
 
 		return $instance ? $instance : $instance = new self();
+	}
+
+	/**
+	 * Get prop name alias. Some background settings (eg. button's gradient background enable) might
+	 * use slightly different prop name to store background config;
+	 *
+	 * @since ??
+	 *
+	 * @param array  $aliases   Aliases.
+	 * @param string $prop_name Prop name.
+	 *
+	 * @return string
+	 */
+	public function get_prop_name_alias( $aliases = array(), $prop_name = '' ) {
+		// If no aliases given, simply return the prop name because it has no alias.
+		if ( empty( $aliases ) ) {
+			return $prop_name;
+		}
+
+		return et_()->array_get( $aliases, $prop_name, $prop_name );
 	}
 
 	/**
@@ -52,10 +73,12 @@ class ET_Builder_Module_Helper_Background {
 	 * Get gradient properties for hover mode
 	 *
 	 * @since 4.3.3
+	 * @since ?? add capability to look for sticky style's gradient
 	 *
 	 * @param array  $props                       Module's props
 	 * @param string $base_prop_name             Background base prop name
 	 * @param array  $gradient_properties_desktop {
+	 *     @type string $mode
 	 *     @type string $type
 	 *     @type string $direction
 	 *     @type string $radial_direction
@@ -67,7 +90,13 @@ class ET_Builder_Module_Helper_Background {
 	 *
 	 * @return array
 	 */
-	function get_gradient_hover_properties( $props, $base_prop_name, $gradient_properties_desktop = array() ) {
+	public function get_gradient_mode_properties( $mode, $props, $base_prop_name, $gradient_properties_desktop = array() ) {
+		$helper = et_builder_get_helper( $mode );
+
+		if ( ! $mode ) {
+			return false;
+		}
+
 		// Desktop value as default.
 		$gradient_type_desktop             = et_()->array_get( $gradient_properties_desktop, 'type', '' );
 		$gradient_direction_desktop        = et_()->array_get( $gradient_properties_desktop, 'direction', '' );
@@ -78,24 +107,24 @@ class ET_Builder_Module_Helper_Background {
 		$gradient_end_position_desktop     = et_()->array_get( $gradient_properties_desktop, 'end_position', '' );
 		$gradient_overlays_image_desktop   = et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_overlays_image", '', true );
 
-		// Hover value.
-		$gradient_type_hover             = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_color_gradient_type", $props, $gradient_type_desktop );
-		$gradient_direction_hover        = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_color_gradient_direction", $props, $gradient_direction_desktop );
-		$gradient_direction_radial_hover = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_color_gradient_direction_radial", $props, $gradient_radial_direction_desktop );
-		$gradient_start_hover            = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_color_gradient_start", $props, $gradient_color_start_desktop );
-		$gradient_end_hover              = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_color_gradient_end", $props, $gradient_color_end_desktop );
-		$gradient_start_position_hover   = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_color_gradient_start_position", $props, $gradient_start_position_desktop );
-		$gradient_end_position_hover     = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_color_gradient_end_position", $props, $gradient_end_position_desktop );
-		$gradient_overlays_image_hover   = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_color_gradient_overlays_image", $props, $gradient_overlays_image_desktop );
+		// Mode value.
+		$gradient_type_mode             = $helper->get_raw_value( "{$base_prop_name}_color_gradient_type", $props, $gradient_type_desktop );
+		$gradient_direction_mode        = $helper->get_raw_value( "{$base_prop_name}_color_gradient_direction", $props, $gradient_direction_desktop );
+		$gradient_direction_radial_mode = $helper->get_raw_value( "{$base_prop_name}_color_gradient_direction_radial", $props, $gradient_radial_direction_desktop );
+		$gradient_start_mode            = $helper->get_raw_value( "{$base_prop_name}_color_gradient_start", $props, $gradient_color_start_desktop );
+		$gradient_end_mode              = $helper->get_raw_value( "{$base_prop_name}_color_gradient_end", $props, $gradient_color_end_desktop );
+		$gradient_start_position_mode   = $helper->get_raw_value( "{$base_prop_name}_color_gradient_start_position", $props, $gradient_start_position_desktop );
+		$gradient_end_position_mode     = $helper->get_raw_value( "{$base_prop_name}_color_gradient_end_position", $props, $gradient_end_position_desktop );
+		$gradient_overlays_image_mode   = $helper->get_raw_value( "{$base_prop_name}_color_gradient_overlays_image", $props, $gradient_overlays_image_desktop );
 
 		return array(
-			'type'             => '' !== $gradient_type_hover ? $gradient_type_hover : $gradient_type_desktop,
-			'direction'        => '' !== $gradient_direction_hover ? $gradient_direction_hover : $gradient_direction_desktop,
-			'radial_direction' => '' !== $gradient_direction_radial_hover ? $gradient_direction_radial_hover : $gradient_radial_direction_desktop,
-			'color_start'      => '' !== $gradient_start_hover ? $gradient_start_hover : $gradient_color_start_desktop,
-			'color_end'        => '' !== $gradient_end_hover ? $gradient_end_hover : $gradient_color_end_desktop,
-			'start_position'   => '' !== $gradient_start_position_hover ? $gradient_start_position_hover : $gradient_start_position_desktop,
-			'end_position'     => '' !== $gradient_end_position_hover ? $gradient_end_position_hover : $gradient_end_position_desktop,
+			'type'             => '' !== $gradient_type_mode ? $gradient_type_mode : $gradient_type_desktop,
+			'direction'        => '' !== $gradient_direction_mode ? $gradient_direction_mode : $gradient_direction_desktop,
+			'radial_direction' => '' !== $gradient_direction_radial_mode ? $gradient_direction_radial_mode : $gradient_radial_direction_desktop,
+			'color_start'      => '' !== $gradient_start_mode ? $gradient_start_mode : $gradient_color_start_desktop,
+			'color_end'        => '' !== $gradient_end_mode ? $gradient_end_mode : $gradient_color_end_desktop,
+			'start_position'   => '' !== $gradient_start_position_mode ? $gradient_start_position_mode : $gradient_start_position_desktop,
+			'end_position'     => '' !== $gradient_end_position_mode ? $gradient_end_position_mode : $gradient_end_position_desktop,
 		);
 	}
 
@@ -132,13 +161,13 @@ class ET_Builder_Module_Helper_Background {
 		$args           = wp_parse_args( array_filter( $args ), $defaults );
 		$direction      = 'linear' === $args['type'] ? $args['direction'] : "circle at {$args['radial_direction']}";
 		$start_position = et_sanitize_input_unit( $args['start_position'], false, '%' );
-		$end_Position   = et_sanitize_input_unit( $args['end_position'], false, '%' );
+		$end_position   = et_sanitize_input_unit( $args['end_position'], false, '%' );
 
 		return esc_html(
 			"{$args['type']}-gradient(
 			{$direction},
 			{$args['color_start']} ${start_position},
-			{$args['color_end']} ${end_Position}
+			{$args['color_end']} ${end_position}
 		)"
 		);
 	}
@@ -171,6 +200,7 @@ class ET_Builder_Module_Helper_Background {
 	 * Get background UI option's style based on given props and prop name
 	 *
 	 * @since 4.3.3
+	 * @since ?? Add sticky style support.
 	 *
 	 * @todo Further simplify this method; Break it down into more encapsulated methods
 	 *
@@ -181,6 +211,7 @@ class ET_Builder_Module_Helper_Background {
 	 *     @type array  $fields_Definition
 	 *     @type string $selector
 	 *     @type string $selector_hover
+	 *     @type string $selector_sticky
 	 *     @type number $priority
 	 *     @type string $function_name
 	 *     @type bool   $has_background_color_toggle
@@ -200,6 +231,7 @@ class ET_Builder_Module_Helper_Background {
 			'fields_definition'             => array(),
 			'selector'                      => '',
 			'selector_hover'                => '',
+			'selector_sticky'               => '',
 			'priority'                      => '',
 			'function_name'                 => '',
 			'has_background_color_toggle'   => false,
@@ -208,6 +240,7 @@ class ET_Builder_Module_Helper_Background {
 			'use_background_image'          => true,
 			'use_background_video'          => true,
 			'use_background_color_reset'    => true,
+			'prop_name_aliases'             => array(),
 		);
 
 		// Parse arguments
@@ -219,7 +252,6 @@ class ET_Builder_Module_Helper_Background {
 		$important         = $args['important'];
 		$fields_definition = $args['fields_definition'];
 		$selector          = $args['selector'];
-		$selector_hover    = $args['selector_hover'];
 		$priority          = $args['priority'];
 		$function_name     = $args['function_name'];
 
@@ -229,6 +261,9 @@ class ET_Builder_Module_Helper_Background {
 		$use_image_options        = $args['use_background_image'];
 		$use_color_options        = $args['use_background_color'];
 		$use_color_reset_options  = $args['use_background_color_reset'];
+
+		// Prop name aliases. Some background element uses different prop name (eg. button background).
+		$prop_name_aliases = $args['prop_name_aliases'];
 
 		// Save processed background. These will be compared with the smaller device background
 		// processed value to avoid rendering the same styles.
@@ -245,8 +280,14 @@ class ET_Builder_Module_Helper_Background {
 			'phone'   => false,
 		);
 
+		// Helper.
+		$responsive = et_pb_responsive_options();
+
+		// Parsed prop name, in case it has aliases.
+		$base_prop_name_parsed = $this->get_prop_name_alias( $prop_name_aliases, $base_prop_name );
+
 		// Background Desktop, Tablet, and Phone.
-		foreach ( et_pb_responsive_options()->get_modes() as $device ) {
+		foreach ( $responsive->get_modes() as $device ) {
 			$is_desktop = 'desktop' === $device;
 			$suffix     = ! $is_desktop ? "_{$device}" : '';
 			$style      = '';
@@ -259,7 +300,7 @@ class ET_Builder_Module_Helper_Background {
 			$is_image_disabled      = false;
 
 			// Ensure responsive settings is enabled on mobile.
-			if ( ! $is_desktop && ! et_pb_responsive_options()->is_responsive_enabled( $props, $base_prop_name ) ) {
+			if ( ! $is_desktop && ! $responsive->is_responsive_enabled( $props, $base_prop_name_parsed ) ) {
 				continue;
 			}
 
@@ -271,11 +312,17 @@ class ET_Builder_Module_Helper_Background {
 
 			// A. Background Gradient.
 			if ( $use_gradient_options && 'fields_only' !== $use_gradient_options ) {
-				$use_gradient = et_pb_responsive_options()->get_inheritance_background_value( $props, "use_{$base_prop_name}_color_gradient", $device, $base_prop_name, $fields_definition );
+				$use_gradient = $responsive->get_inheritance_background_value(
+					$props,
+					$this->get_prop_name_alias( $prop_name_aliases, "use_{$base_prop_name}_color_gradient" ),
+					$device,
+					$base_prop_name,
+					$fields_definition
+				);
 
 				// 1. Ensure gradient color is active.
 				if ( 'on' === $use_gradient ) {
-					$gradient_overlays_image = et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_overlays_image{$suffix}", '', true );
+					$gradient_overlays_image = $responsive->get_any_value( $props, "{$base_prop_name}_color_gradient_overlays_image{$suffix}", '', true );
 					$gradient_properties     = $this->get_gradient_properties( $props, $base_prop_name, $suffix );
 
 					// Will be used as default of Gradient hover.
@@ -297,8 +344,8 @@ class ET_Builder_Module_Helper_Background {
 
 			// B. Background Image.
 			if ( $use_image_options && 'fields_only' !== $use_image_options ) {
-				$image    = et_pb_responsive_options()->get_inheritance_background_value( $props, "{$base_prop_name}_image", $device, $base_prop_name, $fields_definition );
-				$parallax = et_pb_responsive_options()->get_any_value( $props, "parallax{$suffix}", 'off' );
+				$image    = $responsive->get_inheritance_background_value( $props, "{$base_prop_name}_image", $device, $base_prop_name, $fields_definition );
+				$parallax = $responsive->get_any_value( $props, "parallax{$suffix}", 'off' );
 
 				// Background image and parallax status.
 				$is_image_active         = '' !== $image && 'on' !== $parallax;
@@ -344,7 +391,7 @@ class ET_Builder_Module_Helper_Background {
 
 					// Blend.
 					$image_blend         = $this->get_image_style( 'blend', $base_prop_name, $suffix, $props, $fields_definition, $is_prev_image_active );
-					$image_blend_inherit = et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_blend{$suffix}", '', true );
+					$image_blend_inherit = $responsive->get_any_value( $props, "{$base_prop_name}_blend{$suffix}", '', true );
 					$image_blend_default = et_()->array_get( $fields_definition, "{$base_prop_name}_blend.default", '' );
 
 					if ( '' !== $image_blend_inherit ) {
@@ -409,10 +456,10 @@ class ET_Builder_Module_Helper_Background {
 			// C. Background Color.
 			if ( $use_color_options && 'fields_only' !== $use_color_options ) {
 
-				$use_color_value = et_pb_responsive_options()->get_any_value( $props, "use_{$base_prop_name}_color{$suffix}", 'on', true );
+				$use_color_value = $responsive->get_any_value( $props, "use_{$base_prop_name}_color{$suffix}", 'on', true );
 
 				if ( ! $has_gradient_and_image && 'off' !== $use_color_value ) {
-					$color       = et_pb_responsive_options()->get_inheritance_background_value( $props, "{$base_prop_name}_color", $device, $base_prop_name, $fields_definition );
+					$color       = $responsive->get_inheritance_background_value( $props, "{$base_prop_name}_color", $device, $base_prop_name, $fields_definition );
 					$color       = ! $is_desktop && '' === $color ? 'initial' : $color;
 					$color_style = $color;
 
@@ -454,191 +501,248 @@ class ET_Builder_Module_Helper_Background {
 			}
 		}
 
-		// Background Hover.
-		if ( et_builder_is_hover_enabled( $base_prop_name, $props ) ) {
-			$images_hover = array();
-			$style_hover  = '';
+		// Background Modes (Hover & Sticky).
+		$modes = array( 'hover', 'sticky' );
 
-			$has_gradient_hover           = false;
-			$has_image_hover              = false;
-			$has_gradient_and_image_hover = false;
-			$is_gradient_hover_disabled   = false;
-			$is_image_hover_disabled      = false;
+		foreach ( $modes as $mode ) {
+			// Get helper.
+			$helper = et_builder_get_helper( $mode );
 
-			$gradient_overlays_image_hover = 'off';
+			// Bail if no helper.
+			if ( ! $helper ) {
+				continue;
+			}
 
-			// Background Gradient Hover.
-			// This part is little bit different compared to other hover implementation. In this case,
-			// hover is enabled on the background field, not on the each of those fields. So, built
-			// in function get_value() doesn't work in this case. Temporarily, we need to fetch the
-			// the value from get_raw_value().
-			if ( $use_gradient_options && 'fields_only' !== $use_gradient_options ) {
-				$use_gradient_hover = et_pb_responsive_options()->get_inheritance_background_value( $props, "use_{$base_prop_name}_color_gradient", 'hover', $base_prop_name, $fields_definition );
+			// Get selector.
+			$selector_mode = $args[ "selector_{$mode}" ];
 
-				// 1. Ensure gradient color is active and values are not null.
-				if ( 'on' === $use_gradient_hover ) {
-					// Flag to inform BG Color if current module has Gradient.
-					$has_gradient_hover    = true;
-					$gradient_values_hover = $this->get_gradient_hover_properties( $props, $base_prop_name, $gradient_properties_desktop );
-					$gradient_hover        = $this->get_gradient_style( $gradient_values_hover );
-					$images_hover[]        = $gradient_hover;
-
-					$gradient_overlays_image_desktop = et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_overlays_image", '', true );
-					$gradient_overlays_image_hover   = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_color_gradient_overlays_image", $props, $gradient_overlays_image_desktop );
-				} elseif ( 'off' === $use_gradient_hover ) {
-					$is_gradient_hover_disabled = true;
+			// If no fixed selector defined, prepend / append default selector.
+			if ( '' === $selector_mode ) {
+				if ( 'hover' === $mode ) {
+					$selector_mode = $helper->add_hover_to_order_class( $selector );
+				} elseif ( 'sticky' === $mode ) {
+					$is_sticky_module = $helper->is_sticky_module( $props );
+					$selector_mode    = $helper->add_sticky_to_order_class( $selector, $is_sticky_module );
 				}
 			}
 
-			// Background Image Hover.
-			// This part is little bit different compared to other hover implementation. In this case,
-			// hover is enabled on the background field, not on the each of those fields. So, built
-			// in function get_value() doesn't work in this case. Temporarily, we need to fetch the
-			// the value from get_raw_value().
-			if ( $use_image_options && 'fields_only' !== $use_image_options ) {
-				$image_hover    = et_pb_responsive_options()->get_inheritance_background_value( $props, "{$base_prop_name}_image", 'hover', $base_prop_name, $fields_definition );
-				$parallax_hover = et_pb_hover_options()->get_raw_value( 'parallax', $props );
+			// Check if mode is enabled.
+			if ( $helper->is_enabled( $this->get_prop_name_alias( $prop_name_aliases, $base_prop_name ), $props ) ) {
+				$images_mode = array();
+				$style_mode  = '';
 
-				if ( '' !== $image_hover && null !== $image_hover && 'on' !== $parallax_hover ) {
-					// Flag to inform BG Color if current module has Image.
-					$has_image_hover = true;
+				$has_gradient_mode           = false;
+				$has_image_mode              = false;
+				$has_gradient_and_image_mode = false;
+				$is_gradient_mode_disabled   = false;
+				$is_image_mode_disabled      = false;
 
-					// Size.
-					$image_size_hover   = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_size", $props );
-					$image_size_desktop = et_()->array_get( $props, "{$base_prop_name}_size", '' );
-					$is_same_image_size = $image_size_hover === $image_size_desktop;
+				$gradient_overlays_image_mode = 'off';
 
-					if ( empty( $image_size_hover ) && ! empty( $image_size_desktop ) ) {
-						$image_size_hover = $image_size_desktop;
-					}
+				// Background Gradient Mode (Hover / Sticky).
+				// This part is little bit different compared to responsive implementation. In
+				// this case, mode is enabled on the background field, not on the each of those
+				// fields. So, built in function get_value() doesn't work in this case.
+				// Temporarily, we need to fetch the the value from get_raw_value().
+				if ( $use_gradient_options && 'fields_only' !== $use_gradient_options ) {
+					$use_gradient_mode = $responsive->get_inheritance_background_value(
+						$props,
+						$this->get_prop_name_alias( $prop_name_aliases, "use_{$base_prop_name}_color_gradient" ),
+						$mode,
+						$base_prop_name,
+						$fields_definition
+					);
 
-					if ( ! empty( $image_size_hover ) && ! $is_same_image_size ) {
-						$style_hover .= sprintf(
-							'background-size: %1$s; ',
-							esc_html( $image_size_hover )
+					// 1. Ensure gradient color is active and values are not null.
+					if ( 'on' === $use_gradient_mode ) {
+						// Flag to inform BG Color if current module has Gradient.
+						$has_gradient_mode    = true;
+						$gradient_values_mode = $this->get_gradient_mode_properties(
+							$mode,
+							$props,
+							$base_prop_name,
+							$gradient_properties_desktop
 						);
-					}
+						$gradient_mode        = $this->get_gradient_style( $gradient_values_mode );
+						$images_mode[]        = $gradient_mode;
 
-					// Position.
-					$image_position_hover   = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_position", $props );
-					$image_position_desktop = et_()->array_get( $props, "{$base_prop_name}_position", '' );
-					$is_same_image_position = $image_position_hover === $image_position_desktop;
-
-					if ( empty( $image_position_hover ) && ! empty( $image_position_desktop ) ) {
-						$image_position_hover = $image_position_desktop;
-					}
-
-					if ( ! empty( $image_position_hover ) && ! $is_same_image_position ) {
-						$style_hover .= sprintf(
-							'background-position: %1$s; ',
-							esc_html( str_replace( '_', ' ', $image_position_hover ) )
+						$gradient_overlays_image_desktop = $responsive->get_any_value(
+							$props,
+							"{$base_prop_name}_color_gradient_overlays_image",
+							'',
+							true
 						);
-					}
-
-					// Repeat.
-					$image_repeat_hover   = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_repeat", $props );
-					$image_repeat_desktop = et_()->array_get( $props, "{$base_prop_name}_repeat", '' );
-					$is_same_image_repeat = $image_repeat_hover === $image_repeat_desktop;
-
-					if ( empty( $image_repeat_hover ) && ! empty( $image_repeat_desktop ) ) {
-						$image_repeat_hover = $image_repeat_desktop;
-					}
-
-					if ( ! empty( $image_repeat_hover ) && ! $is_same_image_repeat ) {
-						$style_hover .= sprintf(
-							'background-repeat: %1$s; ',
-							esc_html( $image_repeat_hover )
+						$gradient_overlays_image_mode    = $helper->get_raw_value(
+							"{$base_prop_name}_color_gradient_overlays_image",
+							$props,
+							$gradient_overlays_image_desktop
 						);
+					} elseif ( 'off' === $use_gradient_mode ) {
+						$is_gradient_mode_disabled = true;
 					}
+				}
 
-					// Blend.
-					$image_blend_hover   = et_pb_hover_options()->get_raw_value( "{$base_prop_name}_blend", $props );
-					$image_blend_default = et_()->array_get( $fields_definition, "{$base_prop_name}_blend.default", '' );
-					$image_blend_desktop = et_()->array_get( $props, "{$base_prop_name}_blend", '' );
-					$is_same_image_blend = $image_blend_hover === $image_blend_desktop;
+				// Background Image Mode (Hover / Sticky).
+				// This part is little bit different compared to responsive implementation. In
+				// this case, mode is enabled on the background field, not on the each of those
+				// fields. So, built in function get_value() doesn't work in this case.
+				// Temporarily, we need to fetch the the value from get_raw_value().
+				if ( $use_image_options && 'fields_only' !== $use_image_options ) {
+					$image_mode    = $responsive->get_inheritance_background_value(
+						$props,
+						"{$base_prop_name}_image",
+						$mode,
+						$base_prop_name,
+						$fields_definition
+					);
+					$parallax_mode = $helper->get_raw_value( 'parallax', $props );
 
-					if ( empty( $image_blend_hover ) && ! empty( $image_blend_desktop ) ) {
-						$image_blend_hover = $image_blend_desktop;
-					}
+					if ( '' !== $image_mode && null !== $image_mode && 'on' !== $parallax_mode ) {
+						// Flag to inform BG Color if current module has Image.
+						$has_image_mode = true;
 
-					if ( ! empty( $image_blend_hover ) ) {
-						// Don't print the same background blend.
-						if ( ! $is_same_image_blend ) {
-							$style_hover .= sprintf(
-								'background-blend-mode: %1$s; ',
-								esc_html( $image_blend_hover )
+						// Size.
+						$image_size_mode    = $helper->get_raw_value( "{$base_prop_name}_size", $props );
+						$image_size_desktop = et_()->array_get( $props, "{$base_prop_name}_size", '' );
+						$is_same_image_size = $image_size_mode === $image_size_desktop;
+
+						if ( empty( $image_size_mode ) && ! empty( $image_size_desktop ) ) {
+							$image_size_mode = $image_size_desktop;
+						}
+
+						if ( ! empty( $image_size_mode ) && ! $is_same_image_size ) {
+							$style_mode .= sprintf(
+								'background-size: %1$s; ',
+								esc_html( $image_size_mode )
 							);
 						}
 
-						// Force background-color: initial;
-						if ( $has_gradient_hover && $has_image_hover && $image_blend_hover !== $image_blend_default ) {
-							$has_gradient_and_image_hover = true;
-							$style_hover                 .= sprintf( 'background-color: initial%1$s; ', esc_html( $important ) );
+						// Position.
+						$image_position_mode    = $helper->get_raw_value( "{$base_prop_name}_position", $props );
+						$image_position_desktop = et_()->array_get( $props, "{$base_prop_name}_position", '' );
+						$is_same_image_position = $image_position_mode === $image_position_desktop;
+
+						if ( empty( $image_position_mode ) && ! empty( $image_position_desktop ) ) {
+							$image_position_mode = $image_position_desktop;
 						}
+
+						if ( ! empty( $image_position_mode ) && ! $is_same_image_position ) {
+							$style_mode .= sprintf(
+								'background-position: %1$s; ',
+								esc_html( str_replace( '_', ' ', $image_position_mode ) )
+							);
+						}
+
+						// Repeat.
+						$image_repeat_mode    = $helper->get_raw_value( "{$base_prop_name}_repeat", $props );
+						$image_repeat_desktop = et_()->array_get( $props, "{$base_prop_name}_repeat", '' );
+						$is_same_image_repeat = $image_repeat_mode === $image_repeat_desktop;
+
+						if ( empty( $image_repeat_mode ) && ! empty( $image_repeat_desktop ) ) {
+							$image_repeat_mode = $image_repeat_desktop;
+						}
+
+						if ( ! empty( $image_repeat_mode ) && ! $is_same_image_repeat ) {
+							$style_mode .= sprintf(
+								'background-repeat: %1$s; ',
+								esc_html( $image_repeat_mode )
+							);
+						}
+
+						// Blend.
+						$image_blend_mode    = $helper->get_raw_value( "{$base_prop_name}_blend", $props );
+						$image_blend_default = et_()->array_get( $fields_definition, "{$base_prop_name}_blend.default", '' );
+						$image_blend_desktop = et_()->array_get( $props, "{$base_prop_name}_blend", '' );
+						$is_same_image_blend = $image_blend_mode === $image_blend_desktop;
+
+						if ( empty( $image_blend_mode ) && ! empty( $image_blend_desktop ) ) {
+							$image_blend_mode = $image_blend_desktop;
+						}
+
+						if ( ! empty( $image_blend_mode ) ) {
+							// Don't print the same background blend.
+							if ( ! $is_same_image_blend ) {
+								$style_mode .= sprintf(
+									'background-blend-mode: %1$s; ',
+									esc_html( $image_blend_mode )
+								);
+							}
+
+							// Force background-color: initial.
+							if ( $has_gradient_mode && $has_image_mode && $image_blend_mode !== $image_blend_default ) {
+								$has_gradient_and_image_mode = true;
+								$style_mode                 .= sprintf( 'background-color: initial%1$s; ', esc_html( $important ) );
+							}
+						}
+
+						// Only append background image when the image is exist.
+						$images_mode[] = sprintf( 'url(%1$s)', esc_html( $image_mode ) );
+					} elseif ( '' === $image_mode ) {
+						$is_image_mode_disabled = true;
+					}
+				}
+
+				if ( ! empty( $images_mode ) ) {
+					// The browsers stack the images in the opposite order to what you'd expect.
+					if ( 'on' !== $gradient_overlays_image_mode ) {
+						$images_mode = array_reverse( $images_mode );
 					}
 
-					// Only append background image when the image is exist.
-					$images_hover[] = sprintf( 'url(%1$s)', esc_html( $image_hover ) );
-				} elseif ( '' === $image_hover ) {
-					$is_image_hover_disabled = true;
+					$style_mode .= sprintf(
+						'background-image: %1$s%2$s;',
+						esc_html( join( ', ', $images_mode ) ),
+						$important
+					);
+				} elseif ( $is_gradient_mode_disabled && $is_image_mode_disabled ) {
+					$style_mode .= sprintf(
+						'background-image: initial %1$s;',
+						$important
+					);
 				}
-			}
 
-			if ( ! empty( $images_hover ) ) {
-				// The browsers stack the images in the opposite order to what you'd expect.
-				if ( 'on' !== $gradient_overlays_image_hover ) {
-					$images_hover = array_reverse( $images_hover );
-				}
+				// Background Color Mode (Hover / Sticky).
+				if ( $use_color_options && 'fields_only' !== $use_color_options ) {
+					$use_color_mode_value = $helper->get_raw_value( "use_{$base_prop_name}_color", $props );
+					$use_color_mode_value = ! empty( $use_color_mode_value ) ?
+						$use_color_mode_value :
+						et_()->array_get( $props, "use_{$base_prop_name}_color", 'on' );
 
-				$style_hover .= sprintf(
-					'background-image: %1$s%2$s;',
-					esc_html( join( ', ', $images_hover ) ),
-					$important
-				);
-			} elseif ( $is_gradient_hover_disabled && $is_image_hover_disabled ) {
-				$style_hover .= sprintf(
-					'background-image: initial %1$s;',
-					$important
-				);
-			}
+					if ( ! $has_gradient_and_image_mode && 'off' !== $use_color_mode_value ) {
+						$color_mode = $responsive->get_inheritance_background_value(
+							$props,
+							"{$base_prop_name}_color",
+							$mode,
+							$base_prop_name,
+							$fields_definition
+						);
+						$color_mode = '' !== $color_mode ? $color_mode : 'transparent';
 
-			// Background Color Hover.
-			if ( $use_color_options && 'fields_only' !== $use_color_options ) {
-
-				$use_color_hover_value = et_()->array_get( $props, "use_{$base_prop_name}_color__hover", '' );
-				$use_color_hover_value = ! empty( $use_color_hover_value ) ?
-					$use_color_hover_value :
-					et_()->array_get( $props, "use_{$base_prop_name}_color", 'on' );
-
-				if ( ! $has_gradient_and_image_hover && 'off' !== $use_color_hover_value ) {
-					$color_hover = et_pb_responsive_options()->get_inheritance_background_value( $props, "{$base_prop_name}_color", 'hover', $base_prop_name, $fields_definition );
-					$color_hover = '' !== $color_hover ? $color_hover : 'transparent';
-
-					if ( '' !== $color_hover ) {
-						$style_hover .= sprintf(
-							'background-color: %1$s%2$s; ',
-							esc_html( $color_hover ),
+						if ( '' !== $color_mode ) {
+							$style_mode .= sprintf(
+								'background-color: %1$s%2$s; ',
+								esc_html( $color_mode ),
+								esc_html( $important )
+							);
+						}
+					} elseif ( $has_color_toggle_options && 'off' === $use_color_mode_value ) {
+						// Reset - If current module has background color toggle, it's off, and current mode
+						// it's not desktop, we should reset the background color.
+						$style .= sprintf(
+							'background-color: initial %1$s; ',
 							esc_html( $important )
 						);
 					}
-				} elseif ( $has_color_toggle_options && 'off' === $use_color_hover_value ) {
-					// Reset - If current module has background color toggle, it's off, and current mode
-					// it's not desktop, we should reset the background color.
-					$style .= sprintf(
-						'background-color: initial %1$s; ',
-						esc_html( $important )
-					);
 				}
-			}
 
-			// Render background hover styles.
-			if ( '' !== $style_hover ) {
-				$el_style = array(
-					'selector'    => $selector_hover,
-					'declaration' => rtrim( $style_hover ),
-					'priority'    => $priority,
-				);
-				ET_Builder_Element::set_style( $function_name, $el_style );
+				// Render background mode styles.
+				if ( '' !== $style_mode ) {
+					$el_style = array(
+						'selector'    => $selector_mode,
+						'declaration' => rtrim( $style_mode ),
+						'priority'    => $priority,
+					);
+					ET_Builder_Element::set_style( $function_name, $el_style );
+				}
 			}
 		}
 	}

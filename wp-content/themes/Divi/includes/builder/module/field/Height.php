@@ -157,6 +157,7 @@ class ET_Builder_Module_Field_Height extends ET_Builder_Module_Field_Base {
 			'hover'            => 'tabs',
 			'default_on_child' => true,
 			'mobile_options'   => true,
+			'sticky'           => true,
 			'validate_unit'    => true,
 			'unitless'         => false,
 			'default_unit'     => 'px',

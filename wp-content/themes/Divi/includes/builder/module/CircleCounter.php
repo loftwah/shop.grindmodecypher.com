@@ -169,6 +169,7 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 				'toggle_slug'    => 'circle',
 				'description'    => esc_html__( 'This will change the fill color for the bar.', 'et_builder' ),
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			),
 			'circle_color'       => array(
@@ -179,6 +180,7 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 				'tab_slug'       => 'advanced',
 				'toggle_slug'    => 'circle',
 				'mobile_options' => true,
+				'sticky'         => true,
 				'hover'          => 'tabs',
 			),
 			'circle_color_alpha' => array(
@@ -197,6 +199,7 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 				'toggle_slug'     => 'circle',
 				'unitless'        => true,
 				'mobile_options'  => true,
+				'sticky'          => true,
 				'hover'           => 'tabs',
 			),
 		);
@@ -206,6 +209,7 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 	function render( $attrs, $content = null, $render_slug ) {
 		wp_enqueue_script( 'easypiechart' );
 
+		$sticky                = et_pb_sticky_options();
 		$multi_view            = et_pb_multi_view_options( $this );
 		$number                = $multi_view->get_value( 'number' );
 		$percent_sign          = $this->props['percent_sign'];
@@ -229,6 +233,7 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 		$bar_bg_color_phone         = isset( $bar_bg_color_values['phone'] ) ? $bar_bg_color_values['phone'] : '';
 		$bar_bg_color_hover         = et_pb_hover_options()->get_value( 'bar_bg_color', $this->props, '' );
 		$bar_bg_color_hover_enabled = et_builder_is_hover_enabled( 'bar_bg_color', $this->props );
+		$bar_bg_color_sticky        = $sticky->get_value( 'bar_bg_color', $this->props, '' );
 
 		$circle_color               = $this->props['circle_color'];
 		$circle_color_values        = et_pb_responsive_options()->get_property_values( $this->props, 'circle_color' );
@@ -236,6 +241,7 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 		$circle_color_phone         = isset( $circle_color_values['phone'] ) ? $circle_color_values['phone'] : '';
 		$circle_color_hover         = et_pb_hover_options()->get_value( 'circle_color', $this->props, '' );
 		$circle_color_hover_enabled = et_builder_is_hover_enabled( 'circle_color', $this->props );
+		$circle_color_sticky        = $sticky->get_value( 'circle_color', $this->props, '' );
 
 		$circle_color_alpha              = $this->props['circle_color_alpha'];
 		$circle_color_alpha_values       = et_pb_responsive_options()->get_property_values( $this->props, 'circle_color_alpha' );
@@ -243,6 +249,7 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 		$circle_color_alpha_phone        = isset( $circle_color_alpha_values['phone'] ) ? $circle_color_alpha_values['phone'] : '';
 		$circle_color_alpha_hover        = et_pb_hover_options()->get_value( 'circle_color_alpha', $this->props, '' );
 		$circle_color_alpha_hover_enable = et_builder_is_hover_enabled( 'circle_color_alpha', $this->props );
+		$circle_color_alpha_sticky       = $sticky->get_value( 'circle_color_alpha', $this->props, '' );
 
 		$number = str_ireplace( '%', '', $number );
 
@@ -258,6 +265,9 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 		$bar_bg_color_data_hover  = '' !== $bar_bg_color_hover && $bar_bg_color_hover_enabled ?
 			sprintf( ' data-bar-bg-color-hover="%1$s"', esc_attr( $bar_bg_color_hover ) )
 			: '';
+		$bar_bg_color_data_sticky = '' !== $bar_bg_color_sticky ?
+			sprintf( ' data-bar-bg-color-sticky="%1$s"', esc_attr( $bar_bg_color_sticky ) )
+			: '';
 
 		$circle_color_data        = '' !== $circle_color ?
 			sprintf( ' data-color="%1$s"', esc_attr( $circle_color ) )
@@ -271,6 +281,9 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 		$circle_color_data_hover  = '' !== $circle_color_hover && $circle_color_hover_enabled ?
 			sprintf( ' data-color-hover="%1$s"', esc_attr( $circle_color_hover ) )
 			: '';
+		$circle_color_data_sticky = '' !== $circle_color_sticky ?
+			sprintf( ' data-color-sticky="%1$s"', esc_attr( $circle_color_sticky ) )
+			: '';
 
 		$circle_color_alpha_data        = '' !== $circle_color_alpha ?
 			sprintf( ' data-alpha="%1$s"', esc_attr( $circle_color_alpha ) )
@@ -283,6 +296,14 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 			: '';
 		$circle_color_alpha_data_hover  = '' !== $circle_color_alpha_hover && $circle_color_alpha_hover_enable ?
 			sprintf( ' data-alpha-hover="%1$s"', esc_attr( $circle_color_alpha_hover ) )
+			: '';
+		$circle_color_alpha_data_sticky = '' !== $circle_color_alpha_sticky ?
+			sprintf( ' data-alpha-sticky="%1$s"', esc_attr( $circle_color_alpha_sticky ) )
+			: '';
+
+		// Sticky id.
+		$data_sticky_id = $sticky->is_sticky_module( $this->props ) ?
+			sprintf( ' data-sticky-id="%1$s"', esc_attr( $this->get_sticky_id( $render_slug ) ) )
 			: '';
 
 		// Background layout data attributes.
@@ -320,7 +341,7 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 
 		$output = sprintf(
 			'<div%1$s class="%2$s"%11$s>
-				<div class="et_pb_circle_counter_inner" data-number-value="%3$s" data-bar-bg-color="%4$s"%7$s%8$s%12$s%13$s%14$s%15$s%16$s%17$s%18$s%19$s%20$s%21$s>
+				<div class="et_pb_circle_counter_inner" data-number-value="%3$s" data-bar-bg-color="%4$s"%7$s%8$s%12$s%13$s%14$s%15$s%16$s%17$s%18$s%19$s%20$s%21$s%22$s%23$s%24$s%25$s>
 				%10$s
 				%9$s
 					<div class="percent"%19$s><p><span class="percent-value"></span><span class="percent-sign">%5$s</span></p></div>
@@ -347,7 +368,11 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 			$bar_bg_color_data_hover,
 			$circle_color_data_hover,
 			$circle_color_alpha_data_hover, // #20
-			$multi_view_data_attr
+			$multi_view_data_attr,
+			$bar_bg_color_data_sticky,
+			$circle_color_data_sticky,
+			$circle_color_alpha_data_sticky,
+			$data_sticky_id // #25
 		);
 
 		return $output;

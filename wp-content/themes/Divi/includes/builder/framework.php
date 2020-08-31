@@ -113,6 +113,7 @@ require_once ET_BUILDER_DIR . 'api/rest/BlockLayout.php';
 require_once ET_BUILDER_DIR . 'frontend-builder/theme-builder/theme-builder.php';
 require_once ET_BUILDER_DIR . 'feature/global-presets/Settings.php';
 require_once ET_BUILDER_DIR . 'feature/global-presets/History.php';
+require_once ET_BUILDER_DIR . 'feature/window.php';
 
 // Conditional Includes.
 if ( et_is_woocommerce_plugin_active() ) {
@@ -262,6 +263,25 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 
 function et_builder_load_global_functions_script() {
 	wp_enqueue_script( 'et-builder-modules-global-functions-script', ET_BUILDER_URI . '/frontend-builder/build/frontend-builder-global-functions.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
+
+	// These are variable that is used on frontend's script utils module. The utils is used by
+	// `et-builder-modules-global-functions-script` handle which is loaded earlier than other script
+	// when minify js option is disabled hence being defined here. If minify JS option is enabled,
+	// `et_builder_dequeue_minified_scripts()` will assign this to the minified bundle's handle.
+	wp_localize_script(
+		'et-builder-modules-global-functions-script',
+		'et_builder_utils_params',
+		array(
+			'condition'              => array(
+				'diviTheme'  => function_exists( 'et_divi_fonts_url' ),
+				'extraTheme' => function_exists( 'et_extra_fonts_url' ),
+			),
+			'scrollLocations'        => et_builder_get_window_scroll_locations(),
+			'builderScrollLocations' => et_builder_get_onload_scroll_locations(),
+			'onloadScrollLocation'   => et_builder_get_onload_scroll_location(),
+			'builderType'            => et_builder_get_current_builder_type(),
+		)
+	);
 }
 add_action( 'wp_enqueue_scripts', 'et_builder_load_global_functions_script', 7 );
 

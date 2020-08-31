@@ -118,6 +118,7 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 				),
 			),
 			'link_options'   => false,
+			'sticky'         => false,
 		);
 	}
 
@@ -252,6 +253,7 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 				'toggle_slug'    => 'icon',
 				'hover'          => 'tabs',
 				'mobile_options' => true,
+				'sticky'         => true,
 			),
 			'use_icon_font_size' => array(
 				'label'            => esc_html__( 'Use Custom Icon Size', 'et_builder' ),
@@ -290,6 +292,7 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 				'depends_show_if'  => 'on',
 				'responsive'       => true,
 				'hover'            => 'tabs',
+				'sticky'           => true,
 			),
 		);
 
@@ -331,7 +334,8 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		global $et_pb_social_media_follow_link;
+		global $et_pb_social_media_follow_link,
+			$et_pb_social_media_follow_sticky;
 
 		$multi_view = et_pb_multi_view_options( $this );
 		$multi_view->set_custom_prop( 'follow_button', $et_pb_social_media_follow_link['follow_button'] );
@@ -347,9 +351,6 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 		$is_skype              = false;
 		$network_name          = esc_attr( $this->get_network_name( trim( wp_strip_all_tags( $content ) ) ) );
 		$use_icon_font_size    = $this->props['use_icon_font_size'];
-		$icon_color_hover      = $this->get_hover_value( 'icon_color' );
-		$icon_color_values     = et_pb_responsive_options()->get_property_values( $this->props, 'icon_color' );
-		$icon_font_size_hover  = $this->get_hover_value( 'icon_font_size' );
 		$icon_font_size_values = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
 
 		if ( 'skype' === $social_network ) {
@@ -389,91 +390,43 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 		}
 
 		// Icon Color.
-		et_pb_responsive_options()->generate_responsive_css( $icon_color_values, '.et_pb_social_media_follow %%order_class%%.et_pb_social_icon .icon:before', 'color', $render_slug, '', 'color' );
-
-		if ( et_builder_is_hover_enabled( 'icon_color', $this->props ) ) {
-			$el_style = array(
-				'selector'    => '.et_pb_social_media_follow %%order_class%%.et_pb_social_icon:hover .icon:before',
-				'declaration' => sprintf(
-					'color: %1$s;',
-					esc_html( $icon_color_hover )
-				),
-			);
-			ET_Builder_Element::set_style( $render_slug, $el_style );
-		}
+		$this->generate_styles(
+			array(
+				'base_attr_name'                  => 'icon_color',
+				'selector'                        => '.et_pb_social_media_follow %%order_class%%.et_pb_social_icon .icon:before',
+				'hover_selector'                  => '.et_pb_social_media_follow %%order_class%%.et_pb_social_icon:hover .icon:before',
+				'sticky_pseudo_selector_location' => 'prefix',
+				'css_property'                    => 'color',
+				'render_slug'                     => $render_slug,
+				'type'                            => 'color',
+				'is_sticky_module'                => $et_pb_social_media_follow_sticky,
+			)
+		);
 
 		// Icon Size.
 		if ( 'off' !== $use_icon_font_size ) {
-			// Proccess for each devices.
-			foreach ( $icon_font_size_values as $font_size_key => $font_size_value ) {
-				if ( '' === $font_size_value ) {
-					continue;
-				}
+			// Calculate icon size + its wrapper dimension.
+			$this->generate_styles(
+				array(
+					'base_attr_name'                  => 'icon_font_size',
+					'selector'                        => '.et_pb_social_media_follow %%order_class%% .icon:before',
+					'selector_wrapper'                => '.et_pb_social_media_follow %%order_class%% .icon',
+					'hover_pseudo_selector_location'  => 'suffix',
+					'sticky_pseudo_selector_location' => 'prefix',
+					'render_slug'                     => $render_slug,
+					'type'                            => 'range',
+					'css_property'                    => 'right',
+					'is_sticky_module'                => $et_pb_social_media_follow_sticky,
 
-				$media_query = 'general';
-				if ( 'tablet' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_980' );
-				} elseif ( 'phone' === $font_size_key ) {
-					$media_query = ET_Builder_Element::get_media_query( 'max_width_767' );
-				}
-
-				$font_size_value_int    = (int) $font_size_value;
-				$font_size_value_unit   = str_replace( $font_size_value_int, '', $font_size_value );
-				$font_size_value_double = 0 < $font_size_value_int ? $font_size_value_int * 2 : 0;
-				$font_size_value_double = (string) $font_size_value_double . $font_size_value_unit;
-
-				// Icon.
-				$el_style = array(
-					'selector'    => '.et_pb_social_media_follow %%order_class%% .icon:before',
-					'declaration' => sprintf(
-						'font-size:%1$s; line-height:%2$s; height:%2$s; width:%2$s;',
-						esc_html( $font_size_value ),
-						esc_html( $font_size_value_double )
+					// processed attr value can't be directly assigned to single css property so
+					// custom processor is needed to render this attr. Processor required is 100%
+					// identical to social media follow module's. Thus it is being re-used.
+					'processor'                       => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_social_media_icon_font_size',
 					),
-					'media_query' => $media_query,
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-
-				// Icon Wrapper.
-				$el_style = array(
-					'selector'    => '.et_pb_social_media_follow %%order_class%% .icon',
-					'declaration' => sprintf(
-						'height:%1$s; width:%1$s;',
-						esc_html( $font_size_value_double )
-					),
-					'media_query' => $media_query,
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
-
-			// Icon hover styles.
-			if ( et_builder_is_hover_enabled( 'icon_font_size', $this->props ) && ! empty( $icon_font_size_hover ) ) {
-				$icon_font_size_hover_int    = (int) $icon_font_size_hover;
-				$icon_font_size_hover_unit   = str_replace( $icon_font_size_hover_int, '', $icon_font_size_hover );
-				$icon_font_size_hover_double = 0 < $icon_font_size_hover_int ? $icon_font_size_hover_int * 2 : 0;
-				$icon_font_size_hover_double = (string) $icon_font_size_hover_double . $icon_font_size_hover_unit;
-
-				// Icon.
-				$el_style = array(
-					'selector'    => '.et_pb_social_media_follow %%order_class%% .icon:hover:before',
-					'declaration' => sprintf(
-						'font-size:%1$s; line-height:%2$s; height:%2$s; width:%2$s;',
-						esc_html( $icon_font_size_hover ),
-						esc_html( $icon_font_size_hover_double )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-
-				// Icon Wrapper.
-				$el_style = array(
-					'selector'    => '.et_pb_social_media_follow %%order_class%% .icon:hover',
-					'declaration' => sprintf(
-						'height:%1$s; width:%1$s;',
-						esc_html( $icon_font_size_hover_double )
-					),
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
-			}
+				)
+			);
 		}
 
 		$social_network             = ET_Builder_Element::add_module_order_class( $social_network, $render_slug );
