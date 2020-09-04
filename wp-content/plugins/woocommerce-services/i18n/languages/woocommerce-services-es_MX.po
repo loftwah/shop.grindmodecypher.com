@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - WooCommerce Services - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-07-31 21:16:01+0000\n"
+"PO-Revision-Date: 2020-08-19 21:43:22+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -10,6 +10,11 @@ msgstr ""
 "X-Generator: GlotPress/3.0.0-alpha.2\n"
 "Language: es_MX\n"
 "Project-Id-Version: Plugins - WooCommerce Services - Stable (latest release)\n"
+
+#: classes/class-wc-connect-taxjar-integration.php:318 i18n/strings.php:125
+#: i18n/strings.php:328
+msgid "ZIP/Postal code"
+msgstr "Código postal"
 
 #: i18n/strings.php:348
 msgid "This action will delete any information entered on the form."
@@ -74,10 +79,6 @@ msgstr "Información de la empresa"
 #: i18n/strings.php:330
 msgid "Email"
 msgstr "Correo electrónico"
-
-#: i18n/strings.php:328
-msgid "Postal code / Zip"
-msgstr "Código postal"
 
 #: i18n/strings.php:322
 msgid "Address 2 (optional)"
@@ -328,7 +329,7 @@ msgstr "Han sido guardados tus paquetes de envío."
 msgid "0.0"
 msgstr "0.0"
 
-#: woocommerce-services.php:1310
+#: woocommerce-services.php:1311
 msgid "Shipment Tracking"
 msgstr "Seguimiento de envíos"
 
@@ -344,23 +345,23 @@ msgstr "Información de aduanas válida"
 msgid "Customs information incomplete"
 msgstr "Información de aduanas incompleta"
 
-#: woocommerce-services.php:1353
+#: woocommerce-services.php:1354
 msgid "Packing Log:"
 msgstr "Registro de paquetería:"
 
-#: woocommerce-services.php:1340
+#: woocommerce-services.php:1341
 msgid "Chosen Rate:"
 msgstr "Tarifa elegida:"
 
-#: woocommerce-services.php:1336
+#: woocommerce-services.php:1337
 msgid "Shipping Method ID:"
 msgstr "ID del método de envío:"
 
-#: woocommerce-services.php:1332
+#: woocommerce-services.php:1333
 msgid "Shipping Method Name:"
 msgstr "Nombre del método de envío:"
 
-#: woocommerce-services.php:1316
+#: woocommerce-services.php:1317
 msgid "Shipping Debug"
 msgstr "Depuración de envíos"
 
@@ -429,11 +430,6 @@ msgstr "Al producto ( ID: %d ) le falta un valor de dimensión. No se pueden cal
 msgid "Product ( ID: %d ) did not include a weight. Shipping rates cannot be calculated."
 msgstr "El producto ( ID: %d ) no incluye peso. No se pueden calcular las tarifas de envío."
 
-#. translators: 1: name of shipping service, 2: shipping rate (price)
-#: classes/class-wc-connect-shipping-method.php:454
-msgid "Received rate: %1$s (%2$s)"
-msgstr "Tarifa recibida: %1$s (%2$s)"
-
 #: classes/class-wc-connect-api-client.php:64
 msgid "Invalid WooCommerce Services service slug provided"
 msgstr "Se ha facilitado un slug de servicio de WooCommerce Services no válido"
@@ -441,6 +437,11 @@ msgstr "Se ha facilitado un slug de servicio de WooCommerce Services no válido"
 #: classes/class-wc-connect-shipping-method.php:461
 msgid "Packing log:"
 msgstr "Registro de paquetería:"
+
+#. translators: 1: name of shipping service, 2: shipping rate (price)
+#: classes/class-wc-connect-shipping-method.php:454
+msgid "Received rate: %1$s (%2$s)"
+msgstr "Tarifa recibida: %1$s (%2$s)"
 
 #: i18n/strings.php:206
 msgid "Your customer selected {{shippingMethod/}}"
@@ -969,18 +970,14 @@ msgid "2 character continent code."
 msgstr "Código de 2 caracteres del continente."
 
 #: classes/class-wc-connect-taxjar-integration.php:326
-msgctxt "%s - Postcode/Zip checkout field label"
+msgctxt "%s - ZIP/Postal code checkout field label"
 msgid "Invalid %s entered."
 msgstr "%s introducido no válido."
 
 #: classes/class-wc-connect-taxjar-integration.php:324
-msgctxt "%s - Postcode/Zip checkout field label"
+msgctxt "%s - ZIP/Postal code checkout field label"
 msgid "%s does not match the selected state."
 msgstr "%s no coincide con la provincia seleccionada."
-
-#: classes/class-wc-connect-taxjar-integration.php:318
-msgid "Postcode / ZIP"
-msgstr "Código postal / ZIP"
 
 #: classes/class-wc-connect-privacy.php:90
 msgid "Shipping label tracking number"
@@ -1118,11 +1115,11 @@ msgstr "Enlaza a una cuenta PayPal"
 msgid "Refresh"
 msgstr "Recargar"
 
-#: woocommerce-services.php:1095
+#: woocommerce-services.php:1096
 msgid "Tracking number"
 msgstr "Número de seguimiento"
 
-#: woocommerce-services.php:1094
+#: woocommerce-services.php:1095
 msgid "Provider"
 msgstr "Proveedor"
 
@@ -1468,18 +1465,18 @@ msgid "Add a credit card"
 msgstr "Añadir una tarjeta de crédito"
 
 #. translators: %d: Deleted Product ID
-#: classes/class-wc-connect-compatibility-wc26.php:116
 #: classes/class-wc-connect-compatibility-wc30.php:130
+#: classes/class-wc-connect-compatibility-wc26.php:116
 msgid "#%d - [Deleted product]"
 msgstr "#%d - [producto borrado]"
 
 #. translators: %1$d: Product ID, %2$s: Product Name
-#: classes/class-wc-connect-compatibility-wc26.php:111
 #: classes/class-wc-connect-compatibility-wc30.php:125
+#: classes/class-wc-connect-compatibility-wc26.php:111
 msgid "#%1$d - %2$s"
 msgstr "#%1$d - %2$s"
 
-#: woocommerce-services.php:1425
+#: woocommerce-services.php:1426
 msgid "<a href=\"%s\">Support</a>"
 msgstr "<a href=\"%s\">Soporte</a>"
 
@@ -1487,8 +1484,8 @@ msgstr "<a href=\"%s\">Soporte</a>"
 msgid "There was an error installing Jetpack. Please try installing it manually."
 msgstr "Hubo un error al instalar Jetpack. Por favor, trata de instalarlo manualmente."
 
-#: i18n/strings.php:270 woocommerce-services.php:994
-#: woocommerce-services.php:997
+#: woocommerce-services.php:995 woocommerce-services.php:998
+#: i18n/strings.php:270
 msgid "Shipping Labels"
 msgstr "Etiquetas de envío"
 
@@ -1507,8 +1504,8 @@ msgstr "https://woocommerce.com/"
 msgid "WooCommerce Services"
 msgstr "WooCommerce Services"
 
-#: i18n/strings.php:118 i18n/strings.php:329 woocommerce-services.php:1376
-#: woocommerce-services.php:1404
+#: woocommerce-services.php:1377 woocommerce-services.php:1405
+#: i18n/strings.php:118 i18n/strings.php:329
 msgid "Phone"
 msgstr "Teléfono"
 
@@ -1602,7 +1599,7 @@ msgstr "Ajuste de precio"
 msgid "Saved Packages"
 msgstr "Paquetes guardados"
 
-#: woocommerce-services.php:1083 woocommerce-services.php:1090
+#: woocommerce-services.php:1084 woocommerce-services.php:1091
 msgid "Tracking"
 msgstr "Seguimiento"
 
@@ -1634,10 +1631,6 @@ msgstr "Ciudad"
 #: i18n/strings.php:326
 msgid "State"
 msgstr "Provincia"
-
-#: i18n/strings.php:125
-msgid "Postal code"
-msgstr "Código postal"
 
 #: i18n/strings.php:126 i18n/strings.php:327
 msgid "Country"
@@ -1733,13 +1726,13 @@ msgstr "Más"
 msgid "Invalid PDF request."
 msgstr "Petición de PDF no válida."
 
-#: classes/class-wc-rest-connect-shipping-label-controller.php:105
 #: classes/class-wc-connect-shipping-method.php:408
+#: classes/class-wc-rest-connect-shipping-label-controller.php:105
 msgid "Unknown package"
 msgstr "Paquete desconocido"
 
-#: classes/class-wc-rest-connect-shipping-label-controller.php:101
 #: classes/class-wc-connect-shipping-method.php:410
+#: classes/class-wc-rest-connect-shipping-label-controller.php:101
 msgid "Individual packaging"
 msgstr "Empaquetado individual"
 
@@ -1768,7 +1761,7 @@ msgstr "No ha sido posible actualizar los ajustes. %s"
 msgid "Packaging"
 msgstr "Paquetería"
 
-#: woocommerce-services.php:1456
+#: woocommerce-services.php:1457
 msgid "Section not loading? Visit the <a href=\"%s\">status page</a> for troubleshooting steps."
 msgstr "¿No carga la sección? Visita la <a href=\"%s\">página de estado</a> para ver los pasos de solución de problemas."
 
@@ -1780,7 +1773,7 @@ msgstr "Nota: El modo de desarrollo de Jetpack está activo en este sitio. Este 
 msgid "Note: Jetpack is connected, but development mode is also enabled on this site. Please disable development mode."
 msgstr "Nota: Jetpack está conectado, pero también está activo el modo de desarrollo en este sitio. Por favor, desactiva el modo de desarrollo."
 
-#: woocommerce-services.php:1312
+#: woocommerce-services.php:1313
 msgid "Shipping Label"
 msgstr "Etiqueta de envío"
 
@@ -1964,7 +1957,7 @@ msgstr "Por favor, establece la ubicación base en Ajustes de WooCommerce > Gene
 msgid "WooCommerce %s or higher is required (You are running %s)"
 msgstr "Se requiere WooCommerce %s o superior (estás ejecutando la versión %s)"
 
-#: classes/class-wc-connect-error-notice.php:103 woocommerce-services.php:1492
+#: woocommerce-services.php:1493 classes/class-wc-connect-error-notice.php:103
 msgid "Dismiss this notice"
 msgstr "Descartar este aviso"
 

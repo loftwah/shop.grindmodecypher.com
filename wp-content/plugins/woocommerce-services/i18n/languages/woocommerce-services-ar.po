@@ -11,6 +11,11 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: Plugins - WooCommerce Services - Stable (latest release)\n"
 
+#: classes/class-wc-connect-taxjar-integration.php:318 i18n/strings.php:125
+#: i18n/strings.php:328
+msgid "ZIP/Postal code"
+msgstr ""
+
 #: i18n/strings.php:348
 msgid "This action will delete any information entered on the form."
 msgstr ""
@@ -73,10 +78,6 @@ msgstr ""
 
 #: i18n/strings.php:330
 msgid "Email"
-msgstr ""
-
-#: i18n/strings.php:328
-msgid "Postal code / Zip"
 msgstr ""
 
 #: i18n/strings.php:322
@@ -348,7 +349,7 @@ msgstr ""
 msgid "0.0"
 msgstr ""
 
-#: woocommerce-services.php:1310
+#: woocommerce-services.php:1311
 msgid "Shipment Tracking"
 msgstr ""
 
@@ -364,23 +365,23 @@ msgstr ""
 msgid "Customs information incomplete"
 msgstr ""
 
-#: woocommerce-services.php:1353
+#: woocommerce-services.php:1354
 msgid "Packing Log:"
 msgstr ""
 
-#: woocommerce-services.php:1340
+#: woocommerce-services.php:1341
 msgid "Chosen Rate:"
 msgstr ""
 
-#: woocommerce-services.php:1336
+#: woocommerce-services.php:1337
 msgid "Shipping Method ID:"
 msgstr ""
 
-#: woocommerce-services.php:1332
+#: woocommerce-services.php:1333
 msgid "Shipping Method Name:"
 msgstr ""
 
-#: woocommerce-services.php:1316
+#: woocommerce-services.php:1317
 msgid "Shipping Debug"
 msgstr ""
 
@@ -449,17 +450,17 @@ msgstr ""
 msgid "Product ( ID: %d ) did not include a weight. Shipping rates cannot be calculated."
 msgstr ""
 
-#. translators: 1: name of shipping service, 2: shipping rate (price)
-#: classes/class-wc-connect-shipping-method.php:454
-msgid "Received rate: %1$s (%2$s)"
-msgstr ""
-
 #: classes/class-wc-connect-api-client.php:64
 msgid "Invalid WooCommerce Services service slug provided"
 msgstr ""
 
 #: classes/class-wc-connect-shipping-method.php:461
 msgid "Packing log:"
+msgstr ""
+
+#. translators: 1: name of shipping service, 2: shipping rate (price)
+#: classes/class-wc-connect-shipping-method.php:454
+msgid "Received rate: %1$s (%2$s)"
 msgstr ""
 
 #: i18n/strings.php:206
@@ -997,17 +998,13 @@ msgid "2 character continent code."
 msgstr ""
 
 #: classes/class-wc-connect-taxjar-integration.php:326
-msgctxt "%s - Postcode/Zip checkout field label"
+msgctxt "%s - ZIP/Postal code checkout field label"
 msgid "Invalid %s entered."
 msgstr ""
 
 #: classes/class-wc-connect-taxjar-integration.php:324
-msgctxt "%s - Postcode/Zip checkout field label"
+msgctxt "%s - ZIP/Postal code checkout field label"
 msgid "%s does not match the selected state."
-msgstr ""
-
-#: classes/class-wc-connect-taxjar-integration.php:318
-msgid "Postcode / ZIP"
 msgstr ""
 
 #: classes/class-wc-connect-privacy.php:90
@@ -1146,11 +1143,11 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: woocommerce-services.php:1095
+#: woocommerce-services.php:1096
 msgid "Tracking number"
 msgstr ""
 
-#: woocommerce-services.php:1094
+#: woocommerce-services.php:1095
 msgid "Provider"
 msgstr ""
 
@@ -1504,18 +1501,18 @@ msgid "Add a credit card"
 msgstr ""
 
 #. translators: %d: Deleted Product ID
-#: classes/class-wc-connect-compatibility-wc26.php:116
 #: classes/class-wc-connect-compatibility-wc30.php:130
+#: classes/class-wc-connect-compatibility-wc26.php:116
 msgid "#%d - [Deleted product]"
 msgstr ""
 
 #. translators: %1$d: Product ID, %2$s: Product Name
-#: classes/class-wc-connect-compatibility-wc26.php:111
 #: classes/class-wc-connect-compatibility-wc30.php:125
+#: classes/class-wc-connect-compatibility-wc26.php:111
 msgid "#%1$d - %2$s"
 msgstr ""
 
-#: woocommerce-services.php:1425
+#: woocommerce-services.php:1426
 msgid "<a href=\"%s\">Support</a>"
 msgstr ""
 
@@ -1523,8 +1520,8 @@ msgstr ""
 msgid "There was an error installing Jetpack. Please try installing it manually."
 msgstr ""
 
-#: i18n/strings.php:270 woocommerce-services.php:994
-#: woocommerce-services.php:997
+#: woocommerce-services.php:995 woocommerce-services.php:998
+#: i18n/strings.php:270
 msgid "Shipping Labels"
 msgstr ""
 
@@ -1543,8 +1540,8 @@ msgstr ""
 msgid "WooCommerce Services"
 msgstr ""
 
-#: i18n/strings.php:118 i18n/strings.php:329 woocommerce-services.php:1376
-#: woocommerce-services.php:1404
+#: woocommerce-services.php:1377 woocommerce-services.php:1405
+#: i18n/strings.php:118 i18n/strings.php:329
 msgid "Phone"
 msgstr ""
 
@@ -1642,7 +1639,7 @@ msgstr ""
 msgid "Saved Packages"
 msgstr ""
 
-#: woocommerce-services.php:1083 woocommerce-services.php:1090
+#: woocommerce-services.php:1084 woocommerce-services.php:1091
 msgid "Tracking"
 msgstr ""
 
@@ -1677,10 +1674,6 @@ msgstr ""
 #: i18n/strings.php:122 i18n/strings.php:124 i18n/strings.php:324
 #: i18n/strings.php:326
 msgid "State"
-msgstr ""
-
-#: i18n/strings.php:125
-msgid "Postal code"
 msgstr ""
 
 #: i18n/strings.php:126 i18n/strings.php:327
@@ -1777,13 +1770,13 @@ msgstr ""
 msgid "Invalid PDF request."
 msgstr ""
 
-#: classes/class-wc-rest-connect-shipping-label-controller.php:105
 #: classes/class-wc-connect-shipping-method.php:408
+#: classes/class-wc-rest-connect-shipping-label-controller.php:105
 msgid "Unknown package"
 msgstr ""
 
-#: classes/class-wc-rest-connect-shipping-label-controller.php:101
 #: classes/class-wc-connect-shipping-method.php:410
+#: classes/class-wc-rest-connect-shipping-label-controller.php:101
 msgid "Individual packaging"
 msgstr ""
 
@@ -1812,7 +1805,7 @@ msgstr ""
 msgid "Packaging"
 msgstr ""
 
-#: woocommerce-services.php:1456
+#: woocommerce-services.php:1457
 msgid "Section not loading? Visit the <a href=\"%s\">status page</a> for troubleshooting steps."
 msgstr ""
 
@@ -1824,7 +1817,7 @@ msgstr ""
 msgid "Note: Jetpack is connected, but development mode is also enabled on this site. Please disable development mode."
 msgstr ""
 
-#: woocommerce-services.php:1312
+#: woocommerce-services.php:1313
 msgid "Shipping Label"
 msgstr ""
 
@@ -2008,7 +2001,7 @@ msgstr ""
 msgid "WooCommerce %s or higher is required (You are running %s)"
 msgstr ""
 
-#: classes/class-wc-connect-error-notice.php:103 woocommerce-services.php:1492
+#: woocommerce-services.php:1493 classes/class-wc-connect-error-notice.php:103
 msgid "Dismiss this notice"
 msgstr ""
 

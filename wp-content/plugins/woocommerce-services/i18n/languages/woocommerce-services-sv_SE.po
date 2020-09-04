@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - WooCommerce Services - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-08-05 21:15:23+0000\n"
+"PO-Revision-Date: 2020-08-19 21:06:08+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -10,6 +10,11 @@ msgstr ""
 "X-Generator: GlotPress/3.0.0-alpha.2\n"
 "Language: sv_SE\n"
 "Project-Id-Version: Plugins - WooCommerce Services - Stable (latest release)\n"
+
+#: classes/class-wc-connect-taxjar-integration.php:318 i18n/strings.php:125
+#: i18n/strings.php:328
+msgid "ZIP/Postal code"
+msgstr ""
 
 #: i18n/strings.php:348
 msgid "This action will delete any information entered on the form."
@@ -75,10 +80,6 @@ msgstr "Företagsinformation"
 msgid "Email"
 msgstr "E-post"
 
-#: i18n/strings.php:328
-msgid "Postal code / Zip"
-msgstr ""
-
 #: i18n/strings.php:322
 msgid "Address 2 (optional)"
 msgstr "Adress 2 (valfritt)"
@@ -129,7 +130,7 @@ msgstr ""
 
 #: i18n/strings.php:211
 msgid "Adult signature required"
-msgstr ""
+msgstr "Signatur av vuxen krävs"
 
 #: i18n/strings.php:210
 msgid "Signature required"
@@ -224,11 +225,11 @@ msgstr ""
 
 #: i18n/strings.php:393
 msgid "No tracking information available at this time"
-msgstr ""
+msgstr "Ingen spårningsinformation tillgänglig just nu"
 
 #: i18n/strings.php:221
 msgid "Connection error: unable to create label at this time"
-msgstr ""
+msgstr "Anslutningsfel: kan inte skapa etikett just nu"
 
 #: i18n/strings.php:217 i18n/strings.php:219
 msgid "Track Package"
@@ -328,7 +329,7 @@ msgstr ""
 msgid "0.0"
 msgstr "0.0"
 
-#: woocommerce-services.php:1310
+#: woocommerce-services.php:1311
 msgid "Shipment Tracking"
 msgstr ""
 
@@ -344,23 +345,23 @@ msgstr ""
 msgid "Customs information incomplete"
 msgstr ""
 
-#: woocommerce-services.php:1353
+#: woocommerce-services.php:1354
 msgid "Packing Log:"
 msgstr ""
 
-#: woocommerce-services.php:1340
+#: woocommerce-services.php:1341
 msgid "Chosen Rate:"
 msgstr ""
 
-#: woocommerce-services.php:1336
+#: woocommerce-services.php:1337
 msgid "Shipping Method ID:"
 msgstr ""
 
-#: woocommerce-services.php:1332
+#: woocommerce-services.php:1333
 msgid "Shipping Method Name:"
 msgstr ""
 
-#: woocommerce-services.php:1316
+#: woocommerce-services.php:1317
 msgid "Shipping Debug"
 msgstr ""
 
@@ -429,17 +430,17 @@ msgstr ""
 msgid "Product ( ID: %d ) did not include a weight. Shipping rates cannot be calculated."
 msgstr ""
 
-#. translators: 1: name of shipping service, 2: shipping rate (price)
-#: classes/class-wc-connect-shipping-method.php:454
-msgid "Received rate: %1$s (%2$s)"
-msgstr ""
-
 #: classes/class-wc-connect-api-client.php:64
 msgid "Invalid WooCommerce Services service slug provided"
 msgstr ""
 
 #: classes/class-wc-connect-shipping-method.php:461
 msgid "Packing log:"
+msgstr ""
+
+#. translators: 1: name of shipping service, 2: shipping rate (price)
+#: classes/class-wc-connect-shipping-method.php:454
+msgid "Received rate: %1$s (%2$s)"
 msgstr ""
 
 #: i18n/strings.php:206
@@ -969,18 +970,14 @@ msgid "2 character continent code."
 msgstr ""
 
 #: classes/class-wc-connect-taxjar-integration.php:326
-msgctxt "%s - Postcode/Zip checkout field label"
+msgctxt "%s - ZIP/Postal code checkout field label"
 msgid "Invalid %s entered."
-msgstr "Ogiltig %s angiven."
+msgstr "Ogiltigt %s angivet."
 
 #: classes/class-wc-connect-taxjar-integration.php:324
-msgctxt "%s - Postcode/Zip checkout field label"
+msgctxt "%s - ZIP/Postal code checkout field label"
 msgid "%s does not match the selected state."
 msgstr "%s matchar inte den valda delstaten."
-
-#: classes/class-wc-connect-taxjar-integration.php:318
-msgid "Postcode / ZIP"
-msgstr "Postnummer"
 
 #: classes/class-wc-connect-privacy.php:90
 msgid "Shipping label tracking number"
@@ -1118,11 +1115,11 @@ msgstr "Länka ett PayPal-konto"
 msgid "Refresh"
 msgstr "Uppdatera"
 
-#: woocommerce-services.php:1095
+#: woocommerce-services.php:1096
 msgid "Tracking number"
 msgstr "Spårningsnummer"
 
-#: woocommerce-services.php:1094
+#: woocommerce-services.php:1095
 msgid "Provider"
 msgstr "Leverantör"
 
@@ -1468,18 +1465,18 @@ msgid "Add a credit card"
 msgstr "Lägg till ett kreditkort"
 
 #. translators: %d: Deleted Product ID
-#: classes/class-wc-connect-compatibility-wc26.php:116
 #: classes/class-wc-connect-compatibility-wc30.php:130
+#: classes/class-wc-connect-compatibility-wc26.php:116
 msgid "#%d - [Deleted product]"
 msgstr "#%d - [Ta bort produkt]"
 
 #. translators: %1$d: Product ID, %2$s: Product Name
-#: classes/class-wc-connect-compatibility-wc26.php:111
 #: classes/class-wc-connect-compatibility-wc30.php:125
+#: classes/class-wc-connect-compatibility-wc26.php:111
 msgid "#%1$d - %2$s"
 msgstr "#%1$d - %2$s"
 
-#: woocommerce-services.php:1425
+#: woocommerce-services.php:1426
 msgid "<a href=\"%s\">Support</a>"
 msgstr "<a href=\"%s\">Support</a>"
 
@@ -1487,8 +1484,8 @@ msgstr "<a href=\"%s\">Support</a>"
 msgid "There was an error installing Jetpack. Please try installing it manually."
 msgstr "Det var det fel att installera JetPack. Prova installera det manuellt."
 
-#: i18n/strings.php:270 woocommerce-services.php:994
-#: woocommerce-services.php:997
+#: woocommerce-services.php:995 woocommerce-services.php:998
+#: i18n/strings.php:270
 msgid "Shipping Labels"
 msgstr "Fraktetiketter"
 
@@ -1507,8 +1504,8 @@ msgstr "https://woocommerce.com/"
 msgid "WooCommerce Services"
 msgstr "WooCommerce Services"
 
-#: i18n/strings.php:118 i18n/strings.php:329 woocommerce-services.php:1376
-#: woocommerce-services.php:1404
+#: woocommerce-services.php:1377 woocommerce-services.php:1405
+#: i18n/strings.php:118 i18n/strings.php:329
 msgid "Phone"
 msgstr "Telefon"
 
@@ -1602,7 +1599,7 @@ msgstr "Prisjustering"
 msgid "Saved Packages"
 msgstr "Sparade paket"
 
-#: woocommerce-services.php:1083 woocommerce-services.php:1090
+#: woocommerce-services.php:1084 woocommerce-services.php:1091
 msgid "Tracking"
 msgstr "Spårning"
 
@@ -1634,10 +1631,6 @@ msgstr "Ort"
 #: i18n/strings.php:326
 msgid "State"
 msgstr "Delstat"
-
-#: i18n/strings.php:125
-msgid "Postal code"
-msgstr "Postnummer"
 
 #: i18n/strings.php:126 i18n/strings.php:327
 msgid "Country"
@@ -1733,13 +1726,13 @@ msgstr "Mer"
 msgid "Invalid PDF request."
 msgstr "Ogiltig PDF-begäran."
 
-#: classes/class-wc-rest-connect-shipping-label-controller.php:105
 #: classes/class-wc-connect-shipping-method.php:408
+#: classes/class-wc-rest-connect-shipping-label-controller.php:105
 msgid "Unknown package"
 msgstr "Okänt paket"
 
-#: classes/class-wc-rest-connect-shipping-label-controller.php:101
 #: classes/class-wc-connect-shipping-method.php:410
+#: classes/class-wc-rest-connect-shipping-label-controller.php:101
 msgid "Individual packaging"
 msgstr ""
 
@@ -1768,7 +1761,7 @@ msgstr "Det gick inte att uppdatera inställningarna. %s"
 msgid "Packaging"
 msgstr ""
 
-#: woocommerce-services.php:1456
+#: woocommerce-services.php:1457
 msgid "Section not loading? Visit the <a href=\"%s\">status page</a> for troubleshooting steps."
 msgstr ""
 
@@ -1780,7 +1773,7 @@ msgstr ""
 msgid "Note: Jetpack is connected, but development mode is also enabled on this site. Please disable development mode."
 msgstr "Obs! Jetpack är ansluten, men utvecklingsläget är också aktiverat på denna webbplats. Inaktivera utvecklingsläget."
 
-#: woocommerce-services.php:1312
+#: woocommerce-services.php:1313
 msgid "Shipping Label"
 msgstr "Fraktetikett"
 
@@ -1964,7 +1957,7 @@ msgstr "Ställ in basplats i WooCommerce-inställningar > Allmänt"
 msgid "WooCommerce %s or higher is required (You are running %s)"
 msgstr "WooCommerce %s eller högre krävs (Du kör %s)"
 
-#: classes/class-wc-connect-error-notice.php:103 woocommerce-services.php:1492
+#: woocommerce-services.php:1493 classes/class-wc-connect-error-notice.php:103
 msgid "Dismiss this notice"
 msgstr "Avfärda denna notis"
 
