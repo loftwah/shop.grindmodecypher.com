@@ -134,7 +134,7 @@ function et_pb_hover_options() {
 /**
  * Get sticky option instance.
  *
- * @since ??
+ * @since 4.6.0
  *
  * @return ET_Builder_Module_Sticky_Options
  */
@@ -190,7 +190,7 @@ function et_pb_background_layout_options() {
 /**
  * Get helper instance
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param string $helper_name Helper name.
  *

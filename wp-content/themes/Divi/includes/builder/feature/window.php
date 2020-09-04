@@ -4,14 +4,14 @@
  *
  * @package     Divi
  * @sub-package Builder
- * @since       ??
+ * @since 4.6.0
  */
 
 /**
  * Get scroll location of all preview mode of all builder context
  * These are sorted by the time it was added to Divi (older to newer)
  *
- * @since ??
+ * @since 4.6.0
  *
  * @return array
  */
@@ -84,7 +84,7 @@ function et_builder_get_builder_scroll_locations() {
 /**
  * Get window scroll location
  *
- * @since ??
+ * @since 4.6.0
  *
  * @return array
  */
@@ -95,7 +95,7 @@ function et_builder_get_window_scroll_locations() {
 /**
  * Get current builder type
  *
- * @since ??
+ * @since 4.6.0
  *
  * @return string app|top
  */
@@ -123,7 +123,7 @@ function et_builder_get_current_builder_type() {
 /**
  * Get scroll location on all breakpoints of current builder type
  *
- * @since ??
+ * @since 4.6.0
  *
  * @return array
  */
@@ -137,7 +137,7 @@ function et_builder_get_onload_scroll_locations() {
 /**
  * Get on page load scroll location of current builder type
  *
- * @since ??
+ * @since 4.6.0
  *
  * @return string app|top
  */

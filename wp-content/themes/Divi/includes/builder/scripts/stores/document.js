@@ -25,13 +25,13 @@ const states = {
  * ETScriptDocumentStore is not exported; intentionally export its instance so there'll only be one
  * ETScriptDocumentStore instance
  *
- * @since ??
+ * @since 4.6.0
  */
 class ETScriptDocumentStore extends EventEmitter {
   /**
    * ETScriptDocumentStore constructor
    *
-   * @since ??
+   * @since 4.6.0
    */
   constructor() {
     super();
@@ -43,7 +43,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Record document height
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {number} height
    *
@@ -65,7 +65,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Record document width
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {number} width
    *
@@ -87,7 +87,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Get recorded document height
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {number}
    */
@@ -98,7 +98,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Get recorded document width
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {number}
    */
@@ -109,7 +109,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Add document dimension change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *
@@ -124,7 +124,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Remove document dimension change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *
@@ -139,7 +139,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Add document height change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *
@@ -154,7 +154,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Remove document height change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *
@@ -169,7 +169,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Add document width change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *
@@ -184,7 +184,7 @@ class ETScriptDocumentStore extends EventEmitter {
   /**
    * Remove document width change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *

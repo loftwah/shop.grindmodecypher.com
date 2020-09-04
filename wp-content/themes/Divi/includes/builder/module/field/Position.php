@@ -376,7 +376,7 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 	/**
 	 * @param string $function_name
 	 *
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 */
 	public function process( $function_name ) {
 		global $is_parent_sticky;

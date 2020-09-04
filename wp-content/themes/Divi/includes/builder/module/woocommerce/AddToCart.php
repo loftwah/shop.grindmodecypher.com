@@ -130,7 +130,7 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 						'limited_main' => '%%order_class%% .button',
 						'alignment'    => '%%order_class%% .et_pb_module_inner > form',
 						// Setting to TRUE since it only checks for the value's existence.
-						'important'    => true,
+						'important'    => 'all',
 					),
 
 					/*
@@ -141,7 +141,8 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 					'use_alignment'  => false,
 					'box_shadow'     => array(
 						'css' => array(
-							'main' => '%%order_class%% .button',
+							'main'      => '%%order_class%% .button',
+							'important' => true,
 						),
 					),
 					'use_icon'       => false,

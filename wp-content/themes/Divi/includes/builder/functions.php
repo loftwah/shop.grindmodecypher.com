@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.6.0' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.6.1' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -1354,6 +1354,9 @@ function et_fb_current_page_params() {
 	$default_categories = array( get_term_by( 'name', 'Uncategorized', 'category' ) );
 	$categories         = et_pb_get_post_categories( $post_id, $default_categories );
 
+	// phpcs:ignore
+	$block_id = et_()->array_get( $_GET, 'blockId', '' );
+
 	$current_page = array(
 		'url'                   => esc_url( $current_url ),
 		'permalink'             => esc_url( remove_query_arg( 'et_fb', $current_url ) ),
@@ -1379,6 +1382,12 @@ function et_fb_current_page_params() {
 		'woocommerceComponents' => $exclude_woo ? array() : et_fb_current_page_woocommerce_components(),
 		'woocommerceTabs'       => et_builder_tb_enabled() && et_is_woocommerce_plugin_active() ?
 			ET_Builder_Module_Helper_Woocommerce_Modules::get_default_tab_options() : et_fb_woocommerce_tabs(),
+		'woocommerce'           => array(
+			'inactive_module_notice' => esc_html__(
+				'WooCommerce must be active for this module to appear',
+				'et_builder'
+			),
+		),
 	);
 
 	return apply_filters( 'et_fb_current_page_params', $current_page );

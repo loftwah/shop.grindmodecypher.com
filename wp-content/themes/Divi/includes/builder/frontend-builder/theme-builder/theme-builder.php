@@ -1696,7 +1696,7 @@ function et_theme_builder_clear_wp_post_cache( $layout_id = '' ) {
 	if ( empty( $template_use_on ) ) {
 		// Clear All - If the template is 'default' because it's enabled globally.
 		if ( $is_template_default ) {
-			et_theme_builder_clear_wp_cache();
+			et_theme_builder_clear_wp_cache( 'all' );
 		}
 		return;
 	}

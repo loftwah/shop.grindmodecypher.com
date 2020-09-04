@@ -421,7 +421,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 	 * Get border radii CSS styles.
 	 *
 	 * @since 3.23 Add responsive setting support.
-	 * @since ?? Add sticky style support
+	 * @since 4.6.0 Add sticky style support
 	 *
 	 * @param  array          $atts            All module attributes.
 	 * @param  array          $advanced_fields All module advanced fields definition.
@@ -519,7 +519,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 	 * Get border styles CSS styles.
 	 *
 	 * @since 3.23 Add responsive setting support.
-	 * @since ?? Add sticky style support
+	 * @since 4.6.0 Add sticky style support
 	 *
 	 * @param  array   $attrs           All module attributes.
 	 * @param  array   $advanced_fields All module advanced fields definition.

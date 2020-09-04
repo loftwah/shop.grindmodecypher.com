@@ -415,7 +415,7 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 	/**
 	 * Inherit value from pricing tables (parent) module
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 */
 	public function maybe_inherit_values() {
 		global $et_pb_pricing_tables_sticky_transition;

@@ -452,7 +452,7 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 	 * If responsive is used, automatically return array of all devices value.
 	 * If responsive is not used, return string of desktop value
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param array   $attrs         List of all attributes and values.
 	 * @param string  $name          Property name.

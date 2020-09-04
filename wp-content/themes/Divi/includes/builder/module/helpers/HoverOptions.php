@@ -173,7 +173,7 @@ class ET_Builder_Module_Hover_Options {
 	 * Adds `:hover` in selector at the end of the selector
 	 * E.g: add_hover_to_selectors('%%order_class%%% .image') >>> '%%order_class%%% .image:hover'
 	 *
-	 * @since ?? moved the order of `-` in capturing group 4's character set so it captures
+	 * @since 4.6.0 moved the order of `-` in capturing group 4's character set so it captures
 	 *           `::-` prefixed pseudo selector like `::-moz-placeholder` correctly
 	 *
 	 * @param string $selector

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * image).
  *
  * @since 4.3.3
- * @since ?? Add sticky style support
+ * @since 4.6.0 Add sticky style support
  *
  * @todo Use `ET_Builder_Module_Helper_Background->get_background_style()` for `ET_Builder_Element->process_advanced_background_options()`
  *
@@ -30,7 +30,7 @@ class ET_Builder_Module_Helper_Background {
 	 * Get prop name alias. Some background settings (eg. button's gradient background enable) might
 	 * use slightly different prop name to store background config;
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param array  $aliases   Aliases.
 	 * @param string $prop_name Prop name.
@@ -73,7 +73,7 @@ class ET_Builder_Module_Helper_Background {
 	 * Get gradient properties for hover mode
 	 *
 	 * @since 4.3.3
-	 * @since ?? add capability to look for sticky style's gradient
+	 * @since 4.6.0 add capability to look for sticky style's gradient
 	 *
 	 * @param array  $props                       Module's props
 	 * @param string $base_prop_name             Background base prop name
@@ -200,7 +200,7 @@ class ET_Builder_Module_Helper_Background {
 	 * Get background UI option's style based on given props and prop name
 	 *
 	 * @since 4.3.3
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 *
 	 * @todo Further simplify this method; Break it down into more encapsulated methods
 	 *
@@ -519,7 +519,7 @@ class ET_Builder_Module_Helper_Background {
 			// If no fixed selector defined, prepend / append default selector.
 			if ( '' === $selector_mode ) {
 				if ( 'hover' === $mode ) {
-					$selector_mode = $helper->add_hover_to_order_class( $selector );
+					$selector_mode = $helper->add_hover_to_selectors( $selector );
 				} elseif ( 'sticky' === $mode ) {
 					$is_sticky_module = $helper->is_sticky_module( $props );
 					$selector_mode    = $helper->add_sticky_to_order_class( $selector, $is_sticky_module );

@@ -12,7 +12,7 @@ import { top_window } from '@core/admin/js/frame-helpers';
 /**
  * Check current page's builder Type
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {string} builderType fe|vb|bfb|tb|lbb|lbp
  *
@@ -23,7 +23,7 @@ export const isBuilderType = builderType => builderType === window.et_builder_ut
 /**
  * Return condition value
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {string} conditionName
  *
@@ -34,7 +34,7 @@ export const is = conditionName => window.et_builder_utils_params.condition[cond
 /**
  * Is current page Frontend
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {bool}
  */
@@ -43,7 +43,7 @@ export const isFE = isBuilderType('fe');
 /**
  * Is current page Visual Builder
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {bool}
  */
@@ -52,7 +52,7 @@ export const isVB = isBuilderType('vb');
 /**
  * Is current page BFB / New Builder Experience
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {bool}
  */
@@ -61,7 +61,7 @@ export const isBFB = isBuilderType('bfb');
 /**
  * Is current page Theme Builder
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {bool}
  */
@@ -77,7 +77,7 @@ export const isLBB = isBuilderType('lbb');
 /**
  * Is current page uses Divi Theme
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {bool}
  */
@@ -86,7 +86,7 @@ export const isDiviTheme = is('diviTheme');
 /**
  * Is current page uses Extra Theme
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {bool}
  */
@@ -95,7 +95,7 @@ export const isExtraTheme = is('extraTheme');
 /**
  * Is current page Layout Block Preview
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {bool}
  */
@@ -104,7 +104,7 @@ export const isLBP = isBuilderType('lbp');
 /**
  * Check if current window is block editor window (gutenberg editing page)
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {bool}
  */
@@ -113,7 +113,7 @@ export const isBlockEditor = $(top_window.document).find('.edit-post-layout__con
 /**
  * Check if current window is builder window (VB, BFB, TB, LBB)
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {bool}
  */
@@ -122,7 +122,7 @@ export const isBuilder = ['vb', 'bfb', 'tb', 'lbb'].includes(window.et_builder_u
 /**
  * Get offsets value of all sides
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {object} $selector jQuery selector instance
  * @param {number} height
@@ -201,7 +201,7 @@ export const getOffsets = ($selector, width = 0, height = 0) => {
  * Increase EventEmitter's max listeners if lister count is about to surpass the max listeners limit
  * IMPORTANT: Need to be placed BEFORE `.on()`
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {EventEmitter} emitter
  * @param {string} EventName
@@ -221,7 +221,7 @@ export const maybeIncreaseEmitterMaxListeners = (emitter, eventName) => {
  * remain at 10
  * IMPORTANT: Need to be placed AFTER `.removeListener()`
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {EventEmitter} emitter
  * @param {string} eventName
@@ -239,7 +239,7 @@ export const maybeDecreaseEmitterMaxListeners = (emitter, eventName) => {
  * Expose frontend (FE) component via global object so it can be accessed and reused externally
  * Note: window.ET_Builder is for builder app's component; window.ET_FE is for frontend component
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {string} type
  * @param {string} name

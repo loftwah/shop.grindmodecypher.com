@@ -4,13 +4,13 @@
  *
  * @package     Divi
  * @sub-package Builder
- * @since       ??
+ * @since 4.6.0
  */
 
 /**
  * Sticky field class.
  *
- * @since ??
+ * @since 4.6.0
  */
 class ET_Builder_Module_Field_Sticky extends ET_Builder_Module_Field_Base {
 	/**
@@ -27,7 +27,7 @@ class ET_Builder_Module_Field_Sticky extends ET_Builder_Module_Field_Base {
 	/**
 	 * Retrieves default settings for sticky fields.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @return array $settings Default settings.
 	 */
@@ -38,7 +38,7 @@ class ET_Builder_Module_Field_Sticky extends ET_Builder_Module_Field_Base {
 	/**
 	 * Retrieves default value of specific field settings
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $name    Default name.
 	 * @param string $default Default's default value.
@@ -52,7 +52,7 @@ class ET_Builder_Module_Field_Sticky extends ET_Builder_Module_Field_Base {
 	/**
 	 * Retrieves fields for sticky settings.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param  array $args   Associative array for settings.
 	 *
@@ -235,7 +235,7 @@ class ET_Builder_Module_Field_Sticky extends ET_Builder_Module_Field_Base {
 	/**
 	 * Get limit position options based on Element Type.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $module_slug Module Slug.
 	 *

@@ -168,7 +168,7 @@ function et_theme_builder_api_save() {
 		et_theme_builder_trash_draft_and_unused_posts();
 	}
 
-	et_theme_builder_clear_wp_cache();
+	et_theme_builder_clear_wp_cache( 'all' );
 
 	wp_send_json_success(
 		array(

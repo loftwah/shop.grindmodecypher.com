@@ -4,7 +4,7 @@
  *
  * @package     Divi
  * @sub-package Builder
- * @since       ??
+ * @since 4.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sticky Options helper methods
  *
- * @since ??
+ * @since 4.6.0
  *
  * Class ET_Builder_Module_Sticky_Options
  */
@@ -30,7 +30,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * Get instance of ET_Builder_Module_Sticky_Options.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @return object|ET_Builder_Module_Sticky_Options
 	 */
@@ -45,7 +45,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * Get Sticky field suffix
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @return string
 	 */
@@ -56,7 +56,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * Get Sticky field enabled suffix
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @return string
 	 */
@@ -67,7 +67,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * Returns the field original name by removing the `_sticky` or `__sticky_enabled` suffix if it exists.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $name Field name.
 	 *
@@ -83,7 +83,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * Get valid sticky_position which implies module is sticky element
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @return array
 	 */
@@ -94,7 +94,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * Check if the setting has enabled sticky options
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $setting Field name.
 	 * @param array  $attrs   Module attributes.
@@ -111,7 +111,7 @@ class ET_Builder_Module_Sticky_Options {
 	 * Check if module with given attributes is a sticky module. Need to consider responsive value:
 	 * desktop might have non sticky element value but its smaller breakpoint has sticky element value
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param array $attrs Module attributes.
 	 *
@@ -152,7 +152,7 @@ class ET_Builder_Module_Sticky_Options {
 	 * Returns the field / setting name with sticky suffix
 	 * E.g.: get_sticky_enabled_field('test') => 'test__sticky'
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $setting Field name.
 	 *
@@ -166,7 +166,7 @@ class ET_Builder_Module_Sticky_Options {
 	 * Returns the sticky enabled setting field name
 	 * E.g.: get_sticky_enabled_field('test') => 'test__sticky_enabled'
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $setting Field name.
 	 *
@@ -179,7 +179,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * Returns setting value for sticky if enabled, otherwise return the default value
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $setting Field name.
 	 * @param array  $attrs   Module attributes.
@@ -197,7 +197,7 @@ class ET_Builder_Module_Sticky_Options {
 	 * Returns setting sticky value if sticky is enabled for a compose option;
 	 * If it does not exist, return $default specified value
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $setting Field name.
 	 * @param string $option  Option.
@@ -216,7 +216,7 @@ class ET_Builder_Module_Sticky_Options {
 	 * Returns setting sticky raw value;
 	 * If it does not exist, return $default specified value
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $setting Field name.
 	 * @param array  $attrs   Module attributes.
@@ -231,7 +231,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * Adds sticky state selector prefix before given selectors
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string|array $selector      CSS Selector.
 	 * @param bool         $is_sticky     Whether current module is sticky or not, based on
@@ -256,7 +256,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * Add sticky state selector prefix to given selector
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $selector  CSS Selector.
 	 * @param bool   $is_sticky whether current module is sticky or not, based on `sticky_position`
@@ -283,7 +283,7 @@ class ET_Builder_Module_Sticky_Options {
 	 * Check if given attrs has incompatible attribute value which makes sticky mechanism can't
 	 * be used on current module
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param array $attrs Module attributes.
 	 *
@@ -310,7 +310,7 @@ class ET_Builder_Module_Sticky_Options {
 	/**
 	 * List of fields and its value which prevent sticky mechanism to work due to how it behaves
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @return array
 	 */

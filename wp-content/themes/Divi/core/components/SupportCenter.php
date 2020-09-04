@@ -3261,8 +3261,8 @@ class ET_Core_SupportCenter {
 					'tooltip' => esc_html__( 'Every website needs backups! Each of our hosting partners provide automatic daily backups. If disaster strikes, these hosting companies have your back.', 'et-core' ),
 				),
 				'migrate'  => array(
-					'title'   => esc_html__( 'Free Site Migration', 'et-core' ),
-					'tooltip' => esc_html__( "Already have a Divi website hosted somewhere else? All of our hosting partners provide free assisted migration. It's easy to switch to Divi Hosting.", 'et-core' ),
+					'title'   => esc_html__( 'Easy Site Migration', 'et-core' ),
+					'tooltip' => esc_html__( "Already have a Divi website hosted somewhere else? All of our hosting partners provide migration tools or professional assisted migration. It's easy to switch to Divi Hosting!", 'et-core' ),
 				),
 				'staging'  => array(
 					'title'   => esc_html__( 'Easy Staging Sites', 'et-core' ),

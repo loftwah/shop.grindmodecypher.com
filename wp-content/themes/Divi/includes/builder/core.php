@@ -3186,11 +3186,13 @@ if ( ! function_exists( 'et_builder_get_cache_notification_modal' ) ) :
 
 			$cache_plugin_message = '<p>' . $cache_plugin_message . '</p>';
 
-			$cache_plugin_message .= sprintf(
-				'<a href="%1$s" class="et_builder_modal_action_button" target="_blank">%2$s</a>',
-				esc_url( admin_url( $cache_plugin['page'] ) ),
-				esc_html__( 'Clear Plugin Cache', 'et_builder' )
-			);
+			if ( ! empty( $cache_plugin['page'] ) ) {
+				$cache_plugin_message .= sprintf(
+					'<a href="%1$s" class="et_builder_modal_action_button" target="_blank">%2$s</a>',
+					esc_url( admin_url( $cache_plugin['page'] ) ),
+					esc_html__( 'Clear Plugin Cache', 'et_builder' )
+				);
+			}
 		}
 
 		$browser_cache_message = '<p>' . esc_html__( 'Builder files may also be cached in your browser. Please clear your browser cache.', 'et_builder' ) . '</p>';
@@ -3741,6 +3743,7 @@ if ( ! function_exists( 'et_pb_detect_cache_plugins' ) ) :
 	 * @return string or bool
 	 */
 	function et_pb_detect_cache_plugins() {
+		// Cache Plugins.
 		if ( function_exists( 'edd_w3edge_w3tc_activate_license' ) ) {
 			return array(
 				'name' => 'W3 Total Cache',
@@ -3819,6 +3822,95 @@ if ( ! function_exists( 'et_pb_detect_cache_plugins' ) ) :
 			return array(
 				'name' => 'Hummingbird',
 				'page' => 'admin.php?page=wphb',
+			);
+		}
+
+		if ( class_exists( 'comet_cache' ) ) {
+			return array(
+				'name' => 'Comet Cache',
+				'page' => 'admin.php?page=comet_cache',
+			);
+		}
+
+		if ( class_exists( 'Cache_Enabler' ) ) {
+			return array(
+				'name' => 'Cache Enabler',
+				'page' => 'options-general.php?page=cache-enabler',
+			);
+		}
+
+		// Hosting Provider Caching.
+		if ( class_exists( 'batcache' ) ) {
+			// Doesn't have clear cache button on WP Admin area.
+			return array(
+				'name' => 'Pressable Cache',
+				'page' => '',
+			);
+		}
+
+		if ( class_exists( 'WpeCommon' ) ) {
+			return array(
+				'name' => 'WP Engine Cache',
+				'page' => 'admin.php?page=wpengine-common',
+			);
+		}
+
+		if ( class_exists( 'Endurance_Page_Cache' ) ) {
+			// The purge cache button exists on MU plugins page.
+			return array(
+				'name' => 'Endurance Page Cache',
+				'page' => 'plugins.php?plugin_status=mustuse',
+			);
+		}
+
+		if ( function_exists( 'pantheon_wp_clear_edge_all' ) ) {
+			// Doesn't have clear cache button on WP Admin area.
+			return array(
+				'name' => 'Pantheon Advanced Page Cache',
+				'page' => '',
+			);
+		}
+
+		if ( function_exists( 'sg_cachepress_purge_cache' ) ) {
+			return array(
+				'name' => 'SG Optimizer',
+				'page' => 'admin.php?page=sg-cachepress',
+			);
+		}
+
+		if ( class_exists( 'Breeze_Admin' ) ) {
+			return array(
+				'name' => 'Breeze',
+				'page' => 'options-general.php?page=breeze',
+			);
+		}
+
+		if ( class_exists( '\Kinsta\Cache' ) ) {
+			return array(
+				'name' => 'Kinsta Cache',
+				'page' => 'admin.php?page=kinsta-tools',
+			);
+		}
+
+		if ( class_exists( '\WPaaS\Cache' ) ) {
+			return array(
+				'name' => 'GoDaddy Cache',
+				'page' => '',
+			);
+		}
+
+		// Complimentary Performance Plugins.
+		if ( class_exists( 'autoptimizeCache' ) ) {
+			return array(
+				'name' => 'Autoptimize',
+				'page' => 'options-general.php?page=autoptimize',
+			);
+		}
+
+		if ( class_exists( 'WP_Optimize' ) ) {
+			return array(
+				'name' => 'WP-Optimize',
+				'page' => 'admin.php?page=wpo_settings',
 			);
 		}
 

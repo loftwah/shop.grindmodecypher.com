@@ -1,3 +1,49 @@
+version 4.6.1 ( updated 09-03-2020 )
+- Fixed issue with the Shop module which was not rendering the right template when it was returning no results.
+- Fixed incorrect sticky element in sticky state when window is resized.
+- Fixed incorrect auto-generated sticky offset when known element is not visible.
+- Fixed broken hover style of border style, width, and color in frontend.
+- Added clear cache support for Batcache (Pressable), Breeze, Kinsta Cache, GoDaddy Cache, and WP-Optimize.
+- Fixed issue when extending the styles of an element when the modal was already opened.
+- Fixed incorrect hover selector of button option group's background field.
+- Fixed error when trying to use external links on Video modules.
+- Improved Woo modules notice when Woocommerce plugin is not active.
+- Fixed Box shadow and Text Shadow on Add to Cart module's button.
+	* core/components/SupportCenter.php
+	* core/components/init.php
+	* includes/builder/autoload.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/core.php
+	* includes/builder/feature/window.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/api.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/functions.php
+	* includes/builder/module/PricingTablesItem.php
+	* includes/builder/module/Shop.php
+	* includes/builder/module/field/Border.php
+	* includes/builder/module/field/Divider.php
+	* includes/builder/module/field/MarginPadding.php
+	* includes/builder/module/field/Position.php
+	* includes/builder/module/field/Sticky.php
+	* includes/builder/module/field/TextShadow.php
+	* includes/builder/module/helpers/Background.php
+	* includes/builder/module/helpers/HoverOptions.php
+	* includes/builder/module/helpers/ResponsiveOptions.php
+	* includes/builder/module/helpers/StickyOptions.php
+	* includes/builder/module/helpers/StyleProcessor.php
+	* includes/builder/module/woocommerce/AddToCart.php
+	* includes/builder/scripts/ext/media-library.js
+	* includes/builder/scripts/frontend/background-layout.js
+	* includes/builder/scripts/frontend/sticky-element.js
+	* includes/builder/scripts/frontend/sticky-elements.js
+	* includes/builder/scripts/stores/document.js
+	* includes/builder/scripts/stores/sticky.js
+	* includes/builder/scripts/stores/window.js
+	* includes/builder/scripts/utils/sticky.js
+	* includes/builder/scripts/utils/utils.js
+	* webpack.production.config.js
+
 version 4.6 ( updated 08-26-2020 )
 - Added sticky element option for every module. Sticky element allow module to sticky on the edge of browser as the window is scrolled.
 	* includes/builder/ab-testing.php

@@ -307,7 +307,7 @@ class ET_Builder_Module_Field_Divider extends ET_Builder_Module_Field_Base {
 	 * for the background-image property.
 	 *
 	 * @since 3.23 Pass values parameter to support responsive settings.
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 *
 	 * @param  string $placement Whether it is the top or bottom divider.
 	 * @param  array  $atts      Associative array of shortcode and their

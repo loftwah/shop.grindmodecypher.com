@@ -9,7 +9,7 @@
  * Copy of ET_Builder_Element::process_advanced_custom_margin_options().
  *
  * @since 3.23
- * @since ?? Add sticky style support
+ * @since 4.6.0 Add sticky style support
  */
 class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base {
 
@@ -267,7 +267,7 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 	 * Adds CSS rule.
 	 *
 	 * @since 3.23
-	 * @since ?? Add sticky style support
+	 * @since 4.6.0 Add sticky style support
 	 *
 	 * @see ET_Builder_Element->process_advanced_custom_margin_options()
 	 *

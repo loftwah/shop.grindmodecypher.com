@@ -635,7 +635,7 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 	/**
 	 * Process Text Shadow options and adds CSS rules.
 	 *
-	 * @since ?? Add sticky style support
+	 * @since 4.6.0 Add sticky style support
 	 *
 	 * @param ET_Builder_Element $module Module object.
 	 * @param string             $function_name Shortcode function.

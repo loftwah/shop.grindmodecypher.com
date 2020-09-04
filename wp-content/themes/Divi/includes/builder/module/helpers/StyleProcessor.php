@@ -4,7 +4,7 @@
  *
  * @package     Divi
  * @sub-package Builder
- * @since       ??
+ * @since 4.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +19,7 @@ if ( ! function_exists( 'et_pb_responsive_options' ) ) {
 /**
  * Icon Font helper methods.
  *
- * @since ??
+ * @since 4.6.0
  *
  * Class ET_Builder_Module_Helper_Style_Processor
  */
@@ -28,7 +28,7 @@ class ET_Builder_Module_Helper_Style_Processor {
 	 * Custom `generate_styles()` processor for responsive, hover, and sticky styles of `icon_font_size`
 	 * attributes which sets right property value of font icon in accordion/toggle title.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @used-by ET_Builder_Module_Accordion->render()
 	 * @used-by ET_Builder_Module_Toggle->render()
@@ -119,7 +119,7 @@ class ET_Builder_Module_Helper_Style_Processor {
 	 * `icon_font_size` attributes which sets css properties for social media follow's icon and
 	 * its dimension.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @used-by ET_Builder_Module_Social_Media_Follow->render()
 	 * @used-by ET_Builder_Module_Social_Media_Follow_Item->render()
@@ -218,7 +218,7 @@ class ET_Builder_Module_Helper_Style_Processor {
 	 * Custom `generate_styles()` processor for responsive, hover, and sticky styles of
 	 * `icon_font_size` attributes which sets the size of overlay icon.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @used-by ET_Builder_Module_Testimonial->render()
 	 * @used-by ET_Builder_Module_Video->render()

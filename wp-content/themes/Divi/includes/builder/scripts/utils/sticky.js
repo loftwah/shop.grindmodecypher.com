@@ -18,7 +18,7 @@ import {
 /**
  * Get top / bottom limit attributes
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {object} $selector
  * @param {string}
@@ -62,7 +62,7 @@ export const getLimit = ($selector, limit) => {
 /**
  * Get top / bottom limit selector based on given name
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {object} $selector
  * @param {string} limit
@@ -99,7 +99,7 @@ export const getLimitSelector = ($selector, limit) => {
  * @param {object} modules
  * @param {object} currentModules
  *
- * @since ??
+ * @since 4.6.0
  */
 export const filterInvalidModules = (modules, currentModules = {}) => {
   const filteredModules = {};
@@ -131,7 +131,7 @@ export const filterInvalidModules = (modules, currentModules = {}) => {
  * likely to be affected by transition if the sticky value is retrieved on the fly, thus it needs
  * to be retrieved ahead its time by this approach
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {object} $module
  * @param {string} id
@@ -195,7 +195,7 @@ export const getStickyStyles = (id, $module) => {
  * and transition need to be removed then re-added 50ms later. This is mostly happened because the
  * module positioning changed from relative to fixed when entering/leaving sticky state
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {string} transitionValue
  * @param {array} trimmedProperties
@@ -220,7 +220,7 @@ export const trimTransitionValue = (transitionValue, trimmedProperties) => {
  * Calculate automatic offset that should be given based on sum of heights of all sticky modules
  * that are currently in sticky state when window reaches $target's offset.
  *
- * @since ??
+ * @since 4.6.0
  *
  * @param {object} $target
  *

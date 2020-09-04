@@ -64,7 +64,7 @@ const hasFixedNav = $body.hasClass('et_fixed_nav');
  * is rendered outside current builder type. Removed nested sticky module (sticky inside another
  * sticky module) from the module list.
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {object}
  */
@@ -73,7 +73,7 @@ const savedStickyElements = filterInvalidModules(cloneDeep(window.et_pb_sticky_e
 /**
  * Defaults of known non module elements which its stickiness needs to be considered
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {object}
  */
@@ -259,7 +259,7 @@ const elementsDefaults = {
 /**
  * Known non module elements which its stickiness needs to be considered
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {object}
  */
@@ -269,7 +269,7 @@ const elements = cloneDeep(elementsDefaults);
 /**
  * Hold all sticky elements modules' properties
  *
- * @since ??
+ * @since 4.6.0
  *
  * @type {object}
  */
@@ -282,13 +282,13 @@ let modules = {};
  * This store stores selected properties of all sticky elements on the page so a sticky element
  * can use other sticky element's calculated value quickly
  *
- * @since ??
+ * @since 4.6.0
  */
 class ETScriptStickyStore extends EventEmitter {
   /**
    * ETScriptStickyStore constructor
    *
-   * @since ??
+   * @since 4.6.0
    */
   constructor() {
     super();
@@ -328,7 +328,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Get registered modules
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @type {object}
    */
@@ -339,7 +339,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * List of builder options (that is used by sticky elements) that has responsive mode.
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {array}
    */
@@ -362,7 +362,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Update selected module / elements prop on document height change
    *
-   * @since ??
+   * @since 4.6.0
    */
   onDocumentHeightChange = () => {
     // Update Divi fixed nav height property. Divi fixed nav height change when it enters its sticky state
@@ -384,7 +384,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Builder did mount listener callback
    *
-   * @since ??
+   * @since 4.6.0
    */
   onBuilderDidMount = () => {
     const stickyOnloadModuleKeys  = keys(window.et_pb_sticky_elements);
@@ -402,7 +402,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Builder settings change listener callback
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {object} event
    * @param {bool}   forceUpdate
@@ -431,7 +431,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Get id of all modules
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @type {object} modules
    *
@@ -444,7 +444,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Get modules based on its rendering position; also consider its offset surrounding setting if needed
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string}      top|bottom
    * @param {string|bool} on|off|false when false, ignore offset surrounding value
@@ -465,7 +465,7 @@ class ETScriptStickyStore extends EventEmitter {
    * Sort modules from top to down based on offset prop. Passed module has no id or index prop so
    * offset which visually indicate module's position in the page will do
    *
-   * @since ??
+   * @since 4.6.0
    */
   sortModules = () => {
     const storeModules = this.modules;
@@ -491,7 +491,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Set prop value
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} id need to be unique
    * @param {string} name
@@ -516,7 +516,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Get prop
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} id
    * @param {string} name
@@ -538,7 +538,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Set known elements' props
    *
-   * @since ??
+   * @since 4.6.0
    */
   setElementsProps = () => {
     forEach(elements, (settings, name) => {
@@ -554,7 +554,8 @@ class ETScriptStickyStore extends EventEmitter {
       }
 
       const currentWindow = 'top' === this.getElementProp(name, 'window') ? top_window : window;
-      const hasElement    = currentWindow.jQuery(settings.selector).length > 0;
+      const $element      = currentWindow.jQuery(settings.selector);
+      const hasElement    = $element.length > 0 && $element.is(':visible');
 
       if (hasElement) {
         this.setElementProp(name, 'exist', hasElement);
@@ -567,7 +568,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Set known element prop value
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} id need to be unique
    * @param {string} name
@@ -587,7 +588,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Get known element prop
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} id
    * @param {string} name
@@ -602,7 +603,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Set element height
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} name
    */
@@ -630,7 +631,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Generate offset modules for offset surrounding option
    *
-   * @since ??
+   * @since 4.6.0
    */
   generateOffsetModules = () => {
     // Get module's width, height, and offsets. These are needed to calculate offset module's
@@ -892,7 +893,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Check if module with given id is on sticky state
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} id
    *
@@ -905,7 +906,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Add listener callback for settings change event
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function}
    */
@@ -918,7 +919,7 @@ class ETScriptStickyStore extends EventEmitter {
   /**
    * Remove listener callback for settings change event
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function}
    */

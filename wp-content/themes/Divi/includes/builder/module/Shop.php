@@ -611,7 +611,9 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 
 		do_action( 'et_pb_shop_after_print_shop' );
 
-		if ( '<div class="woocommerce columns-0"></div>' === $shop || et_()->starts_with( $shop, $shortcode ) ) {
+		$is_shop_empty = preg_match( '/<div class="woocommerce columns-([0-9 ]+)"><\/div>+/', $shop );
+
+		if ( $is_shop_empty || et_()->starts_with( $shop, $shortcode ) ) {
 			$shop = self::get_no_results_template();
 		}
 

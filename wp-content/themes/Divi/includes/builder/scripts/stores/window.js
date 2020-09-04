@@ -95,13 +95,13 @@ const bfbFrameId = '#et-bfb-app-frame';
  * This store listen to direct window's events; builder callback listen to this store's events
  * to avoid dom-based calculation whenever possible; use the property passed by this store
  *
- * @since ??
+ * @since 4.6.0
  */
 class ETScriptWindowStore extends EventEmitter {
   /**
    * ETScriptWindowStore constructor
    *
-   * @since ??
+   * @since 4.6.0
    */
   constructor() {
     super();
@@ -140,7 +140,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Set window height
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} windowLocation app|top
    * @param {number} height
@@ -162,7 +162,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Set window width
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} windowLocation app|top
    * @param {number} width
@@ -204,7 +204,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Set scroll location value
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} scrollLocation app|top
    *
@@ -230,7 +230,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Set scroll top value
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} windowLocation app|top
    * @param {number} scrollTop
@@ -252,7 +252,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Set builder zoomed status (on builder only)
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} builderPreviewMode desktop|tablet|phone|zoom|wireframe
    */
@@ -265,7 +265,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Set BFB iframe offset
    *
-   * @since ??
+   * @since 4.6.0
    */
   setBfbIframeOffset = () => {
     states.bfbIframeOffset = top_window.jQuery(bfbFrameId).offset();
@@ -274,7 +274,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Set Layout Block iframe offset
    *
-   * @since ??
+   * @since 4.6.0
    */
   setLayoutBlockPreviewIframeOffset = () => {
     const blockId             = get(window.ETBlockLayoutModulesScript, 'blockId', '');
@@ -316,7 +316,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Set vertical scrollbar width
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} windowLocation
    * @param {number} width
@@ -336,7 +336,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Get current window width
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {number}
    */
@@ -347,7 +347,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Get current window height
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {number}
    */
@@ -358,7 +358,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Get current window scroll location
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {string} app|top
    */
@@ -369,7 +369,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Get current window scroll top / distance to document
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {number}
    */
@@ -394,7 +394,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Get current app window breakpoint (by device)
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {string}
    */
@@ -405,7 +405,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Get builder zoomed status
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {bool}
    */
@@ -416,7 +416,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Get current window vertical scrollbar width.
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {number}
    */
@@ -427,7 +427,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Get builder scroll location of builder context + preview mode
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {string} previewMode desktop|tablet|phone|zoom|wireframe
    *
@@ -440,7 +440,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Add width change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *
@@ -455,7 +455,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Remove width change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *
@@ -470,7 +470,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Add height change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *
@@ -485,7 +485,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Remove height change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    *
@@ -500,7 +500,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Add scroll location change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {ETScriptWindowStore}
    */
@@ -513,7 +513,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Remove scroll location change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {ETScriptWindowStore}
    */
@@ -526,7 +526,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Add scroll top change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {ETScriptWindowStore}
    */
@@ -539,7 +539,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Remove scroll top change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @return {ETScriptWindowStore}
    */
@@ -552,7 +552,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Set breakpoint (by device) based on window width
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @todo update breakpoint setting mechanic so this won't need to define another screen size definition
    *       and able to reuse (et_screen_size())
@@ -588,7 +588,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Add breakpoint change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    */
@@ -601,7 +601,7 @@ class ETScriptWindowStore extends EventEmitter {
   /**
    * Remove breakpoint change event listener
    *
-   * @since ??
+   * @since 4.6.0
    *
    * @param {function} callback
    */

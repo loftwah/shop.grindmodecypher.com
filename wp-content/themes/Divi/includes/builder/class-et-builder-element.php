@@ -131,7 +131,7 @@ class ET_Builder_Element {
 	/**
 	 * Sticky element configuration
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @var array
 	 */
@@ -4828,7 +4828,7 @@ class ET_Builder_Element {
 	/**
 	 * Add sticky fields to the additional fields options.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @return void
 	 */
@@ -7597,7 +7597,7 @@ class ET_Builder_Element {
 	 *
 	 * @param string $function_name Function name.
 	 *
-	 * @since ?? Add sticky style support
+	 * @since 4.6.0 Add sticky style support
 	 */
 	function setup_hover_transitions( $function_name ) {
 
@@ -11496,7 +11496,7 @@ class ET_Builder_Element {
 	 *
 	 * @since 3.23 Add support to generate responsive styles of font, text color, and text align.
 	 *           And also process styles of block elements sub options group.
-	 * @since ?? Add sticky style support
+	 * @since 4.6.0 Add sticky style support
 	 *
 	 * @param  string $function_name Module slug.
 	 */
@@ -12529,7 +12529,7 @@ class ET_Builder_Element {
 	 * Process background CSS styles.
 	 *
 	 * @since 3.23 Add responsive support.
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 *
 	 * @param string $function_name Module slug.
 	 */
@@ -13351,7 +13351,7 @@ class ET_Builder_Element {
 	 * @param string $function_name Function name.
 	 *
 	 * @since 3.23 Add support to generate responsive styles of border styles and radii.]
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 */
 	public function process_advanced_borders_options( $function_name ) {
 		// Disable if module doesn't set advanced_fields property and has no VB support.
@@ -13513,6 +13513,8 @@ class ET_Builder_Element {
 					'priority'    => $this->_style_priority,
 				);
 
+				self::set_style( $function_name, $el_style );
+
 				$main = et_()->array_get( $border, 'css.sticky', $this->main_css_element );
 				$main = et_()->array_get( $border, 'css.main.border_styles', $main );
 				$main = 'default' !== $border_name ? $sticky->add_sticky_to_selectors( $main, $this->is_sticky_module ) : $sticky->add_sticky_to_order_class( $main, $this->is_sticky_module );
@@ -13557,7 +13559,7 @@ class ET_Builder_Element {
 	 *
 	 * @param string $function_name Function name.
 	 *
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 */
 	function process_transform( $function_name ) {
 		$transform = self::$_->array_get( $this->advanced_fields, 'transform', array() );
@@ -13781,7 +13783,7 @@ class ET_Builder_Element {
 	 *
 	 * @param string $function_name Function name.
 	 *
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 */
 	function process_max_width_options( $function_name ) {
 		global $is_parent_sticky, $et_fb_processing_shortcode_object;
@@ -14063,7 +14065,7 @@ class ET_Builder_Element {
 	 * Return unique identifier for sticky element. For frontend, order class is considered unique
 	 * and sufficient as identifier
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $render_slug Render slug.
 	 *
@@ -14080,7 +14082,7 @@ class ET_Builder_Element {
 	 * Sticky element UX is fully handled via javascript; Module simply exposes the configuration
 	 * for JS to initialized
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param string $render_slug Render slug.
 	 */
@@ -14249,7 +14251,7 @@ class ET_Builder_Element {
 	 *
 	 * @param string $function_name Function name.
 	 *
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 */
 	public function process_height_options( $function_name ) {
 		if ( ! is_array( self::$_->array_get( $this->advanced_fields, 'height' ) ) ) {
@@ -14348,7 +14350,7 @@ class ET_Builder_Element {
 	 *
 	 * @param string $function_name Function name.
 	 *
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 */
 	public function process_overflow_options( $function_name ) {
 		if ( ! is_array( self::$_->array_get( $this->advanced_fields, 'overflow', array() ) ) ) {
@@ -14411,7 +14413,7 @@ class ET_Builder_Element {
 	 *
 	 * @param string $function_name Function name.
 	 *
-	 * @since ?? Add sticky style support
+	 * @since 4.6.0 Add sticky style support
 	 */
 	function process_advanced_custom_margin_options( $function_name ) {
 		// Disable if module doesn't set advanced_fields property and has no VB support
@@ -14775,8 +14777,8 @@ class ET_Builder_Element {
 	 * Process advanced button options.
 	 *
 	 * @since 3.23 Add support to generate responsive styles of padding and button alignment.
-	 * @since ?? Add sticky style support.
-	 * @since ?? Background rendering is refactored; it now uses et_pb_background_options().
+	 * @since 4.6.0 Add sticky style support.
+	 * @since 4.6.0 Background rendering is refactored; it now uses et_pb_background_options().
 	 *
 	 * @param  string $function_name Module slug.
 	 */
@@ -15662,7 +15664,7 @@ class ET_Builder_Element {
 	 * - Text Focus Color       -> Hover -> Form field & placeholder focus selector
 	 *
 	 * @since 3.23
-	 * @since ?? Add sticky style support
+	 * @since 4.6.0 Add sticky style support
 	 *
 	 * @param  string $function_name Module slug.
 	 */
@@ -15991,7 +15993,7 @@ class ET_Builder_Element {
 	 *
 	 * @since 3.23 Add responsive support. Pass device attributes and make sure no duplicate styles
 	 *           are rendered.
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 *
 	 * @param  string $function_name Module slug.
 	 */
@@ -17710,7 +17712,7 @@ class ET_Builder_Element {
 	 *
 	 * NOTE: If there are more processors introduced, this needs to be updated
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param array $processor Style processor.
 	 *
@@ -17747,7 +17749,7 @@ class ET_Builder_Element {
 	 *
 	 * NOTE: If there are more mode besides sticky and hover introduced, this needs to be updated.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param array $args Function arguments.
 	 *
@@ -17922,7 +17924,7 @@ class ET_Builder_Element {
 	/**
 	 * Generate CSS declaration.
 	 *
-	 * @since ??
+	 * @since 4.6.0
 	 *
 	 * @param array|string $css_property   CSS Property.
 	 * @param string       $value          Value.
@@ -18509,7 +18511,7 @@ class ET_Builder_Element {
 	 * function reads options set by the 'Filters' and 'Image Filters' builder menu fields.)
 	 *
 	 * @since 3.23 Add responsive setting styling processing here.
-	 * @since ?? Add sticky style support.
+	 * @since 4.6.0 Add sticky style support.
 	 *
 	 * @param string $function_name Builder module's function name (keeps the CSS rules straight)
 	 * @param string $prefix        Optional string prepended to the field name (i.e., `filter_saturate` -> `child_filter_saturate`)
