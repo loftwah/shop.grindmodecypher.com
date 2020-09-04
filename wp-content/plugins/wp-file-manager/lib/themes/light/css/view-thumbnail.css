@@ -5,8 +5,8 @@
 
 /* File wrapper */
 .elfinder .elfinder-cwd-view-icons .elfinder-cwd-file {
-  width: 92px;
-  height: 92px;
+/*  width: 92px;
+  height: 92px;*/
   border: 1px solid transparent;
   border-radius: 0;
 }

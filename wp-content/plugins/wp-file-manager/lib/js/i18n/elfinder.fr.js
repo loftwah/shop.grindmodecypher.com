@@ -131,7 +131,7 @@
 			'cmdgetfile'   : 'Sélectionner les fichiers',
 			'cmdhelp'      : 'À propos de ce logiciel',
 			'cmdhome'      : 'Accueil',
-			'cmdinfo'      : 'Information',
+			'cmdinfo'      : 'Renseignements',
 			'cmdmkdir'     : 'Nouveau dossier',
 			'cmdmkdirin'   : 'Dans un nouveau dossier', // from v2.1.7 added 19.2.2016
 			'cmdmkfile'    : 'Nouveau fichier',
@@ -180,9 +180,9 @@
 			'btnUnmount': 'Démonter', // from v2.1 added 30.04.2012
 			'btnConv'   : 'Convertir', // from v2.1 added 08.04.2014
 			'btnCwd'    : 'Ici',      // from v2.1 added 22.5.2015
-			'btnVolume' : 'Volume',    // from v2.1 added 22.5.2015
+			'btnVolume' : 'Le volume',    // from v2.1 added 22.5.2015
 			'btnAll'    : 'Tous',       // from v2.1 added 22.5.2015
-			'btnMime'   : 'Type MIME', // from v2.1 added 22.5.2015
+			'btnMime'   : 'Tapez MIME', // from v2.1 added 22.5.2015
 			'btnFileName':'Nom du fichier',  // from v2.1 added 22.5.2015
 			'btnSaveClose': 'Enregistrer & Ferme', // from v2.1 added 12.6.2015
 			'btnBackup' : 'Sauvegarde', // fromv2.1 added 28.11.2015
@@ -511,13 +511,13 @@
 			'kindAppFlash'    : 'Application Flash',
 			'kindPDF'         : 'Portable Document Format (PDF)',
 			'kindTorrent'     : 'Fichier BitTorrent',
-			'kind7z'          : 'Archive 7z',
-			'kindTAR'         : 'Archive TAR',
-			'kindGZIP'        : 'Archive GZIP',
-			'kindBZIP'        : 'Archive BZIP',
-			'kindXZ'          : 'Archive XZ',
-			'kindZIP'         : 'Archive ZIP',
-			'kindRAR'         : 'Archive RAR',
+			'kind7z'          : 'Archiver 7z',
+			'kindTAR'         : 'Archiver TAR',
+			'kindGZIP'        : 'Archiver GZIP',
+			'kindBZIP'        : 'Archiver BZIP',
+			'kindXZ'          : 'Archiver XZ',
+			'kindZIP'         : 'Archiver ZIP',
+			'kindRAR'         : 'Archiver RAR',
 			'kindJAR'         : 'Fichier Java JAR',
 			'kindTTF'         : 'Police True Type',
 			'kindOTF'         : 'Police Open Type',

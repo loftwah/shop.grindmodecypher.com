@@ -233,6 +233,7 @@
 			'sortsize'          : 'po veličini',
 			'sortdate'          : 'po datumu',
 			'sortFoldersFirst'  : 'Prvo folderi',
+			'sortperm'          : 'Dopuštenjem',
 			'sortAlsoTreeview':'Такође Треевиев',
 			
 			/********************************** messages **********************************/
@@ -321,7 +322,8 @@
 			'dropFilesBrowser': 'Превуците, испустите или залепите из прегледача', // from v2.1 added 30.05.2012
 			'dropPasteFiles'  : 'Овде превуците и испустите или залепите датотеке', // from v2.1 added 07.04.2014
 			'Code Editor':'Едитор кода',
-            'extentiontype' :'тип екстензије',
+			'extentiontype' :'тип екстензије',
+			'reinstate'       : 'ponovo postavi', 
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Nepoznat',
 			'kindFolder'      : 'Фолдер',

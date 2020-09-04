@@ -96,7 +96,7 @@
 	background-image: url('../images/search-default.svg') !important;
 	background-position: inherit;
 	/*left: 138px;*/
-background-size: 14px;
+background-size: 15px;
 }
 .elfinder-cwd table tr:nth-child(2n+1) {
 	background-color: #f9f9f9;
@@ -114,7 +114,7 @@ background-size: 14px;
 }
 .elfinder .elfinder-cwd table thead td {
 	padding: 10px 14px;
-	padding-right: 20px;
+	padding-right: 25px;
 	font-weight: 700;
 }
 .elfinder .elfinder-cwd table td {
@@ -156,8 +156,8 @@ border: 1px solid #ddd !important;
 }
 
 #elfinder-wp_file_manager-cwd-thead .ui-state-default.touch-punch.touch-punch-keep-default.ui-sortable .elfinder-cwd-view-th-name span.ui-icon{
-	right: inherit;
-left: 54px;
+/*	right: inherit;
+	left: 54px;*/
 }
 .elfinder .elfinder-cwd-wrapper-list table thead tr td {
 	color: #404040;

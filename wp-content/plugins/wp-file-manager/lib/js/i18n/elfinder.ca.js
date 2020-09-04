@@ -230,6 +230,7 @@
 			'sortsize'          : 'per mida',
 			'sortdate'          : 'per data',
 			'sortFoldersFirst' : 'Carpetes primer',
+			'sortperm'          : 'Per permís',
 			'sortAlsoTreeview':'També Treeview',
 			
 			/********************************** messages **********************************/
@@ -316,6 +317,7 @@
 			'emptyFolderLTap' : 'La carpeta està buida \\ durant un clic llarg per afegir articles', // from v2.1.6 added 30.12.2015
 			'Code Editor':'Editor de codis',
 			'extentiontype' :'tipus d extensió',
+			'reinstate'       : 'restablir', 
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Desconegut',
 			'kindFolder'      : 'Carpeta',

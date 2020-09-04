@@ -2,9 +2,8 @@
 /* Main toolbar wrapper */
 .elfinder .elfinder-toolbar {
 	background: #f4f5f7;
-	padding: 15px 0px;
 	border-bottom: 1px solid #ddd;
-padding-left: 10px;
+	padding-left: 10px;
 }
 /* Buttonset wrapper */
 .elfinder .elfinder-toolbar .elfinder-buttonset {
@@ -263,3 +262,9 @@ background-size:12px;
   .elfinder .elfinder-toolbar .elfinder-buttonset .elfinder-button-menu-item-selected.elfinder-menu-item-sort-desc .elfinder-menu-item-sort-dir {
     /* */
   }
+  .elfinder-toolbar .elfinder-button-search .ui-icon-close {
+    background-image: url(../images/close.png);
+    background-position: center;
+    background-size: 57px;
+    background-repeat: no-repeat;
+}

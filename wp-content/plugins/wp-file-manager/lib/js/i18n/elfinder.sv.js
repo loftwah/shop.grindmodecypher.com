@@ -236,6 +236,7 @@
 			'sortsize'          : 'efter storlek',
 			'sortdate'          : 'efter datum',
 			'sortFoldersFirst'  : 'Mappar först', // added 22.06.2012
+			'sortperm'          : 'Med tillstånd',
 			'sortAlsoTreeview':'Även Treeview',
 			
 			/********************************** messages **********************************/
@@ -325,7 +326,8 @@
 			'emptyFolderLTap' : 'Länge klicka här för att lägga till en tom \\ Ämne-mapp', // from v2.1.6 added 30.12.2015
 			'dropFilesBrowser': 'Dra, släpp eller klistra in från webbläsaren', // from v2.1 added 30.05.2012
 			'dropPasteFiles'  : 'Dra och släpp eller klistra in filer här', // from v2.1 added 07.04.2014
-            'extentiontype':'Typ av förlängning',
+			'extentiontype':'Typ av förlängning',
+			'reinstate'       : 'ställa in igen', 
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Okänd',
 			'kindFolder'      : 'Mapp',
@@ -340,7 +342,7 @@
 			'kindMsPP'        : 'Microsoft Powerpoint',
 			'kindOO'          : 'Open Office',
 			'kindAppFlash'    : 'Flash',
-			'kindPDF'         : 'Portable Document Format (PDF)',
+			'kindPDF'         : 'Portabelt dokumentformat (PDF)',
 			'kindTorrent'     : 'Bittorrent',
 			'kind7z'          : '7z',
 			'kindTAR'         : 'TAR',
@@ -357,7 +359,7 @@
 			'kindText'        : 'Text',
 			'kindTextPlain'   : 'Plain',
 			'kindPHP'         : 'PHP',
-			'kindCSS'         : 'Cascading style sheet',
+			'kindCSS'         : 'Kaskad stilark',
 			'kindHTML'        : 'HTML',
 			'kindJS'          : 'Javascript',
 			'kindRTF'         : 'Rich Text Format',

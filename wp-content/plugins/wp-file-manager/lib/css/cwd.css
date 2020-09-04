@@ -222,14 +222,16 @@
     transform-origin: top center;
     transform: scale(1.5);
 }
-
 .elfinder-cwd-size1 .elfinder-cwd-icon.elfinder-cwd-bgurl:before {
-    -ms-transform-origin: top left;
-    -ms-transform: scale(1.35) translate(-4px, 15%);
+     -ms-transform-origin: top left;
+    -ms-transform: scale(1.18) translate(0, 15%);
     -webkit-transform-origin: top left;
-    -webkit-transform: scale(1.35) translate(-4px, 15%);
+    -webkit-transform: scale(1.18) translate(0, 15%);
     transform-origin: top left;
-    transform: scale(1.35) translate(-4px, 15%);
+    transform: scale(1.18) translate(0, 15%); 
+/*    -ms-transform: scale(1.35) translate(-4px, 15%);
+    -webkit-transform: scale(1.35) translate(-4px, 15%);
+    transform: scale(1.35) translate(-4px, 15%);*/
 }
 
 .elfinder-cwd-size1 .elfinder-cwd-icon.elfinder-cwd-bgurl:after {
@@ -274,11 +276,14 @@
 
 .elfinder-cwd-size2 .elfinder-cwd-icon.elfinder-cwd-bgurl:before {
     -ms-transform-origin: top left;
-    -ms-transform: scale(1.8) translate(-5px, 18%);
+    -ms-transform: scale(1.55) translate(0, 18%);
     -webkit-transform-origin: top left;
-    -webkit-transform: scale(1.8) translate(-5px, 18%);
+    -webkit-transform: scale(1.55) translate(0, 18%);
     transform-origin: top left;
-    transform: scale(1.8) translate(-5px, 18%);
+    transform: scale(1.55) translate(0, 18%);
+/*  -ms-transform: scale(1.8) translate(-5px, 18%);
+    -webkit-transform: scale(1.8) translate(-5px, 18%);
+    transform: scale(1.8) translate(-5px, 18%);*/
 }
 
 .elfinder-cwd-size2 .elfinder-cwd-icon.elfinder-cwd-bgurl:after {
@@ -309,25 +314,29 @@
 
 .elfinder-cwd-size3.elfinder-cwd-view-icons .elfinder-cwd-file-wrapper {
     width: 122px;
-    height: 122px;
+    height: 72px;
 }
+
 
 .elfinder-cwd-size3 .elfinder-cwd-icon {
     -ms-transform-origin: top center;
-    -ms-transform: scale(2.5);
+    -ms-transform: scale(1.5);
     -webkit-transform-origin: top center;
-    -webkit-transform: scale(2.5);
+    -webkit-transform: scale(1.5);
     transform-origin: top center;
-    transform: scale(2.5);
+    transform: scale(1.5);
 }
 
 .elfinder-cwd-size3 .elfinder-cwd-icon.elfinder-cwd-bgurl:before {
     -ms-transform-origin: top left;
-    -ms-transform: scale(2.25) translate(-6px, 20%);
+    -ms-transform: scale(1.18) translate(0, 20%);
     -webkit-transform-origin: top left;
-    -webkit-transform: scale(2.25) translate(-6px, 20%);
+    -webkit-transform: scale(1.18) translate(0, 20%);
     transform-origin: top left;
-    transform: scale(2.25) translate(-6px, 20%);
+    transform: scale(1.18) translate(0, 20%);
+/*  -ms-transform: scale(2.25) translate(-6px, 20%);
+    -webkit-transform: scale(2.25) translate(-6px, 20%);
+    transform: scale(2.25) translate(-6px, 20%);*/
 }
 
 .elfinder-cwd-size3 .elfinder-cwd-icon.elfinder-cwd-bgurl:after {
@@ -343,8 +352,8 @@
     -webkit-transform: scale(1);
     transform-origin: center center;
     transform: scale(1);
-    width: 120px;
-    height: 120px;
+    width: 72px; 
+    height: 72px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     border-radius: 10px;
@@ -1014,6 +1023,7 @@
 
 .elfinder .elfinder-cwd table thead td {
     padding: 4px 14px;
+    padding-right: 25px;
 }
 
 .elfinder-ltr .elfinder-cwd.elfinder-has-checkbox table thead td:first-child {
@@ -1201,7 +1211,7 @@ tr.elfinder-cwd-file td .elfinder-cwd-select {
 /* table header resize handle */
 .elfinder-cwd-view-list thead td .ui-resizable-handle {
     height: 100%;
-    top: 6px;
+    top: 3px;
 }
 
 .elfinder-touch .elfinder-cwd-view-list thead td .ui-resizable-handle {

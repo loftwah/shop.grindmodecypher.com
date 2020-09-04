@@ -8,6 +8,7 @@
     padding: 4px 0;
     top: 0;
     left: 0;
+    z-index: 9999 !important;
 }
 
 /* submenu */
@@ -66,7 +67,7 @@
 }
 
 .elfinder .elfinder-contextmenu-rtl .elfinder-contextmenu-item .ui-icon {
-    right: 2px;
+    right: 0px;
 }
 
 .elfinder-touch .elfinder-contextmenu-item {

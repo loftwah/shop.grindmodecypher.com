@@ -450,7 +450,7 @@ select.elfinder-tabstop.ui-state-hover {
 div.elfinder-cwd-wrapper-list tr.ui-state-default td span.ui-icon {
   font-size: 8px;
   margin-top: 5px;
-  margin-right: 5px;
+  margin-right: 10px;
 }
 div.elfinder-cwd-wrapper-list .ui-icon-grip-dotted-vertical {
   margin: 2px;
@@ -841,6 +841,7 @@ div.elfinder-cwd-wrapper-list .ui-icon-grip-dotted-vertical {
 .elfinder-cwd-view-icons .elfinder-cwd-icon.elfinder-cwd-bgurl:before {
   left: inherit;
   background-color: #313131;
+  width: 60px;
 }
 .elfinder-quicklook .elfinder-cwd-icon:before {
   top: 33px;
@@ -1206,7 +1207,7 @@ div.elfinder-cwd-wrapper-list .ui-icon-grip-dotted-vertical {
 .elfinder-cwd-file.ui-selected {
   background: #455158;
   color: #555;
-  width: 120px !important;
+/*  width: 120px !important;*/
 }
 .elfinder-cwd-filename input,
 .elfinder-cwd-filename textarea {
@@ -1493,4 +1494,25 @@ a.ui-button:active .ui-icon,
 .elfinder-help *,
 .elfinder-help a {
   color: #546E7A;
+}
+.elfinder-rtl .elfinder-cwd-size1 .elfinder-cwd-icon.elfinder-cwd-bgurl:before, .elfinder-rtl .elfinder-cwd-size2 .elfinder-cwd-icon.elfinder-cwd-bgurl:before, .elfinder-rtl .elfinder-cwd-size3 .elfinder-cwd-icon.elfinder-cwd-bgurl:before {
+    left: 0;
+    position: absolute;
+}
+.elfinder-cwd-view-icons .elfinder-cwd-file .ui-state-hover,
+.elfinder-cwd-view-icons .elfinder-cwd-file .ui-state-active {
+   color: #fff;
+}
+.elfinder-cwd-view-list thead td .ui-resizable-handle {top: 3px;}
+
+.elfinder-button-menu.elfinder-button-search-menu {top:6px !important;}
+.elfinder .elfinder-contextmenu-item .ui-icon.ui-icon-check {
+    margin-top: -6px;
+}
+.elfinder-contextmenu .elfinder-contextmenu-item .elfinder-contextsubmenu-item .ui-icon.ui-icon-check {
+    font-size: 13px;right: 1px;
+}
+.elfinder-ltr .elfinder-button-search .ui-icon-close{font-size: 17px;}
+.elfinder .elfinder-contextmenu-rtl .elfinder-contextmenu-arrow:before {
+    content: '\e858';
 }

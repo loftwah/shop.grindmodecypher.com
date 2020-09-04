@@ -229,6 +229,7 @@
 			'sortsize'          : 'etter størrelse',
 			'sortdate'          : 'etter dato',
 			'sortFoldersFirst'  : 'Mapper først',
+			'sortperm'          : 'Etter tillatelse',
 			
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Bekreftelse nødvendig',
@@ -315,6 +316,7 @@
 			'Code Editor' :'Kodeditor',
 			'extentiontype' :'utvidelsestype',
 			'sortAlsoTreeview':'sorter ogsåTree-visning',
+			'reinstate'            : 'Restaurere',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Ukjent',
 			'kindFolder'      : 'Mappe',
@@ -346,7 +348,7 @@
 			'kindText'        : 'Tekst dokument',
 			'kindTextPlain'   : 'Plain text',
 			'kindPHP'         : 'PHP kilde',
-			'kindCSS'         : 'Cascading style sheet',
+			'kindCSS'         : 'Kaskaderende stilark',
 			'kindHTML'        : 'HTML dokument',
 			'kindJS'          : 'Javascript',
 			'kindRTF'         : 'Rikt Tekst Format',

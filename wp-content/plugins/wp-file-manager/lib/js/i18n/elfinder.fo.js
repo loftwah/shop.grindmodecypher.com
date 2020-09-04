@@ -163,7 +163,7 @@
 			'btnUnmount': 'Aftengja', // from v2.1 added 30.04.2012
 			'btnConv'   : 'Konverter', // from v2.1 added 08.04.2014
 			'btnCwd'    : 'Her',      // from v2.1 added 22.5.2015
-			'btnVolume' : 'Volume',    // from v2.1 added 22.5.2015
+			'btnVolume' : 'rúmmál',    // from v2.1 added 22.5.2015
 			'btnAll'    : 'Øll',       // from v2.1 added 22.5.2015
 			'btnMime'   : 'MIME Slag', // from v2.1 added 22.5.2015
 			'btnFileName':'Fílunavn',  // from v2.1 added 22.5.2015
@@ -247,6 +247,7 @@
 			'sortsize'          : 'eftir stødd',
 			'sortdate'          : 'eftir dato',
 			'sortFoldersFirst'  : 'mappur fyrst',
+			'sortperm'          : 'með leyfi',
 			'sortAlsoTreeview':'Einnig Treeview',
 
 			/********************************** new items **********************************/
@@ -352,7 +353,8 @@
 			'emptyFolderDrop' : 'Mappan er tóm \\ laus til að bæta við hlutum', // from v2.1.6 added 30.12.2015
 			'emptyFolderLTap' : 'Mappan er tóm \\ í langan smell til að bæta við hlutum', // from v2.1.6 added 30.12.2015
 			'Code Editor':'Kóðar ritstjóri',
-            'extentiontype' : 'tegund af útvíkkun',
+			'extentiontype' : 'tegund af útvíkkun',
+			'reinstate'       : 'endurheimta',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Ókent',
 			'kindFolder'      : 'Mappa',
@@ -384,7 +386,7 @@
 			'kindText'        : 'Text skjal',
 			'kindTextPlain'   : 'Reinur tekstur',
 			'kindPHP'         : 'PHP kelda',
-			'kindCSS'         : 'Cascading style sheet (CSS)',
+			'kindCSS'         : 'Cascading stíl lak (CSS)',
 			'kindHTML'        : 'HTML skjal',
 			'kindJS'          : 'Javascript kelda',
 			'kindRTF'         : 'Rich Text Format (RTF)',
@@ -400,7 +402,7 @@
 			'kindSQL'         : 'SQL kelda',
 			'kindXML'         : 'XML skjal',
 			'kindAWK'         : 'AWK kelda',
-			'kindCSV'         : 'Comma separated values (CSV)',
+			'kindCSV'         : 'Kommu aðgreind gildi (CSV)',
 			'kindDOCBOOK'     : 'Docbook XML skjal',
 			'kindMarkdown'    : 'Markdown text', // added 20.7.2015
 			// images

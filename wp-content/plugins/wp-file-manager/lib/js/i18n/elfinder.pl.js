@@ -1,8 +1,9 @@
 /**
- * Polskie tłumaczenie
+ * Polski translation
  * @author Marcin Mikołajczyk <marcin@pjwstk.edu.pl>
  * @author Bogusław Zięba <bobi@poczta.fm>
- * @version 2020-03-29
+ * @author Bogusław Zięba <bobi@poczta.fm>
+ * @version 2020-08-25
  */
 (function(root, factory) {
 	if (typeof define === 'function' && define.amd) {
@@ -17,9 +18,9 @@
 		translator : 'Marcin Mikołajczyk &lt;marcin@pjwstk.edu.pl&gt;, Bogusław Zięba &lt;bobi@poczta.fm&gt;, Bogusław Zięba &lt;bobi@poczta.fm&gt;',
 		language   : 'Polski',
 		direction  : 'ltr',
-		dateFormat : 'd.m.Y H:i', // will show like: 29.03.2020 06:58
-		fancyDateFormat : '$1 H:i', // will show like: Dzisiaj 06:58
-		nonameDateFormat : 'ymd-His', // noname upload will show like: 200329-065813
+		dateFormat : 'd.m.Y H:i', // will show like: 25.08.2020 15:18
+		fancyDateFormat : '$1 H:i', // will show like: Dzisiaj 15:18
+		nonameDateFormat : 'ymd-His', // noname upload will show like: 200825-151807
 		messages   : {
 
 			/********************************** errors **********************************/
@@ -492,7 +493,7 @@
 			'exportToSave'    : 'Tego elementu nie można zapisać. Aby uniknąć utraty zmian, musisz wyeksportować go na swój komputer.', // from v2.1.44 added 1.12.2018
 			'dblclickToSelect': 'Kliknij dwukrotnie plik, aby go wybrać.', // from v2.1.47 added 22.1.2019
 			'useFullscreen'   : 'Użyj trybu pełnoekranowego', // from v2.1.47 added 19.2.2019
-            'Code Editor' :'Edytor kodu',
+
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Nieznany',
 			'kindRoot'        : 'Główny Wolumin', // from v2.1.16 added 16.10.2016

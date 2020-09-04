@@ -159,7 +159,7 @@
 			'cmdempty'     : 'Vyprázdnit složku', // from v2.1.25 added 22.06.2017
 			'cmdundo'      : 'Krok zpět', // from v2.1.27 added 31.07.2017
 			'cmdredo'      : 'Udělat to znovu', // from v2.1.27 added 31.07.2017
-			'cmdpreference': 'Preference', // from v2.1.27 added 03.08.2017
+			'cmdpreference': 'Přednost', // from v2.1.27 added 03.08.2017
 			'cmdselectall' : 'Vyberat vše', // from v2.1.28 added 15.08.2017
 			'cmdselectnone': 'Nic nevyberať', // from v2.1.28 added 15.08.2017
 			'cmdselectinvert': 'Invertovat výběr', // from v2.1.28 added 15.08.2017

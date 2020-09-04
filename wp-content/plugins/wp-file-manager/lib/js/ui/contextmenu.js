@@ -222,6 +222,7 @@ jQuery.fn.elfindercontextmenu = function(fm) {
 							subselected = null;
 						} else {
 							code == ESC && close();
+							fm.trigger('closecontextmenu');
 						}
 					} else if (code == UP || code == DOWN) {
 						if (subnodes) {

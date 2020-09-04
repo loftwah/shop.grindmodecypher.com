@@ -113,13 +113,13 @@
 			'cmdgetfile'   : 'Vælg filer',
 			'cmdhelp'      : 'Om dette produkt',
 			'cmdhome'      : 'Hjem',
-			'cmdinfo'      : 'Information',
+			'cmdinfo'      : 'underretning',
 			'cmdmkdir'     : 'Ny mappe',
 			'cmdmkfile'    : 'Ny fil',
 			'cmdopen'      : 'Åben',
 			'cmdpaste'     : 'Indsæt',
 			'cmdquicklook' : 'Vis',
-			'cmdreload'    : 'Reload',
+			'cmdreload'    : 'Genindlæs',
 			'cmdrename'    : 'Omdøb',
 			'cmdrm'        : 'Slet',
 			'cmdsearch'    : 'Find filer',
@@ -228,6 +228,7 @@
 			'sortsize'          : 'efter størrelse',
 			'sortdate'          : 'efter dato',
 			'sortFoldersFirst'  : 'Mapper først', // added 22.06.2012
+			'sortperm'          : 'med tilladelse',
 			'sortAlsoTreeview':'Også Treeview',
 			
 			/********************************** messages **********************************/
@@ -311,6 +312,7 @@
 			'emptyFolderLTap' : 'Mappen er tom \\ for et langt klik for at tilføje varer', // from v2.1.6 added 30.12.2015
 			'Code Editor':'Kodeditor',
 			'extentiontype':'udvidelsestype',
+			'reinstate'       : 'Nulstil', 
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Ukendt',
 			'kindFolder'      : 'Mappe',

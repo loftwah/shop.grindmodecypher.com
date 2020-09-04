@@ -230,6 +230,7 @@
 			'sortsize'          : 'κατά μέγεθος',
 			'sortdate'          : 'κατά ημερομηνία',
 			'sortFoldersFirst'  : 'Πρώτα οι φάκελοι', // added 22.06.2012
+			'sortperm'          : 'Με άδεια',
 			'sortAlsoTreeview':'Επίσης Treeview',
 			
 			/********************************** messages **********************************/
@@ -316,6 +317,7 @@
 			'emptyFolderLTap' : 'Ο φάκελος είναι κενός \\ για ένα μεγάλο κλικ για να προσθέσετε στοιχεία', // from v2.1.6 added 30.12.2015
 			'Code Editor':'Πρόγραμμα επεξεργασίας κώδικα',
 			'extentiontype':'τύπος επέκτασης',
+			'reinstate'       : 'παλινορθώ',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Άγνωστο',
 			'kindFolder'      : 'Φάκελος',
@@ -347,7 +349,7 @@
 			'kindText'        : 'Έγγραφο κειμένου',
 			'kindTextPlain'   : 'Απλό κείμενο',
 			'kindPHP'         : 'Κώδικας PHP',
-			'kindCSS'         : 'Cascading style sheet',
+			'kindCSS'         : 'Διαδοχικό φύλλο στυλ',
 			'kindHTML'        : 'Έγγραφο HTML',
 			'kindJS'          : 'Κώδικας Javascript',
 			'kindRTF'         : 'Rich Text Format',

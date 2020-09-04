@@ -122,3 +122,4 @@
 .elfinder .elfinder-dialog .elfinder-upload-dialog-or {
   /* */
 }
+.elfinder .elfinder-button-search.ui-state-active{background: transparent;}

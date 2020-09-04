@@ -17,6 +17,7 @@ elFinder.prototype.commands.netmount = function() {
 	
 	this.handlers = {
 		load : function() {
+			this.button.hide();
 			var fm = self.fm;
 			if (fm.cookieEnabled) {
 				fm.one('open', function() {

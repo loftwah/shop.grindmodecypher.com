@@ -230,6 +230,7 @@
 			'sortsize'          : 'לפי גודל',
 			'sortdate'          : 'לפי תאריך',
 			'sortFoldersFirst'  : 'תיקיות תחילה',
+			'sortperm'          : 'ברשות',
 			'sortAlsoTreeview'  : 'גם נוף',
 
 			/********************************** messages **********************************/
@@ -315,7 +316,8 @@
 			'emptyFolderDrop' : 'התיקיה ריקה \\ רופפת להוספת פריטים', // from v2.1.6 added 30.12.2015
 			'emptyFolderLTap' : 'התיקיה ריקה \\ לחיצה ארוכה כדי להוסיף פריטים', // from v2.1.6 added 30.12.2015
 			'Code Editor':'עורך קוד',
-            'extentiontype':'סוג הרחבה',
+			'extentiontype':'סוג הרחבה',
+			'reinstate'       : 'להחזיר',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'בלתי ידוע',
 			'kindFolder'      : 'תיקייה',

@@ -93,7 +93,7 @@
 			'errResizeSize'        : 'حجم الصورة غير صالح.',  // added 7.3.2013
 			'errResizeNoChange'    : 'لم يتغير حجم الصورة.',  // added 7.3.2013
 			'errUsupportType'      : 'نوع ملف غير مدعوم.',
-			'errNotUTF8Content'    : 'File "$1" is not in UTF-8 and cannot be edited.',  // added 9.11.2011
+			'errNotUTF8Content'    : 'الملف "$ 1" ليس بتنسيق UTF-8 ولا يمكن تحريره.',  // added 9.11.2011
 			'errNetMount'          : 'تعذر التثبيت "$1".', // added 17.04.2012
 			'errNetMountNoDriver'  : 'بروتوكول غير مدعوم.',     // added 17.04.2012
 			'errNetMountFailed'    : 'فشل جبل.',         // added 17.04.2012
@@ -103,7 +103,7 @@
 			'errFtpDownloadFile'   : 'غير قادر على تنزيل الملف من FTP: "$1"',
 			'errFtpUploadFile'     : 'تعذر تحميل الملف إلى FTP: "$1"',
 			'errFtpMkdir'          : 'تعذر إنشاء دليل بعيد على FTP: "$1"',
-			'errArchiveExec'       : 'Error while archiving files: "$1"',
+			'errArchiveExec'       : 'خطأ أثناء أرشفة الملفات: "$ 1"',
 			'errExtractExec'       : 'Error while extracting files: "$1"',
 			'errNetUnMount'        : 'غير قادر على إلغاء تحميل.', // from v2.1 added 30.04.2012
 			'errConvUTF8'          : 'Not convertible to UTF-8', // from v2.1 added 08.04.2014
@@ -180,15 +180,15 @@
 			'btnConv'   : 'تحويل', // from v2.1 added 08.04.2014
 			'btnCwd'    : 'هنا',      // from v2.1 added 22.5.2015
 			'btnVolume' : 'الصوت',    // from v2.1 added 22.5.2015
-			'btnAll'    : 'All',       // from v2.1 added 22.5.2015
+			'btnAll'    : 'الكل',       // from v2.1 added 22.5.2015
 			'btnMime'   : 'نوع التمثيل الصامت', // from v2.1 added 22.5.2015
 			'btnFileName':'اسم الملف',  // from v2.1 added 22.5.2015
 			'btnSaveClose': 'حفظ وإغلاق', // from v2.1 added 12.6.2015
 			'btnBackup' : 'دعم', // fromv2.1 added 28.11.2015
 			'btnRename'    : 'إعادة تسمية',      // from v2.1.24 added 6.4.2017
 			'btnRenameAll' : 'إعادة تسمية (الجميع)', // from v2.1.24 added 6.4.2017
-			'btnPrevious' : 'Prev ($1/$2)', // from v2.1.24 added 11.5.2017
-			'btnNext'     : 'Next ($1/$2)', // from v2.1.24 added 11.5.2017
+			'btnPrevious' : 'السابق ($1/$2)', // from v2.1.24 added 11.5.2017
+			'btnNext'     : 'التالى ($1/$2)', // from v2.1.24 added 11.5.2017
 			'btnSaveAs'   : 'حفظ إلى', // from v2.1.25 added 24.5.2017
 
 			/******************************** notifications ********************************/
@@ -295,9 +295,9 @@
 			'confirmRm'       : 'هل أنت متأكد من أنك تريد الحذف؟ لا يمكن التراجع عن هذه العملية ',
 			'confirmRepl'     : 'استبدال الملف القديم بملف جديد؟',
 			'confirmRest'     : 'استبدال العنصر بالعنصر من سلة المهملات؟', // fromv2.1.24 added 5.5.2017
-			'confirmConvUTF8' : 'Not in UTF-8<br/>Convert to UTF-8?<br/>Contents become UTF-8 by saving after conversion.', // from v2.1 added 08.04.2014
-			'confirmNonUTF8'  : 'Character encoding of this file couldn\'t be detected. It need to temporarily convert to UTF-8 for editting.<br/>Please select character encoding of this file.', // from v2.1.19 added 28.11.2016
-			'confirmNotSave'  : 'It has been modified.<br/>Losing work if you do not save changes.', // from v2.1 added 15.7.2015
+			'confirmConvUTF8' : 'ليس في UTF-8 <br/> هل تريد التحويل إلى UTF-8؟ <br/> تصبح المحتويات UTF-8 بالحفظ بعد التحويل.', // from v2.1 added 08.04.2014
+			'confirmNonUTF8'  : 'تعذر الكشف عن ترميز الأحرف لهذا الملف. يجب أن يتم التحويل مؤقتًا إلى UTF-8 للتحرير. <br/> يُرجى تحديد ترميز الأحرف لهذا الملف.', // from v2.1.19 added 28.11.2016
+			'confirmNotSave'  : 'تم تعديله. <br/> فقدان العمل إذا لم تقم بحفظ التغييرات.', // from v2.1 added 15.7.2015
 			'confirmTrash'    : 'هل أنت متأكد أنك تريد نقل العناصر إلى سلة المهملات؟', //from v2.1.24 added 29.4.2017
 			'apllyAll'        : 'تطبيق على الكل',
 			'name'            : 'الاسم',
@@ -348,7 +348,7 @@
 			'maintainer'      : 'مشارك',
 			'translator'      : 'مترجم',
 			'icons'           : 'أيقونات',
-			'dontforget'      : 'and don\'t forget to take your towel',
+			'dontforget'      : 'ولا تنس أن تأخذ المنشفة',
 			'shortcutsof'     : 'الاختصارات غير مفعلة',
 			'dropFiles'       : 'لصق الملفات هنا',
 			'or'              : 'أو',
@@ -402,21 +402,21 @@
 			'openMultiConfirm': 'You are trying to open the $1 files. هل أنت متأكد أنك تريد فتح في المتصفح؟', // from v2.1.12 added 5.14.2016
 			'emptySearch'     : 'نتائج البحث فارغة في هدف البحث.', // from v2.1.12 added 5.16.2016
 			'editingFile'     : 'يقوم بتحرير ملف.', // from v2.1.13 added 6.3.2016
-			'hasSelected'     : 'You have selected $1 items.', // from v2.1.13 added 6.3.2016
-			'hasClipboard'    : 'You have $1 items in the clipboard.', // from v2.1.13 added 6.3.2016
+			'hasSelected'     : 'لقد حددت $ 1 عنصرًا.', // from v2.1.13 added 6.3.2016
+			'hasClipboard'    : 'لديك عنصر $ 1 في الحافظة.', // from v2.1.13 added 6.3.2016
 			'incSearchOnly'   : 'البحث المتزايد هو فقط من العرض الحالي.', // from v2.1.13 added 6.30.2016
-			'reinstate'       : 'Reinstate', // from v2.1.15 added 3.8.2016
-			'complete'        : '$1 complete', // from v2.1.15 added 21.8.2016
+			'reinstate'       : 'إعادة', // from v2.1.15 added 3.8.2016
+			'complete'        : '$1 اكامل', // from v2.1.15 added 21.8.2016
 			'contextmenu'     : 'قائمة السياق', // from v2.1.15 added 9.9.2016
 			'pageTurning'     : 'تحول الصفحة', // from v2.1.15 added 10.9.2016
 			'volumeRoots'     : 'جذور الحجم', // from v2.1.16 added 16.9.2016
-			'reset'           : 'Reset', // from v2.1.16 added 1.10.2016
+			'reset'           : 'إعادة تعيين', // from v2.1.16 added 1.10.2016
 			'bgcolor'         : 'Background color', // from v2.1.16 added 1.10.2016
 			'colorPicker'     : 'Color picker', // from v2.1.16 added 1.10.2016
 			'8pxgrid'         : '8px Grid', // from v2.1.16 added 4.10.2016
 			'enabled'         : 'Enabled', // from v2.1.16 added 4.10.2016
 			'disabled'        : 'Disabled', // from v2.1.16 added 4.10.2016
-			'emptyIncSearch'  : 'نتائج البحث فارغة في العرض الحالي.\\APress [Enter] to expand search target.', // from v2.1.16 added 5.10.2016
+			'emptyIncSearch'  : 'نتائج البحث فارغة في العرض الحالي.\\APress [Enter] لتوسيع هدف البحث.', // from v2.1.16 added 5.10.2016
 			'emptyLetSearch'  : 'نتائج بحث الحرف الأول فارغة في العرض الحالي.', // from v2.1.23 added 24.3.2017
 			'textLabel'       : 'تسمية نصية', // from v2.1.17 added 13.10.2016
 			'minsLeft'        : '$1 mins left', // from v2.1.17 added 13.11.2016
@@ -425,7 +425,7 @@
 			'selectFolder'    : 'اختر مجلد', // from v2.1.20 added 13.12.2016
 			'firstLetterSearch': 'البحث بالحرف الأول', // from v2.1.23 added 24.3.2017
 			'presets'         : 'إعدادات مسبقة', // from v2.1.25 added 26.5.2017
-			'tooManyToTrash'  : 'It\'s too many items so it can\'t into trash.', // from v2.1.25 added 9.6.2017
+			'tooManyToTrash'  : 'إنها عناصر كثيرة جدًا لذا لا يمكن وضعها في سلة المهملات.', // from v2.1.25 added 9.6.2017
 			'TextArea'        : 'TextArea', // from v2.1.25 added 14.6.2017
 			'folderToEmpty'   : 'إفراغ المجلد "$1".', // from v2.1.25 added 22.6.2017
 			'filderIsEmpty'   : 'لا توجد عناصر في مجلد "$1".', // from v2.1.25 added 22.6.2017
@@ -466,10 +466,10 @@
 			'kindText'        : 'Text ملف',
 			'kindTextPlain'   : 'مستند نصي',
 			'kindPHP'         : 'PHP ملف نصي برمجي لـ',
-			'kindCSS'         : 'Cascading style sheet',
+			'kindCSS'         : 'ورقة الأنماط المتتالية',
 			'kindHTML'        : 'HTML ملف',
 			'kindJS'          : 'Javascript ملف نصي برمجي لـ',
-			'kindRTF'         : 'Rich Text Format',
+			'kindRTF'         : 'تنسيق نص منسق',
 			'kindC'           : 'C ملف نصي برمجي لـ',
 			'kindCHeader'     : 'C header ملف نصي برمجي لـ',
 			'kindCPP'         : 'C++ ملف نصي برمجي لـ',

@@ -366,7 +366,7 @@
 			'moveFiles'       : 'Di chuyển các mục',
 			'copyFiles'       : 'Sao chép các mục',
 			'restoreFiles'    : 'Khôi mục các mục', // from v2.1.24 added 5.5.2017
-			'rmFromPlaces'    : 'Remove from places',
+			'rmFromPlaces'    : 'Xóa khỏi những nơi',
 			'aspectRatio'     : 'Tỉ lệ khung hình',
 			'scale'           : 'Tỉ lệ',
 			'width'           : 'Rộng',
@@ -378,12 +378,12 @@
 			'rotate-ccw'      : 'Xoay 90 độ CCW',
 			'degree'          : '°',
 			'netMountDialogTitle' : 'Gắn kết âm lượng mạng', // added 18.04.2012
-			'protocol'            : 'Protocol', // added 18.04.2012
-			'host'                : 'Host', // added 18.04.2012
-			'port'                : 'Port', // added 18.04.2012
-			'user'                : 'User', // added 18.04.2012
-			'pass'                : 'Password', // added 18.04.2012
-			'confirmUnmount'      : 'Are you unmount $1?',  // from v2.1 added 30.04.2012
+			'protocol'            : 'Nghị định thư', // added 18.04.2012
+			'host'                : 'chủ nhà', // added 18.04.2012
+			'port'                : 'Cảng', // added 18.04.2012
+			'user'                : 'Người sử dụng', // added 18.04.2012
+			'pass'                : 'Mật khẩu', // added 18.04.2012
+			'confirmUnmount'      : 'Bạn có unmount $1?',  // from v2.1 added 30.04.2012
 			'dropFilesBrowser': 'Thả hoặc dán tệp từ trình duyệt', // from v2.1 added 30.05.2012
 			'dropPasteFiles'  : 'Thả tập tin, Dán URL hoặc hình ảnh (clipboard) tại đây', // from v2.1 added 07.04.2014
 			'encoding'        : 'Mã hóa', // from v2.1 added 19.12.2014
@@ -523,57 +523,57 @@
 			'kindOTF'         : 'Open Type font',
 			'kindRPM'         : 'RPM package',
 			// texts
-			'kindText'        : 'Text document',
-			'kindTextPlain'   : 'Plain text',
-			'kindPHP'         : 'PHP source',
-			'kindCSS'         : 'Cascading style sheet',
-			'kindHTML'        : 'HTML document',
-			'kindJS'          : 'Javascript source',
-			'kindRTF'         : 'Rich Text Format',
-			'kindC'           : 'C source',
-			'kindCHeader'     : 'C header source',
-			'kindCPP'         : 'C++ source',
-			'kindCPPHeader'   : 'C++ header source',
-			'kindShell'       : 'Unix shell script',
-			'kindPython'      : 'Python source',
-			'kindJava'        : 'Java source',
-			'kindRuby'        : 'Ruby source',
-			'kindPerl'        : 'Perl script',
-			'kindSQL'         : 'SQL source',
-			'kindXML'         : 'XML document',
-			'kindAWK'         : 'AWK source',
-			'kindCSV'         : 'Comma separated values',
-			'kindDOCBOOK'     : 'Docbook XML document',
-			'kindMarkdown'    : 'Markdown text', // added 20.7.2015
+			'kindText'        : 'Tài liệu văn bản',
+			'kindTextPlain'   : 'Văn bản thuần túy',
+			'kindPHP'         : 'Nguồn PHP',
+			'kindCSS'         : 'Bảng kiểu xếp tầng tấm',
+			'kindHTML'        : 'Tài liệu HTML',
+			'kindJS'          : 'Nguồn Javascript',
+			'kindRTF'         : 'Định dạng văn bản phong phú',
+			'kindC'           : 'Nguồn C',
+			'kindCHeader'     : 'Nguồn tiêu đề C',
+			'kindCPP'         : 'Nguồn C ++',
+			'kindCPPHeader'   : 'Nguồn tiêu đề C ++',
+			'kindShell'       : 'Tập lệnh shell Unix',
+			'kindPython'      : 'Nguồn Python',
+			'kindJava'        : 'Nguồn Java',
+			'kindRuby'        : 'Nguồn Ruby',
+			'kindPerl'        : 'Tập lệnh Perl',
+			'kindSQL'         : 'Nguồn SQL',
+			'kindXML'         : 'Tài liệu XML',
+			'kindAWK'         : 'Nguồn AWK',
+			'kindCSV'         : 'Các giá trị được phân tách bằng dấu phẩy',
+			'kindDOCBOOK'     : 'Tài liệu XML Docbook',
+			'kindMarkdown'    : 'Văn bản đánh dấu', // added 20.7.2015
 			// images
-			'kindImage'       : 'Image',
-			'kindBMP'         : 'BMP image',
-			'kindJPEG'        : 'JPEG image',
-			'kindGIF'         : 'GIF Image',
-			'kindPNG'         : 'PNG Image',
-			'kindTIFF'        : 'TIFF image',
-			'kindTGA'         : 'TGA image',
-			'kindPSD'         : 'Adobe Photoshop image',
-			'kindXBITMAP'     : 'X bitmap image',
-			'kindPXM'         : 'Pixelmator image',
+			'kindImage'       : 'Hình ảnh',
+			'kindBMP'         : 'BMP Hình ảnh',
+			'kindJPEG'        : 'JPEG Hình ảnh',
+			'kindGIF'         : 'GIF Hình ảnh',
+			'kindPNG'         : 'PNG Hình ảnh',
+			'kindTIFF'        : 'TIFF Hình ảnh',
+			'kindTGA'         : 'TGA Hình ảnh',
+			'kindPSD'         : 'Hình ảnh Adobe Photoshop',
+			'kindXBITMAP'     : 'Hình ảnh bitmap X',
+			'kindPXM'         : 'Hình ảnh Pixelmator',
 			// media
-			'kindAudio'       : 'Audio media',
-			'kindAudioMPEG'   : 'MPEG audio',
-			'kindAudioMPEG4'  : 'MPEG-4 audio',
-			'kindAudioMIDI'   : 'MIDI audio',
-			'kindAudioOGG'    : 'Ogg Vorbis audio',
-			'kindAudioWAV'    : 'WAV audio',
-			'AudioPlaylist'   : 'MP3 playlist',
-			'kindVideo'       : 'Video media',
-			'kindVideoDV'     : 'DV movie',
-			'kindVideoMPEG'   : 'MPEG movie',
-			'kindVideoMPEG4'  : 'MPEG-4 movie',
-			'kindVideoAVI'    : 'AVI movie',
-			'kindVideoMOV'    : 'Quick Time movie',
-			'kindVideoWM'     : 'Windows Media movie',
-			'kindVideoFlash'  : 'Flash movie',
-			'kindVideoMKV'    : 'Matroska movie',
-			'kindVideoOGG'    : 'Ogg movie'
+			'kindAudio'       : 'phương tiện truyền thông âm thanh',
+			'kindAudioMPEG'   : 'Âm thanh MPEG',
+			'kindAudioMPEG4'  : 'Âm thanh MPEG-4',
+			'kindAudioMIDI'   : 'Âm thanh MIDI',
+			'kindAudioOGG'    : 'Âm thanh Ogg Vorbis',
+			'kindAudioWAV'    : 'Âm thanh WAV',
+			'AudioPlaylist'   : 'Danh sách nhạc MP3',
+			'kindVideo'       : 'Phương tiện video',
+			'kindVideoDV'     : 'Phim DV',
+			'kindVideoMPEG'   : 'Phim MPEG',
+			'kindVideoMPEG4'  : 'Phim MPEG-4',
+			'kindVideoAVI'    : 'Phim AVI',
+			'kindVideoMOV'    : 'Phim Quick Time',
+			'kindVideoWM'     : 'Phim Windows Media',
+			'kindVideoFlash'  : 'Phim flash',
+			'kindVideoMKV'    : 'Phim matroska',
+			'kindVideoOGG'    : 'Phim ogg'
 		}
 	};
 }));

@@ -72,7 +72,7 @@
 			'errMove'              : '"$1" ni možno premakniti.',
 			'errCopyInItself'      : '"$1" ni možno kopirati samo vase.',
 			'errRm'                : '"$1" ni možno izbrisati.',
-			'errRmSrc'             : 'Unable remove source file(s).',
+			'errRmSrc'             : 'Ni mogoče odstraniti vir datoteka (e).',
 			'errExtract'           : 'Datotek iz "$1" ni možno odpakirati.',
 			'errArchive'           : 'Napaka pri delanju arhiva.',
 			'errArcType'           : 'Nepodprta vrsta arhiva.',
@@ -82,12 +82,12 @@
 			'errArcSymlinks'       : 'Zaradi varnostnih razlogov arhiva ki vsebuje "symlinks" ni možno odpakirati.',
 			'errArcMaxSize'        : 'Datoteke v arhivu presegajo največjo dovoljeno velikost.',
 			'errResize'            : '"$1" ni možno razširiti.',
-			'errResizeDegree'      : 'Invalid rotate degree.',
-			'errResizeRotate'      : 'Unable to rotate image.',
-			'errResizeSize'        : 'Invalid image size.',
-			'errResizeNoChange'    : 'Image size not changed.',
+			'errResizeDegree'      : 'Neveljavna vrtenje stopnja.',
+			'errResizeRotate'      : 'Slike ni mogoče zavrteti.',
+			'errResizeSize'        : 'Neveljavna velikost slike.',
+			'errResizeNoChange'    : 'Velikost slike ni spremenjena.',
 			'errUsupportType'      : 'Nepodprta vrsta datoteke.',
-			'errNotUTF8Content'    : 'File "$1" is not in UTF-8 and cannot be edited.',  // added 9.11.2011
+			'errNotUTF8Content'    : 'Datoteke "$1" ni v UTF-8 in je ni mogoče urejati.',  // added 9.11.2011
 			'errNetMount'          : 'Unable to mount "$1".', // added 17.04.2012
 			'errNetMountNoDriver'  : 'Unsupported protocol.',     // added 17.04.2012
 			'errNetMountFailed'    : 'Mount failed.',         // added 17.04.2012
@@ -236,6 +236,7 @@
 			'sortsize'          : 'po velikosti',
 			'sortdate'          : 'po datumu',
 			'sortFoldersFirst'  : 'Najprej mape',
+			'sortperm'          : 'Po dovoljenju',
 			'sortAlsoTreeview':'Tudi Treeview',
 			
 			/********************************** messages **********************************/
@@ -324,6 +325,7 @@
 			'dropFilesBrowser': 'Povlecite in spustite ali prilepite iz brskalnika', // from v2.1 added 30.05.2012
 			'dropPasteFiles'  : 'Tu povlecite in spustite ali prilepite datoteke', // from v2.1 added 07.04.2014
 			'extentiontype' : 'vrsta podaljška',
+			'reinstate'       : 'Ponastaviti',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Neznan',
 			'kindFolder'      : 'Mapa',
@@ -355,10 +357,10 @@
 			'kindText'        : 'Tekst dokument',
 			'kindTextPlain'   : 'Samo tekst',
 			'kindPHP'         : 'PHP koda',
-			'kindCSS'         : 'Cascading style sheet (CSS)',
+			'kindCSS'         : 'Kaskadno slogovno datoteko (CSS)',
 			'kindHTML'        : 'HTML dokument',
 			'kindJS'          : 'Javascript koda',
-			'kindRTF'         : 'Rich Text Format (RTF)',
+			'kindRTF'         : 'Oblika obogatenega besedila (RTF)',
 			'kindC'           : 'C koda',
 			'kindCHeader'     : 'C header koda',
 			'kindCPP'         : 'C++ koda',

@@ -151,7 +151,7 @@
 			'btnNo'     : 'ياق',
 			'btnYes'    : 'ھەئە',
 			'btnMount'  : 'يۈكلەش',  // added 18.04.2012
-			'btnApprove': 'Goto $ 1 & تەستىق', // from v2.1 added 26.04.2012
+			'btnApprove': 'Goto $1 & تەستىق', // from v2.1 added 26.04.2012
 			'btnUnmount': 'تەڭداشسىز', // from v2.1 added 30.04.2012
 			'btnConv'   : 'ئۆزگەرتىش', // from v2.1 added 08.04.2014
 			'btnCwd'    : 'بۇ يەردە',      // from v2.1 added 22.5.2015
@@ -238,6 +238,8 @@
 			'sortkind'          : 'شەكلى ',
 			'sortsize'          : 'چوڭلىقى',
 			'sortdate'          : 'ۋاقتى',
+			'sortperm'          : 'ئىجازەت بىلەن',
+			'sortAlsoTreeview'  : 'يەنە Treeview',
 			'sortFoldersFirst'  : 'قىسقۇچلار باشتا',
 
 			/********************************** messages **********************************/
@@ -326,7 +328,8 @@
 			'dropFilesBrowser': 'توركۆرگۈدىن سۆرەپ تاشلاش ، تاشلاش ياكى چاپلاش', // from v2.1 added 30.05.2012
 			'dropPasteFiles'  : 'ھۆججەتلەرنى بۇ يەرگە سۆرەپ تاشلاڭ', // from v2.1 added 07.04.2014
 			'Code Editor':'كود تەھرىرلىگۈچى',
-            'extentiontype':'كېڭەيتىش تىپى',
+			'extentiontype':'كېڭەيتىش تىپى',
+			'reinstate'       : 'قايتا تەڭشەڭ',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'ئېنىق ئەمەس',
 			'kindFolder'      : 'ھۈججەت قىسقۇچ',

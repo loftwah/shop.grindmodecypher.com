@@ -75,12 +75,12 @@
 			'errCopyInItself'      : '"$1" nem másolható saját magára.',
 			'errRm'                : '"$1" törlése nem sikerült.',
 			'errRmSrc'             : 'Forrásfájl(ok) eltávolítása sikertelen.',
-			'errExtract'           : 'Unable to extract files from "$1".',
-			'errArchive'           : 'Unable to create archive.',
+			'errExtract'           : 'Nem sikerült kivonni a fájlokat a "$1".',
+			'errArchive'           : 'Nem sikerült archívumot létrehozni.',
 			'errArcType'           : 'Nem támogatott archívum típus.',
-			'errNoArchive'         : 'File is not archive or has unsupported archive type.',
-			'errCmdNoSupport'      : 'Backend does not support this command.',
-			'errReplByChild'       : 'The folder “$1” can’t be replaced by an item it contains.',
+			'errNoArchive'         : 'A fájl nem archív, vagy nem támogatott archívumtípust tartalmaz.',
+			'errCmdNoSupport'      : 'A backend nem támogatja ezt a parancsot.',
+			'errReplByChild'       : 'Az „$ 1” mappát nem lehet helyettesíteni egy abban található elemmel.',
 			'errArcSymlinks'       : 'For security reason denied to unpack archives contains symlinks or files with not allowed names.', // edited 24.06.2012
 			'errArcMaxSize'        : 'Archive files exceeds maximum allowed size.',
 			'errResize'            : 'Unable to resize "$1".',
@@ -249,7 +249,7 @@
 			'sortsize'          : 'méret szerint',
 			'sortdate'          : 'dátum szerint',
 			'sortFoldersFirst'  : 'Először a mappák',
-			'sortAlsoTreeview':'A Treeview is',
+			'sortAlsoTreeview':'szintén Treeview',
 			'sortperm'          : 'engedély alapján', // from v2.1.13 added 13.06.2016
 			'sortmode'          : 'mód szerint',       // from v2.1.13 added 13.06.2016
 			'sortowner'         : 'a tulajdonos által',      // from v2.1.13 added 13.06.2016
@@ -261,12 +261,12 @@
 			'Archive'           : 'Archív',  // from v2.1 added 10.11.2015
 
 			/********************************** messages **********************************/
-			'confirmReq'      : 'Confirmation required',
+			'confirmReq'      : 'Megerősítés szükséges',
 			'confirmRm'       : 'Valóban törölni akarja a kijelölt adatokat?<br/>Ez később nem fordítható vissza!',
-			'confirmRepl'     : 'Replace old file with new one?',
-			'confirmConvUTF8' : 'Not in UTF-8<br/>Convert to UTF-8?<br/>Contents become UTF-8 by saving after conversion.', // from v2.1 added 08.04.2014
-			'confirmNotSave'  : 'It has been modified.<br/>Losing work if you do not save changes.', // from v2.1 added 15.7.2015
-			'apllyAll'        : 'Apply to all',
+			'confirmRepl'     : 'Cserélje le a régi fájlt újra?',
+			'confirmConvUTF8' : 'Nincs UTF-8 <br/> Átalakítás UTF-8? <br/> Tartalom vált UTF-8-megtakarítás átalakítás után.', // from v2.1 added 08.04.2014
+			'confirmNotSave'  : 'Megváltozott. <br/> Munka elvesztése, ha nem menti el a módosításokat.', // from v2.1 added 15.7.2015
+			'apllyAll'        : 'Mindenkire vonatkozik',
 			'name'            : 'Név',
 			'size'            : 'Méret',
 			'perms'           : 'Jogok',
@@ -376,7 +376,8 @@
 			'dropFilesBrowser': 'Telepítse vagy illessze be a böngészőfájlokat', // from v2.1 added 30.05.2012
 			'dropPasteFiles'  : 'Telepítsen itt fájlokat, vagy illessze be az URL-eket vagy képeket (kivágásokat)',
 			'Code Editor': 'Kódszerkesztő',
-            'extentiontype':'kiterjesztés típusa',
+			'extentiontype':'kiterjesztés típusa',
+			'reinstate'       : 'Visszaállítani',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Ismeretlen',
 			'kindFolder'      : 'Mappa',
@@ -406,9 +407,9 @@
 			'kindRPM'         : 'RPM csomag',
 			// texts
 			'kindText'        : 'Szöveges dokumentum',
-			'kindTextPlain'   : 'Plain text',
+			'kindTextPlain'   : 'Egyszerű szöveg',
 			'kindPHP'         : 'PHP forráskód',
-			'kindCSS'         : 'Cascading style sheet',
+			'kindCSS'         : 'Lépcsőzetes stíluslap',
 			'kindHTML'        : 'HTML dokumentum',
 			'kindJS'          : 'Javascript forráskód',
 			'kindRTF'         : 'Rich Text Format',
@@ -424,7 +425,7 @@
 			'kindSQL'         : 'SQL forráskód',
 			'kindXML'         : 'XML dokumentum',
 			'kindAWK'         : 'AWK forráskód',
-			'kindCSV'         : 'Comma separated values',
+			'kindCSV'         : 'Vesszővel elválasztott értékek',
 			'kindDOCBOOK'     : 'Docbook XML dokumentum',
 			'kindMarkdown'    : 'Markdown text', // added 20.7.2015
 			// images

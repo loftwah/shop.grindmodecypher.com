@@ -245,6 +245,7 @@
 			'sortsize'          : 'după mărime',
 			'sortdate'          : 'după dată',
 			'sortFoldersFirst'  : 'Dosarele primele',
+			'sortperm'          : 'Prin Permisiunea',
 			'sortAlsoTreeview':'De asemenea Treeview',
 
 			/********************************** new items **********************************/
@@ -350,7 +351,8 @@
 			'emptyFolder'     : 'Folder gol', // from v2.1.6 added 30.12.2015
 			'emptyFolderDrop' : 'Treceți aici pentru a adăuga un folder gol \\ Un element', // from v2.1.6 added 30.12.2015
 			'emptyFolderLTap' : 'Apăsați lung aici pentru a adăuga un folder gol \\ Un element', // from v2.1.6 added 30.12.2015
-             'extentiontype'     :'tip de extensie',
+			 'extentiontype'     :'tip de extensie',
+			 'reinstate'       : 'restabiliți',
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Necunoscut',
 			'kindFolder'      : 'Dosar',
