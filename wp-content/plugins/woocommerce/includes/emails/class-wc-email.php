@@ -20,7 +20,7 @@ if ( class_exists( 'WC_Email', false ) ) {
  *
  * @class       WC_Email
  * @version     2.5.0
- * @package     WooCommerce/Classes/Emails
+ * @package     WooCommerce\Classes\Emails
  * @extends     WC_Settings_API
  */
 class WC_Email extends WC_Settings_API {
@@ -1048,11 +1048,14 @@ class WC_Email extends WC_Settings_API {
 				var view = '" . esc_js( __( 'View template', 'woocommerce' ) ) . "';
 				var hide = '" . esc_js( __( 'Hide template', 'woocommerce' ) ) . "';
 
-				jQuery( 'a.toggle_editor' ).text( view ).toggle( function() {
-					jQuery( this ).text( hide ).closest(' .template' ).find( '.editor' ).slideToggle();
-					return false;
-				}, function() {
-					jQuery( this ).text( view ).closest( '.template' ).find( '.editor' ).slideToggle();
+				jQuery( 'a.toggle_editor' ).text( view ).click( function() {
+					var label = hide;
+
+					if ( jQuery( this ).closest(' .template' ).find( '.editor' ).is(':visible') ) {
+						var label = view;
+					}
+
+					jQuery( this ).text( label ).closest(' .template' ).find( '.editor' ).slideToggle();
 					return false;
 				} );
 

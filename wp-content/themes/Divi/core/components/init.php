@@ -8,6 +8,7 @@ function et_core_init() {
 	ET_Core_API_Spam_Providers::instance();
 	ET_Core_Cache_Directory::instance();
 	ET_Core_PageResource::startup();
+	ET_Core_CompatibilityWarning::instance();
 
 	if ( defined( 'ET_CORE_UPDATED' ) ) {
 		global $wp_rewrite;
@@ -218,11 +219,10 @@ function et_core_clear_wp_cache( $post_id = '' ) {
 
 			// WP Optimize.
 			if ( class_exists( 'WP_Optimize' ) && defined( 'WPO_PLUGIN_MAIN_PATH' ) ) {
-				include_once WPO_PLUGIN_MAIN_PATH . 'cache/class-cache-commands.php';
-
-				if ( class_exists( 'WP_Optimize_Cache_Commands' ) ) {
-					$wpo_cache_commands = new WP_Optimize_Cache_Commands();
-					$wpo_cache_commands->purge_page_cache();
+				if ( '' !== $post_id && is_callable( 'WPO_Page_Cache::delete_single_post_cache' ) ) {
+					WPO_Page_Cache::delete_single_post_cache( $post_id );
+				} elseif ( is_callable( array( 'WP_Optimize', 'get_page_cache' ) ) && is_callable( array( WP_Optimize()->get_page_cache(), 'purge' ) ) ) {
+					WP_Optimize()->get_page_cache()->purge();
 				}
 			}
 	} catch( Exception $err ) {

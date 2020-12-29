@@ -60,7 +60,7 @@ jQuery(document).ready(function ($) {
       '%s': '%s',
       'value': value
     };
-
+    fbq('set', 'agent', '%s', '%s');
     if(event_id){
       fbq('track', 'AddToCart', param, {'eventID': event_id});
     }
@@ -122,7 +122,7 @@ jQuery(document).ready(function ($) {
   }
 
   public static function injectAddToCartEventId(){
-    if(FacebookPluginUtils::isAdmin()
+    if(FacebookPluginUtils::isInternalUser()
       || !FacebookWordpressOptions::getUseS2S()){
       return;
     }
@@ -143,7 +143,7 @@ jQuery(document).ready(function ($) {
       //Getting form data
       parse_str( $_POST['post_data'], $post_data );
       if(isset($post_data['facebook_event_id'])){
-        //Starting CAPI event creation
+        //Starting Conversions API event creation
         $event_id = $post_data['facebook_event_id'];
         $server_event = ServerEventFactory::safeCreateEvent(
           'AddToCart',
@@ -158,14 +158,16 @@ jQuery(document).ready(function ($) {
   }
 
   public static function injectAddToCartListener($download_id) {
-    if (FacebookPluginUtils::isAdmin()) {
+    if (FacebookPluginUtils::isInternalUser()) {
       return;
     }
 
     $listener_code = sprintf(
       self::$addToCartJS,
       FacebookPixel::FB_INTEGRATION_TRACKING_KEY,
-      self::TRACKING_NAME
+      self::TRACKING_NAME,
+      FacebookWordpressOptions::getAgentString(),
+      FacebookWordpressOptions::getPixelId()
     );
 
     printf("
@@ -179,7 +181,7 @@ jQuery(document).ready(function ($) {
   }
 
   public static function injectInitiateCheckoutEvent() {
-    if (FacebookPluginUtils::isAdmin() || !function_exists('EDD')) {
+    if (FacebookPluginUtils::isInternalUser() || !function_exists('EDD')) {
       return;
     }
 
@@ -201,7 +203,7 @@ jQuery(document).ready(function ($) {
   }
 
   public static function trackPurchaseEvent($payment, $edd_receipt_args) {
-    if (FacebookPluginUtils::isAdmin() || empty($payment->ID)) {
+    if (FacebookPluginUtils::isInternalUser() || empty($payment->ID)) {
       return;
     }
 
@@ -233,7 +235,7 @@ jQuery(document).ready(function ($) {
   }
 
   public static function injectViewContentEvent($download_id) {
-    if (FacebookPluginUtils::isAdmin() || empty($download_id)) {
+    if (FacebookPluginUtils::isInternalUser() || empty($download_id)) {
       return;
     }
 

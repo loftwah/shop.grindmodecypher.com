@@ -1,7 +1,5 @@
-Divi Theme by Elegant Themes
-============================
-
-> Copyright (C) 2016, Elegant Themes, Inc.
+# Divi Theme
+![CI](https://github.com/elegantthemes/Divi/workflows/CI/badge.svg) ![Inspections](https://github.com/elegantthemes/Divi/workflows/Inspections/badge.svg)
 
 Divi is a powerful multipurpose WordPress theme built atop the Divi Builder
 framework, a revolutionary drag and drop page builder for WordPress. This theme
@@ -12,8 +10,7 @@ our awesome WordPress themes and plugins.
 https://www.elegantthemes.com/join.php
 
 
-Getting Started
----------------
+## Getting Started
 
 To get started using Divi, we recommend browsing our extensive theme documentation
 at http://www.elegantthemes.com/gallery/divi/documentation/. Below are listed 
@@ -36,3 +33,6 @@ http://www.elegantthemes.com/gallery/divi/documentation/divi-library/
 
 **6. Using The Divi Theme Customizer**
 http://www.elegantthemes.com/gallery/divi/documentation/customizer/
+
+## Copyright
+> **© Copyright 2013-2020, Elegant Themes, Inc.**

@@ -24,28 +24,28 @@ import sortBy from 'lodash/sortBy';
 import $ from 'jquery';
 
 // Internal dependencies
-import ETScriptDocumentStore from './document';
-import ETScriptWindowStore from './window';
-import {
-  isBuilder,
-} from '../utils/utils';
 import {
   isOrHasValue,
 } from '@frontend-builder/utils/responsive-options-pure';
 import {
   top_window,
 } from '@core-ui/utils/frame-helpers';
+import ETScriptDocumentStore from './document';
+import ETScriptWindowStore from './window';
 import {
   getOffsets,
-  isTB,
-  isLBB,
-  isVB,
+  isBFB,
+  isBuilder,
   isDiviTheme,
   isExtraTheme,
-  maybeIncreaseEmitterMaxListeners,
+  isLBB,
+  isTB,
+  isVB,
   maybeDecreaseEmitterMaxListeners,
+  maybeIncreaseEmitterMaxListeners,
   registerFrontendComponent,
 } from '../utils/utils';
+
 import {
   filterInvalidModules,
   getLimit,
@@ -71,7 +71,7 @@ const hasFixedNav = $body.hasClass('et_fixed_nav');
 const savedStickyElements = filterInvalidModules(cloneDeep(window.et_pb_sticky_elements));
 
 /**
- * Defaults of known non module elements which its stickiness needs to be considered
+ * Defaults of known non module elements which its stickiness needs to be considered.
  *
  * @since 4.6.0
  *
@@ -88,7 +88,12 @@ const elementsDefaults = {
       // Admin bar doesn't have fixed position in smaller breakpoint
       const isPositionFixed = 'fixed' === top_window.jQuery(elements.wpAdminBar.selector).css('position');
 
-      return !isTB && !isLBB && isPositionFixed;
+      // When Responsive View's control is visible, admin bar offset becomes irrelevant. Note:
+      // At this point the `height` value might not be updated yet, so manually get the height
+      // value via `getHeight()` method.
+      const hasVbAppFramePaddingTop = elements.builderAppFramePaddingTop.getHeight() > 0;
+
+      return ! hasVbAppFramePaddingTop && ! isTB && ! isLBB && isPositionFixed;
     },
   },
   diviFixedPrimaryNav: {
@@ -114,7 +119,7 @@ const elementsDefaults = {
       const $mainHeader = $(elementsDefaults.diviFixedPrimaryNav.selector);
 
       // Bail if this isn't Divi
-      if (!isDiviTheme && 1 > $mainHeader.length) {
+      if (! isDiviTheme && 1 > $mainHeader.length) {
         return 0;
       }
 
@@ -169,7 +174,7 @@ const elementsDefaults = {
     height: 0,
     window: 'app',
     condition: () => {
-      if (!isObject(ETScriptWindowStore) || !isExtraTheme) {
+      if (! isObject(ETScriptWindowStore) || ! isExtraTheme) {
         return false;
       }
 
@@ -189,7 +194,7 @@ const elementsDefaults = {
       const $mainHeader = $(elementsDefaults.extraFixedPrimaryNav.selector);
 
       // Bail if this isn't Extra
-      if (!isExtraTheme && 1 > $mainHeader.length) {
+      if (! isExtraTheme && 1 > $mainHeader.length) {
         return 0;
       }
 
@@ -217,6 +222,20 @@ const elementsDefaults = {
       return parseFloat(height);
     },
   },
+  builderAppFramePaddingTop: {
+    id: 'builderAppFramePaddingTop',
+    selector: isBFB ? '#et-bfb-app-frame' : '#et-fb-app-frame',
+    exist: false,
+    height: 0,
+    window: 'top',
+    getHeight: () => {
+      const selector = elements.builderAppFramePaddingTop.selector;
+      const cssProperty = isBFB ? 'marginTop' : 'paddingTop';
+      const paddingTop = top_window.jQuery(selector).css(cssProperty);
+
+      return parseFloat(paddingTop);
+    }
+  },
   tbHeader: {
     id: 'et-tb-branded-modal__header',
     selector: '.et-tb-branded-modal__header',
@@ -233,6 +252,7 @@ const elementsDefaults = {
   },
   gbHeader: {
     id: 'edit-post-header',
+
     // This selector exist on WP 5.4 and below; hence these are used instead of `.block-editor-editor-skeleton__header`
     selector: '.edit-post-header',
     exist: false,
@@ -257,7 +277,7 @@ const elementsDefaults = {
 };
 
 /**
- * Known non module elements which its stickiness needs to be considered
+ * Known non module elements which its stickiness needs to be considered.
  *
  * @since 4.6.0
  *
@@ -267,7 +287,7 @@ const elements = cloneDeep(elementsDefaults);
 
 // States
 /**
- * Hold all sticky elements modules' properties
+ * Hold all sticky elements modules' properties.
  *
  * @since 4.6.0
  *
@@ -280,13 +300,13 @@ let modules = {};
  * Sticky Elements store.
  *
  * This store stores selected properties of all sticky elements on the page so a sticky element
- * can use other sticky element's calculated value quickly
+ * can use other sticky element's calculated value quickly.
  *
  * @since 4.6.0
  */
 class ETScriptStickyStore extends EventEmitter {
   /**
-   * ETScriptStickyStore constructor
+   * ETScriptStickyStore constructor.
    *
    * @since 4.6.0
    */
@@ -326,7 +346,7 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Get registered modules
+   * Get registered modules.
    *
    * @since 4.6.0
    *
@@ -341,7 +361,7 @@ class ETScriptStickyStore extends EventEmitter {
    *
    * @since 4.6.0
    *
-   * @return {array}
+   * @returns {Array}
    */
   get responsiveOptions() {
     const options = [
@@ -360,7 +380,7 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Update selected module / elements prop on document height change
+   * Update selected module / elements prop on document height change.
    *
    * @since 4.6.0
    */
@@ -379,10 +399,14 @@ class ETScriptStickyStore extends EventEmitter {
 
       this.setElementProp('extraFixedPrimaryNav', 'height', getExtraFixedMainHeaderHeight());
     }
+
+    if (this.getElementProp('builderAppFramePaddingTop', 'exist', false)) {
+      this.setElementHeight('builderAppFramePaddingTop');
+    }
   }
 
   /**
-   * Builder did mount listener callback
+   * Builder did mount listener callback.
    *
    * @since 4.6.0
    */
@@ -400,7 +424,7 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Builder settings change listener callback
+   * Builder settings change listener callback.
    *
    * @since 4.6.0
    *
@@ -410,7 +434,7 @@ class ETScriptStickyStore extends EventEmitter {
   onBuilderSettingsChange = (event, forceUpdate = false) => {
     const settings = get(event, 'detail.settings');
 
-    if (isEqual(settings, this.modules) && !forceUpdate) {
+    if (isEqual(settings, this.modules) && ! forceUpdate) {
       return;
     }
 
@@ -429,41 +453,37 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Get id of all modules
+   * Get id of all modules.
    *
    * @since 4.6.0
    *
    * @type {object} modules
    *
-   * @return {array}
+   * @returns {Array}
    */
-  getModulesId = modules => {
-    return map(modules, module => module.id);
-  }
+  getModulesId = modules => map(modules, module => module.id)
 
   /**
-   * Get modules based on its rendering position; also consider its offset surrounding setting if needed
+   * Get modules based on its rendering position; also consider its offset surrounding setting if needed.
    *
    * @since 4.6.0
-   *
-   * @param {string}      top|bottom
-   * @param {string|bool} on|off|false when false, ignore offset surrounding value
-   *
-   * @return {bool}
+   * @param {string} top|bottom
+   * @param position
+   * @param offsetSurrounding
+   * @param {string|bool} on|off|false When false, ignore offset surrounding value.
+   * @returns {bool}
    */
-  getModulesByPosition = (position, offsetSurrounding = false) => {
-    return filter(modules, (module, id) => {
-      // Check offset surrounding value; if param set to `false`, ignore it. If `on`|`off`, only
-      // pass module that has matching value
-      const isOffsetSurrounding = !offsetSurrounding ? true : isOrHasValue(module.offsetSurrounding, offsetSurrounding);
+  getModulesByPosition = (position, offsetSurrounding = false) => filter(modules, (module, id) => {
+    // Check offset surrounding value; if param set to `false`, ignore it. If `on`|`off`, only
+    // pass module that has matching value
+    const isOffsetSurrounding = ! offsetSurrounding ? true : isOrHasValue(module.offsetSurrounding, offsetSurrounding);
 
-      return includes(['top_bottom', position], this.getProp(id, 'position')) && isOffsetSurrounding;
-    });
-  }
+    return includes(['top_bottom', position], this.getProp(id, 'position')) && isOffsetSurrounding;
+  })
 
   /**
    * Sort modules from top to down based on offset prop. Passed module has no id or index prop so
-   * offset which visually indicate module's position in the page will do
+   * offset which visually indicate module's position in the page will do.
    *
    * @since 4.6.0
    */
@@ -489,17 +509,17 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Set prop value
+   * Set prop value.
    *
    * @since 4.6.0
    *
-   * @param {string} id need to be unique
+   * @param {string} id Need to be unique.
    * @param {string} name
    * @param {string} value
    */
   setProp = (id, name, value) => {
     // Skip updating if the id isn't exist
-    if (!has(modules, id) || isUndefined(id)) {
+    if (! has(modules, id) || isUndefined(id)) {
       return;
     }
 
@@ -514,16 +534,15 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Get prop
+   * Get prop.
    *
    * @since 4.6.0
-   *
    * @param {string} id
    * @param {string} name
-   * @param {mixed}  defaultValue
-   * @param {bool}   return
-   *
-   * @return {mixed}
+   * @param {mixed} defaultValue
+   * @param returnCurrentBreakpoint
+   * @param {bool} return
+   * @returns {mixed}
    */
   getProp = (id, name, defaultValue, returnCurrentBreakpoint = true) => {
     const value        = get(modules, `${id}.${name}`, defaultValue);
@@ -536,17 +555,17 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Set known elements' props
+   * Set known elements' props.
    *
    * @since 4.6.0
    */
   setElementsProps = () => {
     forEach(elements, (settings, name) => {
-      if (!has(settings, 'window')) {
+      if (! has(settings, 'window')) {
         return;
       }
 
-      if (has(settings, 'condition') && isFunction(settings.condition) && !settings.condition()) {
+      if (has(settings, 'condition') && isFunction(settings.condition) && ! settings.condition()) {
         // Reset props if it fails on condition check
         this.setElementProp(name, 'exist', get(elementsDefaults, `${name}.exist`, false));
         this.setElementProp(name, 'height', get(elementsDefaults, `${name}.height`, 0));
@@ -566,11 +585,11 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Set known element prop value
+   * Set known element prop value.
    *
    * @since 4.6.0
    *
-   * @param {string} id need to be unique
+   * @param {string} id Need to be unique.
    * @param {string} name
    * @param {string} value
    */
@@ -586,7 +605,7 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Get known element prop
+   * Get known element prop.
    *
    * @since 4.6.0
    *
@@ -594,14 +613,12 @@ class ETScriptStickyStore extends EventEmitter {
    * @param {string} name
    * @param {mixed} defaultValue
    *
-   * @return {mixed}
+   * @returns {mixed}
    */
-  getElementProp = (id, name, defaultValue) => {
-    return get(elements, `${id}.${name}`, defaultValue);
-  }
+  getElementProp = (id, name, defaultValue) => get(elements, `${id}.${name}`, defaultValue)
 
   /**
-   * Set element height
+   * Set element height.
    *
    * @since 4.6.0
    *
@@ -622,14 +639,13 @@ class ETScriptStickyStore extends EventEmitter {
       } else {
         height += currentWindow.jQuery(item).outerHeight();
       }
-
     });
 
     this.setElementProp(name, 'height', parseInt(height));
   }
 
   /**
-   * Generate offset modules for offset surrounding option
+   * Generate offset modules for offset surrounding option.
    *
    * @since 4.6.0
    */
@@ -639,13 +655,13 @@ class ETScriptStickyStore extends EventEmitter {
     // This needs to be on earlier and different loop than the one below for generating offset
     // modules because in builder the modules need to be sorted from top to down first
     forEach(this.modules, (module, id) => {
-      const $module = $(this.getProp(id, 'selector'));
-      const moduleWidth = parseInt($module.outerWidth());
-      const moduleHeight = parseInt($module.outerHeight());
+      const $module       = $(this.getProp(id, 'selector'));
+      const moduleWidth   = parseInt($module.outerWidth());
+      const moduleHeight  = parseInt($module.outerHeight());
       const moduleOffsets = getOffsets($module, moduleWidth, moduleHeight);
 
       // Only update dimension props if module isn't on sticky state
-      if (!this.isSticky(id)) {
+      if (! this.isSticky(id)) {
         this.setProp(id, 'width', moduleWidth);
         this.setProp(id, 'height', moduleHeight);
         this.setProp(id, 'offsets', moduleOffsets);
@@ -676,7 +692,7 @@ class ETScriptStickyStore extends EventEmitter {
       this.sortModules();
     }
 
-    const modules                 = this.modules
+    const { modules }             = this;
     const modulesSize             = size(modules);
     const topPositionModules      = this.getModulesByPosition('top', 'on');
     const topPositionModulesId    = this.getModulesId(topPositionModules);
@@ -684,7 +700,7 @@ class ETScriptStickyStore extends EventEmitter {
     const bottomPositionModulesId = this.getModulesId(bottomPositionModules);
 
     // Capture top/bottom offsetModules updates for later loop
-    let offsetModulesUpdates = [];
+    const offsetModulesUpdates = [];
 
     forEach(modules, (module, id) => {
       if (isOrHasValue(module.offsetSurrounding, 'on')) {
@@ -692,7 +708,7 @@ class ETScriptStickyStore extends EventEmitter {
         // has its offset surrounding turn on, that are rendered BEFORE THIS sticky element
         if (includes(['top', 'top_bottom'], this.getProp(id, 'position'))) {
           const topOffsetModuleIndex = topPositionModulesId.indexOf(id);
-          const topOffsetModule = slice(topPositionModulesId, 0, topOffsetModuleIndex);
+          const topOffsetModule      = slice(topPositionModulesId, 0, topOffsetModuleIndex);
 
           // Saves all top offset modules for reference. This still needs to be processed to
           // filter adjacent column later
@@ -709,7 +725,7 @@ class ETScriptStickyStore extends EventEmitter {
         // has its offset surrounding turn on, that are rendered AFTER THIS sticky element
         if (includes(['bottom', 'top_bottom'], this.getProp(id, 'position'))) {
           const bottomOffsetModuleIndex = bottomPositionModulesId.indexOf(id);
-          const bottomOffsetModules = slice(bottomPositionModulesId, (bottomOffsetModuleIndex + 1), modulesSize);
+          const bottomOffsetModules     = slice(bottomPositionModulesId, (bottomOffsetModuleIndex + 1), modulesSize);
 
           // Saves all bottom offset modules for reference. This still needs to be processed to
           // filter adjacent column later
@@ -742,7 +758,7 @@ class ETScriptStickyStore extends EventEmitter {
 
       forEach(offsetModulesUpdates, update => {
         // module's id
-        const moduleId      = update.id;
+        const moduleId = update.id;
 
         // Need to be defined inside offsetModulesUpdates loop so each surrounding loop starts new
         // Will be updated on every loop so next loop has reference of what is prev modules has
@@ -784,7 +800,7 @@ class ETScriptStickyStore extends EventEmitter {
           // scroll top which might be over-engineer. Thus this is kept this way until further
           // confirmation with design team
           // @todo probably add conditional offset surrounding; confirm to design team
-          if (!moduleLimitOffsets && surroundingLimitOffsets) {
+          if (! moduleLimitOffsets && surroundingLimitOffsets) {
             return false;
           }
 
@@ -849,7 +865,7 @@ class ETScriptStickyStore extends EventEmitter {
         });
 
         // Set ${top/bottom}OffsetModules prop which will be synced to stickyElement
-        this.setProp(moduleId, update.prop + 'Align', offsetModules);
+        this.setProp(moduleId, `${update.prop}Align`, offsetModules);
       });
     }
 
@@ -862,53 +878,43 @@ class ETScriptStickyStore extends EventEmitter {
     forEach(this.modules, (module, moduleId) => {
       if (module.topOffsetModulesAlign) {
         const lastTopOffsetModule = last(module.topOffsetModulesAlign);
-        const pervTopOffsetModule = this.getProp(
-          lastTopOffsetModule,
-          'topOffsetModules',
-          this.getProp(lastTopOffsetModule, 'topOffsetModulesAlign', [])
-        );
+        const pervTopOffsetModule = this.getProp(lastTopOffsetModule, 'topOffsetModules', this.getProp(lastTopOffsetModule, 'topOffsetModulesAlign', []));
 
         this.setProp(moduleId, 'topOffsetModules', compact([
           ...pervTopOffsetModule,
-          ...[lastTopOffsetModule]
-        ]))
+          ...[lastTopOffsetModule],
+        ]));
       }
 
       if (module.bottomOffsetModulesAlign) {
         const firstBottomOffsetModule = head(module.bottomOffsetModulesAlign);
-        const pervBottomOffsetModule = this.getProp(
-          firstBottomOffsetModule,
-          'bottomOffsetModules',
-          this.getProp(firstBottomOffsetModule, 'bottomOffsetModulesAlign', [])
-        );
+        const pervBottomOffsetModule  = this.getProp(firstBottomOffsetModule, 'bottomOffsetModules', this.getProp(firstBottomOffsetModule, 'bottomOffsetModulesAlign', []));
 
         this.setProp(moduleId, 'bottomOffsetModules', compact([
           ...[firstBottomOffsetModule],
           ...pervBottomOffsetModule,
-        ]))
+        ]));
       }
     });
   }
 
   /**
-   * Check if module with given id is on sticky state
+   * Check if module with given id is on sticky state.
    *
    * @since 4.6.0
    *
    * @param {string} id
    *
-   * @return {bool}
+   * @returns {bool}
    */
-  isSticky = id => {
-    return get(this.modules, [id, 'isSticky'], false);
-  }
+  isSticky = id => get(this.modules, [id, 'isSticky'], false)
 
   /**
-   * Add listener callback for settings change event
+   * Add listener callback for settings change event.
    *
    * @since 4.6.0
-   *
-   * @param {function}
+   * @param callback
+   * @param {Function}
    */
   addSettingsChangeListener = callback => {
     maybeIncreaseEmitterMaxListeners(this, SETTINGS_CHANGE);
@@ -917,18 +923,18 @@ class ETScriptStickyStore extends EventEmitter {
   }
 
   /**
-   * Remove listener callback for settings change event
+   * Remove listener callback for settings change event.
    *
    * @since 4.6.0
-   *
-   * @param {function}
+   * @param callback
+   * @param {Function}
    */
   removeSettingsChangeListener = callback => {
     this.removeListener(SETTINGS_CHANGE, callback);
     maybeDecreaseEmitterMaxListeners(this, SETTINGS_CHANGE);
     return this;
   }
-};
+}
 
 const stickyStoreInstance = new ETScriptStickyStore;
 

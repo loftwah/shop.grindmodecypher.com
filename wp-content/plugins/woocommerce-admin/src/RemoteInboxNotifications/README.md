@@ -342,4 +342,57 @@ This passes when the store is on a WordPress.com site with the eCommerce plan.
 
 `value` is required.
 
+### Base location - country
+This passes when the store is located in the specified country.
 
+```
+{
+	"type": "base_location_country",
+	"value": "US",
+	"operation": "="
+}
+```
+
+`value` and `operation` are both required.
+
+### Base location - state
+This passes when the store is located in the specified state.
+
+```
+{
+	"type": "base_location_state",
+	"value": "TX",
+	"operation": "="
+}
+```
+
+`value` and `operation` are both required.
+
+### Note status
+This passes when the status of the specified note matches the specified status.
+The below example passes when the `wc-admin-mobile-app` note has not been
+actioned.
+
+```
+{
+	"type": "note_status",
+	"note_name": "wc-admin-mobile-app",
+	"status": "actioned",
+	"operation": "!="
+}
+```
+
+### Option
+This passes when the option value matches the value using the operation.
+
+```
+{
+	"type": "option",
+	"option_name": "woocommerce_currency",
+	"value": "USD",
+	"default": "USD",
+	"operation": "="
+}
+```
+
+`option_name`, `value`, and `operation` are all required. `default` is not required and allows a default value to be used if the option does not exist.

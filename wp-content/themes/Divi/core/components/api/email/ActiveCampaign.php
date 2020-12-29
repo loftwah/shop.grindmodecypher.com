@@ -30,7 +30,22 @@ class ET_Core_API_Email_ActiveCampaign extends ET_Core_API_Email_Provider {
 	public $custom_fields_scope = 'account';
 
 	protected function _fetch_custom_fields( $list_id = '', $list = array() ) {
-		$fields = array();
+		// These general / default fields are static (it can not be edited or deleted in the ActiveCampaign dashboard) and not returned by the rest API,
+		// so just add it here as the default custom fields for ActiveCampaign.
+		$fields = array(
+			'%phone%'              => array(
+				'field_id' => '%phone%',
+				'hidden'   => false,
+				'name'     => 'Phone',
+				'type'     => 'input',
+			),
+			'%customer_acct_name%' => array(
+				'field_id' => '%customer_acct_name%',
+				'hidden'   => false,
+				'name'     => 'Account',
+				'type'     => 'input',
+			),
+		);
 
 		foreach ( $list['fields'] as $field ) {
 			$field    = $this->transform_data_to_our_format( $field, 'custom_field' );
@@ -80,7 +95,13 @@ class ET_Core_API_Email_ActiveCampaign extends ET_Core_API_Email_Provider {
 				}
 			}
 
-			self::$_->array_set( $args, "field[{$field_id},0]", $value );
+			// Check if the custom field is an ActiveCampaign general field,
+			// it should be posted as dedicated param instead of `field[{$field_id},0]` param.
+			if ( preg_match( '/%(.*)%/', $field_id, $matches ) ) {
+				self::$_->array_set( $args, $matches[1], $value );
+			} else {
+				self::$_->array_set( $args, "field[{$field_id},0]", $value );
+			}
 		}
 
 		return $args;

@@ -33,6 +33,8 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
   // Being consistent with the WooCommerce plugin
   const FB_ID_PREFIX = 'wc_post_id_';
 
+  const DIV_ID_FOR_AJAX_PIXEL_EVENTS = 'fb-pxl-ajax-code';
+
   public static function injectPixelCode() {
     // Add the hooks only if the WooCommerce plugin is not active
     if(!self::isFacebookForWooCommerceActive()) {
@@ -51,11 +53,81 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
       add_action( 'woocommerce_payment_complete',
         array(__CLASS__, 'trackPurchaseEvent'),
         40);
+
+      add_action( 'woocommerce_after_single_product',
+        array(__CLASS__, 'trackViewContentEvent'),
+        40);
+      // This div will be used to insert the fbq calls
+      // when an event is triggered by an AJAX request
+      add_action( 'wp_footer',
+        array(__CLASS__, 'addDivForAjaxPixelEvent')
+      );
     }
   }
 
+  public static function addDivForAjaxPixelEvent(){
+    echo self::getDivForAjaxPixelEvent();
+  }
+
+  public static function getDivForAjaxPixelEvent($content = ''){
+    return "<div id='".self::DIV_ID_FOR_AJAX_PIXEL_EVENTS."'>"
+      .$content."</div>";
+  }
+
+  public static function trackViewContentEvent(){
+    if(FacebookPluginUtils::isInternalUser()){
+      return;
+    }
+
+    global $post;
+    if (!isset($post->ID)){
+      return;
+    }
+
+    $product = wc_get_product($post->ID);
+    if(!$product){
+      return;
+    }
+
+    $server_event = ServerEventFactory::safeCreateEvent(
+      'ViewContent',
+      array(__CLASS__, 'createViewContentEvent'),
+      array($product),
+      self::TRACKING_NAME
+    );
+
+    FacebookServerSideEvent::getInstance()->track($server_event, false);
+
+    self::enqueuePixelCode($server_event);
+  }
+
+  public static function createViewContentEvent($product){
+    $event_data = self::getPIIFromSession();
+
+    $product_id = self::getProductId($product);
+    $content_type = $product->is_type('variable') ? 'product_group' : 'product';
+
+    $event_data['content_type'] = $content_type;
+    $event_data['currency'] = \get_woocommerce_currency();
+    $event_data['value'] = $product->get_price();
+    $event_data['content_ids'] = array($product_id);
+    $event_data['content_name'] = $product->get_title();
+    $event_data['content_category'] =
+      self::getProductCategory($product->get_id());
+
+    return array_filter($event_data);
+  }
+
+  private static function getProductCategory($product_id){
+    $categories = get_the_terms(
+        $product_id,
+        'product_cat'
+      );
+    return count($categories) > 0 ? $categories[0]->name : null;
+  }
+
   public static function trackPurchaseEvent($order_id) {
-    if (FacebookPluginUtils::isAdmin()) {
+    if (FacebookPluginUtils::isInternalUser()) {
       return;
     }
 
@@ -67,6 +139,8 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
     );
 
     FacebookServerSideEvent::getInstance()->track($server_event);
+
+    self::enqueuePixelCode($server_event);
   }
 
   public static function createPurchaseEvent($order_id) {
@@ -108,7 +182,7 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
 
   public static function trackAddToCartEvent(
     $cart_item_key, $product_id, $quantity, $variation_id) {
-    if (FacebookPluginUtils::isAdmin()) {
+    if (FacebookPluginUtils::isInternalUser()) {
       return;
     }
 
@@ -119,7 +193,42 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
       self::TRACKING_NAME
     );
 
-    FacebookServerSideEvent::getInstance()->track($server_event);
+    // When AJAX is used to add an item to the cart
+    // The Conversions API event should be sent inmediately
+    // because the wp_footer action is not executed
+    $is_ajax_request = wp_doing_ajax();
+
+    FacebookServerSideEvent::getInstance()->track($server_event,
+      $is_ajax_request);
+
+    // If it is not an ajax request
+    // We show the pixel call in the footer
+    // Otherwise we add a filter
+    // to modify the ajax response
+    // and show the fbq call in the div #fb-pxl-ajax-code
+    if(!$is_ajax_request){
+      self::enqueuePixelCode($server_event);
+    }
+    else{
+      FacebookServerSideEvent::getInstance()->setPendingPixelEvent(
+        'addPixelCodeToAddToCartFragment',
+        $server_event
+      );
+      add_filter('woocommerce_add_to_cart_fragments',
+        array(__CLASS__, 'addPixelCodeToAddToCartFragment'));
+    }
+  }
+
+  public static function addPixelCodeToAddToCartFragment($fragments) {
+    $server_event =
+      FacebookServerSideEvent::getInstance()
+        ->getPendingPixelEvent('addPixelCodeToAddToCartFragment');
+    if( !is_null($server_event) ){
+      $pixel_code = self::generatePixelCode($server_event, true);
+      $fragments['#'.self::DIV_ID_FOR_AJAX_PIXEL_EVENTS] =
+        self::getDivForAjaxPixelEvent($pixel_code);
+    }
+    return $fragments;
   }
 
   public static function createAddToCartEvent(
@@ -140,7 +249,7 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
   }
 
   public static function trackInitiateCheckout() {
-    if (FacebookPluginUtils::isAdmin()) {
+    if (FacebookPluginUtils::isInternalUser()) {
       return;
     }
 
@@ -152,6 +261,8 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
     );
 
     FacebookServerSideEvent::getInstance()->track($server_event);
+
+    self::enqueuePixelCode($server_event);
   }
 
   public static function createInitiateCheckoutEvent() {
@@ -256,5 +367,23 @@ class FacebookWordpressWooCommerce extends FacebookWordpressIntegrationBase {
     return in_array(
       'facebook-for-woocommerce/facebook-for-woocommerce.php',
       get_option('active_plugins'));
+  }
+
+  public static function generatePixelCode($server_event, $script_tag = false){
+    $code = PixelRenderer::render(array($server_event), self::TRACKING_NAME,
+      $script_tag);
+    $code = sprintf("
+<!-- Facebook Pixel Event Code -->
+%s
+<!-- End Facebook Pixel Event Code -->
+      ",
+    $code);
+    return $code;
+  }
+
+  public static function enqueuePixelCode($server_event){
+    $code = self::generatePixelCode($server_event, false);
+    wc_enqueue_js($code);
+    return $code;
   }
 }

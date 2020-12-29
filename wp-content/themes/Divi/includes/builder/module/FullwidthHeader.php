@@ -774,12 +774,19 @@ class ET_Builder_Module_Fullwidth_Header extends ET_Builder_Module {
 				)
 			);
 
+			$logo_image_class            = 'header-logo';
+			$logo_image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'logo_image_url' );
+
+			if ( ! empty( $logo_image_attachment_class ) ) {
+				$logo_image_class .= " {$logo_image_attachment_class}";
+			}
+
 			$logo_image_url = $multi_view->render_element(
 				array(
 					'tag'      => 'img',
 					'attrs'    => array(
 						'src'   => '{{logo_image_url}}',
-						'class' => 'header-logo',
+						'class' => esc_attr( $logo_image_class ),
 						'title' => esc_attr( $logo_title ),
 						'alt'   => esc_attr( $logo_alt_text ),
 					),
@@ -820,6 +827,18 @@ class ET_Builder_Module_Fullwidth_Header extends ET_Builder_Module {
 		$header_image = '';
 
 		if ( $multi_view->has_value( 'header_image_url' ) ) {
+			$header_image_attrs = array(
+				'src'   => '{{header_image_url}}',
+				'alt'   => esc_attr( $image_alt_text ),
+				'title' => esc_attr( $image_title ),
+			);
+
+			$header_image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'header_image_url' );
+
+			if ( ! empty( $header_image_attachment_class ) ) {
+				$header_image_attrs['class'] = esc_attr( $header_image_attachment_class );
+			}
+
 			$header_image = sprintf(
 				'<div class="header-image-container%2$s">
 					<div class="header-image">
@@ -829,11 +848,7 @@ class ET_Builder_Module_Fullwidth_Header extends ET_Builder_Module {
 				$multi_view->render_element(
 					array(
 						'tag'   => 'img',
-						'attrs' => array(
-							'src'   => '{{header_image_url}}',
-							'alt'   => esc_attr( $image_alt_text ),
-							'title' => esc_attr( $image_title ),
-						),
+						'attrs' => $header_image_attrs,
 					)
 				),
 				( '' !== $image_orientation ? sprintf( ' %1$s', esc_attr( $image_orientation ) ) : '' )

@@ -15,6 +15,7 @@ final class ET_Core_Updates {
 	protected $product_version;
 	protected $all_et_products_domains;
 	protected $upgrading_et_product;
+	protected $up_to_date_products_data;
 
 	// class version
 	protected $version;
@@ -32,7 +33,9 @@ final class ET_Core_Updates {
 		self::$_this = $this;
 
 		$this->core_url = $core_url;
-		$this->version  = '1.1';
+		$this->version  = '1.2';
+
+		$this->up_to_date_products_data = array();
 
 		$this->product_version = $product_version;
 
@@ -289,14 +292,43 @@ final class ET_Core_Updates {
 		wp_enqueue_style( 'et_core_updates', $this->core_url . 'admin/css/updates.css', array(), $this->product_version );
 	}
 
+	function add_up_to_date_products_data( $update_data, $settings = array() ) {
+		$settings = $this->process_request_settings( $settings );
+
+		$products_category = $settings['is_plugin_response'] ? 'plugins' : 'themes';
+
+		if ( ! empty( $this->up_to_date_products_data[ $products_category ] ) ) {
+			$update_data->no_update = $this->up_to_date_products_data[ $products_category ];
+		}
+
+		return $update_data;
+	}
+
 	function merge_et_products_response( $update_transient, $et_update_products_data ) {
-		if ( empty( $et_update_products_data ) || empty( $et_update_products_data->response ) ) {
+		if (
+			empty( $et_update_products_data )
+			|| (
+				empty( $et_update_products_data->response )
+				&& empty( $et_update_products_data->no_update )
+			)
+		) {
 			return $update_transient;
 		}
 
-		$update_transient_response = ! empty( $update_transient->response ) ? $update_transient->response : array();
+		$merge_data_fields = array(
+			'response',
+			'no_update',
+		);
 
-		$update_transient->response = array_merge( $update_transient_response, $et_update_products_data->response );
+		foreach ( $merge_data_fields as $data_field_name ) {
+			if ( empty( $et_update_products_data->$data_field_name ) ) {
+				continue;
+			}
+
+			$default_response_data = ! empty( $update_transient->$data_field_name ) ? $update_transient->$data_field_name : array();
+
+			$update_transient->$data_field_name = array_merge( $default_response_data, $et_update_products_data->$data_field_name );
+		}
 
 		return $update_transient;
 	}
@@ -357,14 +389,20 @@ final class ET_Core_Updates {
 			$plugins_request = wp_remote_post( 'https://cdn.elegantthemes.com/api/api.php', $options );
 		}
 
-		if ( ! is_wp_error( $plugins_request ) && wp_remote_retrieve_response_code( $plugins_request ) === 200 ){
-			$plugins_response = unserialize( wp_remote_retrieve_body( $plugins_request ) );
+		$plugins_response = array();
 
-			if ( ! empty( $plugins_response ) ) {
-				$plugins_response = $this->process_additional_response_settings( $plugins_response );
+		if ( ! is_wp_error( $plugins_request ) && wp_remote_retrieve_response_code( $plugins_request ) === 200 ){
+			$plugins_response = maybe_unserialize( wp_remote_retrieve_body( $plugins_request ) );
+
+			if ( ! empty( $plugins_response ) && is_array( $plugins_response ) ) {
+				$request_settings = array( 'is_plugin_response' => true );
+
+				$plugins_response = $this->process_additional_response_settings( $plugins_response, $request_settings );
 
 				$last_update->checked  = $plugins;
 				$last_update->response = $plugins_response;
+
+				$last_update = $this->add_up_to_date_products_data( $last_update, $request_settings );
 			}
 		}
 
@@ -401,8 +439,8 @@ final class ET_Core_Updates {
 		return $false;
 	}
 
-	function process_additional_response_settings( $response ) {
-		if ( empty( $response ) || empty( $response['et_account_data'] ) ) {
+	function process_account_settings( $response ) {
+		if ( empty( $response['et_account_data'] ) ) {
 			return $response;
 		}
 
@@ -449,6 +487,42 @@ final class ET_Core_Updates {
 		}
 
 		unset( $response['et_account_data'] );
+
+		return $response;
+	}
+
+	function process_up_to_date_products_settings( $response, $settings ) {
+		if ( empty( $response['et_up_to_date_products'] ) ) {
+			return $response;
+		}
+
+		$products_category = $settings['is_plugin_response'] ? 'plugins' : 'themes';
+
+		$this->up_to_date_products_data[ $products_category ] = $response['et_up_to_date_products'];
+
+		unset( $response['et_up_to_date_products'] );
+
+		return $response;
+	}
+
+	function process_request_settings( $settings = array() ) {
+		$defaults = array(
+			'is_plugin_response' => false,
+		);
+
+		return array_merge( $defaults, $settings );
+	}
+
+	function process_additional_response_settings( $response, $settings = array() ) {
+		if ( empty( $response ) ) {
+			return $response;
+		}
+
+		$settings = $this->process_request_settings( $settings );
+
+		$response = $this->process_account_settings( $response );
+
+		$response = $this->process_up_to_date_products_settings( $response, $settings );
 
 		return $response;
 	}
@@ -506,13 +580,15 @@ final class ET_Core_Updates {
 		}
 
 		if ( ! is_wp_error( $theme_request ) && wp_remote_retrieve_response_code( $theme_request ) === 200 ){
-			$theme_response = unserialize( wp_remote_retrieve_body( $theme_request ) );
+			$theme_response = maybe_unserialize( wp_remote_retrieve_body( $theme_request ) );
 
-			if ( ! empty( $theme_response ) ) {
+			if ( ! empty( $theme_response ) && is_array( $theme_response ) ) {
 				$theme_response = $this->process_additional_response_settings( $theme_response );
 
 				$last_update->checked  = $themes;
 				$last_update->response = $theme_response;
+
+				$last_update = $this->add_up_to_date_products_data( $last_update );
 			}
 		}
 
@@ -709,7 +785,7 @@ endif;
 
 if ( ! function_exists( 'et_core_enable_automatic_updates' ) ) :
 function et_core_enable_automatic_updates( $deprecated, $version ) {
-	if ( ! is_admin() ) {
+	if ( ! is_admin() && ! wp_doing_cron() ) {
 		return;
 	}
 

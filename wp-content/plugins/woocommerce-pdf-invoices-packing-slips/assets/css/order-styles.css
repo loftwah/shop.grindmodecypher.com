@@ -1,6 +1,6 @@
 /* Order list buttons: */
 .type-shop_order .column-wc_actions a.button.wpo_wcpdf {
-	padding: 2px !important;
+	padding: 3px 2px 1px 1px !important;
 }
 
 .type-shop_order .column-wc_actions a.button.wpo_wcpdf.exists::after {
@@ -38,10 +38,16 @@
 	}
 }
 
+#wpo_wcpdf-data-input-box > .inside {
+	margin: 0;
+	padding: 10px 0;
+	background-color: #f8f8f8;
+}
+
 #wpo_wcpdf-data-input-box h4 {
 	font-size: 14px;
 	line-height: 1.4;
-	margin: 1.5em 0 0 0;
+	margin: 0;
 }
 
 #wpo_wcpdf-data-input-box p {
@@ -50,6 +56,19 @@
 
 #wpo_wcpdf-data-input-box .form-field input {
 	width: auto;
+}
+
+.wcpdf-data-fields {
+	margin-left: 10px;
+	margin-right: 10px;
+	padding: 10px;
+	margin-bottom: 10px;
+	background-color: white;
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.wcpdf-data-fields:last-child {
+	margin-bottom: 0;
 }
 
 .wcpdf-data-fields .read-only {
@@ -64,18 +83,20 @@
 
 /* Edit buttons Invoice, Proforma and Credit */
 .wcpdf-data-fields h4 .dashicons:first-of-type {
-	margin-left:20px!important;	
+	margin-left:20px !important;	
 }
 
 .wcpdf-data-fields .wpo-wcpdf-edit-date-number,
 .wcpdf-data-fields .wpo-wcpdf-delete-document,
-.wcpdf-data-fields .wpo-wcpdf-regenerate-document {
+.wcpdf-data-fields .wpo-wcpdf-regenerate-document,
+.wcpdf-data-fields .wpo-wcpdf-edit-document-notes {
 	opacity:0.5;
 }
 
 .wcpdf-data-fields .wpo-wcpdf-edit-date-number:hover,
 .wcpdf-data-fields .wpo-wcpdf-delete-document:hover,
-.wcpdf-data-fields .wpo-wcpdf-regenerate-document:hover {
+.wcpdf-data-fields .wpo-wcpdf-regenerate-document:hover,
+.wcpdf-data-fields .wpo-wcpdf-edit-document-notes:hover {
 	opacity:1;
 	cursor:pointer;
 }

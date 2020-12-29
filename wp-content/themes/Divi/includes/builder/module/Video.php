@@ -47,6 +47,15 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 					),
 				),
 			),
+			'borders'         => array(
+				'default' => array(
+					'css' => array(
+						'main' => array(
+							'border_radii' => '%%order_class%%, %%order_class%% iframe',
+						),
+					),
+				),
+			),
 			'box_shadow'      => array(
 				'default' => array(
 					'css' => array(

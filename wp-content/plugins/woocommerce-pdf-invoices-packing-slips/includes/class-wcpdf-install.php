@@ -72,12 +72,12 @@ class Install {
 			return;
 		}
 
-		// Create temp folders
+		// Get tmp folders
 		$tmp_base = WPO_WCPDF()->main->get_tmp_base();
 
 		// check if tmp folder exists => if not, initialize 
-		if ( $tmp_base !== false && !@is_dir( $tmp_base ) ) {
-			WPO_WCPDF()->main->init_tmp( $tmp_base );
+		if ( ! @is_dir( $tmp_base ) || ! wp_is_writable( $tmp_base ) ) {
+			WPO_WCPDF()->main->init_tmp();
 		}
 
 		// Unsupported currency symbols 
@@ -193,11 +193,13 @@ class Install {
 		// sync fonts on every upgrade!
 		$tmp_base = WPO_WCPDF()->main->get_tmp_base();
 
+		// get fonts folder path
+		$font_path = WPO_WCPDF()->main->get_tmp_path( 'fonts' );
+
 		// check if tmp folder exists => if not, initialize 
-		if ( $tmp_base !== false && !@is_dir( $tmp_base ) ) {
-			WPO_WCPDF()->main->init_tmp( $tmp_base );
+		if ( ! @is_dir( $tmp_base ) || ! wp_is_writable( $tmp_base ) || ! @is_dir( $font_path ) || ! wp_is_writable( $font_path ) ) {
+			WPO_WCPDF()->main->init_tmp();
 		} else {
-			$font_path = WPO_WCPDF()->main->get_tmp_path( 'fonts' );
 			// don't try merging fonts with local when updating pre 2.0
 			$pre_2 = ( $installed_version == 'versionless' || version_compare( $installed_version, '2.0-dev', '<' ) );
 			$merge_with_local = $pre_2 ? false : true;
@@ -357,16 +359,18 @@ class Install {
 		// make sure fonts match with version: copy from plugin folder
 		$tmp_base = WPO_WCPDF()->main->get_tmp_base();
 
+		// make sure we have the fonts directory
+		$font_path = WPO_WCPDF()->main->get_tmp_path( 'fonts' );
+
 		// don't continue if we don't have an upload dir
 		if ($tmp_base === false) {
 			return false;
 		}
 
 		// check if tmp folder exists => if not, initialize 
-		if ( !@is_dir( $tmp_base ) ) {
-			WPO_WCPDF()->main->init_tmp( $tmp_base );
+		if ( ! @is_dir( $tmp_base ) || ! wp_is_writable( $tmp_base ) || ! @is_dir( $font_path ) || ! wp_is_writable( $font_path ) ) {
+			WPO_WCPDF()->main->init_tmp();
 		} else {
-			$font_path = WPO_WCPDF()->main->get_tmp_path( 'fonts' );
 			WPO_WCPDF()->main->copy_fonts( $font_path );
 		}
 	}

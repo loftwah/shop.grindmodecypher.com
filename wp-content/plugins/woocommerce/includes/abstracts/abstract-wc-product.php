@@ -2,7 +2,7 @@
 /**
  * WooCommerce product base class.
  *
- * @package WooCommerce/Abstracts
+ * @package WooCommerce\Abstracts
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +21,7 @@ require_once WC_ABSPATH . 'includes/legacy/abstract-wc-legacy-product.php';
  * The WooCommerce product class handles individual product data.
  *
  * @version 3.0.0
- * @package WooCommerce/Abstracts
+ * @package WooCommerce\Abstracts
  */
 class WC_Product extends WC_Abstract_Legacy_Product {
 
@@ -1738,7 +1738,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return boolean
 	 */
 	public function has_options() {
-		return false;
+		return apply_filters( 'woocommerce_product_has_options', false, $this );
 	}
 
 	/*

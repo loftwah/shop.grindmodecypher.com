@@ -30,7 +30,7 @@ class Invoice extends Order_Document_Methods {
 		// set properties
 		$this->type		= 'invoice';
 		$this->title	= __( 'Invoice', 'woocommerce-pdf-invoices-packing-slips' );
-		$this->icon		= WPO_WCPDF()->plugin_url() . "/assets/images/invoice.png";
+		$this->icon		= WPO_WCPDF()->plugin_url() . "/assets/images/invoice.svg";
 
 		// Call parent constructor
 		parent::__construct( $order );
@@ -72,6 +72,7 @@ class Invoice extends Order_Document_Methods {
 		}
 
 		$this->init_number();
+		do_action( 'wpo_wcpdf_init_document', $this );
 	}
 
 	public function exists() {
@@ -111,7 +112,7 @@ class Invoice extends Order_Document_Methods {
 			$last_number_year = $number_store->get_last_date('Y');
 			// check if we need to reset
 			if ( $current_year != $last_number_year ) {
-				$number_store->set_next( 1 );
+				$number_store->set_next( apply_filters( 'wpo_wcpdf_reset_number_yearly_start', 1, $this ) );
 			}
 		}
 
@@ -244,6 +245,19 @@ class Invoice extends Order_Document_Methods {
 				'args'			=> array(
 					'option_name'		=> $option_name,
 					'id'				=> 'display_phone',
+				)
+			),
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'display_customer_notes',
+				'title'			=> __( 'Display customer notes', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'checkbox',
+				'section'		=> 'invoice',
+				'args'			=> array(
+					'option_name'		=> $option_name,
+					'id'				=> 'display_customer_notes',
+					'store_unchecked'	=> true,
+					'default'			=> 1,
 				)
 			),
 			array(
@@ -382,7 +396,7 @@ class Invoice extends Order_Document_Methods {
 				'args'			=> array(
 					'option_name'	=> $option_name,
 					'id'			=> 'disable_free',
-					'description'	=> sprintf(__( "Disable automatic creation/attachment when the order total is %s", 'woocommerce-pdf-invoices-packing-slips' ), function_exists('wc_price') ? wc_price( 0 ) : 0 ),
+					'description'	=> sprintf(__( "Disable document when the order total is %s", 'woocommerce-pdf-invoices-packing-slips' ), function_exists('wc_price') ? wc_price( 0 ) : 0 ),
 				)
 			),
 			array(

@@ -732,14 +732,17 @@ function et_core_setup( $deprecated = '' ) {
 	$theme_dir = _et_core_normalize_path( trailingslashit( realpath( get_template_directory() ) ) );
 
 	if ( 0 === strpos( $core_path, $theme_dir ) ) {
-		$url = get_template_directory_uri() . '/core/';
+		$url  = get_template_directory_uri() . '/core/';
+		$type = 'theme';
 	} else {
-		$url = plugin_dir_url( __FILE__ );
+		$url  = plugin_dir_url( __FILE__ );
+		$type = 'plugin';
 	}
 
 	define( 'ET_CORE_PATH', $core_path );
 	define( 'ET_CORE_URL', $url );
 	define( 'ET_CORE_TEXTDOMAIN', 'et-core' );
+	define( 'ET_CORE_TYPE', $type );
 
 	load_theme_textdomain( 'et-core', ET_CORE_PATH . 'languages/' );
 	et_core_maybe_set_updated();
@@ -1293,11 +1296,11 @@ function et_get_attachment_id_by_url( $url ) {
 	$attachments_sql_query = et_get_attachment_id_by_url_sql( $normalized_url );
 	$attachment_id         = (int) $wpdb->get_var( $attachments_sql_query );
 
-	// There is this new feature in WordPress 5.3 that allows users to upload big image file 
+	// There is this new feature in WordPress 5.3 that allows users to upload big image file
 	// (threshold being either width or height of 2560px) and the core will scale it down.
 	// This causing the GUID URL info stored is no more relevant since the WordPress core system
 	// will append "-scaled." string into the image URL when serving it in the frontend.
-	// Hence we run another query as fallback in case the attachment ID is not found and 
+	// Hence we run another query as fallback in case the attachment ID is not found and
 	// there is "-scaled." string appear in the image URL
 	// @see https://make.wordpress.org/core/2019/10/09/introducing-handling-of-big-images-in-wordpress-5-3/
 	// @see https://wordpress.org/support/topic/media-images-renamed-to-xyz-scaled-jpg/
@@ -1309,7 +1312,7 @@ function et_get_attachment_id_by_url( $url ) {
 
 	// There is a case the GUID image URL stored differently with the URL
 	// served in the frontend for a featured image, so the query will always fail.
-	// Hence we add another fallback query to the _wp_attached_file value in 
+	// Hence we add another fallback query to the _wp_attached_file value in
 	// the postmeta table to match with the image relative path.
 	if ( ! $attachment_id ) {
 		$uploads         = wp_get_upload_dir();
@@ -1787,13 +1790,13 @@ if ( ! function_exists( 'et_core_get_websafe_fonts' ) ) :
 				'type'          => 'sans-serif',
 			),
 		);
-	
+
 		foreach ( array_keys( $websafe_fonts ) as $font_name ) {
 			$websafe_fonts[ $font_name ]['standard'] = true;
 		}
-	
+
 		ksort( $websafe_fonts );
-	
+
 		return apply_filters( 'et_websafe_fonts', $websafe_fonts );
 	}
 endif;
@@ -1862,3 +1865,25 @@ endif;
 
 // Action for WP Cron: Disable Hosting Card status via ET API
 add_action( 'et_maybe_update_hosting_card_status_cron', 'et_maybe_update_hosting_card_status' );
+
+
+if ( ! function_exists( 'et_preload_fonts' ) ) :
+	/**
+	 * Preload fonts to speedup the site.
+	 */
+	function et_preload_fonts() {
+		$link_template = '<link rel="preload" href="%s" as="font" crossorigin="anonymous">';
+
+		$allowed_tags = array(
+			'link' => array(
+				'rel'         => array(),
+				'href'        => array(),
+				'as'          => array(),
+				'crossorigin' => array(),
+			),
+		);
+
+		echo wp_kses( sprintf( $link_template, esc_url( ET_CORE_URL . 'admin/fonts/modules.ttf' ) ), $allowed_tags );
+	}
+	add_action( 'wp_head', 'et_preload_fonts' );
+endif;

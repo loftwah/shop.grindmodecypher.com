@@ -1158,7 +1158,7 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module_Type_Pos
 					)
 				) : '';
 
-				$slide_class  = 'off' !== $show_image && in_array( $image_placement, array( 'left', 'right' ) ) && $has_post_thumbnail ? ' et_pb_slide_with_image' : '';
+				$slide_class  = 'off' !== $show_image && in_array( $image_placement, array( 'left', 'right' ), true ) && $has_post_thumbnail ? ' et_pb_slide_with_image et_pb_media_alignment_center' : '';
 				$slide_class .= 'off' !== $show_image && ! $has_post_thumbnail ? ' et_pb_slide_with_no_image' : '';
 				$slide_class .= ' ' . implode( ' ', $background_layout_class_names );
 
@@ -1178,7 +1178,7 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module_Type_Pos
 				$should_apply_bg_image = $is_show_image && 'background' === $image_placement;
 				$inline_background     = $should_apply_bg_image && $query->posts[ $post_index ]->post_featured_image ? 'style="background-image: url(' . esc_url( $query->posts[ $post_index ]->post_featured_image ) . ');"' : '';
 				?>
-			<div class="et_pb_slide et_pb_media_alignment_center<?php echo esc_attr( $slide_class ); ?>" <?php echo et_core_esc_previously( $multi_view_attrs_wrapper ); ?> <?php echo et_core_esc_previously( $inline_background ); ?>>
+			<div class="et_pb_slide<?php echo esc_attr( $slide_class ); ?>" <?php echo et_core_esc_previously( $multi_view_attrs_wrapper ); ?> <?php echo et_core_esc_previously( $inline_background ); ?>>
 				<?php if ( 'on' === $parallax && $should_apply_bg_image ) { ?>
 					<div class="et_parallax_bg_wrap">
 						<div class="et_parallax_bg

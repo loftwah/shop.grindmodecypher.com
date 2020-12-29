@@ -379,8 +379,6 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 	 * @since 4.6.0 Add sticky style support.
 	 */
 	public function process( $function_name ) {
-		global $is_parent_sticky;
-
 		$utils           = ET_Core_Data_Utils::instance();
 		$hover           = et_pb_hover_options();
 		$sticky          = et_pb_sticky_options();
@@ -416,7 +414,7 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 
 			// If the module is sticky or inside a sticky module, we need to add z-index for sticky state
 			// with an `!important` flag to override sticky's default inline z-index: 10000 value when module enters sticky state.
-			if ( $sticky->is_sticky_module( $props ) || $is_parent_sticky ) {
+			if ( $sticky->is_sticky_module( $props ) || $sticky->is_inside_sticky_module() ) {
 				array_push( $views, 'sticky' );
 			}
 
@@ -467,7 +465,7 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				array_push( $views, 'tablet', 'phone' );
 			}
 
-			if ( $is_parent_sticky ) {
+			if ( $sticky->is_inside_sticky_module() ) {
 				array_push( $views, 'sticky' );
 			}
 
@@ -514,8 +512,8 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 			);
 
 			$sticky_status = array(
-				'horizontal' => $is_parent_sticky ? $sticky->is_enabled( 'horizontal_offset', $props ) : false,
-				'vertical'   => $is_parent_sticky ? $sticky->is_enabled( 'vertical_offset', $props ) : false,
+				'horizontal' => $sticky->is_inside_sticky_module() ? $sticky->is_enabled( 'horizontal_offset', $props ) : false,
+				'vertical'   => $sticky->is_inside_sticky_module() ? $sticky->is_enabled( 'vertical_offset', $props ) : false,
 			);
 
 			if ( $resp_status['horizontal'] || $resp_status['vertical'] ) {

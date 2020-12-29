@@ -60,6 +60,7 @@ class PageFields extends AbstractEnum {
   const CHECKINS = 'checkins';
   const COMPANY_OVERVIEW = 'company_overview';
   const CONNECTED_INSTAGRAM_ACCOUNT = 'connected_instagram_account';
+  const CONNECTED_PAGE_BACKED_INSTAGRAM_ACCOUNT = 'connected_page_backed_instagram_account';
   const CONTACT_ADDRESS = 'contact_address';
   const COPYRIGHT_WHITELISTED_IG_PARTNERS = 'copyright_whitelisted_ig_partners';
   const COUNTRY_PAGE_LIKES = 'country_page_likes';
@@ -128,7 +129,6 @@ class PageFields extends AbstractEnum {
   const NEW_LIKE_COUNT = 'new_like_count';
   const OFFER_ELIGIBLE = 'offer_eligible';
   const OVERALL_STAR_RATING = 'overall_star_rating';
-  const PAGE_ABOUT_STORY = 'page_about_story';
   const PAGE_TOKEN = 'page_token';
   const PARENT_PAGE = 'parent_page';
   const PARKING = 'parking';
@@ -137,6 +137,7 @@ class PageFields extends AbstractEnum {
   const PERSONAL_INTERESTS = 'personal_interests';
   const PHARMA_SAFETY_INFO = 'pharma_safety_info';
   const PHONE = 'phone';
+  const PICKUP_OPTIONS = 'pickup_options';
   const PLACE_TYPE = 'place_type';
   const PLOT_OUTLINE = 'plot_outline';
   const PREFERRED_AUDIENCE = 'preferred_audience';
@@ -204,6 +205,7 @@ class PageFields extends AbstractEnum {
       'checkins' => 'unsigned int',
       'company_overview' => 'string',
       'connected_instagram_account' => 'IGUser',
+      'connected_page_backed_instagram_account' => 'IGUser',
       'contact_address' => 'MailingAddress',
       'copyright_whitelisted_ig_partners' => 'list<string>',
       'country_page_likes' => 'unsigned int',
@@ -272,7 +274,6 @@ class PageFields extends AbstractEnum {
       'new_like_count' => 'unsigned int',
       'offer_eligible' => 'bool',
       'overall_star_rating' => 'float',
-      'page_about_story' => 'PageAboutStory',
       'page_token' => 'string',
       'parent_page' => 'Page',
       'parking' => 'PageParking',
@@ -281,6 +282,7 @@ class PageFields extends AbstractEnum {
       'personal_interests' => 'string',
       'pharma_safety_info' => 'string',
       'phone' => 'string',
+      'pickup_options' => 'list<string>',
       'place_type' => 'string',
       'plot_outline' => 'string',
       'preferred_audience' => 'Targeting',

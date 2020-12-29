@@ -38,6 +38,7 @@ use FacebookAds\Enum\AbstractEnum;
 class CampaignFields extends AbstractEnum {
 
   const ACCOUNT_ID = 'account_id';
+  const AD_STRATEGY_ID = 'ad_strategy_id';
   const ADLABELS = 'adlabels';
   const BID_STRATEGY = 'bid_strategy';
   const BOOSTED_OBJECT_ID = 'boosted_object_id';
@@ -64,6 +65,7 @@ class CampaignFields extends AbstractEnum {
   const SOURCE_CAMPAIGN_ID = 'source_campaign_id';
   const SPECIAL_AD_CATEGORIES = 'special_ad_categories';
   const SPECIAL_AD_CATEGORY = 'special_ad_category';
+  const SPECIAL_AD_CATEGORY_COUNTRY = 'special_ad_category_country';
   const SPEND_CAP = 'spend_cap';
   const START_TIME = 'start_time';
   const STATUS = 'status';
@@ -73,11 +75,13 @@ class CampaignFields extends AbstractEnum {
   const ADBATCH = 'adbatch';
   const EXECUTION_OPTIONS = 'execution_options';
   const ITERATIVE_SPLIT_TEST_CONFIGS = 'iterative_split_test_configs';
+  const SMART_PROMOTION_TYPE = 'smart_promotion_type';
   const UPSTREAM_EVENTS = 'upstream_events';
 
   public function getFieldTypes() {
     return array(
       'account_id' => 'string',
+      'ad_strategy_id' => 'string',
       'adlabels' => 'list<AdLabel>',
       'bid_strategy' => 'BidStrategy',
       'boosted_object_id' => 'string',
@@ -104,6 +108,7 @@ class CampaignFields extends AbstractEnum {
       'source_campaign_id' => 'string',
       'special_ad_categories' => 'list<string>',
       'special_ad_category' => 'string',
+      'special_ad_category_country' => 'list<string>',
       'spend_cap' => 'string',
       'start_time' => 'datetime',
       'status' => 'Status',
@@ -113,6 +118,7 @@ class CampaignFields extends AbstractEnum {
       'adbatch' => 'list<Object>',
       'execution_options' => 'list<ExecutionOptions>',
       'iterative_split_test_configs' => 'list<Object>',
+      'smart_promotion_type' => 'SmartPromotionType',
       'upstream_events' => 'map',
     );
   }

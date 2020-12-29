@@ -856,6 +856,15 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		// Get query
 		$query = new WP_Query( $query_args );
 
+		/**
+		 * Filters Blog module's main query.
+		 *
+		 * @since 4.7.0
+		 *
+		 * @param WP_Query $query
+		 */
+		$query = apply_filters( 'et_builder_blog_query', $query ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We intend to override $wp_query for blog module.
+
 		// Keep page's $wp_query global
 		$wp_query_page = $wp_query;
 
@@ -1426,6 +1435,15 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			// that check for is_main_query() are applied.
 			$wp_the_query = $wp_query = new WP_Query( array_merge( $original, $custom ) );
 		}
+
+		/**
+		 * Filters Blog module's main query.
+		 *
+		 * @since 4.7.0
+		 *
+		 * @param WP_Query $wp_query
+		 */
+		$wp_query = apply_filters( 'et_builder_blog_query', $wp_query ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We intend to override $wp_query for blog module.
 
 		// Manually set the max_num_pages to make the `next_posts_link` work
 		if ( '' !== $offset_number && ! empty( $offset_number ) ) {

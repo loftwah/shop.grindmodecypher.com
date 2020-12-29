@@ -40,8 +40,10 @@ class CommerceMerchantSettingsFields extends AbstractEnum {
   const BRAINTREE_MERCHANT_ID = 'braintree_merchant_id';
   const CHECKOUT_MESSAGE = 'checkout_message';
   const CONTACT_EMAIL = 'contact_email';
+  const CTA = 'cta';
   const DISABLE_CHECKOUT_URLS = 'disable_checkout_urls';
   const DISPLAY_NAME = 'display_name';
+  const EXTERNAL_MERCHANT_ID = 'external_merchant_id';
   const FACEBOOK_CHANNEL = 'facebook_channel';
   const HAS_DISCOUNT_CODE = 'has_discount_code';
   const ID = 'id';
@@ -58,14 +60,17 @@ class CommerceMerchantSettingsFields extends AbstractEnum {
   const SUPPORTED_CARD_TYPES = 'supported_card_types';
   const TERMS = 'terms';
   const TERMS_URL_BY_LOCALE = 'terms_url_by_locale';
+  const WHATSAPP_CHANNEL = 'whatsapp_channel';
 
   public function getFieldTypes() {
     return array(
       'braintree_merchant_id' => 'string',
       'checkout_message' => 'string',
       'contact_email' => 'string',
+      'cta' => 'string',
       'disable_checkout_urls' => 'bool',
       'display_name' => 'string',
+      'external_merchant_id' => 'string',
       'facebook_channel' => 'Object',
       'has_discount_code' => 'bool',
       'id' => 'string',
@@ -82,6 +87,7 @@ class CommerceMerchantSettingsFields extends AbstractEnum {
       'supported_card_types' => 'list<string>',
       'terms' => 'string',
       'terms_url_by_locale' => 'map<string, string>',
+      'whatsapp_channel' => 'Object',
     );
   }
 }

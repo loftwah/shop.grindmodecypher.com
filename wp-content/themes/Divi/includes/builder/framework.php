@@ -99,6 +99,7 @@ function et_esc_html_once( $text, $value = '' ) {
 require_once ET_BUILDER_DIR . 'compat/early.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/blocks/Layout.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/utils/Conversion.php';
+require_once ET_BUILDER_DIR . 'feature/gutenberg/EditorTypography.php';
 require_once ET_BUILDER_DIR . 'core.php';
 require_once ET_BUILDER_DIR . 'conditions.php';
 require_once ET_BUILDER_DIR . 'post/PostStack.php';

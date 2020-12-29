@@ -16,17 +16,16 @@ import {
 } from './utils';
 
 /**
- * Get top / bottom limit attributes
+ * Get top / bottom limit attributes.
  *
  * @since 4.6.0
- *
  * @param {object} $selector
+ * @param limit
  * @param {string}
- *
- * @return {object}
- * @return {string} object.limit
- * @return {number} object.height
- * @return {number} object.width
+ * @returns {object}
+ * @returns {string} Object.limit.
+ * @returns {number} Object.height.
+ * @returns {number} Object.width.
  * @return {object} object.offsets
  * @return {number} object.offsets.top
  * @return {number} object.offsets.right
@@ -37,19 +36,19 @@ export const getLimit = ($selector, limit) => {
   // @todo update valid limits based on selector
   const validLimits = ['body', 'section', 'row', 'column'];
 
-  if (!includes(validLimits, limit)) {
+  if (! includes(validLimits, limit)) {
     return false;
   }
 
   // Limit selector
   const $limitSelector = getLimitSelector($selector, limit);
 
-  if (!$limitSelector) {
+  if (! $limitSelector) {
     return false;
   }
 
   const height = $limitSelector.outerHeight();
-  const width = $limitSelector.outerWidth();
+  const width  = $limitSelector.outerWidth();
 
   return {
     limit,
@@ -57,17 +56,17 @@ export const getLimit = ($selector, limit) => {
     width,
     offsets: getOffsets($limitSelector, width, height),
   };
-}
+};
 
 /**
- * Get top / bottom limit selector based on given name
+ * Get top / bottom limit selector based on given name.
  *
  * @since 4.6.0
  *
  * @param {object} $selector
  * @param {string} limit
  *
- * @return {bool|object}
+ * @returns {bool|object}
  */
 export const getLimitSelector = ($selector, limit) => {
   let parentSelector = false;
@@ -90,11 +89,11 @@ export const getLimitSelector = ($selector, limit) => {
   }
 
   return parentSelector ? $selector.closest(parentSelector) : false;
-}
+};
 
 /**
  * Filter invalid sticky modules
- * 1. Sticky module inside another sticky module
+ * 1. Sticky module inside another sticky module.
  *
  * @param {object} modules
  * @param {object} currentModules
@@ -111,7 +110,7 @@ export const filterInvalidModules = (modules, currentModules = {}) => {
     }
 
     // Repopulate the module list
-    if (!isEmpty(currentModules) && currentModules[key]) {
+    if (! isEmpty(currentModules) && currentModules[key]) {
       // Keep props that isn't available on incoming modules intact
       filteredModules[key] = {
         ...currentModules[key],
@@ -123,22 +122,23 @@ export const filterInvalidModules = (modules, currentModules = {}) => {
   });
 
   return filteredModules;
-}
+};
 
 /**
  * Get sticky style of given module by cloning, adding sticky state classname, appending DOM,
  * retrieving value, then immediately the cloned DOM. This is needed for property that is most
  * likely to be affected by transition if the sticky value is retrieved on the fly, thus it needs
- * to be retrieved ahead its time by this approach
+ * to be retrieved ahead its time by this approach.
  *
  * @since 4.6.0
  *
- * @param {object} $module
  * @param {string} id
+ * @param {object} $module
+ * @param {object} $placeholder
  *
- * @return {object}
+ * @returns {object}
  */
-export const getStickyStyles = (id, $module) => {
+export const getStickyStyles = (id, $module, $placeholder) => {
   // Sticky state classname to be added; these will make cloned module to have fixed position and
   // make sticky style take effect
   const stickyStyleClassname = 'et_pb_sticky et_pb_sticky_style_dom';
@@ -147,6 +147,9 @@ export const getStickyStyles = (id, $module) => {
   // so the dimension can be immediately retrieved
   const $stickyStyleDom = $module.clone().addClass(stickyStyleClassname).attr({
     'data-sticky-style-dom-id': id,
+
+    // Remove inline styles so on-page styles works. Especially needed if module is in sticky state
+    style: '',
   }).css({
     opacity: 0,
     transition: 'none',
@@ -157,10 +160,10 @@ export const getStickyStyles = (id, $module) => {
   // loaded on the cloned module after the module is appended to the layout EVEN IF the image on
   // the $module has been loaded. This might load to inaccurate sticky style calculation. To avoid
   // it, recreate the image by getting actual width and height then recreate the image using SVG
-  $stickyStyleDom.find('img').each(function (index) {
-    const $img = $(this);
-    const $measuredImg = $module.find(`img:eq(${index})`);
-    const measuredWidth = get($measuredImg, [0, 'naturalWidth'], $module.find(`img:eq(${index})`).outerWidth());
+  $stickyStyleDom.find('img').each(function(index) {
+    const $img           = $(this);
+    const $measuredImg   = $module.find(`img:eq(${index})`);
+    const measuredWidth  = get($measuredImg, [0, 'naturalWidth'], $module.find(`img:eq(${index})`).outerWidth());
     const measuredHeight = get($measuredImg, [0, 'naturalHeight'], $module.find(`img:eq(${index})`).outerHeight());
 
     $img.attr({
@@ -170,51 +173,61 @@ export const getStickyStyles = (id, $module) => {
       // Recreate svg to use image's actual width so the image reacts appropriately when sticky
       // style modifies image dimension (eg image has 100% and padding in sticky style is larger;
       // this will resulting in image being smaller because the wrapper dimension is smaller)
-      src: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${measuredWidth}" height="${measuredHeight}"><rect width="${measuredWidth}" height="${measuredHeight}" /></svg>`
+      src: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${measuredWidth}" height="${measuredHeight}"><rect width="${measuredWidth}" height="${measuredHeight}" /></svg>`,
     });
   });
 
   // Append the cloned DOM
   $module.after($stickyStyleDom);
 
+  // Get inline margin style value that is substraction of sticky style - style due to position
+  // relative to fixed change
+  const getMarginStyle = corner => {
+    const marginPropName = `margin${corner}`;
+    const $normalModule  = $module.hasClass('et_pb_sticky') ? $placeholder : $module;
+
+    return parseFloat($stickyStyleDom.css(marginPropName)) - parseFloat($normalModule.css(marginPropName));
+  };
+
   // Measure sticky style DOM properties
   const styles = {
     height: $stickyStyleDom.outerHeight(),
     width: $stickyStyleDom.outerWidth(),
+    marginRight: getMarginStyle('Right'),
+    marginLeft: getMarginStyle('Left'),
+    padding: $stickyStyleDom.css('padding'),
   };
 
   // Immediately remove the cloned DOM
   $(`.et_pb_sticky_style_dom[data-sticky-style-dom-id="${id}"]`).remove();
 
   return styles;
-}
+};
 
 /**
  * Remove given property's transition from transition property's value. To make some properties
- * (eg. width, top, left) transition smoothly when entering / leaving sticky state, its property
+ * (eg. Width, top, left) transition smoothly when entering / leaving sticky state, its property
  * and transition need to be removed then re-added 50ms later. This is mostly happened because the
- * module positioning changed from relative to fixed when entering/leaving sticky state
+ * module positioning changed from relative to fixed when entering/leaving sticky state.
  *
  * @since 4.6.0
  *
  * @param {string} transitionValue
- * @param {array} trimmedProperties
+ * @param {Array} trimmedProperties
  *
- * @return {string}
+ * @returns {string}
  */
 export const trimTransitionValue = (transitionValue, trimmedProperties) => {
   // Make sure that transitionValue is string. Otherwise split will throw error
-  if (!isString(transitionValue)) {
+  if (! isString(transitionValue)) {
     transitionValue = '';
   }
 
   const transitions  = transitionValue.split(', ');
-  const trimmedValue = filter(transitions, (transition) => {
-    return !includes(trimmedProperties, head(transition.split(' ')));
-  });
+  const trimmedValue = filter(transitions, transition => ! includes(trimmedProperties, head(transition.split(' '))));
 
   return isEmpty(trimmedValue) ? 'none' : trimmedValue.join(', ');
-}
+};
 
 /**
  * Calculate automatic offset that should be given based on sum of heights of all sticky modules
@@ -224,9 +237,9 @@ export const trimTransitionValue = (transitionValue, trimmedProperties) => {
  *
  * @param {object} $target
  *
- * @return {number}
+ * @returns {number}
  */
-export const getClosestStickyModuleOffsetTop = ($target) => {
+export const getClosestStickyModuleOffsetTop = $target => {
   const offset = $target.offset();
   offset.right = offset.left + $target.outerWidth();
 
@@ -243,7 +256,7 @@ export const getClosestStickyModuleOffsetTop = ($target) => {
   // @see https://github.com/elegantthemes/Divi/issues/19432
   forEach(stickyModules, stickyModule => {
     // Ignore sticky module if it is stuck to bottom
-    if (!includes(['top_bottom', 'top'], stickyModule.position)) {
+    if (! includes(['top_bottom', 'top'], stickyModule.position)) {
       return;
     }
 
@@ -277,26 +290,18 @@ export const getClosestStickyModuleOffsetTop = ($target) => {
   if (get(closestStickyElement, 'topOffsetModules', false)) {
     forEach(get(closestStickyElement, 'topOffsetModules', []), stickyId => {
       // Get sticky module's height on sticky state; fallback to height just to be safe
-      const stickyModuleHeight = get(
-        stickyModules,
-        [stickyId, 'heightSticky'],
-        get(stickyModules, [stickyId, 'height'], 0)
-      );
+      const stickyModuleHeight = get(stickyModules, [stickyId, 'heightSticky'], get(stickyModules, [stickyId, 'height'], 0));
 
       // Sum up top offset module's height
       closestStickyOffsetTop += stickyModuleHeight;
     });
 
     // Get closest-to-y-offset's sticky module's height on sticky state;
-    const closestStickyElementHeight = get(
-      stickyModules,
-      [closestStickyElement.id, 'heightSticky'],
-      get(stickyModules, [closestStickyElement.id, 'height'], 0)
-    );
+    const closestStickyElementHeight = get(stickyModules, [closestStickyElement.id, 'heightSticky'], get(stickyModules, [closestStickyElement.id, 'height'], 0));
 
     // Sum up top offset module's height
     closestStickyOffsetTop += closestStickyElementHeight;
   }
 
   return closestStickyOffsetTop;
-}
+};

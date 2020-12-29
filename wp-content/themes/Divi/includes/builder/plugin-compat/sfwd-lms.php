@@ -13,6 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class ET_Builder_Plugin_Compat_LearnDash extends ET_Builder_Plugin_Compat_Base {
 	/**
+	 * Original `in_the_loop` property value for the layouts.
+	 *
+	 * @var array
+	 */
+	protected $_in_the_loop = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 4.3.4
@@ -38,6 +45,59 @@ class ET_Builder_Plugin_Compat_LearnDash extends ET_Builder_Plugin_Compat_Base {
 		add_action( 'learndash-focus-header-before', array( $this, 'fire_learndash_compatibility_action' ) );
 		add_action( 'learndash-focus-template-start', array( $this, 'maybe_inject_theme_builder_header' ) );
 		add_action( 'learndash-focus-template-end', array( $this, 'maybe_inject_theme_builder_footer' ) );
+		add_action( 'et_theme_builder_template_before_body', array( $this, 'maybe_override_query_before_body' ), 10, 3 );
+		add_action( 'et_theme_builder_template_after_body', array( $this, 'maybe_override_query_after_body' ), 10, 3 );
+	}
+
+	/**
+	 * Maybe override `$wp_query` temporarily before TB layout body template.
+	 *
+	 * @since 4.7.4
+	 *
+	 * @param integer $layout_id      TB layout post ID (header, body, footer).
+	 * @param boolean $layout_enabled Current layout status whether is enabled or not.
+	 * @param integer $template_id    TB template post ID (parent of TB layout).
+	 */
+	public function maybe_override_query_before_body( $layout_id, $layout_enabled, $template_id ) {
+		if ( ! $layout_enabled || ! function_exists( 'learndash_get_post_types' ) ) {
+			return;
+		}
+
+		if ( ! in_array( get_post_type(), learndash_get_post_types(), true ) ) {
+			return;
+		}
+
+		global $wp_query;
+
+		// Save current value as reference for later usage.
+		$this->_in_the_loop[ $layout_id ] = $wp_query->in_the_loop;
+
+		// Force the query to be treated as a loop (fake loop).
+		$wp_query->in_the_loop = true;
+	}
+
+	/**
+	 * Maybe restore `$wp_query` after TB layout body template rendered.
+	 *
+	 * @since 4.7.4
+	 *
+	 * @param integer $layout_id      TB layout post ID (header, body, footer).
+	 * @param boolean $layout_enabled Current layout status whether is enabled or not.
+	 * @param integer $template_id    TB template post ID (parent of TB layout).
+	 */
+	public function maybe_override_query_after_body( $layout_id, $layout_enabled, $template_id ) {
+		if ( ! $layout_enabled || ! function_exists( 'learndash_get_post_types' ) ) {
+			return;
+		}
+
+		if ( ! in_array( get_post_type(), learndash_get_post_types(), true ) ) {
+			return;
+		}
+
+		global $wp_query;
+
+		// Restore `in_the_loop` property to original state.
+		$wp_query->in_the_loop = et_()->array_get( $this->_in_the_loop, $layout_id, false );
 	}
 
 	/**

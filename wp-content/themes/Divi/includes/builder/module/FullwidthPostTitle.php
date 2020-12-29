@@ -476,15 +476,21 @@ class ET_Builder_Module_Fullwidth_Post_Title extends ET_Builder_Module {
 			$featured_image_src = et_()->array_get( wp_get_attachment_image_src( $post_thumbnail_id, $featured_image_size ), 0 );
 			$featured_image_alt   = get_post_meta( $post_thumbnail_id, '_wp_attachment_image_alt', true );
 			$featured_image_title = get_the_title( $post_thumbnail_id );
+			$featured_image_class = et_pb_media_options()->get_image_attachment_class( $this->props, '', $post_thumbnail_id );
+			$featured_image_attrs = array(
+				'src'   => $featured_image_src,
+				'alt'   => $featured_image_alt,
+				'title' => $featured_image_title,
+			);
+
+			if ( ! empty( $featured_image_class ) ) {
+				$featured_image_attrs['class'] = esc_attr( $featured_image_class );
+			}
 
 			$featured_image_content = $multi_view->render_element(
 				array(
 					'tag'   => 'img',
-					'attrs' => array(
-						'src'   => $featured_image_src,
-						'alt'   => $featured_image_alt,
-						'title' => $featured_image_title,
-					),
+					'attrs' => $featured_image_attrs,
 				)
 			);
 

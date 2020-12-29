@@ -521,6 +521,12 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 								$image_attrs['sizes']  = '(max-width:479px) 479px, 100vw';
 							}
 
+							$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, '', get_post_thumbnail_id() );
+
+							if ( ! empty( $image_attachment_class ) ) {
+								$image_attrs['class'] = esc_attr( $image_attachment_class );
+							}
+
 							$this->render_image( $thumb_src, $image_attrs );
 							?>
 							<div class="meta">

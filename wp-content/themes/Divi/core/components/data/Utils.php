@@ -480,12 +480,16 @@ class ET_Core_Data_Utils {
 	/**
 	 * Disable XML entity loader.
 	 *
+	 * @since 4.7.5 Don't execute deprecated `libxml_disable_entity_loader()` on PHP 8.0.
+	 *
 	 * @param bool $disable
 	 *
 	 * @return void
 	 */
 	public function libxml_disable_entity_loader( $disable ) {
-		if ( function_exists( 'libxml_disable_entity_loader' ) ) {
+		// The `libxml_disable_entity_loader()` method is deprecated since PHP 8.0 because
+		// PHP 8.0 and later uses libxml versions from 2.9.0, which disabled XXE by default.
+		if ( PHP_VERSION_ID < 80000 && function_exists( 'libxml_disable_entity_loader' ) ) {
 			libxml_disable_entity_loader( $disable );
 		}
 	}
@@ -893,7 +897,7 @@ class ET_Core_Data_Utils {
 
 	/**
 	 * Returns a string with a valid CSS property value.
-	 * 
+	 *
 	 * With some locales (ex: ro_RO) the decimal point can be ',' (comma) and
 	 * we need to convert that to a '.' (period) decimal point to ensure that
 	 * the value is a valid CSS property value.
@@ -904,7 +908,7 @@ class ET_Core_Data_Utils {
 	 *
 	 * @return string
 	 */
-	public function to_css_decimal( $float ) {	
+	public function to_css_decimal( $float ) {
 		return strtr( $float, ',', '.' );
 	}
 

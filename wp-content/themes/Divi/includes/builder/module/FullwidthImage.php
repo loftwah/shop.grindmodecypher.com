@@ -302,14 +302,24 @@ class ET_Builder_Module_Fullwidth_Image extends ET_Builder_Module {
 			);
 		}
 
+		$image_attrs = array(
+			'src'    => '{{src}}',
+			'alt'    => esc_attr( $alt ),
+			'title'  => esc_attr( $title_text ),
+			'height' => 'auto',
+			'width'  => 'auto',
+		);
+
+		$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'src' );
+
+		if ( ! empty( $image_attachment_class ) ) {
+			$image_attrs['class'] = esc_attr( $image_attachment_class );
+		}
+
 		$image_html = $multi_view->render_element(
 			array(
 				'tag'      => 'img',
-				'attrs'    => array(
-					'src'   => '{{src}}',
-					'alt'   => $alt,
-					'title' => $title_text,
-				),
+				'attrs'    => $image_attrs,
 				'required' => 'src',
 			)
 		);

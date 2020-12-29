@@ -184,6 +184,32 @@ class ET_Core_Portability {
 				$post_content = et_fb_process_to_shortcode( $shortcode_object, array(), '', false );
 				// Add slashes for post content to avoid unwanted unslashing (by wp_unslash) while post is inserting.
 				$post['post_content'] = wp_slash( $post_content );
+
+				// Upload thumbnail image if exist.
+				if ( ! empty( $post['post_meta'] ) && ! empty( $post['post_meta']['_thumbnail_id'] ) ) {
+					$post_thumbnail_origin_id = (int) $post['post_meta']['_thumbnail_id'][0];
+
+					if ( ! empty( $import['thumbnails'] ) && ! empty( $import['thumbnails'][ $post_thumbnail_origin_id ] ) ) {
+						$post_thumbnail_new = $this->upload_images( $import['thumbnails'][ $post_thumbnail_origin_id ] );
+						$new_thumbnail_data = reset( $post_thumbnail_new );
+
+						// New thumbnail image was uploaded and it should be updated.
+						if ( isset( $new_thumbnail_data['replacement_id'] ) ) {
+							$new_thumbnail_id  = $new_thumbnail_data['replacement_id'];
+							$post['thumbnail'] = $new_thumbnail_id;
+
+							if ( ! function_exists( 'wp_crop_image' ) ) {
+								include ABSPATH . 'wp-admin/includes/image.php';
+							}
+
+							$thumbnail_path = get_attached_file( $new_thumbnail_id );
+
+							// Generate all the image sizes and update thumbnail metadata.
+							$new_metadata = wp_generate_attachment_metadata( $new_thumbnail_id, $thumbnail_path );
+							wp_update_attachment_metadata( $new_thumbnail_id, $new_metadata );
+						}
+					}
+				}
 			}
 
 			if ( ! $this->import_posts( $data ) ) {
@@ -229,11 +255,13 @@ class ET_Core_Portability {
 		$this->prevent_failure();
 		et_core_nonce_verified_previously();
 
-		$timestamp      = $this->get_timestamp();
-		$filesystem     = $this->set_filesystem();
-		$temp_file_id   = sanitize_file_name( $timestamp );
-		$temp_file      = $this->has_temp_file( $temp_file_id, 'et_core_export' );
-		$global_presets = '';
+		$timestamp            = $this->get_timestamp();
+		$filesystem           = $this->set_filesystem();
+		$temp_file_id         = sanitize_file_name( $timestamp );
+		$temp_file            = $this->has_temp_file( $temp_file_id, 'et_core_export' );
+		$apply_global_presets = isset( $_POST['apply_global_presets'] ) ? wp_validate_boolean( $_POST['apply_global_presets'] ) : false;
+		$global_presets       = '';
+		$thumbnails           = '';
 
 		if ( $temp_file ) {
 			$file_data      = json_decode( $filesystem->get_contents( $temp_file ) );
@@ -282,15 +310,22 @@ class ET_Core_Portability {
 			$data = $this->apply_query( $data, 'set' );
 
 			if ( 'post_type' === $this->instance->type ) {
-				$used_global_presets  = array();
+				$used_global_presets = array();
+				$options             = array(
+					'apply_global_presets' => true,
+				);
 
 				foreach ( $data as $post ) {
 					$shortcode_object = et_fb_process_shortcode( $post->post_content );
 
-					$used_global_presets = array_merge(
-						$this->get_used_global_presets( $shortcode_object, $used_global_presets ),
-						$used_global_presets
-					);
+					if ( $apply_global_presets ) {
+						$post->post_content = et_fb_process_to_shortcode( $shortcode_object, $options, '', false );
+					} else {
+						$used_global_presets = array_merge(
+							$this->get_used_global_presets( $shortcode_object, $used_global_presets ),
+							$used_global_presets
+						);
+					}
 				}
 
 				if ( ! empty ( $used_global_presets ) ) {
@@ -308,12 +343,15 @@ class ET_Core_Portability {
 			$filesystem->put_contents( $temp_file, wp_json_encode( $file_data ) );
 		}
 
+		$thumbnails = $this->_get_thumbnail_images( $data );
+
 		$images = $this->get_data_images( $data );
 		$data = array(
-			'context'  => $this->instance->context,
-			'data'     => $data,
-			'presets' => $global_presets,
-			'images'   => $this->maybe_paginate_images( $images, 'encode_images', $timestamp ),
+			'context'    => $this->instance->context,
+			'data'       => $data,
+			'presets'    => $global_presets,
+			'images'     => $this->maybe_paginate_images( $images, 'encode_images', $timestamp ),
+			'thumbnails' => $thumbnails,
 		);
 
 		// Return exported content instead of printing it
@@ -1160,6 +1198,11 @@ class ET_Core_Portability {
 					update_post_meta( $post_id, $meta_key, $meta );
 				}
 			}
+
+			// Assign new thumbnail if provided.
+			if ( isset( $post['thumbnail'] ) ) {
+				set_post_thumbnail( $post_id, $post['thumbnail'] );
+			}
 		}
 
 		return true;
@@ -1409,6 +1452,36 @@ class ET_Core_Portability {
 		}
 
 		return $result['images'];
+	}
+
+	/**
+	 * Get all thumbnail images in the data given.
+	 *
+	 * @since 4.7.4
+	 *
+	 * @param array $data Array of data.
+	 *
+	 * @return array
+	 */
+	protected function _get_thumbnail_images( $data ) {
+		$thumbnails = array();
+
+		foreach ( $data as $post_data ) {
+			// If post has thumbnail.
+			if ( ! empty( $post_data->post_meta ) && ! empty( $post_data->post_meta->_thumbnail_id ) ) {
+				$post_thumbnail = get_the_post_thumbnail_url( $post_data->ID );
+
+				// If thumbnail image found in the WP Media library.
+				if ( $post_thumbnail ) {
+					$thumbnail_id    = (int) $post_data->post_meta->_thumbnail_id[0];
+					$thumbnail_image = $this->encode_images( array( $thumbnail_id ) );
+
+					$thumbnails[ $thumbnail_id ] = $thumbnail_image;
+				}
+			}
+		}
+
+		return $thumbnails;
 	}
 
 	/**
@@ -2103,6 +2176,8 @@ class ET_Core_Portability {
 
 		), admin_url() );
 
+		$is_etdev_plugin_activated = is_plugin_active( 'etdev/etdev.php' );
+
 		?>
 		<div class="et-core-modal-overlay et-core-form" data-et-core-portability="<?php echo esc_attr( $this->instance->context ); ?>">
 			<div class="et-core-modal">
@@ -2122,7 +2197,11 @@ class ET_Core_Portability {
 								<input type="text" name="" value="<?php echo esc_attr( $this->instance->name ); ?>">
 								<?php if ( 'post_type' === $this->instance->type ) : ?>
 									<div class="et-core-clearfix"></div>
-									<label><input type="checkbox" name="et-core-portability-posts"/><?php esc_html_e( 'Only export selected items', ET_CORE_TEXTDOMAIN ); ?></label>
+									<label><input type="checkbox" name="et-core-portability-posts" <?php echo $is_etdev_plugin_activated ? 'checked' : ''; ?> /><?php esc_html_e( 'Only export selected items', ET_CORE_TEXTDOMAIN ); ?></label>
+								<?php endif; ?>
+								<?php if ( $is_etdev_plugin_activated ) : ?>
+									<div class="et-core-clearfix"></div>
+									<label><input type="checkbox" name="et-core-portability-apply-presets" checked /><?php esc_html_e( 'Export Presets As Static Styles', ET_CORE_TEXTDOMAIN ); ?></label>
 								<?php endif; ?>
 							</form>
 						</div>

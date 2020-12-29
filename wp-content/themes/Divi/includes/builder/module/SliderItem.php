@@ -865,13 +865,23 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 		$image = '';
 
 		if ( $multi_view->has_value( 'image' ) ) {
+			$image_attrs = array(
+				'src'    => '{{image}}',
+				'alt'    => esc_attr( $image_alt ),
+				'height' => 'auto',
+				'width'  => 'auto',
+			);
+
+			$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'image' );
+
+			if ( ! empty( $image_attachment_class ) ) {
+				$image_attrs['class'] = esc_attr( $image_attachment_class );
+			}
+
 			$image_html = $multi_view->render_element(
 				array(
 					'tag'      => 'img',
-					'attrs'    => array(
-						'src' => '{{image}}',
-						'alt' => esc_attr( $image_alt ),
-					),
+					'attrs'    => $image_attrs,
 					'required' => 'image',
 				)
 			);

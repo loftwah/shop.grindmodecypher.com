@@ -1,4 +1,4 @@
-/* compiled by scssphp v0.0.10 on Tue, 25 Aug 2020 23:41:57 +0000 (0.0117s) */
+/* compiled by scssphp v0.0.10 on Sun, 13 Sep 2020 10:32:28 +0000 (0.0163s) */
 
 /* material aside */
 /*
@@ -80,7 +80,7 @@ ul#adminmenu li:after, ul#adminmenu a:after {
   display: none !important; }
 
 #adminmenu .current div.wp-menu-image:before, #adminmenu .wp-has-current-submenu div.wp-menu-image:before, #adminmenu a.current:hover div.wp-menu-image:before, #adminmenu a.wp-has-current-submenu:hover div.wp-menu-image:before, #adminmenu li.wp-has-current-submenu a:focus div.wp-menu-image:before, #adminmenu li.wp-has-current-submenu.opensub div.wp-menu-image:before, #adminmenu li.wp-has-current-submenu:hover div.wp-menu-image:before {
-  color: #999; }
+  color: #111; }
 
 .wp-has-submenu .wp-menu-arrow {
   cursor: pointer;
@@ -97,7 +97,7 @@ ul#adminmenu li:after, ul#adminmenu a:after {
     background: transparent !important;
     display: inline-block;
     border: 4px solid transparent;
-    border-top-color: #999;
+    border-top-color: #111;
     border-bottom-width: 0;
     opacity: 0.5;
     width: 0;
@@ -126,7 +126,7 @@ ul#adminmenu li:after, ul#adminmenu a:after {
   padding: 10px 20px !important; }
 
 #adminmenu li.wp-menu-separator {
-  border-bottom: 1px solid #999;
+  border-bottom: 1px solid #111;
   opacity: 0.2; }
 
 .page-title-action {
@@ -139,7 +139,7 @@ ul#adminmenu li:after, ul#adminmenu a:after {
   overflow: hidden;
   top: auto !important;
   border-radius: 100% !important;
-  background-color: #f44336 !important;
+  background-color: #111 !important;
   color: #fff !important;
   bottom: 20px;
   right: 20px;

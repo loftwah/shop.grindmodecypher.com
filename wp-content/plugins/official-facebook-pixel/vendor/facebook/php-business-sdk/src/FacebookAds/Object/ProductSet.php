@@ -265,6 +265,7 @@ class ProductSet extends AbstractCrudObject {
     $this->assureId();
 
     $param_types = array(
+      'allow_live_product_set_deletion' => 'bool',
     );
     $enums = array(
     );
@@ -312,7 +313,9 @@ class ProductSet extends AbstractCrudObject {
 
     $param_types = array(
       'filter' => 'Object',
+      'metadata' => 'map',
       'name' => 'string',
+      'retailer_id' => 'string',
     );
     $enums = array(
     );

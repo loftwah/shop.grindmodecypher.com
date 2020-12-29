@@ -122,8 +122,22 @@ table.order-data-addresses {
 	margin-bottom: 10mm;
 }
 
+table.order-data-addresses td.address {
+	word-wrap: break-word;
+}
+
 td.order-data {
 	width: 40%;
+}
+
+td.order-data table {
+	width: 100%;
+}
+
+td.order-data table th {
+	font-weight: normal;
+	padding-right: 2mm;
+	width: 50%;
 }
 
 .invoice .shipping-address {
@@ -132,11 +146,6 @@ td.order-data {
 
 .packing-slip .billing-address {
 	width: 30%;
-}
-
-td.order-data table th {
-	font-weight: normal;
-	padding-right: 2mm;
 }
 
 /* Order details */
@@ -221,6 +230,7 @@ dd:after {
 }
 
 /* Notes & Totals */
+.document-notes,
 .customer-notes {
 	margin-top: 5mm;
 }

@@ -27,7 +27,7 @@
 		$hide_ad = get_option( 'wpo_wcpdf_hide_extensions_ad' );
 	}
 	
-	if ( !$hide_ad && !( class_exists('WooCommerce_PDF_IPS_Pro') && class_exists('WooCommerce_PDF_IPS_Dropbox') && class_exists('WooCommerce_PDF_IPS_Templates') && class_exists('WooCommerce_Ext_PrintOrders') ) ) {
+	if ( !$hide_ad && !( class_exists('WooCommerce_PDF_IPS_Pro') && class_exists('WooCommerce_PDF_IPS_Templates') && class_exists('WooCommerce_Ext_PrintOrders') ) ) {
 		include('wcpdf-extensions.php');
 	}
 

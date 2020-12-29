@@ -7,26 +7,26 @@ import isEqual from 'lodash/isEqual';
 import $ from 'jquery';
 
 // Internal dependencies
+import { top_window } from '@core-ui/utils/frame-helpers';
 import ETScriptStickyStore from './sticky';
 import { getContentAreaSelector } from '../../frontend-builder/gutenberg/utils/selectors';
-import { top_window } from '@core-ui/utils/frame-helpers';
 import {
   isBFB,
+  isExtraTheme,
   isFE,
-  isTB,
   isLBB,
   isLBP,
+  isTB,
   isVB,
-  maybeIncreaseEmitterMaxListeners,
   maybeDecreaseEmitterMaxListeners,
+  maybeIncreaseEmitterMaxListeners,
   registerFrontendComponent,
-  isExtraTheme,
 } from '../utils/utils';
 
 // Builder window
 const $window         = $(window);
 const $topWindow      = top_window.jQuery(top_window);
-const hasTopWindow    = !isEqual(window, top_window);
+const hasTopWindow    = ! isEqual(window, top_window);
 const windowLocations = hasTopWindow ? ['app', 'top'] : ['app'];
 
 // Event Constants
@@ -74,12 +74,13 @@ const states = {
 // Retrieved from server, used for validating values
 const validValues = {
   scrollLocation: [...et_builder_utils_params.scrollLocations],
-}
+};
 
 // Variables
 const builderScrollLocations = {
   ...et_builder_utils_params.builderScrollLocations,
 };
+
 // @todo need to change how this works since builder already have et_screen_sizes(), unless
 // we prefer to add another breakpoint functions
 const deviceMinimumBreakpoints = {
@@ -87,19 +88,19 @@ const deviceMinimumBreakpoints = {
   tablet: 767,
   phone: 0,
 };
-const bfbFrameId = '#et-bfb-app-frame';
+const bfbFrameId               = '#et-bfb-app-frame';
 
 /**
  * Window store.
  *
  * This store listen to direct window's events; builder callback listen to this store's events
- * to avoid dom-based calculation whenever possible; use the property passed by this store
+ * to avoid dom-based calculation whenever possible; use the property passed by this store.
  *
  * @since 4.6.0
  */
 class ETScriptWindowStore extends EventEmitter {
   /**
-   * ETScriptWindowStore constructor
+   * ETScriptWindowStore constructor.
    *
    * @since 4.6.0
    */
@@ -138,14 +139,14 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Set window height
+   * Set window height.
    *
    * @since 4.6.0
    *
-   * @param {string} windowLocation app|top
+   * @param {string} windowLocation App|top.
    * @param {number} height
    *
-   * @return {Window}
+   * @returns {Window}
    */
   setHeight = (windowLocation = 'app', height) => {
     if (height === states.height[windowLocation]) {
@@ -160,14 +161,14 @@ class ETScriptWindowStore extends EventEmitter {
   };
 
   /**
-   * Set window width
+   * Set window width.
    *
    * @since 4.6.0
    *
-   * @param {string} windowLocation app|top
+   * @param {string} windowLocation App|top.
    * @param {number} width
    *
-   * @return {Window}
+   * @returns {Window}
    */
   setWidth = (windowLocation = 'app', width) => {
     if (width === states.width[windowLocation]) {
@@ -182,7 +183,7 @@ class ETScriptWindowStore extends EventEmitter {
       if (isExtraTheme) {
         const outerWidth            = this.width + this.verticalScrollBar;
         const extraMobileBreakpoint = 1024;
-        const fixedNavActivation    = !states.extraMobileBreakpoint && outerWidth >= extraMobileBreakpoint;
+        const fixedNavActivation    = ! states.extraMobileBreakpoint && outerWidth >= extraMobileBreakpoint;
         const fixedNavDeactivation  = states.extraMobileBreakpoint && outerWidth < extraMobileBreakpoint;
 
         // Re-set element props when Extra mobile breakpoint change happens
@@ -202,17 +203,17 @@ class ETScriptWindowStore extends EventEmitter {
   };
 
   /**
-   * Set scroll location value
+   * Set scroll location value.
    *
    * @since 4.6.0
    *
-   * @param {string} scrollLocation app|top
+   * @param {string} scrollLocation App|top.
    *
-   * @return {ETScriptWindowStore}
+   * @returns {ETScriptWindowStore}
    */
   setScrollLocation = scrollLocation => {
     // Prevent incorrect scroll location value from being saved
-    if (!includes(validValues.scrollLocation, scrollLocation)) {
+    if (! includes(validValues.scrollLocation, scrollLocation)) {
       return false;
     }
 
@@ -228,14 +229,14 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Set scroll top value
+   * Set scroll top value.
    *
    * @since 4.6.0
    *
-   * @param {string} windowLocation app|top
+   * @param {string} windowLocation App|top.
    * @param {number} scrollTop
    *
-   * @return {ETScriptWindowStore}
+   * @returns {ETScriptWindowStore}
    */
   setScrollTop = (windowLocation, scrollTop) => {
     if (scrollTop === states.scrollTop[windowLocation]) {
@@ -250,11 +251,11 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Set builder zoomed status (on builder only)
+   * Set builder zoomed status (on builder only).
    *
    * @since 4.6.0
    *
-   * @param {string} builderPreviewMode desktop|tablet|phone|zoom|wireframe
+   * @param {string} builderPreviewMode Desktop|tablet|phone|zoom|wireframe.
    */
   setBuilderZoomedStatus = builderPreviewMode => {
     const isBuilderZoomed = 'zoom' === builderPreviewMode;
@@ -263,7 +264,7 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Set BFB iframe offset
+   * Set BFB iframe offset.
    *
    * @since 4.6.0
    */
@@ -272,16 +273,16 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Set Layout Block iframe offset
+   * Set Layout Block iframe offset.
    *
    * @since 4.6.0
    */
   setLayoutBlockPreviewIframeOffset = () => {
-    const blockId             = get(window.ETBlockLayoutModulesScript, 'blockId', '');
-    const previewIframeId     = `#divi-layout-iframe-${blockId}`;
-    const $block              = top_window.jQuery(previewIframeId).closest('.wp-block[data-type="divi/layout"]');
-    const blockPosition       = $block.position();
-    const contentSelectors    = [
+    const blockId          = get(window.ETBlockLayoutModulesScript, 'blockId', '');
+    const previewIframeId  = `#divi-layout-iframe-${blockId}`;
+    const $block           = top_window.jQuery(previewIframeId).closest('.wp-block[data-type="divi/layout"]');
+    const blockPosition    = $block.position();
+    const contentSelectors = [
       // WordPress 5.4
       'block-editor-editor-skeleton__content',
 
@@ -314,7 +315,7 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Set vertical scrollbar width
+   * Set vertical scrollbar width.
    *
    * @since 4.6.0
    *
@@ -334,44 +335,44 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Get current window width
+   * Get current window width.
    *
    * @since 4.6.0
    *
-   * @return {number}
+   * @returns {number}
    */
   get width() {
     return states.width[this.scrollLocation];
-  };
+  }
 
   /**
-   * Get current window height
+   * Get current window height.
    *
    * @since 4.6.0
    *
-   * @return {number}
+   * @returns {number}
    */
   get height() {
     return states.height[this.scrollLocation];
-  };
+  }
 
   /**
-   * Get current window scroll location
+   * Get current window scroll location.
    *
    * @since 4.6.0
    *
-   * @return {string} app|top
+   * @returns {string} App|top.
    */
   get scrollLocation() {
     return states.scrollLocation;
   }
 
   /**
-   * Get current window scroll top / distance to document
+   * Get current window scroll top / distance to document.
    *
    * @since 4.6.0
    *
-   * @return {number}
+   * @returns {number}
    */
   get scrollTop() {
     const multiplier = this.isBuilderZoomed ? 2 : 1;
@@ -392,22 +393,22 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Get current app window breakpoint (by device)
+   * Get current app window breakpoint (by device).
    *
    * @since 4.6.0
    *
-   * @return {string}
+   * @returns {string}
    */
   get breakpoint() {
     return states.breakpoint;
   }
 
   /**
-   * Get builder zoomed status
+   * Get builder zoomed status.
    *
    * @since 4.6.0
    *
-   * @return {bool}
+   * @returns {bool}
    */
   get isBuilderZoomed() {
     return states.isBuilderZoomed;
@@ -418,33 +419,31 @@ class ETScriptWindowStore extends EventEmitter {
    *
    * @since 4.6.0
    *
-   * @return {number}
+   * @returns {number}
    */
   get verticalScrollBar() {
     return states.verticalScrollBar[this.scrollLocation];
   }
 
   /**
-   * Get builder scroll location of builder context + preview mode
+   * Get builder scroll location of builder context + preview mode.
    *
    * @since 4.6.0
    *
-   * @param {string} previewMode desktop|tablet|phone|zoom|wireframe
+   * @param {string} previewMode Desktop|tablet|phone|zoom|wireframe.
    *
-   * @return {string} app|top
+   * @returns {string} App|top.
    */
-  getBuilderScrollLocation = previewMode => {
-    return get(builderScrollLocations, previewMode, 'app');
-  }
+  getBuilderScrollLocation = previewMode => get(builderScrollLocations, previewMode, 'app')
 
   /**
-   * Add width change event listener
+   * Add width change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   addWidthChangeListener = callback => {
     maybeIncreaseEmitterMaxListeners(this, WIDTH_CHANGE);
@@ -453,13 +452,13 @@ class ETScriptWindowStore extends EventEmitter {
   };
 
   /**
-   * Remove width change event listener
+   * Remove width change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   removeWidthChangeListener = callback => {
     this.removeListener(WIDTH_CHANGE, callback);
@@ -468,13 +467,13 @@ class ETScriptWindowStore extends EventEmitter {
   };
 
   /**
-   * Add height change event listener
+   * Add height change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   addHeightChangeListener = callback => {
     maybeIncreaseEmitterMaxListeners(this, HEIGHT_CHANGE);
@@ -483,13 +482,13 @@ class ETScriptWindowStore extends EventEmitter {
   };
 
   /**
-   * Remove height change event listener
+   * Remove height change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   removeHeightChangeListener = callback => {
     this.removeListener(HEIGHT_CHANGE, callback);
@@ -498,11 +497,11 @@ class ETScriptWindowStore extends EventEmitter {
   };
 
   /**
-   * Add scroll location change event listener
+   * Add scroll location change event listener.
    *
+   * @param callback
    * @since 4.6.0
-   *
-   * @return {ETScriptWindowStore}
+   * @returns {ETScriptWindowStore}
    */
   addScrollLocationChangeListener = callback => {
     maybeIncreaseEmitterMaxListeners(this, SCROLL_LOCATION_CHANGE);
@@ -511,11 +510,11 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Remove scroll location change event listener
+   * Remove scroll location change event listener.
    *
+   * @param callback
    * @since 4.6.0
-   *
-   * @return {ETScriptWindowStore}
+   * @returns {ETScriptWindowStore}
    */
   removeScrollLocationChangeListener = callback => {
     this.removeListener(SCROLL_LOCATION_CHANGE, callback);
@@ -524,11 +523,11 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Add scroll top change event listener
+   * Add scroll top change event listener.
    *
+   * @param callback
    * @since 4.6.0
-   *
-   * @return {ETScriptWindowStore}
+   * @returns {ETScriptWindowStore}
    */
   addScrollTopChangeListener = callback => {
     maybeIncreaseEmitterMaxListeners(this, SCROLL_TOP_CHANGE);
@@ -537,11 +536,11 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Remove scroll top change event listener
+   * Remove scroll top change event listener.
    *
+   * @param callback
    * @since 4.6.0
-   *
-   * @return {ETScriptWindowStore}
+   * @returns {ETScriptWindowStore}
    */
   removeScrollTopChangeListener = callback => {
     this.removeListener(SCROLL_TOP_CHANGE, callback);
@@ -550,16 +549,16 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Set breakpoint (by device) based on window width
+   * Set breakpoint (by device) based on window width.
    *
    * @since 4.6.0
    *
-   * @todo update breakpoint setting mechanic so this won't need to define another screen size definition
-   *       and able to reuse (et_screen_size())
+   * @todo Update breakpoint setting mechanic so this won't need to define another screen size definition
+   *       and able to reuse (et_screen_size()).
    *
    * @param {number} windowWidth
    *
-   * @return {ETScriptWindowStore}
+   * @returns {ETScriptWindowStore}
    */
   setBreakpoint = windowWidth => {
     let newBreakpoint = '';
@@ -586,11 +585,11 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Add breakpoint change event listener
+   * Add breakpoint change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    */
   addBreakpointChangeListener = callback => {
     maybeIncreaseEmitterMaxListeners(this, BREAKPOINT_CHANGE);
@@ -599,18 +598,18 @@ class ETScriptWindowStore extends EventEmitter {
   }
 
   /**
-   * Remove breakpoint change event listener
+   * Remove breakpoint change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    */
   removeBreakpointChangeListener = callback => {
     this.removeListener(BREAKPOINT_CHANGE, callback);
     maybeDecreaseEmitterMaxListeners(this, BREAKPOINT_CHANGE);
     return this;
   }
-};
+}
 
 // initiate window store instance
 const windowStoreInstance = new ETScriptWindowStore();
@@ -618,7 +617,7 @@ const windowStoreInstance = new ETScriptWindowStore();
 
 /**
  * Listen for (app/top) window events, and update store's value
- * store is listener free; it only hold / set / get values
+ * store is listener free; it only hold / set / get values.
  */
 forEach(windowLocations, windowLocation => {
   const isTop          = 'top' === windowLocation;
@@ -705,7 +704,7 @@ forEach(windowLocations, windowLocation => {
   }
 
   // App window listener only
-  if (isApp){
+  if (isApp) {
     // Update known element props when breakpoint changes. Breakpoint change is basically less
     // aggressive resize event, happened between known window's width
     if (isFE || isVB) {

@@ -4,7 +4,7 @@
  *
  * Functions for updating data, used by the background updater.
  *
- * @package WooCommerce/Functions
+ * @package WooCommerce\Functions
  * @version 3.3.0
  */
 
@@ -2134,39 +2134,15 @@ function wc_update_400_db_version() {
 /**
  * Register attributes as terms for variable products, in increments of 100 products.
  *
- * @return bool true if there are more products to process.
+ * This migration was added to support a new mechanism to improve the filtering of
+ * variable products by attribute (https://github.com/woocommerce/woocommerce/pull/26260),
+ * however that mechanism was later reverted (https://github.com/woocommerce/woocommerce/pull/27625)
+ * due to numerous issues found. Thus the migration is no longer needed.
+ *
+ * @return bool true if the migration needs to be run again.
  */
 function wc_update_440_insert_attribute_terms_for_variable_products() {
-	$state_option_name = 'woocommerce_' . __FUNCTION__ . '_state';
-
-	$page     = intval( get_option( $state_option_name, 1 ) );
-	$products = wc_get_products(
-		array(
-			'type'  => 'variable',
-			'limit' => 100,
-			'page'  => $page,
-		)
-	);
-	if ( empty( $products ) ) {
-		delete_option( $state_option_name );
-		return false;
-	}
-
-	$attribute_taxonomy_names = wc_get_attribute_taxonomy_names();
-	foreach ( $products as $product ) {
-		$variation_ids = $product->get_children();
-		foreach ( $variation_ids as $variation_id ) {
-			$variation            = wc_get_product( $variation_id );
-			$variation_attributes = $variation->get_attributes();
-			foreach ( $variation_attributes as $attr_name => $attr_value ) {
-				wp_set_post_terms( $variation_id, array( $attr_value ), $attr_name );
-			}
-			$attributes_to_delete = array_diff( $attribute_taxonomy_names, array_keys( $variation_attributes ) );
-			wp_delete_object_term_relationships( $variation_id, $attributes_to_delete );
-		}
-	}
-
-	return update_option( $state_option_name, $page + 1 );
+	return false;
 }
 
 /**
@@ -2174,4 +2150,71 @@ function wc_update_440_insert_attribute_terms_for_variable_products() {
  */
 function wc_update_440_db_version() {
 	WC_Install::update_db_version( '4.4.0' );
+}
+
+/**
+ * Update DB version to 4.5.0.
+ */
+function wc_update_450_db_version() {
+	WC_Install::update_db_version( '4.5.0' );
+}
+
+/**
+ * Sanitize all coupons code.
+ *
+ * @return bool True to run again, false if completed.
+ */
+function wc_update_450_sanitize_coupons_code() {
+	global $wpdb;
+
+	$coupon_id      = 0;
+	$last_coupon_id = get_option( 'woocommerce_update_450_last_coupon_id', '0' );
+
+	$coupons = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT ID, post_title FROM $wpdb->posts WHERE ID > %d AND post_type = 'shop_coupon' LIMIT 10",
+			$last_coupon_id
+		),
+		ARRAY_A
+	);
+
+	if ( empty( $coupons ) ) {
+		delete_option( 'woocommerce_update_450_last_coupon_id' );
+		return false;
+	}
+
+	foreach ( $coupons as $key => $data ) {
+		$coupon_id = intval( $data['ID'] );
+		$code      = trim( wp_filter_kses( $data['post_title'] ) );
+
+		if ( ! empty( $code ) && $data['post_title'] !== $code ) {
+			$wpdb->update(
+				$wpdb->posts,
+				array(
+					'post_title' => $code,
+				),
+				array(
+					'ID' => $coupon_id,
+				),
+				array(
+					'%s',
+				),
+				array(
+					'%d',
+				)
+			);
+
+			// Clean cache.
+			clean_post_cache( $coupon_id );
+			wp_cache_delete( WC_Cache_Helper::get_cache_prefix( 'coupons' ) . 'coupon_id_from_code_' . $data['post_title'], 'coupons' );
+		}
+	}
+
+	// Start the run again.
+	if ( $coupon_id ) {
+		return update_option( 'woocommerce_update_450_last_coupon_id', $coupon_id );
+	}
+
+	delete_option( 'woocommerce_update_450_last_coupon_id' );
+	return false;
 }

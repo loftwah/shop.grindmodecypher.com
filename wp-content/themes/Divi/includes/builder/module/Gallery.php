@@ -258,7 +258,7 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 					'on'  => esc_html__( 'Slider', 'et_builder' ),
 				),
 				'default_on_front' => 'off',
-				'description'      => esc_html__( 'Toggle between the various blog layout types.', 'et_builder' ),
+				'description'      => esc_html__( 'Toggle between the various gallery layout types.', 'et_builder' ),
 				'affects'          => array(
 					'zoom_icon_color',
 					'caption_font',
@@ -637,6 +637,12 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 			if ( 'on' !== $fullwidth ) {
 				$image_attrs['srcset'] = $attachment->image_src_full[0] . ' 479w, ' . $attachment->image_src_thumb[0] . ' 480w';
 				$image_attrs['sizes']  = '(max-width:479px) 479px, 100vw';
+			}
+
+			$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, '', $attachment->ID );
+
+			if ( ! empty( $image_attachment_class ) ) {
+				$image_attrs['class'] = esc_attr( $image_attachment_class );
 			}
 
 			$image_output = sprintf(

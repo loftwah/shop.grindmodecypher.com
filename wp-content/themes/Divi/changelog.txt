@@ -1,3 +1,327 @@
+version 4.7.7 ( updated 12-14-2020 )
+- Fixed issue where select gradient color start and end buttons didn't work on background options of Button module.
+- Fixed issue where options of Text options group didn't show up after user clicked on Quick Access launch icon.
+- Fixed anchor link not working when the URL is loaded on Safari or Firefox browsers.
+	* includes/builder/feature/gutenberg/EditorTypography.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/scripts/frontend/scripts.js
+
+version 4.7.6 ( updated 12-11-2020 )
+- Apply theme customizer typography styles in the Gutenberg Editor.
+- Fixed image module alignment issue in mobile.
+- Fixed Divi reCaptcha conflict with 3rd party plugins.
+- Fixed js error when Find & Replace modal was opened for Button Background options in some cases.
+- Fixed the email list not working if the account name contains a quote or vertical line in the Email Optin module.
+- Fixed fullwidth header module incorrect height when the fullscreen layout is enabled.
+- Fixed video module border-radius in iOS and Safari.
+- Fixed a compatibility issue with WordPress 5.6 where it would cause the Fullwidth Header scroll down icon to not work.
+- Fixed Divider Arrangement setting option - Underneath Section Content.
+- Fixed true parallax jumping issue when an animation is enabled.
+- Fixed error on the console log when Filterable Portfolio is loaded on Firefox.
+- Fixed an issue with the Post Slider image top and bottom position.
+- Fixed the issue where fixed navigation bar was not sticky in Firefox browser.
+- Fixed button hover background color conflicts with the theme customizer.
+	* core/components/api/spam/ReCaptcha.php
+	* functions.php
+	* includes/builder/core.php
+	* includes/builder/feature/gutenberg/EditorTypography.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/module/FullwidthPostSlider.php
+	* includes/builder/module/Image.php
+	* includes/builder/module/PostSlider.php
+	* includes/builder/module/Signup.php
+	* includes/builder/module/Video.php
+	* includes/builder/scripts/frontend/scripts.js
+	* js/src/custom.js
+
+version 4.7.5 ( updated 12-09-2020 )
+- Fixed Email module button looks incorrect in 1/6 and 1/5 columns layout.
+- Fixed email optin module's extra space above form when no title or description exists.
+- Fixed anchor link doesn't work on default Divi menu after WordPress 5.6 released.
+- Fixed Slider module controls when opacity or Sepia filter is enabled.
+- Fixed locked section's Paste Row issue.
+- Submit email opt-in form when users hit enter.
+- Fixed reCAPTCHA account selecting in Settings Modal.
+- Fixed section divider changes position on mobile and tablet in the option.
+- Fixed Fullwidth Slider image position when lazy loading image is enabled.
+- Fixed unwanted h2 font-size change on posts within the Builder content on mobile screens.
+- Fixed center text alignment of blurb module when image/icon placement is set to left and content is not enough.
+- Fixed Post Navigation Module link arrow custom CSS that was affecting the label too.
+- Fixed hash anchor to tab for woo tabs module.
+- Fixed mobile menu background color in VB.
+- Fixed blurb module strange right padding with RTL languages.
+- Fixed blog module excerpt for languages that don't have space between words.
+- Fixed PHP 8 libxml_disable_entity_loader deprecation warning by adding conditional statement to run the method only on PHP 7.4 and below.
+- Fixed preload key requests for modules.ttf.
+- Fixed Centered Inline Logo header style showing Cart icon on the left.
+- Fixed setting 1 column in footer showing in 2 columns in tablets.
+- Removed top & bottom margin that were wrongly applied to the WooCommerce Related Products module.
+	* core/components/Portability.php
+	* core/components/data/Utils.php
+	* core/components/lib/OAuth.php
+	* core/functions.php
+	* epanel/custom_functions.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/test/css-modules-compiler.js
+	* includes/builder/module/PostsNavigation.php
+	* includes/builder/module/woocommerce/Tabs.php
+	* includes/builder/plugin-compat/sfwd-lms.php
+	* includes/builder/scripts/frontend/global-functions.js
+	* includes/builder/scripts/frontend/scripts.js
+	* js/src/custom.js
+
+version 4.7.4 ( updated 11-24-2020 )
+- Introduced hooks for add, undo, redo, jump to, and discard actions on settings modal.
+- Fixed Featured Images import and export for Library items.
+- Fixed some shortcut keys not being overridden in Select2 input fields.
+- Fixed incorrect selectors in Woo Add to Cart module that affected Border options.
+- Fixed empty logo image alt text when not set from divi builder settings.
+- Fixed sticky elements position resets to top-left if sticky tab active in mobile view.
+- Fixed woocommerce long description can't update in classic Divi builder.
+- Fixed an issue in Visual Builder where the preview width could extend beyond the maximum allowed Tablet View width.
+- Fixed the styles on the password-protected page.
+- Fixed broken layout block preview after undo and redo actions.
+- Fixed empty title in bar counters module.
+- Fixed LearnDash content not being rendered properly when Post Content module is being used on theme builder body layout.
+- Fixed broken layout on product tour tooltip modal.
+- Align reset variations link on the right.
+- Fixed excerpt length issue that occurred when Excerpt Length set to 0 and showing dots.
+- Fixed project bottom margin when Divi Builder is enabled.
+	* core/components/Portability.php
+	* epanel/custom_functions.php
+	* functions.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/Menu.php
+	* includes/builder/plugin-compat/sfwd-lms.php
+	* includes/builder/scripts/utils/utils.js
+
+version 4.7.3 ( updated 11-19-2020 )
+- Fixed javascript error in select font options.
+	* includes/builder/frontend-builder/bundle.js
+
+version 4.7.2 ( updated 11-18-2020 )
+- Fixed an issue in Responsive View Modes where tooltips could be positioned incorrectly after scrolling to the top of the page.
+- Fixed issue where select gradient color start and end buttons don't work on background options.
+- Fixed an issue in Visual Builder's responsive views where the right-click menu positioned would not adjust to match page scroll.
+- Fixed an issue where the wrong icon would be displayed in some cases with RTL.
+- Fixed custom fields not populated after adding a new account in Email Optin module.
+- Fixed sticky not working in global modules.
+- Fixed an issue where modifying dimensions in Responsive Views would reset to the Desktop View mode.
+- Fixed the incorrect Custom Fields options order.
+- Fixed a typo in a legacy slider code.
+- Fixed ActiveCampaign general fields not shown in the custom field option.
+	* core/components/api/email/ActiveCampaign.php
+	* epanel/shortcodes/js/et_shortcodes_frontend.js
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/core.php
+	* includes/builder/frontend-builder/bundle.js
+
+version 4.7.1 ( updated 11-16-2020 )
+- Fixed a regression that caused changes to a global module's settings to not be updated in the database.
+- Fixed the menu logo image with max-height looks stretchy.
+- Fixed an issue in Visual Builder where custom CSS rules set in Theme Options could prevent scrolling in Tablet and Phone Views.
+- Fixed an issue where some changes made with Responsive Views controls would not update the ET_Builder API as expected.
+	* core/components/CompatibilityWarning.php
+	* core/components/Updates.php
+	* core/components/api/email/SendinBlue.php
+	* core/components/api/spam/ReCaptcha.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/Blog.php
+	* includes/builder/plugin-compat/amazon-s3-and-cloudfront.php
+	* includes/builder/plugin-compat/relevanssi.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/sticky-element.js
+	* includes/builder/scripts/src/bfb_admin_script.js
+	* includes/builder/scripts/stores/sticky.js
+
+version 4.7 ( updated 11-11-2020 )
+- Fixed element position in wireframe preview mode.
+- Fixed builder UI's button affected by customizer style in Extra theme.
+- Fixed an issue where settings modal dimension were not defined prior to a height calculation.
+- Fixed issue where ReCaptcha js loaded in forms without spam protection enabled.
+- Fixed custom z-index for Row inside a Section with divider not working.
+- Email address validation in Contact Form changed to similar to how WordPress is_email() method works, on the FE.
+- The Responsive Views Update allows users to drag the width of view modes to a custom width to simulate different device widths, choose from preset widths for popular devices, and set custom default preview widths for tablet and phone.
+- Fixed Amazon S3 & Cloudfront image URLs not transformed in the builder.
+- Fixed issue with blog module not showing any posts on the search result page when Relevanssi plugin is activated.
+- Fixed issue with form being assigned to different account when editing the Email Option module.
+- Fixed some PHP notices regarding plugins and themes update checking.
+- Added support for the latest Sendinblue API (v3).
+- Introduces compatibility warning system for ET plugins/themes.
+	* core/admin/js/compatibility-warning.js
+	* core/components/CompatibilityWarning.php
+	* core/components/init.php
+	* core/functions.php
+	* core/wp_functions.php
+	* includes/builder/core.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/functions.php
+	* includes/builder/languages/et_builder-en_US-et-builder-gutenberg.po
+	* includes/builder/module/Blog.php
+	* includes/builder/plugin-compat/amazon-s3-and-cloudfront.php
+	* includes/builder/plugin-compat/relevanssi.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/src/builder.js
+	* js/src/custom.js
+
+version 4.6.6 ( updated 10-15-2020 )
+- Fix scroll behavior after drag & drop content to the builder.
+- Fixes incorrect generated selector when 3rd party extension use Divi Module Elements on their modules.
+- Fixed unwanted UI lag when draggable padding UI is dragged.
+- Fixed a bug in the border options that allowed negative values to be entered.
+- Fixed a typo in the Gallery module's layout option help text.
+- Fixed the SVG logo without width not showing in Menu module.
+- Restored the "Clear" link for variations on the product page.
+- Fixed alternative scroll-to-anchor method not enabled by default.
+- Fixed the issue when settings from Divi Global Defaults Editor were not migrated to Div Presets for the Divi Builder plugin.
+- Fixed broken image size on image of Slider & Fullwidth Slider modules.
+- Added JS filter 'et.builder.store.setting.update' to hook on page settings values.
+- Fixed an issue that caused the meta description to be duplicated when Rank Math SEO plugin was active.
+- Fixes issue making user unable to save BFB layout when cache and scheduled cache preloading are enabled on WP Optimize plugin.
+- Fixes incorrect generated selector when 3rd party extension use Divi Module Elements on their modules.
+- Fixed broken image size on image of Slider & Fullwidth Slider modules.
+	* core/components/init.php
+	* epanel/custom_functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/core.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/Gallery.php
+	* includes/builder/module/SliderItem.php
+	* includes/builder/module/field/Border.php
+	* includes/builder/scripts/frontend/scripts.js
+
+version 4.6.5 ( updated 09-25-2020 )
+- Fixed broken image size on Image module and image logo of Menu module.
+- Fixed navigation anchor wrong target position with position-fixed section in theme builder header.
+- Removed alternative scroll-to-anchor option from Divi Theme Options and made it the default behavior.
+	* functions.php
+	* includes/builder/autoload.php
+	* includes/builder/module/FullwidthImage.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/Image.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/helpers/class-et-builder-module-helper-media.php
+	* includes/builder/scripts/frontend/global-functions.js
+	* options_divi.php
+
+version 4.6.4 ( updated 09-24-2020 )
+- Product ordering issue fixed in the Shop module.
+- Fixed the Button background color Sticky state not being properly applied.
+- Fixed CSS string value auto turn into 0auto.
+- Fixed stuttering sticky element on sticky section at theme builder header due to image that affects section height, slow connection, and disabled cache.
+- Fixed sticky background gradient and image not working in Section.
+- Fixed default WordPress lazy load feature not working properly with images in Divi Builder modules.
+- Fixed the Button background color Sticky state not being properly applied.
+- Fixed the issue with downloading a backup of Divi Theme Options.
+	* core/admin/js/portability.js
+	* epanel/custom_functions.php
+	* includes/builder/api/rest/BlockLayout.php
+	* includes/builder/autoload.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/core.php
+	* includes/builder/feature/AjaxCache.php
+	* includes/builder/feature/BlockEditorIntegration.php
+	* includes/builder/feature/ClassicEditor.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/Blurb.php
+	* includes/builder/module/FullwidthHeader.php
+	* includes/builder/module/FullwidthImage.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/FullwidthPortfolio.php
+	* includes/builder/module/FullwidthPostTitle.php
+	* includes/builder/module/Gallery.php
+	* includes/builder/module/Image.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/PostTitle.php
+	* includes/builder/module/Shop.php
+	* includes/builder/module/SliderItem.php
+	* includes/builder/module/TeamMember.php
+	* includes/builder/module/field/TextShadow.php
+	* includes/builder/module/helpers/ResponsiveOptions.php
+	* includes/builder/module/helpers/StickyOptions.php
+	* includes/builder/module/helpers/class-et-builder-module-helper-media.php
+	* includes/builder/scripts/frontend/sticky-element.js
+
+version 4.6.3 ( updated 09-18-2020 )
+- Fixed speciality section inner max-width option.
+	* includes/builder/class-et-builder-element.php
+
+version 4.6.2 ( updated 09-17-2020 )
+- Fixed incorrect sticky state in the section with a video module.
+- Fixed sticky element that doesn't correctly exits sticky state because fixed header transition is completed after document height props are updated.
+- Fixed inconsistent row alignment output in frontend and visual builder when custom margin is used.
+- Removed unnecessary overflow hidden for rows with 4+ columns.
+- Revived background overlay and text overlay colors on hover state for post slider.
+- Fixed javascript error in Internet Explorer.
+- Enabled sorting in the Store module on the frontend.
+- Fixed incorrect warning on Minify And Combine Javascript & Style Files options when 3rd party extension plugin is activated.
+- Fixed incorrect module width on sticky state when sticky margin is set and width is auto.
+- Fixed inability to drag and drop image to media library that is opened on gallery module's images field.
+- Fixed unwanted padding change when specialty row enters sticky state.
+- Fixed issue when changing the scale of the Button module.
+- Fixed javascript error when setting the sticky Section Divider height.
+- Fixed sticky style not implemented if module is sticky module inside sticky module.
+- Fixed issue with links not working inside of the mobile menus.
+- Fixed a case where Divi page would cause an error when loaded inside an iframe hosted on a different domain.
+- Fixed default primary menu active link color.
+	* core/admin/js/portability.js
+	* core/components/Portability.php
+	* core/components/Updates.php
+	* core/ui/utils/frame-helpers.js
+	* functions.php
+	* includes/builder/ab-testing.php
+	* includes/builder/api/DiviExtension.php
+	* includes/builder/api/DiviExtensions.php
+	* includes/builder/autoload.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-plugin-compat-loader.php
+	* includes/builder/class-et-builder-settings.php
+	* includes/builder/class-et-builder-value.php
+	* includes/builder/class-et-global-settings.php
+	* includes/builder/conditions.php
+	* includes/builder/core.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/main-modules.php
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/PostSlider.php
+	* includes/builder/module/Shop.php
+	* includes/builder/module/field/Position.php
+	* includes/builder/module/helpers/StickyOptions.php
+	* includes/builder/plugin-compat/scripts/sitepress-multilingual-cms.js
+	* includes/builder/scripts/frontend/background-layout.js
+	* includes/builder/scripts/frontend/global-functions.js
+	* includes/builder/scripts/frontend/motion-effects.js
+	* includes/builder/scripts/frontend/preview.js
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/sticky-element.js
+	* includes/builder/scripts/frontend/sticky-elements.js
+	* includes/builder/scripts/src/admin_global_functions.js
+	* includes/builder/scripts/src/bfb_admin_script.js
+	* includes/builder/scripts/src/block-layout-frontend-preview.js
+	* includes/builder/scripts/src/builder.js
+	* includes/builder/scripts/src/cache_notice.js
+	* includes/builder/scripts/src/cpt-modules-wrapper.js
+	* includes/builder/scripts/src/failure_notice.js
+	* includes/builder/scripts/src/library_category.js
+	* includes/builder/scripts/src/library_scripts.js
+	* includes/builder/scripts/src/page-settings-metabox.js
+	* includes/builder/scripts/src/reset_memory_limit_increase_setting.js
+	* includes/builder/scripts/src/roles_admin.js
+	* includes/builder/scripts/stores/document.js
+	* includes/builder/scripts/stores/sticky.js
+	* includes/builder/scripts/stores/window.js
+	* includes/builder/scripts/utils/sticky.js
+	* includes/builder/scripts/utils/utils.js
+	* js/src/theme-customizer.js
+
 version 4.6.1 ( updated 09-03-2020 )
 - Fixed issue with the Shop module which was not rendering the right template when it was returning no results.
 - Fixed incorrect sticky element in sticky state when window is resized.
@@ -204,9 +528,9 @@ version 4.5.6 ( updated 08-10-2020 )
 	* js/src/theme-customizer.js
 
 version 4.5.5 ( updated 08-08-2020 )
-- Fixed bottom section dividers appearing at the top of sections. 
+- Fixed bottom section dividers appearing at the top of sections.
 	* style.css
-	
+
 version 4.5.4 ( updated 08-07-2020 )
 - Fixed missing backward compatibility function to handle Gutenberg data for block editor.
 - Hide block inserter button when Divi Layout is not activated yet.

@@ -965,7 +965,9 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 					$ip_address = 'on' === $this->props['ip_address'] ? 'true' : 'false';
 
 					if ( false !== strpos( $list, '|' ) ) {
-						list( $account_name, $list ) = explode( '|', $list );
+						$exploded     = explode( '|', $list );
+						$list         = array_pop( $exploded ); // Pops the last index as the list id.
+						$account_name = implode( '|', $exploded ); // Rebuild the rest array as the account name, in case there is a vertical line `|` in the account name and it was exploded.
 					} else {
 						$account_name = self::get_account_name_for_list_id( $provider, $list );
 					}

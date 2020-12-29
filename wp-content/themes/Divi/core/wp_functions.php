@@ -163,3 +163,141 @@ function has_block() {
 	return false;
 }
 endif;
+
+if ( ! function_exists( 'wp_get_default_update_php_url' ) ) :
+/**
+ * Gets the default URL to learn more about updating the PHP version the site is running on.
+ *
+ * Do not use this function to retrieve this URL. Instead, use {@see wp_get_update_php_url()} when relying on the URL.
+ * This function does not allow modifying the returned URL, and is only used to compare the actually used URL with the
+ * default one.
+ *
+ * @since 5.1.0
+ * @access private
+ *
+ * @return string Default URL to learn more about updating PHP.
+ */
+function wp_get_default_update_php_url() {
+	return _x( 'https://wordpress.org/support/update-php/', 'localized PHP upgrade information page' );
+}
+endif;
+
+if ( ! function_exists( 'wp_get_update_php_url' ) ) :
+/**
+ * Gets the URL to learn more about updating the PHP version the site is running on.
+ *
+ * This URL can be overridden by specifying an environment variable `WP_UPDATE_PHP_URL` or by using the
+ * {@see 'wp_update_php_url'} filter. Providing an empty string is not allowed and will result in the
+ * default URL being used. Furthermore the page the URL links to should preferably be localized in the
+ * site language.
+ *
+ * @since 5.1.0
+ *
+ * @return string URL to learn more about updating PHP.
+ */
+function wp_get_update_php_url() {
+	$default_url = wp_get_default_update_php_url();
+
+	$update_url = $default_url;
+	if ( false !== getenv( 'WP_UPDATE_PHP_URL' ) ) {
+		$update_url = getenv( 'WP_UPDATE_PHP_URL' );
+	}
+
+	/**
+	 * Filters the URL to learn more about updating the PHP version the site is running on.
+	 *
+	 * Providing an empty string is not allowed and will result in the default URL being used. Furthermore
+	 * the page the URL links to should preferably be localized in the site language.
+	 *
+	 * @since 5.1.0
+	 *
+	 * @param string $update_url URL to learn more about updating PHP.
+	 */
+	$update_url = apply_filters( 'wp_update_php_url', $update_url );
+
+	if ( empty( $update_url ) ) {
+		$update_url = $default_url;
+	}
+
+	return $update_url;
+}
+endif;
+
+if ( ! function_exists( 'wp_get_update_php_annotation' ) ) :
+/**
+ * Returns the default annotation for the web hosting altering the "Update PHP" page URL.
+ *
+ * This function is to be used after {@see wp_get_update_php_url()} to return a consistent
+ * annotation if the web host has altered the default "Update PHP" page URL.
+ *
+ * @since 5.2.0
+ *
+ * @return string Update PHP page annotation. An empty string if no custom URLs are provided.
+ */
+function wp_get_update_php_annotation() {
+	$update_url  = wp_get_update_php_url();
+	$default_url = wp_get_default_update_php_url();
+
+	if ( $update_url === $default_url ) {
+		return '';
+	}
+
+	$annotation = sprintf(
+		/* translators: %s: Default Update PHP page URL. */
+		__( 'This resource is provided by your web host, and is specific to your site. For more information, <a href="%s" target="_blank">see the official WordPress documentation</a>.' ),
+		esc_url( $default_url )
+	);
+
+	return $annotation;
+}
+endif;
+
+if ( ! function_exists( 'wp_update_php_annotation' ) ) :
+/**
+ * Prints the default annotation for the web host altering the "Update PHP" page URL.
+ *
+ * This function is to be used after {@see wp_get_update_php_url()} to display a consistent
+ * annotation if the web host has altered the default "Update PHP" page URL.
+ *
+ * @since 5.1.0
+ * @since 5.2.0 Added the `$before` and `$after` parameters.
+ *
+ * @param string $before Markup to output before the annotation. Default `<p class="description">`.
+ * @param string $after  Markup to output after the annotation. Default `</p>`.
+ */
+function wp_update_php_annotation( $before = '<p class="description">', $after = '</p>' ) {
+	$annotation = wp_get_update_php_annotation();
+
+	if ( $annotation ) {
+		echo et_core_intentionally_unescaped( $before . $annotation . $after, 'html' );
+	}
+}
+endif;
+
+if ( ! function_exists( 'is_wp_version_compatible' ) ) :
+/**
+ * Checks compatibility with the current WordPress version.
+ *
+ * @since 5.2.0
+ *
+ * @param string $required Minimum required WordPress version.
+ * @return bool True if required version is compatible or empty, false if not.
+ */
+function is_wp_version_compatible( $required ) {
+	return empty( $required ) || version_compare( get_bloginfo( 'version' ), $required, '>=' );
+}
+endif;
+
+if ( ! function_exists( 'is_php_version_compatible' ) ) :
+/**
+ * Checks compatibility with the current PHP version.
+ *
+ * @since 5.2.0
+ *
+ * @param string $required Minimum required PHP version.
+ * @return bool True if required version is compatible or empty, false if not.
+ */
+function is_php_version_compatible( $required ) {
+	return empty( $required ) || version_compare( phpversion(), $required, '>=' );
+}
+endif;

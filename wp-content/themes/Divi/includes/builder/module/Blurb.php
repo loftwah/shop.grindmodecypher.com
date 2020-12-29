@@ -857,6 +857,12 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 			$image_classes[] = "et_pb_animation_{$animation}_{$mode}";
 		}
 
+		$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'image' );
+
+		if ( ! empty( $image_attachment_class ) ) {
+			$image_classes[] = esc_attr( $image_attachment_class );
+		}
+
 		if ( 'off' === $use_icon ) {
 			$image = $multi_view->render_element(
 				array(

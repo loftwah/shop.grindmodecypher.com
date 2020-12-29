@@ -11,7 +11,7 @@ jQuery(document).ready(function() {
 </script>
 
 <div class="wcpdf-extensions-ad">
-	<?php $no_pro = !class_exists('WooCommerce_PDF_IPS_Pro') && !class_exists('WooCommerce_PDF_IPS_Dropbox') && !class_exists('WPO_WCPDF_Templates'); ?>
+	<?php $no_pro = !class_exists('WooCommerce_PDF_IPS_Pro') && !class_exists('WPO_WCPDF_Templates'); ?>
 	<img src="<?php echo WPO_WCPDF()->plugin_url() . '/assets/images/wpo-helper.png'; ?>" class="wpo-helper">
 	<h3><?php _e( 'Check out these premium extensions!', 'woocommerce-pdf-invoices-packing-slips' ); ?></h3>
 	<i>(<?php _e( 'click items to read more', 'woocommerce-pdf-invoices-packing-slips' ); ?>)</i>
@@ -125,7 +125,7 @@ jQuery(document).ready(function() {
 	</ul>
 	<?php
 	// link to hide message when one of the premium extensions is installed
-	if ( class_exists('WooCommerce_PDF_IPS_Pro') || class_exists('WooCommerce_PDF_IPS_Dropbox') || class_exists('WPO_WCPDF_Templates') || class_exists('WooCommerce_PDF_IPS_Templates') || class_exists('WooCommerce_Ext_PrintOrders') || class_exists('WPO_WC_Smart_Reminder_Emails') ) {
+	if ( class_exists('WooCommerce_PDF_IPS_Pro') || class_exists('WPO_WCPDF_Templates') || class_exists('WooCommerce_PDF_IPS_Templates') || class_exists('WooCommerce_Ext_PrintOrders') || class_exists('WPO_WC_Smart_Reminder_Emails') ) {
 		printf('<a href="%s" style="display:inline-block; margin-top: 10px;">%s</a>', add_query_arg( 'wpo_wcpdf_hide_extensions_ad', 'true' ), __( 'Hide this message', 'woocommerce-pdf-invoices-packing-slips' ) );
 	}
 	?>

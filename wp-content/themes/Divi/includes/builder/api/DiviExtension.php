@@ -1,8 +1,20 @@
 <?php
+/**
+ * Divi extension base class.
+ *
+ * @package Builder
+ * @subpackage API
+ * @since 4.6.2
+ */
 
+/**
+ * Core class used to implement the Divi Extension.
+ */
 class DiviExtension {
 
 	/**
+	 * Utility class instance.
+	 *
 	 * @since 3.1
 	 *
 	 * @var ET_Core_Data_Utils
@@ -28,7 +40,7 @@ class DiviExtension {
 	 *
 	 * @since 3.1
 	 *
-	 * @return array
+	 * @var array
 	 */
 	protected $_builder_js_data = array();
 
@@ -37,7 +49,7 @@ class DiviExtension {
 	 *
 	 * @since 3.1
 	 *
-	 * @return array
+	 * @var array
 	 */
 	protected $_frontend_js_data = array();
 
@@ -109,7 +121,8 @@ class DiviExtension {
 			self::$_ = ET_Core_Data_Utils::instance();
 		}
 
-		if ( $this->name = $name ) {
+		$this->name = $name;
+		if ( $this->name ) {
 			$this->_initialize();
 		}
 	}
@@ -120,13 +133,13 @@ class DiviExtension {
 	 * @since 3.1
 	 */
 	protected function _enqueue_bundles() {
-		// Frontend Bundle
+		// Frontend Bundle.
 		$bundle_url = "{$this->plugin_dir_url}scripts/frontend-bundle.min.js";
 
 		wp_enqueue_script( "{$this->name}-frontend-bundle", $bundle_url, $this->_bundle_dependencies['frontend'], $this->version, true );
 
 		if ( et_core_is_fb_enabled() ) {
-			// Builder Bundle
+			// Builder Bundle.
 			$bundle_url = "{$this->plugin_dir_url}scripts/builder-bundle.min.js";
 
 			wp_enqueue_script( "{$this->name}-builder-bundle", $bundle_url, $this->_bundle_dependencies['builder'], $this->version, true );
@@ -139,14 +152,14 @@ class DiviExtension {
 	 * @since 3.1
 	 */
 	protected function _enqueue_debug_bundles() {
-		// Frontend Bundle
+		// Frontend Bundle.
 		$site_url       = wp_parse_url( get_site_url() );
 		$hot_bundle_url = "{$site_url['scheme']}://{$site_url['host']}:3000/static/js/frontend-bundle.js";
 
 		wp_enqueue_script( "{$this->name}-frontend-bundle", $hot_bundle_url, $this->_bundle_dependencies['frontend'], $this->version, true );
 
 		if ( et_core_is_fb_enabled() ) {
-			// Builder Bundle
+			// Builder Bundle.
 			$hot_bundle_url = "{$site_url['scheme']}://{$site_url['host']}:3000/static/js/builder-bundle.js";
 
 			wp_enqueue_script( "{$this->name}-builder-bundle", $hot_bundle_url, $this->_bundle_dependencies['builder'], $this->version, true );
@@ -173,7 +186,7 @@ class DiviExtension {
 			}
 		}
 
-		// Backend Styles - VB
+		// Backend Styles - VB.
 		wp_enqueue_style( "{$this->name}-backend-styles", $backend_styles_url, array(), $this->version );
 	}
 
@@ -240,10 +253,10 @@ class DiviExtension {
 		$this->_set_debug_mode();
 		$this->_set_bundle_dependencies();
 
-		// Setup translations
+		// Setup translations.
 		load_plugin_textdomain( $this->gettext_domain, false, basename( $this->plugin_dir ) . '/languages' );
 
-		// Register callbacks
+		// Register callbacks.
 		register_activation_hook( "{$this->plugin_dir}/{$this->name}.php", array( $this, 'wp_hook_activate' ) );
 		register_deactivation_hook( "{$this->plugin_dir}/{$this->name}.php", array( $this, 'wp_hook_deactivate' ) );
 
@@ -295,15 +308,15 @@ class DiviExtension {
 			$this->_enqueue_backend_styles();
 		}
 
-		// Normalize the extension name to get actual script name. For example from 'divi-custom-modules' to `DiviCustomModules`
+		// Normalize the extension name to get actual script name. For example from 'divi-custom-modules' to `DiviCustomModules`.
 		$extension_name = str_replace( ' ', '', ucwords( str_replace( '-', ' ', $this->name ) ) );
 
-		// Enqueue frontend bundle's data
+		// Enqueue frontend bundle's data.
 		if ( ! empty( $this->_frontend_js_data ) ) {
 			wp_localize_script( "{$this->name}-frontend-bundle", "{$extension_name}FrontendData", $this->_frontend_js_data );
 		}
 
-		// Enqueue builder bundle's data
+		// Enqueue builder bundle's data.
 		if ( et_core_is_fb_enabled() && ! empty( $this->_builder_js_data ) ) {
 			wp_localize_script( "{$this->name}-builder-bundle", "{$extension_name}BuilderData", $this->_builder_js_data );
 		}

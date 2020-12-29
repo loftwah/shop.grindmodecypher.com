@@ -1,6 +1,11 @@
 <?php
+/**
+ * Load all modules.
+ *
+ * @package Divi
+ * @subpackage Builder
+ */
 
-// Load all modules
 $et_builder_module_files = glob( ET_BUILDER_DIR . 'module/*.php' );
 $et_builder_module_types = glob( ET_BUILDER_DIR . 'module/type/*.php' );
 

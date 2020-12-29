@@ -284,7 +284,9 @@ var Printful_Product_Size_Guide;
             var tableHeader = this.buildEl('thead'),
                 tableHeaderRow = this.buildEl('tr');
 
-            tableHeaderRow.appendChild(this.buildEl('td', null, {innerHTML: 'Size'}));
+            var tableHeaderRowText = window.pfGlobal && window.pfGlobal.sg_table_header_size ? window.pfGlobal.sg_table_header_size : 'Size';
+
+            tableHeaderRow.appendChild(this.buildEl('td', null, {innerHTML: tableHeaderRowText}));
             rows.map((function (row) {
                 tableHeaderRow.appendChild(this.buildEl('td', null, {innerHTML: row.title}));
             }).bind(this));

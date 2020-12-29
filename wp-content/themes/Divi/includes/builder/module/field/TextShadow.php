@@ -555,8 +555,10 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 		}
 
 		if ( $is_sticky ) {
-			$selector = $sticky->add_sticky_to_selectors( $selector, $sticky->is_sticky_module( $all_values ), is_string( $selector ) );
-			$selector = et_()->array_get( $font, 'css.text_shadow_sticky', et_()->array_get( $font, 'css.sticky', $selector ) );
+			$has_wrapper                      = et_()->array_get( $module->wrapper_settings, 'order_class_wrapper', false );
+			$is_sticky_module_without_wrapper = $has_wrapper ? false : $sticky->is_sticky_module( $all_values );
+			$selector                         = $sticky->add_sticky_to_selectors( $selector, $is_sticky_module_without_wrapper, is_string( $selector ) );
+			$selector                         = et_()->array_get( $font, 'css.text_shadow_sticky', et_()->array_get( $font, 'css.sticky', $selector ) );
 		}
 
 		// Get the text-shadow declaration (horizontal vertical blur color).

@@ -3,9 +3,9 @@ Contributors: pomegranate
 Donate link: https://wpovernight.com/downloads/woocommerce-pdf-invoices-packing-slips-bundle/
 Tags: woocommerce, pdf, invoices, packing slips, print, delivery notes, invoice, packing slip, export, email, bulk, automatic
 Requires at least: 3.5
-Tested up to: 5.5
+Tested up to: 5.6
 Requires PHP: 5.3
-Stable tag: 2.6.0
+Stable tag: 2.7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,43 @@ There's a setting on the Status tab of the settings page that allows you to togg
 6. Set shop name, address, header logo, etc.
 
 == Changelog ==
+
+= 2.7.3 =
+* New: Support for line breaks in invoice notes
+* Fix: Only pass opened edit fields when regenerating document
+* Fix: Words in table headers could be broken up
+* Deprecated: legacy translations (pre-2.0) are no longer read automatically (can be enabled in the Status tab)
+
+= 2.7.2 =
+* Fix: Update invoice number and date when regenerating document from edit mode
+* Fix: Prevent infinite loop when temporary folder is not writable
+* Fix: Prevent layout issues when custom order data exceeds column width
+* Fix: Error when PHP Ctype extension is not installed
+* Tested up to WooCommerce 4.8 & WP 5.6
+
+= 2.7.1 =
+* New: Redesigned action buttons
+* New: Randomized temporary folder name for easier protection
+* New: Setting to enable/disable customer notes
+* New: Completely disable free invoice when that setting is enabled (not just attachments)
+* New: Template action hooks before and after shop name and address
+* New: Filter to set starting number for yearly reset
+* Fix: Errors on third party products without weight/sku/dimensions
+* Fix: Uneven spacing between action icons
+* Fix: Missing `$email_to_send` parameter for `woocommerce_before_resend_order_emails` hook
+* Fix: Break long words in billing address
+* Tested up to WooCommerce 4.7
+
+= 2.7.0 =
+* New: Add per-order notes to invoices (requires template update if you have a custom template)
+* New: Show notice with instructions for protecting the invoice folder on NGINX setups
+* Fix: Show correct "next number" on settings page for sites using MySQL 8+
+* Tested up to WooCommerce 4.6
+
+= 2.6.1 =
+* Fix: Load custom documents once rather than on every document request
+* Tweak: execute wpo_wcpdf_init_document action in invoice too
+* Tested up to WooCommerce 4.5
 
 = 2.6.0 =
 * Feature: More advanced address visibility options

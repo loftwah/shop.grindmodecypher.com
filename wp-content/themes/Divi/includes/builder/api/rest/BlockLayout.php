@@ -1,16 +1,32 @@
 <?php
+/**
+ * Rest API: Layout Block
+ *
+ * @package Divi
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
+/**
+ * Class for custom REST API endpoint for Divi Layout block.
+ */
 class ET_Api_Rest_Block_Layout {
+
 	/**
+	 * Instance of `ET_Api_Rest_Block_Layout`.
+	 *
 	 * @var ET_Api_Rest_Block_Layout
 	 */
 	private static $_instance;
 
-	function __construct() {
+	/**
+	 * Constructor.
+	 *
+	 * ET_Api_Rest_Block_Layout constructor.
+	 */
+	public function __construct() {
 		$this->register();
 	}
 
@@ -52,7 +68,7 @@ class ET_Api_Rest_Block_Layout {
 				'callback'            => array( $this, 'get_layout_content_callback' ),
 				'args'                => array(
 					'id'    => array(
-						// using intval directly doesn't work, hence the custom callback
+						// using intval directly doesn't work, hence the custom callback.
 						'sanitize_callback'   => array( $this, 'sanitize_int' ),
 						'validation_callback' => 'is_numeric',
 					),
@@ -72,7 +88,7 @@ class ET_Api_Rest_Block_Layout {
 				'callback'            => array( $this, 'process_builder_edit_data' ),
 				'args'                => array(
 					'action'        => array(
-						'sanitize_callback'   => array( $this, 'sanitize_action' ), // update|delete|get
+						'sanitize_callback'   => array( $this, 'sanitize_action' ), // update|delete|get.
 						'validation_callback' => array( $this, 'validate_action' ),
 					),
 					'postId'        => array(
@@ -99,7 +115,7 @@ class ET_Api_Rest_Block_Layout {
 	 *
 	 * @since 4.1.0
 	 *
-	 * @param object WP_REST_Request
+	 * @param WP_REST_Request $request Full details about the request.
 	 *
 	 * @return string|WP_Error
 	 */
@@ -110,7 +126,7 @@ class ET_Api_Rest_Block_Layout {
 		// Action nonce check. REST API actually has checked for nonce at cookie sent on every
 		// request and performed capability-based check. This check perform action-based nonce
 		// check to strengthen the security
-		// @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
+		// @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/.
 		if ( ! wp_verify_nonce( $nonce, 'et_rest_get_layout_content' ) ) {
 			return new WP_Error(
 				'invalid_nonce',
@@ -121,7 +137,7 @@ class ET_Api_Rest_Block_Layout {
 			);
 		}
 
-		// request has to have id param
+		// request has to have id param.
 		if ( ! $post_id ) {
 			return new WP_Error(
 				'no_layout_id',
@@ -150,18 +166,17 @@ class ET_Api_Rest_Block_Layout {
 	/**
 	 *  Process /block/layout/builder_edit_data route request
 	 *
-	 * @since 4.1.0
-	 *
-	 * @param object WP_REST_Request
+	 * @param WP_Rest_Request $request Request to prepare items for.
 	 *
 	 * @return string|WP_Error
+	 * @since 4.1.0
 	 */
 	public function process_builder_edit_data( WP_Rest_Request $request ) {
 		$post_id  = $request->get_param( 'postId' );
 		$block_id = $request->get_param( 'blockId' );
 		$nonce    = $request->get_param( 'nonce' );
 
-		// No post ID
+		// No post ID.
 		if ( empty( $post_id ) ) {
 			return new WP_Error(
 				'no_post_id',
@@ -172,7 +187,7 @@ class ET_Api_Rest_Block_Layout {
 			);
 		}
 
-		// No block ID
+		// No block ID.
 		if ( empty( $block_id ) ) {
 			return new WP_Error(
 				'no_block_id',
@@ -186,7 +201,7 @@ class ET_Api_Rest_Block_Layout {
 		// Action nonce check. REST API actually has checked for nonce at cookie sent on every
 		// request and performed capability-based check. This check perform action-based nonce
 		// check to strengthen the security
-		// @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
+		// @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/.
 		if ( ! wp_verify_nonce( $nonce, 'et_rest_process_builder_edit_data' ) ) {
 			return new WP_Error(
 				'invalid_nonce',
@@ -207,7 +222,7 @@ class ET_Api_Rest_Block_Layout {
 			case 'update':
 				$layout_content = $request->get_param( 'layoutContent' );
 
-				// No layout content
+				// No layout content.
 				if ( empty( $layout_content ) ) {
 					return new WP_Error(
 						'no_layout_content',
@@ -223,10 +238,10 @@ class ET_Api_Rest_Block_Layout {
 				if ( ! empty( $saved_layout_content ) && $saved_layout_content === $layout_content ) {
 					// If for some reason layout exist and identical to the one being sent, return
 					// true because update_post_meta() returns false if it updates the meta key and
-					// the value doesn't change
+					// the value doesn't change.
 					$result = true;
 				} else {
-					// Otherwise, attempt to save post meta and returns how it goes
+					// Otherwise, attempt to save post meta and returns how it goes.
 					$result = update_post_meta(
 						$post_id,
 						$post_meta_key,
@@ -246,7 +261,6 @@ class ET_Api_Rest_Block_Layout {
 						'status' => 400,
 					)
 				);
-				break;
 		}
 
 		return array(
@@ -259,7 +273,7 @@ class ET_Api_Rest_Block_Layout {
 	 *
 	 * @since 4.1.0
 	 *
-	 * @param int|mixed
+	 * @param int|mixed $value Value.
 	 *
 	 * @return int
 	 */
@@ -272,7 +286,7 @@ class ET_Api_Rest_Block_Layout {
 	 *
 	 * @since 4.1.0
 	 *
-	 * @param string $value
+	 * @param string $value Action value.
 	 *
 	 * @return string
 	 */
@@ -285,7 +299,7 @@ class ET_Api_Rest_Block_Layout {
 	 *
 	 * @since 4.1.0
 	 *
-	 * @param string $value
+	 * @param string $value Action value.
 	 *
 	 * @return bool
 	 */
@@ -296,7 +310,7 @@ class ET_Api_Rest_Block_Layout {
 			'delete',
 		);
 
-		return in_array( $value, $valid_builder_edit_data_actions );
+		return in_array( $value, $valid_builder_edit_data_actions, true );
 	}
 
 	/**
@@ -311,5 +325,5 @@ class ET_Api_Rest_Block_Layout {
 	}
 }
 
-// Initialize ET_Api_Rest_Block_Layout
+// Initialize ET_Api_Rest_Block_Layout.
 ET_Api_Rest_Block_Layout::instance();

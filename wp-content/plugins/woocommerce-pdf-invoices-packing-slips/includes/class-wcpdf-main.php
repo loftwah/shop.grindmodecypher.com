@@ -13,13 +13,15 @@ if ( !class_exists( '\\WPO\\WC\\PDF_Invoices\\Main' ) ) :
 
 class Main {
 
+	private $subfolders = array( 'attachments', 'fonts', 'dompdf' );
+
 	function __construct()	{
 		add_action( 'wp_ajax_generate_wpo_wcpdf', array($this, 'generate_pdf_ajax' ) );
 		add_action( 'wp_ajax_nopriv_generate_wpo_wcpdf', array($this, 'generate_pdf_ajax' ) );
 
 		// email
 		add_filter( 'woocommerce_email_attachments', array( $this, 'attach_pdf_to_email' ), 99, 4 );
-		add_filter( 'wpo_wcpdf_custom_attachment_condition', array( $this, 'disable_free_attachment'), 1001, 4 );
+		add_filter( 'wpo_wcpdf_document_is_allowed', array( $this, 'disable_free'), 10, 2 );
 		add_filter( 'wp_mail', array( $this, 'set_phpmailer_validator'), 10, 1 );
 
 		if ( isset(WPO_WCPDF()->settings->debug_settings['enable_debug']) ) {
@@ -53,6 +55,17 @@ class Main {
 
 		// apply header logo height
 		add_action( 'wpo_wcpdf_custom_styles', array( $this, 'set_header_logo_height' ), 9, 2 );
+
+		// show notices of missing required directories
+		if( get_option( 'wpo_wcpdf_no_dir_error' ) ) {
+			// if all folders exist and are writable delete the option
+			if( $this->tmp_folders_exist_and_writable() ) {
+				delete_option( 'wpo_wcpdf_no_dir_error' );
+			// if not, show notice
+			} else {
+				add_action( 'admin_notices', array( $this, 'no_dir_notice' ), 1 );
+			}
+		}
 	}
 
 	/**
@@ -93,6 +106,9 @@ class Main {
 		}
 
 		$tmp_path = $this->get_tmp_path('attachments');
+		if ( ! @is_dir( $tmp_path ) || ! wp_is_writable( $tmp_path ) ) {
+			return $attachments;
+		}
 
 		// clear pdf files from temp folder (from http://stackoverflow.com/a/13468943/1446634)
 		// array_map('unlink', ( glob( $tmp_path.'*.pdf' ) ? glob( $tmp_path.'*.pdf' ) : array() ) );
@@ -373,8 +389,8 @@ class Main {
 		}
 
 		// check if tmp folder exists => if not, initialize
-		if ( !@is_dir( $tmp_base ) ) {
-			$this->init_tmp( $tmp_base );
+		if ( ! @is_dir( $tmp_base ) || ! wp_is_writable( $tmp_base ) ) {
+			$this->init_tmp();
 		}
 
 		if ( empty( $type ) ) {
@@ -398,17 +414,27 @@ class Main {
 		}
 
 		// double check for existence, in case tmp_base was installed, but subfolder not created
-		if ( !@is_dir( $tmp_path ) ) {
-			@mkdir( $tmp_path );
+		if ( ! is_dir( $tmp_path ) ) {
+			$dir = mkdir( $tmp_path );
+
+			if ( ! $dir ) {
+				update_option( 'wpo_wcpdf_no_dir_error', $tmp_path );
+				wcpdf_log_error( "Unable to create folder {$tmp_path}", 'critical' );
+				return false;
+			}
+		} elseif( ! wp_is_writable( $tmp_path ) ) {
+			update_option( 'wpo_wcpdf_no_dir_error', $tmp_path );
+			wcpdf_log_error( "Temp folder {$tmp_path} not writable", 'critical' );
+			return false;
 		}
 
-		return $tmp_path;
+		return apply_filters( 'wpo_wcpdf_tmp_path_{$type}', $tmp_path );;
 	}
 
 	/**
 	 * return the base tmp folder (usually uploads)
 	 */
-	public function get_tmp_base () {
+	public function get_tmp_base ( $append_random_string = true ) {
 		// wp_upload_dir() is used to set the base temp folder, under which a
 		// 'wpo_wcpdf' folder and several subfolders are created
 		//
@@ -417,13 +443,16 @@ class Main {
 		// * UNLESS the ‘UPLOADS’ constant is defined in wp-config (http://codex.wordpress.org/Editing_wp-config.php#Moving_uploads_folder)
 		//
 		// May also be overridden by the wpo_wcpdf_tmp_path filter
-
-		$upload_dir = wp_upload_dir();
-		if (!empty($upload_dir['error'])) {
-			$tmp_base = false;
+		
+		$wp_upload_base = $this->get_wp_upload_base();
+		if( $wp_upload_base ) {
+			if( $append_random_string && $code = $this->get_random_string() ) {
+				$tmp_base = $wp_upload_base . 'wpo_wcpdf_'.$code.'/';
+			} else {
+				$tmp_base = $wp_upload_base . 'wpo_wcpdf/';
+			}
 		} else {
-			$upload_base = trailingslashit( $upload_dir['basedir'] );
-			$tmp_base = $upload_base . 'wpo_wcpdf/';
+			$tmp_base = false;
 		}
 
 		$tmp_base = apply_filters( 'wpo_wcpdf_tmp_path', $tmp_base );
@@ -435,22 +464,88 @@ class Main {
 	}
 
 	/**
+	 * Get WordPress uploads folder base
+	 */
+	public function get_wp_upload_base () {
+		$upload_dir = wp_upload_dir();
+		if ( ! empty($upload_dir['error']) ) {
+			$wp_upload_base = false;
+		} else {
+			$upload_base = trailingslashit( $upload_dir['basedir'] );
+			$wp_upload_base = $upload_base;
+		}
+		return $wp_upload_base;
+	}
+
+	/**
+	 * Generate random string
+	 */
+	public function generate_random_string () {
+		if ( function_exists( 'random_bytes' ) ) { // PHP7+
+			$code = bin2hex(random_bytes(16));
+		} else {
+			$code = md5(uniqid(rand(), true));
+		}
+		// create option
+		update_option( 'wpo_wcpdf_random_string', $code );
+	}
+
+	/**
+	 * Get random string
+	 */
+	public function get_random_string () {
+		$code = sanitize_text_field( get_option( 'wpo_wcpdf_random_string' ) );
+		if( $code ) {
+			return $code;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Install/create plugin tmp folders
 	 */
-	public function init_tmp ( $tmp_base ) {
-		// create plugin base temp folder
-		mkdir( $tmp_base );
+	public function init_tmp () {
+		// generate random string if don't exist
+		if( ! $this->get_random_string() ) {
+			$this->generate_random_string();
+		}
 
-		if (!is_dir($tmp_base)) {
-			wcpdf_log_error( "Unable to create temp folder {$tmp_base}", 'critical' );
+		// get tmp base
+		$tmp_base = $this->get_tmp_base();
+
+		// create plugin base temp folder
+		if ( ! is_dir( $tmp_base ) ) {
+			$dir = mkdir( $tmp_base );
+
+			// don't continue if we don't have an upload dir
+			if ( ! $dir ) {
+				update_option( 'wpo_wcpdf_no_dir_error', $tmp_base );
+				wcpdf_log_error( "Unable to create temp folder {$tmp_base}", 'critical' );
+				return false;
+			}
+		} elseif( ! wp_is_writable( $tmp_base ) ) {
+			update_option( 'wpo_wcpdf_no_dir_error', $tmp_base );
+			wcpdf_log_error( "Temp folder {$tmp_base} not writable", 'critical' );
+			return false;
 		}
 
 		// create subfolders & protect
-		$subfolders = array( 'attachments', 'fonts', 'dompdf' );
-		foreach ( $subfolders as $subfolder ) {
+		foreach ( $this->subfolders as $subfolder ) {
 			$path = $tmp_base . $subfolder . '/';
-			if ( !is_dir( $path ) ) {
-				mkdir( $path );
+			if ( ! is_dir( $path ) ) {
+				$dir = mkdir( $path );
+
+				// check if we have dir
+				if ( ! $dir ) {
+					update_option( 'wpo_wcpdf_no_dir_error', $path );
+					wcpdf_log_error( "Unable to create folder {$path}", 'critical' );
+					return false;
+				}
+			} elseif( ! wp_is_writable( $path ) ) {
+				update_option( 'wpo_wcpdf_no_dir_error', $path );
+				wcpdf_log_error( "Temp folder {$path} not writable", 'critical' );
+				return false;
 			}
 
 			// copy font files
@@ -462,7 +557,91 @@ class Main {
 			file_put_contents( $path . '.htaccess', 'deny from all' );
 			touch( $path . 'index.php' );
 		}
+	}
 
+	public function no_dir_notice() {
+		$path = get_option( 'wpo_wcpdf_no_dir_error' );
+		if ( $path ) {
+			ob_start();
+			?>
+			<div class="error">
+				<p><?php printf( __( "The %s directory %s couldn't be created or is not writable!", 'woocommerce-pdf-invoices-packing-slips' ), '<strong>WooCommerce PDF Invoices & Packing Slips</strong>' ,'<code>' . $path . '</code>' ); ?></p>
+				<p><?php _e( 'Please check your directories write permissions or contact your hosting service provider.', 'woocommerce-pdf-invoices-packing-slips' ); ?></p>
+				<p><a href="<?php echo esc_url( add_query_arg( 'wpo_wcpdf_hide_no_dir_notice', 'true' ) ); ?>"><?php _e( 'Hide this message', 'woocommerce-pdf-invoices-packing-slips' ); ?></a></p>
+			</div>
+			<?php
+			echo ob_get_clean();
+
+			// save option to hide notice
+			if ( isset( $_GET['wpo_wcpdf_hide_no_dir_notice'] ) ) {
+				delete_option( 'wpo_wcpdf_no_dir_error', true );
+				wp_redirect( 'admin.php?page=wpo_wcpdf_options_page' );
+				exit;
+			}
+		}
+	}
+
+	/**
+	 * Copy contents from one directory to another
+	 */
+	public function copy_directory ( $old_path, $new_path ) {
+		if( empty($old_path) || empty($new_path) ) return;
+		if( ! is_dir($old_path) ) return;
+		if( ! is_dir($new_path) ) {
+			$dir = mkdir($new_path);
+
+			// check if we have dir
+			if ( ! $dir ) {
+				update_option( 'wpo_wcpdf_no_dir_error', $new_path );
+				wcpdf_log_error( "Unable to create folder {$new_path}", 'critical' );
+				return false;
+			}
+		} elseif( ! wp_is_writable( $new_path ) ) {
+			update_option( 'wpo_wcpdf_no_dir_error', $new_path );
+			wcpdf_log_error( "Temp folder {$new_path} not writable", 'critical' );
+			return false;
+		}
+
+		global $wp_filesystem;
+
+		// check for WP_Filesystem(), is required for copy_dir()
+		if ( ! WP_Filesystem() ) {
+			WP_Filesystem();
+		}
+
+		// we have the directories, let's try to copy
+		try {
+			$result = copy_dir( $old_path, $new_path );
+			// delete old directory with contents
+			if( $result ) {
+				$wp_filesystem->delete( $old_path, true );
+			}
+		} catch ( \Error $e ) {
+			wcpdf_log_error( "Unable to copy directory contents: ".$e->getMessage(), 'critical', $e );
+			return;
+		}
+	}
+
+	/**
+	 * checks if the plugin tmp folders exist and are writable
+	 */
+	private function tmp_folders_exist_and_writable()
+	{
+		// tmp base
+		$tmp_base = $this->get_tmp_base();
+		if( ! @is_dir( $tmp_base ) || ! wp_is_writable( $tmp_base ) ) {
+			return false;
+		}
+
+		// subfolders
+		foreach( $this->subfolders as $type ) {
+			$tmp_path = $this->get_tmp_path( $type );
+			if( ! @is_dir( $tmp_path ) || ! wp_is_writable( $tmp_base ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -543,21 +722,21 @@ class Main {
 		}
 	}
 
-	public function disable_free_attachment( $attach, $order, $email_id, $document_type ) {
-		// prevent fatal error for non-order objects
-		if ( !method_exists( $order, 'get_total' ) ) {
-			return false;
+	public function disable_free( $allowed, $document ) {
+		if( ! $document->exists() && ! empty($order = $document->order) ) {
+			if ( ! is_callable( array($order, 'get_total') ) ) {
+				return false;
+			}
+			// check order total & setting
+			$order_total = $order->get_total();
+			if ( $order_total == 0 && $document->get_setting('disable_free') ) {
+				return false;
+			} else {
+				return $allowed;
+			}
+		} else {
+			return $allowed;
 		}
-
-		$document_settings = WPO_WCPDF()->settings->get_document_settings( $document_type );
-
-		// check order total & setting
-		$order_total = $order->get_total();
-		if ( $order_total == 0 && isset( $document_settings['disable_free'] ) ) {
-			return false;
-		}
-
-		return $attach;
 	}
 
 	public function test_mode_settings( $use_historical_settings, $document ) {

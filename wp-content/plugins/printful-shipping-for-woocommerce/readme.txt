@@ -1,10 +1,10 @@
 === Printful Integration for WooCommerce ===
 Contributors: girts_u, kievins, kberzins
 Tags: woocommerce, printful, drop shipping, shipping, shipping rates, fulfillment, printing, fedex, carriers, checkout, t-shirts
-Requires at least: 4.9
+Requires at least: 5.3
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 2.1.14
+Stable tag: 2.1.18
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,15 +16,15 @@ Grow your store with the top print-on-demand dropshipping plugin
 
 With Printful, you can focus on building your store. We'll print, fulfill and ship your products for you. Simply upload your design, add it to your store, and we'll do the rest.
 
-We offer more than 220 products in various categories, from apparel, home items, jewelry, accessories, and more!  Once your orders start rolling in, we’ll fulfill and ship each one under your brand and in an average of 3 business days at our locations in California, North Carolina, Mexico, and Europe.
+We offer more than 230 products in various categories, from apparel, home items, jewelry, accessories, and more!  Once your orders start rolling in, we’ll fulfill and ship each one under your brand at our locations in California, North Carolina, Mexico, and Europe.
 
-Printful customers have already made more than $310 million in sales, so start selling today!
+Printful customers have already made more than $412 million in sales, so start selling today!
 
 = How does Printful work? =
 
 When a customer buys something from your WooCommerce store, the order is automatically imported to Printful, where we fulfill and ship it to them under your brand. You can then see your order, revenue, and profit statistics on your WooCommerce dashboard.
 
-We’re trusted to print over 14 million products. When will we print for you?
+We’re trusted to print over 17 million products. When will we print for you?
 
 Learn more about the WooCommerce + Printful integration [here](https://www.printful.com/dashboard/woocommerce/register).
 
@@ -36,7 +36,6 @@ Learn more about the WooCommerce + Printful integration [here](https://www.print
 - Product personalization: Sell designs your customers can personalize themselves
 - Warehousing & Fulfillment services: Store your inventory at our warehouse, and we'll fulfill all your orders
 - Stress-free shipping: Lost shipments are on us, and we offer shipping methods with tracking
-- Samples orders: Get product samples with 20% off + free shipping to select destinations
 - 24/7 support: Get in touch with us using chat, email, or phone
 
 Still not convinced? Check out our [demo store](https://woocommerce-demo.printful.com/) to see what's possible!
@@ -64,6 +63,18 @@ Go to https://www.printful.com/dashboard/store , select your WooCommerce store, 
 5. Support page
 
 == Upgrade Notice ==
+
+= 2.1.18 =
+Woocommerce compatibility raised to 4.8
+
+= 2.1.17 =
+Woocommerce compatibility raised to 4.7
+
+= 2.1.16 =
+Woocommerce compatibility raised to 4.6
+
+= 2.1.15 =
+Fix translations
 
 = 2.1.14 =
 Advanced size guide feature
@@ -184,8 +195,20 @@ First release
 
 == Changelog ==
 
+= 2.1.18 =
+* Woocommerce compatibility raised to 4.8
+
+= 2.1.17 =
+* Woocommerce compatibility raised to 4.7
+
+= 2.1.16 =
+* Woocommerce compatibility raised to 4.6
+
+= 2.1.15 =
+* Fix translations
+
 = 2.1.14 =
-Advanced size guide feature
+* Advanced size guide feature
 
 = 2.1.13 =
 * Improved support for WooCommerce 4.3

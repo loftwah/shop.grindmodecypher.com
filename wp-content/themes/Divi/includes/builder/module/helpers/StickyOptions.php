@@ -108,6 +108,19 @@ class ET_Builder_Module_Sticky_Options {
 	}
 
 	/**
+	 * Check if current module is inside sticky module
+	 *
+	 * @since 4.6.2
+	 *
+	 * @return bool
+	 */
+	public function is_inside_sticky_module() {
+		global $is_inside_sticky_module;
+
+		return $is_inside_sticky_module;
+	}
+
+	/**
 	 * Check if module with given attributes is a sticky module. Need to consider responsive value:
 	 * desktop might have non sticky element value but its smaller breakpoint has sticky element value
 	 *
@@ -118,6 +131,11 @@ class ET_Builder_Module_Sticky_Options {
 	 * @return bool
 	 */
 	public function is_sticky_module( $attrs ) {
+		// No nested sticky element.
+		if ( $this->is_inside_sticky_module() ) {
+			return false;
+		}
+
 		// Bail if there is fields which its selected value are incompatible to sticky mechanism.
 		if ( $this->has_incompatible_attrs( $attrs ) ) {
 			return false;
@@ -271,9 +289,9 @@ class ET_Builder_Module_Sticky_Options {
 		// If current selector is sticky module, sticky selector is directly attached; if it isn't
 		// it is safe to assume that the sticky selector is one of its parent DOM, hence the space.
 		if ( $is_sticky ) {
-			$selectors = preg_replace( '/(%%order_class%%)/i', '.et_pb_sticky$1', $selectors );
+			$selectors = preg_replace( '/(%%order_class%%)/i', '.et_pb_sticky$1', $selectors, 1 );
 		} else {
-			$selectors = preg_replace( '/(%%order_class%%)/i', '.et_pb_sticky $1', $selectors );
+			$selectors = preg_replace( '/(%%order_class%%)/i', '.et_pb_sticky $1', $selectors, 1 );
 		}
 
 		return implode( ', ', $selectors );

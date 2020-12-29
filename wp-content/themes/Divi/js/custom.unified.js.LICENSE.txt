@@ -1,11 +1,4 @@
 /*!
-* Magnific Popup v1.0.1 by Dmitry Semenov
-* The MIT License (MIT)
-* Copyright (c) 2014-2015 Dmitry Semenov, http://dimsemenov.com
-* http://bit.ly/magnific-popup#build=inline+image+ajax+iframe+gallery+retina+imagezoom+fastclick
-*/
-
-/*!
 * SmoothScroll for websites v1.2.1
 * Licensed under the terms of the MIT license.
 *

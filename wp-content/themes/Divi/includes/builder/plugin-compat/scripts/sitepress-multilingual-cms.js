@@ -1,29 +1,29 @@
 (function($) {
-  $(document).ready(function($) {
+  $(document).ready($ => {
     $('body').on('click', '.js-wpml-translate-link', function() {
-      var $this  = $(this);
-      var url    = $this.attr('href');
+      const $this = $(this);
+      const url   = $this.attr('href');
 
-      if (!url) {
+      if (! url) {
         return;
       }
 
       // Bail early if current layout has translation.
-      if (!url.startsWith('post-new')) {
+      if (! url.startsWith('post-new')) {
         return;
       }
 
       // Find translation language ID and trid.
-      var langIds = url.match(/lang\=(\w+)&/);
-      var langId  = langIds && 'undefined' !== typeof langIds[1] ? langIds[1] : '';
-      var trids   = url.match(/trid\=(\w+)&/);
-      var trid    = trids && 'undefined' !== typeof trids[1] ? trids[1] : '';
+      const langIds = url.match(/lang\=(\w+)&/);
+      const langId  = langIds && 'undefined' !== typeof langIds[1] ? langIds[1] : '';
+      const trids   = url.match(/trid\=(\w+)&/);
+      const trid    = trids && 'undefined' !== typeof trids[1] ? trids[1] : '';
 
-      if (!langId || !trid) {
+      if (! langId || ! trid) {
         return false;
       }
 
-      var thisElement = $this.html();
+      const thisElement = $this.html();
 
       $this.html('<span class="spinner et-builder-wpml-compat-spinner" style="visibility: visible; margin: 0;"></span>');
 
@@ -36,21 +36,21 @@
           nonce: et_builder_wpml_compat_options.nonces.et_builder_wpml_translate_layout,
           translation_trid: trid,
           translation_lang_id: langId,
-        }
+        },
       })
-      .done(function(result) {
-        if ('undefined' !== typeof result) {
-          if (result.success && 'undefined' !== typeof result.data) {
-            window.location.href = _.unescape( result.data.edit_layout_link );
+        .done(result => {
+          if ('undefined' !== typeof result) {
+            if (result.success && 'undefined' !== typeof result.data) {
+              window.location.href = _.unescape(result.data.edit_layout_link);
+            }
           }
-        }
 
-        $this.html(thisElement);
-      })
-      .fail(function(data) {
-        console.log(data.responseText);
-        $this.html(thisElement);
-      });
+          $this.html(thisElement);
+        })
+        .fail(data => {
+          console.log(data.responseText);
+          $this.html(thisElement);
+        });
 
       return false;
     });

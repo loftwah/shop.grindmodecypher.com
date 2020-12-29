@@ -84,7 +84,7 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 			),
 			'prev_link_arrow' => array(
 				'label'    => esc_html__( 'Previous Link Arrow', 'et_builder' ),
-				'selector' => 'span.nav-previous a span',
+				'selector' => 'span.nav-previous .meta-nav',
 			),
 			'next_link'       => array(
 				'label'    => esc_html__( 'Next Link', 'et_builder' ),
@@ -92,7 +92,7 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 			),
 			'next_link_arrow' => array(
 				'label'    => esc_html__( 'Next Link Arrow', 'et_builder' ),
-				'selector' => 'span.nav-next a span',
+				'selector' => 'span.nav-next .meta-nav',
 			),
 		);
 

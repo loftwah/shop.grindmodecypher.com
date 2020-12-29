@@ -1,4 +1,4 @@
-/* compiled by scssphp v0.0.10 on Tue, 25 Aug 2020 23:41:57 +0000 (0.0038s) */
+/* compiled by scssphp v0.0.10 on Sun, 13 Sep 2020 10:32:28 +0000 (0.0045s) */
 
 @media screen and (min-width: 782px) {
   .admin-menu-h #wpcontent, .admin-menu-h #wpfooter {
@@ -24,7 +24,7 @@
         top: -1000em !important;
         margin-top: 0 !important; }
       .admin-menu-h #adminmenu > li:hover > a, .admin-menu-h #adminmenu > li:focus > a, .admin-menu-h #adminmenu > li:active > a {
-        color: #333; }
+        color: #111; }
         .admin-menu-h #adminmenu > li:hover .wp-submenu, .admin-menu-h #adminmenu > li:focus .wp-submenu, .admin-menu-h #adminmenu > li:active .wp-submenu {
           top: 100% !important;
           left: 0 !important; }

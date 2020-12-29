@@ -332,7 +332,13 @@ class ET_Builder_Global_Presets_Settings {
 	 * @since 4.5.0
 	 */
 	public function migrate_custom_defaults() {
-		if ( et_is_builder_plugin_active() || self::are_custom_defaults_migrated() ) {
+		if ( self::are_custom_defaults_migrated() ) {
+			return;
+		}
+
+		// Re-run migration to Global Presets if a user has not yet saved any presets.
+		if ( et_is_builder_plugin_active() && ! empty( (array) $this->_settings ) ) {
+			et_update_option( self::CUSTOM_DEFAULTS_MIGRATED_FLAG, true );
 			return;
 		}
 

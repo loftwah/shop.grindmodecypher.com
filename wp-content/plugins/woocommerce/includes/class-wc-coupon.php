@@ -4,9 +4,11 @@
  *
  * The WooCommerce coupons class gets coupon data from storage and checks coupon validity.
  *
- * @package WooCommerce/Classes
+ * @package WooCommerce\Classes
  * @version 3.0.0
  */
+
+use Automattic\WooCommerce\Utilities\NumberUtil;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -446,7 +448,14 @@ class WC_Coupon extends WC_Legacy_Coupon {
 			$discount = $single ? $discount : $discount * $cart_item_qty;
 		}
 
-		return apply_filters( 'woocommerce_coupon_get_discount_amount', round( min( $discount, $discounting_amount ), wc_get_rounding_precision() ), $discounting_amount, $cart_item, $single, $this );
+		return apply_filters(
+			'woocommerce_coupon_get_discount_amount',
+			NumberUtil::round( min( $discount, $discounting_amount ), wc_get_rounding_precision() ),
+			$discounting_amount,
+			$cart_item,
+			$single,
+			$this
+		);
 	}
 
 	/*

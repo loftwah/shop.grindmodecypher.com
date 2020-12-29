@@ -510,14 +510,6 @@ $options = array (
 			"desc" => esc_html__( "In some cases users will want to create parent categories or links as placeholders to hold a list of child links or categories. In this case it is not desirable to have the parent links lead anywhere, but instead merely serve an organizational function. Enabling this options will remove the links from all parent pages/categories so that they don't lead anywhere when clicked.", $themename )
 			),
 
-			array(
-				"name" => esc_html__( "Alternative scroll-to-anchor method", $themename ),
-				"id"   => $shortname . "_scroll_to_anchor_fix",
-				"type" => "checkbox2",
-				"std"  => "false",
-				"desc" => esc_html__( "Sometimes when using the CSS ID of a section to link directly to it from another page, the page's final scroll position can be inaccurate. Enable this option to use an alternative method for scrolling to anchors which can be more accurate than the default method in some cases.", $themename ),
-			),
-
 		array( "name" => "navigation-3",
 			   "type" => "subcontent-end",),
 

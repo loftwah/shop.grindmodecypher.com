@@ -2293,6 +2293,15 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 				'reset'    => esc_html__( 'Reset Dynamic Content', 'et_builder' ),
 			),
 		),
+
+		'responsiveViews'           => array(
+			'button'         => array(
+				'make_default_view'  => esc_html__( 'Make Default %s View', 'et_builder' ),
+				'reset_default_view' => esc_html__( 'Reset Default %s View', 'et_builder' ),
+			),
+			'preset_desktop' => esc_html__( 'Desktop View', 'et_builder' ),
+			'preset_custom'  => esc_html__( 'Custom View', 'et_builder' ),
+		),
 	);
 
 	$helpers['i18n'] = array_merge(

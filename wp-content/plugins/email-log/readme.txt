@@ -3,19 +3,20 @@ Contributors: sudar
 Tags: email, log, log email, resend email, multisite  
 Requires PHP: 5.6  
 Requires at least: 4.0  
-Tested up to: 5.4  
-Stable tag: 2.4.2  
+Tested up to: 5.5  
+Stable tag: 2.4.3  
 
-Log and view all outgoing emails from WordPress. Works with WordPress Multisite as well.
+Log and view all outgoing emails from WordPress. Very useful if you have to debug email related problems or have to store sent emails for auditing.
 
 == Description ==
 
-Email Log is a WordPress plugin that allows you to easily log and view all emails sent from WordPress.
+Email Log is a WordPress plugin that allows you to easily log and view all emails that were sent from WordPress.
 
-This would be very useful for debugging email related problems in your WordPress site or for storing sent emails for auditing purposes.
+This would be very useful for debugging email related problems in your WordPress site or for storing sent emails for auditing purposes, especially on ecommerce sites that are setup with either WooCommerce or Easy Digital Downloads.
 
 You can perform advanced actions like re-sending email, automatically forwarding emails or export logs with our [premium add-ons](https://wpemaillog.com/store/?utm_campaign=Upsell&utm_medium=wporg&utm_source=readme&utm_content=store).
 
+Works with WordPress Multisite as well.
 ### Viewing logged emails
 
 The logged emails will be stored in a separate table and can be viewed from the admin interface.
@@ -131,6 +132,11 @@ Meanwhile, I have added a hack to handle this condition in v1.7.3 of my plugin. 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
 == Changelog ==
+
+= v2.4.3 – (2020-10-09) =
+- New: Added `el_log_time_display_format` filter to change the email log display time.
+- New: Provide an option for translators to override the email log display time.
+- Tweak: Enhanced the nonce check.
 
 = v2.4.2 – (2020-07-07) =
 - Fix: Fixed issues with email preview tab switcher that occurred in some installations.

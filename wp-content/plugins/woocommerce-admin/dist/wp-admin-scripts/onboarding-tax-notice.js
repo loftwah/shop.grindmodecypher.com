@@ -82,19 +82,26 @@ this["wc"] = this["wc"] || {}; this["wc"]["onboardingTaxNotice"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 721);
+/******/ 	return __webpack_require__(__webpack_require__.s = 537);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 19:
+/***/ 25:
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["wp"]["data"]; }());
 
 /***/ }),
 
-/***/ 20:
+/***/ 3:
+/***/ (function(module, exports) {
+
+(function() { module.exports = this["wp"]["i18n"]; }());
+
+/***/ }),
+
+/***/ 35:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -108,7 +115,7 @@ this["wc"] = this["wc"] || {}; this["wc"]["onboardingTaxNotice"] =
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return getSetting; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return setSetting; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return getAdminLink; });
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(52);
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
@@ -138,7 +145,6 @@ var WC_ASSET_URL = SOURCE.wcAssetUrl;
 /**
  * Retrieves a setting value from the setting state.
  *
- * @export
  * @param {string}   name                         The identifier for the setting.
  * @param {*}    [fallback=false]             The value to use as a fallback
  *                                                if the setting is not in the
@@ -174,7 +180,6 @@ function getSetting(name) {
  *
  * @deprecated
  *
- * @export
  * @param {string}   name                        The setting property key for the
  *                                               setting being mutated.
  * @param {*}    value                       The value to set.
@@ -207,14 +212,7 @@ function getAdminLink(path) {
 
 /***/ }),
 
-/***/ 3:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["wp"]["i18n"]; }());
-
-/***/ }),
-
-/***/ 34:
+/***/ 52:
 /***/ (function(module, exports) {
 
 function _typeof(obj) {
@@ -237,75 +235,22 @@ module.exports = _typeof;
 
 /***/ }),
 
-/***/ 72:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return domReady; });
-/**
- * @typedef {() => void} Callback
- *
- * TODO: Remove this typedef and inline `() => void` type.
- *
- * This typedef is used so that a descriptive type is provided in our
- * automatically generated documentation.
- *
- * An in-line type `() => void` would be preferable, but the generated
- * documentation is `null` in that case.
- *
- * @see https://github.com/WordPress/gutenberg/issues/18045
- */
-
-/**
- * Specify a function to execute when the DOM is fully loaded.
- *
- * @param {Callback} callback A function to execute after the DOM is ready.
- *
- * @example
- * ```js
- * import domReady from '@wordpress/dom-ready';
- *
- * domReady( function() {
- * 	//do something after DOM loads.
- * } );
- * ```
- *
- * @return {void}
- */
-function domReady(callback) {
-  if (document.readyState === 'complete' || // DOMContentLoaded + Images/Styles/etc loaded, so we call directly.
-  document.readyState === 'interactive' // DOMContentLoaded fires at this point, so we call directly.
-  ) {
-      return void callback();
-    } // DOMContentLoaded has not fired yet, delay callback until then.
-
-
-  document.addEventListener('DOMContentLoaded', callback);
-}
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 721:
+/***/ 537:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(19);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(25);
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_dom_ready__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(72);
-/* harmony import */ var _woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(20);
+/* harmony import */ var _wordpress_dom_ready__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(81);
+/* harmony import */ var _woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(35);
 /**
  * External dependencies
  */
 
 
-
-/**
- * WooCommerce dependencies
- */
 
 
 /**
@@ -357,6 +302,55 @@ Object(_wordpress_dom_ready__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(fun
     saveButton.addEventListener('click', showTaxCompletionNotice);
   }
 });
+
+/***/ }),
+
+/***/ 81:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return domReady; });
+/**
+ * @typedef {() => void} Callback
+ *
+ * TODO: Remove this typedef and inline `() => void` type.
+ *
+ * This typedef is used so that a descriptive type is provided in our
+ * automatically generated documentation.
+ *
+ * An in-line type `() => void` would be preferable, but the generated
+ * documentation is `null` in that case.
+ *
+ * @see https://github.com/WordPress/gutenberg/issues/18045
+ */
+
+/**
+ * Specify a function to execute when the DOM is fully loaded.
+ *
+ * @param {Callback} callback A function to execute after the DOM is ready.
+ *
+ * @example
+ * ```js
+ * import domReady from '@wordpress/dom-ready';
+ *
+ * domReady( function() {
+ * 	//do something after DOM loads.
+ * } );
+ * ```
+ *
+ * @return {void}
+ */
+function domReady(callback) {
+  if (document.readyState === 'complete' || // DOMContentLoaded + Images/Styles/etc loaded, so we call directly.
+  document.readyState === 'interactive' // DOMContentLoaded fires at this point, so we call directly.
+  ) {
+      return void callback();
+    } // DOMContentLoaded has not fired yet, delay callback until then.
+
+
+  document.addEventListener('DOMContentLoaded', callback);
+}
+//# sourceMappingURL=index.js.map
 
 /***/ })
 

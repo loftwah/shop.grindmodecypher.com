@@ -82,24 +82,25 @@ this["wc"] = this["wc"] || {}; this["wc"]["number"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 715);
+/******/ 	return __webpack_require__(__webpack_require__.s = 526);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 18:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 100:
+/***/ (function(module, exports) {
 
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ _slicedToArray; });
-
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
 function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
 }
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
+
+module.exports = _arrayWithHoles;
+
+/***/ }),
+
+/***/ 101:
+/***/ (function(module, exports) {
+
 function _iterableToArrayLimit(arr, i) {
   if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
@@ -126,64 +127,44 @@ function _iterableToArrayLimit(arr, i) {
 
   return _arr;
 }
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
-var unsupportedIterableToArray = __webpack_require__(51);
 
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
+module.exports = _iterableToArrayLimit;
+
+/***/ }),
+
+/***/ 102:
+/***/ (function(module, exports) {
+
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
 
-
-
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || Object(unsupportedIterableToArray["a" /* default */])(arr, i) || _nonIterableRest();
-}
+module.exports = _nonIterableRest;
 
 /***/ }),
 
 /***/ 31:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _arrayLikeToArray; });
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
+var arrayWithHoles = __webpack_require__(100);
 
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
+var iterableToArrayLimit = __webpack_require__(101);
 
-  return arr2;
+var unsupportedIterableToArray = __webpack_require__(70);
+
+var nonIterableRest = __webpack_require__(102);
+
+function _slicedToArray(arr, i) {
+  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || unsupportedIterableToArray(arr, i) || nonIterableRest();
 }
+
+module.exports = _slicedToArray;
 
 /***/ }),
 
-/***/ 51:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 5:
+/***/ (function(module, exports) {
 
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _unsupportedIterableToArray; });
-/* harmony import */ var _arrayLikeToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(31);
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return Object(_arrayLikeToArray__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return Object(_arrayLikeToArray__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(o, minLen);
-}
-
-/***/ }),
-
-/***/ 6:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _defineProperty; });
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -199,9 +180,11 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
+module.exports = _defineProperty;
+
 /***/ }),
 
-/***/ 715:
+/***/ 526:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -209,8 +192,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "numberFormat", function() { return numberFormat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatValue", function() { return formatValue; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateDelta", function() { return calculateDelta; });
-/* harmony import */ var _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
-/* harmony import */ var _babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(18);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__);
 
 
 
@@ -234,7 +219,7 @@ function _objectSpread(target) {
 
     if (i % 2) {
       ownKeys(Object(source), true).forEach(function (key) {
-        Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(target, key, source[key]);
+        _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -248,12 +233,15 @@ function _objectSpread(target) {
   return target;
 }
 
-var numberFormatter = __webpack_require__(716);
+var numberFormatter = __webpack_require__(527);
 /**
  * Formats a number using site's current locale
  *
  * @see http://locutus.io/php/strings/number_format/
  * @param {Object} numberConfig number formatting configuration object.
+ * @param {number} numberConfig.precision
+ * @param {string} numberConfig.decimalSeparator
+ * @param {string} numberConfig.thousandSeparator
  * @param {number|string} number number to format
  * @return {?string} A formatted string.
  */
@@ -279,7 +267,7 @@ function numberFormat(_ref, number) {
 
   if (isNaN(parsedPrecision)) {
     var _number$toString$spli = number.toString().split('.'),
-        _number$toString$spli2 = Object(_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])(_number$toString$spli, 2),
+        _number$toString$spli2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_number$toString$spli, 2),
         decimals = _number$toString$spli2[1];
 
     parsedPrecision = decimals ? decimals.length : 0;
@@ -333,7 +321,7 @@ function calculateDelta(primaryValue, secondaryValue) {
 
 /***/ }),
 
-/***/ 716:
+/***/ 527:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -341,26 +329,26 @@ function calculateDelta(primaryValue, secondaryValue) {
 
 module.exports = function number_format(number, decimals, decPoint, thousandsSep) {
   // eslint-disable-line camelcase
-  //  discuss at: http://locutus.io/php/number_format/
-  // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-  // improved by: Kevin van Zonneveld (http://kvz.io)
+  //  discuss at: https://locutus.io/php/number_format/
+  // original by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
+  // improved by: Kevin van Zonneveld (https://kvz.io)
   // improved by: davook
-  // improved by: Brett Zamir (http://brett-zamir.me)
-  // improved by: Brett Zamir (http://brett-zamir.me)
+  // improved by: Brett Zamir (https://brett-zamir.me)
+  // improved by: Brett Zamir (https://brett-zamir.me)
   // improved by: Theriault (https://github.com/Theriault)
-  // improved by: Kevin van Zonneveld (http://kvz.io)
-  // bugfixed by: Michael White (http://getsprink.com)
+  // improved by: Kevin van Zonneveld (https://kvz.io)
+  // bugfixed by: Michael White (https://getsprink.com)
   // bugfixed by: Benjamin Lupton
-  // bugfixed by: Allan Jensen (http://www.winternet.no)
+  // bugfixed by: Allan Jensen (https://www.winternet.no)
   // bugfixed by: Howard Yeend
   // bugfixed by: Diogo Resende
   // bugfixed by: Rival
-  // bugfixed by: Brett Zamir (http://brett-zamir.me)
-  //  revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-  //  revised by: Luke Smith (http://lucassmith.name)
-  //    input by: Kheang Hok Chin (http://www.distantia.ca/)
+  // bugfixed by: Brett Zamir (https://brett-zamir.me)
+  //  revised by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
+  //  revised by: Luke Smith (https://lucassmith.name)
+  //    input by: Kheang Hok Chin (https://www.distantia.ca/)
   //    input by: Jay Klehr
-  //    input by: Amir Habibi (http://www.residence-mixte.com/)
+  //    input by: Amir Habibi (https://www.residence-mixte.com/)
   //    input by: Amirouche
   //   example 1: number_format(1234.56)
   //   returns 1: '1,235'
@@ -424,6 +412,41 @@ module.exports = function number_format(number, decimals, decPoint, thousandsSep
   return s.join(dec);
 };
 //# sourceMappingURL=number_format.js.map
+
+/***/ }),
+
+/***/ 62:
+/***/ (function(module, exports) {
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+
+module.exports = _arrayLikeToArray;
+
+/***/ }),
+
+/***/ 70:
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayLikeToArray = __webpack_require__(62);
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
+}
+
+module.exports = _unsupportedIterableToArray;
 
 /***/ })
 

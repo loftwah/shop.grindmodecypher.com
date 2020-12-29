@@ -448,16 +448,24 @@ class ET_Builder_Module_Team_Member extends ET_Builder_Module {
 				}
 			}
 
+			$image_attrs = array(
+				'src' => '{{image_url}}',
+				'alt' => '{{name}}',
+			);
+
+			$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'image_url' );
+
+			if ( ! empty( $image_attachment_class ) ) {
+				$image_attrs['class'] = esc_attr( $image_attachment_class );
+			}
+
 			$image = $multi_view->render_element(
 				array(
 					'tag'     => 'div',
 					'content' => $multi_view->render_element(
 						array(
 							'tag'   => 'img',
-							'attrs' => array(
-								'src' => '{{image_url}}',
-								'alt' => '{{name}}',
-							),
+							'attrs' => $image_attrs,
 						)
 					),
 					'attrs'   => array(

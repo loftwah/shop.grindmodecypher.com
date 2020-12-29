@@ -5,14 +5,16 @@ import get from 'lodash/get';
 
 // Internal dependencies
 import {
-  maybeIncreaseEmitterMaxListeners,
   maybeDecreaseEmitterMaxListeners,
+  maybeIncreaseEmitterMaxListeners,
   registerFrontendComponent,
 } from '../utils/utils';
+
 
 const HEIGHT_CHANGE    = 'height_change';
 const WIDTH_CHANGE     = 'width_change';
 const DIMENSION_CHANGE = 'dimension_change';
+
 // States
 const states = {
   height: 0,
@@ -20,16 +22,16 @@ const states = {
 };
 
 /**
- * document store; track document height (at the moment) and its changes. Builder elements
+ * Document store; track document height (at the moment) and its changes. Builder elements
  * should listen and get this store's value instead of directly getting it from document.
  * ETScriptDocumentStore is not exported; intentionally export its instance so there'll only be one
- * ETScriptDocumentStore instance
+ * ETScriptDocumentStore instance.
  *
  * @since 4.6.0
  */
 class ETScriptDocumentStore extends EventEmitter {
   /**
-   * ETScriptDocumentStore constructor
+   * ETScriptDocumentStore constructor.
    *
    * @since 4.6.0
    */
@@ -41,15 +43,15 @@ class ETScriptDocumentStore extends EventEmitter {
   }
 
   /**
-   * Record document height
+   * Record document height.
    *
    * @since 4.6.0
    *
    * @param {number} height
    *
-   * @return {Window}
+   * @returns {Window}
    */
-  setHeight = (height) => {
+  setHeight = height => {
     if (height === states.height) {
       return this;
     }
@@ -63,15 +65,15 @@ class ETScriptDocumentStore extends EventEmitter {
   };
 
   /**
-   * Record document width
+   * Record document width.
    *
    * @since 4.6.0
    *
    * @param {number} width
    *
-   * @return {Window}
+   * @returns {Window}
    */
-  setWidth = (width) => {
+  setWidth = width => {
     if (width === states.width) {
       return this;
     }
@@ -85,35 +87,35 @@ class ETScriptDocumentStore extends EventEmitter {
   };
 
   /**
-   * Get recorded document height
+   * Get recorded document height.
    *
    * @since 4.6.0
    *
-   * @return {number}
+   * @returns {number}
    */
   get height() {
     return states.height;
-  };
+  }
 
   /**
-   * Get recorded document width
+   * Get recorded document width.
    *
    * @since 4.6.0
    *
-   * @return {number}
+   * @returns {number}
    */
   get width() {
     return states.width;
-  };
+  }
 
   /**
-   * Add document dimension change event listener
+   * Add document dimension change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   addDimensionChangeListener = callback => {
     maybeIncreaseEmitterMaxListeners(this, DIMENSION_CHANGE);
@@ -122,13 +124,13 @@ class ETScriptDocumentStore extends EventEmitter {
   };
 
   /**
-   * Remove document dimension change event listener
+   * Remove document dimension change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   removeDimensionChangeListener = callback => {
     this.removeListener(DIMENSION_CHANGE, callback);
@@ -137,13 +139,13 @@ class ETScriptDocumentStore extends EventEmitter {
   };
 
   /**
-   * Add document height change event listener
+   * Add document height change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   addHeightChangeListener = callback => {
     maybeIncreaseEmitterMaxListeners(this, HEIGHT_CHANGE);
@@ -152,13 +154,13 @@ class ETScriptDocumentStore extends EventEmitter {
   };
 
   /**
-   * Remove document height change event listener
+   * Remove document height change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   removeHeightChangeListener = callback => {
     this.removeListener(HEIGHT_CHANGE, callback);
@@ -167,13 +169,13 @@ class ETScriptDocumentStore extends EventEmitter {
   };
 
   /**
-   * Add document width change event listener
+   * Add document width change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   addWidthChangeListener = callback => {
     maybeIncreaseEmitterMaxListeners(this, WIDTH_CHANGE);
@@ -182,13 +184,13 @@ class ETScriptDocumentStore extends EventEmitter {
   };
 
   /**
-   * Remove document width change event listener
+   * Remove document width change event listener.
    *
    * @since 4.6.0
    *
-   * @param {function} callback
+   * @param {Function} callback
    *
-   * @return {Window}
+   * @returns {Window}
    */
   removeWidthChangeListener = callback => {
     this.removeListener(WIDTH_CHANGE, callback);
@@ -200,14 +202,21 @@ class ETScriptDocumentStore extends EventEmitter {
 // Create document store instance
 const documentStoreInstance = new ETScriptDocumentStore();
 
-// Listen to document's DOm change, debounce its callback, and update store's height
-const documentObserver = new MutationObserver(debounce(() => {
+/**
+ * Event's function callback to update document store's props
+ *
+ * @since 4.6.2
+ */
+function updateDocumentStoreProps() {
   const documentHeight = get(document, 'documentElement.offsetHeight');
   const documentWidth  = get(document, 'documentElement.offsetWidth');
 
   // Store automatically ignore if given height value is equal to the current one; so this is fine
   documentStoreInstance.setHeight(documentHeight).setWidth(documentWidth);
-}, 50));
+}
+
+// Listen to document's DOM change, debounce its callback, and update store's props
+const documentObserver = new MutationObserver(debounce(updateDocumentStoreProps, 50));
 
 // Observe document change
 // @todo probably plug this on only when necessary
@@ -217,6 +226,9 @@ documentObserver.observe(document, {
   childList: true,
   subtree: true,
 });
+
+// Update document store properties when Divi's fixed header transition is completed
+window.addEventListener('ETDiviFixedHeaderTransitionEnd', updateDocumentStoreProps);
 
 // Register store instance as component to be exposed via global object
 registerFrontendComponent('stores', 'document', documentStoreInstance);

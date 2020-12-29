@@ -134,7 +134,6 @@ class ET_Core_LIB_OAuthUtil {
 	}
 }
 
-
 /**
  * A base class for implementing a Signature Method
  * See section 9 ("Signing Requests") in the spec
@@ -179,7 +178,7 @@ abstract class ET_Core_LIB_OAuthSignatureMethod {
 		$result = 0;
 
 		for ( $i = 0; $i < strlen( $signature ); $i ++ ) {
-			$result |= ord( $built{$i} ) ^ ord( $signature{$i} );
+			$result |= ord( $built[ $i ] ) ^ ord( $signature[ $i ] );
 		}
 
 		return 0 === $result;

@@ -44,6 +44,7 @@ class PageTasksValues extends AbstractEnum {
   const MANAGE = 'MANAGE';
   const MANAGE_JOBS = 'MANAGE_JOBS';
   const MANAGE_LEADS = 'MANAGE_LEADS';
+  const MESSAGING = 'MESSAGING';
   const MODERATE = 'MODERATE';
   const MODERATE_COMMUNITY = 'MODERATE_COMMUNITY';
   const PAGES_MESSAGING = 'PAGES_MESSAGING';

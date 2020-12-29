@@ -154,6 +154,7 @@ class ProductItem extends AbstractCrudObject {
     $param_types = array(
       'additional_image_files' => 'list<file>',
       'additional_image_urls' => 'list<string>',
+      'additional_uploaded_image_ids' => 'list<string>',
       'additional_variant_attributes' => 'map',
       'android_app_name' => 'string',
       'android_class' => 'string',
@@ -162,6 +163,7 @@ class ProductItem extends AbstractCrudObject {
       'availability' => 'availability_enum',
       'brand' => 'string',
       'category' => 'string',
+      'category_specific_fields' => 'map',
       'checkout_url' => 'string',
       'color' => 'string',
       'commerce_tax_category' => 'commerce_tax_category_enum',
@@ -175,6 +177,7 @@ class ProductItem extends AbstractCrudObject {
       'custom_label_4' => 'string',
       'description' => 'string',
       'expiration_date' => 'string',
+      'fb_product_category' => 'string',
       'gender' => 'gender_enum',
       'gtin' => 'string',
       'image_url' => 'string',

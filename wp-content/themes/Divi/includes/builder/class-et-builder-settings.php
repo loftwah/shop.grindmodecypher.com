@@ -1,45 +1,79 @@
 <?php
+/**
+ * Builder settings API.
+ *
+ * @package Divi.
+ * @subpackage Builder.
+ *
+ * @since 4.6.2
+ */
 
 require_once 'module/field/Factory.php';
 
-
+/**
+ * Class for handling interacting with builder settings.
+ */
 class ET_Builder_Settings {
 
 	/**
+	 * Builder setting fields.
+	 *
+	 * @see ET_Builder_Settings::_get_builder_settings_fields()
+	 *
 	 * @var array
 	 */
 	protected static $_BUILDER_SETTINGS_FIELDS;
 
 	/**
+	 * Builder setting values.
+	 *
+	 * @see ET_Builder_Settings::_get_builder_settings_values()
+	 *
 	 * @var array
 	 */
 	protected static $_BUILDER_SETTINGS_VALUES;
 
 	/**
+	 * Page setting fields.
+	 *
+	 * @see ET_Builder_Settings::_get_page_settings_fields()
+	 *
 	 * @var array
 	 */
 	protected static $_PAGE_SETTINGS_FIELDS;
 
 	/**
+	 * Map of page settings fields to post metas.
+	 * e.x `'_et_pb_static_css_file' => 'et_pb_static_css_file'`
+	 *
 	 * @var array
 	 */
 	protected static $_PAGE_SETTINGS_FIELDS_META_KEY_MAP = array();
 
 	/**
+	 * List of page setting fields slug whose values are default.
+	 *
 	 * @var array[]
 	 */
 	protected static $_PAGE_SETTINGS_IS_DEFAULT = array();
 
 	/**
+	 * Page setting fields value array.
+	 *
 	 * @var array
 	 */
 	protected static $_PAGE_SETTINGS_VALUES;
 
 	/**
+	 * `ET_Builder_Settings` instance.
+	 *
 	 * @var ET_Builder_Settings
 	 */
 	protected static $_instance;
 
+	/**
+	 * ET_Builder_Settings constructor.
+	 */
 	public function __construct() {
 		if ( null !== self::$_instance ) {
 			wp_die( esc_html( get_class( $this ) . 'is a singleton class. You cannot create a another instance.' ) );
@@ -49,6 +83,11 @@ class ET_Builder_Settings {
 		$this->_register_callbacks();
 	}
 
+	/**
+	 * Get ab testing fields.
+	 *
+	 * @return array
+	 */
 	protected static function _get_ab_testing_fields() {
 		return array(
 			'et_pb_enable_ab_testing'         => array(
@@ -147,6 +186,11 @@ class ET_Builder_Settings {
 		);
 	}
 
+	/**
+	 * Get builder settings fields.
+	 *
+	 * @return array
+	 */
 	protected static function _get_builder_settings_fields() {
 		$builder_settings_fields = array(
 			'et_pb_static_css_file'       => self::_get_static_css_generation_field( 'builder' ),
@@ -238,6 +282,11 @@ class ET_Builder_Settings {
 		return $builder_settings_fields;
 	}
 
+	/**
+	 * Get builder settings in ePanel format.
+	 *
+	 * @return array
+	 */
 	protected static function _get_builder_settings_in_epanel_format() {
 		$tabs   = self::get_tabs( 'builder' );
 		$fields = self::get_fields( 'builder' );
@@ -311,6 +360,11 @@ class ET_Builder_Settings {
 		return $result;
 	}
 
+	/**
+	 * Get builder settings values.
+	 *
+	 * @return array
+	 */
 	protected static function _get_builder_settings_values() {
 		return array(
 			'et_pb_static_css_file' => et_get_option( 'et_pb_static_css_file', 'on' ),
@@ -318,6 +372,13 @@ class ET_Builder_Settings {
 		);
 	}
 
+	/**
+	 * Get page settings fields.
+	 *
+	 * @param string $post_type Page post type.
+	 *
+	 * @return array
+	 */
 	protected static function _get_page_settings_fields( $post_type = 'post' ) {
 		$fields   = array();
 		$overflow = ET_Builder_Module_Fields_Factory::get( 'Overflow' );
@@ -531,22 +592,22 @@ class ET_Builder_Settings {
 
 	/**
 	 * Get page setting fields' meta_key map. Most page settings' field meta key is identical to
-	 * its field['id'] but some fields use different meta_key. Map might need in some situations
+	 * its field['id'] but some fields use different meta_key. Map might need in some situations.
 	 *
 	 * @since 3.20
 	 *
-	 * @param bool $meta_key_to_id reverse mapping if set to false
+	 * @param bool $meta_key_to_id Reverse mapping if set to false.
 	 *
 	 * @return array
 	 */
 	public static function get_page_setting_meta_key_map( $meta_key_to_id = true ) {
 		static $map = array();
 
-		// Less likely to change, populate it once will be sufficient
+		// Less likely to change, populate it once will be sufficient.
 		if ( empty( $map ) ) {
 			foreach ( self::_get_page_settings_fields() as $field_id => $field ) {
 				if ( isset( $field['meta_key'] ) ) {
-					// The map can be reversed if needed
+					// The map can be reversed if needed.
 					if ( $meta_key_to_id ) {
 						$map[ $field['meta_key'] ] = $field_id;
 					} else {
@@ -559,6 +620,13 @@ class ET_Builder_Settings {
 		return $map;
 	}
 
+	/**
+	 * Get page settings values.
+	 *
+	 * @param int $post_id Post id.
+	 *
+	 * @return mixed|void
+	 */
 	protected static function _get_page_settings_values( $post_id ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
 
@@ -570,13 +638,13 @@ class ET_Builder_Settings {
 		$OVERFLOW_DEFAULT = ET_Builder_Module_Helper_Overflow::OVERFLOW_DEFAULT;
 		$is_default       = array();
 
-		// Page settings fields
+		// Page settings fields.
 		$fields = self::$_PAGE_SETTINGS_FIELDS;
 
-		// Defaults
+		// Defaults.
 		$default_bounce_rate_limit = 5;
 
-		// Get values
+		// Get values.
 		$ab_bounce_rate_limit       = get_post_meta( $post_id, '_et_pb_ab_bounce_rate_limit', true );
 		$et_pb_ab_bounce_rate_limit = '' !== $ab_bounce_rate_limit ? $ab_bounce_rate_limit : $default_bounce_rate_limit;
 		$is_default[]               = $et_pb_ab_bounce_rate_limit === $default_bounce_rate_limit ? 'et_pb_ab_bounce_rate_limit' : '';
@@ -613,10 +681,10 @@ class ET_Builder_Settings {
 		$is_default[]                   = strtolower( $et_pb_section_background_color ) === $default ? 'et_pb_section_background_color' : '';
 
 		$overflow_x   = (string) get_post_meta( $post_id, $overflow->get_field_x( '_et_pb_' ), true );
-		$is_default[] = empty( $overflow_x ) || $overflow_x == $OVERFLOW_DEFAULT ? $overflow->get_field_x( 'et_pb_' ) : '';
+		$is_default[] = empty( $overflow_x ) || $overflow_x === $OVERFLOW_DEFAULT ? $overflow->get_field_x( 'et_pb_' ) : '';
 
 		$overflow_y   = (string) get_post_meta( $post_id, $overflow->get_field_y( '_et_pb_' ), true );
-		$is_default[] = empty( $overflow_y ) || $overflow_y == $OVERFLOW_DEFAULT ? $overflow->get_field_y( 'et_pb_' ) : '';
+		$is_default[] = empty( $overflow_y ) || $overflow_y === $OVERFLOW_DEFAULT ? $overflow->get_field_y( 'et_pb_' ) : '';
 
 		$static_css_file       = get_post_meta( $post_id, '_et_pb_static_css_file', true );
 		$default               = $fields['et_pb_static_css_file']['default'];
@@ -665,7 +733,8 @@ class ET_Builder_Settings {
 		 * }
 		 * @param string|int $post_id
 		 */
-		$values = self::$_PAGE_SETTINGS_VALUES[ $post_id ] = apply_filters( 'et_builder_page_settings_values', $values, $post_id );
+		self::$_PAGE_SETTINGS_VALUES[ $post_id ] = apply_filters( 'et_builder_page_settings_values', $values, $post_id );
+		$values                                  = self::$_PAGE_SETTINGS_VALUES[ $post_id ];
 
 		/**
 		 * Filters the Divi Builder's page settings values.
@@ -678,6 +747,13 @@ class ET_Builder_Settings {
 		return apply_filters( 'et_pb_get_builder_settings_values', $values, $post_id );
 	}
 
+	/**
+	 * Get Static CSS File Generation setting field.
+	 *
+	 * @param string $scope Field scope.
+	 *
+	 * @return array
+	 */
 	protected static function _get_static_css_generation_field( $scope ) {
 		$description = array(
 			'page'    => esc_html__( "When this option is enabled, the builder's inline CSS styles for this page will be cached and served as a static file. Enabling this option can help improve performance.", 'et_builder' ),
@@ -709,6 +785,11 @@ class ET_Builder_Settings {
 		);
 	}
 
+	/**
+	 * Get an array of default value of all post types where Divi Builder is enabled on.
+	 *
+	 * @return array
+	 */
 	protected static function _get_post_type_options_defaults() {
 		$post_types        = et_builder_get_enabled_builder_post_types();
 		$post_type_options = array();
@@ -733,10 +814,23 @@ class ET_Builder_Settings {
 		return is_array( $terms ) ? implode( ',', $terms ) : '';
 	}
 
+	/**
+	 * Get registered post type options.
+	 *
+	 * @return array
+	 */
 	public static function get_registered_post_type_options() {
 		return et_get_registered_post_type_options( 'ET_Builder_Settings::sort_post_types' );
 	}
 
+	/**
+	 * Sort post types callback.
+	 *
+	 * @param WP_Post $a The first post type to compare.
+	 * @param WP_Post $b Tge second post type to compare.
+	 *
+	 * @return int|lt|mixed
+	 */
 	public static function sort_post_types( $a, $b ) {
 		// ASCII has a total of 127 characters, so 500 as the interval
 		// should be a sufficiently high number.
@@ -751,6 +845,9 @@ class ET_Builder_Settings {
 		return strcasecmp( $a->label, $b->label ) - $a_rank + $b_rank;
 	}
 
+	/**
+	 * Initialize the builder settings.
+	 */
 	protected function _initialize() {
 		/**
 		 * Filters Divi Builder settings field definitions.
@@ -803,18 +900,27 @@ class ET_Builder_Settings {
 		self::$_PAGE_SETTINGS_VALUES = array();
 	}
 
+	/**
+	 * Remove static resources for a post when `et_pb_css_in_footer` or `et_pb_static_css_file` field update.
+	 *
+	 * @param string $setting Setting field slug.
+	 * @param string $setting_value Setting field value.
+	 */
 	protected static function _maybe_clear_cached_static_css_files( $setting, $setting_value ) {
-		if ( in_array( $setting, array( 'et_pb_css_in_footer', 'et_pb_static_css_file' ) ) ) {
+		if ( in_array( $setting, array( 'et_pb_css_in_footer', 'et_pb_static_css_file' ), true ) ) {
 			 ET_Core_PageResource::remove_static_resources( 'all', 'all' );
 		}
 	}
 
+	/**
+	 * Register callbacks.
+	 */
 	protected function _register_callbacks() {
 		$class = get_class( $this );
 
 		if ( ! is_admin() ) {
 			// Setup post meta callback registration on preview page. Priority has to be less than 10
-			// so get_post_meta used on self::_get_page_settings_values() are affected
+			// so get_post_meta used on self::_get_page_settings_values() are affected.
 			add_action( 'wp', array( $this, '_register_preview_post_metadata' ), 5 );
 
 			return;
@@ -822,7 +928,7 @@ class ET_Builder_Settings {
 
 		add_action( 'et_builder_settings_update_option', array( $class, 'update_option_cb' ), 10, 3 );
 
-		// setup plugin style options, rather than epanel
+		// setup plugin style options, rather than epanel.
 		if ( et_is_builder_plugin_active() ) {
 			add_filter( 'et_builder_plugin_dashboard_sections', array( $class, 'add_plugin_dashboard_sections' ) );
 			add_filter( 'et_builder_plugin_dashboard_fields_data', array( $class, 'add_plugin_dashboard_fields_data' ) );
@@ -839,7 +945,7 @@ class ET_Builder_Settings {
 	 * Adds a tab for the builder to ePanel's tabs array.
 	 * {@see 'et_epanel_tab_names'}
 	 *
-	 * @param string[] $tabs
+	 * @param string[] $tabs ePanel's tabs array.
 	 *
 	 * @return string[] $tabs
 	 */
@@ -858,7 +964,7 @@ class ET_Builder_Settings {
 	 * Adds builder settings fields data to the builder plugin's options dashboard.
 	 * {@see 'et_builder_plugin_dashboard_fields_data'}
 	 *
-	 * @param array[] $dashboard_data
+	 * @param array[] $dashboard_data Plugin options array.
 	 *
 	 * @return array[] $dashboard_data
 	 */
@@ -923,7 +1029,7 @@ class ET_Builder_Settings {
 	 * Adds tabs for builder settings to the builder plugin's options dashboard.
 	 * {@see 'et_builder_plugin_dashboard_sections'}
 	 *
-	 * @param array[] $sections
+	 * @param array[] $sections Sections configuration.
 	 *
 	 * @return array[] $sections
 	 */
@@ -945,7 +1051,7 @@ class ET_Builder_Settings {
 	/**
 	 * Adds builder settings to ePanel. {@see 'et_epanel_layout_data'}
 	 *
-	 * @param array $layout_data
+	 * @param array $layout_data Layout setting fields configuration.
 	 *
 	 * @return array $data
 	 */
@@ -970,6 +1076,13 @@ class ET_Builder_Settings {
 		return $result;
 	}
 
+	/**
+	 * Update setting option callback.
+	 *
+	 * @param string $setting Setting field slug.
+	 * @param string $setting_value Setting field value.
+	 * @param string $post_id Post id or global.
+	 */
 	public static function update_option_cb( $setting, $setting_value, $post_id = 'global' ) {
 		if ( did_action( 'wp_ajax_et_fb_ajax_save' ) ) {
 			return;
@@ -998,6 +1111,8 @@ class ET_Builder_Settings {
 	}
 
 	/**
+	 * Get class instance.
+	 *
 	 * @return ET_Builder_Settings
 	 */
 	public static function get_instance() {
@@ -1011,7 +1126,7 @@ class ET_Builder_Settings {
 	/**
 	 * Returns the localized tab names for the builder settings.
 	 *
-	 * @param string $scope
+	 * @param string $scope Accepts 'page', 'builder'.
 	 *
 	 * @return string[] {
 	 *     Localized Tab Names.
@@ -1090,6 +1205,7 @@ class ET_Builder_Settings {
 		$utils = ET_Core_Data_Utils::instance();
 
 		// Get current post type singular name and use it as toggle title.
+		// phpcs:ignore WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
 		$post_type = wp_doing_ajax() ? $utils->array_get( $_POST, 'et_post_type' ) : get_post_type( et_core_page_resource_get_the_ID() );
 
 		$post_type_obj = get_post_type_object( $post_type );
@@ -1130,6 +1246,7 @@ class ET_Builder_Settings {
 	 *
 	 * @param string     $scope   Get values for scope (page|builder|all). Default 'page'.
 	 * @param string|int $post_id Optional. If not provided, {@link get_the_ID()} will be used.
+	 * @param bool       $exclude_defaults Optional. Whether to exclude default value.
 	 *
 	 * @return mixed[] {
 	 *     Settings Values
@@ -1154,18 +1271,30 @@ class ET_Builder_Settings {
 		}
 
 		if ( $exclude_defaults ) {
-			'all' === $scope || $result = array( $result );
+			if ( 'all' !== $scope ) {
+				$result = array( $result );
+			}
 
 			foreach ( $result as $key => $settings ) {
 				$result[ $key ] = array_diff_key( $result[ $key ], array_flip( self::$_PAGE_SETTINGS_IS_DEFAULT[ $post_id ] ) );
 			}
 
-			'all' === $scope || $result = $result[0];
+			if ( 'all' !== $scope ) {
+				$result = $result[0];
+			}
 		}
 
 		return $result;
 	}
 
+	/**
+	 * Callback to automatically clear static resources when option is disabled in divi builder plugin dashboard.
+	 *
+	 * @param array  $processed_options Setting options array.
+	 * @param string $option_name Updated option name.
+	 * @param array  $field_info Field info.
+	 * @param array  $output Options array.
+	 */
 	public static function plugin_dashboard_option_saved_cb( $processed_options, $option_name, $field_info, $output ) {
 		if ( ! isset( $field_info['id'] ) ) {
 			return;
@@ -1183,6 +1312,14 @@ class ET_Builder_Settings {
 		self::_maybe_clear_cached_static_css_files( $setting, $setting_value );
 	}
 
+	/**
+	 * Callback to get dashboard option value from {@see ET_Builder_Settings::$_BUILDER_SETTINGS_VALUES}.
+	 *
+	 * @param string $option_value Option value.
+	 * @param array  $option Option array.
+	 *
+	 * @return mixed
+	 */
 	public static function plugin_dashboard_option_value_cb( $option_value, $option ) {
 		if ( ! isset( $option['id'] ) ) {
 			return $option_value;
@@ -1199,7 +1336,7 @@ class ET_Builder_Settings {
 
 	/**
 	 * Register filter callback for modifying page settings post meta value based on current
-	 * autosave data if current page is valid builder preview page
+	 * autosave data if current page is valid builder preview page.
 	 *
 	 * @since 3.20
 	 *
@@ -1211,14 +1348,14 @@ class ET_Builder_Settings {
 		}
 
 		// Populate page settings fields meta_key map. Most page setting field id is identical (sans
-		// `_` prefix) to its meta_key name but some field has completely different meta_key name
+		// `_` prefix) to its meta_key name but some field has completely different meta_key name.
 		foreach ( self::$_PAGE_SETTINGS_FIELDS as $field_id => $field ) {
 			$meta_key = isset( $field['meta_key'] ) ? $field['meta_key'] : '_' . $field_id;
 
 			self::$_PAGE_SETTINGS_FIELDS_META_KEY_MAP[ $meta_key ] = $field_id;
 		}
 
-		// Register filter for modifying page setting's post_meta value
+		// Register filter for modifying page setting's post_meta value.
 		add_filter( 'get_post_metadata', array( 'ET_Builder_Settings', 'modify_preview_post_metadata' ), 10, 4 );
 	}
 
@@ -1233,9 +1370,9 @@ class ET_Builder_Settings {
 	public static function get_preview_post_metadata() {
 		static $preview_post_metadata = null;
 
-		// Value retrieval should only be done once
+		// Value retrieval should only be done once.
 		if ( is_null( $preview_post_metadata ) ) {
-			// Get autosave data of current post of current user
+			// Get autosave data of current post of current user.
 			$current_user_id       = get_current_user_id();
 			$preview_post_metadata = get_post_meta(
 				get_the_ID(),
@@ -1243,7 +1380,7 @@ class ET_Builder_Settings {
 				true
 			);
 
-			// Returned value should be array
+			// Returned value should be array.
 			if ( ! is_array( $preview_post_metadata ) ) {
 				$preview_post_metadata = array();
 			}
@@ -1260,27 +1397,27 @@ class ET_Builder_Settings {
 	 *
 	 * @since 3.20
 	 *
-	 * @param null|array|string $value
-	 * @param int               $object_id
-	 * @param string            $meta_key
-	 * @param bool              $single
+	 * @param null|array|string $value Post meta value.
+	 * @param int               $object_id Post id.
+	 * @param string            $meta_key Meta key.
+	 * @param bool              $single Meta value, or an array of values.
 	 *
 	 * @return null|array|string
 	 */
 	public static function modify_preview_post_metadata( $value, $object_id, $meta_key, $single ) {
 		$current_user_id = get_current_user_id();
 
-		// Bail if $meta_key value is equal to meta_key value used to save current page autosave data
+		// Bail if $meta_key value is equal to meta_key value used to save current page autosave data.
 		if ( "_et_builder_settings_autosave_{$current_user_id}" === $meta_key ) {
 			return $value;
 		}
 
-		// Bail if $meta_key is not page settings field's meta key
+		// Bail if $meta_key is not page settings field's meta key.
 		if ( ! isset( self::$_PAGE_SETTINGS_FIELDS_META_KEY_MAP[ $meta_key ] ) ) {
 			return $value;
 		}
 
-		// Bail if current $meta_key value doesn't exist on preview page autosave data
+		// Bail if current $meta_key value doesn't exist on preview page autosave data.
 		$preview_post_meta_key = self::$_PAGE_SETTINGS_FIELDS_META_KEY_MAP[ $meta_key ];
 		$preview_post_metadata = self::get_preview_post_metadata();
 
@@ -1334,7 +1471,8 @@ if ( ! function_exists( 'et_builder_settings_get' ) ) :
 		$has_page   = isset( $page_fields[ $setting ] );
 		$has_global = isset( $builder_fields[ $setting ] );
 
-		$value             = $global_value = '';
+		$global_value      = '';
+		$value             = $global_value;
 		$global_is_default = false;
 
 		if ( ! $has_page && ! $has_global ) {

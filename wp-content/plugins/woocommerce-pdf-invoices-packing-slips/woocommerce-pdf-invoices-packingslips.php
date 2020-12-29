@@ -3,14 +3,14 @@
  * Plugin Name: WooCommerce PDF Invoices & Packing Slips
  * Plugin URI: http://www.wpovernight.com
  * Description: Create, print & email PDF invoices & packing slips for WooCommerce orders.
- * Version: 2.6.0
+ * Version: 2.7.3
  * Author: Ewout Fernhout
  * Author URI: http://www.wpovernight.com
  * License: GPLv2 or later
  * License URI: http://www.opensource.org/licenses/gpl-license.php
  * Text Domain: woocommerce-pdf-invoices-packing-slips
  * WC requires at least: 2.2.0
- * WC tested up to: 4.4.0
+ * WC tested up to: 4.8.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,9 +21,10 @@ if ( !class_exists( 'WPO_WCPDF' ) ) :
 
 class WPO_WCPDF {
 
-	public $version = '2.6.0';
+	public $version = '2.7.3';
 	public $plugin_basename;
 	public $legacy_mode;
+	public $legacy_textdomain;
 
 	protected static $_instance = null;
 
@@ -49,9 +50,14 @@ class WPO_WCPDF {
 
 		// load the localisation & classes
 		add_action( 'plugins_loaded', array( $this, 'translations' ) );
-		add_filter( 'load_textdomain_mofile', array( $this, 'textdomain_fallback' ), 10, 2 );
 		add_action( 'plugins_loaded', array( $this, 'load_classes' ), 9 );
 		add_action( 'in_plugin_update_message-'.$this->plugin_basename, array( $this, 'in_plugin_update_message' ) );
+		add_action( 'admin_notices', array( $this, 'nginx_detected' ) );
+
+		// legacy textdomain fallback
+		if ( $this->legacy_textdomain_enabled() === true ) {
+			add_filter( 'load_textdomain_mofile', array( $this, 'textdomain_fallback' ), 10, 2 );
+		}
 	}
 
 	/**
@@ -218,12 +224,22 @@ class WPO_WCPDF {
 	 */
 	public function legacy_mode_enabled() {
 		if (!isset($this->legacy_mode)) {
-			$debug_settings = get_option( 'wpo_wcpdf_settings_debug' );
+			$debug_settings = get_option( 'wpo_wcpdf_settings_debug', array() );
 			$this->legacy_mode = isset($debug_settings['legacy_mode']);
 		}
 		return $this->legacy_mode;
 	}
 
+	/**
+	 * Check if legacy textdomain fallback is enabled
+	 */
+	public function legacy_textdomain_enabled() {
+		if (!isset($this->legacy_textdomain)) {
+			$debug_settings = get_option( 'wpo_wcpdf_settings_debug', array() );
+			$this->legacy_textdomain = isset($debug_settings['legacy_textdomain']);
+		}
+		return $this->legacy_textdomain;
+	}
 
 	/**
 	 * Check if woocommerce is activated
@@ -323,6 +339,49 @@ class WPO_WCPDF {
 		}
 
 		return wp_kses_post( $upgrade_notice );
+	}
+
+	public function nginx_detected()
+	{
+		if ( empty( $this->main ) ) {
+			return;
+		}
+		$tmp_path = $this->main->get_tmp_path('attachments');
+		$server_software   = isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : '';
+		$random_string = $this->main->get_random_string();
+
+		if ( stristr( $server_software, 'nginx' ) && ( current_user_can( 'manage_shop_settings' ) || current_user_can( 'manage_woocommerce' ) ) && ! get_option('wpo_wcpdf_hide_nginx_notice') && ! $random_string ) {
+			ob_start();
+			?>
+			<div class="error">
+				<img src="<?php echo $this->plugin_url() . "/assets/images/nginx.svg"; ?>" style="margin-top:10px;">
+				<p><?php printf( __( 'The PDF files in %s are not currently protected due to your site running on <strong>NGINX</strong>.', 'woocommerce-pdf-invoices-packing-slips' ), '<strong>' . $tmp_path . '</strong>' ); ?></p>
+				<p><?php _e( 'To protect them, you must click the button below.', 'woocommerce-pdf-invoices-packing-slips' ); ?></p>
+				<p><a class="button" href="<?php echo esc_url( add_query_arg( 'wpo_wcpdf_protect_pdf_directory', 'true' ) ); ?>"><?php _e( 'Generate random temporary folder name', 'woocommerce-pdf-invoices-packing-slips' ); ?></a></p>
+				<p><a href="<?php echo esc_url( add_query_arg( 'wpo_wcpdf_hide_nginx_notice', 'true' ) ); ?>"><?php _e( 'Hide this message', 'woocommerce-pdf-invoices-packing-slips' ); ?></a></p>
+			</div>
+			<?php
+			echo ob_get_clean();
+		}
+
+		// protect PDF directory
+		if ( isset( $_GET['wpo_wcpdf_protect_pdf_directory'] ) ) {
+			$this->main->generate_random_string();
+			$old_path = $this->main->get_tmp_base( false );
+			$new_path = $this->main->get_tmp_base();
+			$this->main->copy_directory( $old_path, $new_path );
+			// save option to hide nginx notice
+			update_option( 'wpo_wcpdf_hide_nginx_notice', true );
+			wp_redirect( 'admin.php?page=wpo_wcpdf_options_page' );
+			exit;
+		}
+
+		// save option to hide nginx notice
+		if ( isset( $_GET['wpo_wcpdf_hide_nginx_notice'] ) ) {
+			update_option( 'wpo_wcpdf_hide_nginx_notice', true );
+			wp_redirect( 'admin.php?page=wpo_wcpdf_options_page' );
+			exit;
+		}
 	}
 
 	/**

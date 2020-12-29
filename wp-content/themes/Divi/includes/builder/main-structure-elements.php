@@ -2,8 +2,11 @@
 /**
  * Fires before the builder's structure element classes are loaded.
  *
+ * @package Divi
+ * @subpackage Builder
  * @since 4.4.9
  */
+
 do_action( 'et_builder_structure_elements_load' );
 
 /**
@@ -12,7 +15,10 @@ do_action( 'et_builder_structure_elements_load' );
  * @since [version]
  */
 class ET_Builder_Section extends ET_Builder_Structure_Element {
-	function init() {
+	/**
+	 * Sets up the element's properties.
+	 */
+	public function init() {
 		$this->name       = esc_html__( 'Section', 'et_builder' );
 		$this->plural     = esc_html__( 'Sections', 'et_builder' );
 		$this->slug       = 'et_pb_section';
@@ -159,7 +165,12 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		);
 	}
 
-	function get_fields() {
+	/**
+	 * Get the settings fields data for this element.
+	 *
+	 * @return array|array[]
+	 */
+	public function get_fields() {
 		$fields = array(
 			'inner_shadow'               => array(
 				'label'            => esc_html__( 'Show Inner Shadow', 'et_builder' ),
@@ -394,12 +405,15 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		return array_merge( $fields, $column_fields );
 	}
 
+	/**
+	 * Get CSS fields transition of section.
+	 */
 	public function get_transition_fields_css_props() {
 		$fields = parent::get_transition_fields_css_props();
 
-		// Section Dividers Height
+		// Section Dividers Height.
 		foreach ( array( 'top', 'bottom' ) as $placement ) {
-			// Inside sprintf, the double %% prints a literal '%' character
+			// Inside sprintf, the double %% prints a literal '%' character.
 			$selector                                = sprintf(
 				'%%%%order_class%%%%.section_has_divider.et_pb_%1$s_divider .et_pb_%1$s_inside_divider',
 				$placement
@@ -416,9 +430,10 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 	/**
 	 * Check if current background is transparent background or not.
 	 *
-	 * @since 3.24.1
+	 * @param string $background_color Background color.
 	 *
 	 * @return boolean Transparent color status.
+	 * @since 3.24.1
 	 */
 	public function is_transparent_background( $background_color = '' ) {
 		$page_setting_section_background = et_builder_settings_get( 'et_pb_section_background_color', get_the_ID() );
@@ -435,7 +450,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 	 *
 	 * @since 3.24.1
 	 *
-	 * @param string $mode
+	 * @param string $mode Preview mode.
 	 *
 	 * @return boolean
 	 */
@@ -461,6 +476,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 	 * Get parallax image background.
 	 *
 	 * @since 3.24.1
+	 * @param string $base_name Background base.
 	 *
 	 * @return HTML Parallax backgrounds markup.
 	 */
@@ -521,15 +537,15 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 			// C.1. Parallax BG Class to inform if other modes exist.
 			$parallax_classname = array();
-			if ( ( '_tablet' === $suffix || '' === $suffix ) && in_array( '_phone', $parallax_processed ) ) {
+			if ( ( '_tablet' === $suffix || '' === $suffix ) && in_array( '_phone', $parallax_processed, true ) ) {
 				$parallax_classname[] = 'et_parallax_bg_phone_exist';
 			}
 
-			if ( '' === $suffix && in_array( '_tablet', $parallax_processed ) ) {
+			if ( '' === $suffix && in_array( '_tablet', $parallax_processed, true ) ) {
 				$parallax_classname[] = 'et_parallax_bg_tablet_exist';
 			}
 
-			if ( in_array( $hover_suffix, $parallax_processed ) ) {
+			if ( in_array( $hover_suffix, $parallax_processed, true ) ) {
 				$parallax_classname[] = 'et_parallax_bg_hover_exist';
 			}
 
@@ -560,7 +576,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					esc_url( $background_image )
 				);
 
-				// set `.et_parallax_bg_wrap` border-radius
+				// set `.et_parallax_bg_wrap` border-radius.
 				et_set_parallax_bg_wrap_border_radius( $this->props, $this->slug, '%%order_class%%' );
 			}
 
@@ -572,7 +588,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			array_push( $parallax_processed, $suffix );
 		}
 
-		// Added classname for module wrapper
+		// Added classname for module wrapper.
 		if ( '' !== $parallax_background ) {
 			$this->add_classname( 'et_pb_section_parallax' );
 		}
@@ -580,7 +596,16 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		return $parallax_background;
 	}
 
-	function render( $atts, $content = null, $function_name ) {
+	/**
+	 * Generates the structure module's HTML output based on {@see ET_Builder_Section::$props}.
+	 *
+	 * @param array  $atts       List of unprocessed attributes.
+	 * @param mixed  $content     Content being processed.
+	 * @param string $function_name Slug of module that is used for rendering output.
+	 *
+	 * @return string The module's HTML output.
+	 */
+	public function render( $atts, $content = null, $function_name ) {
 		$multi_view                                   = et_pb_multi_view_options( $this );
 		$hover                                        = et_pb_hover_options();
 		$sticky                                       = et_pb_sticky_options();
@@ -774,7 +799,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			}
 
 			if ( 'on' === $use_custom_gutter && '' !== $gutter_width ) {
-				$gutter_width  = '0' === $gutter_width ? '1' : $gutter_width; // set the gutter to 1 if 0 entered by user
+				$gutter_width  = '0' === $gutter_width ? '1' : $gutter_width; // set the gutter to 1 if 0 entered by user.
 				$gutter_class .= ' et_pb_gutters' . $gutter_width;
 
 				if ( et_builder_is_hover_enabled( 'gutter_width', $this->props ) && ! empty( $gutter_width_hover ) && $gutter_width !== $gutter_width_hover ) {
@@ -788,7 +813,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				}
 			}
 
-			// Column hover backgrounds
+			// Column hover backgrounds.
 			$column_hover_backgrounds  = array();
 			$column_sticky_backgrounds = array();
 
@@ -912,7 +937,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				),
 			);
 
-			// Column hover paddings
+			// Column hover paddings.
 			$column_hover_paddings  = array();
 			$column_sticky_paddings = array();
 
@@ -1066,7 +1091,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		);
 		et_pb_responsive_options()->generate_responsive_css( $background_color_values, '%%order_class%%.et_pb_section', 'background-color', $function_name, ' !important;', 'color' );
 
-		// Background hover styles
+		// Background hover styles.
 		$hover_background_color    = $hover->get_value( 'background_color', $this->props, $background_color );
 		$hover_background_selector = '%%order_class%%.et_pb_section:hover';
 
@@ -1112,7 +1137,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			}
 		}
 
-		// Transparent is default for Builder Plugin, but not for theme
+		// Transparent is default for Builder Plugin, but not for theme.
 		$is_transparent_background        = $this->is_transparent_background( $background_color );
 		$is_transparent_background_tablet = $this->is_transparent_background( $background_color_tablet );
 		$is_transparent_background_phone  = $this->is_transparent_background( $background_color_phone );
@@ -1122,12 +1147,12 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			$this->add_classname( 'et_pb_with_background' );
 		}
 
-		// Background UI
+		// Background UI.
 		if ( 'on' === $parallax ) {
 			$this->add_classname( 'et_pb_section_parallax' );
 		}
 
-		// CSS Filters
+		// CSS Filters.
 		$this->add_classname( $this->generate_css_filters( $function_name ) );
 
 		if ( 'on' === $inner_shadow && ! ( '' !== $background_image && 'on' === $parallax && 'off' === $parallax_method ) ) {
@@ -1188,7 +1213,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 				// Check if style is not default.
 				if ( '' !== $divider_style ) {
-					// get an svg for using in ::before
+					// get an svg for using in ::before.
 					$breakpoint = ! $is_desktop ? $device : '';
 					$divider->process_svg( $placement, $this->props, $breakpoint, $values );
 
@@ -1199,13 +1224,13 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 						$top = $divider->get_svg( 'top' );
 					}
 
-					// add a corresponding class
+					// add a corresponding class.
 					$this->add_classname( $divider->classes );
 				}
 			}
 		}
 
-		// Position Options
+		// Position Options.
 		if ( $multi_view->has_value( 'positioning', 'absolute' ) ) {
 			$this->add_classname( 'et_pb_section--absolute' );
 		}
@@ -1227,11 +1252,11 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			)
 		);
 
-		// Remove automatically added classnames
+		// Remove automatically added classnames.
 		$this->remove_classname( 'et_pb_module' );
 
 		// Save module classes into variable BEFORE processing the content with `do_shortcode()`
-		// Otherwise order classes messed up with internal sections if exist
+		// Otherwise order classes messed up with internal sections if exist.
 		$module_classes = $this->module_classname( $function_name );
 
 		$output = sprintf(
@@ -1260,7 +1285,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		);
 
 		if ( 'on' === $specialty ) {
-			// reset the global column settings to make sure they are not affected by internal content
+			// reset the global column settings to make sure they are not affected by internal content.
 			$et_pb_all_column_settings = $et_pb_all_column_settings_backup;
 
 			if ( $et_pb_rendering_column_content_row ) {
@@ -1272,16 +1297,21 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 	}
 
+	/**
+	 * Process box shadow CSS styles of section.
+	 *
+	 * @param string $function_name Module slug.
+	 */
 	public function process_box_shadow( $function_name ) {
 		/**
-		 * @var ET_Builder_Module_Field_BoxShadow $boxShadow
+		 * Instance of BoxShadow module field. @var ET_Builder_Module_Field_BoxShadow $box_shadow
 		 */
-		$boxShadow   = ET_Builder_Module_Fields_Factory::get( 'BoxShadow' );
-		$style       = $boxShadow->get_value( $this->props );
-		$hover_style = $boxShadow->get_value( $this->props, array( 'hover' => true ) );
+		$box_shadow  = ET_Builder_Module_Fields_Factory::get( 'BoxShadow' );
+		$style       = $box_shadow->get_value( $this->props );
+		$hover_style = $box_shadow->get_value( $this->props, array( 'hover' => true ) );
 
 		if ( ! empty( $style ) && 'none' !== $style && false === strpos( $style, 'inset' ) ) {
-			// Make section z-index higher if it has outer box shadow #4762
+			// Make section z-index higher if it has outer box shadow #4762.
 			$el_style = array(
 				'selector'    => '%%order_class%%',
 				'declaration' => 'z-index: 10;',
@@ -1290,7 +1320,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		}
 
 		if ( ! empty( $hover_style ) && 'none' !== $hover_style && false === strpos( $hover_style, 'inset' ) ) {
-			// Make section z-index higher if it has outer box shadow #4762
+			// Make section z-index higher if it has outer box shadow #4762.
 			$el_style = array(
 				'selector'    => '%%order_class%%:hover',
 				'declaration' => 'z-index: 10;',
@@ -1301,9 +1331,16 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		parent::process_box_shadow( $function_name );
 	}
 
+	/**
+	 * Box shadow back compatibility.
+	 *
+	 * @param string $function_name Module slug.
+	 *
+	 * @return string
+	 */
 	private function _keep_box_shadow_compatibility( $function_name ) {
 		/**
-		 * @var ET_Builder_Module_Field_BoxShadow $box_shadow
+		 * Instance of box shadow field factory. @var ET_Builder_Module_Field_BoxShadow $box_shadow
 		 */
 		$box_shadow = ET_Builder_Module_Fields_Factory::get( 'BoxShadow' );
 		$utils      = ET_Core_Data_Utils::instance();
@@ -1332,8 +1369,16 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 }
 new ET_Builder_Section();
 
+/**
+ * Class used to process row element(module).
+ *
+ * @since 4.6.2
+ */
 class ET_Builder_Row extends ET_Builder_Structure_Element {
-	function init() {
+	/**
+	 * Sets up the element's properties.
+	 */
+	public function init() {
 		$this->name            = esc_html__( 'Row', 'et_builder' );
 		$this->plural          = esc_html__( 'Rows', 'et_builder' );
 		$this->slug            = 'et_pb_row';
@@ -1380,11 +1425,10 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 						),
 					),
 					'module_alignment' => array(
-						'label'            => esc_html__( 'Row Alignment', 'et_builder' ),
-						'mobile_options'   => true,
-						'description'      => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
-						'default'          => 'center',
-						'default_on_front' => '',
+						'label'          => esc_html__( 'Row Alignment', 'et_builder' ),
+						'mobile_options' => true,
+						'description'    => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
+						'default_sticky' => 'center',
 					),
 				),
 				'toggle_slug'     => 'width',
@@ -1402,6 +1446,9 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			'button'          => false,
 			'position_fields' => array(
 				'default' => 'relative',
+			),
+			'z_index'         => array(
+				'important' => true,
 			),
 		);
 
@@ -1433,7 +1480,12 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		);
 	}
 
-	function get_fields() {
+	/**
+	 * Get the settings fields data for this element.
+	 *
+	 * @return array|array[]
+	 */
+	public function get_fields() {
 		$fields = array(
 			'column_structure'           => array(
 				'label'       => esc_html__( 'Column Structure', 'et_builder' ),
@@ -1503,7 +1555,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			),
 			'padding_mobile'             => array(
 				'label'            => esc_html__( 'Keep Custom Padding on Mobile', 'et_builder' ),
-				'type'             => 'skip', // Remaining attribute for backward compatibility
+				'type'             => 'skip', // Remaining attribute for backward compatibility.
 				'tab_slug'         => 'advanced',
 				'toggle_slug'      => 'margin_padding',
 				'default_on_front' => '',
@@ -1524,7 +1576,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			'column_padding_mobile'      => array(
 				'label'            => esc_html__( 'Keep Column Padding on Mobile', 'et_builder' ),
 				'tab_slug'         => 'advanced',
-				'type'             => 'skip', // Remaining attribute for backward compatibility
+				'type'             => 'skip', // Remaining attribute for backward compatibility.
 				'default_on_front' => '',
 			),
 			'custom_padding_last_edited' => array(
@@ -1649,6 +1701,11 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		return array_merge( $fields, $column_fields );
 	}
 
+	/**
+	 * Get CSS fields transition of row.
+	 *
+	 * @since 3.23 Add form field options group and background image on the fields list.
+	 */
 	public function get_transition_fields_css_props() {
 		$fields = parent::get_transition_fields_css_props();
 
@@ -1661,7 +1718,16 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		return $fields;
 	}
 
-	function render( $atts, $content = null, $function_name ) {
+	/**
+	 * Generates the structure module's HTML output based on {@see ET_Builder_Row::$props}.
+	 *
+	 * @param array  $atts       List of unprocessed attributes.
+	 * @param mixed  $content     Content being processed.
+	 * @param string $function_name Slug of module that is used for rendering output.
+	 *
+	 * @return string The module's HTML output.
+	 */
+	public function render( $atts, $content = null, $function_name ) {
 		$custom_padding             = $this->props['custom_padding'];
 		$custom_padding_tablet      = $this->props['custom_padding_tablet'];
 		$custom_padding_phone       = $this->props['custom_padding_phone'];
@@ -1722,7 +1788,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		$gutter_hover_data = '';
 
 		if ( 'on' === $use_custom_gutter && '' !== $gutter_width ) {
-			$gutter_width = '0' === $gutter_width ? '1' : $gutter_width; // set the gutter width to 1 if 0 entered by user
+			$gutter_width = '0' === $gutter_width ? '1' : $gutter_width; // set the gutter width to 1 if 0 entered by user.
 			$this->add_classname( 'et_pb_gutters' . $gutter_width );
 
 			if ( et_builder_is_hover_enabled( 'gutter_width', $this->props ) && ! empty( $gutter_width_hover ) && $gutter_width !== $gutter_width_hover ) {
@@ -1739,7 +1805,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		$padding_values = explode( '|', $custom_padding );
 
 		if ( ! empty( $padding_values ) ) {
-			// old version of Rows support only top and bottom padding, so we need to handle it along with the full padding in the recent version
+			// old version of Rows support only top and bottom padding, so we need to handle it along with the full padding in the recent version.
 			if ( 2 === count( $padding_values ) ) {
 				$padding_settings = array(
 					'top'    => isset( $padding_values[0] ) ? $padding_values[0] : '',
@@ -1767,8 +1833,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 
 					// Backward compatibility. Keep Padding on Mobile is deprecated in favour of responsive inputs mechanism for custom padding
 					// To ensure that it is compatibility with previous version of Divi, this option is now only used as last resort if no
-					// responsive padding value is found,  and padding_mobile value is saved (which is set to off by default)
-					if ( in_array( $padding_mobile, array( 'on', 'off' ) ) && 'on' !== $padding_mobile && ! $custom_padding_responsive_active ) {
+					// responsive padding value is found,  and padding_mobile value is saved (which is set to off by default).
+					if ( in_array( $padding_mobile, array( 'on', 'off' ), true ) && 'on' !== $padding_mobile && ! $custom_padding_responsive_active ) {
 						$element_style['media_query'] = ET_Builder_Element::get_media_query( 'min_width_981' );
 					}
 
@@ -1794,17 +1860,17 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			}
 
 			if ( ! empty( $padding_mobile_values_processed ) ) {
-				et_pb_generate_responsive_css( $padding_mobile_values_processed, '%%order_class%%.et_pb_row', '', $function_name, ' !important; ' );
+				et_pb_responsive_options()->generate_responsive_css( $padding_mobile_values_processed, '%%order_class%%.et_pb_row', '', $function_name, ' !important; ' );
 			}
 		}
 
 		$parallax_image   = $this->get_parallax_image_background();
 		$background_video = $this->video_background();
 
-		// CSS Filters
+		// CSS Filters.
 		$this->add_classname( $this->generate_css_filters( $function_name ) );
 
-		// Remove automatically added classnames
+		// Remove automatically added classnames.
 		$this->remove_classname( 'et_pb_module' );
 
 		if ( self::contains( $content, array( 'et_pb_menu', 'et_pb_fullwidth_menu' ) ) ) {
@@ -1812,18 +1878,18 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 		}
 
 		// Save module classes into variable BEFORE processing the content with `do_shortcode()`
-		// Otherwise order classes messed up with internal rows if exist
+		// Otherwise order classes messed up with internal rows if exist.
 		$module_classes = $this->module_classname( $function_name );
 
-		// Inner content shortcode parsing has to be done after all classname addition/removal
+		// Inner content shortcode parsing has to be done after all classname addition/removal.
 		$inner_content               = do_shortcode( et_pb_fix_shortcodes( $content ) );
 		$content_dependent_classname = '' === trim( $inner_content ) ? ' et_pb_row_empty' : '';
 
 		// reset the global column settings to make sure they are not affected by internal content
-		// This has to be done after inner content's shortcode being parsed
+		// This has to be done after inner content's shortcode being parsed.
 		$et_pb_all_column_settings = $et_pb_all_column_settings_backup;
 
-		// Reset row's column content flag
+		// Reset row's column content flag.
 		if ( $et_pb_rendering_column_content_row ) {
 			$et_pb_rendering_column_content_row = false;
 		}
@@ -1849,8 +1915,16 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 }
 new ET_Builder_Row();
 
+/**
+ * Class used to process inner row element(module).
+ *
+ * @since 4.6.2
+ */
 class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
-	function init() {
+	/**
+	 * Sets up the element's properties.
+	 */
+	public function init() {
 		$this->name            = esc_html__( 'Row', 'et_builder' );
 		$this->plural          = esc_html__( 'Rows', 'et_builder' );
 		$this->slug            = 'et_pb_row_inner';
@@ -1877,10 +1951,9 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				),
 				'options' => array(
 					'module_alignment' => array(
-						'label'            => esc_html__( 'Row Alignment', 'et_builder' ),
-						'description'      => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
-						'default'          => 'center',
-						'default_on_front' => '',
+						'label'          => esc_html__( 'Row Alignment', 'et_builder' ),
+						'description'    => esc_html__( 'Rows can be aligned to the left, right or center. By default, rows are centered within their parent section.', 'et_builder' ),
+						'default_sticky' => 'center',
 					),
 				),
 			),
@@ -1920,7 +1993,12 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		);
 	}
 
-	function get_fields() {
+	/**
+	 * Get the settings fields data for this element.
+	 *
+	 * @return array|array[]
+	 */
+	public function get_fields() {
 		$fields = array(
 			'column_structure'           => array(
 				'label'       => esc_html__( 'Column Structure', 'et_builder' ),
@@ -1937,7 +2015,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 			),
 			'padding_mobile'             => array(
 				'label'       => esc_html__( 'Keep Custom Padding on Mobile', 'et_builder' ),
-				'type'        => 'skip', // Remaining attribute for backward compatibility
+				'type'        => 'skip', // Remaining attribute for backward compatibility.
 				'tab_slug'    => 'advanced',
 				'toggle_slug' => 'margin_padding',
 			),
@@ -1993,7 +2071,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 			'column_padding_mobile'      => array(
 				'label'    => esc_html__( 'Keep Column Padding on Mobile', 'et_builder' ),
 				'tab_slug' => 'advanced',
-				'type'     => 'skip', // Remaining attribute for backward compatibility
+				'type'     => 'skip', // Remaining attribute for backward compatibility.
 			),
 			'custom_padding_last_edited' => array(
 				'type'     => 'skip',
@@ -2103,6 +2181,9 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		return array_merge( $fields, $column_fields );
 	}
 
+	/**
+	 * Get CSS fields transition of inner row.
+	 */
 	public function get_transition_fields_css_props() {
 		$fields = parent::get_transition_fields_css_props();
 
@@ -2115,7 +2196,16 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		return $fields;
 	}
 
-	function render( $atts, $content = null, $function_name ) {
+	/**
+	 * Generates the structure module's HTML output based on {@see ET_Builder_Row_Inner::$props}.
+	 *
+	 * @param array  $atts       List of unprocessed attributes.
+	 * @param mixed  $content     Content being processed.
+	 * @param string $function_name Slug of module that is used for rendering output.
+	 *
+	 * @return string The module's HTML output.
+	 */
+	public function render( $atts, $content = null, $function_name ) {
 		$gutter_width               = $this->props['gutter_width'];
 		$gutter_width_hover         = $this->get_hover_value( 'gutter_width' );
 		$make_equal                 = $this->props['make_equal'];
@@ -2161,7 +2251,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		$padding_values = explode( '|', $custom_padding );
 
 		if ( ! empty( $padding_values ) ) {
-			// old version of Rows support only top and bottom padding, so we need to handle it along with the full padding in the recent version
+			// old version of Rows support only top and bottom padding, so we need to handle it along with the full padding in the recent version.
 			if ( 2 === count( $padding_values ) ) {
 				$padding_settings = array(
 					'top'    => isset( $padding_values[0] ) ? $padding_values[0] : '',
@@ -2189,8 +2279,8 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 
 					// Backward compatibility. Keep Padding on Mobile is deprecated in favour of responsive inputs mechanism for custom padding
 					// To ensure that it is compatibility with previous version of Divi, this option is now only used as last resort if no
-					// responsive padding value is found,  and padding_mobile value is saved (which is set to off by default)
-					if ( in_array( $padding_mobile, array( 'on', 'off' ) ) && 'on' !== $padding_mobile && ! $custom_padding_responsive_active ) {
+					// responsive padding value is found,  and padding_mobile value is saved (which is set to off by default).
+					if ( in_array( $padding_mobile, array( 'on', 'off' ), true ) && 'on' !== $padding_mobile && ! $custom_padding_responsive_active ) {
 						$element_style['media_query'] = ET_Builder_Element::get_media_query( 'min_width_981' );
 					}
 
@@ -2216,7 +2306,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 			}
 
 			if ( ! empty( $padding_mobile_values_processed ) ) {
-				et_pb_generate_responsive_css( $padding_mobile_values_processed, '.et_pb_column %%order_class%%', '', $function_name, ' !important; ' );
+				et_pb_responsive_options()->generate_responsive_css( $padding_mobile_values_processed, '.et_pb_column %%order_class%%', '', $function_name, ' !important; ' );
 			}
 		}
 
@@ -2237,7 +2327,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		$gutter_hover_data = '';
 
 		if ( 'on' === $use_custom_gutter && '' !== $gutter_width ) {
-			$gutter_width = '0' === $gutter_width ? '1' : $gutter_width; // set the gutter to 1 if 0 entered by user
+			$gutter_width = '0' === $gutter_width ? '1' : $gutter_width; // set the gutter to 1 if 0 entered by user.
 			$this->add_classname( 'et_pb_gutters' . $gutter_width );
 
 			if ( et_builder_is_hover_enabled( 'gutter_width', $this->props ) && ! empty( $gutter_width_hover ) && $gutter_width !== $gutter_width_hover ) {
@@ -2254,10 +2344,10 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		$parallax_image   = $this->get_parallax_image_background();
 		$background_video = $this->video_background();
 
-		// CSS Filters
+		// CSS Filters.
 		$this->add_classname( $this->generate_css_filters( $function_name ) );
 
-		// Remove automatically added classnames
+		// Remove automatically added classnames.
 		$this->remove_classname( 'et_pb_module' );
 
 		if ( self::contains( $content, array( 'et_pb_menu', 'et_pb_fullwidth_menu' ) ) ) {
@@ -2265,14 +2355,14 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		}
 
 		// Save module classes into variable BEFORE processing the content with `do_shortcode()`
-		// Otherwise order classes messed up with internal rows if exist
+		// Otherwise order classes messed up with internal rows if exist.
 		$module_classes = $this->module_classname( $function_name );
 
-		// Inner content shortcode parsing has to be done after all classname addition/removal
+		// Inner content shortcode parsing has to be done after all classname addition/removal.
 		$inner_content               = do_shortcode( et_pb_fix_shortcodes( $content ) );
 		$content_dependent_classname = '' === trim( $inner_content ) ? ' et_pb_row_empty' : '';
 
-		// reset the global column settings to make sure they are not affected by internal content
+		// reset the global column settings to make sure they are not affected by internal content.
 		$et_pb_all_column_settings_inner = $et_pb_all_column_settings_backup;
 
 		$output = sprintf(
@@ -2296,8 +2386,17 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 }
 new ET_Builder_Row_Inner();
 
+/**
+ * Class used to process column element(module).
+ *
+ * @since 4.6.2
+ */
 class ET_Builder_Column extends ET_Builder_Structure_Element {
-	function init() {
+
+	/**
+	 * Sets up the element's properties.
+	 */
+	public function init() {
 		$this->name                        = esc_html__( 'Column', 'et_builder' );
 		$this->plural                      = esc_html__( 'Columns', 'et_builder' );
 		$this->slug                        = 'et_pb_column';
@@ -2342,7 +2441,12 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		);
 	}
 
-	function get_fields() {
+	/**
+	 * Get the settings fields data for this element.
+	 *
+	 * @return array|array[]
+	 */
+	public function get_fields() {
 		$fields = array(
 			'type'                        => array(
 				'default_on_front' => '4_4',
@@ -2384,7 +2488,16 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		return $fields;
 	}
 
-	function render( $atts, $content = null, $function_name ) {
+	/**
+	 * Generates the structure module's HTML output based on {@see ET_Builder_Column::$props}.
+	 *
+	 * @param array  $atts       List of unprocessed attributes.
+	 * @param mixed  $content     Content being processed.
+	 * @param string $function_name Slug of module that is used for rendering output.
+	 *
+	 * @return string The module's HTML output.
+	 */
+	public function render( $atts, $content = null, $function_name ) {
 		$type                        = $this->props['type'];
 		$specialty_columns           = $this->props['specialty_columns'];
 		$saved_specialty_column_type = $this->props['saved_specialty_column_type'];
@@ -2457,10 +2570,10 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			}
 		}
 
-		// Get column type value in array
+		// Get column type value in array.
 		$column_type = explode( '_', $type );
 
-		// Just in case for some reason column shortcode has no `type` attribute and causes unexpected $column_type values
+		// Just in case for some reason column shortcode has no `type` attribute and causes unexpected $column_type values.
 		if ( isset( $column_type[0] ) && isset( $column_type[1] ) ) {
 			// Get column progress.
 			$column_progress = intval( $column_type[0] ) / intval( $column_type[1] );
@@ -2497,7 +2610,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 
 				$background_gradient = wp_parse_args( array_filter( $background_gradient ), $default_gradient );
 
-				$direction               = $background_gradient['type'] === 'linear' ? $background_gradient['direction'] : "circle at {$background_gradient['radial_direction']}";
+				$direction               = 'linear' === $background_gradient['type'] ? $background_gradient['direction'] : "circle at {$background_gradient['radial_direction']}";
 				$start_gradient_position = et_sanitize_input_unit( $background_gradient['start_position'], false, '%' );
 				$end_gradient_position   = et_sanitize_input_unit( $background_gradient['end_position'], false, '%' );
 				$background_images[]     = "{$background_gradient['type']}-gradient(
@@ -2629,7 +2742,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 					}
 				}
 			} elseif ( isset( $has_background_gradient, $has_background_image ) ) {
-				// Force background-color: initial
+				// Force background-color: initial.
 				$el_style = array(
 					'selector'    => '%%order_class%%',
 					'declaration' => 'background-color: initial;',
@@ -2645,7 +2758,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				unset( $padding_values['padding-hover-enabled'], $padding_values['padding-sticky-enabled'] );
 
 				foreach ( $padding_values as $position => $value ) {
-					if ( in_array( $position, array( 'padding-top', 'padding-right', 'padding-bottom', 'padding-left' ) ) && ! empty( $value ) ) {
+					if ( in_array( $position, array( 'padding-top', 'padding-right', 'padding-bottom', 'padding-left' ), true ) && ! empty( $value ) ) {
 						$element_style = array(
 							'selector'    => '%%order_class%%',
 							'declaration' => sprintf(
@@ -2657,18 +2770,18 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 
 						// Backward compatibility. Keep Padding on Mobile is deprecated in favour of responsive inputs mechanism for custom padding
 						// To ensure that it is compatibility with previous version of Divi, this option is now only used as last resort if no
-						// responsive padding value is found,  and padding_mobile value is saved (which is set to off by default)
-						if ( in_array( $keep_column_padding_mobile, array( 'on', 'off' ) ) && 'on' !== $keep_column_padding_mobile && ! $padding_responsive_active ) {
+						// responsive padding value is found,  and padding_mobile value is saved (which is set to off by default).
+						if ( in_array( $keep_column_padding_mobile, array( 'on', 'off' ), true ) && 'on' !== $keep_column_padding_mobile && ! $padding_responsive_active ) {
 							$element_style['media_query'] = ET_Builder_Element::get_media_query( 'min_width_981' );
 						}
 
 						ET_Builder_Element::set_style( $function_name, $element_style );
 					}
 
-					// Add padding hover styles
+					// Add padding hover styles.
 					if ( $padding_hover_enabled
-						&& null != self::$_->array_get( $padding_values, "{$position}-hover" )
-						&& '' != self::$_->array_get( $padding_values, "{$position}-hover" )
+						&& null !== self::$_->array_get( $padding_values, "{$position}-hover" )
+						&& '' !== self::$_->array_get( $padding_values, "{$position}-hover" )
 					) {
 						$hover_value = $padding_values[ "{$position}-hover" ];
 
@@ -2719,7 +2832,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 
 				if ( ! empty( $padding_mobile_values_processed ) ) {
 					$padding_mobile_selector = 'et_pb_column_inner' !== $function_name ? '.et_pb_row > .et_pb_column%%order_class%%' : '.et_pb_row_inner > .et_pb_column%%order_class%%';
-					et_pb_generate_responsive_css( $padding_mobile_values_processed, $padding_mobile_selector, '', $function_name );
+					et_pb_responsive_options()->generate_responsive_css( $padding_mobile_values_processed, $padding_mobile_selector, '', $function_name );
 				}
 			}
 			if ( '' !== $custom_css_before ) {
@@ -2907,7 +3020,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			$parallax_image   = $this->get_parallax_image_background();
 		}
 
-		// Remove automatically added classname
+		// Remove automatically added classname.
 		$this->remove_classname( 'et_pb_module' );
 
 		$this->add_classname( 'et_pb_column_' . $type, 1 );
@@ -2920,7 +3033,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			$this->add_classname( 'et_pb_specialty_column' );
 		}
 
-		// CSS Filters
+		// CSS Filters.
 		$this->add_classname( $this->generate_css_filters( $function_name ) );
 
 		if ( '' !== $video_background ) {
@@ -2942,13 +3055,13 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 
 		// Module classname in column has to be contained in variable BEFORE content is being parsed
 		// as shortcode because column and column inner use the same ET_Builder_Column's render
-		// classname doesn't work in nested situation because each called module doesn't have its own class init
+		// classname doesn't work in nested situation because each called module doesn't have its own class init.
 		$module_classname = $this->module_classname( $function_name );
 
-		// Inner content shortcode parsing has to be done after all classname addition/removal
+		// Inner content shortcode parsing has to be done after all classname addition/removal.
 		$inner_content = do_shortcode( et_pb_fix_shortcodes( $content ) );
 
-		// Inner content dependant class in column shouldn't use add_classname/remove_classname method
+		// Inner content dependant class in column shouldn't use add_classname/remove_classname method.
 		$content_dependent_classname = '' === trim( $inner_content ) ? ' et_pb_column_empty' : '';
 
 		$output = sprintf(

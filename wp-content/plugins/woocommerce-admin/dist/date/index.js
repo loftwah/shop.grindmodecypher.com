@@ -82,18 +82,18 @@ this["wc"] = this["wc"] || {}; this["wc"]["date"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 714);
+/******/ 	return __webpack_require__(__webpack_require__.s = 525);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 119:
+/***/ 136:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(74);
+var utils = __webpack_require__(87);
 var formats = __webpack_require__(96);
 var has = Object.prototype.hasOwnProperty;
 
@@ -168,7 +168,12 @@ var stringify = function stringify(
     } else if (obj instanceof Date) {
         obj = serializeDate(obj);
     } else if (generateArrayPrefix === 'comma' && isArray(obj)) {
-        obj = obj.join(',');
+        obj = utils.maybeMap(obj, function (value) {
+            if (value instanceof Date) {
+                return serializeDate(value);
+            }
+            return value;
+        }).join(',');
     }
 
     if (obj === null) {
@@ -203,44 +208,31 @@ var stringify = function stringify(
 
     for (var i = 0; i < objKeys.length; ++i) {
         var key = objKeys[i];
+        var value = obj[key];
 
-        if (skipNulls && obj[key] === null) {
+        if (skipNulls && value === null) {
             continue;
         }
 
-        if (isArray(obj)) {
-            pushToArray(values, stringify(
-                obj[key],
-                typeof generateArrayPrefix === 'function' ? generateArrayPrefix(prefix, key) : prefix,
-                generateArrayPrefix,
-                strictNullHandling,
-                skipNulls,
-                encoder,
-                filter,
-                sort,
-                allowDots,
-                serializeDate,
-                formatter,
-                encodeValuesOnly,
-                charset
-            ));
-        } else {
-            pushToArray(values, stringify(
-                obj[key],
-                prefix + (allowDots ? '.' + key : '[' + key + ']'),
-                generateArrayPrefix,
-                strictNullHandling,
-                skipNulls,
-                encoder,
-                filter,
-                sort,
-                allowDots,
-                serializeDate,
-                formatter,
-                encodeValuesOnly,
-                charset
-            ));
-        }
+        var keyPrefix = isArray(obj)
+            ? typeof generateArrayPrefix === 'function' ? generateArrayPrefix(prefix, key) : prefix
+            : prefix + (allowDots ? '.' + key : '[' + key + ']');
+
+        pushToArray(values, stringify(
+            value,
+            keyPrefix,
+            generateArrayPrefix,
+            strictNullHandling,
+            skipNulls,
+            encoder,
+            filter,
+            sort,
+            allowDots,
+            serializeDate,
+            formatter,
+            encodeValuesOnly,
+            charset
+        ));
     }
 
     return values;
@@ -374,13 +366,13 @@ module.exports = function (object, opts) {
 
 /***/ }),
 
-/***/ 120:
+/***/ 137:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(74);
+var utils = __webpack_require__(87);
 
 var has = Object.prototype.hasOwnProperty;
 var isArray = Array.isArray;
@@ -415,17 +407,6 @@ var parseArrayValue = function (val, options) {
     }
 
     return val;
-};
-
-var maybeMap = function maybeMap(val, fn) {
-    if (isArray(val)) {
-        var mapped = [];
-        for (var i = 0; i < val.length; i += 1) {
-            mapped.push(fn(val[i]));
-        }
-        return mapped;
-    }
-    return fn(val);
 };
 
 // This is what browsers will submit when the ✓ character occurs in an
@@ -476,7 +457,7 @@ var parseValues = function parseQueryStringValues(str, options) {
             val = options.strictNullHandling ? null : '';
         } else {
             key = options.decoder(part.slice(0, pos), defaults.decoder, charset, 'key');
-            val = maybeMap(
+            val = utils.maybeMap(
                 parseArrayValue(part.slice(pos + 1), options),
                 function (encodedVal) {
                     return options.decoder(encodedVal, defaults.decoder, charset, 'value');
@@ -650,7 +631,7 @@ module.exports = function (str, opts) {
 
 /***/ }),
 
-/***/ 16:
+/***/ 19:
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["moment"]; }());
@@ -671,26 +652,7 @@ module.exports = function (str, opts) {
 
 /***/ }),
 
-/***/ 67:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var stringify = __webpack_require__(119);
-var parse = __webpack_require__(120);
-var formats = __webpack_require__(96);
-
-module.exports = {
-    formats: formats,
-    parse: parse,
-    stringify: stringify
-};
-
-
-/***/ }),
-
-/***/ 714:
+/***/ 525:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -717,13 +679,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loadLocaleData", function() { return loadLocaleData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "dateValidationMessages", function() { return dateValidationMessages; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "validateDateInputForRange", function() { return validateDateInputForRange; });
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(67);
+/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(82);
 /* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(qs__WEBPACK_IMPORTED_MODULE_3__);
 /**
  * External dependencies
@@ -733,11 +695,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var isoDateFormat = 'YYYY-MM-DD';
-/**
- * @typedef {Object} Moment - An instance of moment
- * @typedef {Object} DateParams
- */
-
 /**
  * DateValue Object
  *
@@ -751,7 +708,7 @@ var isoDateFormat = 'YYYY-MM-DD';
 /**
  * DateParams Object
  *
- * @typedef {Object} dateParams - date parameters derived from query parameters.
+ * @typedef {Object} DateParams - date parameters derived from query parameters.
  * @property {string} period - period value, ie `last_week`
  * @property {string} compare - compare valuer, ie previous_year
  * @param {moment.Moment|null} after - If the period supplied is "custom", this is the after date
@@ -831,7 +788,7 @@ var appendTimestamp = function appendTimestamp(date, timeOfDay) {
  *
  * @param {string} format - localized date string format
  * @param {string} str - date string
- * @return {Moment|null} - Moment object representing given string
+ * @return {Object|null} - Moment object representing given string
  */
 
 function toMoment(format, str) {
@@ -849,8 +806,8 @@ function toMoment(format, str) {
 /**
  * Given two dates, derive a string representation
  *
- * @param {Moment} after - start date
- * @param {Moment} before - end date
+ * @param {Object} after - start date
+ * @param {Object} before - end date
  * @return {string} - text value for the supplied date range
  */
 
@@ -949,8 +906,8 @@ function getCurrentPeriod(period, compare) {
  *
  * @param {string} period - the chosen period
  * @param {string} compare - `previous_period` or `previous_year`
- * @param {Moment} [after] - after date if custom period
- * @param {Moment} [before] - before date if custom period
+ * @param {Object} [after] - after date if custom period
+ * @param {Object} [before] - before date if custom period
  * @return {DateValue} - DateValue data about the selected period
  */
 
@@ -1012,10 +969,10 @@ function getDateValue(period, compare, after, before) {
  * Add default date-related parameters to a query object
  *
  * @param {Object} query - query object
- * @property {string} query.period - period value, ie `last_week`
- * @property {string} query.compare - compare value, ie `previous_year`
- * @property {string} query.after - date in iso date format, ie `2018-07-03`
- * @property {string} query.before - date in iso date format, ie `2018-07-03`
+ * @param {string} query.period - period value, ie `last_week`
+ * @param {string} query.compare - compare value, ie `previous_year`
+ * @param {string} query.after - date in iso date format, ie `2018-07-03`
+ * @param {string} query.before - date in iso date format, ie `2018-07-03`
  * @param {string} defaultDateRange - the store's default date range
  * @return {DateParams} - date parameters derived from query parameters with added defaults
  */
@@ -1049,10 +1006,10 @@ var getDateParamsFromQuery = function getDateParamsFromQuery(query) {
  * Get Date Value Objects for a primary and secondary date range
  *
  * @param {Object} query - query object
- * @property {string} query.period - period value, ie `last_week`
- * @property {string} query.compare - compare value, ie `previous_year`
- * @property {string} query.after - date in iso date format, ie `2018-07-03`
- * @property {string} query.before - date in iso date format, ie `2018-07-03`
+ * @param {string} query.period - period value, ie `last_week`
+ * @param {string} query.compare - compare value, ie `previous_year`
+ * @param {string} query.after - date in iso date format, ie `2018-07-03`
+ * @param {string} query.before - date in iso date format, ie `2018-07-03`
  * @param {string} defaultDateRange - the store's default date range
  * @return {{primary: DateValue, secondary: DateValue}} - Primary and secondary DateValue objects
  */
@@ -1110,11 +1067,11 @@ var getDateDifferenceInDays = function getDateDifferenceInDays(date, date2) {
  * Get the previous date for either the previous period of year.
  *
  * @param {string} date - Base date
- * @param {string|Moment.moment} date1 - primary start
- * @param {string|Moment.moment} date2 - secondary start
+ * @param {string} date1 - primary start
+ * @param {string} date2 - secondary start
  * @param {string} compare - `previous_period`  or `previous_year`
  * @param {string} interval - interval
- * @return {Moment.moment}  - Calculated date
+ * @return {Object}  - Calculated date
  */
 
 var getPreviousDate = function getPreviousDate(date, date1, date2, compare, interval) {
@@ -1217,7 +1174,8 @@ function getIntervalForQuery(query) {
 /**
  * Returns the current chart type to use.
  *
- * @param  {Object} query Current query
+ * @param {Object} query Current query
+ * @param {string} query.chartType
  * @return {string} Current chart type.
  */
 
@@ -1311,6 +1269,8 @@ function getDateFormatsForInterval(interval) {
  * of moment style js formats.
  *
  * @param {Object} config Locale config object, from store settings.
+ * @param {string} config.userLocale
+ * @param {Array} config.weekdaysShort
  */
 
 function loadLocaleData(_ref2) {
@@ -1338,8 +1298,8 @@ var dateValidationMessages = {
 };
 /**
  * @typedef {Object} validatedDate
- * @property {Moment|null} validatedDate.date - A resulting Moment date object or null, if invalid
- * @property {string} validatedDate.error - An optional error message if date is invalid
+ * @property {Object|null} date - A resulting Moment date object or null, if invalid
+ * @property {string} error - An optional error message if date is invalid
  */
 
 /**
@@ -1347,8 +1307,8 @@ var dateValidationMessages = {
  *
  * @param {string} type - Designate beginning or end of range, eg `before` or `after`.
  * @param {string} value - User input value
- * @param {Moment|null} [before] - If already designated, the before date parameter
- * @param {Moment|null} [after] - If already designated, the after date parameter
+ * @param {Object|null} [before] - If already designated, the before date parameter
+ * @param {Object|null} [after] - If already designated, the after date parameter
  * @param {string} format - The expected date format in a user's locale
  * @return {Object} validatedDate - validated date object
  */
@@ -1391,7 +1351,26 @@ function validateDateInputForRange(type, value, before, after, format) {
 
 /***/ }),
 
-/***/ 74:
+/***/ 82:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var stringify = __webpack_require__(136);
+var parse = __webpack_require__(137);
+var formats = __webpack_require__(96);
+
+module.exports = {
+    formats: formats,
+    parse: parse,
+    stringify: stringify
+};
+
+
+/***/ }),
+
+/***/ 87:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1620,6 +1599,17 @@ var combine = function combine(a, b) {
     return [].concat(a, b);
 };
 
+var maybeMap = function maybeMap(val, fn) {
+    if (isArray(val)) {
+        var mapped = [];
+        for (var i = 0; i < val.length; i += 1) {
+            mapped.push(fn(val[i]));
+        }
+        return mapped;
+    }
+    return fn(val);
+};
+
 module.exports = {
     arrayToObject: arrayToObject,
     assign: assign,
@@ -1629,6 +1619,7 @@ module.exports = {
     encode: encode,
     isBuffer: isBuffer,
     isRegExp: isRegExp,
+    maybeMap: maybeMap,
     merge: merge
 };
 
@@ -1644,7 +1635,7 @@ module.exports = {
 var replace = String.prototype.replace;
 var percentTwenties = /%20/g;
 
-var util = __webpack_require__(74);
+var util = __webpack_require__(87);
 
 var Format = {
     RFC1738: 'RFC1738',

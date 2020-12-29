@@ -350,19 +350,25 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 				'text-align'      => esc_html( $align ),
 				"margin-{$align}" => ! empty( $align ) && 'center' !== $align ? '0' : '',
 			),
-			'tablet'  => array(
+		);
+
+		if ( ! empty( $align_tablet ) ) {
+			$align_values['tablet'] = array(
 				'text-align'             => esc_html( $align_tablet ),
 				'margin-left'            => 'left' !== $align_tablet ? 'auto' : '',
 				'margin-right'           => 'left' !== $align_tablet ? 'auto' : '',
 				"margin-{$align_tablet}" => ! empty( $align_tablet ) && 'center' !== $align_tablet ? '0' : '',
-			),
-			'phone'   => array(
+			);
+		}
+
+		if ( ! empty( $align_phone ) ) {
+			$align_values['phone'] = array(
 				'text-align'            => esc_html( $align_phone ),
 				'margin-left'           => 'left' !== $align_phone ? 'auto' : '',
 				'margin-right'          => 'left' !== $align_phone ? 'auto' : '',
 				"margin-{$align_phone}" => ! empty( $align_phone ) && 'center' !== $align_phone ? '0' : '',
-			),
-		);
+			);
+		}
 
 		et_pb_responsive_options()->generate_responsive_css( $align_values, '%%order_class%%', '', $render_slug, '', 'alignment' );
 
@@ -440,14 +446,24 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 			? '<div class="box-shadow-overlay"></div>'
 			: '';
 
+		$image_attrs = array(
+			'src'    => '{{src}}',
+			'alt'    => esc_attr( $alt ),
+			'title'  => esc_attr( $title_text ),
+			'height' => 'auto',
+			'width'  => 'auto',
+		);
+
+		$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'src' );
+
+		if ( ! empty( $image_attachment_class ) ) {
+			$image_attrs['class'] = esc_attr( $image_attachment_class );
+		}
+
 		$image_html = $multi_view->render_element(
 			array(
 				'tag'      => 'img',
-				'attrs'    => array(
-					'src'   => '{{src}}',
-					'alt'   => esc_attr( $alt ),
-					'title' => esc_attr( $title_text ),
-				),
+				'attrs'    => $image_attrs,
 				'required' => 'src',
 			)
 		);

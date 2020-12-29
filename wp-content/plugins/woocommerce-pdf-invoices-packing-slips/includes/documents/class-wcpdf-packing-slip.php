@@ -30,7 +30,7 @@ class Packing_Slip extends Order_Document_Methods {
 		// set properties
 		$this->type		= 'packing-slip';
 		$this->title	= __( 'Packing Slip', 'woocommerce-pdf-invoices-packing-slips' );
-		$this->icon		= WPO_WCPDF()->plugin_url() . "/assets/images/packing-slip.png";
+		$this->icon		= WPO_WCPDF()->plugin_url() . "/assets/images/packing-slip.svg";
 
 		// Call parent constructor
 		parent::__construct( $order );
@@ -130,6 +130,19 @@ class Packing_Slip extends Order_Document_Methods {
 				'args'			=> array(
 					'option_name'	=> $option_name,
 					'id'			=> 'display_phone',
+				)
+			),
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'display_customer_notes',
+				'title'			=> __( 'Display customer notes', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'checkbox',
+				'section'		=> 'packing_slip',
+				'args'			=> array(
+					'option_name'		=> $option_name,
+					'id'				=> 'display_customer_notes',
+					'store_unchecked'	=> true,
+					'default'			=> 1,
 				)
 			),
 		);

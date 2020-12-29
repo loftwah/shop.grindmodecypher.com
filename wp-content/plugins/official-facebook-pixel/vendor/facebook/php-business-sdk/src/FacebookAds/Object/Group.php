@@ -51,6 +51,7 @@ use FacebookAds\Object\Values\LiveVideoStereoscopicModeValues;
 use FacebookAds\Object\Values\LiveVideoStreamTypeValues;
 use FacebookAds\Object\Values\PhotoBackdatedTimeGranularityValues;
 use FacebookAds\Object\Values\PhotoUnpublishedContentTypeValues;
+use FacebookAds\Object\Values\ProfilePictureSourceBreakingChangeValues;
 use FacebookAds\Object\Values\ProfilePictureSourceTypeValues;
 
 /**
@@ -510,6 +511,7 @@ class Group extends AbstractCrudObject {
     $param_types = array(
       'content_tags' => 'list<string>',
       'description' => 'string',
+      'enable_backup_ingest' => 'bool',
       'encoding_settings' => 'string',
       'fisheye_video_cropped' => 'bool',
       'front_z_rotation' => 'float',
@@ -521,7 +523,6 @@ class Group extends AbstractCrudObject {
       'privacy' => 'string',
       'projection' => 'projection_enum',
       'published' => 'bool',
-      'save_vod' => 'bool',
       'schedule_custom_profile_image' => 'file',
       'spatial_audio_format' => 'spatial_audio_format_enum',
       'status' => 'status_enum',
@@ -710,12 +711,14 @@ class Group extends AbstractCrudObject {
     $this->assureId();
 
     $param_types = array(
+      'breaking_change' => 'breaking_change_enum',
       'height' => 'int',
       'redirect' => 'bool',
       'type' => 'type_enum',
       'width' => 'int',
     );
     $enums = array(
+      'breaking_change_enum' => ProfilePictureSourceBreakingChangeValues::getInstance()->getValues(),
       'type_enum' => ProfilePictureSourceTypeValues::getInstance()->getValues(),
     );
 
@@ -778,6 +781,7 @@ class Group extends AbstractCrudObject {
       'composer_type' => 'string',
       'container_type' => 'container_type_enum',
       'content_category' => 'content_category_enum',
+      'creative_tools' => 'string',
       'description' => 'string',
       'embeddable' => 'bool',
       'end_offset' => 'unsigned int',
@@ -819,6 +823,7 @@ class Group extends AbstractCrudObject {
       'scheduled_publish_time' => 'unsigned int',
       'slideshow_spec' => 'map',
       'source' => 'string',
+      'source_instagram_media_id' => 'string',
       'spherical' => 'bool',
       'start_offset' => 'unsigned int',
       'swap_mode' => 'swap_mode_enum',
@@ -833,6 +838,7 @@ class Group extends AbstractCrudObject {
       'upload_session_id' => 'string',
       'upload_setting_properties' => 'string',
       'video_file_chunk' => 'string',
+      'video_id_original' => 'string',
       'video_start_time_ms' => 'unsigned int',
       'waterfall_id' => 'string',
     );

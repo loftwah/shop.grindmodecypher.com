@@ -50,6 +50,7 @@ class Printful_Size_Guide {
 				'sg_data_raw'                    => json_encode( $sizeGuideData ),
 				'sg_tab_title_person'            => __( 'Measure yourself', 'printful' ),
 				'sg_tab_title_product'           => __( 'Product measurements', 'printful' ),
+                'sg_table_header_size'           => __( 'Size', 'printful' ),
 			)
 		);
 		wp_register_style( $handle, plugins_url( '../assets/css/size-guide.css', __FILE__ ) );

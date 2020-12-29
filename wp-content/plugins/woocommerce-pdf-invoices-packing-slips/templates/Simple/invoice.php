@@ -13,8 +13,12 @@
 		?>
 		</td>
 		<td class="shop-info">
+			<?php do_action( 'wpo_wcpdf_before_shop_name', $this->type, $this->order ); ?>
 			<div class="shop-name"><h3><?php $this->shop_name(); ?></h3></div>
+			<?php do_action( 'wpo_wcpdf_after_shop_name', $this->type, $this->order ); ?>
+			<?php do_action( 'wpo_wcpdf_before_shop_address', $this->type, $this->order ); ?>
 			<div class="shop-address"><?php $this->shop_address(); ?></div>
+			<?php do_action( 'wpo_wcpdf_after_shop_address', $this->type, $this->order ); ?>
 		</td>
 	</tr>
 </table>
@@ -113,6 +117,14 @@
 	<tfoot>
 		<tr class="no-borders">
 			<td class="no-borders">
+				<div class="document-notes">
+					<?php do_action( 'wpo_wcpdf_before_document_notes', $this->type, $this->order ); ?>
+					<?php if ( $this->get_document_notes() ) : ?>
+						<h3><?php _e( 'Notes', 'woocommerce-pdf-invoices-packing-slips' ); ?></h3>
+						<?php $this->document_notes(); ?>
+					<?php endif; ?>
+					<?php do_action( 'wpo_wcpdf_after_document_notes', $this->type, $this->order ); ?>
+				</div>
 				<div class="customer-notes">
 					<?php do_action( 'wpo_wcpdf_before_customer_notes', $this->type, $this->order ); ?>
 					<?php if ( $this->get_shipping_notes() ) : ?>

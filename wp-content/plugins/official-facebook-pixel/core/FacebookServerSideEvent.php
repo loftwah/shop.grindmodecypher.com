@@ -26,26 +26,57 @@ defined('ABSPATH') or die('Direct access not allowed');
 
 class FacebookServerSideEvent {
   private static $instance = null;
-  private $tracked_events = [];
+  // Contains all the events triggered during the request
+  private $trackedEvents = [];
+  // Contains all Conversions API events that have not been sent
+  private $pendingEvents = [];
+  // Maps a callback name with a Conversions API event
+  // that hasn't been rendered as pixel event
+  private $pendingPixelEvents = [];
 
   public static function getInstance() {
     if (self::$instance == null) {
       self::$instance = new FacebookServerSideEvent();
     }
-
     return self::$instance;
   }
 
-  public function track($event) {
-    $this->tracked_events[] = $event;
-
-    if (FacebookWordpressOptions::getUseS2S()) {
-      do_action('send_server_event', $event);
+  public function track($event, $sendNow = true) {
+    $this->trackedEvents[] = $event;
+    if( FacebookWordpressOptions::getUseS2S() ){
+      if( $sendNow ){
+        do_action( 'send_server_events',
+          array($event),
+          1
+        );
+      }
+      else{
+        $this->pendingEvents[] = $event;
+      }
     }
   }
 
   public function getTrackedEvents() {
-    return $this->tracked_events;
+    return $this->trackedEvents;
+  }
+
+  public function getNumTrackedEvents(){
+    return count( $this->trackedEvents );
+  }
+
+  public function getPendingEvents(){
+    return $this->pendingEvents;
+  }
+
+  public function setPendingPixelEvent($callback_name, $event){
+    $this->pendingPixelEvents[$callback_name] = $event;
+  }
+
+  public function getPendingPixelEvent($callback_name){
+    if(array_key_exists($callback_name, $this->pendingPixelEvents)){
+      return $this->pendingPixelEvents[$callback_name];
+    }
+    return null;
   }
 
   public static function send($events) {

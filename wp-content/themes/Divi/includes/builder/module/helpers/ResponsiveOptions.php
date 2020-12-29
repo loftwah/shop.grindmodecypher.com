@@ -933,7 +933,7 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 					// backward compatibility.
 					$valid_value = $this_value;
 					if ( 'range' === $type ) {
-						$valid_value = et_builder_process_range_value( $this_value );
+						$valid_value = et_builder_process_range_value( $this_value, $this_property );
 					}
 
 					$declaration .= sprintf(
@@ -947,13 +947,14 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 				// Get valid value. Previously, it only works for range control value and run
 				// et_builder_process_range_value function directly.
 				$valid_value = $current_value;
-				if ( 'range' === $type ) {
-					$valid_value = et_builder_process_range_value( $current_value );
-				}
 
 				foreach ( $css_property as $this_property ) {
 					if ( empty( $this_property ) ) {
 						continue;
+					}
+
+					if ( 'range' === $type ) {
+						$valid_value = et_builder_process_range_value( $current_value, $this_property );
 					}
 
 					$declaration .= sprintf(
@@ -968,7 +969,7 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 				// et_builder_process_range_value function directly.
 				$valid_value = $current_value;
 				if ( 'range' === $type ) {
-					$valid_value = et_builder_process_range_value( $current_value );
+					$valid_value = et_builder_process_range_value( $current_value, $css_property );
 				}
 
 				$declaration = sprintf(
