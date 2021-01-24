@@ -238,8 +238,7 @@ class Printful_Shipping extends WC_Shipping_Method
 
 
 		if ( $request['recipient']['country_code'] == 'US' &&
-		     ( empty( $request['recipient']['zip'] ) ||
-		       empty( $request['recipient']['state_code'] ) )
+		     ( empty( $request['recipient']['state_code'] ) )
 		) {
 			return false;
 		}
