@@ -88,7 +88,7 @@ class ET_Core_Post_Query {
 	 * @param string $value  The meta value.
 	 * @param bool   $negate Whether or not to negate this meta query.
 	 */
-	protected function _add_meta_query( $key, $value = null, $negate ) {
+	protected function _add_meta_query( $key, $value, $negate ) {
 		if ( ! isset( $this->_wp_query_args['meta_query'] ) ) {
 			$this->_wp_query_args['meta_query'] = array();
 		}

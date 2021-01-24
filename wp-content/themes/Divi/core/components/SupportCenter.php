@@ -209,9 +209,6 @@ class ET_Core_SupportCenter {
 		// Get `et_support_options` settings & set $this->support_user_options
 		$this->support_user_get_options();
 
-		// Set the Site ID data via Elegant Themes API & token
-		$this->maybe_set_site_id();
-
 		// Set the plugins allowlist for Safe Mode
 		$this->set_safe_mode_plugins_allowlist();
 	}
@@ -237,6 +234,9 @@ class ET_Core_SupportCenter {
 		if ( et_core_is_safe_mode_active() ) {
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		}
+
+		// Get Site ID with Elegant Themes API & token (needed in advance for Remote Access).
+		add_action( 'admin_init', array( $this, 'maybe_set_site_id' ) );
 
 		// Add extra User Role capabilities needed for Remote Access to work with 3rd party software
 		add_filter( 'add_et_support_standard_capabilities', array( $this, 'support_user_extra_caps_standard' ), 10, 1 );
@@ -516,14 +516,26 @@ class ET_Core_SupportCenter {
 	/**
 	 * Update the Site ID data via Elegant Themes API
 	 *
+	 * @since ?.?  Early exit if no Site ID, but also no API credentials to use for a request.
 	 * @since 3.20
 	 *
 	 * @return void
 	 */
 	public function maybe_set_site_id() {
+		// Early exit if the user doesn't have Support Center access.
+		if ( ! $this->current_user_can( 'et_support_center' ) ) {
+			return;
+		}
+
 		$site_id = get_option( 'et_support_site_id' );
 
+		// If we already have a saved Site ID for support, then we don't need to request a new ID.
 		if ( ! empty( $site_id ) ) {
+			return;
+		}
+
+		// If there are no saved API credentials, then we can't use the API to request a Site ID for support.
+		if ( ! $this->get_et_license() ) {
 			return;
 		}
 

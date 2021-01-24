@@ -652,6 +652,13 @@ if ( et_is_woocommerce_plugin_active() ) {
 				),
 			);
 
+			// Add custom tabs on default for theme builder.
+			if ( et_builder_tb_enabled() ) {
+				et_theme_builder_wc_set_global_objects();
+				$tabs = apply_filters( 'woocommerce_product_tabs', $tabs );
+				et_theme_builder_wc_reset_global_objects();
+			}
+
 			return $tabs;
 		}
 

@@ -209,7 +209,16 @@ class ET_Builder_Module_Map extends ET_Builder_Module {
 		return array_merge( $fields, $filters );
 	}
 
-	function render( $attrs, $content = null, $render_slug ) {
+	/**
+	 * Renders the module output.
+	 *
+	 * @param  array  $attrs       List of attributes.
+	 * @param  string $content     Content being processed.
+	 * @param  string $render_slug Slug of module that is used for rendering output.
+	 *
+	 * @return string
+	 */
+	public function render( $attrs, $content, $render_slug ) {
 		$address_lat          = $this->props['address_lat'];
 		$address_lng          = $this->props['address_lng'];
 		$zoom_level           = $this->props['zoom_level'];

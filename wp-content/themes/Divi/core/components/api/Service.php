@@ -513,7 +513,7 @@ abstract class ET_Core_API_Service {
 	 *
 	 * @return array
 	 */
-	public function transform_data_to_our_format( $data = array(), $key_type, $exclude_keys = array() ) {
+	public function transform_data_to_our_format( $data, $key_type, $exclude_keys = array() ) {
 		if ( ! isset( $this->data_keys[ $key_type ] ) ) {
 			return array();
 		}
@@ -530,7 +530,7 @@ abstract class ET_Core_API_Service {
 	 *
 	 * @return array
 	 */
-	public function transform_data_to_provider_format( $data = array(), $key_type, $exclude_keys = array() ) {
+	public function transform_data_to_provider_format( $data, $key_type, $exclude_keys = array() ) {
 		if ( ! isset( $this->data_keys[ $key_type ] ) ) {
 			return array();
 		}

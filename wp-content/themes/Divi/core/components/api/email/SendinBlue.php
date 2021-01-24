@@ -121,8 +121,8 @@ class ET_Core_API_Email_SendinBlue extends ET_Core_API_Email_Provider {
 			),
 			'subscriber'   => array(
 				'email'         => 'email',
-				'name'          => 'attributes.NAME',
-				'last_name'     => 'attributes.SURNAME',
+				'name'          => 'attributes.FIRSTNAME',
+				'last_name'     => 'attributes.LASTNAME',
 				'list_id'       => $this->_should_use_legacy_api() ? '@listid' : '@listIds',
 				'custom_fields' => 'custom_fields',
 				'updateEnabled' => 'updateEnabled',

@@ -1,48 +1,74 @@
 <?php
+/**
+ * Divi Library.
+ *
+ * @package Builder
+ */
 
+/**
+ * Core class used to implement Layout Library.
+ */
 class ET_Builder_Library {
 
 	/**
+	 * Instance of `ET_Builder_Library`.
+	 *
 	 * @var ET_Builder_Library
 	 */
 	private static $_instance;
 
 	/**
+	 * Instance of  `ET_Core_Data_Utils`.
+	 *
 	 * @var ET_Core_Data_Utils
 	 */
 	protected static $_;
 
 	/**
+	 * List of i18n strings.
+	 *
 	 * @var mixed[]
 	 */
 	protected static $_i18n;
 
 	/**
+	 * Yoast primary category meta key.
+	 *
 	 * @var string
 	 */
 	protected static $_primary_category_key;
 
 	/**
+	 * List of Divi Library's Standard Post Types.
+	 *
 	 * @var string[]
 	 */
 	protected static $_standard_post_types = array( 'post', 'page', 'project' );
 
 	/**
+	 * Instance of `ET_Builder_Post_Taxonomy_LayoutCategory`.
+	 *
 	 * @var ET_Builder_Post_Taxonomy_LayoutCategory
 	 */
 	public $layout_categories;
 
 	/**
+	 * Instance of `ET_Builder_Post_Taxonomy_LayoutPack`.
+	 *
 	 * @var ET_Builder_Post_Taxonomy_LayoutPack
 	 */
 	public $layout_packs;
 
 	/**
+	 * Instance of `ET_Builder_Post_Taxonomy_LayoutType`.
+	 *
 	 * @var ET_Builder_Post_Taxonomy_LayoutType
 	 */
 	public $layout_types;
 
 	/**
+	 * Instance of `ET_Builder_Post_Type_Layout`.
+	 *
 	 * @var ET_Builder_Post_Type_Layout
 	 */
 	public $layouts;
@@ -67,8 +93,8 @@ class ET_Builder_Library {
 	/**
 	 * Compare by slug
 	 *
-	 * @param object $a
-	 * @param object $b
+	 * @param object $a First category in comparison.
+	 * @param object $b Second category in comparison.
 	 *
 	 * @return bool
 	 */
@@ -137,8 +163,8 @@ class ET_Builder_Library {
 	 *
 	 * @since 3.0.99
 	 *
-	 * @param string  $long_name
-	 * @param WP_Post $layout
+	 * @param string  $long_name Layout title.
+	 * @param WP_Post $layout Layout post.
 	 *
 	 * @return string
 	 */
@@ -165,7 +191,8 @@ class ET_Builder_Library {
 	 * @param array[] $layout_categories Processed layouts.
 	 */
 	protected function _process_layout_categories( $post, $layout, $index, &$layout_categories ) {
-		if ( ! $terms = wp_get_post_terms( $post->ID, $this->layout_categories->name ) ) {
+		$terms = wp_get_post_terms( $post->ID, $this->layout_categories->name );
+		if ( ! $terms ) {
 			$layout->category_slug = 'uncategorized';
 			return;
 		}
@@ -192,10 +219,12 @@ class ET_Builder_Library {
 				$layout->category_slug = $category->slug;
 			}
 
-			if ( $id = get_post_meta( $post->ID, self::$_primary_category_key, true ) ) {
+			$id = get_post_meta( $post->ID, self::$_primary_category_key, true );
+
+			if ( $id ) {
 				// $id is a string, $category->term_id is an int.
 				if ( $id === $category->term_id ) {
-					// This is the primary category (used in the layout URL)
+					// This is the primary category (used in the layout URL).
 					$layout->category_slug = $category->slug;
 				}
 			}
@@ -213,7 +242,8 @@ class ET_Builder_Library {
 	 * @param array[] $layout_packs Processed layouts.
 	 */
 	protected function _process_layout_packs( $post, $layout, $index, &$layout_packs ) {
-		if ( ! $terms = wp_get_post_terms( $post->ID, $this->layout_packs->name ) ) {
+		$terms = wp_get_post_terms( $post->ID, $this->layout_packs->name );
+		if ( ! $terms ) {
 			return;
 		}
 
@@ -265,7 +295,8 @@ class ET_Builder_Library {
 	 * @since 3.0.99
 	 */
 	protected function _register_cpt_and_taxonomies() {
-		if ( ! $files = glob( ET_BUILDER_DIR . 'post/*/Layout*.php' ) ) {
+		$files = glob( ET_BUILDER_DIR . 'post/*/Layout*.php' );
+		if ( ! $files ) {
 			return;
 		}
 
@@ -303,8 +334,8 @@ class ET_Builder_Library {
 	 *
 	 * @since 3.0.99
 	 *
-	 * @param array[] $categories
-	 * @param array[] $packs
+	 * @param array[] $categories Layout categories.
+	 * @param array[] $packs Layout packs.
 	 *
 	 * @return array[] {
 	 *
@@ -330,6 +361,11 @@ class ET_Builder_Library {
 		return $sorted;
 	}
 
+	/**
+	 * Get Divi Library's Standard Post Types.
+	 *
+	 * @return mixed|void
+	 */
 	public static function _standard_post_types() {
 		/**
 		 * Filters the Divi Library's Standard Post Types.
@@ -375,8 +411,9 @@ class ET_Builder_Library {
 			$layout->id    = $post->ID;
 			$layout->index = $index;
 			$layout->date  = $post->post_date;
+			$types         = wp_get_post_terms( $layout->id, $this->layout_types->name );
 
-			if ( ! $types = wp_get_post_terms( $layout->id, $this->layout_types->name ) ) {
+			if ( ! $types ) {
 				continue;
 			}
 
@@ -387,27 +424,28 @@ class ET_Builder_Library {
 				continue;
 			}
 
-			$title = html_entity_decode( $post->post_title );
+			$title      = html_entity_decode( $post->post_title );
+			$short_name = get_post_meta( $post->ID, '_et_builder_library_short_name', true );
 
-			if ( ! $short_name = get_post_meta( $post->ID, '_et_builder_library_short_name', true ) ) {
+			if ( ! $short_name ) {
 				$short_name = $this->_get_layout_short_name( $title, $post );
 
 				if ( $short_name !== $title ) {
 					update_post_meta( $post->ID, '_et_builder_library_short_name', $short_name );
 				}
 			}
-
-			$layout->name = $layout->short_name = '';
+			$layout->short_name = '';
+			$layout->name       = $layout->short_name;
 
 			if ( $title ) {
-				// Remove periods since we use dot notation to retrieve translation
+				// Remove periods since we use dot notation to retrieve translation.
 				str_replace( '.', '', $title );
 
 				$layout->name = et_core_intentionally_unescaped( self::__( $title, '@layoutsLong' ), 'react_jsx' );
 			}
 
 			if ( $short_name ) {
-				// Remove periods since we use dot notation to retrieve translation
+				// Remove periods since we use dot notation to retrieve translation.
 				str_replace( '.', '', $title );
 
 				$layout->short_name = et_core_intentionally_unescaped( self::__( $short_name, '@layoutsShort' ), 'react_jsx' );
@@ -536,7 +574,7 @@ class ET_Builder_Library {
 		$custom_layouts_data = apply_filters(
 			'et_builder_library_custom_layouts',
 			array(
-				'existing_pages' => $this->builder_library_modal_custom_tabs_existing_pages(),
+				'existing_pages' => $this->_builder_library_modal_custom_tabs_existing_pages(),
 			),
 			$saved_layouts_data
 		);
@@ -621,7 +659,7 @@ class ET_Builder_Library {
 	 *     }
 	 * }
 	 */
-	protected function builder_library_modal_custom_tabs_existing_pages() {
+	protected function _builder_library_modal_custom_tabs_existing_pages() {
 		et_core_nonce_verified_previously();
 
 		$categories = array();
@@ -642,16 +680,16 @@ class ET_Builder_Library {
 		 */
 		$post_types = apply_filters( 'et_library_builder_post_types', et_builder_get_builder_post_types() );
 
-		// Remove Extra's category layouts from "Your Existing Pages" layout list
-		if ( in_array( 'layout', $post_types ) ) {
-			unset( $post_types[ array_search( 'layout', $post_types ) ] );
+		// Remove Extra's category layouts from "Your Existing Pages" layout list.
+		if ( in_array( 'layout', $post_types, true ) ) {
+			unset( $post_types[ array_search( 'layout', $post_types, true ) ] );
 		}
 
 		if ( wp_doing_ajax() ) {
-			// VB case
+			// VB case.
 			$exclude = isset( $_POST['postId'] ) ? (int) $_POST['postId'] : false;
 		} else {
-			// BB case
+			// BB case.
 			$exclude = get_the_ID();
 		}
 
@@ -697,7 +735,7 @@ class ET_Builder_Library {
 							continue;
 						}
 
-						// Do not add the current page to the list
+						// Do not add the current page to the list.
 						if ( $post->ID === $exclude ) {
 							continue;
 						}
@@ -707,7 +745,7 @@ class ET_Builder_Library {
 							continue;
 						}
 
-						// Only include posts that the user is allowed to edit
+						// Only include posts that the user is allowed to edit.
 						if ( ! current_user_can( 'edit_post', $post->ID ) ) {
 							continue;
 						}
@@ -778,7 +816,7 @@ class ET_Builder_Library {
 		}
 
 		if ( count( $categories ) > 1 ) {
-			// Sort categories (post_type in this case) by slug
+			// Sort categories (post_type in this case) by slug.
 			uasort( $categories, array( 'self', 'compare_by_slug' ) );
 		}
 
@@ -812,7 +850,7 @@ class ET_Builder_Library {
 	/**
 	 * Get custom tabs for the library modal.
 	 *
-	 * @param string $post_type
+	 * @param string $post_type Post type.
 	 *
 	 * @return array[] {
 	 *     Custom Tabs
@@ -862,12 +900,14 @@ class ET_Builder_Library {
 
 		global $wpdb;
 
-		return $all_built_for_post_types = $wpdb->get_col(
+		$all_built_for_post_types = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT DISTINCT( meta_value ) FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value > ''",
 				'_et_pb_built_for_post_type'
 			)
 		);
+
+		return $all_built_for_post_types;
 	}
 
 	/**
@@ -944,7 +984,7 @@ class ET_Builder_Library {
 					continue;
 				}
 
-				// Sanity check just to be safe
+				// Sanity check just to be safe.
 				if ( get_post_meta( $post->ID, '_et_pb_predefined_layout', true ) ) {
 					wp_delete_post( $post->ID, true );
 				}
@@ -1029,12 +1069,12 @@ class ET_Builder_Library {
 			ob_end_clean();
 		}
 
-		header( 'Content-Length: ' . @filesize( $tmp_file ) );
+		header( 'Content-Length: ' . @filesize( $tmp_file ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- `filesize` may fail due to the permissions denied error.
 
-		@unlink( $tmp_file );
+		@unlink( $tmp_file ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- `unlink` may fail due to the permissions denied error.
 
 		// Charset has to be explicitly mentioned when it is other than UTF-8.
-		@header( 'Content-Type: application/json; charset=' . esc_attr( get_option( 'blog_charset' ) ) );
+		header( 'Content-Type: application/json; charset=' . esc_attr( get_option( 'blog_charset' ) ) );
 
 		die( et_core_intentionally_unescaped( $response, 'html' ) );
 	}
@@ -1089,6 +1129,8 @@ class ET_Builder_Library {
 	 * Enqueues library-related styles and scripts in the admin.
 	 * {@see 'admin_enqueue_scripts'}
 	 *
+	 * @param string $page The current admin page.
+	 *
 	 * @since 3.0.99
 	 */
 	public function wp_hook_admin_enqueue_scripts( $page ) {
@@ -1096,7 +1138,7 @@ class ET_Builder_Library {
 
 		et_core_load_main_fonts();
 
-		wp_enqueue_style( 'et-builder-notification-popup-styles', ET_BUILDER_URI . '/styles/notification_popup_styles.css' );
+		wp_enqueue_style( 'et-builder-notification-popup-styles', ET_BUILDER_URI . '/styles/notification_popup_styles.css', array(), ET_BUILDER_PRODUCT_VERSION );
 
 		if ( 'et_pb_layout' === $typenow ) {
 			$new_layout_modal = et_pb_generate_new_layout_modal();
@@ -1105,7 +1147,7 @@ class ET_Builder_Library {
 			$deps = array(
 				'jquery',
 			);
-			wp_enqueue_script( 'library-scripts', ET_BUILDER_URI . '/scripts/library_scripts.js', $deps, ET_BUILDER_PRODUCT_VERSION );
+			wp_enqueue_script( 'library-scripts', ET_BUILDER_URI . '/scripts/library_scripts.js', $deps, ET_BUILDER_PRODUCT_VERSION, false );
 
 			$new_template_options_data = array(
 				'ajaxurl'             => admin_url( 'admin-ajax.php' ),
@@ -1114,7 +1156,7 @@ class ET_Builder_Library {
 			);
 			wp_localize_script( 'library-scripts', 'et_pb_new_template_options', $new_template_options_data );
 		} else {
-			wp_enqueue_script( 'et-builder-failure-notice', ET_BUILDER_URI . '/scripts/failure_notice.js', array( 'jquery' ), ET_BUILDER_PRODUCT_VERSION );
+			wp_enqueue_script( 'et-builder-failure-notice', ET_BUILDER_URI . '/scripts/failure_notice.js', array( 'jquery' ), ET_BUILDER_PRODUCT_VERSION, false );
 		}
 	}
 }

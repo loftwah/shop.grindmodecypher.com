@@ -239,7 +239,7 @@ class ET_Core_Data_Utils {
 		$value  = $array;
 
 		foreach ( $keys as $key ) {
-			if ( '[' === $key[0] ) {
+			if ( ! empty( $key ) && isset( $key[0] ) && '[' === $key[0] ) {
 				$index = substr( $key, 1, -1 );
 
 				if ( is_numeric( $index ) ) {

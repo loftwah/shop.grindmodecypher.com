@@ -249,7 +249,16 @@ class ET_Builder_Module_Social_Media_Follow extends ET_Builder_Module {
 		$et_pb_social_media_follow_sticky = et_pb_sticky_options()->is_sticky_module( $this->props );
 	}
 
-	function render( $attrs, $content = null, $render_slug ) {
+	/**
+	 * Renders the module output.
+	 *
+	 * @param  array  $attrs       List of attributes.
+	 * @param  string $content     Content being processed.
+	 * @param  string $render_slug Slug of module that is used for rendering output.
+	 *
+	 * @return string
+	 */
+	public function render( $attrs, $content, $render_slug ) {
 		global $et_pb_social_media_follow_link;
 
 		$multi_view                = et_pb_multi_view_options( $this );

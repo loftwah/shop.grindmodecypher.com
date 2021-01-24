@@ -1148,7 +1148,7 @@ if ( ! function_exists( 'et_fb_enqueue_react' ) ) :
 	function et_fb_enqueue_react() {
 		$DEBUG         = defined( 'ET_DEBUG' ) && ET_DEBUG;
 		$core_scripts  = ET_CORE_URL . 'admin/js';
-		$react_version = '16.7.0';
+		$react_version = '16.12.0';
 
 		wp_dequeue_script( 'react' );
 		wp_dequeue_script( 'react-dom' );

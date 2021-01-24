@@ -56,7 +56,7 @@ class ET_Builder_Plugin_Compat_Relevanssi extends ET_Builder_Plugin_Compat_Base 
 	 */
 	public function maybe_modify_blog_query( $query ) {
 		// Modify blog query when the current page is search result page.
-		if ( is_search() && function_exists( 'relevanssi_do_query' ) ) {
+		if ( is_search() && function_exists( 'relevanssi_do_query' ) && $query->query_vars['s'] ) {
 			relevanssi_do_query( $query );
 		}
 

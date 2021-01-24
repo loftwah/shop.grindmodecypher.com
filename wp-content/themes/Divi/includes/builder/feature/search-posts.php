@@ -1,5 +1,12 @@
 <?php
 /**
+ * Ajax service which searches through posts.
+ *
+ * @package Divi
+ * @subpackage Builder
+ */
+
+/**
  * Handle ajax requests to search for posts.
  *
  * @since 3.26.7
@@ -48,7 +55,7 @@ function et_builder_ajax_search_posts() {
 		if ( $value_post && 'publish' === $value_post->post_status && $value_post->post_type === $post_type ) {
 			$results['results'][] = array(
 				'value' => $value,
-				'label' => et_core_intentionally_unescaped( strip_tags( $value_post->post_title ), 'react_jsx' ),
+				'label' => et_core_intentionally_unescaped( wp_strip_all_tags( $value_post->post_title ), 'react_jsx' ),
 				'meta'  => array(
 					'post_type' => et_core_intentionally_unescaped( $post_type_label, 'react_jsx' ),
 				),
@@ -112,7 +119,7 @@ function et_builder_ajax_search_posts() {
 	foreach ( $posts->posts as $post ) {
 		$results['results'][] = array(
 			'value' => (int) $post->ID,
-			'label' => et_core_intentionally_unescaped( strip_tags( $post->post_title ), 'react_jsx' ),
+			'label' => et_core_intentionally_unescaped( wp_strip_all_tags( $post->post_title ), 'react_jsx' ),
 			'meta'  => array(
 				'post_type' => et_core_intentionally_unescaped( $post_type_label, 'react_jsx' ),
 			),
@@ -139,7 +146,7 @@ add_action( 'wp_ajax_et_builder_search_posts', 'et_builder_ajax_search_posts' );
  *
  * @since 3.27.3
  *
- * @param string $join
+ * @param string $join  The JOIN clause of the query.
  *
  * @return string
  */
@@ -156,7 +163,7 @@ function et_builder_ajax_search_posts_query_join( $join ) {
  *
  * @since 3.27.3
  *
- * @param string $where
+ * @param string $where The WHERE clause of the query.
  *
  * @return string
  */

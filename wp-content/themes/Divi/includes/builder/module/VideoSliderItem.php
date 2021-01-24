@@ -315,7 +315,16 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 		return $video_src;
 	}
 
-	function render( $attrs, $content = null, $render_slug ) {
+	/**
+	 * Renders the module output.
+	 *
+	 * @param  array  $attrs       List of attributes.
+	 * @param  string $content     Content being processed.
+	 * @param  string $render_slug Slug of module that is used for rendering output.
+	 *
+	 * @return string
+	 */
+	public function render( $attrs, $content, $render_slug ) {
 		global $et_pb_slider_image_overlay,
 			$et_pb_video_slider_sticky;
 

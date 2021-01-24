@@ -345,7 +345,14 @@ abstract class ET_Builder_Module_Type_WithSpamProtection extends ET_Builder_Modu
 		ksort( self::$enabled_spam_providers );
 	}
 
-	public function render( $attrs, $content = null, $render_slug ) {
+	/**
+	 * Renders the module output.
+	 *
+	 * @param  array  $attrs       List of attributes.
+	 * @param  string $content     Content being processed.
+	 * @param  string $render_slug Slug of module that is used for rendering output.
+	 */
+	public function render( $attrs, $content, $render_slug ) {
 
 		$this->_checksum  = md5( serialize( $attrs ) );
 		$use_spam_service = get_option( $this->slug . '_' . $this->_checksum );

@@ -1,6 +1,12 @@
 <?php
+/**
+ * Handle error report
+ *
+ * @package Builder
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 // get_plugins() is only available on dashboard; Manually require it needed.
@@ -8,13 +14,20 @@ if ( ! function_exists( 'get_plugins' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 }
 
+/**
+ * Class to send an error report.
+ */
 class ET_Builder_Error_Report {
 	/**
+	 * Instance of `ET_Core_Data_Utils`.
+	 *
 	 * @var ET_Core_Data_Utils
 	 */
 	protected static $_;
 
 	/**
+	 * Instance of `ET_Builder_Error_Report`.
+	 *
 	 * @var ET_Builder_Error_Report
 	 */
 	private static $_instance;
@@ -27,11 +40,11 @@ class ET_Builder_Error_Report {
 	}
 
 	/**
-	 * json_decode data and stripslashes if needed.
+	 * Get json_decode data and stripslashes if needed.
 	 *
 	 * @since 3.24
 	 *
-	 * @param string $data
+	 * @param string $data Data to be decoded.
 	 *
 	 * @return mixed
 	 */
@@ -96,7 +109,7 @@ class ET_Builder_Error_Report {
 			),
 		);
 
-		// If the site uses divi builder plugin, provide the theme information
+		// If the site uses divi builder plugin, provide the theme information.
 		if ( et_is_builder_plugin_active() ) {
 			array_unshift(
 				$info['installation'],
@@ -104,7 +117,7 @@ class ET_Builder_Error_Report {
 			);
 		}
 
-		// If the site uses child theme, provide the child theme information
+		// If the site uses child theme, provide the child theme information.
 		if ( is_child_theme() ) {
 			array_unshift(
 				$info['installation'],
@@ -124,7 +137,7 @@ class ET_Builder_Error_Report {
 	 *
 	 * @return string|bool
 	 */
-	protected function get_product() {
+	protected function _get_product() {
 		if ( et_is_builder_plugin_active() ) {
 			return 'divi-builder';
 		}
@@ -145,12 +158,12 @@ class ET_Builder_Error_Report {
 	 *
 	 * @since 3.21.4
 	 *
-	 * @param string $info_name debug info item name
-	 * @param object $post      alias for $_POST
+	 * @param string $info_name debug info item name.
+	 * @param object $post      alias for $_POST.
 	 *
 	 * @return string|array|object
 	 */
-	protected function get_debug_value( $info_name, $post ) {
+	protected function _get_debug_value( $info_name, $post ) {
 		switch ( $info_name ) {
 			case 'role':
 				$current_user = wp_get_current_user();
@@ -186,12 +199,12 @@ class ET_Builder_Error_Report {
 				break;
 
 			case 'product_name':
-				$value = $this->get_product();
+				$value = $this->_get_product();
 				break;
 
 			case 'product_version':
 				$value = et_is_builder_plugin_active() ?
-					self::$_->array_get( get_plugin_data( WP_PLUGIN_DIR . '/' . 'divi-builder/divi-builder.php' ), 'Version', '' ) :
+					self::$_->array_get( get_plugin_data( WP_PLUGIN_DIR . '/divi-builder/divi-builder.php' ), 'Version', '' ) :
 					et_get_theme_version();
 
 				$value = esc_html( $value );
@@ -229,7 +242,7 @@ class ET_Builder_Error_Report {
 
 			case 'theme_version':
 			case 'child_theme_version':
-				$value = esc_html__( wp_get_theme()->get( 'Version' ) );
+				$value = esc_html( wp_get_theme()->get( 'Version' ) );
 				break;
 
 			case 'is_child_theme':
@@ -249,11 +262,11 @@ class ET_Builder_Error_Report {
 	 *
 	 * @since 3.21.4
 	 *
-	 * @param string $data
+	 * @param string $data Report data.
 	 *
 	 * @return string
 	 */
-	protected function get_report_content( $data ) {
+	protected function _get_report_content( $data ) {
 		$report_content = '';
 
 		$debug_info = self::get_debug_info();
@@ -267,7 +280,7 @@ class ET_Builder_Error_Report {
 			$report_content[ $item_key ] = $items_title;
 
 			foreach ( $debug_items as $debug_item ) {
-				$item_value = et_core_esc_previously( $this->get_debug_value( $debug_item, $data, 'array' ) );
+				$item_value = et_core_esc_previously( $this->_get_debug_value( $debug_item, $data, 'array' ) );
 
 				$report_content[ $debug_item ] = $item_value;
 			}
@@ -281,27 +294,29 @@ class ET_Builder_Error_Report {
 	 *
 	 * @since 3.21.4
 	 *
-	 * @param string $data
-	 * @param string $field
+	 * @param string $data Report data.
+	 * @param string $field Debug info item name.
 	 *
 	 * @return string
 	 */
-	protected function get_exported_layout_content( $data, $field ) {
-		// Set faux $_POST value that is required by portability
-		$_POST['post']    = $_POST['post_id'];
-		$_POST['content'] = self::$_instance->get_debug_value( $field, $data );
+	protected function _get_exported_layout_content( $data, $field ) {
+		// phpcs:disable WordPress.Security.NonceVerification -- Nonce has been verified in the {@see self::endpoint()}.
+		// Set faux $_POST value that is required by portability.
+		$_POST['post']    = isset( $_POST['post_id'] ) ? sanitize_text_field( $_POST['post_id'] ) : '';
+		$_POST['content'] = self::$_instance->_get_debug_value( $field, $data );
 
-		// Remove page value if it is equal to `false`, avoiding paginated images not accidentally triggered
+		// Remove page value if it is equal to `false`, avoiding paginated images not accidentally triggered.
 		if ( isset( $_POST['page'] ) && false === $_POST['page'] ) {
 			unset( $_POST['page'] );
 		}
 
 		$portability = et_core_portability_load( 'et_builder' );
-		// Export the content
+		// Export the content.
 		$result = $portability->export( true );
 		// Delete temp files or else the same content will be used for all exports.
 		$portability->delete_temp_files( 'et_core_export' );
 		return $result;
+		// phpcs:enable
 	}
 
 	/**
@@ -310,7 +325,7 @@ class ET_Builder_Error_Report {
 	 * @since 3.21.4
 	 */
 	public static function endpoint() {
-		// Check for valid permission. Only administrator role can send error report
+		// Check for valid permission. Only administrator role can send error report.
 		if ( ! et_core_security_check_passed( 'manage_options', 'et_fb_send_error_report' ) ) {
 			wp_send_json_error(
 				array(
@@ -320,7 +335,7 @@ class ET_Builder_Error_Report {
 			wp_die();
 		}
 
-		// Check valid post id
+		// Check valid post id.
 		$post_id = self::$_->array_get( $_POST, 'post_id', false );
 
 		if ( ! $post_id ) {
@@ -344,7 +359,7 @@ class ET_Builder_Error_Report {
 			wp_die();
 		}
 
-		// Check for Elegant Themes username & API Key
+		// Check for Elegant Themes username & API Key.
 		$updates_options = get_site_option( 'et_automatic_updates_options', array() );
 		$et_username     = self::$_->array_get( $updates_options, 'username', '' );
 		$et_api_key      = self::$_->array_get( $updates_options, 'api_key', '' );
@@ -358,7 +373,7 @@ class ET_Builder_Error_Report {
 			wp_die();
 		}
 
-		// Check for account status
+		// Check for account status.
 		$et_account_status = get_site_option( 'et_account_status', 'not_active' );
 
 		if ( 'active' !== $et_account_status ) {
@@ -379,11 +394,11 @@ class ET_Builder_Error_Report {
 			'body'    => array(
 				'username'     => $et_username,
 				'api_key'      => $et_api_key,
-				'error_report' => self::$_instance->get_report_content( $data ),
+				'error_report' => self::$_instance->_get_report_content( $data ),
 				'site_url'     => site_url(),
 				'attachments'  => array(
-					'latest' => self::$_instance->get_exported_layout_content( $data, 'latest_content' ),
-					'loaded' => self::$_instance->get_exported_layout_content( $data, 'loaded_content' ),
+					'latest' => self::$_instance->_get_exported_layout_content( $data, 'latest_content' ),
+					'loaded' => self::$_instance->_get_exported_layout_content( $data, 'loaded_content' ),
 				),
 			),
 		);

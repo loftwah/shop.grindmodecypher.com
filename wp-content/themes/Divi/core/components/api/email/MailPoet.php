@@ -50,7 +50,15 @@ class ET_Core_API_Email_MailPoet extends ET_Core_API_Email_Provider {
 		}
 	}
 
-	protected function _init_provider_class( $version = '2', $owner, $account_name, $api_key ) {
+	/**
+	 * Initiate provider class based on the version number.
+	 *
+	 * @param  string $version      Version number.
+	 * @param  string $owner        Owner.
+	 * @param  string $account_name Account name.
+	 * @param  string $api_key      API key.
+	 */
+	protected function _init_provider_class( $version, $owner, $account_name, $api_key ) {
 		if ( '3' === $version ) {
 			$this->_MP = new ET_Core_API_Email_MailPoet3( $owner, $account_name, $api_key );
 		} else {

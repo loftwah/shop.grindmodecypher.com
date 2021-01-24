@@ -878,7 +878,8 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		// Manually set the max_num_pages to make the `next_posts_link` work
 		if ( '' !== $args['offset_number'] && ! empty( $args['offset_number'] ) ) {
 			$wp_query->found_posts   = max( 0, $wp_query->found_posts - intval( $args['offset_number'] ) );
-			$wp_query->max_num_pages = ceil( $wp_query->found_posts / intval( $args['posts_number'] ) );
+			$posts_number            = intval( $args['posts_number'] );
+			$wp_query->max_num_pages = $posts_number > 1 ? ceil( $wp_query->found_posts / $posts_number ) : 1;
 		}
 
 		ob_start();
@@ -1172,7 +1173,16 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		return add_query_arg( 'et_blog', '', $result );
 	}
 
-	function render( $attrs, $content = null, $render_slug ) {
+	/**
+	 * Renders the module output.
+	 *
+	 * @param  array  $attrs       List of attributes.
+	 * @param  string $content     Content being processed.
+	 * @param  string $render_slug Slug of module that is used for rendering output.
+	 *
+	 * @return string
+	 */
+	public function render( $attrs, $content, $render_slug ) {
 		global $post, $paged, $wp_query, $wp_the_query, $wp_filter, $__et_blog_module_paged;
 
 		if ( self::$rendering ) {
@@ -1449,7 +1459,8 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		if ( '' !== $offset_number && ! empty( $offset_number ) ) {
 			global $wp_query;
 			$wp_query->found_posts   = max( 0, $wp_query->found_posts - intval( $offset_number ) );
-			$wp_query->max_num_pages = ceil( $wp_query->found_posts / intval( $posts_number ) );
+			$posts_number            = intval( $posts_number );
+			$wp_query->max_num_pages = $posts_number > 1 ? ceil( $wp_query->found_posts / $posts_number ) : 1;
 		}
 
 		$blog_order                 = self::_get_index( array( self::INDEX_MODULE_ORDER, $render_slug ) );

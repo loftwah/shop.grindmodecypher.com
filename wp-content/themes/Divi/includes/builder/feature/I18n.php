@@ -1,6 +1,12 @@
 <?php
+/**
+ * Cached common translation.
+ *
+ * @package Builder
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -27,7 +33,7 @@ class ET_Builder_I18n {
 			// 3. `et_builder` Text Domain only.
 			// 4. No comments / empty lines.
 			// 5. Keep the list ordered, if can't do with your IDE, switch to Emacs.
-			// i18-list-begin
+			// i18-list-begin.
 			case 'Admin Label'     : return esc_html__( 'Admin Label', 'et_builder' );
 			case 'Advanced'        : return esc_html__( 'Advanced', 'et_builder' );
 			case 'After'           : return esc_html__( 'After', 'et_builder' );
@@ -110,7 +116,7 @@ class ET_Builder_I18n {
 			case 'Upload an image' : return esc_attr__( 'Upload an image', 'et_builder' );
 			case 'Visibility'      : return esc_attr__( 'Visibility', 'et_builder' );
 			case 'Yes'             : return esc_html__( 'Yes', 'et_builder' );
-			// i18-list-end
+			// i18-list-end.
 		}
 		// phpcs:enable
 

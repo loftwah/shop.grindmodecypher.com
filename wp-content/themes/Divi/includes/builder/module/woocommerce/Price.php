@@ -218,7 +218,7 @@ class ET_Builder_Module_Woocommerce_Price extends ET_Builder_Module {
 	 *
 	 * @return string
 	 */
-	public function render( $attrs, $content = null, $render_slug ) {
+	public function render( $attrs, $content, $render_slug ) {
 		$this->add_classname( $this->get_text_orientation_classname() );
 
 		$output = self::get_price( $this->props );

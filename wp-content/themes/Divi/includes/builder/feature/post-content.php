@@ -1,5 +1,12 @@
 <?php
 /**
+ * Generalized dynamic content implementation to make it usable for WooCommerce Modules.
+ *
+ * @package Divi
+ * @subpackage Builder
+ */
+
+/**
  * Handle ajax requests to resolve post content.
  *
  * @since 3.17.2
@@ -7,20 +14,23 @@
  * @return void
  */
 function et_builder_ajax_resolve_post_content() {
-	$_         = ET_Core_Data_Utils::instance();
-	$nonce     = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '';
-	$nonce     = sanitize_text_field( $nonce );
-	$post_id   = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'et_fb_resolve_post_content' ) ) { // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput -- The nonce value is used only for comparision in the `wp_verify_nonce`.
+		et_core_die();
+	}
+
+	$_       = ET_Core_Data_Utils::instance();
+	$post_id = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
+	// phpcs:disable ET.Sniffs.ValidatedSanitizedInput -- All values from `$_POST['groups']` and `$_POST['overrides']` arrays value are being sanitized before use in following foreach loop.
 	$groups    = isset( $_POST['groups'] ) && is_array( $_POST['groups'] ) ? $_POST['groups'] : array();
 	$overrides = isset( $_POST['overrides'] ) && is_array( $_POST['overrides'] ) ? $_POST['overrides'] : array();
+	// phpcs:enable
 	$overrides = array_map( 'wp_kses_post', $overrides );
 	$post      = get_post( $post_id );
 
-	$invalid_nonce       = ! wp_verify_nonce( $nonce, 'et_fb_resolve_post_content' );
 	$invalid_permissions = ! current_user_can( 'edit_post', $post_id );
 	$invalid_post        = null === $post;
 
-	if ( $invalid_nonce || $invalid_permissions || $invalid_post ) {
+	if ( $invalid_permissions || $invalid_post ) {
 		et_core_die();
 	}
 
@@ -44,9 +54,9 @@ add_action( 'wp_ajax_et_builder_resolve_post_content', 'et_builder_ajax_resolve_
  *
  * @since 3.17.2
  *
- * @param array   $terms
- * @param boolean $link
- * @param string  $separator
+ * @param array   $terms List of terms.
+ * @param boolean $link Whether return link or label.
+ * @param string  $separator Terms separators.
  *
  * @return string
  */
@@ -75,7 +85,7 @@ function et_builder_list_terms( $terms, $link = true, $separator = ' | ' ) {
  *
  * @since 4.0
  *
- * @param integer $post_id
+ * @param integer $post_id Post id.
  *
  * @return string
  */

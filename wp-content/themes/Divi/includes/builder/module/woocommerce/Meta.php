@@ -342,7 +342,7 @@ class ET_Builder_Module_Woocommerce_Meta extends ET_Builder_Module {
 	 *
 	 * @return string
 	 */
-	public function render( $attrs, $content = null, $render_slug ) {
+	public function render( $attrs, $content, $render_slug ) {
 		$multi_view = et_pb_multi_view_options( $this );
 		ET_Builder_Module_Helper_Woocommerce_Modules::process_background_layout_data( $render_slug, $this );
 

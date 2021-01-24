@@ -110,6 +110,7 @@ class ET_Core_API_Email_MailerLite extends ET_Core_API_Email_Provider {
 				'last_name'     => 'fields.last_name',
 				'email'         => 'email',
 				'custom_fields' => 'custom_fields',
+				'resubscribe'   => 'resubscribe',
 			),
 			'error'        => array(
 				'error_message' => 'error.message',
@@ -142,6 +143,7 @@ class ET_Core_API_Email_MailerLite extends ET_Core_API_Email_Provider {
 	 * @inheritDoc
 	 */
 	public function subscribe( $args, $url = '' ) {
+		$args['resubscribe'] = 1;
 		$url = "{$this->LISTS_URL}/{$args['list_id']}/subscribers";
 
 		return parent::subscribe( $args, $url );

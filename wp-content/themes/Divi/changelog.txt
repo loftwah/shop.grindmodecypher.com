@@ -1,3 +1,169 @@
+version 4.8.1 ( updated 01-15-2021 )
+- Fixed JS Error e.state is null in 3rd party modules.
+- Fixed issue where alt/title text from background image could overwrite the Module's image alt/title text.
+- Fixed an issue in Builder controls where margin/padding values intended for Phone View could be saved to Tablet View if a user-specified default Phone View width was greater than the system default.
+- Fixed an issue where the help video skip controls were not working.
+- Fixed Title Text group in Woo Title module was not auto opening after clicking Quick Access of the title in Visual Builder.
+- Fixed Quick Access was working only for the default heading level in Woo Title module.
+- Added Quick Access functionality to Star rating in Shop Module.
+- Fixed a case where Modules, Rows, and Sections taller than the browser viewport could fail to render controls on hover within the Visual Builder.
+- Updated React version to 16.12.0.
+- Fixed JS Error Cannot read property 'isInViewportUpdater' of null.
+- Fixed builder crash on hover to section/row/module when builder setting animation is off.
+- Fixed an issue where the method used to embed YouTube videos would cause a W3C validation error.
+- Fixed clicking on recent reviews widget doesn't scroll to review tab built with Woo Tabs module.
+- Restored and deprecated et_get_one_font_languages function.
+	* core/admin/js/react-dom.production.min.js
+	* core/admin/js/react.production.min.js
+	* functions.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* js/src/custom.js
+
+version 4.8 ( updated 01-13-2021 )
+- Implemented substantial performance improvements for the Visual Builder.
+- Fixed Woo Tabs not showing custom tabs not showing on Theme builder when this product option is selected.
+- Fixed ACF fields not showing up if you select the post category in the Blog module.
+- Fixed a bug where the Menu module will stop working on mobile when a core builder JS function is called by a 3rd party app.
+- Fixed an issue in Visual Builder where the primary navbar could become partially obstructed by a secondary navbar in a Responsive View mode.
+- Fixed Current Category option of Shop module not being saved when WPML plugin is activated.
+- Fixed an issue with Multiselect Bulk Edit that affected 3rd party modules.
+- Fixed wrong position in grid mode with fixed position.
+- Fixed an issue with the menu module where changing the menu hover color would also affect the submenu color.
+- Fixed an issue with the Blurb module's image size setting using different width property on Front End and Visual Builder.
+- Fixed scroll effects not working when the Post Content module is present in a TB layout.
+- Display the products of the current vendor on the vendor archive page if the Use Current Page option enabled.
+- Fixed a bug with scroll to module when AJAX pagination is used on WordPress 5.6.
+- Fixed issue where a nested ordered list inside an unordered list was not reflecting the styles of the unordered list.
+- Fixed an issue causing the custom css for old price text to not be able to override the current price text color on shop module.
+- Fixed undefined setAttibute error of TinyMCE on Classic Builder.
+- Fixed PHP warning in the Blog module.
+- Fixed element flicker on hover in VB if position is fixed or absolute in the click builder mode.
+- Fixed incorrect posts result on Blog module when Relevanssi plugin is activated.
+- Fixed Toggle module with animation visibility issue.
+- Fixed Specialty Section's Gutter Width was overriding Inner Rows Gutter Width.
+- Fixed a PHP error that occurred in the Fullwidth Menu module when hover was enabled on the search icon.
+- Fixed an issue when uploading custom font in theme builder would result in triggering unsaved changes message.
+- Fixed an issue with Blurb module's image (when using rounded corners setting) which was displaying with a bit of a delay on mobile devices.
+- Fixed the issue when Split Test could be saved with incomplete configuration and couldn't be disabled after that.
+- Fixed a PHP warning with Woo Tabs module that may occur with some 3rd party WooCommerce plugins.
+- Fixed error that appears on the console when selecting font on legacy theme customizer.
+- Fixed a PHP warning that occurred on PHP 7+ after rolling back.
+- Fixed an issue where MailerLite subscribers were not able to resubscribe once unsubscribed.
+- Fixed First Name and Last Name saving to Sendinblue lists.
+- Fixed an issue in Support Center where repeated calls could be made to our Token API if a site lacked API credentials.
+- Added support for PHP 8.0 to fix deprecated warnings of required parameters after optional parameters in function/method signatures.
+- Fixed an issue with the upsell module that causes the four or more column to break layout.
+- Fixed an issue causing the WooCommerce view past order table on my account page to shift if hovered on the action button.
+- Fixed issue with Show Top Bar option in the theme customizer that didn't show/hide the top menu on check/uncheck.
+- Fixed in mobile devices smooth scrolling not working with anchors in menu module.
+- Added ability to set the font in Customizer for Japanese, Korean, Malayalam, and Chinese language.
+	* core/components/SupportCenter.php
+	* core/components/api/Service.php
+	* core/components/api/email/MailPoet.php
+	* core/components/api/email/MailerLite.php
+	* core/components/api/email/SendinBlue.php
+	* core/components/data/Utils.php
+	* core/components/lib/OAuth.php
+	* core/components/lib/SilentThemeUpgraderSkin.php
+	* core/components/post/Query.php
+	* epanel/google-fonts/et_google_fonts.js
+	* functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/core.php
+	* includes/builder/feature/ErrorReport.php
+	* includes/builder/feature/I18n.php
+	* includes/builder/feature/Library.php
+	* includes/builder/feature/dynamic-content.php
+	* includes/builder/feature/post-content.php
+	* includes/builder/feature/search-posts.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/functions.php
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/Accordion.php
+	* includes/builder/module/Audio.php
+	* includes/builder/module/BarCounters.php
+	* includes/builder/module/BarCountersItem.php
+	* includes/builder/module/Blog.php
+	* includes/builder/module/Blurb.php
+	* includes/builder/module/Button.php
+	* includes/builder/module/CircleCounter.php
+	* includes/builder/module/Code.php
+	* includes/builder/module/Comments.php
+	* includes/builder/module/ContactForm.php
+	* includes/builder/module/ContactFormItem.php
+	* includes/builder/module/CountdownTimer.php
+	* includes/builder/module/Cta.php
+	* includes/builder/module/Divider.php
+	* includes/builder/module/FilterablePortfolio.php
+	* includes/builder/module/FullwidthCode.php
+	* includes/builder/module/FullwidthHeader.php
+	* includes/builder/module/FullwidthImage.php
+	* includes/builder/module/FullwidthMap.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/FullwidthPortfolio.php
+	* includes/builder/module/FullwidthPostSlider.php
+	* includes/builder/module/FullwidthPostTitle.php
+	* includes/builder/module/FullwidthSlider.php
+	* includes/builder/module/Gallery.php
+	* includes/builder/module/Image.php
+	* includes/builder/module/Login.php
+	* includes/builder/module/Map.php
+	* includes/builder/module/MapItem.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/NumberCounter.php
+	* includes/builder/module/Portfolio.php
+	* includes/builder/module/PostSlider.php
+	* includes/builder/module/PostTitle.php
+	* includes/builder/module/PostsNavigation.php
+	* includes/builder/module/PricingTables.php
+	* includes/builder/module/PricingTablesItem.php
+	* includes/builder/module/Search.php
+	* includes/builder/module/Shop.php
+	* includes/builder/module/Sidebar.php
+	* includes/builder/module/Signup.php
+	* includes/builder/module/Slider.php
+	* includes/builder/module/SliderItem.php
+	* includes/builder/module/SocialMediaFollow.php
+	* includes/builder/module/SocialMediaFollowItem.php
+	* includes/builder/module/Tabs.php
+	* includes/builder/module/TabsItem.php
+	* includes/builder/module/TeamMember.php
+	* includes/builder/module/Testimonial.php
+	* includes/builder/module/Text.php
+	* includes/builder/module/Toggle.php
+	* includes/builder/module/Video.php
+	* includes/builder/module/VideoSlider.php
+	* includes/builder/module/VideoSliderItem.php
+	* includes/builder/module/helpers/WooCommerceModules.php
+	* includes/builder/module/type/PostContent.php
+	* includes/builder/module/type/WithSpamProtection.php
+	* includes/builder/module/woocommerce/AddToCart.php
+	* includes/builder/module/woocommerce/AdditionalInfo.php
+	* includes/builder/module/woocommerce/Breadcrumb.php
+	* includes/builder/module/woocommerce/CartNotice.php
+	* includes/builder/module/woocommerce/Description.php
+	* includes/builder/module/woocommerce/Images.php
+	* includes/builder/module/woocommerce/Meta.php
+	* includes/builder/module/woocommerce/Price.php
+	* includes/builder/module/woocommerce/Rating.php
+	* includes/builder/module/woocommerce/RelatedProducts.php
+	* includes/builder/module/woocommerce/Reviews.php
+	* includes/builder/module/woocommerce/Stock.php
+	* includes/builder/module/woocommerce/Tabs.php
+	* includes/builder/module/woocommerce/Title.php
+	* includes/builder/module/woocommerce/Upsells.php
+	* includes/builder/plugin-compat/advanced-custom-fields.php
+	* includes/builder/plugin-compat/relevanssi.php
+	* includes/builder/plugin-compat/sitepress-multilingual-cms.php
+	* includes/builder/scripts/frontend/global-functions.js
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/src/builder.js
+	* js/src/custom.js
+	* js/src/theme-customizer.js
+
 version 4.7.7 ( updated 12-14-2020 )
 - Fixed issue where select gradient color start and end buttons didn't work on background options of Button module.
 - Fixed issue where options of Text options group didn't show up after user clicked on Quick Access launch icon.

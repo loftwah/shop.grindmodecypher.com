@@ -545,7 +545,7 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 	 *
 	 * @return string
 	 */
-	public function render( $attrs, $content = null, $render_slug ) {
+	public function render( $attrs, $content, $render_slug ) {
 		$multi_view             = et_pb_multi_view_options( $this );
 		$use_focus_border_color = $this->props['use_focus_border_color'];
 

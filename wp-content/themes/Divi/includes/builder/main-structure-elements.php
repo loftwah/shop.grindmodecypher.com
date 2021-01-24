@@ -605,7 +605,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 	 *
 	 * @return string The module's HTML output.
 	 */
-	public function render( $atts, $content = null, $function_name ) {
+	public function render( $atts, $content, $function_name ) {
 		$multi_view                                   = et_pb_multi_view_options( $this );
 		$hover                                        = et_pb_hover_options();
 		$sticky                                       = et_pb_sticky_options();
@@ -1727,7 +1727,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 	 *
 	 * @return string The module's HTML output.
 	 */
-	public function render( $atts, $content = null, $function_name ) {
+	public function render( $atts, $content, $function_name ) {
 		$custom_padding             = $this->props['custom_padding'];
 		$custom_padding_tablet      = $this->props['custom_padding_tablet'];
 		$custom_padding_phone       = $this->props['custom_padding_phone'];
@@ -2205,7 +2205,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 	 *
 	 * @return string The module's HTML output.
 	 */
-	public function render( $atts, $content = null, $function_name ) {
+	public function render( $atts, $content, $function_name ) {
 		$gutter_width               = $this->props['gutter_width'];
 		$gutter_width_hover         = $this->get_hover_value( 'gutter_width' );
 		$make_equal                 = $this->props['make_equal'];
@@ -2497,7 +2497,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 	 *
 	 * @return string The module's HTML output.
 	 */
-	public function render( $atts, $content = null, $function_name ) {
+	public function render( $atts, $content, $function_name ) {
 		$type                        = $this->props['type'];
 		$specialty_columns           = $this->props['specialty_columns'];
 		$saved_specialty_column_type = $this->props['saved_specialty_column_type'];

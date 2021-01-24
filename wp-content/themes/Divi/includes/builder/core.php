@@ -1232,11 +1232,13 @@ function et_pb_retrieve_templates( $layout_type = 'layout', $module_width = '', 
 		)
 	);
 
-	$query->the_post(); // Call the_post() to properly configure post data.
-
-	wp_reset_postdata();
-
 	if ( ! empty( $query->posts ) ) {
+		// Call the_post() to properly configure post data. Make sure to call the_post() and
+		// wp_reset_postdata() only if the posts result exist to avoid unexpected issues.
+		$query->the_post();
+
+		wp_reset_postdata();
+
 		foreach ( $query->posts as $single_post ) {
 
 			if ( 'module' === $layout_type ) {
@@ -1616,11 +1618,13 @@ function et_pb_get_global_module() {
 			)
 		);
 
-		$query->the_post(); // Call the_post() to properly configure post data.
-
-		wp_reset_postdata();
-
 		if ( ! empty( $query->post ) ) {
+			// Call the_post() to properly configure post data. Make sure to call the_post() and
+			// wp_reset_postdata() only if the posts result exist to avoid unexpected issues.
+			$query->the_post();
+
+			wp_reset_postdata();
+
 			if ( 'skip' === $global_autop ) {
 				$post_content = $query->post->post_content;
 			} else {

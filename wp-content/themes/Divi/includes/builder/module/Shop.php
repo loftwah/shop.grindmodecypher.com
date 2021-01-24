@@ -219,11 +219,11 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			),
 			'price'     => array(
 				'label'    => esc_html__( 'Price', 'et_builder' ),
-				'selector' => 'li.product .price',
+				'selector' => "{$this->main_css_element} .woocommerce ul.products li.product .price .amount",
 			),
 			'price_old' => array(
 				'label'    => esc_html__( 'Old Price', 'et_builder' ),
-				'selector' => 'li.product .price del span.amount',
+				'selector' => "{$this->main_css_element} .woocommerce ul.products li.product .price del span.amount",
 			),
 		);
 
@@ -611,7 +611,15 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			add_action( 'pre_get_posts', array( $this, 'apply_woo_widget_filters' ), 10 );
 		}
 
+		if ( $use_current_loop ) {
+			add_filter( 'woocommerce_shortcode_products_query', array( $this, 'filter_vendors_products_query' ) );
+		}
+
 		$shop = do_shortcode( $shortcode );
+
+		if ( $use_current_loop ) {
+			remove_filter( 'woocommerce_shortcode_products_query', array( $this, 'filter_vendors_products_query' ) );
+		}
 
 		if ( 'product_category' === $type || $use_current_loop ) {
 			remove_action( 'pre_get_posts', array( $this, 'apply_woo_widget_filters' ), 10 );
@@ -677,7 +685,16 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 		return $title_selector;
 	}
 
-	function render( $attrs, $content = null, $render_slug ) {
+	/**
+	 * Renders the module output.
+	 *
+	 * @param  array  $attrs       List of attributes.
+	 * @param  string $content     Content being processed.
+	 * @param  string $render_slug Slug of module that is used for rendering output.
+	 *
+	 * @return string
+	 */
+	public function render( $attrs, $content, $render_slug ) {
 		$sticky             = et_pb_sticky_options();
 		$type               = $this->props['type'];
 		$include_categories = $this->props['include_categories'];
@@ -812,6 +829,37 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 
 			// Add fake cache-busting argument as the filtering is actually done in self::apply_woo_widget_filters().
 			$query_args['nocache'] = microtime( true );
+		}
+
+		return $query_args;
+	}
+
+	/**
+	 * Filter the vendors products query arguments on vendor archive page.
+	 *
+	 * @param array $query_args WP_Query arguments.
+	 *
+	 * @return array
+	 */
+	public function filter_vendors_products_query( $query_args ) {
+		if ( ! class_exists( 'WC_Product_Vendors' ) ) {
+			return $query_args;
+		}
+
+		if ( defined( 'WC_PRODUCT_VENDORS_TAXONOMY' )
+			&& is_tax( WC_PRODUCT_VENDORS_TAXONOMY ) ) {
+			$term_id = get_queried_object_id(); // Vendor id.
+			$args    = array(
+				'taxonomy' => WC_PRODUCT_VENDORS_TAXONOMY,
+				'field'    => 'id',
+				'terms'    => $term_id,
+			);
+
+			if ( is_array( $query_args['tax_query'] ) ) {
+				$query_args['tax_query'][] = $args;
+			} else {
+				$query_args['tax_query'] = array( $args );
+			}
 		}
 
 		return $query_args;

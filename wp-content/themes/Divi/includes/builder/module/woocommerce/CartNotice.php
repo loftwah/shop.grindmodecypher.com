@@ -294,7 +294,7 @@ class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module {
 	 *
 	 * @return string
 	 */
-	public function render( $attrs, $content = null, $render_slug ) {
+	public function render( $attrs, $content, $render_slug ) {
 		/*
 		 * In front end, do not print cart notice module if there is no notices exist.
 		 *

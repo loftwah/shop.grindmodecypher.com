@@ -69,7 +69,7 @@ class ET_Builder_Module_Menu extends ET_Builder_Module {
 					'css'             => array(
 						'main'         => "{$this->main_css_element} ul li a",
 						'limited_main' => "{$this->main_css_element} ul li a, {$this->main_css_element} ul li",
-						'hover'        => "{$this->main_css_element} ul li:hover a",
+						'hover'        => "{$this->main_css_element} ul li:hover > a",
 					),
 					'line_height'     => array(
 						'default' => '1em',
@@ -798,15 +798,15 @@ class ET_Builder_Module_Menu extends ET_Builder_Module {
 			}
 
 			if ( $hover->is_enabled( $icon_show_prop, $this->props ) ) {
-				$hover = ( 'on' === $this->get_hover_value( $icon_show_prop ) ) ? 'flex' : 'none';
-
-				$el_style = array(
+				$hover_display = ( 'on' === $this->get_hover_value( $icon_show_prop ) ) ? 'flex' : 'none';
+				$el_style      = array(
 					'selector'    => str_replace( '%%order_class%%', '%%order_class%%:hover', $selector ),
 					'declaration' => sprintf(
 						'display: %1$s;',
-						esc_html( $hover )
+						esc_html( $hover_display )
 					),
 				);
+
 				ET_Builder_Element::set_style( $render_slug, $el_style );
 			}
 
@@ -997,7 +997,16 @@ class ET_Builder_Module_Menu extends ET_Builder_Module {
 		);
 	}
 
-	function render( $attrs, $content = null, $render_slug ) {
+	/**
+	 * Renders the module output.
+	 *
+	 * @param  array  $attrs       List of attributes.
+	 * @param  string $content     Content being processed.
+	 * @param  string $render_slug Slug of module that is used for rendering output.
+	 *
+	 * @return string
+	 */
+	public function render( $attrs, $content, $render_slug ) {
 		$menu_slug                       = self::$menu_slug;
 		$background_color                = $this->props['background_color'];
 		$menu_id                         = $this->props['menu_id'];

@@ -229,7 +229,16 @@ class ET_Builder_Module_Video_Slider extends ET_Builder_Module {
 		$et_pb_video_slider_sticky = et_pb_sticky_options()->is_sticky_module( $this->props );
 	}
 
-	function render( $attrs, $content = null, $render_slug ) {
+	/**
+	 * Renders the module output.
+	 *
+	 * @param  array  $attrs       List of attributes.
+	 * @param  string $content     Content being processed.
+	 * @param  string $render_slug Slug of module that is used for rendering output.
+	 *
+	 * @return string
+	 */
+	public function render( $attrs, $content, $render_slug ) {
 		$multi_view         = et_pb_multi_view_options( $this );
 		$show_arrows        = $this->props['show_arrows'];
 		$show_thumbnails    = $this->props['show_thumbnails'];

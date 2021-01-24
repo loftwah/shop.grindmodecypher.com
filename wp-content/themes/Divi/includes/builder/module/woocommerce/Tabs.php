@@ -388,6 +388,11 @@ class ET_Builder_Module_Woocommerce_Tabs extends ET_Builder_Module_Tabs {
 					}
 				}
 			} else {
+				// Skip if the 'callback' key does not exist.
+				if ( ! isset( $tab['callback'] ) ) {
+					continue;
+				}
+
 				// Get tab value based on defined product tab's callback attribute.
 				ob_start();
 				// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found

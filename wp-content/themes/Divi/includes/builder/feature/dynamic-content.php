@@ -1,4 +1,9 @@
 <?php
+/**
+ * Handle dynamic content.
+ *
+ * @package Builder
+ */
 
 /**
  * Gets the dynamic content fields related to Product post type.
@@ -53,7 +58,7 @@ function et_builder_get_product_dynamic_content_fields() {
  *
  * @since 3.17.2
  *
- * @param integer $post_id
+ * @param integer $post_id Post Id.
  *
  * @return array[]
  */
@@ -110,13 +115,13 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 	);
 
 	$fields['post_title'] = array(
-		// Translators: %1$s: Post type name
+		// Translators: %1$s: Post type name.
 		'label' => esc_html( sprintf( __( '%1$s/Archive Title', 'et_builder' ), $post_type_label ) ),
 		'type'  => 'text',
 	);
 
 	$fields['post_excerpt'] = array(
-		// Translators: %1$s: Post type name
+		// Translators: %1$s: Post type name.
 		'label'  => esc_html( sprintf( __( '%1$s Excerpt', 'et_builder' ), $post_type_label ) ),
 		'type'   => 'text',
 		'fields' => array(
@@ -134,7 +139,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 	);
 
 	$fields['post_date'] = array(
-		// Translators: %1$s: Post type name
+		// Translators: %1$s: Post type name.
 		'label'  => esc_html( sprintf( __( '%1$s Publish Date', 'et_builder' ), $post_type_label ) ),
 		'type'   => 'text',
 		'fields' => array(
@@ -156,7 +161,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 	);
 
 	$fields['post_comment_count'] = array(
-		// Translators: %1$s: Post type name
+		// Translators: %1$s: Post type name.
 		'label'  => esc_html( sprintf( __( '%1$s Comment Count', 'et_builder' ), $post_type_label ) ),
 		'type'   => 'text',
 		'fields' => array(
@@ -174,7 +179,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 
 	if ( ! empty( $post_taxonomy_types ) ) {
 		$fields['post_categories'] = array(
-			// Translators: %1$s: Post type name
+			// Translators: %1$s: Post type name.
 			'label'  => esc_html( sprintf( __( '%1$s Categories', 'et_builder' ), $post_type_label ) ),
 			'type'   => 'text',
 			'fields' => array(
@@ -205,7 +210,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 	// Fill in tag taxonomies.
 	if ( isset( $post_taxonomy_types[ "{$tag_taxonomy_post_type}_tag" ] ) ) {
 		$fields['post_tags'] = array(
-			// Translators: %1$s: Post type name
+			// Translators: %1$s: Post type name.
 			'label'  => esc_html( sprintf( __( '%1$s Tags', 'et_builder' ), $post_type_label ) ),
 			'type'   => 'text',
 			'fields' => array(
@@ -234,7 +239,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 	}
 
 	$fields['post_link'] = array(
-		// Translators: %1$s: Post type name
+		// Translators: %1$s: Post type name.
 		'label'  => esc_html( sprintf( __( '%1$s Link', 'et_builder' ), $post_type_label ) ),
 		'type'   => 'text',
 		'fields' => array(
@@ -242,7 +247,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 				'label'   => esc_html__( 'Link Text', 'et_builder' ),
 				'type'    => 'select',
 				'options' => array(
-					// Translators: %1$s: Post type name
+					// Translators: %1$s: Post type name.
 					'post_title' => esc_html( sprintf( __( '%1$s Title', 'et_builder' ), $post_type_label ) ),
 					'custom'     => esc_html__( 'Custom', 'et_builder' ),
 				),
@@ -260,7 +265,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 	);
 
 	$fields['post_author'] = array(
-		// Translators: %1$s: Post type name
+		// Translators: %1$s: Post type name.
 		'label'  => esc_html( sprintf( __( '%1$s Author', 'et_builder' ), $post_type_label ) ),
 		'type'   => 'text',
 		'fields' => array(
@@ -346,7 +351,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 	);
 
 	$fields['post_link_url'] = array(
-		// Translators: %1$s: Post type name
+		// Translators: %1$s: Post type name.
 		'label' => esc_html( sprintf( __( 'Current %1$s Link', 'et_builder' ), $post_type_label ) ),
 		'type'  => 'url',
 	);
@@ -368,7 +373,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 		$key                    = 'post_link_url_' . $public_post_type->name;
 
 		$fields[ $key ] = array(
-			// Translators: %1$s: Post type name
+			// Translators: %1$s: Post type name.
 			'label'  => esc_html( sprintf( __( '%1$s Link', 'et_builder' ), $public_post_type_label ) ),
 			'type'   => 'url',
 			'fields' => array(
@@ -388,7 +393,7 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 	);
 
 	$fields['post_author_profile_picture'] = array(
-		// Translators: %1$s: Post type name
+		// Translators: %1$s: Post type name.
 		'label' => esc_html__( 'Author Profile Picture', 'et_builder' ),
 		'type'  => 'image',
 	);
@@ -485,7 +490,7 @@ add_action( 'registered_post_type', 'et_builder_clear_get_built_in_dynamic_conte
  *
  * @since 3.17.2
  *
- * @param string $post_type
+ * @param string $post_type Post type.
  *
  * @return array
  */
@@ -511,7 +516,7 @@ function et_builder_get_taxonomy_types( $post_type ) {
  *
  * @since 4.4.4
  *
- * @param string $key
+ * @param string $key Post meta key.
  *
  * @return string
  */
@@ -527,7 +532,7 @@ function et_builder_get_dynamic_content_custom_field_label( $key ) {
  *
  * @since 4.4.4
  *
- * @param string $content
+ * @param string $content Value content.
  *
  * @return array
  */
@@ -544,7 +549,7 @@ function et_builder_get_dynamic_contents( $content ) {
 /**
  * Get all meta keys used as dynamic content in the content of a post.
  *
- * @param integer $post_id
+ * @param integer $post_id Post Id.
  *
  * @return array
  */
@@ -583,8 +588,6 @@ function et_builder_get_used_dynamic_content_meta_keys( $post_id ) {
  *
  * @since 4.4.4
  *
- * @param integer $post_id
- *
  * @return string[]
  */
 function et_builder_get_most_used_post_meta_keys() {
@@ -595,19 +598,17 @@ function et_builder_get_most_used_post_meta_keys() {
 		return $most_used_meta_keys;
 	}
 
-	$public_post_types      = array_keys( et_builder_get_public_post_types() );
-	$post_type_placeholders = implode( ',', array_fill( 0, count( $public_post_types ), '%s' ) );
+	$public_post_types = array_keys( et_builder_get_public_post_types() );
+	$post_types        = "'" . implode( "','", esc_sql( $public_post_types ) ) . "'";
 
-	$sql = $wpdb->prepare(
-		"SELECT DISTINCT pm.meta_key FROM {$wpdb->postmeta} pm
-		INNER JOIN {$wpdb->posts} p ON ( p.ID = pm.post_id AND p.post_type IN ({$post_type_placeholders}) )
+	$sql = "SELECT DISTINCT pm.meta_key FROM {$wpdb->postmeta} pm
+		INNER JOIN {$wpdb->posts} p ON ( p.ID = pm.post_id AND p.post_type IN ({$post_types}) )
 		WHERE pm.meta_key NOT LIKE '\_%'
 		GROUP BY pm.meta_key
 		ORDER BY COUNT(pm.meta_key) DESC
-		LIMIT 50",
-		$public_post_types
-	);
+		LIMIT 50";
 
+	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql query does not use users/visitor input
 	$most_used_meta_keys = $wpdb->get_col( $sql );
 
 	set_transient( 'et_builder_most_used_meta_keys', $most_used_meta_keys, 5 * MINUTE_IN_SECONDS );
@@ -620,7 +621,7 @@ function et_builder_get_most_used_post_meta_keys() {
  *
  * @since 3.17.2
  *
- * @param integer $post_id
+ * @param integer $post_id Post Id.
  *
  * @return array[]
  */
@@ -654,7 +655,7 @@ function et_builder_get_custom_dynamic_content_fields( $post_id ) {
 	}
 
 	foreach ( $raw_custom_fields as $key => $values ) {
-		if ( substr( $key, 0, 1 ) === '_' && ! in_array( $key, $display_hidden_meta_keys ) ) {
+		if ( substr( $key, 0, 1 ) === '_' && ! in_array( $key, $display_hidden_meta_keys, true ) ) {
 			// Ignore hidden meta keys.
 			continue;
 		}
@@ -735,8 +736,8 @@ function et_builder_get_custom_dynamic_content_fields( $post_id ) {
  *
  * @since 3.17.2
  *
- * @param integer $post_id
- * @param string  $context
+ * @param integer $post_id Post Id.
+ * @param string  $context Context e.g `edit`, `display`.
  *
  * @return array[]
  */
@@ -768,8 +769,8 @@ function et_builder_get_dynamic_content_fields( $post_id, $context ) {
  *
  * @since 4.0
  *
- * @param array $a
- * @param array $b
+ * @param array $a First field.
+ * @param array $b Second field.
  *
  * @return integer
  */
@@ -811,9 +812,9 @@ function et_builder_sort_dynamic_content_fields( $a, $b ) {
  *
  * @since 3.17.2
  *
- * @param integer $post_id
- * @param string  $field
- * @param string  $setting
+ * @param integer $post_id Post Id.
+ * @param string  $field Custom field name.
+ * @param string  $setting Array of dynamic content settings.
  *
  * @return string
  */
@@ -827,15 +828,15 @@ function et_builder_get_dynamic_attribute_field_default( $post_id, $field, $sett
 /**
  * Resolve dynamic content to a simple value.
  *
- * @since 3.17.2
- *
- * @param string  $name
- * @param array   $settings
- * @param integer $post_id
- * @param string  $context
- * @param array   $overrides
+ * @param string  $name Custom field name.
+ * @param array   $settings Array of dynamic content settings.
+ * @param integer $post_id Post Id.
+ * @param string  $context Context e.g `edit`, `display`.
+ * @param array   $overrides An associative array of field_name => value to override field value.
+ * @param bool    $is_content Whether dynamic content used in module's main_content field {@see et_builder_ajax_resolve_post_content()}.
  *
  * @return string
+ * @since 3.17.2
  */
 function et_builder_resolve_dynamic_content( $name, $settings, $post_id, $context, $overrides = array(), $is_content = false ) {
 	/**
@@ -879,10 +880,10 @@ function et_builder_resolve_dynamic_content( $name, $settings, $post_id, $contex
  *
  * @since 3.17.2
  *
- * @param integer $post_id
- * @param string  $name
- * @param string  $value
- * @param array   $settings
+ * @param integer $post_id Post Id.
+ * @param string  $name Custom field name.
+ * @param string  $value Value content.
+ * @param array   $settings Array of dynamic content settings.
  *
  * @return string
  */
@@ -923,15 +924,15 @@ function et_builder_wrap_dynamic_content( $post_id, $name, $value, $settings ) {
 /**
  * Resolve built-in dynamic content fields.
  *
- * @since 3.17.2
- *
- * @param string  $content
- * @param string  $name
- * @param array   $settings
- * @param string  $context
- * @param integer $post_id
+ * @param string  $content Value content.
+ * @param string  $name Custom field name.
+ * @param array   $settings Array of dynamic content settings.
+ * @param integer $post_id Post Id.
+ * @param string  $context Context e.g `edit`, `display`.
+ * @param array   $overrides An associative array of field_name => value to override field value.
  *
  * @return string
+ * @since 3.17.2
  */
 function et_builder_filter_resolve_default_dynamic_content( $content, $name, $settings, $post_id, $context, $overrides ) {
 	global $shortname, $wp_query;
@@ -1034,8 +1035,8 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 			$post_taxonomies = et_builder_get_taxonomy_types( get_post_type( $post_id ) );
 			$taxonomy        = $_->array_get( $settings, 'category_type', '' );
 
-			if ( in_array( $taxonomy, array( 'et_header_layout_category', 'et_body_layout_category', 'et_footer_layout_category' ) ) ) {
-				// TB layouts were storing an invalid taxonomy in <= 4.0.3 so we have to correct it:
+			if ( in_array( $taxonomy, array( 'et_header_layout_category', 'et_body_layout_category', 'et_footer_layout_category' ), true ) ) {
+				// TB layouts were storing an invalid taxonomy in <= 4.0.3 so we have to correct it:.
 				$taxonomy = $def( $post_id, $name, 'category_type' );
 			}
 
@@ -1569,15 +1570,15 @@ add_filter( 'et_builder_resolve_dynamic_content', 'et_builder_filter_resolve_def
 /**
  * Resolve custom field dynamic content fields.
  *
- * @since 3.17.2
- *
- * @param string  $content
- * @param string  $name
- * @param array   $settings
- * @param string  $context
- * @param integer $post_id
+ * @param string  $content Value content.
+ * @param string  $name Custom field name.
+ * @param array   $settings Array of dynamic content settings.
+ * @param integer $post_id Post Id.
+ * @param string  $context Context e.g `edit`, `display`.
+ * @param array   $overrides  An associative array of field_name => value to override field value.
  *
  * @return string
+ * @since 3.17.2
  */
 function et_builder_filter_resolve_custom_field_dynamic_content( $content, $name, $settings, $post_id, $context, $overrides ) {
 	$post   = get_post( $post_id );
@@ -1631,11 +1632,11 @@ add_filter( 'et_builder_resolve_dynamic_content', 'et_builder_filter_resolve_cus
  *
  * @since 3.17.2
  *
- * @param string  $field
- * @param array   $settings
- * @param integer $post_id
- * @param array   $overrides
- * @param boolean $is_content
+ * @param string  $field Custom field name.
+ * @param array   $settings Array of dynamic content settings.
+ * @param integer $post_id Post Id.
+ * @param array   $overrides An associative array of field_name => value to override field value.
+ * @param boolean $is_content Whether dynamic content used in module's main_content field {@see et_builder_ajax_resolve_post_content()}.
  *
  * @return string
  */
@@ -1649,7 +1650,7 @@ add_action( 'et_builder_resolve_dynamic_post_content_field', 'et_builder_filter_
  *
  * @since 3.20.2
  *
- * @param string $value
+ * @param string $value Content.
  *
  * @return string
  */
@@ -1664,11 +1665,12 @@ function et_builder_clean_dynamic_content( $value ) {
  *
  * @since 3.20.2
  *
- * @param string $json
+ * @param string $json JSON-encoded string.
  *
  * @return ET_Builder_Value|null
  */
 function et_builder_parse_dynamic_content_json( $json ) {
+	// phpcs:disable WordPress.Security.NonceVerification -- This function does not change any stats, hence CSRF ok.
 	$post_types         = array_keys( et_builder_get_public_post_types() );
 	$dynamic_content    = json_decode( $json, true );
 	$is_dynamic_content = is_array( $dynamic_content ) && isset( $dynamic_content['dynamic'] ) && (bool) $dynamic_content['dynamic'];
@@ -1676,21 +1678,21 @@ function et_builder_parse_dynamic_content_json( $json ) {
 	$has_settings       = is_array( $dynamic_content ) && isset( $dynamic_content['settings'] ) && is_array( $dynamic_content['settings'] );
 	$has_category_type  = is_array( $dynamic_content ) && isset( $dynamic_content['settings'] ) && isset( $dynamic_content['settings']['category_type'] );
 
-	// When adding a section from library get_post_type() will not work, and post type has to be fetched from $_POST
+	// When adding a section from library get_post_type() will not work, and post type has to be fetched from $_POST.
 	$is_added_from_library = isset( $_POST['et_post_type'] );
 
 	if ( ! $is_dynamic_content || ! $has_content || ! $has_settings ) {
 		return null;
 	}
 
-	// Replaces layout_category with proper category_type depending on the post type on which the layout is added
+	// Replaces layout_category with proper category_type depending on the post type on which the layout is added.
 	if ( $has_category_type && 'post_categories' === $dynamic_content['content'] && ! 0 === substr_compare( $dynamic_content['settings']['category_type'], '_tag', - 4 ) ) {
 		if ( $is_added_from_library ) {
 			$correct_post_type = sanitize_text_field( $_POST['et_post_type'] );
-			$correct_post_type = in_array( $correct_post_type, $post_types ) ? $correct_post_type : 'post';
+			$correct_post_type = in_array( $correct_post_type, $post_types, true ) ? $correct_post_type : 'post';
 		} else {
 			$correct_post_type = get_post_type();
-			$correct_post_type = in_array( $correct_post_type, $post_types ) ? $correct_post_type : 'post';
+			$correct_post_type = in_array( $correct_post_type, $post_types, true ) ? $correct_post_type : 'post';
 		}
 
 		if ( 'post' === $correct_post_type ) {
@@ -1705,6 +1707,7 @@ function et_builder_parse_dynamic_content_json( $json ) {
 		sanitize_text_field( $dynamic_content['content'] ),
 		array_map( 'wp_kses_post', $dynamic_content['settings'] )
 	);
+	// phpcs:enable
 }
 
 /**
@@ -1712,7 +1715,7 @@ function et_builder_parse_dynamic_content_json( $json ) {
  *
  * @since 3.17.2
  *
- * @param string $content
+ * @param string $content Value content.
  *
  * @return ET_Builder_Value
  */
@@ -1722,7 +1725,7 @@ function et_builder_parse_dynamic_content( $content ) {
 	$dynamic_content = et_builder_parse_dynamic_content_json( $json );
 
 	if ( null === $dynamic_content ) {
-		$json            = base64_decode( $json );
+		$json            = base64_decode( $json ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions -- `base64_decode` is used to unserialize dynamic content.
 		$dynamic_content = et_builder_parse_dynamic_content_json( $json );
 	}
 
@@ -1738,9 +1741,9 @@ function et_builder_parse_dynamic_content( $content ) {
  *
  * @since 3.20.2
  *
- * @param bool    $dynamic
- * @param string  $content
- * @param mixed[] $settings
+ * @param bool    $dynamic Whether the value is static or dynamic.
+ * @param string  $content Value content. Represents the dynamic content type when dynamic.
+ * @param mixed[] $settings Array of dynamic content settings.
  *
  * @return string
  */
@@ -1758,10 +1761,10 @@ function et_builder_serialize_dynamic_content( $dynamic, $content, $settings ) {
 		$options
 	);
 
-	// Use fallback if needed
+	// Use fallback if needed.
 	$result = 0 === $options ? str_replace( '\/', '/', $result ) : $result;
 
-	return '@ET-DC@' . base64_encode( $result ) . '@';
+	return '@ET-DC@' . base64_encode( $result ) . '@'; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions -- `base64_encode` is used to serialize dynamic content.
 }
 
 /**
@@ -1769,7 +1772,7 @@ function et_builder_serialize_dynamic_content( $dynamic, $content, $settings ) {
  *
  * @since 4.0.9
  *
- * @param string $content
+ * @param string $content Post Content.
  *
  * @return string
  */
@@ -1782,8 +1785,8 @@ function et_builder_strip_dynamic_content( $content ) {
  *
  * @since 3.20.2
  *
- * @param string  $post_excerpt
- * @param integer $post_id
+ * @param string  $post_excerpt Post Excerpt.
+ * @param integer $post_id Post Id.
  *
  * @return string
  */
@@ -1807,7 +1810,7 @@ add_filter( 'et_truncate_post', 'et_builder_reencode_legacy_dynamic_content_in_e
  *
  * @since 3.20.2
  *
- * @param array $matches
+ * @param array $matches PCRE match.
  *
  * @return string
  */
@@ -1821,8 +1824,8 @@ function et_builder_reencode_legacy_dynamic_content_in_excerpt_callback( $matche
  *
  * @since 3.17.2
  *
- * @param string  $post_excerpt
- * @param integer $post_id
+ * @param string  $post_excerpt Post excerpt.
+ * @param integer $post_id Post Id.
  *
  * @return string
  */
@@ -1844,7 +1847,7 @@ add_filter( 'et_truncate_post', 'et_builder_resolve_dynamic_content_in_excerpt',
  *
  * @since 3.17.2
  *
- * @param array $matches
+ * @param array $matches PCRE match.
  *
  * @return string
  */

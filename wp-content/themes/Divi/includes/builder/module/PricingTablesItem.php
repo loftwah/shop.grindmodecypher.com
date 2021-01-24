@@ -435,7 +435,7 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 	 *
 	 * @return string The module's HTML output.
 	 */
-	public function render( $attrs, $content = null, $render_slug ) {
+	public function render( $attrs, $content, $render_slug ) {
 		global $et_pb_pricing_tables_num,
 			$et_pb_pricing_tables_icon,
 			$et_pb_pricing_tables_icon_tablet,

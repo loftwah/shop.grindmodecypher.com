@@ -270,7 +270,16 @@ class ET_Builder_Module_Accordion extends ET_Builder_Module {
 		$et_pb_accordion_header_level = $this->props['toggle_level'];
 	}
 
-	function render( $attrs, $content = null, $render_slug ) {
+	/**
+	 * Renders the module output.
+	 *
+	 * @param  array  $attrs       List of attributes.
+	 * @param  string $content     Content being processed.
+	 * @param  string $render_slug Slug of module that is used for rendering output.
+	 *
+	 * @return string
+	 */
+	public function render( $attrs, $content, $render_slug ) {
 		global $et_pb_accordion_item_number;
 
 		$video_background          = $this->video_background();

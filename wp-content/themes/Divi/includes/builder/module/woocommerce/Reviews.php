@@ -445,7 +445,7 @@ class ET_Builder_Module_Woocommerce_Reviews extends ET_Builder_Module_Comments {
 	/**
 	 * {@inheritdoc}
 	 */
-	function render( $attrs, $content = null, $render_slug ) {
+	public function render( $attrs, $content, $render_slug ) {
 		// Image - CSS Filters.
 		if ( et_()->array_get( $this->advanced_fields, 'image.css', false ) ) {
 			$classes = $this->generate_css_filters( $this->slug, 'child_', et_()->array_get( $this->advanced_fields['image']['css'], 'main', '%%order_class%%' ) );

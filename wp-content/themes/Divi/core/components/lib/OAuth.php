@@ -303,7 +303,7 @@ class ET_Core_LIB_OAuthRequest extends ET_Core_LIB_OAuthBase {
 	 *
 	 * @return ET_Core_LIB_OAuthRequest
 	 */
-	public static function from_consumer_and_token( $consumer, $token = null, $http_method, $http_url, $parameters = array() ) {
+	public static function from_consumer_and_token( $consumer, $token, $http_method, $http_url, $parameters = array() ) {
 		$defaults = array(
 			"oauth_version"      => ET_Core_LIB_OAuthRequest::$version,
 			"oauth_nonce"        => ET_Core_LIB_OAuthRequest::generate_nonce(),

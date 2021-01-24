@@ -69,6 +69,8 @@ class ET_Builder_Plugin_Compat_Advanced_Custom_Fields extends ET_Builder_Plugin_
 	 * @return string
 	 */
 	public function maybe_filter_dynamic_content_meta_value( $meta_value, $meta_key, $post_id ) {
+		global $wp_query;
+
 		$post_type  = get_post_type( $post_id );
 		$identifier = $post_id;
 
@@ -76,7 +78,9 @@ class ET_Builder_Plugin_Compat_Advanced_Custom_Fields extends ET_Builder_Plugin_
 			return $this->format_placeholder_value( $meta_key, $post_id );
 		}
 
-		if ( is_category() || is_tag() || is_tax() ) {
+		$is_blog_query = isset( $wp_query->et_pb_blog_query ) && $wp_query->et_pb_blog_query;
+
+		if ( ! $is_blog_query && ( is_category() || is_tag() || is_tax() ) ) {
 			$term       = get_queried_object();
 			$identifier = "{$term->taxonomy}_{$term->term_id}";
 		} elseif ( is_author() ) {
