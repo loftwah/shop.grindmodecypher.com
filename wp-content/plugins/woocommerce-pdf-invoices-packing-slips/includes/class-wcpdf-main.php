@@ -56,16 +56,14 @@ class Main {
 		// apply header logo height
 		add_action( 'wpo_wcpdf_custom_styles', array( $this, 'set_header_logo_height' ), 9, 2 );
 
-		// show notices of missing required directories
-		if( get_option( 'wpo_wcpdf_no_dir_error' ) ) {
-			// if all folders exist and are writable delete the option
-			if( $this->tmp_folders_exist_and_writable() ) {
-				delete_option( 'wpo_wcpdf_no_dir_error' );
-			// if not, show notice
-			} else {
-				add_action( 'admin_notices', array( $this, 'no_dir_notice' ), 1 );
-			}
-		}
+		// show notice of missing required directories
+		add_action( 'admin_notices', array( $this, 'no_dir_notice' ), 1 );
+
+		// add custom webhook topics for documents
+		add_filter( 'woocommerce_webhook_topic_hooks', array( $this, 'wc_webhook_topic_hooks' ), 10, 2 );
+		add_filter( 'woocommerce_valid_webhook_events', array( $this, 'wc_webhook_topic_events' ) );
+		add_filter( 'woocommerce_webhook_topics', array( $this, 'wc_webhook_topics' ) );
+		add_action( 'wpo_wcpdf_save_document', array( $this, 'wc_webhook_trigger' ), 10, 2 );
 	}
 
 	/**
@@ -286,12 +284,14 @@ class Main {
 		$document_type = sanitize_text_field( $_GET['document_type'] );
 
 		$order_ids = (array) array_map( 'absint', explode( 'x', $_GET['order_ids'] ) );
-		// Process oldest first: reverse $order_ids array
-		$order_ids = array_reverse( $order_ids );
+
+		// Process oldest first: reverse $order_ids array if required
+		if ( count( $order_ids ) > 1 && end( $order_ids ) < reset( $order_ids ) ) {
+			$order_ids = array_reverse( $order_ids );
+		}
 
 		// set default is allowed
 		$allowed = true;
-
 
 		if ( $guest_access && isset( $_GET['order_key'] ) ) {
 			// Guest access with order key
@@ -560,23 +560,30 @@ class Main {
 	}
 
 	public function no_dir_notice() {
-		$path = get_option( 'wpo_wcpdf_no_dir_error' );
-		if ( $path ) {
-			ob_start();
-			?>
-			<div class="error">
-				<p><?php printf( __( "The %s directory %s couldn't be created or is not writable!", 'woocommerce-pdf-invoices-packing-slips' ), '<strong>WooCommerce PDF Invoices & Packing Slips</strong>' ,'<code>' . $path . '</code>' ); ?></p>
-				<p><?php _e( 'Please check your directories write permissions or contact your hosting service provider.', 'woocommerce-pdf-invoices-packing-slips' ); ?></p>
-				<p><a href="<?php echo esc_url( add_query_arg( 'wpo_wcpdf_hide_no_dir_notice', 'true' ) ); ?>"><?php _e( 'Hide this message', 'woocommerce-pdf-invoices-packing-slips' ); ?></a></p>
-			</div>
-			<?php
-			echo ob_get_clean();
-
-			// save option to hide notice
-			if ( isset( $_GET['wpo_wcpdf_hide_no_dir_notice'] ) ) {
-				delete_option( 'wpo_wcpdf_no_dir_error', true );
-				wp_redirect( 'admin.php?page=wpo_wcpdf_options_page' );
-				exit;
+		if( is_admin() && ( $path = get_option( 'wpo_wcpdf_no_dir_error' ) ) ) {
+			// if all folders exist and are writable delete the option
+			if( $this->tmp_folders_exist_and_writable() ) {
+				delete_option( 'wpo_wcpdf_no_dir_error' );
+			// if not, show notice
+			} else {
+				if ( $path ) {
+					ob_start();
+					?>
+					<div class="error">
+						<p><?php printf( __( "The %s directory %s couldn't be created or is not writable!", 'woocommerce-pdf-invoices-packing-slips' ), '<strong>WooCommerce PDF Invoices & Packing Slips</strong>' ,'<code>' . $path . '</code>' ); ?></p>
+						<p><?php _e( 'Please check your directories write permissions or contact your hosting service provider.', 'woocommerce-pdf-invoices-packing-slips' ); ?></p>
+						<p><a href="<?php echo esc_url( add_query_arg( 'wpo_wcpdf_hide_no_dir_notice', 'true' ) ); ?>"><?php _e( 'Hide this message', 'woocommerce-pdf-invoices-packing-slips' ); ?></a></p>
+					</div>
+					<?php
+					echo ob_get_clean();
+		
+					// save option to hide notice
+					if ( isset( $_GET['wpo_wcpdf_hide_no_dir_notice'] ) ) {
+						delete_option( 'wpo_wcpdf_no_dir_error', true );
+						wp_redirect( 'admin.php?page=wpo_wcpdf_options_page' );
+						exit;
+					}
+				}
 			}
 		}
 	}
@@ -912,6 +919,35 @@ class Main {
 		ini_set( 'display_errors', 1 );
 	}
 
+	public function wc_webhook_topic_hooks( $topic_hooks, $wc_webhook ) {
+		$documents = WPO_WCPDF()->documents->get_documents();
+		foreach ($documents as $document) {
+			$topic_hooks["order.{$document->type}-saved"] = array(
+				"wpo_wcpdf_webhook_order_{$document->slug}_saved",
+			);
+		}
+		return $topic_hooks;
+	}
+
+	public function wc_webhook_topic_events( $topic_events ) {
+		$documents = WPO_WCPDF()->documents->get_documents();
+		foreach ($documents as $document) {
+			$topic_events[] = "{$document->type}-saved";
+		}
+		return $topic_events;
+	}
+
+	public function wc_webhook_topics( $topics ) {
+		$documents = WPO_WCPDF()->documents->get_documents();
+		foreach ($documents as $document) {
+			$topics["order.{$document->type}-saved"] = sprintf( __( 'Order %s Saved', 'woocommerce-pdf-invoices-packing-slips' ), $document->get_title() );
+		}
+		return $topics;
+	}
+
+	public function wc_webhook_trigger( $document, $order ) {
+		do_action( "wpo_wcpdf_webhook_order_{$document->slug}_saved", $order->get_id() );
+	}
 }
 
 endif; // class_exists

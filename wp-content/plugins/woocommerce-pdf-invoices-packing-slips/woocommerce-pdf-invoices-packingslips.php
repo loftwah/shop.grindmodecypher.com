@@ -3,14 +3,14 @@
  * Plugin Name: WooCommerce PDF Invoices & Packing Slips
  * Plugin URI: http://www.wpovernight.com
  * Description: Create, print & email PDF invoices & packing slips for WooCommerce orders.
- * Version: 2.7.3
+ * Version: 2.7.4
  * Author: Ewout Fernhout
  * Author URI: http://www.wpovernight.com
  * License: GPLv2 or later
  * License URI: http://www.opensource.org/licenses/gpl-license.php
  * Text Domain: woocommerce-pdf-invoices-packing-slips
  * WC requires at least: 2.2.0
- * WC tested up to: 4.8.0
+ * WC tested up to: 4.9.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +21,7 @@ if ( !class_exists( 'WPO_WCPDF' ) ) :
 
 class WPO_WCPDF {
 
-	public $version = '2.7.3';
+	public $version = '2.7.4';
 	public $plugin_basename;
 	public $legacy_mode;
 	public $legacy_textdomain;
@@ -53,6 +53,7 @@ class WPO_WCPDF {
 		add_action( 'plugins_loaded', array( $this, 'load_classes' ), 9 );
 		add_action( 'in_plugin_update_message-'.$this->plugin_basename, array( $this, 'in_plugin_update_message' ) );
 		add_action( 'admin_notices', array( $this, 'nginx_detected' ) );
+		add_action( 'admin_notices', array( $this, 'mailpoet_mta_detected' ) );
 
 		// legacy textdomain fallback
 		if ( $this->legacy_textdomain_enabled() === true ) {
@@ -379,6 +380,39 @@ class WPO_WCPDF {
 		// save option to hide nginx notice
 		if ( isset( $_GET['wpo_wcpdf_hide_nginx_notice'] ) ) {
 			update_option( 'wpo_wcpdf_hide_nginx_notice', true );
+			wp_redirect( 'admin.php?page=wpo_wcpdf_options_page' );
+			exit;
+		}
+	}
+
+	/**
+	 * Detect MailPoet.
+	 * @return void
+	 */
+	public function mailpoet_mta_detected() {
+		if( is_callable( array( '\\MailPoet\\Settings\\SettingsController', 'getInstance' ) ) ) {
+			$settings = \MailPoet\Settings\SettingsController::getInstance();
+			if( empty($settings) ) return;
+			$mta = $settings->get('mta');
+
+			if( ! empty($mta) && ! empty($mta['method']) && $mta['method'] == 'MailPoet' && ! get_option('wpo_wcpdf_hide_mailpoet_notice') ) {
+				ob_start();
+				?>
+				<div class="error">
+					<img src="<?php echo $this->plugin_url() . "/assets/images/mailpoet.svg"; ?>" style="margin-top:10px;">
+					<p><?php printf( __( 'When sending emails with MailPoet 3 and the active sending method is MailPoet Sending Service, MailPoet does not include the %s attachments in the emails.', 'woocommerce-pdf-invoices-packing-slips' ), '<strong>WooCommerce PDF Invoices & Packing Slips</strong>' ); ?></p>
+					<p><?php printf( __( 'To fix this you should select other method like %s or %s.', 'woocommerce-pdf-invoices-packing-slips' ), '<strong>'.__('Your web host / web server', 'woocommerce-pdf-invoices-packing-slips').'</strong>', '<strong>SMTP</strong>' ); ?></p>
+					<p><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=mailpoet-settings#/mta' ) ); ?>"><?php _e( 'Change MailPoet sending method', 'woocommerce-pdf-invoices-packing-slips' ); ?></a></p>
+					<p><a href="<?php echo esc_url( add_query_arg( 'wpo_wcpdf_hide_mailpoet_notice', 'true' ) ); ?>"><?php _e( 'Hide this message', 'woocommerce-pdf-invoices-packing-slips' ); ?></a></p>
+				</div>
+				<?php
+				echo ob_get_clean();
+			}
+		}
+
+		// save option to hide mailpoet notice
+		if ( isset( $_GET['wpo_wcpdf_hide_mailpoet_notice'] ) ) {
+			update_option( 'wpo_wcpdf_hide_mailpoet_notice', true );
 			wp_redirect( 'admin.php?page=wpo_wcpdf_options_page' );
 			exit;
 		}
