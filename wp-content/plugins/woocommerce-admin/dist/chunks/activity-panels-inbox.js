@@ -77,7 +77,7 @@ var prop_types_default = /*#__PURE__*/__webpack_require__.n(prop_types);
 var external_this_wc_components_ = __webpack_require__(74);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // EXTERNAL MODULE: ./client/header/activity-panel/activity-card/style.scss
 var style = __webpack_require__(593);
@@ -472,7 +472,7 @@ var defineProperty_default = /*#__PURE__*/__webpack_require__.n(defineProperty);
 var dropdown = __webpack_require__(339);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/modal/index.js + 3 modules
 var modal = __webpack_require__(546);

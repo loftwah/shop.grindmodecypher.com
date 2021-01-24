@@ -94,7 +94,7 @@ this["wc"] = this["wc"] || {}; this["wc"]["date"] =
 
 
 var utils = __webpack_require__(87);
-var formats = __webpack_require__(96);
+var formats = __webpack_require__(99);
 var has = Object.prototype.hasOwnProperty;
 
 var arrayPrefixGenerators = {
@@ -1359,7 +1359,7 @@ function validateDateInputForRange(type, value, before, after, format) {
 
 var stringify = __webpack_require__(136);
 var parse = __webpack_require__(137);
-var formats = __webpack_require__(96);
+var formats = __webpack_require__(99);
 
 module.exports = {
     formats: formats,
@@ -1626,7 +1626,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 96:
+/***/ 99:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

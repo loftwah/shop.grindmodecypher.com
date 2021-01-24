@@ -110,7 +110,7 @@ var extends_default = /*#__PURE__*/__webpack_require__.n(helpers_extends);
 var external_this_wp_element_ = __webpack_require__(0);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
 var classnames = __webpack_require__(4);
@@ -957,7 +957,7 @@ var placeholder_RecommendedExtensionsPlaceholder = function RecommendedExtension
 
 /* harmony default export */ var placeholder = (placeholder_RecommendedExtensionsPlaceholder);
 // EXTERNAL MODULE: ./client/marketing/data/constants.js
-var constants = __webpack_require__(94);
+var constants = __webpack_require__(97);
 
 // EXTERNAL MODULE: ./client/marketing/components/card/index.js
 var card = __webpack_require__(146);
@@ -1114,7 +1114,7 @@ var style = __webpack_require__(247);
 var components = __webpack_require__(179);
 
 // EXTERNAL MODULE: ./client/marketing/data/constants.js
-var constants = __webpack_require__(94);
+var constants = __webpack_require__(97);
 
 // EXTERNAL MODULE: ./client/marketing/components/card/index.js
 var card = __webpack_require__(146);
@@ -1478,7 +1478,7 @@ var external_this_wp_dataControls_ = __webpack_require__(27);
 var external_this_wp_data_ = __webpack_require__(25);
 
 // EXTERNAL MODULE: ./client/marketing/data/constants.js
-var constants = __webpack_require__(94);
+var constants = __webpack_require__(97);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
 var regenerator = __webpack_require__(14);
@@ -2320,7 +2320,7 @@ row_InstalledExtensionRow.propTypes = {
 };
 /* harmony default export */ var row = (row_InstalledExtensionRow);
 // EXTERNAL MODULE: ./client/marketing/data/constants.js
-var constants = __webpack_require__(94);
+var constants = __webpack_require__(97);
 
 // CONCATENATED MODULE: ./client/marketing/overview/installed-extensions/index.js
 
@@ -2446,7 +2446,7 @@ var knowledge_base = __webpack_require__(255);
 var body = __webpack_require__(533);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // EXTERNAL MODULE: ./node_modules/gridicons/dist/cross.js
 var cross = __webpack_require__(637);
@@ -2580,7 +2580,7 @@ var overview_MarketingOverview = function MarketingOverview() {
 
 /***/ }),
 
-/***/ 94:
+/***/ 97:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -458,7 +458,7 @@ var external_this_wp_i18n_ = __webpack_require__(3);
 var modal = __webpack_require__(546);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // EXTERNAL MODULE: external "lodash"
 var external_lodash_ = __webpack_require__(2);

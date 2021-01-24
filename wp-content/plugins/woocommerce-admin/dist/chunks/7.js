@@ -273,7 +273,7 @@ var external_this_wp_i18n_ = __webpack_require__(3);
 var library_close = __webpack_require__(257);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/components/build-module/modal/header.js
 

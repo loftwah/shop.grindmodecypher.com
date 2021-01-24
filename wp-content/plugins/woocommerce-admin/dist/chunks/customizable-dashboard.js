@@ -493,7 +493,7 @@ var external_lodash_ = __webpack_require__(2);
 var dropdown = __webpack_require__(339);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(67);
+var build_module_button = __webpack_require__(68);
 
 // EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/icon/index.js
 var icon = __webpack_require__(114);
