@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Official Facebook Pixel
+ * Plugin Name: Facebook for WordPress
  * Plugin URI: https://www.facebook.com/business/help/881403525362441
  * Description: <strong><em>***ATTENTION: After upgrade the plugin may be deactivated due to a known issue, to workaround please refresh this page and activate plugin.***</em></strong> The Facebook pixel is an analytics tool that helps you measure the effectiveness of your advertising. You can use the Facebook pixel to understand the actions people are taking on your website and reach audiences you care about.
  * Author: Facebook
  * Author URI: https://www.facebook.com/
- * Version: 2.2.2
+ * Version: 3.0.0
  * Text Domain: official-facebook-pixel
  */
 
@@ -36,6 +36,7 @@ use FacebookPixelPlugin\Core\FacebookPluginConfig;
 use FacebookPixelPlugin\Core\FacebookWordpressOptions;
 use FacebookPixelPlugin\Core\FacebookWordpressPixelInjection;
 use FacebookPixelPlugin\Core\FacebookWordpressSettingsPage;
+use FacebookPixelPlugin\Core\FacebookWordpressSettingsRecorder;
 use FacebookPixelPlugin\Core\ServerEventAsyncTask;
 
 class FacebookForWordpress {
@@ -77,6 +78,7 @@ class FacebookForWordpress {
     if (is_admin()) {
       $plugin_name = plugin_basename(__FILE__);
       new FacebookWordpressSettingsPage($plugin_name);
+      (new FacebookWordpressSettingsRecorder())->init();
     }
   }
 }
