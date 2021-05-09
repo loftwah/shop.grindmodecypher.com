@@ -77,6 +77,29 @@ class ProductItem extends AbstractCrudObject {
   }
 
 
+  public function getChannelsToIntegrityStatus(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+    );
+    $enums = array(
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_GET,
+      '/channels_to_integrity_status',
+      new CatalogItemChannelsToIntegrityStatus(),
+      'EDGE',
+      CatalogItemChannelsToIntegrityStatus::getFieldsEnum()->getValues(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
+
   public function getProductSets(array $fields = array(), array $params = array(), $pending = false) {
     $this->assureId();
 
@@ -152,7 +175,6 @@ class ProductItem extends AbstractCrudObject {
     $this->assureId();
 
     $param_types = array(
-      'additional_image_files' => 'list<file>',
       'additional_image_urls' => 'list<string>',
       'additional_uploaded_image_ids' => 'list<string>',
       'additional_variant_attributes' => 'map',

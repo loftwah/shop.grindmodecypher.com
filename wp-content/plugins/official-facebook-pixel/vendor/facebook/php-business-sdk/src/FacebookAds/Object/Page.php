@@ -42,6 +42,7 @@ use FacebookAds\Object\Values\CommerceOrderStateValues;
 use FacebookAds\Object\Values\EventEventStateFilterValues;
 use FacebookAds\Object\Values\EventTimeFilterValues;
 use FacebookAds\Object\Values\EventTypeValues;
+use FacebookAds\Object\Values\ImageCopyrightGeoOwnershipValues;
 use FacebookAds\Object\Values\InsightsResultDatePresetValues;
 use FacebookAds\Object\Values\InsightsResultPeriodValues;
 use FacebookAds\Object\Values\InstantArticleInsightsQueryResultBreakdownValues;
@@ -598,30 +599,6 @@ class Page extends AbstractCrudObject {
     return $pending ? $request : $request->execute();
   }
 
-  public function deleteClaimedUrls(array $fields = array(), array $params = array(), $pending = false) {
-    $this->assureId();
-
-    $param_types = array(
-      'url' => 'string',
-    );
-    $enums = array(
-    );
-
-    $request = new ApiRequest(
-      $this->api,
-      $this->data['id'],
-      RequestInterface::METHOD_DELETE,
-      '/claimed_urls',
-      new AbstractCrudObject(),
-      'EDGE',
-      array(),
-      new TypeChecker($param_types, $enums)
-    );
-    $request->addParams($params);
-    $request->addFields($fields);
-    return $pending ? $request : $request->execute();
-  }
-
   public function getClaimedUrls(array $fields = array(), array $params = array(), $pending = false) {
     $this->assureId();
 
@@ -638,6 +615,29 @@ class Page extends AbstractCrudObject {
       new URL(),
       'EDGE',
       URL::getFieldsEnum()->getValues(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
+
+  public function getCommerceEligibility(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+    );
+    $enums = array(
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_GET,
+      '/commerce_eligibility',
+      new PageCommerceEligibility(),
+      'EDGE',
+      PageCommerceEligibility::getFieldsEnum()->getValues(),
       new TypeChecker($param_types, $enums)
     );
     $request->addParams($params);
@@ -1237,6 +1237,62 @@ class Page extends AbstractCrudObject {
       new Page(),
       'EDGE',
       Page::getFieldsEnum()->getValues(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
+
+  public function getImageCopyrights(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+    );
+    $enums = array(
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_GET,
+      '/image_copyrights',
+      new ImageCopyright(),
+      'EDGE',
+      ImageCopyright::getFieldsEnum()->getValues(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
+
+  public function createImageCopyright(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+      'artist' => 'string',
+      'creator' => 'string',
+      'custom_id' => 'string',
+      'description' => 'string',
+      'filename' => 'string',
+      'geo_ownership' => 'list<geo_ownership_enum>',
+      'original_content_creation_date' => 'unsigned int',
+      'reference_photo' => 'string',
+      'title' => 'string',
+    );
+    $enums = array(
+      'geo_ownership_enum' => ImageCopyrightGeoOwnershipValues::getInstance()->getValues(),
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_POST,
+      '/image_copyrights',
+      new ImageCopyright(),
+      'EDGE',
+      ImageCopyright::getFieldsEnum()->getValues(),
       new TypeChecker($param_types, $enums)
     );
     $request->addParams($params);
@@ -1887,6 +1943,7 @@ class Page extends AbstractCrudObject {
         'PAYMENT_SETTINGS',
         'PERSISTENT_MENU',
         'PLATFORM',
+        'SUBJECT_TO_NEW_EU_PRIVACY_RULES',
         'TARGET_AUDIENCE',
         'WHITELISTED_DOMAINS',
       ),
@@ -2966,9 +3023,9 @@ class Page extends AbstractCrudObject {
       $this->data['id'],
       RequestInterface::METHOD_GET,
       '/tours',
-      new EventTour(),
+      new AbstractCrudObject(),
       'EDGE',
-      EventTour::getFieldsEnum()->getValues(),
+      array(),
       new TypeChecker($param_types, $enums)
     );
     $request->addParams($params);
@@ -3146,7 +3203,6 @@ class Page extends AbstractCrudObject {
       'animated_effect_id' => 'unsigned int',
       'application_id' => 'string',
       'asked_fun_fact_prompt_id' => 'unsigned int',
-      'attribution_app_id' => 'string',
       'audio_story_wave_animation_handle' => 'string',
       'backdated_post' => 'list',
       'call_to_action' => 'Object',

@@ -92,16 +92,20 @@ class FacebookWordpressSettingsPage {
 
 <script>
     window.facebookBusinessExtensionConfig = {
-      pixelId: '<?php echo FacebookWordpressOptions::getPixelId() ?>'
+      pixelId: '<?php echo esc_html(FacebookWordpressOptions::getPixelId()) ?>'
       ,popupOrigin: "https://business.facebook.com"
       ,setSaveSettingsRoute: '<?php echo $this->getFbeSaveSettingsAjaxRoute() ?>'
-      ,externalBusinessId: '<?php echo FacebookWordpressOptions::getExternalBusinessId() ?>'
+      ,externalBusinessId: '<?php echo esc_html(
+        FacebookWordpressOptions::getExternalBusinessId()
+      )?>'
       ,fbeLoginUrl: "https://business.facebook.com/fbe-iframe-get-started/?"
       ,deleteConfigKeys: '<?php echo $this->getDeleteFbeSettingsAjaxRoute() ?>'
       ,appId: '221646389321681'
       ,timeZone: 'America/Los_Angeles'
       ,installed: '<?php echo FacebookWordpressOptions::getIsFbeInstalled() ?>'
-      ,systemUserName: '<?php echo FacebookWordpressOptions::getExternalBusinessId()  ?>' + '_system_user'
+      ,systemUserName: '<?php echo esc_html(
+        FacebookWordpressOptions::getExternalBusinessId()
+        )  ?>' + '_system_user'
       ,businessVertical: 'ECOMMERCE'
       ,version: 'v8.0'
       ,currency: 'USD'
@@ -117,11 +121,27 @@ class FacebookWordpressSettingsPage {
   }
 
   public function getFbeSaveSettingsAjaxRoute(){
-    return admin_url('admin-ajax.php?action=save_fbe_settings');
+    $nonce_value = wp_create_nonce(
+      FacebookPluginConfig::SAVE_FBE_SETTINGS_ACTION_NAME
+    );
+    $simple_url = admin_url('admin-ajax.php');
+    $args = array(
+      'action' => FacebookPluginConfig::SAVE_FBE_SETTINGS_ACTION_NAME,
+      '_wpnonce' => $nonce_value
+    );
+    return add_query_arg($args, $simple_url);
   }
 
   public function getDeleteFbeSettingsAjaxRoute(){
-    return admin_url('admin-ajax.php?action=delete_fbe_settings');
+    $nonce_value = wp_create_nonce(
+      FacebookPluginConfig::DELETE_FBE_SETTINGS_ACTION_NAME
+    );
+    $simple_url = admin_url('admin-ajax.php');
+    $args = array(
+      'action' => FacebookPluginConfig::DELETE_FBE_SETTINGS_ACTION_NAME,
+      '_wpnonce' => $nonce_value
+    );
+    return add_query_arg($args, $simple_url);
   }
 
   public function addSettingsLink($links) {
@@ -146,6 +166,12 @@ class FacebookWordpressSettingsPage {
         FacebookPluginConfig::ADMIN_IGNORE_FBE_NOT_INSTALLED_NOTICE,
         true)){
         add_action('admin_notices', array($this, 'fbeNotInstalledNotice'));
+      }
+      if( $is_fbe_installed == '1' && !get_user_meta(
+        get_current_user_id(),
+        FacebookPluginConfig::ADMIN_IGNORE_PLUGIN_REVIEW_NOTICE,
+        true)){
+        add_action('admin_notices', array($this, 'pluginReviewNotice'));
       }
     }
   }
@@ -173,7 +199,7 @@ class FacebookWordpressSettingsPage {
       '<a href="%s">follow the setup steps.</a>';
   }
 
-  public function setNotice($notice, $dismiss_config) {
+  public function setNotice($notice, $dismiss_config, $notice_type) {
     $url = admin_url('options-general.php?page=' .
         FacebookPluginConfig::ADMIN_MENU_SLUG);
 
@@ -182,7 +208,7 @@ class FacebookWordpressSettingsPage {
       esc_url($url));
     printf(
       '
-<div class="notice notice-warning is-dismissible hide-last-button">
+<div class="notice notice-%s is-dismissible">
   <p>%s</p>
   <button
     type="button"
@@ -192,11 +218,27 @@ class FacebookWordpressSettingsPage {
   </button>
 </div>
       ',
+      $notice_type,
       $link,
       esc_url(add_query_arg($dismiss_config, '')),
       esc_html__(
         'Dismiss this notice.',
         FacebookPluginConfig::TEXT_DOMAIN));
+  }
+
+  public function pluginReviewNotice(){
+    $message = sprintf('Let us know what you think about <strong>%s</strong>. '.
+      'Leave a review on <a href="%s" target="_blank">this page</a>.',
+      FacebookPluginConfig::PLUGIN_NAME,
+      FacebookPluginConfig::PLUGIN_REVIEW_PAGE
+    );
+    $this->setNotice(
+      __(
+        $message,
+        FacebookPluginConfig::TEXT_DOMAIN),
+      FacebookPluginConfig::ADMIN_DISMISS_PLUGIN_REVIEW_NOTICE,
+      'info'
+    );
   }
 
   public function fbeNotInstalledNotice() {
@@ -205,7 +247,9 @@ class FacebookWordpressSettingsPage {
       __(
         $message,
         FacebookPluginConfig::TEXT_DOMAIN),
-      FacebookPluginConfig::ADMIN_DISMISS_FBE_NOT_INSTALLED_NOTICE);
+      FacebookPluginConfig::ADMIN_DISMISS_FBE_NOT_INSTALLED_NOTICE,
+      'warning'
+    );
   }
 
   public function dismissNotices() {
@@ -217,6 +261,12 @@ class FacebookWordpressSettingsPage {
         FacebookPluginConfig::ADMIN_IGNORE_FBE_NOT_INSTALLED_NOTICE,
         true);
     }
-
+    if (isset(
+      $_GET[FacebookPluginConfig::ADMIN_DISMISS_PLUGIN_REVIEW_NOTICE]
+    )){
+      update_user_meta($user_id,
+        FacebookPluginConfig::ADMIN_IGNORE_PLUGIN_REVIEW_NOTICE,
+        true);
+    }
   }
 }

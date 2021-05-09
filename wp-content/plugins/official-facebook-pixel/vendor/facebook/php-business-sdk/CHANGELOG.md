@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## v9.0.2
+
+
+### Added
+- `action_source` field to Event for Conversions API.
+
+### Fixed
+- `opt_out` field was being removed when set to false for Conversions API.
+
 ## v9.0.0
 
 
