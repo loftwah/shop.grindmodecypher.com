@@ -142,12 +142,16 @@ function et_theme_builder_api_save() {
 
 	$_                = et_();
 	$live             = '1' === $_->array_get( $_POST, 'live', '0' );
+	$first_request    = '1' === $_->array_get( $_POST, 'first_request', '1' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is done in `et_builder_security_check`.
+	$last_request     = '1' === $_->array_get( $_POST, 'last_request', '1' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is done in `et_builder_security_check`.
 	$templates        = wp_unslash( $_->array_get( $_POST, 'templates', array() ) );
 	$theme_builder_id = et_theme_builder_get_theme_builder_post_id( $live, true );
 	$has_default      = false;
 	$updated_ids      = array();
 
-	delete_post_meta( $theme_builder_id, '_et_template' );
+	if ( $first_request ) {
+		delete_post_meta( $theme_builder_id, '_et_template' );
+	}
 
 	foreach ( $templates as $template ) {
 		$raw_post_id = $_->array_get( $template, 'id', 0 );
@@ -164,11 +168,13 @@ function et_theme_builder_api_save() {
 		}
 	}
 
-	if ( $live ) {
-		et_theme_builder_trash_draft_and_unused_posts();
-	}
+	if ( $last_request ) {
+		if ( $live ) {
+			et_theme_builder_trash_draft_and_unused_posts();
+		}
 
-	et_theme_builder_clear_wp_cache( 'all' );
+		et_theme_builder_clear_wp_cache( 'all' );
+	}
 
 	wp_send_json_success(
 		array(

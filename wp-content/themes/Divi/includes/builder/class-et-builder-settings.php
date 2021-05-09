@@ -413,14 +413,6 @@ class ET_Builder_Settings {
 					'tab_slug'    => 'advanced',
 					'toggle_slug' => 'custom_css',
 				),
-				'et_pb_color_palette'                    => array(
-					'type'        => 'colorpalette',
-					'id'          => 'et_pb_color_palette',
-					'label'       => esc_html__( 'Color Picker Color Pallete', 'et_builder' ),
-					'default'     => implode( '|', et_pb_get_default_color_palette() ),
-					'tab_slug'    => 'design',
-					'toggle_slug' => 'color_palette',
-				),
 				'et_pb_page_gutter_width'                => array(
 					'type'           => 'range',
 					'id'             => 'et_pb_page_gutter_width',
@@ -584,6 +576,11 @@ class ET_Builder_Settings {
 					'toggle_slug'    => 'position',
 				),
 				'et_pb_static_css_file'                  => self::_get_static_css_generation_field( 'page' ),
+				'global_colors_info'                     => array(
+					'id'       => 'global_colors_info',
+					'type'     => 'hidden',
+					'tab_slug' => 'content',
+				),
 			)
 		);
 
@@ -649,10 +646,11 @@ class ET_Builder_Settings {
 		$et_pb_ab_bounce_rate_limit = '' !== $ab_bounce_rate_limit ? $ab_bounce_rate_limit : $default_bounce_rate_limit;
 		$is_default[]               = $et_pb_ab_bounce_rate_limit === $default_bounce_rate_limit ? 'et_pb_ab_bounce_rate_limit' : '';
 
-		$color_palette       = get_post_meta( $post_id, '_et_pb_color_palette', true );
-		$default             = $fields['et_pb_color_palette']['default'];
-		$et_pb_color_palette = '' !== $color_palette ? $color_palette : $default;
-		$is_default[]        = $et_pb_color_palette === $default ? 'et_pb_color_palette' : '';
+		$color_palette              = implode( '|', et_pb_get_default_color_palette() );
+		$default                    = array( '#000000', '#FFFFFF', '#E02B20', '#E09900', '#EDF000', '#7CDA24', '#0C71C3', '#8300E9' );
+		$et_pb_saved_color_palette  = '' !== $color_palette ? $color_palette : $default;
+		$et_pb_global_color_palette = et_get_option( 'et_global_colors' );
+		$is_default[]               = $et_pb_saved_color_palette === $default ? 'et_pb_color_palette' : '';
 
 		$gutter_width            = get_post_meta( $post_id, '_et_pb_gutter_width', true );
 		$default                 = $fields['et_pb_page_gutter_width']['default'];
@@ -691,6 +689,8 @@ class ET_Builder_Settings {
 		$et_pb_static_css_file = '' !== $static_css_file ? $static_css_file : $default;
 		$is_default[]          = $et_pb_static_css_file === $default ? 'et_pb_static_css_file' : '';
 
+		$page_global_colors_info = get_post_meta( $post_id, '_global_colors_info', true );
+
 		self::$_PAGE_SETTINGS_IS_DEFAULT[ $post_id ] = $is_default;
 
 		$post   = get_post( $post_id );
@@ -702,7 +702,8 @@ class ET_Builder_Settings {
 			'et_pb_enable_shortcode_tracking'         => get_post_meta( $post_id, '_et_pb_enable_shortcode_tracking', true ),
 			'et_pb_ab_current_shortcode'              => '[et_pb_split_track id="' . $post_id . '" /]',
 			'et_pb_custom_css'                        => get_post_meta( $post_id, '_et_pb_custom_css', true ),
-			'et_pb_color_palette'                     => $et_pb_color_palette,
+			'et_pb_color_palette'                     => $et_pb_saved_color_palette,
+			'et_pb_gc_palette'                        => maybe_unserialize( $et_pb_global_color_palette ),
 			'et_pb_page_gutter_width'                 => $et_pb_page_gutter_width,
 			'et_pb_light_text_color'                  => strtolower( $et_pb_light_text_color ),
 			'et_pb_dark_text_color'                   => strtolower( $et_pb_dark_text_color ),
@@ -719,6 +720,7 @@ class ET_Builder_Settings {
 			et_pb_overflow()->get_field_x( 'et_pb_' ) => $overflow_x,
 			et_pb_overflow()->get_field_y( 'et_pb_' ) => $overflow_y,
 			'et_pb_page_z_index'                      => get_post_meta( $post_id, '_et_pb_page_z_index', true ),
+			'global_colors_info'                      => $page_global_colors_info ? $page_global_colors_info : '{}',
 		);
 		/**
 		 * Filters Divi Builder page settings values.

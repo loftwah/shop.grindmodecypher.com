@@ -78,12 +78,12 @@ class ET_Builder_Plugin_Compat_WooCommerce extends ET_Builder_Plugin_Compat_Base
 	 * the 'Your order was cancelled.' notice from being shown multiple times.
 	 * Since grab_image renders shortcodes twice, it must be disabled in the cart page or else the notice
 	 * will not be shown at all.
-	 * My Account Page is also affected by the same issue.
+	 * My Account Page and Checkout Page is also affected by the same issue.
 	 *
 	 * @return bool
 	 */
 	function disable_et_grab_image_setting( $settings ) {
-		return ( is_cart() || is_account_page() ) ? false : $settings;
+		return ( is_cart() || is_checkout() || is_account_page() ) ? false : $settings;
 	}
 
 	/**

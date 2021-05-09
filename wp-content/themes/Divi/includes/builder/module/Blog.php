@@ -1703,6 +1703,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			$this->add_classname(
 				array(
 					'et_pb_blog_grid_wrapper',
+					"et_pb_bg_layout_{$background_layout}",
 				)
 			);
 

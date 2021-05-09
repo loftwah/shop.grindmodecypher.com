@@ -116,8 +116,21 @@ function et_core_clear_wp_cache( $post_id = '' ) {
 			'' !== $post_id ? do_action( 'ce_clear_post_cache', $post_id ) : do_action( 'ce_clear_cache' );
 		}
 
-		// LiteSpeed Cache
-		if ( is_callable( 'LiteSpeed_Cache::get_instance' ) ) {
+		// LiteSpeed Cache v3.0+.
+		if ( '' !== $post_id && has_action( 'litespeed_purge_post' ) ) {
+			do_action( 'litespeed_purge_post', $post_id );
+		} elseif ( '' === $post_id && has_action( 'litespeed_purge_all' ) ) {
+			do_action( 'litespeed_purge_all' );
+		}
+
+		// LiteSpeed Cache v1.1.3 until v3.0.
+		if ( '' !== $post_id && function_exists( 'litespeed_purge_single_post' ) ) {
+			litespeed_purge_single_post( $post_id );
+		} elseif ( '' === $post_id && is_callable( 'LiteSpeed_Cache_API::purge_all' ) ) {
+			LiteSpeed_Cache_API::purge_all();
+		} elseif ( is_callable( 'LiteSpeed_Cache::get_instance' ) ) {
+			// LiteSpeed Cache v1.1.3 below. LiteSpeed_Cache still exist on v2.9.9.2, but no
+			// longer exist on v3.0. Keep it here as backward compatibility for lower version.
 			$litespeed = LiteSpeed_Cache::get_instance();
 
 			if ( '' !== $post_id && method_exists( $litespeed, 'purge_post' ) ) {
@@ -125,13 +138,6 @@ function et_core_clear_wp_cache( $post_id = '' ) {
 			} else if ( '' === $post_id && method_exists( $litespeed, 'purge_all' ) ) {
 				$litespeed->purge_all();
 			}
-		}
-
-		// LiteSpeed Cache v1.1.3+
-		if ( '' !== $post_id && function_exists( 'litespeed_purge_single_post' ) ) {
-			litespeed_purge_single_post( $post_id );
-		} else if ( '' === $post_id && is_callable( 'LiteSpeed_Cache_API::purge_all' ) ) {
-			LiteSpeed_Cache_API::purge_all();
 		}
 
 		// Hyper Cache

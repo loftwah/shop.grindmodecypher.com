@@ -312,6 +312,12 @@ abstract class ET_Core_API_Service {
 			$this->data['refresh_token'] = $this->OAuth_Helper->token->refresh_token;
 		}
 
+		// If there an `instance_url` returned from the auth response, save it.
+		// Salesforce API should use this URL instead of the `login_url` provided by user.
+		if ( ! empty( $this->OAuth_Helper->INSTANCE_URL ) ) { // @phpcs:ignore ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase -- No need to change the prop name.
+			$this->data['instance_url'] = $this->OAuth_Helper->INSTANCE_URL; // @phpcs:ignore ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase -- No need to change the prop name.
+		}
+
 		return true;
 	}
 
@@ -374,13 +380,13 @@ abstract class ET_Core_API_Service {
 				$this->save_data();
 				return true;
 			}
-		} else if ( '2.0' === $this->oauth_version ) {
+		} elseif ( '2.0' === $this->oauth_version ) {
 			$nonce = wp_create_nonce( 'et_core_api_service_oauth2' );
 			$args  = array(
 				'client_id'     => $this->data['api_key'],
 				'response_type' => 'code',
-				'state'         => rawurlencode( "ET_Core|{$this->name}|{$this->account_name}|{$nonce}" ),
-				'redirect_uri'  => $this->REDIRECT_URL,
+				'state'         => rawurlencode( "ET_Core|{$this->slug}|{$this->account_name}|{$nonce}" ),
+				'redirect_uri'  => $this->REDIRECT_URL, // @phpcs:ignore -- No need to change the class property
 			);
 
 			$this->save_data();

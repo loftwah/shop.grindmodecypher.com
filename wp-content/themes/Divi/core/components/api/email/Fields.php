@@ -103,7 +103,7 @@ class ET_Core_API_Email_Fields {
 					$readonly_dependency => self::$_predefined_custom_field_support,
 				),
 				'readonly_if_not' => array(
-					$readonly_dependency => array( 'getresponse', 'sendinblue', 'constant_contact' ),
+					$readonly_dependency => array( 'getresponse', 'sendinblue', 'constant_contact', 'fluentcrm' ),
 				),
 			),
 			'field_type'       => array(

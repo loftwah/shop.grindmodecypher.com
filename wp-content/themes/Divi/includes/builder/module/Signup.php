@@ -1196,7 +1196,7 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 			$this->add_classname( 'et_pb_newsletter_description_no_title' );
 		}
 
-		if ( ! $multi_view->has_value( 'content' ) ) {
+		if ( ! $multi_view->has_value( 'description' ) ) {
 			$this->add_classname( 'et_pb_newsletter_description_no_content' );
 		}
 

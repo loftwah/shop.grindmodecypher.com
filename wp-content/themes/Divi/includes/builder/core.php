@@ -2476,6 +2476,8 @@ function et_fb_get_nonces() {
 		'retrieveGlobalPresetsHistory'    => wp_create_nonce( 'et_builder_retrieve_global_presets_history' ),
 		'migrateModuleCustomizerPhaseTwo' => wp_create_nonce( 'et_builder_migrate_module_customizer_phase_two' ),
 		'getWoocommerceTabs'              => wp_create_nonce( 'et_builder_get_woocommerce_tabs' ),
+		'globalColorsSave'                => wp_create_nonce( 'et_builder_global_colors_save' ),
+		'defaultColorsUpdate'             => wp_create_nonce( 'et_builder_default_colors_update' ),
 	);
 
 	return array_merge( $nonces, $fb_nonces );
@@ -2596,6 +2598,14 @@ if ( ! function_exists( 'et_builder_email_add_account' ) ) :
 				'custom_fields'            => $_->array_get( $list_data, 'custom_fields', array() ),
 				'predefined_custom_fields' => ET_Core_API_Email_Providers::instance()->custom_fields_data(),
 			);
+		} elseif ( is_array( $result ) && isset( $result['redirect_url'] ) ) {
+			$result = array(
+				'error'                    => false,
+				'redirect_url'             => $result['redirect_url'],
+				'accounts_list'            => $_->array_get( $list_data, 'accounts_list', $list_data ),
+				'custom_fields'            => $_->array_get( $list_data, 'custom_fields', array() ),
+				'predefined_custom_fields' => ET_Core_API_Email_Providers::instance()->custom_fields_data(),
+			);
 		} else {
 			$result = array(
 				'error'                    => true,
@@ -2612,6 +2622,69 @@ if ( ! function_exists( 'et_builder_email_add_account' ) ) :
 	add_action( 'wp_ajax_et_builder_email_add_account', 'et_builder_email_add_account' );
 endif;
 
+if ( ! function_exists( 'et_builder_finish_oauth2_authorization' ) ) :
+	/**
+	 * Process the Email Optin OAuth2 authorization from builder / VB.
+	 * This will be loaded in a popup window.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @throws Exception If the Provider or Account not exists.
+	 *
+	 * @return void
+	 */
+	function et_builder_finish_oauth2_authorization() {
+		if ( ! isset( $_GET['et-core-api-email-auth'] ) || empty( esc_attr( $_GET['et-core-api-email-auth'] ) ) ) { // // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended -- logic for nonce checks are following
+			return;
+		}
+
+		if ( ! isset( $_GET['state'] ) || 0 !== strpos( $_GET['state'], 'ET_Core' ) ) { // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended -- logic for nonce checks are following
+			return;
+		}
+
+		$authenticated = false;
+		try {
+			et_core_nonce_verified_previously();
+
+			list( $_, $name, $account, $nonce ) = explode( '|', sanitize_text_field( rawurldecode( $_GET['state'] ) ) ); // @phpcs:ignore ET.Sniffs.ValidatedSanitizedInput.InputNotSanitized -- Sanitized with sanitize_text_field
+
+			if ( ! $name || ! $account || ! $nonce ) {
+				return;
+			}
+
+			$_GET['nonce'] = $nonce;
+
+			et_core_security_check( 'manage_options', 'et_core_api_service_oauth2', 'nonce', '_GET' );
+
+			$providers = ET_Core_API_Email_Providers::instance();
+			if ( ! $providers->account_exists( $name, $account ) ) {
+				throw new Exception( __( 'Account not exists.', 'et_builder' ) );
+			}
+
+			$provider = $providers->get( $name, $account, 'builder' );
+			if ( ! $provider ) {
+				throw new Exception( __( 'Email provider not exists.', 'et_builder' ) );
+			}
+
+			$authenticated = $provider->is_authenticated();
+			if ( ! $authenticated ) {
+				$authenticated = $provider->authenticate();
+			}
+		} catch ( Exception $err ) {
+			$authenticated = false;
+		}
+		?>
+		<script type="text/javascript">
+			// Send a message to the window opener to close this window and process further.
+			if (window.opener) {
+				window.opener.postMessage({ authenticated: <?php echo $authenticated ? 1 : 0; ?> }, window.opener.location);
+			}
+		</script>
+		<?php
+		exit();
+	}
+	add_action( 'init', 'et_builder_finish_oauth2_authorization' );
+endif;
 
 if ( ! function_exists( 'et_builder_email_get_fields_from_post_data' ) ) :
 	/**
@@ -2701,8 +2774,6 @@ if ( ! function_exists( 'et_builder_email_get_lists_field_data' ) ) :
 		return $field_data;
 	}
 endif;
-
-
 
 
 if ( ! function_exists( 'et_builder_email_get_lists' ) ) :
@@ -6137,8 +6208,8 @@ if ( ! function_exists( 'et_builder_show_bfb_welcome_modal' ) ) :
 			</div>
 		</div> );
 		<script>
-			jQuery(document).ready(function() {
-				etCore.modalOpen(jQuery('.et-builder-bfb-welcome-modal:first'));
+			jQuery(function() {
+				etCore.modalOpen(jQuery('.et-builder-bfb-welcome-modal').first());
 			});
 		</script>
 		<?php

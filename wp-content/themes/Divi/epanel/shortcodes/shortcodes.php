@@ -1207,7 +1207,7 @@ function et_advanced_buttons(){
 				$moreTabs = jQuery('<p><a href="#" id="et_add_more_tabs"><?php esc_html_e( '+ Add One More Tab', $themename ); ?></a></p>').appendTo('form#et_shortcodes tbody');
 				$moreTabsLink = jQuery('a#et_add_more_tabs');
 
-				$moreTabsLink.bind('click',function() {
+				$moreTabsLink.on('click',function() {
 					var clonedElements = jQuery('form#et_shortcodes .cloned');
 
 					newElements = clonedElements.slice(0,2).clone();
@@ -1232,7 +1232,7 @@ function et_advanced_buttons(){
 			}
 
 
-			form.find('#shortcodes-submit').click(function(){
+			form.find('#shortcodes-submit').on('click', function() {
 
 				var shortcode = '['+tag;
 
@@ -1316,7 +1316,7 @@ function et_advanced_buttons(){
 			outputOptions = '';
 		}
 
-		jQuery(document).ready(function(){
+		jQuery(function(){
 			var buttonTypeField = jQuery('table.et-button select#et-type');
 
 			buttonTypeField.on('change',function() {

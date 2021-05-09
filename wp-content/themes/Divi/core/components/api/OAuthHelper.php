@@ -38,6 +38,14 @@ class ET_Core_API_OAuthHelper {
 	public $REQUEST_TOKEN_URL;
 
 	/**
+	 * Instance URL, used by Salesforce.
+	 *
+	 * @since 4.9.0
+	 * @var   string
+	 */
+	public $INSTANCE_URL; // @phpcs:ignore ET.Sniffs.ValidVariableName.PropertyNotSnakeCase -- Use uppercase to be consistent with existing code.
+
+	/**
 	 * The OAuth2 bearer for this instance. This is used as the value of the HTTP
 	 * `Authorization` header. The format is: `Bearer {$access_token}`.
 	 *
@@ -266,15 +274,22 @@ class ET_Core_API_OAuthHelper {
 
 		$response = $json ? $response->DATA : wp_parse_args( $response->DATA );
 
+		// Salesforce returns an `instance_url` data in the auth response.
+		if ( isset( $response['instance_url'] ) ) {
+			$this->INSTANCE_URL = esc_url( $response['instance_url'] ); // @phpcs:ignore ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase -- Use uppercase to be consistent with existing code.
+		}
+
 		if ( isset( $response['oauth_token'], $response['oauth_token_secret'] ) ) {
 			// OAuth 1.0a
 			$token       = sanitize_text_field( $response['oauth_token'] );
 			$secret      = sanitize_text_field( $response['oauth_token_secret'] );
 			$this->token = new ET_Core_LIB_OAuthToken( $token, $secret );
-		} else if ( isset( $response['access_token'], $response['refresh_token'] ) ) {
+		} elseif ( isset( $response['access_token'] ) ) {
 			// OAuth 2.0
-			$this->token                = new ET_Core_LIB_OAuthToken( '', sanitize_text_field( $response['access_token'] ) );
-			$this->token->refresh_token = sanitize_text_field( $response['refresh_token'] );
+			$this->token = new ET_Core_LIB_OAuthToken( '', sanitize_text_field( $response['access_token'] ) );
+			if ( isset( $response['refresh_token'] ) ) {
+				$this->token->refresh_token = sanitize_text_field( $response['refresh_token'] );
+			}
 		}
 	}
 }

@@ -148,6 +148,7 @@ class ET_Core_API_Email_MailPoet3 extends ET_Core_API_Email_Provider {
 			return esc_html__( 'An error occurred. Please try again later.', 'et_core' );
 		}
 
+		$subscriber      = array();
 		$args            = et_core_sanitized_previously( $args );
 		$subscriber_data = $this->transform_data_to_provider_format( $args, 'subscriber' );
 		$subscriber_data = $this->_process_custom_fields( $subscriber_data );
@@ -157,10 +158,29 @@ class ET_Core_API_Email_MailPoet3 extends ET_Core_API_Email_Provider {
 
 		unset( $subscriber_data['custom_fields'] );
 
-		try {
-			\MailPoet\API\API::MP( 'v1' )->addSubscriber( $subscriber_data, $lists );
-		} catch ( Exception $exception ) {
-			$result = $exception->getMessage();
+		/**
+		 * Check if the subscriber with this email already exists.
+		 */
+		$subscriber = \MailPoet\Models\Subscriber::findOne( $subscriber_data['email'] );
+
+		if ( $subscriber ) {
+			$subscriber = $subscriber->withCustomFields()->withSubscriptions()->asArray();
+		}
+		/**
+		 * If subscriber is not found, add as a new subscriber. Otherwise, add existing subscriber to the lists.
+		 */
+		if ( empty( $subscriber ) ) {
+			try {
+				\MailPoet\API\API::MP( 'v1' )->addSubscriber( $subscriber_data, $lists );
+			} catch ( Exception $exception ) {
+				$result = $exception->getMessage();
+			}
+		} else {
+			try {
+				\MailPoet\API\API::MP( 'v1' )->subscribeToLists( $subscriber['id'], $lists );
+			} catch ( Exception $exception ) {
+				$result = $exception->getMessage();
+			}
 		}
 
 		return $result;

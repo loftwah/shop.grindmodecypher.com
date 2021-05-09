@@ -162,9 +162,9 @@ export const getStickyStyles = (id, $module, $placeholder) => {
   // it, recreate the image by getting actual width and height then recreate the image using SVG
   $stickyStyleDom.find('img').each(function(index) {
     const $img           = $(this);
-    const $measuredImg   = $module.find(`img:eq(${index})`);
-    const measuredWidth  = get($measuredImg, [0, 'naturalWidth'], $module.find(`img:eq(${index})`).outerWidth());
-    const measuredHeight = get($measuredImg, [0, 'naturalHeight'], $module.find(`img:eq(${index})`).outerHeight());
+    const $measuredImg   = $module.find('img').eq(index);
+    const measuredWidth  = get($measuredImg, [0, 'naturalWidth'], $module.find('img').eq(index).outerWidth());
+    const measuredHeight = get($measuredImg, [0, 'naturalHeight'], $module.find('img').eq(index).outerHeight());
 
     $img.attr({
       // Remove scrse to force DOM to use src
@@ -257,6 +257,14 @@ export const getClosestStickyModuleOffsetTop = $target => {
   forEach(stickyModules, stickyModule => {
     // Ignore sticky module if it is stuck to bottom
     if (! includes(['top_bottom', 'top'], stickyModule.position)) {
+      return;
+    }
+
+    // Ignore if $target is sticky module (that sticks to top; stuck to bottom check above has
+    // made sure of it) - otherwise the auto-generate offset will subtract the element's offset
+    // and causing the scroll never reaches $target location.
+    // @see https://github.com/elegantthemes/Divi/issues/23240
+    if ($target.is(get(stickyModule, 'selector'))) {
       return;
     }
 

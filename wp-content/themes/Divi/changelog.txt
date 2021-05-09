@@ -1,3 +1,321 @@
+version 4.9.4 ( updated 04-13-2021 )
+- Fixed search module custom left and right padding not working when you hide the search button.
+- Fixed incorrect scrollTo behavior when the $target is sticky module that sticks to top.
+- Fixed builder crash when Content Security Policy (CSP) header is enabled.
+- Fixed button hover color from theme customizer affects the media library button when editing products.
+- Fixed an issue with the Testimonial module where the spacing on builder and frontend were irregular.
+- Added Logo Width and Height options to the Menu module.
+- Fix fullwidth header image bottom alignment not working on the default layout.
+- Fixed global color set on hover state overwrites normal state on save.
+- Fixed incorrect posts result on the Blog module when Relevanssi Premium plugin is active.
+- Fixed the color picker input shows up when Rank Math plugin is activated.
+- Allow third-party extensions to access post or page setting values on builder via ET_Builder.API.
+- Fixed the color picker input shows up when Rank Math plugin is activated.
+- Fixed a bug where when importing a layout with global colors the colors would not be imported as global.
+- Fixed the color picker input shows up when Rank Math plugin is activated.
+	* core/admin/js/wp-color-picker-alpha.min.js
+	* core/components/Portability.php
+	* core/ui/utils/frames.js
+	* core/ui/utils/utils.js
+	* epanel/js/wp-color-picker-alpha.min.js
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/languages/et_builder-en_US-et-builder-gutenberg.po
+	* includes/builder/module/ContactFormItem.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/Menu.php
+	* includes/builder/plugin-compat/relevanssi-premium.php
+	* includes/builder/plugin-compat/relevanssi.php
+	* includes/builder/plugin-compat/wp-simple-firewall.php
+	* includes/builder/scripts/ext/wp-color-picker-alpha.js
+	* includes/builder/scripts/ext/wp-color-picker-alpha.min.js
+	* includes/builder/scripts/utils/sticky.js
+
+version 4.9.3 ( updated 04-01-2021 )
+- Fixed inability to click into the search field in a FullwidthMenu module on small screens.
+- Fixed Theme Builder not saved properly when has many templates.
+- Fixed global colors confirmation dialog appears in the layers view (LV) when LV is open.
+- Fixed flashing styles inherited from existing module not in viewport when creating/duplicating module.
+- Introduces orderClassName property on custom module moduleInfo property to display module order class name.
+- Improved JSON data retrieving method to prevent VB saving interruption.
+- Fixed an issue with the VIdeo module that caused the element to still be displayed when hidden.
+- Fixed issue where builder freezes when dragging padding and margin fast.
+- Fixed Post Title Module comment placeholder in the Visual Builder.
+- Suppressed warnings in React 16.12.0 when in development environment.
+- Fixed custom padding bottom set in the module's settings dialog not working for the last contact form item.
+- Fixed issue where links are not clickable on IOS when hover content is enabled.
+- Fixed responsive content not being rendered on small screen devices.
+- Fixed responsive content not being rendered when there is an anchor links in content.
+- Fixed page jump on clicking the pagination links in Gallery.
+- Improves how HTML elements can be removed or excluded from the builder via et_fb_ignore and et_fb_ignore_iframe class.
+	* core/ui/utils/frames.js
+	* core/ui/utils/utils.js
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/api.php
+	* includes/builder/module/ContactFormItem.php
+	* includes/builder/scripts/frontend/scripts.js
+	* js/src/custom.js
+
+version 4.9.2 ( updated 03-12-2021 )
+- Fixed meta links color on the Front End not matching the Visual Builder in the Blog module when using grid layout.
+- Improved logic to allow the last and only row to be moved outside specialty sections.
+- Fixed copy paste styles issue on module with Global Color used.
+- Fixed lost hover state global color.
+- Fixed headers and footers created from Theme Builder were not respecting LearnDash focus mode.
+- Fixed a compatibility issue with EWWW Image Optimizer Lazy Load which caused an issue with all modules using AJAX pagination.
+- Added new fonts to the List of Google Fonts which available without API key.
+	* core/components/SupportCenter.php
+	* core/components/api/email/FluentCRM.php
+	* core/json-data/google-fonts.json
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/module/Blog.php
+	* includes/builder/plugin-compat/scripts/sfwd-lms.js
+	* includes/builder/plugin-compat/sfwd-lms.php
+	* includes/builder/scripts/frontend/scripts.js
+
+version 4.9.1 ( updated 03-03-2021 )
+- Fixed issue where you couldn't save a theme builder template when Yoast SEO plugin is activated.
+- Fixed global colors are not updated in presets.
+- Fixed new module styles inherited from existing module that not visible in viewport.
+- Added wp_body_open method on the default header template.
+- Introduces new way to register store on Divi Layout Block to fix deprecated registerStore method.
+- Fixed fatal error after importing layout from Library modal on Divi Layout Block.
+- Fixed Divi Builder button incorrect position on Gutenberg editor.
+- Fixes PHP warning undefined property ID of post on FluentCRM dashboard.
+- Fixed deprecated way to define Divi Layout Block controls.
+- Fixed Email Optin Module's form on left not aligning correctly if there is no title.
+- Fixed unwanted top offset for Settings Modal in Theme Builder and Layout Editor in GB.
+- Fixed the issue when you cannot close the Layers view modal in Theme Builder.
+- Fixed an issue where renaming a Template in Theme Builder was not reflecting in library.
+- Fixed the issue where browser context menu didn't show inside the Code option of the Code Module.
+- Fixed error printed in the browser console when copy & paste styles modules with global colors enabled.
+- Fixed issue with find and replace not working on RGBA colors.
+- Added support for Dynamic Content 'Manual Custom Field' outside the Theme Builder.
+- Fixed a fatal error that could happen while saving a Theme Builder template when Yoast plugin was active.
+- Fixed an issue with the Contact Form simple captcha field where the input field would not be cleared when a wrong result was submitted.
+- Fixed docked video jumping issue when dragged to the left or top edge.
+- Fixed menu module's mobile menu background color when the responsive style is enabled.
+- Fixed adjusting global color change from background gradient.
+- Fixed PHP Error when switching Divi Theme and Divi Builder plugin.
+- Fixed various jQuery breaking changes and deprecated warnings.
+- Fixed jQuery deprecated warnings on ET products.
+- Fixed Email Optin module with MailPoet showing error message even when subscriber is added to the list.
+- Introduces FluentCRM plugin and Email Optin module integration.
+- Fixed the issue when Divi Presets and Global Colors were missing in exported layouts.
+- Fixed various jQuery breaking changes and deprecated warnings.
+- Fixed issue with Popup from Popup Maker plugin not displaying on mobile.
+	* core/admin/js/portability.js
+	* core/components/Portability.php
+	* core/components/SupportCenter.php
+	* core/components/VersionRollback.php
+	* core/components/api/OAuthHelper.php
+	* core/components/api/Service.php
+	* core/components/api/email/SalesForce.php
+	* core/components/init.php
+	* core/functions.php
+	* core/json-data/google-fonts.json
+	* core/ui/utils/attribute-binder.js
+	* core/ui/utils/frame-helpers.js
+	* core/ui/utils/frames.js
+	* core/ui/utils/utils.js
+	* functions.php
+	* header.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/core.php
+	* includes/builder/feature/dynamic-content.php
+	* includes/builder/feature/gutenberg/EditorTypography.php
+	* includes/builder/frontend-builder/assets/vendors/plugins/advlist/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/anchor/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/autolink/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/autoresize/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/autosave/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/bbcode/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/charmap/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/code/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/codesample/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/colorpicker/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/contextmenu/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/directionality/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/emoticons/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/fullpage/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/fullscreen/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/help/img/logo.png
+	* includes/builder/frontend-builder/assets/vendors/plugins/help/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/hr/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/image/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/imagetools/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/importcss/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/insertdatetime/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/legacyoutput/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/link/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/lists/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/media/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/nonbreaking/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/noneditable/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/pagebreak/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/paste/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/preview/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/print/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/save/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/searchreplace/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/spellchecker/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/tabfocus/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/table/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/template/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/textcolor/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/textpattern/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/toc/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/visualblocks/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/visualchars/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/plugins/wordcount/plugin.min.js
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/content.inline.min.css
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/content.min.css
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/content.mobile.min.css
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/fonts/tinymce-mobile.woff
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/fonts/tinymce.eot
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/fonts/tinymce.svg
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/fonts/tinymce.ttf
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/fonts/tinymce.woff
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/skin.min.css
+	* includes/builder/frontend-builder/assets/vendors/skins/lightgray/skin.mobile.min.css
+	* includes/builder/frontend-builder/assets/vendors/themes/inlite/theme.min.js
+	* includes/builder/frontend-builder/assets/vendors/themes/mobile/theme.min.js
+	* includes/builder/frontend-builder/assets/vendors/themes/modern/theme.min.js
+	* includes/builder/frontend-builder/assets/vendors/tinymce.min.js
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/dynamic-content.php
+	* includes/builder/frontend-builder/theme-builder/frontend-header-template.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/functions.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/Signup.php
+	* includes/builder/module/SliderItem.php
+	* includes/builder/plugin-compat/easy-digital-downloads.php
+	* includes/builder/plugin-compat/scripts/sitepress-multilingual-cms.js
+	* includes/builder/plugin-compat/wordpress-seo.php
+	* includes/builder/scripts/ext/jquery-ui-timepicker-addon.js
+	* includes/builder/scripts/ext/jquery.easypiechart.js
+	* includes/builder/scripts/ext/jquery.fittext.js
+	* includes/builder/scripts/ext/jquery.hashchange.js
+	* includes/builder/scripts/ext/jquery.magnific-popup.js
+	* includes/builder/scripts/ext/jquery.minicolors.js
+	* includes/builder/scripts/ext/jquery.mobile.custom.min.js
+	* includes/builder/scripts/ext/jquery.tablesorter.min.js
+	* includes/builder/scripts/ext/jquery.validate.js
+	* includes/builder/scripts/ext/waypoints.min.js
+	* includes/builder/scripts/ext/widgets.js
+	* includes/builder/scripts/ext/wp-color-picker-alpha.js
+	* includes/builder/scripts/ext/wp-color-picker-alpha.min.js
+	* includes/builder/scripts/frontend/global-functions.js
+	* includes/builder/scripts/frontend/preview.js
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/sticky-element.js
+	* includes/builder/scripts/frontend/sticky-elements.js
+	* includes/builder/scripts/src/admin_global_functions.js
+	* includes/builder/scripts/src/bfb_admin_script.js
+	* includes/builder/scripts/src/block-layout-frontend-preview.js
+	* includes/builder/scripts/src/builder.js
+	* includes/builder/scripts/src/failure_notice.js
+	* includes/builder/scripts/src/library_category.js
+	* includes/builder/scripts/src/library_scripts.js
+	* includes/builder/scripts/src/page-settings-metabox.js
+	* includes/builder/scripts/src/reset_memory_limit_increase_setting.js
+	* includes/builder/scripts/src/roles_admin.js
+	* includes/builder/scripts/stores/sticky.js
+	* includes/builder/scripts/utils/sticky.js
+	* js/src/admin_post_settings.js
+	* js/src/custom.js
+	* js/src/menu_fix.js
+	* js/src/theme-customizer-controls.js
+	* js/src/theme-customizer.js
+
+version 4.9 ( updated 02-10-2021 )
+- Introduced Divi's new global color system.
+- Fixed an issue with WooCommerce login on the Checkout page where login error notices would not be displayed in some cases.
+- Fixed an issue with the Contact Form module displaying unwanted additional options for all field types.
+- Fixed issue with Divider flip functionality on Safari.
+- Fixed Theme Builder Static CSS cache not bursting on the TB layout change.
+- Fixed Post Title Module's headings style of Theme Builder template affecting GB editor content.
+- Fixed the issue where button settings of the child Pricing Table element were not overriding settings of the parent Pricing Tables button.
+- Improves sub history action hooks on builder.
+- Fixed an error causing builder to not function properly when common dependencies are modified/used.
+- Fixed issue where you couldn't authorize a SalesForce account.
+- Improve LiteSpeed Cache compatibility during clear cache action.
+- Fixed call to action button hover background color from the customizer.
+	* core/admin/js/portability.js
+	* core/components/Portability.php
+	* core/components/SupportCenter.php
+	* core/components/VersionRollback.php
+	* core/components/api/OAuthHelper.php
+	* core/components/api/Service.php
+	* core/components/api/email/SalesForce.php
+	* core/components/init.php
+	* core/functions.php
+	* core/json-data/google-fonts.json
+	* core/ui/utils/attribute-binder.js
+	* core/ui/utils/frame-helpers.js
+	* core/ui/utils/frames.js
+	* core/ui/utils/utils.js
+	* functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-settings.php
+	* includes/builder/core.php
+	* includes/builder/feature/gutenberg/EditorTypography.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/functions.php
+	* includes/builder/module/ContactFormItem.php
+	* includes/builder/module/PricingTablesItem.php
+	* includes/builder/module/SliderItem.php
+	* includes/builder/plugin-compat/woocommerce.php
+	* includes/builder/plugin-compat/wp-simple-firewall.php
+
+version 4.8.2 ( updated 01-28-2021 )
+- Changed default filename for Layout Export as the Page Title.
+- Fixed wrong  options filter placement in expanded single panel content settings modal.
+- Fixed builder crash with error "Cannot create property 'content' on string..." when dragging module or updating text module.
+- Added an option on shop module's custom css option to change the display property of the star ratings like color, font-size etc.
+- Fixed fatal error in the quick configuration wizard of Schema plugin.
+- Fixed Quick Actions modal being launched unintentionally when typing in focusable element.
+- Fixed builder crash when CSP is enabled by WP Simple Firewall plugin (Shield Security).
+- Fixed Find & Replace not replacing Button BG And Column Background.
+- Fixed video module not displaying proper video dimensions when border radius for the module is changed.
+- Fixed Overlay option being visible when slider layout was selected in Gallery Module.
+- Fixed HubSpot Single Checkboxes custom field get Converted to radio buttons in Email Optin Module.
+- Fixed image/icon position in Blurb module for mobile devices.
+- Fixed TinyMCE output content to produce consistent value before it's saved.
+- Fixed shop module not respecting the pagination display option for mobile devices.
+- Restored the missing "Use Background Color" option in some modules: Countdown Timer, Call To Action, Login, Email Optin, Testimonial.
+- Fixed Contact Form field alignments on Front End.
+- Fixed Header or Footer created from Theme Builder not working on Heroic Knowledge Base category pages.
+- Fixed issue where setting toggle group fields was empty when switching to global preset mode.
+- Resolved the issue where every menu's location added via the menu module was shown as primary even if it wasn't a primary menu.
+- Fixed button transition issue when button hover properties on hover applied.
+- Fixed an issue where the class names for the portfolio items were not the same for visual builder and on the frontend.
+- Fixed an issue where left padding for a section was affecting the position of the divider.
+- Fixed an issue with the Fullwidth menu module where background color wasn't displaying when the section had a parallax background.
+- Fixed an issue where, in some cases, mouse wheel scroll did not work inside the icon select option.
+- Fixed issue where one user with same email cannot subscribe to multiple MailPoet lists.
+- Fixed dot navigation appearing on archive pages if the first post on archive has it enabled.
+	* core/components/api/email/HubSpot.php
+	* core/components/api/email/_MailPoet3.php
+	* functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/feature/gutenberg/EditorTypography.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/ContactFormItem.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/Gallery.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/Shop.php
+	* includes/builder/plugin-compat/ht-knowledge-base.php
+	* includes/builder/plugin-compat/wp-simple-firewall.php
+	* includes/builder/scripts/frontend/scripts.js
+
 version 4.8.1 ( updated 01-15-2021 )
 - Fixed JS Error e.state is null in 3rd party modules.
 - Fixed issue where alt/title text from background image could overwrite the Module's image alt/title text.

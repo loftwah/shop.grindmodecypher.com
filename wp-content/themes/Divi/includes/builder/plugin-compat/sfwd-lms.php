@@ -47,6 +47,7 @@ class ET_Builder_Plugin_Compat_LearnDash extends ET_Builder_Plugin_Compat_Base {
 		add_action( 'learndash-focus-template-end', array( $this, 'maybe_inject_theme_builder_footer' ) );
 		add_action( 'et_theme_builder_template_before_body', array( $this, 'maybe_override_query_before_body' ), 10, 3 );
 		add_action( 'et_theme_builder_template_after_body', array( $this, 'maybe_override_query_after_body' ), 10, 3 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'focus_mode_compatibility_script' ), 99 );
 	}
 
 	/**
@@ -150,6 +151,13 @@ class ET_Builder_Plugin_Compat_LearnDash extends ET_Builder_Plugin_Compat_Base {
 			$layouts[ ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE ]['enabled'],
 			$layouts[ ET_THEME_BUILDER_TEMPLATE_POST_TYPE ]
 		);
+	}
+
+	/**
+	 * Focus Mode compatibility for global header and footer.
+	 */
+	public function focus_mode_compatibility_script() {
+		wp_enqueue_script( 'et-builder-sfwd-lms-compat-scripts', ET_BUILDER_URI . '/plugin-compat/scripts/sfwd-lms.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
 	}
 }
 

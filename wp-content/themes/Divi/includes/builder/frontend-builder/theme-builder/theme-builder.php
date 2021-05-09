@@ -130,15 +130,15 @@ function et_theme_builder_register_entities() {
 		ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE,
 		array(
 			'labels'             => array(
-				'name'               => esc_html__( 'Header Layouts', 'et_builder' ),
-				'singular_name'      => esc_html__( 'Header Layout', 'et_builder' ),
+				'name'               => esc_html__( 'Header Templates', 'et_builder' ),
+				'singular_name'      => esc_html__( 'Header Template', 'et_builder' ),
 				'add_new'            => esc_html__( 'Add New', 'et_builder' ),
-				'add_new_item'       => esc_html__( 'Add New Header Layout', 'et_builder' ),
-				'edit_item'          => esc_html__( 'Edit Header Layout', 'et_builder' ),
-				'new_item'           => esc_html__( 'New Header Layout', 'et_builder' ),
-				'all_items'          => esc_html__( 'All Header Layouts', 'et_builder' ),
-				'view_item'          => esc_html__( 'View Header Layout', 'et_builder' ),
-				'search_items'       => esc_html__( 'Search Header Layouts', 'et_builder' ),
+				'add_new_item'       => esc_html__( 'Add New Header Template', 'et_builder' ),
+				'edit_item'          => esc_html__( 'Edit Header Template', 'et_builder' ),
+				'new_item'           => esc_html__( 'New Header Template', 'et_builder' ),
+				'all_items'          => esc_html__( 'All Header Templates', 'et_builder' ),
+				'view_item'          => esc_html__( 'View Header Template', 'et_builder' ),
+				'search_items'       => esc_html__( 'Search Header Templates', 'et_builder' ),
 				'not_found'          => esc_html__( 'Nothing found', 'et_builder' ),
 				'not_found_in_trash' => esc_html__( 'Nothing found in Trash', 'et_builder' ),
 				'parent_item_colon'  => '',
@@ -162,15 +162,15 @@ function et_theme_builder_register_entities() {
 		ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE,
 		array(
 			'labels'             => array(
-				'name'               => esc_html__( 'Body Layouts', 'et_builder' ),
-				'singular_name'      => esc_html__( 'Body Layout', 'et_builder' ),
+				'name'               => esc_html__( 'Body Templates', 'et_builder' ),
+				'singular_name'      => esc_html__( 'Body Template', 'et_builder' ),
 				'add_new'            => esc_html__( 'Add New', 'et_builder' ),
-				'add_new_item'       => esc_html__( 'Add New Body Layout', 'et_builder' ),
-				'edit_item'          => esc_html__( 'Edit Body Layout', 'et_builder' ),
-				'new_item'           => esc_html__( 'New Body Layout', 'et_builder' ),
-				'all_items'          => esc_html__( 'All Body Layouts', 'et_builder' ),
-				'view_item'          => esc_html__( 'View Body Layout', 'et_builder' ),
-				'search_items'       => esc_html__( 'Search Body Layouts', 'et_builder' ),
+				'add_new_item'       => esc_html__( 'Add New Body Template', 'et_builder' ),
+				'edit_item'          => esc_html__( 'Edit Body Template', 'et_builder' ),
+				'new_item'           => esc_html__( 'New Body Template', 'et_builder' ),
+				'all_items'          => esc_html__( 'All Body Templates', 'et_builder' ),
+				'view_item'          => esc_html__( 'View Body Template', 'et_builder' ),
+				'search_items'       => esc_html__( 'Search Body Templates', 'et_builder' ),
 				'not_found'          => esc_html__( 'Nothing found', 'et_builder' ),
 				'not_found_in_trash' => esc_html__( 'Nothing found in Trash', 'et_builder' ),
 				'parent_item_colon'  => '',
@@ -194,15 +194,15 @@ function et_theme_builder_register_entities() {
 		ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE,
 		array(
 			'labels'             => array(
-				'name'               => esc_html__( 'Footer Layouts', 'et_builder' ),
-				'singular_name'      => esc_html__( 'Footer Layout', 'et_builder' ),
+				'name'               => esc_html__( 'Footer Templates', 'et_builder' ),
+				'singular_name'      => esc_html__( 'Footer Template', 'et_builder' ),
 				'add_new'            => esc_html__( 'Add New', 'et_builder' ),
-				'add_new_item'       => esc_html__( 'Add New Footer Layout', 'et_builder' ),
-				'edit_item'          => esc_html__( 'Edit Footer Layout', 'et_builder' ),
-				'new_item'           => esc_html__( 'New Footer Layout', 'et_builder' ),
-				'all_items'          => esc_html__( 'All Footer Layouts', 'et_builder' ),
-				'view_item'          => esc_html__( 'View Footer Layout', 'et_builder' ),
-				'search_items'       => esc_html__( 'Search Footer Layouts', 'et_builder' ),
+				'add_new_item'       => esc_html__( 'Add New Footer Template', 'et_builder' ),
+				'edit_item'          => esc_html__( 'Edit Footer Template', 'et_builder' ),
+				'new_item'           => esc_html__( 'New Footer Template', 'et_builder' ),
+				'all_items'          => esc_html__( 'All Footer Templates', 'et_builder' ),
+				'view_item'          => esc_html__( 'View Footer Template', 'et_builder' ),
+				'search_items'       => esc_html__( 'Search Footer Templates', 'et_builder' ),
 				'not_found'          => esc_html__( 'Nothing found', 'et_builder' ),
 				'not_found_in_trash' => esc_html__( 'Nothing found in Trash', 'et_builder' ),
 				'parent_item_colon'  => '',
@@ -1403,7 +1403,7 @@ function et_theme_builder_store_template( $theme_builder_id, $template, $allow_d
 	$footer_enabled      = (bool) $_->array_get( $template, 'layouts.footer.enabled', true );
 	$use_on              = array_map( 'sanitize_text_field', $_->array_get( $template, 'use_on', array() ) );
 	$exclude_from        = array_map( 'sanitize_text_field', $_->array_get( $template, 'exclude_from', array() ) );
-	$exists              = ET_THEME_BUILDER_TEMPLATE_POST_TYPE === get_post_type( $post_id ) && 'publish' === get_post_status( $post_id );
+	$exists              = $post_id > 0 && ET_THEME_BUILDER_TEMPLATE_POST_TYPE === get_post_type( $post_id ) && 'publish' === get_post_status( $post_id );
 	$autogenerated_title = '1' === $_->array_get( $template, 'autogenerated_title', '1' );
 
 	if ( ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE !== get_post_type( $header_id ) || 'publish' !== get_post_status( $header_id ) ) {
@@ -1425,6 +1425,9 @@ function et_theme_builder_store_template( $theme_builder_id, $template, $allow_d
 				'post_title' => $title,
 			)
 		);
+
+		// Update layout title for each template.
+		et_theme_builder_update_layout_title( $template );
 	} else {
 		$post_id = wp_insert_post(
 			array(
@@ -1781,3 +1784,30 @@ function et_theme_builder_clear_wp_post_cache( $layout_id = '' ) {
 }
 
 add_action( 'et_save_post', 'et_theme_builder_clear_wp_post_cache' );
+
+/**
+ *
+ * Update layout title for each template
+ *
+ * @param array $template Theme Builder Template.
+ */
+function et_theme_builder_update_layout_title( $template ) {
+	if ( empty( $template['layouts'] ) ) {
+		return;
+	}
+
+	foreach ( $template['layouts'] as $layout ) {
+		$layout_id = (int) $layout['id'];
+
+		if ( ! $layout_id ) {
+			continue;
+		}
+
+		wp_update_post(
+			array(
+				'ID'         => $layout_id,
+				'post_title' => sanitize_text_field( $template['title'] ),
+			)
+		);
+	}
+}

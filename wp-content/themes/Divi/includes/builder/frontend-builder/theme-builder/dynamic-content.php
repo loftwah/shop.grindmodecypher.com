@@ -190,22 +190,6 @@ function et_theme_builder_filter_resolve_default_dynamic_content( $content, $nam
 			}
 			break;
 
-		case 'post_meta_key':
-			$meta_key   = $_->array_get( $settings, 'meta_key' );
-			$meta_value = get_post_meta( $post_id, $meta_key, true );
-
-			if ( empty( $meta_value ) ) {
-				$content = et_builder_get_dynamic_content_custom_field_label( $meta_key );
-			} else {
-				$enable_html = $_->array_get( $settings, 'enable_html' );
-				if ( 'on' !== $enable_html ) {
-					$content = esc_html( $content );
-				}
-				$wrapped = true;
-			}
-
-			break;
-
 		default:
 			// Avoid unhandled cases being wrapped twice by the default resolve and this one.
 			$wrapped = true;

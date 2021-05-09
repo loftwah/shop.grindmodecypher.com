@@ -403,33 +403,30 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
 		'type'  => 'image',
 	);
 
-	if ( et_builder_tb_enabled() ) {
-		$fields['post_meta_key'] = array(
-			'label'  => esc_html__( 'Manual Custom Field Name', 'et_builder' ),
-			'type'   => 'any',
-			'group'  => esc_html__( 'Custom Fields', 'et_builder' ),
-			'fields' => array(
-				'meta_key' => array(
-					'label' => esc_html__( 'Field Name', 'et_builder' ),
-					'type'  => 'text',
-				),
+	$fields['post_meta_key'] = array(
+		'label'  => esc_html__( 'Manual Custom Field Name', 'et_builder' ),
+		'type'   => 'any',
+		'group'  => esc_html__( 'Custom Fields', 'et_builder' ),
+		'fields' => array(
+			'meta_key' => array(
+				'label' => esc_html__( 'Field Name', 'et_builder' ),
+				'type'  => 'text',
 			),
+		),
+	);
+
+	if ( current_user_can( 'unfiltered_html' ) ) {
+		$fields['post_meta_key']['fields']['enable_html'] = array(
+			'label'   => esc_html__( 'Enable raw HTML', 'et_builder' ),
+			'type'    => 'yes_no_button',
+			'options' => array(
+				'on'  => et_builder_i18n( 'Yes' ),
+				'off' => et_builder_i18n( 'No' ),
+			),
+			'default' => 'off',
+			'show_on' => 'text',
 		);
-
-		if ( current_user_can( 'unfiltered_html' ) ) {
-			$fields['post_meta_key']['fields']['enable_html'] = array(
-				'label'   => esc_html__( 'Enable raw HTML', 'et_builder' ),
-				'type'    => 'yes_no_button',
-				'options' => array(
-					'on'  => et_builder_i18n( 'Yes' ),
-					'off' => et_builder_i18n( 'No' ),
-				),
-				'default' => 'off',
-				'show_on' => 'text',
-			);
-		}
 	}
-
 	/*
 	 * Include Product dynamic fields on Product post type.
 	 *
@@ -1527,10 +1524,19 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 
 		case 'post_meta_key':
 			$meta_key = $_->array_get( $settings, 'meta_key' );
-			$content  = '';
-			if ( ! empty( $meta_key ) ) {
-				$content     = get_post_meta( $post_id, $meta_key, true );
+			$content  = get_post_meta( $post_id, $meta_key, true );
+			$is_fe    = 'fe' === et_builder_get_current_builder_type() ? true : false;
+
+			if ( ( $is_fe && empty( $content ) ) || empty( $meta_key ) ) {
+				$content = '';
+				break;
+			}
+
+			if ( empty( $content ) ) {
+				$content = et_builder_get_dynamic_content_custom_field_label( $meta_key );
+			} else {
 				$enable_html = $_->array_get( $settings, 'enable_html' );
+
 				if ( 'on' !== $enable_html ) {
 					$content = esc_html( $content );
 				}

@@ -666,7 +666,7 @@ class ET_Core_SupportCenter {
 		wp_enqueue_style( 'et-core-admin' );
 		wp_enqueue_script( 'et-core-admin' );
 
-		// Load only on `_et_support_center` pages
+		// Load only on `_et_support_center` pages.
 		if ( strpos( $hook, '_et_support_center' ) ) {
 			// Core Admin CSS
 			wp_enqueue_style( 'et-core',
@@ -2408,20 +2408,24 @@ class ET_Core_SupportCenter {
 
 		$user = get_userdata( $user_id );
 
-		// Gather this user's associated role(s)
+		if ( ! is_object( $user ) || ! property_exists( $user, 'roles' ) ) {
+			return false;
+		}
+
+		// Gather this user's associated role(s).
 		$user_roles      = (array) $user->roles;
 		$user_is_support = false;
 
-		// First, check the username
+		// First, check the username.
 		if ( ! $this->support_user_account_name === $user->user_login ) {
 			return $user_is_support;
 		}
 
-		// Determine whether this user has the ET Support User role
-		if ( in_array( 'et_support', $user_roles ) ) {
+		// Determine whether this user has the ET Support User role.
+		if ( in_array( 'et_support', $user_roles, true ) ) {
 			$user_is_support = true;
 		}
-		if ( in_array( 'et_support_elevated', $user_roles ) ) {
+		if ( in_array( 'et_support_elevated', $user_roles, true ) ) {
 			$user_is_support = true;
 		}
 

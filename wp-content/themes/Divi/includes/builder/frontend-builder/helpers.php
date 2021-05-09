@@ -1595,14 +1595,16 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 				'left'   => et_builder_i18n( 'Left' ),
 			),
 			'colorpicker'      => array(
-				'clear'       => esc_html__( 'Clear', 'et_builder' ),
-				'select'      => esc_html__( 'Select', 'et_builder' ),
-				'selectColor' => esc_html__( 'Select Color', 'et_builder' ),
-				'noColor'     => esc_html__( 'Transparent', 'et_builder' ),
-				'addColor'    => esc_html__( 'Add Color', 'et_builder' ),
+				'clear'          => esc_html__( 'Clear', 'et_builder' ),
+				'select'         => esc_html__( 'Select', 'et_builder' ),
+				'selectColor'    => esc_html__( 'Select Color', 'et_builder' ),
+				'noColor'        => esc_html__( 'Transparent', 'et_builder' ),
+				'addColor'       => esc_html__( 'Add Color', 'et_builder' ),
+				'addGlobalColor' => esc_html__( 'Add Global Color', 'et_builder' ),
 			),
 			'colorManager'     => array(
 				'saved'  => esc_html__( 'Saved', 'et_builder' ),
+				'global' => esc_html__( 'Global', 'et_builder' ),
 				'recent' => esc_html__( 'Recent', 'et_builder' ),
 			),
 			'uploadGallery'    => array(
@@ -1734,6 +1736,18 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 				'options_group' => esc_html__( 'Extend %s Styles', 'et_builder' ),
 				'option'        => esc_html__( 'Extend %s', 'et_builder' ),
 			),
+			'makeDefault'               => esc_html__( 'Make Default', 'et_builder' ),
+			'makeStyleDefault'          => esc_html__( 'Make Style Default', 'et_builder' ),
+			'makeStylesDefault'         => esc_html__( 'Make Styles Default', 'et_builder' ),
+			'modifyDefaultValue'        => esc_html__( 'Modify Default Value', 'et_builder' ),
+			'modifyDefaultValues'       => esc_html__( 'Modify Default Values', 'et_builder' ),
+			'detachFromGlobal'          => esc_html__( 'Detach From Global', 'et_builder' ),
+			'convertToGlobal'           => esc_html__( 'Convert to Global', 'et_builder' ),
+			'makeGlobalColor'           => esc_html__( 'Make Global Color', 'et_builder' ),
+			'editSavedColor'            => esc_html__( 'Edit Saved Color', 'et_builder' ),
+			'editGlobalColor'           => esc_html__( 'Edit Global Color', 'et_builder' ),
+			'deleteGlobalColor'         => esc_html__( 'Delete Global Color', 'et_builder' ),
+			'replaceGlobalColor'        => esc_html__( 'Replace Global Color', 'et_builder' ),
 			'applyToCurrentPreset'      => esc_html__( 'Apply To Active Preset', 'et_builder' ),
 			'applyStyleToCurrentPreset' => esc_html__( 'Apply Style To Active Preset', 'et_builder' ),
 			'applyStylesToActivePreset' => esc_html__( 'Apply Styles To Active Preset', 'et_builder' ),
@@ -1804,6 +1818,10 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 					'addNewPreset'    => esc_html__( 'Add New Preset', 'et_builder' ),
 				),
 			),
+			'applyGlobalColor'     => esc_html__( 'You\'ve made changes to this global color. This will affect all instances of this global color across your entire site. Do you wish to proceed?', 'et_builder' ),
+			'deleteGlobalColor'    => esc_html__( 'You\'re deleting a global color, which will no longer be available across your website, however, instances of this global color will not be affected. Do you wish to proceed?', 'et_builder' ),
+			'finishSavedEdit'      => esc_html__( 'Finish Editing Saved Colors', 'et_builder' ),
+			'finishGlobalEdit'     => esc_html__( 'Finish Editing Global Colors', 'et_builder' ),
 			'portabilityTabs'      => array(
 				'import' => array(
 					'replaceLayout'        => esc_html__( 'Replace existing content.', 'et_builder' ),
@@ -1982,6 +2000,27 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 				'replaceAll'  => array(
 					'label'       => esc_html__( 'Replace All', 'et_builder' ),
 					'description' => esc_html__( 'By default, values will only be replaced when found within the exact option type selected. If you enable this checkbox, the search will be extended to all options and values will be replaced everywhere. For example, a color will be replaced in all colors options: Text Colors, Background Colors, Border Colors, etc.', 'et_builder' ),
+				),
+				'error'       => array(
+					'field_type_not_match'    => esc_html__( 'Field type is not match', 'et_builder' ),
+					'field_name_not_match'    => esc_html__( 'Field name is not match', 'et_builder' ),
+					'replace_value_not_valid' => esc_html__( 'Replace value is not valid', 'et_builder' ),
+					'replace_value_not_match' => esc_html__( 'Replace value is not match', 'et_builder' ),
+				),
+			),
+		),
+		'replaceGlobalColor'        => array(
+			'modal' => array(
+				'title'       => esc_html__( 'Replace Global Color', 'et_builder' ),
+				'description' => esc_html__( 'This global color will be deleted, and all instances across your site will be replaced with another global color of your choice.', 'et_builder' ),
+				'tooltip'     => esc_html__( 'Replace', 'et_builder' ),
+				'find'        => array(
+					'label'       => esc_html__( 'Replace', 'et_builder' ),
+					'description' => esc_html__( 'This is the option value that will be replaced throughout your page. Where this option exists, within the defined scope, it will be replaced by the new value configured below.', 'et_builder' ),
+				),
+				'replaceWith' => array(
+					'label'       => esc_html__( 'With', 'et_builder' ),
+					'description' => esc_html__( 'When the value above is found within your desired area, it will be replaced with the value that you choose here.', 'et_builder' ),
 				),
 				'error'       => array(
 					'field_type_not_match'    => esc_html__( 'Field type is not match', 'et_builder' ),

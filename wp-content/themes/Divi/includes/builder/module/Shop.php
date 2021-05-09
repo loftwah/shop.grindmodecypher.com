@@ -1,11 +1,28 @@
 <?php
+/**
+ * Shop module class.
+ *
+ * Responsible for adding shop module.
+ *
+ * @package Divi
+ * @subpackage Builder
+ */
 
+// Include overlay helper.
 require_once 'helpers/Overlay.php';
 
-
+/**
+ * Handles setting up everything we need for shop module.
+ */
 class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 
-	function init() {
+	/**
+	 * Initialize the module class.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function init() {
 		$this->name       = esc_html__( 'Shop', 'et_builder' );
 		$this->plural     = esc_html__( 'Shops', 'et_builder' );
 		$this->slug       = 'et_pb_shop';
@@ -152,7 +169,7 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			'margin_padding' => array(
 				'css' => array(
 					'main'      => '%%order_class%%',
-					'important' => array( 'custom_margin' ), // needed to overwrite last module margin-bottom styling
+					'important' => array( 'custom_margin' ), // needed to overwrite last module margin-bottom styling.
 				),
 			),
 			'text'           => array(
@@ -160,14 +177,14 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 					'text_shadow' => implode(
 						', ',
 						array(
-							// Title
+							// Title.
 							"{$this->main_css_element} .woocommerce ul.products h3",
 							"{$this->main_css_element} .woocommerce ul.products  h1",
 							"{$this->main_css_element} .woocommerce ul.products  h2",
 							"{$this->main_css_element} .woocommerce ul.products  h4",
 							"{$this->main_css_element} .woocommerce ul.products  h5",
 							"{$this->main_css_element} .woocommerce ul.products  h6",
-							// Price
+							// Price.
 							"{$this->main_css_element} .woocommerce ul.products .price",
 							"{$this->main_css_element} .woocommerce ul.products .price .amount",
 
@@ -214,8 +231,12 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 				'selector' => $this->get_title_selector(),
 			),
 			'rating'    => array(
-				'label'    => esc_html__( 'Rating', 'et_builder' ),
+				'label'    => esc_html__( 'Rating Container', 'et_builder' ),
 				'selector' => '.star-rating',
+			),
+			'stars'     => array(
+				'label'    => esc_html__( 'Star Rating', 'et_builder' ),
+				'selector' => '.star-rating > span:before',
 			),
 			'price'     => array(
 				'label'    => esc_html__( 'Price', 'et_builder' ),
@@ -235,7 +256,13 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 		);
 	}
 
-	function get_fields() {
+	/**
+	 * Get's the module fields.
+	 *
+	 * @access public
+	 * @return array $fields Module Fields.
+	 */
+	public function get_fields() {
 		$fields = array(
 			'type'                => array(
 				'label'            => esc_html__( 'Product View Type', 'et_builder' ),
@@ -455,8 +482,9 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Get CSS fields transition.
 	 *
+	 * @inheritdoc
 	 * @since 4.0.6 Handle star rating letter spacing.
 	 */
 	public function get_transition_fields_css_props() {
@@ -478,13 +506,27 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 		return $fields;
 	}
 
-	function add_product_class_name( $classes ) {
+	/**
+	 * Insert class name where required.
+	 *
+	 * @param array $classes Existing classes.
+	 * @return array Classes to be added.
+	 */
+	public function add_product_class_name( $classes ) {
 		$classes[] = 'product';
 
 		return $classes;
 	}
 
-	function get_shop( $args = array(), $conditional_tags = array(), $current_page = array() ) {
+	/**
+	 * Get shop details for shop module
+	 *
+	 * @param array $args arguments that affect shop output.
+	 * @param array $conditional_tags passed conditional tag for update process.
+	 * @param array $current_page passed current page params.
+	 * @return string HTML markup for shop module
+	 */
+	public function get_shop( $args = array(), $conditional_tags = array(), $current_page = array() ) {
 		foreach ( $args as $arg => $value ) {
 			$this->props[ $arg ] = $value;
 		}
@@ -495,7 +537,13 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 		$orderby            = $this->props['orderby'];
 		$order              = 'ASC';
 		$columns            = $this->props['columns_number'];
-		$pagination         = 'on' === $this->prop( 'show_pagination', 'off' );
+		$pagination_values  = et_pb_responsive_options()->get_property_values( $this->props, 'show_pagination' );
+		$pagination_desktop = et_()->array_get( $pagination_values, 'desktop', '' );
+		$pagination_tablet  = et_()->array_get( $pagination_values, 'tablet', '' );
+		$pagination_phone   = et_()->array_get( $pagination_values, 'phone', '' );
+
+		$pagination = in_array( 'on', array( $pagination_desktop, $pagination_tablet, $pagination_phone ), true );
+
 		$product_categories = array();
 		$product_tags       = array();
 		$use_current_loop   = 'on' === $this->prop( 'use_current_loop', 'off' );
@@ -513,7 +561,7 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			} elseif ( is_product_taxonomy() ) {
 				$term = get_queried_object();
 
-				// Product attribute taxonomy slugs start with pa_
+				// Product attribute taxonomy slugs start with pa_ .
 				if ( et_()->starts_with( $term->taxonomy, 'pa_' ) ) {
 					$product_attribute = $term->taxonomy;
 					$product_terms[]   = $term->slug;
@@ -542,7 +590,7 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			}
 		}
 
-		// Recent was the default option in Divi once, so it is added here for the websites created before the change
+		// Recent was the default option in Divi once, so it is added here for the websites created before the change.
 		if ( 'default' === $orderby && ( 'default' === $type || 'recent' === $type ) ) {
 			// Leave the attribute empty to allow WooCommerce to take over and use the default sorting.
 			$orderby = '';
@@ -552,11 +600,11 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			$orderby = 'date-desc';
 		}
 
-		if ( in_array( $orderby, array( 'price-desc', 'date-desc' ) ) ) {
+		if ( in_array( $orderby, array( 'price-desc', 'date-desc' ), true ) ) {
 			// Supported orderby arguments (as defined by WC_Query->get_catalog_ordering_args() ):
-			// rand | date | price | popularity | rating | title
+			// rand | date | price | popularity | rating | title .
 			$orderby = str_replace( '-desc', '', $orderby );
-			// Switch to descending order if orderby is 'price-desc' or 'date-desc'
+			// Switch to descending order if orderby is 'price-desc' or 'date-desc'.
 			$order = 'DESC';
 		}
 
@@ -642,26 +690,26 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 	/**
 	 * Get shop HTML for shop module
 	 *
-	 * @param array   arguments that affect shop output
-	 * @param array   passed conditional tag for update process
-	 * @param array   passed current page params
+	 * @param array $args arguments that affect shop output.
+	 * @param array $conditional_tags passed conditional tag for update process.
+	 * @param array $current_page passed current page params.
 	 * @return string HTML markup for shop module
 	 */
-	static function get_shop_html( $args = array(), $conditional_tags = array(), $current_page = array() ) {
+	public static function get_shop_html( $args = array(), $conditional_tags = array(), $current_page = array() ) {
 		$shop = new self();
 
 		do_action( 'et_pb_get_shop_html_before' );
 
 		$shop->props = $args;
 
-		// Force product loop to have 'product' class name. It appears that 'product' class disappears
-		// when $this->get_shop() is being called for update / from admin-ajax.php
+		// Force product loop to have 'product' class name. It appears that 'product' class disappears.
+		// when $this->get_shop() is being called for update / from admin-ajax.php.
 		add_filter( 'post_class', array( $shop, 'add_product_class_name' ) );
 
-		// Get product HTML
+		// Get product HTML.
 		$output = $shop->get_shop( array(), array(), $current_page );
 
-		// Remove 'product' class addition to product loop's post class
+		// Remove 'product' class addition to product loop's post class.
 		remove_filter( 'post_class', array( $shop, 'add_product_class_name' ) );
 
 		do_action( 'et_pb_get_shop_html_after' );
@@ -670,8 +718,12 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 	}
 
 
-	// WooCommerce changed the title tag from h3 to h2 in 3.0.0
-	function get_title_selector() {
+	/**
+	 * WooCommerce changed the title tag from h3 to h2 in 3.0.0
+	 *
+	 * @return string HTML markup for title selector.
+	 */
+	public function get_title_selector() {
 		$title_selector = 'li.product h3';
 
 		if ( class_exists( 'WooCommerce' ) ) {
@@ -711,6 +763,23 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 		$hover_icon_phone  = isset( $hover_icon_values['phone'] ) ? $hover_icon_values['phone'] : '';
 		$hover_icon_sticky = $sticky->get_value( 'hover_icon', $this->props );
 
+		$pagination_display = array();
+		$pagination_values  = et_pb_responsive_options()->get_property_values( $this->props, 'show_pagination' );
+		$pagination_desktop = et_()->array_get( $pagination_values, 'desktop', '' );
+		$pagination_tablet  = et_()->array_get( $pagination_values, 'tablet', '' );
+		$pagination_phone   = et_()->array_get( $pagination_values, 'phone', '' );
+
+		$pagination = in_array( 'off', array( $pagination_tablet, $pagination_phone ), true );
+
+		$pagination_display['desktop'] = 'on' === $pagination_desktop ? 'block' : 'none';
+		$pagination_display['tablet']  = 'on' === $pagination_tablet ? 'block' : 'none';
+		$pagination_display['phone']   = 'on' === $pagination_phone ? 'block' : 'none';
+
+		// only run if mobile device pagination is disabled.
+		if ( $pagination ) {
+			et_pb_responsive_options()->generate_responsive_css( $pagination_display, $this->main_css_element . ' nav.woocommerce-pagination', 'display', $render_slug, '', 'yes_no_button' );
+		}
+
 		// Sale Badge Color.
 		$this->generate_styles(
 			array(
@@ -749,7 +818,7 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			)
 		);
 
-		// Images: Add CSS Filters and Mix Blend Mode rules (if set)
+		// Images: Add CSS Filters and Mix Blend Mode rules (if set).
 		if ( array_key_exists( 'image', $this->advanced_fields ) && array_key_exists( 'css', $this->advanced_fields['image'] ) ) {
 			$this->add_classname(
 				$this->generate_css_filters(
@@ -778,7 +847,7 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			);
 		}
 
-		// Module classnames
+		// Module classnames.
 		$this->add_classname(
 			array(
 				$this->get_text_orientation_classname(),
@@ -814,7 +883,7 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 	 *
 	 * @since 4.0.5
 	 *
-	 * @param array $query_args
+	 * @param array $query_args Query array.
 	 *
 	 * @return array
 	 */
@@ -870,7 +939,7 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 	 *
 	 * @since 4.0.8
 	 *
-	 * @param WP_Query $query
+	 * @param WP_Query $query WP QUERY object.
 	 */
 	public function apply_woo_widget_filters( $query ) {
 		global $wp_the_query;

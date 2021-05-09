@@ -195,6 +195,7 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 				'description'     => esc_html__( 'Choose the type of field', 'et_builder' ),
 				'affects'         => array(
 					'checkbox_options',
+					'booleancheckbox_options',
 					'radio_options',
 					'select_options',
 					'min_length',
@@ -218,6 +219,16 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 				'checkbox'        => true,
 				'option_category' => 'basic_option',
 				'depends_show_if' => 'checkbox',
+				'toggle_slug'     => 'field_options',
+				'right_actions'   => 'move|link|copy|delete',
+				'labels'          => $labels,
+			),
+			'booleancheckbox_options'    => array(
+				'label'           => esc_html__( 'Options', 'et_builder' ),
+				'type'            => 'sortable_list',
+				'checkbox'        => true,
+				'option_category' => 'basic_option',
+				'depends_show_if' => 'booleancheckbox',
 				'toggle_slug'     => 'field_options',
 				'right_actions'   => 'move|link|copy|delete',
 				'labels'          => $labels,
@@ -391,6 +402,7 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 		$form_field_text_color      = $this->props['form_field_text_color'];
 		$checkbox_checked           = $this->props['checkbox_checked'];
 		$checkbox_options           = $this->props['checkbox_options'];
+		$booleancheckbox_options    = $this->props['booleancheckbox_options'];
 		$radio_options              = $this->props['radio_options'];
 		$select_options             = $this->props['select_options'];
 		$min_length                 = $this->props['min_length'];
@@ -694,6 +706,52 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 				);
 
 				break;
+			case 'booleancheckbox':
+				$input_field = '';
+
+				$option_search    = array( '&#91;', '&#93;' );
+				$option_replace   = array( '[', ']' );
+				$checkbox_options = str_replace( $option_search, $option_replace, $booleancheckbox_options );
+				$checkbox_options = json_decode( $checkbox_options );
+				$option           = self::$_->array_get( $checkbox_options, 0 );
+
+				$is_checked   = 1 === $option->checked;
+				$option_value = wp_strip_all_tags( $option->value );
+				$drag_id      = isset( $option->dragID ) ? $option->dragID : ''; // phpcs:ignore ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase -- The $option is the sortable list item object set from the sortable-list.jsx
+				$option_id    = isset( $option->id ) ? $option->id : $drag_id;
+				$option_id    = sprintf( ' data-id="%1$s"', esc_attr( $option_id ) );
+
+				$input_field .= sprintf(
+					'<input type="checkbox" id="et_pb_contact_%1$s_%5$s_%3$s" class="input" value="%2$s"%4$s%6$s>
+					<label for="et_pb_contact_%1$s_%5$s_%3$s"><i></i><span class="et_pb_contact_field_options_title">%7$s</span></label>',
+					esc_attr( $field_id ),
+					esc_attr( $option_value ),
+					esc_attr( 0 ),
+					$is_checked ? ' checked="checked"' : '',
+					esc_attr( $render_count ), // #5
+					$option_id,
+					esc_html( $field_title )
+				);
+
+				$input_field = sprintf(
+					'<input class="et_pb_checkbox_handle" type="hidden" name="et_pb_contact_%1$s_%4$s" data-required_mark="%3$s" data-field_type="%2$s" data-original_id="%1$s">
+					<span class="et_pb_contact_field_options_wrapper">
+						%5$s
+						%6$s
+					</span>',
+					esc_attr( $field_id ),
+					esc_attr( $field_type ),
+					'off' === $required_mark ? 'not_required' : 'required',
+					esc_attr( $current_module_num ),
+					$input_field,
+					$multi_view->render_attrs(
+						array(
+							'content' => '{{field_title}}',
+						)
+					)
+				);
+
+				break;
 			case 'radio':
 				$input_field = '';
 
@@ -816,6 +874,10 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 			$this->add_classname( 'et_pb_contact_field--hidden' );
 		}
 
+		if ( $this->_has_background() ) {
+			$this->add_classname( 'has-background' );
+		}
+
 		// Remove automatically added classname
 		$this->remove_classname( 'et_pb_module' );
 
@@ -843,6 +905,20 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 		);
 
 		return $output;
+	}
+
+	/**
+	 * Checks if module has background.
+	 *
+	 * @since 4.9.3
+	 *
+	 * @return bool
+	 */
+	protected function _has_background() {
+		return 'on' === self::$_->array_get( $this->props, 'background_enable_color' )
+			|| 'on' === self::$_->array_get( $this->props, 'background_enable_image' )
+			|| 'on' === self::$_->array_get( $this->props, 'background_enable_video_mp4' )
+			|| 'on' === self::$_->array_get( $this->props, 'background_enable_video_webm' );
 	}
 }
 

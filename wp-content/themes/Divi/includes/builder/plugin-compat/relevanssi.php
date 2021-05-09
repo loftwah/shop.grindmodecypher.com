@@ -25,8 +25,26 @@ class ET_Builder_Plugin_Compat_Relevanssi extends ET_Builder_Plugin_Compat_Base 
 	 * @since 4.7.0
 	 */
 	public function __construct() {
-		$this->plugin_id = 'relevanssi/relevanssi.php';
+		$this->plugin_id = $this->_get_plugin_id();
 		$this->init_hooks();
+	}
+
+	/**
+	 * Get the currently activated plugin id as the FREE and PRO versions are separate plugins.
+	 *
+	 * @since ??
+	 *
+	 * @return string
+	 */
+	protected function _get_plugin_id() {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$pro  = 'relevanssi-premium/relevanssi.php';
+		$free = 'relevanssi/relevanssi.php';
+
+		return is_plugin_active( $pro ) ? $pro : $free;
 	}
 
 	/**

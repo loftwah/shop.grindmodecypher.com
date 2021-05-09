@@ -173,7 +173,7 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 				'button' => array(
 					'label'         => et_builder_i18n( 'Button' ),
 					'css'           => array(
-						'main'         => ".et_pb_pricing {$this->main_css_element} .et_pb_button",
+						'main'         => ".et_pb_pricing {$this->main_css_element} .et_pb_pricing_table_button.et_pb_button",
 						'limited_main' => ".et_pb_pricing {$this->main_css_element} .et_pb_pricing_table_button.et_pb_button",
 						'alignment'    => ".et_pb_pricing {$this->main_css_element} .et_pb_button_wrapper",
 					),

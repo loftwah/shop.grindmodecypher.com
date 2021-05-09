@@ -337,7 +337,7 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 
 	$manager = $result['manager'];
 
-	if ( ! $manager->has_file() ) {
+	if ( ET_Builder_Element::$forced_inline_styles || ! $manager->has_file() ) {
 		$styles = et_pb_get_page_custom_css( $layout->ID ) . ET_Builder_Element::get_style( false, $layout->ID ) . ET_Builder_Element::get_style( true, $layout->ID );
 
 		if ( $styles ) {
@@ -345,6 +345,9 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 
 			// Output the styles inline in the footer on first render as we are already
 			// past "head-late" where they will be enqueued once static files are generated.
+			if ( ET_Builder_Element::$forced_inline_styles ) {
+				$manager->forced_inline = true;
+			}
 			$manager->write_file_location = 'footer';
 			$manager->set_output_location( 'footer' );
 		}

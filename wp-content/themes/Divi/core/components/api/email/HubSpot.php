@@ -107,12 +107,17 @@ class ET_Core_API_Email_HubSpot extends ET_Core_API_Email_Provider {
 
 		unset( $args['custom_fields'] );
 
+		$field_types = array(
+			'radio',
+			'booleancheckbox',
+		);
+
 		foreach ( $fields as $field_id => $value ) {
 			if ( is_array( $value ) && $value ) {
 				// This is a multiple choice field (eg. checkbox, radio, select)
 				$value = array_values( $value );
 				$value = implode( ';', $value );
-			} else if ( 'radio' === $this->data['custom_fields'][ $field_id ]['type'] ) {
+			} elseif ( in_array( $this->data['custom_fields'][ $field_id ]['type'], $field_types, true ) ) {
 				// Should use array key. Sometimes it's different than value and Hubspot expects the key
 				$radio_options = $this->data['custom_fields'][ $field_id ]['options'];
 				$value         = array_search( $value, $radio_options );
@@ -180,7 +185,7 @@ class ET_Core_API_Email_HubSpot extends ET_Core_API_Email_Provider {
 				'textarea'        => 'text',
 				// Them => Us
 				'text'            => 'input',
-				'booleancheckbox' => 'radio',
+				'booleancheckbox' => 'booleancheckbox',
 			),
 		);
 
