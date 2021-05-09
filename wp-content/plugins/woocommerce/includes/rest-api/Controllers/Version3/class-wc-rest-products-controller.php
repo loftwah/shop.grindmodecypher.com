@@ -551,11 +551,22 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 					$stock_quantity += wc_stock_amount( $request['inventory_delta'] );
 					$product->set_stock_quantity( wc_stock_amount( $stock_quantity ) );
 				}
+
+				// Low stock amount.
+				// isset() returns false for value null, thus we need to check whether the value has been sent by the request.
+				if ( array_key_exists( 'low_stock_amount', $request->get_params() ) ) {
+					if ( null === $request['low_stock_amount'] ) {
+						$product->set_low_stock_amount( '' );
+					} else {
+						$product->set_low_stock_amount( wc_stock_amount( $request['low_stock_amount'] ) );
+					}
+				}
 			} else {
 				// Don't manage stock.
 				$product->set_manage_stock( 'no' );
 				$product->set_stock_quantity( '' );
 				$product->set_stock_status( $stock_status );
+				$product->set_low_stock_amount( '' );
 			}
 		} elseif ( ! $product->is_type( 'variable' ) ) {
 			$product->set_stock_status( $stock_status );
@@ -600,7 +611,34 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 		// Product tags.
 		if ( isset( $request['tags'] ) && is_array( $request['tags'] ) ) {
-			$product = $this->save_taxonomy_terms( $product, $request['tags'], 'tag' );
+			$new_tags = array();
+
+			foreach ( $request['tags'] as $tag ) {
+				if ( ! isset( $tag['name'] ) ) {
+					$new_tags[] = $tag;
+					continue;
+				}
+
+				if ( ! term_exists( $tag['name'], 'product_tag' ) ) {
+					// Create the tag if it doesn't exist.
+					$term = wp_insert_term( $tag['name'], 'product_tag' );
+
+					if ( ! is_wp_error( $term ) ) {
+						$new_tags[] = array(
+							'id' => $term['term_id'],
+						);
+
+						continue;
+					}
+				} else {
+					// Tag exists, assume user wants to set the product with this tag.
+					$new_tags[] = array(
+						'id' => get_term_by( 'name', $tag['name'], 'product_tag' )->term_id,
+					);
+				}
+			}
+
+			$product = $this->save_taxonomy_terms( $product, $new_tags, 'tag' );
 		}
 
 		// Downloadable.
@@ -957,6 +995,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
+				),
+				'low_stock_amount'       => array(
+					'description' => __( 'Low Stock amount for the product.', 'woocommerce' ),
+					'type'        => array( 'integer', 'null' ),
+					'context'     => array( 'view', 'edit' ),
 				),
 				'sold_individually'     => array(
 					'description' => __( 'Allow one item to be bought in a single order.', 'woocommerce' ),
