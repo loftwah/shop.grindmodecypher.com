@@ -1,6 +1,6 @@
-(window["__wcAdmin_webpackJsonp"] = window["__wcAdmin_webpackJsonp"] || []).push([[48],{
+(window["__wcAdmin_webpackJsonp"] = window["__wcAdmin_webpackJsonp"] || []).push([[47],{
 
-/***/ 125:
+/***/ 219:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43,7 +43,7 @@ module.exports = emptyFunction;
 
 /***/ }),
 
-/***/ 163:
+/***/ 243:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56,15 +56,15 @@ module.exports = emptyFunction;
 
 
 
-var React = __webpack_require__(8);
+var React = __webpack_require__(20);
 
 var REACT_ELEMENT_TYPE =
   (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) ||
   0xeac7;
 
-var emptyFunction = __webpack_require__(125);
-var invariant = __webpack_require__(164);
-var warning = __webpack_require__(165);
+var emptyFunction = __webpack_require__(219);
+var invariant = __webpack_require__(244);
+var warning = __webpack_require__(245);
 
 var SEPARATOR = '.';
 var SUBSEPARATOR = ':';
@@ -372,7 +372,7 @@ module.exports = createReactFragment;
 
 /***/ }),
 
-/***/ 164:
+/***/ 244:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -426,7 +426,7 @@ module.exports = invariant;
 
 /***/ }),
 
-/***/ 165:
+/***/ 245:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -440,7 +440,7 @@ module.exports = invariant;
 
 
 
-var emptyFunction = __webpack_require__(125);
+var emptyFunction = __webpack_require__(219);
 
 /**
  * Similar to invariant but only logs a warning if the condition is not met.
@@ -457,7 +457,7 @@ module.exports = warning;
 
 /***/ }),
 
-/***/ 166:
+/***/ 246:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -499,100 +499,522 @@ module.exports = function (mixedString) {
 
 /***/ }),
 
-/***/ 241:
+/***/ 608:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* unused harmony export ALLOWED_TAGS */
+/* unused harmony export ALLOWED_ATTR */
+/* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(321);
+/* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dompurify__WEBPACK_IMPORTED_MODULE_0__);
+/**
+ * External dependencies
+ */
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-var defineProperty = __webpack_require__(6);
+var ALLOWED_TAGS = ['a', 'b', 'em', 'i', 'strong', 'p', 'br'];
+var ALLOWED_ATTR = ['target', 'href', 'rel', 'name', 'download'];
+/* harmony default export */ __webpack_exports__["a"] = (function (html) {
+  return {
+    __html: Object(dompurify__WEBPACK_IMPORTED_MODULE_0__["sanitize"])(html, {
+      ALLOWED_TAGS: ALLOWED_TAGS,
+      ALLOWED_ATTR: ALLOWED_ATTR
+    })
+  };
+});
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js
-var objectWithoutProperties = __webpack_require__(11);
+/***/ }),
+
+/***/ 630:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(28);
+/* harmony import */ var _wordpress_primitives__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__);
+
+
+/**
+ * WordPress dependencies
+ */
+
+var chevronRight = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__["SVG"], {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 24 24"
+}, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__["Path"], {
+  d: "M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1 5.4-6z"
+}));
+/* harmony default export */ __webpack_exports__["a"] = (chevronRight);
+//# sourceMappingURL=chevron-right.js.map
+
+/***/ }),
+
+/***/ 636:
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ 714:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "StoreAlerts", function() { return /* binding */ store_alerts_StoreAlerts; });
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.reflect.construct.js
+var es_reflect_construct = __webpack_require__(64);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
+var classCallCheck = __webpack_require__(22);
+var classCallCheck_default = /*#__PURE__*/__webpack_require__.n(classCallCheck);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/createClass.js
+var createClass = __webpack_require__(23);
+var createClass_default = /*#__PURE__*/__webpack_require__.n(createClass);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/assertThisInitialized.js
+var assertThisInitialized = __webpack_require__(18);
+var assertThisInitialized_default = /*#__PURE__*/__webpack_require__.n(assertThisInitialized);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/inherits.js
+var inherits = __webpack_require__(24);
+var inherits_default = /*#__PURE__*/__webpack_require__.n(inherits);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js
+var possibleConstructorReturn = __webpack_require__(25);
+var possibleConstructorReturn_default = /*#__PURE__*/__webpack_require__.n(possibleConstructorReturn);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/getPrototypeOf.js
+var getPrototypeOf = __webpack_require__(14);
+var getPrototypeOf_default = /*#__PURE__*/__webpack_require__.n(getPrototypeOf);
+
+// EXTERNAL MODULE: external ["wp","element"]
+var external_wp_element_ = __webpack_require__(0);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.map.js
+var es_array_map = __webpack_require__(51);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.function.name.js
+var es_function_name = __webpack_require__(129);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.to-string.js
+var es_object_to_string = __webpack_require__(100);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.to-string.js
+var es_regexp_to_string = __webpack_require__(142);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.concat.js
+var es_array_concat = __webpack_require__(66);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.find.js
+var es_array_find = __webpack_require__(192);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.filter.js
+var es_array_filter = __webpack_require__(41);
+
+// EXTERNAL MODULE: external ["wp","i18n"]
+var external_wp_i18n_ = __webpack_require__(2);
+
+// EXTERNAL MODULE: external ["wp","components"]
+var external_wp_components_ = __webpack_require__(4);
 
 // EXTERNAL MODULE: ./node_modules/classnames/index.js
-var classnames = __webpack_require__(4);
+var classnames = __webpack_require__(15);
 var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
 
-// EXTERNAL MODULE: external {"this":["wp","element"]}
-var external_this_wp_element_ = __webpack_require__(0);
+// EXTERNAL MODULE: ./node_modules/interpolate-components/lib/index.js
+var lib = __webpack_require__(99);
+var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
 
-// CONCATENATED MODULE: ./node_modules/@wordpress/components/build-module/visually-hidden/utils.js
+// EXTERNAL MODULE: external ["wp","compose"]
+var external_wp_compose_ = __webpack_require__(65);
+
+// EXTERNAL MODULE: external ["wp","data"]
+var external_wp_data_ = __webpack_require__(26);
+
+// EXTERNAL MODULE: external "moment"
+var external_moment_ = __webpack_require__(29);
+var external_moment_default = /*#__PURE__*/__webpack_require__.n(external_moment_);
+
+// EXTERNAL MODULE: ./node_modules/@wordpress/icons/build-module/icon/index.js
+var icon = __webpack_require__(426);
+
+// EXTERNAL MODULE: ./node_modules/@wordpress/icons/build-module/library/chevron-left.js
+var chevron_left = __webpack_require__(597);
+
+// EXTERNAL MODULE: ./node_modules/@wordpress/icons/build-module/library/chevron-right.js
+var chevron_right = __webpack_require__(630);
+
+// EXTERNAL MODULE: ./client/wc-admin-settings/index.js
+var wc_admin_settings = __webpack_require__(85);
+
+// EXTERNAL MODULE: external ["wc","data"]
+var external_wc_data_ = __webpack_require__(59);
+
+// EXTERNAL MODULE: external ["wc","tracks"]
+var external_wc_tracks_ = __webpack_require__(92);
+
+// EXTERNAL MODULE: ./packages/experimental/build-module/index.js
+var build_module = __webpack_require__(105);
+
+// EXTERNAL MODULE: ./client/lib/sanitize-html/index.js
+var sanitize_html = __webpack_require__(608);
+
+// EXTERNAL MODULE: ./node_modules/prop-types/index.js
+var prop_types = __webpack_require__(1);
+var prop_types_default = /*#__PURE__*/__webpack_require__.n(prop_types);
+
+// CONCATENATED MODULE: ./client/layout/store-alerts/placeholder.js
 
 
 
-/**
- * Utility Functions
- */
-
-/**
- * renderAsRenderProps is used to wrap a component and convert
- * the passed property "as" either a string or component, to the
- * rendered tag if a string, or component.
- *
- * See VisuallyHidden hidden for example.
- *
- * @param {string|WPComponent} as A tag or component to render.
- * @return {WPComponent} The rendered component.
- */
-function renderAsRenderProps(_ref) {
-  var _ref$as = _ref.as,
-      Component = _ref$as === void 0 ? 'div' : _ref$as,
-      props = Object(objectWithoutProperties["a" /* default */])(_ref, ["as"]);
-
-  if (typeof props.children === 'function') {
-    return props.children(props);
-  }
-
-  return Object(external_this_wp_element_["createElement"])(Component, props);
-}
-
-
-//# sourceMappingURL=utils.js.map
-// CONCATENATED MODULE: ./node_modules/@wordpress/components/build-module/visually-hidden/index.js
 
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(defineProperty["a" /* default */])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 /**
  * External dependencies
  */
+
+
+
+
+var placeholder_StoreAlertsPlaceholder = /*#__PURE__*/function (_Component) {
+  inherits_default()(StoreAlertsPlaceholder, _Component);
+
+  var _super = _createSuper(StoreAlertsPlaceholder);
+
+  function StoreAlertsPlaceholder() {
+    classCallCheck_default()(this, StoreAlertsPlaceholder);
+
+    return _super.apply(this, arguments);
+  }
+
+  createClass_default()(StoreAlertsPlaceholder, [{
+    key: "render",
+    value: function render() {
+      var hasMultipleAlerts = this.props.hasMultipleAlerts;
+      return Object(external_wp_element_["createElement"])(external_wp_components_["Card"], {
+        className: "woocommerce-store-alerts is-loading",
+        "aria-hidden": true,
+        size: null
+      }, Object(external_wp_element_["createElement"])(external_wp_components_["CardHeader"], {
+        isBorderless: true
+      }, Object(external_wp_element_["createElement"])("span", {
+        className: "is-placeholder"
+      }), hasMultipleAlerts && Object(external_wp_element_["createElement"])("span", {
+        className: "is-placeholder"
+      })), Object(external_wp_element_["createElement"])(external_wp_components_["CardBody"], null, Object(external_wp_element_["createElement"])("div", {
+        className: "woocommerce-store-alerts__message"
+      }, Object(external_wp_element_["createElement"])("span", {
+        className: "is-placeholder"
+      }), Object(external_wp_element_["createElement"])("span", {
+        className: "is-placeholder"
+      }))), Object(external_wp_element_["createElement"])(external_wp_components_["CardFooter"], {
+        isBorderless: true
+      }, Object(external_wp_element_["createElement"])("span", {
+        className: "is-placeholder"
+      })));
+    }
+  }]);
+
+  return StoreAlertsPlaceholder;
+}(external_wp_element_["Component"]);
+
+/* harmony default export */ var placeholder = (placeholder_StoreAlertsPlaceholder);
+placeholder_StoreAlertsPlaceholder.propTypes = {
+  /**
+   * Whether multiple alerts exists.
+   */
+  hasMultipleAlerts: prop_types_default.a.bool
+};
+placeholder_StoreAlertsPlaceholder.defaultProps = {
+  hasMultipleAlerts: false
+};
+// EXTERNAL MODULE: ./client/layout/store-alerts/style.scss
+var style = __webpack_require__(636);
+
+// CONCATENATED MODULE: ./client/layout/store-alerts/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function store_alerts_createSuper(Derived) { var hasNativeReflectConstruct = store_alerts_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
+
+function store_alerts_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+/**
+ * External dependencies
+ */
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Internal dependencies
  */
 
 
-/**
- * VisuallyHidden component to render text out non-visually
- * for use in devices such as a screen reader.
- *
- * @param {Object}             props             Component props.
- * @param {string|WPComponent} [props.as="div"]  A tag or component to render.
- * @param {string}             [props.className] Class to set on the container.
- */
 
-function VisuallyHidden(_ref) {
-  var _ref$as = _ref.as,
-      as = _ref$as === void 0 ? 'div' : _ref$as,
-      className = _ref.className,
-      props = Object(objectWithoutProperties["a" /* default */])(_ref, ["as", "className"]);
 
-  return renderAsRenderProps(_objectSpread({
-    as: as,
-    className: classnames_default()('components-visually-hidden', className)
-  }, props));
-}
+var store_alerts_StoreAlerts = /*#__PURE__*/function (_Component) {
+  inherits_default()(StoreAlerts, _Component);
 
-/* harmony default export */ var visually_hidden = __webpack_exports__["a"] = (VisuallyHidden);
-//# sourceMappingURL=index.js.map
+  var _super = store_alerts_createSuper(StoreAlerts);
+
+  function StoreAlerts(props) {
+    var _this;
+
+    classCallCheck_default()(this, StoreAlerts);
+
+    _this = _super.call(this, props);
+    _this.state = {
+      currentIndex: 0
+    };
+    _this.previousAlert = _this.previousAlert.bind(assertThisInitialized_default()(_this));
+    _this.nextAlert = _this.nextAlert.bind(assertThisInitialized_default()(_this));
+    return _this;
+  }
+
+  createClass_default()(StoreAlerts, [{
+    key: "previousAlert",
+    value: function previousAlert(event) {
+      event.stopPropagation();
+      var currentIndex = this.state.currentIndex;
+
+      if (currentIndex > 0) {
+        this.setState({
+          currentIndex: currentIndex - 1
+        });
+      }
+    }
+  }, {
+    key: "nextAlert",
+    value: function nextAlert(event) {
+      event.stopPropagation();
+      var alerts = this.getAlerts();
+      var currentIndex = this.state.currentIndex;
+
+      if (currentIndex < alerts.length - 1) {
+        this.setState({
+          currentIndex: currentIndex + 1
+        });
+      }
+    }
+  }, {
+    key: "renderActions",
+    value: function renderActions(alert) {
+      var _this$props = this.props,
+          triggerNoteAction = _this$props.triggerNoteAction,
+          updateNote = _this$props.updateNote;
+      var actions = alert.actions.map(function (action) {
+        return Object(external_wp_element_["createElement"])(external_wp_components_["Button"], {
+          key: action.name,
+          isPrimary: action.primary,
+          isSecondary: !action.primary,
+          href: action.url || undefined,
+          onClick: function onClick() {
+            return triggerNoteAction(alert.id, action.id);
+          }
+        }, action.label);
+      }); // TODO: should "next X" be the start, or exactly 1X from the current date?
+
+      var snoozeOptions = [{
+        value: external_moment_default()().add(4, 'hours').unix().toString(),
+        label: Object(external_wp_i18n_["__"])('Later Today', 'woocommerce-admin')
+      }, {
+        value: external_moment_default()().add(1, 'day').hour(9).minute(0).second(0).millisecond(0).unix().toString(),
+        label: Object(external_wp_i18n_["__"])('Tomorrow', 'woocommerce-admin')
+      }, {
+        value: external_moment_default()().add(1, 'week').hour(9).minute(0).second(0).millisecond(0).unix().toString(),
+        label: Object(external_wp_i18n_["__"])('Next Week', 'woocommerce-admin')
+      }, {
+        value: external_moment_default()().add(1, 'month').hour(9).minute(0).second(0).millisecond(0).unix().toString(),
+        label: Object(external_wp_i18n_["__"])('Next Month', 'woocommerce-admin')
+      }];
+
+      var setReminderDate = function setReminderDate(snoozeOption) {
+        updateNote(alert.id, {
+          status: 'snoozed',
+          date_reminder: snoozeOption.value
+        });
+        var eventProps = {
+          alert_name: alert.name,
+          alert_title: alert.title,
+          snooze_duration: snoozeOption.value,
+          snooze_label: snoozeOption.label
+        };
+        Object(external_wc_tracks_["recordEvent"])('store_alert_snooze', eventProps);
+      };
+
+      var snooze = alert.is_snoozable && Object(external_wp_element_["createElement"])(external_wp_components_["SelectControl"], {
+        className: "woocommerce-store-alerts__snooze",
+        options: [{
+          label: Object(external_wp_i18n_["__"])('Remind Me Later', 'woocommerce-admin'),
+          value: '0'
+        }].concat(snoozeOptions),
+        onChange: function onChange(value) {
+          if (value === '0') {
+            return;
+          }
+
+          var reminderOption = snoozeOptions.find(function (option) {
+            return option.value === value;
+          });
+          var reminderDate = {
+            value: value,
+            label: reminderOption && reminderOption.label
+          };
+          setReminderDate(reminderDate);
+        }
+      });
+
+      if (actions || snooze) {
+        return Object(external_wp_element_["createElement"])("div", {
+          className: "woocommerce-store-alerts__actions"
+        }, actions, snooze);
+      }
+    }
+  }, {
+    key: "getAlerts",
+    value: function getAlerts() {
+      return (this.props.alerts || []).filter(function (note) {
+        return note.status === 'unactioned';
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var alerts = this.getAlerts();
+      var preloadAlertCount = Object(wc_admin_settings["g" /* getSetting */])('alertCount', 0, function (count) {
+        return parseInt(count, 10);
+      });
+
+      if (preloadAlertCount > 0 && this.props.isLoading) {
+        return Object(external_wp_element_["createElement"])(placeholder, {
+          hasMultipleAlerts: preloadAlertCount > 1
+        });
+      } else if (alerts.length === 0) {
+        return null;
+      }
+
+      var currentIndex = this.state.currentIndex;
+      var numberOfAlerts = alerts.length;
+      var alert = alerts[currentIndex];
+      var type = alert.type;
+      var className = classnames_default()('woocommerce-store-alerts', {
+        'is-alert-error': type === 'error',
+        'is-alert-update': type === 'update'
+      });
+      return Object(external_wp_element_["createElement"])(external_wp_components_["Card"], {
+        className: className,
+        size: null
+      }, Object(external_wp_element_["createElement"])(external_wp_components_["CardHeader"], {
+        isBorderless: true
+      }, Object(external_wp_element_["createElement"])(build_module["e" /* Text */], {
+        variant: "title.medium",
+        as: "h2"
+      }, alert.icon && Object(external_wp_element_["createElement"])(external_wp_components_["Dashicon"], {
+        key: "icon",
+        icon: alert.icon
+      }), alert.title), numberOfAlerts > 1 && Object(external_wp_element_["createElement"])("div", {
+        className: "woocommerce-store-alerts__pagination"
+      }, Object(external_wp_element_["createElement"])(external_wp_components_["Button"], {
+        onClick: this.previousAlert,
+        disabled: currentIndex === 0,
+        label: Object(external_wp_i18n_["__"])('Previous Alert', 'woocommerce-admin')
+      }, Object(external_wp_element_["createElement"])(icon["a" /* default */], {
+        icon: chevron_left["a" /* default */]
+      })), Object(external_wp_element_["createElement"])("span", {
+        className: "woocommerce-store-alerts__pagination-label",
+        role: "status",
+        "aria-live": "polite"
+      }, lib_default()({
+        mixedString: Object(external_wp_i18n_["__"])('{{current /}} of {{total /}}', 'woocommerce-admin'),
+        components: {
+          current: Object(external_wp_element_["createElement"])(external_wp_element_["Fragment"], null, currentIndex + 1),
+          total: Object(external_wp_element_["createElement"])(external_wp_element_["Fragment"], null, numberOfAlerts)
+        }
+      })), Object(external_wp_element_["createElement"])(external_wp_components_["Button"], {
+        onClick: this.nextAlert,
+        disabled: numberOfAlerts - 1 === currentIndex,
+        label: Object(external_wp_i18n_["__"])('Next Alert', 'woocommerce-admin')
+      }, Object(external_wp_element_["createElement"])(icon["a" /* default */], {
+        icon: chevron_right["a" /* default */]
+      })))), Object(external_wp_element_["createElement"])(external_wp_components_["CardBody"], null, Object(external_wp_element_["createElement"])("div", {
+        className: "woocommerce-store-alerts__message",
+        dangerouslySetInnerHTML: Object(sanitize_html["a" /* default */])(alert.content)
+      })), Object(external_wp_element_["createElement"])(external_wp_components_["CardFooter"], {
+        isBorderless: true
+      }, this.renderActions(alert)));
+    }
+  }]);
+
+  return StoreAlerts;
+}(external_wp_element_["Component"]);
+var ALERTS_QUERY = {
+  page: 1,
+  per_page: external_wc_data_["QUERY_DEFAULTS"].pageSize,
+  type: 'error,update',
+  status: 'unactioned'
+};
+/* harmony default export */ var store_alerts = __webpack_exports__["default"] = (Object(external_wp_compose_["compose"])(Object(external_wp_data_["withSelect"])(function (select) {
+  var _select = select(external_wc_data_["NOTES_STORE_NAME"]),
+      getNotes = _select.getNotes,
+      isResolving = _select.isResolving; // Filter out notes that may have been marked actioned or not delayed after the initial request
+
+
+  var alerts = getNotes(ALERTS_QUERY);
+  var isLoading = isResolving('getNotes', [ALERTS_QUERY]);
+  return {
+    alerts: alerts,
+    isLoading: isLoading
+  };
+}), Object(external_wp_data_["withDispatch"])(function (dispatch) {
+  var _dispatch = dispatch(external_wc_data_["NOTES_STORE_NAME"]),
+      triggerNoteAction = _dispatch.triggerNoteAction,
+      updateNote = _dispatch.updateNote;
+
+  return {
+    triggerNoteAction: triggerNoteAction,
+    updateNote: updateNote
+  };
+}))(store_alerts_StoreAlerts));
 
 /***/ }),
 
-/***/ 43:
+/***/ 99:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -612,15 +1034,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  */
 
 
-var _react = __webpack_require__(8);
+var _react = __webpack_require__(20);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactAddonsCreateFragment = __webpack_require__(163);
+var _reactAddonsCreateFragment = __webpack_require__(243);
 
 var _reactAddonsCreateFragment2 = _interopRequireDefault(_reactAddonsCreateFragment);
 
-var _tokenize = __webpack_require__(166);
+var _tokenize = __webpack_require__(246);
 
 var _tokenize2 = _interopRequireDefault(_tokenize);
 
@@ -756,565 +1178,6 @@ function interpolate(options) {
 
 exports.default = interpolate;
 //# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 581:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _visually_hidden__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(241);
-
-
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
-
-
-
-function BaseControl(_ref) {
-  var id = _ref.id,
-      label = _ref.label,
-      hideLabelFromVision = _ref.hideLabelFromVision,
-      help = _ref.help,
-      className = _ref.className,
-      children = _ref.children;
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
-    className: classnames__WEBPACK_IMPORTED_MODULE_1___default()('components-base-control', className)
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
-    className: "components-base-control__field"
-  }, label && id && (hideLabelFromVision ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_visually_hidden__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"], {
-    as: "label",
-    htmlFor: id
-  }, label) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("label", {
-    className: "components-base-control__label",
-    htmlFor: id
-  }, label)), label && !id && (hideLabelFromVision ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_visually_hidden__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"], {
-    as: "label"
-  }, label) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(BaseControl.VisualLabel, null, label)), children), !!help && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("p", {
-    id: id + '__help',
-    className: "components-base-control__help"
-  }, help));
-}
-
-BaseControl.VisualLabel = function (_ref2) {
-  var className = _ref2.className,
-      children = _ref2.children;
-  className = classnames__WEBPACK_IMPORTED_MODULE_1___default()('components-base-control__label', className);
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("span", {
-    className: className
-  }, children);
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (BaseControl);
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 584:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* unused harmony export ALLOWED_TAGS */
-/* unused harmony export ALLOWED_ATTR */
-/* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(588);
-/* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dompurify__WEBPACK_IMPORTED_MODULE_0__);
-/**
- * External dependencies
- */
-
-var ALLOWED_TAGS = ['a', 'b', 'em', 'i', 'strong', 'p', 'br'];
-var ALLOWED_ATTR = ['target', 'href', 'rel', 'name', 'download'];
-/* harmony default export */ __webpack_exports__["a"] = (function (html) {
-  return {
-    __html: Object(dompurify__WEBPACK_IMPORTED_MODULE_0__["sanitize"])(html, {
-      ALLOWED_TAGS: ALLOWED_TAGS,
-      ALLOWED_ATTR: ALLOWED_ATTR
-    })
-  };
-});
-
-/***/ }),
-
-/***/ 613:
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
-/***/ 614:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(78);
-
-
-/**
- * WordPress dependencies
- */
-
-var chevronRight = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__[/* SVG */ "c"], {
-  xmlns: "http://www.w3.org/2000/svg",
-  viewBox: "0 0 24 24"
-}, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_primitives__WEBPACK_IMPORTED_MODULE_1__[/* Path */ "b"], {
-  d: "M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1 5.4-6z"
-}));
-/* harmony default export */ __webpack_exports__["a"] = (chevronRight);
-//# sourceMappingURL=chevron-right.js.map
-
-/***/ }),
-
-/***/ 673:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
-var classCallCheck = __webpack_require__(20);
-var classCallCheck_default = /*#__PURE__*/__webpack_require__.n(classCallCheck);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/createClass.js
-var createClass = __webpack_require__(15);
-var createClass_default = /*#__PURE__*/__webpack_require__.n(createClass);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/assertThisInitialized.js
-var assertThisInitialized = __webpack_require__(13);
-var assertThisInitialized_default = /*#__PURE__*/__webpack_require__.n(assertThisInitialized);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/inherits.js
-var inherits = __webpack_require__(22);
-var inherits_default = /*#__PURE__*/__webpack_require__.n(inherits);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js
-var possibleConstructorReturn = __webpack_require__(23);
-var possibleConstructorReturn_default = /*#__PURE__*/__webpack_require__.n(possibleConstructorReturn);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/getPrototypeOf.js
-var getPrototypeOf = __webpack_require__(10);
-var getPrototypeOf_default = /*#__PURE__*/__webpack_require__.n(getPrototypeOf);
-
-// EXTERNAL MODULE: external {"this":["wp","element"]}
-var external_this_wp_element_ = __webpack_require__(0);
-
-// EXTERNAL MODULE: external {"this":["wp","i18n"]}
-var external_this_wp_i18n_ = __webpack_require__(3);
-
-// EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/button/index.js
-var build_module_button = __webpack_require__(68);
-
-// EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/select-control/index.js + 7 modules
-var select_control = __webpack_require__(671);
-
-// EXTERNAL MODULE: ./node_modules/@wordpress/components/build-module/dashicon/index.js
-var dashicon = __webpack_require__(107);
-
-// EXTERNAL MODULE: ./node_modules/classnames/index.js
-var classnames = __webpack_require__(4);
-var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
-
-// EXTERNAL MODULE: ./node_modules/interpolate-components/lib/index.js
-var lib = __webpack_require__(43);
-var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
-
-// EXTERNAL MODULE: ./node_modules/@wordpress/compose/build-module/higher-order/compose.js
-var compose = __webpack_require__(181);
-
-// EXTERNAL MODULE: external {"this":["wp","data"]}
-var external_this_wp_data_ = __webpack_require__(25);
-
-// EXTERNAL MODULE: external "moment"
-var external_moment_ = __webpack_require__(19);
-var external_moment_default = /*#__PURE__*/__webpack_require__.n(external_moment_);
-
-// EXTERNAL MODULE: ./node_modules/@wordpress/icons/build-module/icon/index.js
-var icon = __webpack_require__(377);
-
-// EXTERNAL MODULE: ./node_modules/@wordpress/primitives/build-module/svg/index.js
-var svg = __webpack_require__(78);
-
-// CONCATENATED MODULE: ./node_modules/@wordpress/icons/build-module/library/chevron-left.js
-
-
-/**
- * WordPress dependencies
- */
-
-var chevronLeft = Object(external_this_wp_element_["createElement"])(svg["c" /* SVG */], {
-  xmlns: "http://www.w3.org/2000/svg",
-  viewBox: "0 0 24 24"
-}, Object(external_this_wp_element_["createElement"])(svg["b" /* Path */], {
-  d: "M14.6 7l-1.2-1L8 12l5.4 6 1.2-1-4.6-5z"
-}));
-/* harmony default export */ var chevron_left = (chevronLeft);
-//# sourceMappingURL=chevron-left.js.map
-// EXTERNAL MODULE: ./node_modules/@wordpress/icons/build-module/library/chevron-right.js
-var chevron_right = __webpack_require__(614);
-
-// EXTERNAL MODULE: external {"this":["wc","components"]}
-var external_this_wc_components_ = __webpack_require__(74);
-
-// EXTERNAL MODULE: ./client/settings/index.js
-var settings = __webpack_require__(35);
-
-// EXTERNAL MODULE: external {"this":["wc","data"]}
-var external_this_wc_data_ = __webpack_require__(34);
-
-// EXTERNAL MODULE: external {"this":["wc","tracks"]}
-var external_this_wc_tracks_ = __webpack_require__(50);
-
-// EXTERNAL MODULE: ./client/lib/sanitize-html/index.js
-var sanitize_html = __webpack_require__(584);
-
-// EXTERNAL MODULE: ./node_modules/prop-types/index.js
-var prop_types = __webpack_require__(1);
-var prop_types_default = /*#__PURE__*/__webpack_require__.n(prop_types);
-
-// CONCATENATED MODULE: ./client/layout/store-alerts/placeholder.js
-
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/**
- * External dependencies
- */
-
-
-
-var placeholder_StoreAlertsPlaceholder = /*#__PURE__*/function (_Component) {
-  inherits_default()(StoreAlertsPlaceholder, _Component);
-
-  var _super = _createSuper(StoreAlertsPlaceholder);
-
-  function StoreAlertsPlaceholder() {
-    classCallCheck_default()(this, StoreAlertsPlaceholder);
-
-    return _super.apply(this, arguments);
-  }
-
-  createClass_default()(StoreAlertsPlaceholder, [{
-    key: "render",
-    value: function render() {
-      var hasMultipleAlerts = this.props.hasMultipleAlerts;
-      return Object(external_this_wp_element_["createElement"])("div", {
-        className: "woocommerce-card woocommerce-store-alerts is-loading",
-        "aria-hidden": true
-      }, Object(external_this_wp_element_["createElement"])("div", {
-        className: "woocommerce-card__header"
-      }, Object(external_this_wp_element_["createElement"])("div", {
-        className: "woocommerce-card__title woocommerce-card__header-item"
-      }, Object(external_this_wp_element_["createElement"])("span", {
-        className: "is-placeholder"
-      })), hasMultipleAlerts && Object(external_this_wp_element_["createElement"])("div", {
-        className: "woocommerce-card__action woocommerce-card__header-item"
-      }, Object(external_this_wp_element_["createElement"])("span", {
-        className: "is-placeholder"
-      }))), Object(external_this_wp_element_["createElement"])("div", {
-        className: "woocommerce-card__body"
-      }, Object(external_this_wp_element_["createElement"])("div", {
-        className: "woocommerce-store-alerts__message"
-      }, Object(external_this_wp_element_["createElement"])("span", {
-        className: "is-placeholder"
-      }), Object(external_this_wp_element_["createElement"])("span", {
-        className: "is-placeholder"
-      })), Object(external_this_wp_element_["createElement"])("div", {
-        className: "woocommerce-store-alerts__actions"
-      }, Object(external_this_wp_element_["createElement"])("span", {
-        className: "is-placeholder"
-      }))));
-    }
-  }]);
-
-  return StoreAlertsPlaceholder;
-}(external_this_wp_element_["Component"]);
-
-/* harmony default export */ var placeholder = (placeholder_StoreAlertsPlaceholder);
-placeholder_StoreAlertsPlaceholder.propTypes = {
-  /**
-   * Whether multiple alerts exists.
-   */
-  hasMultipleAlerts: prop_types_default.a.bool
-};
-placeholder_StoreAlertsPlaceholder.defaultProps = {
-  hasMultipleAlerts: false
-};
-// EXTERNAL MODULE: ./client/layout/store-alerts/style.scss
-var style = __webpack_require__(613);
-
-// CONCATENATED MODULE: ./client/layout/store-alerts/index.js
-
-
-
-
-
-
-
-
-function store_alerts_createSuper(Derived) { var hasNativeReflectConstruct = store_alerts_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
-
-function store_alerts_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/**
- * External dependencies
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Internal dependencies
- */
-
-
-
-
-
-var store_alerts_StoreAlerts = /*#__PURE__*/function (_Component) {
-  inherits_default()(StoreAlerts, _Component);
-
-  var _super = store_alerts_createSuper(StoreAlerts);
-
-  function StoreAlerts(props) {
-    var _this;
-
-    classCallCheck_default()(this, StoreAlerts);
-
-    _this = _super.call(this, props);
-    var alerts = _this.props.alerts;
-    _this.state = {
-      currentIndex: alerts ? 0 : null
-    };
-    _this.previousAlert = _this.previousAlert.bind(assertThisInitialized_default()(_this));
-    _this.nextAlert = _this.nextAlert.bind(assertThisInitialized_default()(_this));
-    return _this;
-  }
-
-  createClass_default()(StoreAlerts, [{
-    key: "previousAlert",
-    value: function previousAlert(event) {
-      event.stopPropagation();
-      var currentIndex = this.state.currentIndex;
-
-      if (currentIndex > 0) {
-        this.setState({
-          currentIndex: currentIndex - 1
-        });
-      }
-    }
-  }, {
-    key: "nextAlert",
-    value: function nextAlert(event) {
-      event.stopPropagation();
-      var alerts = this.props.alerts;
-      var currentIndex = this.state.currentIndex;
-
-      if (currentIndex < alerts.length - 1) {
-        this.setState({
-          currentIndex: currentIndex + 1
-        });
-      }
-    }
-  }, {
-    key: "renderActions",
-    value: function renderActions(alert) {
-      var _this$props = this.props,
-          triggerNoteAction = _this$props.triggerNoteAction,
-          updateNote = _this$props.updateNote;
-      var actions = alert.actions.map(function (action) {
-        return Object(external_this_wp_element_["createElement"])(build_module_button["a" /* default */], {
-          key: action.name,
-          isPrimary: action.primary,
-          isSecondary: !action.primary,
-          href: action.url || undefined,
-          onClick: function onClick() {
-            return triggerNoteAction(alert.id, action.id);
-          }
-        }, action.label);
-      }); // TODO: should "next X" be the start, or exactly 1X from the current date?
-
-      var snoozeOptions = [{
-        value: external_moment_default()().add(4, 'hours').unix().toString(),
-        label: Object(external_this_wp_i18n_["__"])('Later Today', 'woocommerce-admin')
-      }, {
-        value: external_moment_default()().add(1, 'day').hour(9).minute(0).second(0).millisecond(0).unix().toString(),
-        label: Object(external_this_wp_i18n_["__"])('Tomorrow', 'woocommerce-admin')
-      }, {
-        value: external_moment_default()().add(1, 'week').hour(9).minute(0).second(0).millisecond(0).unix().toString(),
-        label: Object(external_this_wp_i18n_["__"])('Next Week', 'woocommerce-admin')
-      }, {
-        value: external_moment_default()().add(1, 'month').hour(9).minute(0).second(0).millisecond(0).unix().toString(),
-        label: Object(external_this_wp_i18n_["__"])('Next Month', 'woocommerce-admin')
-      }];
-
-      var setReminderDate = function setReminderDate(snoozeOption) {
-        updateNote(alert.id, {
-          status: 'snoozed',
-          date_reminder: snoozeOption.value
-        });
-        var eventProps = {
-          alert_name: alert.name,
-          alert_title: alert.title,
-          snooze_duration: snoozeOption.value,
-          snooze_label: snoozeOption.label
-        };
-        Object(external_this_wc_tracks_["recordEvent"])('store_alert_snooze', eventProps);
-      };
-
-      var snooze = alert.is_snoozable && Object(external_this_wp_element_["createElement"])(select_control["a" /* default */], {
-        className: "woocommerce-store-alerts__snooze",
-        options: [{
-          label: Object(external_this_wp_i18n_["__"])('Remind Me Later', 'woocommerce-admin'),
-          value: '0'
-        }].concat(snoozeOptions),
-        onChange: function onChange(value) {
-          if (value === '0') {
-            return;
-          }
-
-          var reminderOption = snoozeOptions.find(function (option) {
-            return option.value === value;
-          });
-          var reminderDate = {
-            value: value,
-            label: reminderOption && reminderOption.label
-          };
-          setReminderDate(reminderDate);
-        }
-      });
-
-      if (actions || snooze) {
-        return Object(external_this_wp_element_["createElement"])("div", {
-          className: "woocommerce-store-alerts__actions"
-        }, actions, snooze);
-      }
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var alerts = this.props.alerts || [];
-      var preloadAlertCount = Object(settings["g" /* getSetting */])('alertCount', 0, function (count) {
-        return parseInt(count, 10);
-      });
-
-      if (preloadAlertCount > 0 && this.props.isLoading) {
-        return Object(external_this_wp_element_["createElement"])(placeholder, {
-          hasMultipleAlerts: preloadAlertCount > 1
-        });
-      } else if (alerts.length === 0) {
-        return null;
-      }
-
-      var currentIndex = this.state.currentIndex;
-      var numberOfAlerts = alerts.length;
-      var alert = alerts[currentIndex];
-      var type = alert.type;
-      var className = classnames_default()('woocommerce-store-alerts', 'woocommerce-analytics__card', {
-        'is-alert-error': type === 'error',
-        'is-alert-update': type === 'update'
-      });
-      return Object(external_this_wp_element_["createElement"])(external_this_wc_components_["Card"], {
-        title: [alert.icon && Object(external_this_wp_element_["createElement"])(dashicon["a" /* default */], {
-          key: "icon",
-          icon: alert.icon
-        }), Object(external_this_wp_element_["createElement"])(external_this_wp_element_["Fragment"], {
-          key: "title"
-        }, alert.title)],
-        className: className,
-        action: numberOfAlerts > 1 && Object(external_this_wp_element_["createElement"])("div", {
-          className: "woocommerce-store-alerts__pagination"
-        }, Object(external_this_wp_element_["createElement"])(build_module_button["a" /* default */], {
-          onClick: this.previousAlert,
-          disabled: currentIndex === 0,
-          label: Object(external_this_wp_i18n_["__"])('Previous Alert', 'woocommerce-admin')
-        }, Object(external_this_wp_element_["createElement"])(icon["a" /* default */], {
-          icon: chevron_left
-        })), Object(external_this_wp_element_["createElement"])("span", {
-          className: "woocommerce-store-alerts__pagination-label",
-          role: "status",
-          "aria-live": "polite"
-        }, lib_default()({
-          mixedString: Object(external_this_wp_i18n_["__"])('{{current /}} of {{total /}}', 'woocommerce-admin'),
-          components: {
-            current: Object(external_this_wp_element_["createElement"])(external_this_wp_element_["Fragment"], null, currentIndex + 1),
-            total: Object(external_this_wp_element_["createElement"])(external_this_wp_element_["Fragment"], null, numberOfAlerts)
-          }
-        })), Object(external_this_wp_element_["createElement"])(build_module_button["a" /* default */], {
-          onClick: this.nextAlert,
-          disabled: numberOfAlerts - 1 === currentIndex,
-          label: Object(external_this_wp_i18n_["__"])('Next Alert', 'woocommerce-admin')
-        }, Object(external_this_wp_element_["createElement"])(icon["a" /* default */], {
-          icon: chevron_right["a" /* default */]
-        })))
-      }, Object(external_this_wp_element_["createElement"])("div", {
-        className: "woocommerce-store-alerts__message",
-        dangerouslySetInnerHTML: Object(sanitize_html["a" /* default */])(alert.content)
-      }), this.renderActions(alert));
-    }
-  }]);
-
-  return StoreAlerts;
-}(external_this_wp_element_["Component"]);
-
-/* harmony default export */ var store_alerts = __webpack_exports__["default"] = (Object(compose["a" /* default */])(Object(external_this_wp_data_["withSelect"])(function (select) {
-  var _select = select(external_this_wc_data_["NOTES_STORE_NAME"]),
-      getNotes = _select.getNotes,
-      isResolving = _select.isResolving;
-
-  var alertsQuery = {
-    page: 1,
-    per_page: external_this_wc_data_["QUERY_DEFAULTS"].pageSize,
-    type: 'error,update',
-    status: 'unactioned'
-  }; // Filter out notes that may have been marked actioned or not delayed after the initial request
-
-  var filterNotes = function filterNotes(note) {
-    return note.status === 'unactioned';
-  };
-
-  var alerts = getNotes(alertsQuery).filter(filterNotes);
-  var isLoading = isResolving('getNotes', [alertsQuery]);
-  return {
-    alerts: alerts,
-    isLoading: isLoading
-  };
-}), Object(external_this_wp_data_["withDispatch"])(function (dispatch) {
-  var _dispatch = dispatch(external_this_wc_data_["NOTES_STORE_NAME"]),
-      triggerNoteAction = _dispatch.triggerNoteAction,
-      updateNote = _dispatch.updateNote;
-
-  return {
-    triggerNoteAction: triggerNoteAction,
-    updateNote: updateNote
-  };
-}))(store_alerts_StoreAlerts));
 
 /***/ })
 

@@ -1,1059 +1,1117 @@
 (window["__wcAdmin_webpackJsonp"] = window["__wcAdmin_webpackJsonp"] || []).push([[5],{
 
-/***/ 365:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 319:
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
-var esm_extends = __webpack_require__(7);
+var $ = __webpack_require__(12);
+var $trim = __webpack_require__(188).trim;
+var forcedStringTrimMethod = __webpack_require__(404);
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js
-var objectWithoutPropertiesLoose = __webpack_require__(54);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
-var inheritsLoose = __webpack_require__(53);
-
-// EXTERNAL MODULE: ./node_modules/prop-types/index.js
-var prop_types = __webpack_require__(1);
-
-// CONCATENATED MODULE: ./node_modules/dom-helpers/esm/hasClass.js
-function hasClass(element, className) {
-  if (element.classList) return !!className && element.classList.contains(className);
-  return (" " + (element.className.baseVal || element.className) + " ").indexOf(" " + className + " ") !== -1;
-}
-// CONCATENATED MODULE: ./node_modules/dom-helpers/esm/addClass.js
-
-function addClass_addClass(element, className) {
-  if (element.classList) element.classList.add(className);else if (!hasClass(element, className)) if (typeof element.className === 'string') element.className = element.className + " " + className;else element.setAttribute('class', (element.className && element.className.baseVal || '') + " " + className);
-}
-// CONCATENATED MODULE: ./node_modules/dom-helpers/esm/removeClass.js
-function replaceClassName(origClass, classToRemove) {
-  return origClass.replace(new RegExp("(^|\\s)" + classToRemove + "(?:\\s|$)", 'g'), '$1').replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, '');
-}
-
-function removeClass_removeClass(element, className) {
-  if (element.classList) {
-    element.classList.remove(className);
-  } else if (typeof element.className === 'string') {
-    ;
-    element.className = replaceClassName(element.className, className);
-  } else {
-    element.setAttribute('class', replaceClassName(element.className && element.className.baseVal || '', className));
+// `String.prototype.trim` method
+// https://tc39.es/ecma262/#sec-string.prototype.trim
+$({ target: 'String', proto: true, forced: forcedStringTrimMethod('trim') }, {
+  trim: function trim() {
+    return $trim(this);
   }
-}
-// EXTERNAL MODULE: external "React"
-var external_React_ = __webpack_require__(8);
-var external_React_default = /*#__PURE__*/__webpack_require__.n(external_React_);
-
-// EXTERNAL MODULE: external "ReactDOM"
-var external_ReactDOM_ = __webpack_require__(90);
-var external_ReactDOM_default = /*#__PURE__*/__webpack_require__.n(external_ReactDOM_);
-
-// CONCATENATED MODULE: ./node_modules/react-transition-group/esm/config.js
-/* harmony default export */ var config = ({
-  disabled: false
 });
-// EXTERNAL MODULE: ./node_modules/react-transition-group/esm/TransitionGroupContext.js
-var TransitionGroupContext = __webpack_require__(88);
 
-// CONCATENATED MODULE: ./node_modules/react-transition-group/esm/Transition.js
-
-
-
-
-
-
-
-
-var UNMOUNTED = 'unmounted';
-var EXITED = 'exited';
-var ENTERING = 'entering';
-var ENTERED = 'entered';
-var EXITING = 'exiting';
-/**
- * The Transition component lets you describe a transition from one component
- * state to another _over time_ with a simple declarative API. Most commonly
- * it's used to animate the mounting and unmounting of a component, but can also
- * be used to describe in-place transition states as well.
- *
- * ---
- *
- * **Note**: `Transition` is a platform-agnostic base component. If you're using
- * transitions in CSS, you'll probably want to use
- * [`CSSTransition`](https://reactcommunity.org/react-transition-group/css-transition)
- * instead. It inherits all the features of `Transition`, but contains
- * additional features necessary to play nice with CSS transitions (hence the
- * name of the component).
- *
- * ---
- *
- * By default the `Transition` component does not alter the behavior of the
- * component it renders, it only tracks "enter" and "exit" states for the
- * components. It's up to you to give meaning and effect to those states. For
- * example we can add styles to a component when it enters or exits:
- *
- * ```jsx
- * import { Transition } from 'react-transition-group';
- *
- * const duration = 300;
- *
- * const defaultStyle = {
- *   transition: `opacity ${duration}ms ease-in-out`,
- *   opacity: 0,
- * }
- *
- * const transitionStyles = {
- *   entering: { opacity: 1 },
- *   entered:  { opacity: 1 },
- *   exiting:  { opacity: 0 },
- *   exited:  { opacity: 0 },
- * };
- *
- * const Fade = ({ in: inProp }) => (
- *   <Transition in={inProp} timeout={duration}>
- *     {state => (
- *       <div style={{
- *         ...defaultStyle,
- *         ...transitionStyles[state]
- *       }}>
- *         I'm a fade Transition!
- *       </div>
- *     )}
- *   </Transition>
- * );
- * ```
- *
- * There are 4 main states a Transition can be in:
- *  - `'entering'`
- *  - `'entered'`
- *  - `'exiting'`
- *  - `'exited'`
- *
- * Transition state is toggled via the `in` prop. When `true` the component
- * begins the "Enter" stage. During this stage, the component will shift from
- * its current transition state, to `'entering'` for the duration of the
- * transition and then to the `'entered'` stage once it's complete. Let's take
- * the following example (we'll use the
- * [useState](https://reactjs.org/docs/hooks-reference.html#usestate) hook):
- *
- * ```jsx
- * function App() {
- *   const [inProp, setInProp] = useState(false);
- *   return (
- *     <div>
- *       <Transition in={inProp} timeout={500}>
- *         {state => (
- *           // ...
- *         )}
- *       </Transition>
- *       <button onClick={() => setInProp(true)}>
- *         Click to Enter
- *       </button>
- *     </div>
- *   );
- * }
- * ```
- *
- * When the button is clicked the component will shift to the `'entering'` state
- * and stay there for 500ms (the value of `timeout`) before it finally switches
- * to `'entered'`.
- *
- * When `in` is `false` the same thing happens except the state moves from
- * `'exiting'` to `'exited'`.
- */
-
-var Transition_Transition =
-/*#__PURE__*/
-function (_React$Component) {
-  Object(inheritsLoose["a" /* default */])(Transition, _React$Component);
-
-  function Transition(props, context) {
-    var _this;
-
-    _this = _React$Component.call(this, props, context) || this;
-    var parentGroup = context; // In the context of a TransitionGroup all enters are really appears
-
-    var appear = parentGroup && !parentGroup.isMounting ? props.enter : props.appear;
-    var initialStatus;
-    _this.appearStatus = null;
-
-    if (props.in) {
-      if (appear) {
-        initialStatus = EXITED;
-        _this.appearStatus = ENTERING;
-      } else {
-        initialStatus = ENTERED;
-      }
-    } else {
-      if (props.unmountOnExit || props.mountOnEnter) {
-        initialStatus = UNMOUNTED;
-      } else {
-        initialStatus = EXITED;
-      }
-    }
-
-    _this.state = {
-      status: initialStatus
-    };
-    _this.nextCallback = null;
-    return _this;
-  }
-
-  Transition.getDerivedStateFromProps = function getDerivedStateFromProps(_ref, prevState) {
-    var nextIn = _ref.in;
-
-    if (nextIn && prevState.status === UNMOUNTED) {
-      return {
-        status: EXITED
-      };
-    }
-
-    return null;
-  }; // getSnapshotBeforeUpdate(prevProps) {
-  //   let nextStatus = null
-  //   if (prevProps !== this.props) {
-  //     const { status } = this.state
-  //     if (this.props.in) {
-  //       if (status !== ENTERING && status !== ENTERED) {
-  //         nextStatus = ENTERING
-  //       }
-  //     } else {
-  //       if (status === ENTERING || status === ENTERED) {
-  //         nextStatus = EXITING
-  //       }
-  //     }
-  //   }
-  //   return { nextStatus }
-  // }
-
-
-  var _proto = Transition.prototype;
-
-  _proto.componentDidMount = function componentDidMount() {
-    this.updateStatus(true, this.appearStatus);
-  };
-
-  _proto.componentDidUpdate = function componentDidUpdate(prevProps) {
-    var nextStatus = null;
-
-    if (prevProps !== this.props) {
-      var status = this.state.status;
-
-      if (this.props.in) {
-        if (status !== ENTERING && status !== ENTERED) {
-          nextStatus = ENTERING;
-        }
-      } else {
-        if (status === ENTERING || status === ENTERED) {
-          nextStatus = EXITING;
-        }
-      }
-    }
-
-    this.updateStatus(false, nextStatus);
-  };
-
-  _proto.componentWillUnmount = function componentWillUnmount() {
-    this.cancelNextCallback();
-  };
-
-  _proto.getTimeouts = function getTimeouts() {
-    var timeout = this.props.timeout;
-    var exit, enter, appear;
-    exit = enter = appear = timeout;
-
-    if (timeout != null && typeof timeout !== 'number') {
-      exit = timeout.exit;
-      enter = timeout.enter; // TODO: remove fallback for next major
-
-      appear = timeout.appear !== undefined ? timeout.appear : enter;
-    }
-
-    return {
-      exit: exit,
-      enter: enter,
-      appear: appear
-    };
-  };
-
-  _proto.updateStatus = function updateStatus(mounting, nextStatus) {
-    if (mounting === void 0) {
-      mounting = false;
-    }
-
-    if (nextStatus !== null) {
-      // nextStatus will always be ENTERING or EXITING.
-      this.cancelNextCallback();
-      var node = external_ReactDOM_default.a.findDOMNode(this);
-
-      if (nextStatus === ENTERING) {
-        this.performEnter(node, mounting);
-      } else {
-        this.performExit(node);
-      }
-    } else if (this.props.unmountOnExit && this.state.status === EXITED) {
-      this.setState({
-        status: UNMOUNTED
-      });
-    }
-  };
-
-  _proto.performEnter = function performEnter(node, mounting) {
-    var _this2 = this;
-
-    var enter = this.props.enter;
-    var appearing = this.context ? this.context.isMounting : mounting;
-    var timeouts = this.getTimeouts();
-    var enterTimeout = appearing ? timeouts.appear : timeouts.enter; // no enter animation skip right to ENTERED
-    // if we are mounting and running this it means appear _must_ be set
-
-    if (!mounting && !enter || config.disabled) {
-      this.safeSetState({
-        status: ENTERED
-      }, function () {
-        _this2.props.onEntered(node);
-      });
-      return;
-    }
-
-    this.props.onEnter(node, appearing);
-    this.safeSetState({
-      status: ENTERING
-    }, function () {
-      _this2.props.onEntering(node, appearing);
-
-      _this2.onTransitionEnd(node, enterTimeout, function () {
-        _this2.safeSetState({
-          status: ENTERED
-        }, function () {
-          _this2.props.onEntered(node, appearing);
-        });
-      });
-    });
-  };
-
-  _proto.performExit = function performExit(node) {
-    var _this3 = this;
-
-    var exit = this.props.exit;
-    var timeouts = this.getTimeouts(); // no exit animation skip right to EXITED
-
-    if (!exit || config.disabled) {
-      this.safeSetState({
-        status: EXITED
-      }, function () {
-        _this3.props.onExited(node);
-      });
-      return;
-    }
-
-    this.props.onExit(node);
-    this.safeSetState({
-      status: EXITING
-    }, function () {
-      _this3.props.onExiting(node);
-
-      _this3.onTransitionEnd(node, timeouts.exit, function () {
-        _this3.safeSetState({
-          status: EXITED
-        }, function () {
-          _this3.props.onExited(node);
-        });
-      });
-    });
-  };
-
-  _proto.cancelNextCallback = function cancelNextCallback() {
-    if (this.nextCallback !== null) {
-      this.nextCallback.cancel();
-      this.nextCallback = null;
-    }
-  };
-
-  _proto.safeSetState = function safeSetState(nextState, callback) {
-    // This shouldn't be necessary, but there are weird race conditions with
-    // setState callbacks and unmounting in testing, so always make sure that
-    // we can cancel any pending setState callbacks after we unmount.
-    callback = this.setNextCallback(callback);
-    this.setState(nextState, callback);
-  };
-
-  _proto.setNextCallback = function setNextCallback(callback) {
-    var _this4 = this;
-
-    var active = true;
-
-    this.nextCallback = function (event) {
-      if (active) {
-        active = false;
-        _this4.nextCallback = null;
-        callback(event);
-      }
-    };
-
-    this.nextCallback.cancel = function () {
-      active = false;
-    };
-
-    return this.nextCallback;
-  };
-
-  _proto.onTransitionEnd = function onTransitionEnd(node, timeout, handler) {
-    this.setNextCallback(handler);
-    var doesNotHaveTimeoutOrListener = timeout == null && !this.props.addEndListener;
-
-    if (!node || doesNotHaveTimeoutOrListener) {
-      setTimeout(this.nextCallback, 0);
-      return;
-    }
-
-    if (this.props.addEndListener) {
-      this.props.addEndListener(node, this.nextCallback);
-    }
-
-    if (timeout != null) {
-      setTimeout(this.nextCallback, timeout);
-    }
-  };
-
-  _proto.render = function render() {
-    var status = this.state.status;
-
-    if (status === UNMOUNTED) {
-      return null;
-    }
-
-    var _this$props = this.props,
-        children = _this$props.children,
-        childProps = Object(objectWithoutPropertiesLoose["a" /* default */])(_this$props, ["children"]); // filter props for Transtition
-
-
-    delete childProps.in;
-    delete childProps.mountOnEnter;
-    delete childProps.unmountOnExit;
-    delete childProps.appear;
-    delete childProps.enter;
-    delete childProps.exit;
-    delete childProps.timeout;
-    delete childProps.addEndListener;
-    delete childProps.onEnter;
-    delete childProps.onEntering;
-    delete childProps.onEntered;
-    delete childProps.onExit;
-    delete childProps.onExiting;
-    delete childProps.onExited;
-
-    if (typeof children === 'function') {
-      // allows for nested Transitions
-      return external_React_default.a.createElement(TransitionGroupContext["a" /* default */].Provider, {
-        value: null
-      }, children(status, childProps));
-    }
-
-    var child = external_React_default.a.Children.only(children);
-    return (// allows for nested Transitions
-      external_React_default.a.createElement(TransitionGroupContext["a" /* default */].Provider, {
-        value: null
-      }, external_React_default.a.cloneElement(child, childProps))
-    );
-  };
-
-  return Transition;
-}(external_React_default.a.Component);
-
-Transition_Transition.contextType = TransitionGroupContext["a" /* default */];
-Transition_Transition.propTypes =  false ? undefined : {};
-
-function noop() {}
-
-Transition_Transition.defaultProps = {
-  in: false,
-  mountOnEnter: false,
-  unmountOnExit: false,
-  appear: false,
-  enter: true,
-  exit: true,
-  onEnter: noop,
-  onEntering: noop,
-  onEntered: noop,
-  onExit: noop,
-  onExiting: noop,
-  onExited: noop
-};
-Transition_Transition.UNMOUNTED = 0;
-Transition_Transition.EXITED = 1;
-Transition_Transition.ENTERING = 2;
-Transition_Transition.ENTERED = 3;
-Transition_Transition.EXITING = 4;
-/* harmony default export */ var esm_Transition = (Transition_Transition);
-// CONCATENATED MODULE: ./node_modules/react-transition-group/esm/CSSTransition.js
-
-
-
-
-
-
-
-
-
-
-var _addClass = function addClass(node, classes) {
-  return node && classes && classes.split(' ').forEach(function (c) {
-    return addClass_addClass(node, c);
-  });
-};
-
-var CSSTransition_removeClass = function removeClass(node, classes) {
-  return node && classes && classes.split(' ').forEach(function (c) {
-    return removeClass_removeClass(node, c);
-  });
-};
-/**
- * A transition component inspired by the excellent
- * [ng-animate](http://www.nganimate.org/) library, you should use it if you're
- * using CSS transitions or animations. It's built upon the
- * [`Transition`](https://reactcommunity.org/react-transition-group/transition)
- * component, so it inherits all of its props.
- *
- * `CSSTransition` applies a pair of class names during the `appear`, `enter`,
- * and `exit` states of the transition. The first class is applied and then a
- * second `*-active` class in order to activate the CSS transition. After the
- * transition, matching `*-done` class names are applied to persist the
- * transition state.
- *
- * ```jsx
- * function App() {
- *   const [inProp, setInProp] = useState(false);
- *   return (
- *     <div>
- *       <CSSTransition in={inProp} timeout={200} classNames="my-node">
- *         <div>
- *           {"I'll receive my-node-* classes"}
- *         </div>
- *       </CSSTransition>
- *       <button type="button" onClick={() => setInProp(true)}>
- *         Click to Enter
- *       </button>
- *     </div>
- *   );
- * }
- * ```
- *
- * When the `in` prop is set to `true`, the child component will first receive
- * the class `example-enter`, then the `example-enter-active` will be added in
- * the next tick. `CSSTransition` [forces a
- * reflow](https://github.com/reactjs/react-transition-group/blob/5007303e729a74be66a21c3e2205e4916821524b/src/CSSTransition.js#L208-L215)
- * between before adding the `example-enter-active`. This is an important trick
- * because it allows us to transition between `example-enter` and
- * `example-enter-active` even though they were added immediately one after
- * another. Most notably, this is what makes it possible for us to animate
- * _appearance_.
- *
- * ```css
- * .my-node-enter {
- *   opacity: 0;
- * }
- * .my-node-enter-active {
- *   opacity: 1;
- *   transition: opacity 200ms;
- * }
- * .my-node-exit {
- *   opacity: 1;
- * }
- * .my-node-exit-active {
- *   opacity: 0;
- *   transition: opacity 200ms;
- * }
- * ```
- *
- * `*-active` classes represent which styles you want to animate **to**.
- *
- * **Note**: If you're using the
- * [`appear`](http://reactcommunity.org/react-transition-group/transition#Transition-prop-appear)
- * prop, make sure to define styles for `.appear-*` classes as well.
- */
-
-
-var CSSTransition_CSSTransition =
-/*#__PURE__*/
-function (_React$Component) {
-  Object(inheritsLoose["a" /* default */])(CSSTransition, _React$Component);
-
-  function CSSTransition() {
-    var _this;
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
-    _this.appliedClasses = {
-      appear: {},
-      enter: {},
-      exit: {}
-    };
-
-    _this.onEnter = function (node, appearing) {
-      _this.removeClasses(node, 'exit');
-
-      _this.addClass(node, appearing ? 'appear' : 'enter', 'base');
-
-      if (_this.props.onEnter) {
-        _this.props.onEnter(node, appearing);
-      }
-    };
-
-    _this.onEntering = function (node, appearing) {
-      var type = appearing ? 'appear' : 'enter';
-
-      _this.addClass(node, type, 'active');
-
-      if (_this.props.onEntering) {
-        _this.props.onEntering(node, appearing);
-      }
-    };
-
-    _this.onEntered = function (node, appearing) {
-      var type = appearing ? 'appear' : 'enter';
-
-      _this.removeClasses(node, type);
-
-      _this.addClass(node, type, 'done');
-
-      if (_this.props.onEntered) {
-        _this.props.onEntered(node, appearing);
-      }
-    };
-
-    _this.onExit = function (node) {
-      _this.removeClasses(node, 'appear');
-
-      _this.removeClasses(node, 'enter');
-
-      _this.addClass(node, 'exit', 'base');
-
-      if (_this.props.onExit) {
-        _this.props.onExit(node);
-      }
-    };
-
-    _this.onExiting = function (node) {
-      _this.addClass(node, 'exit', 'active');
-
-      if (_this.props.onExiting) {
-        _this.props.onExiting(node);
-      }
-    };
-
-    _this.onExited = function (node) {
-      _this.removeClasses(node, 'exit');
-
-      _this.addClass(node, 'exit', 'done');
-
-      if (_this.props.onExited) {
-        _this.props.onExited(node);
-      }
-    };
-
-    _this.getClassNames = function (type) {
-      var classNames = _this.props.classNames;
-      var isStringClassNames = typeof classNames === 'string';
-      var prefix = isStringClassNames && classNames ? classNames + "-" : '';
-      var baseClassName = isStringClassNames ? "" + prefix + type : classNames[type];
-      var activeClassName = isStringClassNames ? baseClassName + "-active" : classNames[type + "Active"];
-      var doneClassName = isStringClassNames ? baseClassName + "-done" : classNames[type + "Done"];
-      return {
-        baseClassName: baseClassName,
-        activeClassName: activeClassName,
-        doneClassName: doneClassName
-      };
-    };
-
-    return _this;
-  }
-
-  var _proto = CSSTransition.prototype;
-
-  _proto.addClass = function addClass(node, type, phase) {
-    var className = this.getClassNames(type)[phase + "ClassName"];
-
-    if (type === 'appear' && phase === 'done') {
-      className += " " + this.getClassNames('enter').doneClassName;
-    } // This is for to force a repaint,
-    // which is necessary in order to transition styles when adding a class name.
-
-
-    if (phase === 'active') {
-      /* eslint-disable no-unused-expressions */
-      node && node.scrollTop;
-    }
-
-    this.appliedClasses[type][phase] = className;
-
-    _addClass(node, className);
-  };
-
-  _proto.removeClasses = function removeClasses(node, type) {
-    var _this$appliedClasses$ = this.appliedClasses[type],
-        baseClassName = _this$appliedClasses$.base,
-        activeClassName = _this$appliedClasses$.active,
-        doneClassName = _this$appliedClasses$.done;
-    this.appliedClasses[type] = {};
-
-    if (baseClassName) {
-      CSSTransition_removeClass(node, baseClassName);
-    }
-
-    if (activeClassName) {
-      CSSTransition_removeClass(node, activeClassName);
-    }
-
-    if (doneClassName) {
-      CSSTransition_removeClass(node, doneClassName);
-    }
-  };
-
-  _proto.render = function render() {
-    var _this$props = this.props,
-        _ = _this$props.classNames,
-        props = Object(objectWithoutPropertiesLoose["a" /* default */])(_this$props, ["classNames"]);
-
-    return external_React_default.a.createElement(esm_Transition, Object(esm_extends["a" /* default */])({}, props, {
-      onEnter: this.onEnter,
-      onEntered: this.onEntered,
-      onEntering: this.onEntering,
-      onExit: this.onExit,
-      onExiting: this.onExiting,
-      onExited: this.onExited
-    }));
-  };
-
-  return CSSTransition;
-}(external_React_default.a.Component);
-
-CSSTransition_CSSTransition.defaultProps = {
-  classNames: ''
-};
-CSSTransition_CSSTransition.propTypes =  false ? undefined : {};
-/* harmony default export */ var esm_CSSTransition = __webpack_exports__["a"] = (CSSTransition_CSSTransition);
 
 /***/ }),
 
-/***/ 366:
+/***/ 404:
+/***/ (function(module, exports, __webpack_require__) {
+
+var fails = __webpack_require__(6);
+var whitespaces = __webpack_require__(189);
+
+var non = '\u200B\u0085\u180E';
+
+// check that a method works with the correct list
+// of whitespaces and has a correct name
+module.exports = function (METHOD_NAME) {
+  return fails(function () {
+    return !!whitespaces[METHOD_NAME]() || non[METHOD_NAME]() != non || whitespaces[METHOD_NAME].name !== METHOD_NAME;
+  });
+};
+
+
+/***/ }),
+
+/***/ 600:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return getRequestByIdString; });
+/* unused harmony export getAttributeLabels */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return getCategoryLabels; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return getCouponLabels; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return getCustomerLabels; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return getProductLabels; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return getTaxRateLabels; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return getVariationName; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return getVariationLabels; });
+/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(164);
+/* harmony import */ var core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_join_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(139);
+/* harmony import */ var core_js_modules_es_array_join_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(51);
+/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_function_name_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(129);
+/* harmony import */ var core_js_modules_es_function_name_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_url__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(78);
+/* harmony import */ var _wordpress_url__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_url__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(95);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(5);
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _woocommerce_navigation__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(50);
+/* harmony import */ var _woocommerce_navigation__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_woocommerce_navigation__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _woocommerce_data__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(59);
+/* harmony import */ var _woocommerce_data__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_woocommerce_data__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(85);
+/* harmony import */ var _analytics_report_taxes_utils__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(601);
+
+
+
+
+
+
+/**
+ * External dependencies
+ */
+
+
+
+
+
+
+/**
+ * Internal dependencies
+ */
+
+
+/**
+ * Get a function that accepts ids as they are found in url parameter and
+ * returns a promise with an optional method applied to results
+ *
+ * @param {string|Function} path - api path string or a function of the query returning api path string
+ * @param {Function} [handleData] - function applied to each iteration of data
+ * @return {Function} - a function of ids returning a promise
+ */
+
+function getRequestByIdString(path) {
+  var handleData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : lodash__WEBPACK_IMPORTED_MODULE_7__["identity"];
+  return function () {
+    var queryString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    var query = arguments.length > 1 ? arguments[1] : undefined;
+    var pathString = typeof path === 'function' ? path(query) : path;
+    var idList = Object(_woocommerce_navigation__WEBPACK_IMPORTED_MODULE_8__["getIdsFromQuery"])(queryString);
+
+    if (idList.length < 1) {
+      return Promise.resolve([]);
+    }
+
+    var payload = {
+      include: idList.join(','),
+      per_page: idList.length
+    };
+    return _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_6___default()({
+      path: Object(_wordpress_url__WEBPACK_IMPORTED_MODULE_5__["addQueryArgs"])(pathString, payload)
+    }).then(function (data) {
+      return data.map(handleData);
+    });
+  };
+}
+var getAttributeLabels = getRequestByIdString(_woocommerce_data__WEBPACK_IMPORTED_MODULE_9__["NAMESPACE"] + '/products/attributes', function (attribute) {
+  return {
+    key: attribute.id,
+    label: attribute.name
+  };
+});
+var getCategoryLabels = getRequestByIdString(_woocommerce_data__WEBPACK_IMPORTED_MODULE_9__["NAMESPACE"] + '/products/categories', function (category) {
+  return {
+    key: category.id,
+    label: category.name
+  };
+});
+var getCouponLabels = getRequestByIdString(_woocommerce_data__WEBPACK_IMPORTED_MODULE_9__["NAMESPACE"] + '/coupons', function (coupon) {
+  return {
+    key: coupon.id,
+    label: coupon.code
+  };
+});
+var getCustomerLabels = getRequestByIdString(_woocommerce_data__WEBPACK_IMPORTED_MODULE_9__["NAMESPACE"] + '/customers', function (customer) {
+  return {
+    key: customer.id,
+    label: customer.name
+  };
+});
+var getProductLabels = getRequestByIdString(_woocommerce_data__WEBPACK_IMPORTED_MODULE_9__["NAMESPACE"] + '/products', function (product) {
+  return {
+    key: product.id,
+    label: product.name
+  };
+});
+var getTaxRateLabels = getRequestByIdString(_woocommerce_data__WEBPACK_IMPORTED_MODULE_9__["NAMESPACE"] + '/taxes', function (taxRate) {
+  return {
+    key: taxRate.id,
+    label: Object(_analytics_report_taxes_utils__WEBPACK_IMPORTED_MODULE_11__[/* getTaxCode */ "a"])(taxRate)
+  };
+});
+/**
+ * Create a variation name by concatenating each of the variation's
+ * attribute option strings.
+ *
+ * @param {Object} variation - variation returned by the api
+ * @param {Array} variation.attributes - attribute objects, with option property.
+ * @param {string} variation.name - name of variation.
+ * @return {string} - formatted variation name
+ */
+
+function getVariationName(_ref) {
+  var attributes = _ref.attributes,
+      name = _ref.name;
+  var separator = Object(_woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_10__[/* getSetting */ "g"])('variationTitleAttributesSeparator', ' - ');
+
+  if (name.indexOf(separator) > -1) {
+    return name;
+  }
+
+  var attributeList = attributes.map(function (_ref2) {
+    var option = _ref2.option;
+    return option;
+  }).join(', ');
+  return attributeList ? name + separator + attributeList : name;
+}
+var getVariationLabels = getRequestByIdString(function (_ref3) {
+  var products = _ref3.products;
+
+  // If a product was specified, get just its variations.
+  if (products) {
+    return _woocommerce_data__WEBPACK_IMPORTED_MODULE_9__["NAMESPACE"] + "/products/".concat(products, "/variations");
+  }
+
+  return _woocommerce_data__WEBPACK_IMPORTED_MODULE_9__["NAMESPACE"] + '/variations';
+}, function (variation) {
+  return {
+    key: variation.id,
+    label: getVariationName(variation)
+  };
+});
+
+/***/ }),
+
+/***/ 601:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return getTaxCode; });
+/* harmony import */ var core_js_modules_es_array_join_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(139);
+/* harmony import */ var core_js_modules_es_array_join_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_filter_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(41);
+/* harmony import */ var core_js_modules_es_array_filter_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_filter_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(51);
+/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_function_name_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(129);
+/* harmony import */ var core_js_modules_es_function_name_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(319);
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(142);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(2);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__);
+
+
+
+
+
+
+
+
+/**
+ * External dependencies
+ */
+
+function getTaxCode(tax) {
+  return [tax.country, tax.state, tax.name || Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__["__"])('TAX', 'woocommerce-admin'), tax.priority].map(function (item) {
+    return item.toString().toUpperCase().trim();
+  }).filter(Boolean).join('-');
+}
+
+/***/ }),
+
+/***/ 602:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js
-var objectWithoutPropertiesLoose = __webpack_require__(54);
+// UNUSED EXPORTS: ReportChart
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
-var esm_extends = __webpack_require__(7);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.reflect.construct.js
+var es_reflect_construct = __webpack_require__(64);
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
-var inheritsLoose = __webpack_require__(53);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.keys.js
+var es_object_keys = __webpack_require__(37);
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
-var assertThisInitialized = __webpack_require__(12);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.symbol.js
+var es_symbol = __webpack_require__(53);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.filter.js
+var es_array_filter = __webpack_require__(41);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.get-own-property-descriptor.js
+var es_object_get_own_property_descriptor = __webpack_require__(60);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.get-own-property-descriptors.js
+var es_object_get_own_property_descriptors = __webpack_require__(61);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/defineProperty.js
+var defineProperty = __webpack_require__(7);
+var defineProperty_default = /*#__PURE__*/__webpack_require__.n(defineProperty);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
+var classCallCheck = __webpack_require__(22);
+var classCallCheck_default = /*#__PURE__*/__webpack_require__.n(classCallCheck);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/createClass.js
+var createClass = __webpack_require__(23);
+var createClass_default = /*#__PURE__*/__webpack_require__.n(createClass);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/inherits.js
+var inherits = __webpack_require__(24);
+var inherits_default = /*#__PURE__*/__webpack_require__.n(inherits);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js
+var possibleConstructorReturn = __webpack_require__(25);
+var possibleConstructorReturn_default = /*#__PURE__*/__webpack_require__.n(possibleConstructorReturn);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/getPrototypeOf.js
+var getPrototypeOf = __webpack_require__(14);
+var getPrototypeOf_default = /*#__PURE__*/__webpack_require__.n(getPrototypeOf);
+
+// EXTERNAL MODULE: external ["wp","element"]
+var external_wp_element_ = __webpack_require__(0);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.map.js
+var es_array_map = __webpack_require__(51);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.for-each.js
+var web_dom_collections_for_each = __webpack_require__(49);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.concat.js
+var es_array_concat = __webpack_require__(66);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.search.js
+var es_string_search = __webpack_require__(170);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.exec.js
+var es_regexp_exec = __webpack_require__(88);
+
+// EXTERNAL MODULE: external ["wp","i18n"]
+var external_wp_i18n_ = __webpack_require__(2);
+
+// EXTERNAL MODULE: external ["wp","compose"]
+var external_wp_compose_ = __webpack_require__(65);
+
+// EXTERNAL MODULE: external ["wp","date"]
+var external_wp_date_ = __webpack_require__(211);
+
+// EXTERNAL MODULE: external ["wp","data"]
+var external_wp_data_ = __webpack_require__(26);
+
+// EXTERNAL MODULE: external "lodash"
+var external_lodash_ = __webpack_require__(5);
 
 // EXTERNAL MODULE: ./node_modules/prop-types/index.js
 var prop_types = __webpack_require__(1);
+var prop_types_default = /*#__PURE__*/__webpack_require__.n(prop_types);
 
-// EXTERNAL MODULE: external "React"
-var external_React_ = __webpack_require__(8);
-var external_React_default = /*#__PURE__*/__webpack_require__.n(external_React_);
+// EXTERNAL MODULE: external ["wc","components"]
+var external_wc_components_ = __webpack_require__(145);
 
-// EXTERNAL MODULE: ./node_modules/react-transition-group/esm/TransitionGroupContext.js
-var TransitionGroupContext = __webpack_require__(88);
+// EXTERNAL MODULE: external ["wc","data"]
+var external_wc_data_ = __webpack_require__(59);
 
-// CONCATENATED MODULE: ./node_modules/react-transition-group/esm/utils/ChildMapping.js
+// EXTERNAL MODULE: external ["wc","date"]
+var external_wc_date_ = __webpack_require__(101);
+
+// EXTERNAL MODULE: ./client/lib/currency-context.js
+var currency_context = __webpack_require__(598);
+
+// EXTERNAL MODULE: ./client/analytics/components/report-error/index.js
+var report_error = __webpack_require__(599);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.slice.js
+var es_array_slice = __webpack_require__(187);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.includes.js
+var es_array_includes = __webpack_require__(107);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.includes.js
+var es_string_includes = __webpack_require__(140);
+
+// EXTERNAL MODULE: external ["wc","navigation"]
+var external_wc_navigation_ = __webpack_require__(50);
+
+// CONCATENATED MODULE: ./client/analytics/components/report-chart/utils.js
+
+
+
+
 
 /**
- * Given `this.props.children`, return an object mapping key to child.
- *
- * @param {*} children `this.props.children`
- * @return {object} Mapping of key to child
+ * External dependencies
  */
 
-function getChildMapping(children, mapFn) {
-  var mapper = function mapper(child) {
-    return mapFn && Object(external_React_["isValidElement"])(child) ? mapFn(child) : child;
-  };
 
-  var result = Object.create(null);
-  if (children) external_React_["Children"].map(children, function (c) {
-    return c;
-  }).forEach(function (child) {
-    // run the map function here instead so that the key is the computed one
-    result[child.key] = mapper(child);
-  });
-  return result;
+var DEFAULT_FILTER = 'all';
+function getSelectedFilter(filters, query) {
+  var selectedFilterArgs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  if (!filters || filters.length === 0) {
+    return null;
+  }
+
+  var clonedFilters = filters.slice(0);
+  var filterConfig = clonedFilters.pop();
+
+  if (filterConfig.showFilters(query, selectedFilterArgs)) {
+    var allFilters = Object(external_wc_navigation_["flattenFilters"])(filterConfig.filters);
+    var value = query[filterConfig.param] || filterConfig.defaultValue || DEFAULT_FILTER;
+    return Object(external_lodash_["find"])(allFilters, {
+      value: value
+    });
+  }
+
+  return getSelectedFilter(clonedFilters, query, selectedFilterArgs);
 }
+function getChartMode(selectedFilter, query) {
+  if (selectedFilter && query) {
+    var selectedFilterParam = Object(external_lodash_["get"])(selectedFilter, ['settings', 'param']);
+
+    if (!selectedFilterParam || Object.keys(query).includes(selectedFilterParam)) {
+      return Object(external_lodash_["get"])(selectedFilter, ['chartMode']);
+    }
+  }
+
+  return null;
+}
+// CONCATENATED MODULE: ./client/analytics/components/report-chart/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { defineProperty_default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
 /**
- * When you're adding or removing children some may be added or removed in the
- * same render pass. We want to show *both* since we want to simultaneously
- * animate elements in and out. This function takes a previous set of keys
- * and a new set of keys and merges them with its best guess of the correct
- * ordering. In the future we may expose some of the utilities in
- * ReactMultiChild to make this easy, but for now React itself does not
- * directly have this concept of the union of prevChildren and nextChildren
- * so we implement it here.
- *
- * @param {object} prev prev children as returned from
- * `ReactTransitionChildMapping.getChildMapping()`.
- * @param {object} next next children as returned from
- * `ReactTransitionChildMapping.getChildMapping()`.
- * @return {object} a key set that contains all keys in `prev` and all keys
- * in `next` in a reasonable order.
+ * External dependencies
  */
 
-function mergeChildMappings(prev, next) {
-  prev = prev || {};
-  next = next || {};
-
-  function getValueForKey(key) {
-    return key in next ? next[key] : prev[key];
-  } // For each key of `next`, the list of keys to insert before that key in
-  // the combined list
 
 
-  var nextKeysPending = Object.create(null);
-  var pendingKeys = [];
 
-  for (var prevKey in prev) {
-    if (prevKey in next) {
-      if (pendingKeys.length) {
-        nextKeysPending[prevKey] = pendingKeys;
-        pendingKeys = [];
+
+
+
+
+
+
+/**
+ * Internal dependencies
+ */
+
+
+
+
+/**
+ * Component that renders the chart in reports.
+ */
+
+var report_chart_ReportChart = /*#__PURE__*/function (_Component) {
+  inherits_default()(ReportChart, _Component);
+
+  var _super = _createSuper(ReportChart);
+
+  function ReportChart() {
+    classCallCheck_default()(this, ReportChart);
+
+    return _super.apply(this, arguments);
+  }
+
+  createClass_default()(ReportChart, [{
+    key: "shouldComponentUpdate",
+    value: function shouldComponentUpdate(nextProps) {
+      if (nextProps.isRequesting !== this.props.isRequesting || nextProps.primaryData.isRequesting !== this.props.primaryData.isRequesting || nextProps.secondaryData.isRequesting !== this.props.secondaryData.isRequesting || !Object(external_lodash_["isEqual"])(nextProps.query, this.props.query)) {
+        return true;
       }
-    } else {
-      pendingKeys.push(prevKey);
+
+      return false;
     }
-  }
-
-  var i;
-  var childMapping = {};
-
-  for (var nextKey in next) {
-    if (nextKeysPending[nextKey]) {
-      for (i = 0; i < nextKeysPending[nextKey].length; i++) {
-        var pendingNextKey = nextKeysPending[nextKey][i];
-        childMapping[nextKeysPending[nextKey][i]] = getValueForKey(pendingNextKey);
-      }
-    }
-
-    childMapping[nextKey] = getValueForKey(nextKey);
-  } // Finally, add the keys which didn't appear before any key in `next`
-
-
-  for (i = 0; i < pendingKeys.length; i++) {
-    childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
-  }
-
-  return childMapping;
-}
-
-function getProp(child, prop, props) {
-  return props[prop] != null ? props[prop] : child.props[prop];
-}
-
-function getInitialChildMapping(props, onExited) {
-  return getChildMapping(props.children, function (child) {
-    return Object(external_React_["cloneElement"])(child, {
-      onExited: onExited.bind(null, child),
-      in: true,
-      appear: getProp(child, 'appear', props),
-      enter: getProp(child, 'enter', props),
-      exit: getProp(child, 'exit', props)
-    });
-  });
-}
-function getNextChildMapping(nextProps, prevChildMapping, onExited) {
-  var nextChildMapping = getChildMapping(nextProps.children);
-  var children = mergeChildMappings(prevChildMapping, nextChildMapping);
-  Object.keys(children).forEach(function (key) {
-    var child = children[key];
-    if (!Object(external_React_["isValidElement"])(child)) return;
-    var hasPrev = key in prevChildMapping;
-    var hasNext = key in nextChildMapping;
-    var prevChild = prevChildMapping[key];
-    var isLeaving = Object(external_React_["isValidElement"])(prevChild) && !prevChild.props.in; // item is new (entering)
-
-    if (hasNext && (!hasPrev || isLeaving)) {
-      // console.log('entering', key)
-      children[key] = Object(external_React_["cloneElement"])(child, {
-        onExited: onExited.bind(null, child),
-        in: true,
-        exit: getProp(child, 'exit', nextProps),
-        enter: getProp(child, 'enter', nextProps)
+  }, {
+    key: "getItemChartData",
+    value: function getItemChartData() {
+      var _this$props = this.props,
+          primaryData = _this$props.primaryData,
+          selectedChart = _this$props.selectedChart;
+      var chartData = primaryData.data.intervals.map(function (interval) {
+        var intervalData = {};
+        interval.subtotals.segments.forEach(function (segment) {
+          if (segment.segment_label) {
+            var label = intervalData[segment.segment_label] ? segment.segment_label + ' (#' + segment.segment_id + ')' : segment.segment_label;
+            intervalData[segment.segment_id] = {
+              label: label,
+              value: segment.subtotals[selectedChart.key] || 0
+            };
+          }
+        });
+        return _objectSpread({
+          date: Object(external_wp_date_["format"])('Y-m-d\\TH:i:s', interval.date_start)
+        }, intervalData);
       });
-    } else if (!hasNext && hasPrev && !isLeaving) {
-      // item is old (exiting)
-      // console.log('leaving', key)
-      children[key] = Object(external_React_["cloneElement"])(child, {
-        in: false
-      });
-    } else if (hasNext && hasPrev && Object(external_React_["isValidElement"])(prevChild)) {
-      // item hasn't changed transition states
-      // copy over the last transition props;
-      // console.log('unchanged', key)
-      children[key] = Object(external_React_["cloneElement"])(child, {
-        onExited: onExited.bind(null, child),
-        in: prevChild.props.in,
-        exit: getProp(child, 'exit', nextProps),
-        enter: getProp(child, 'enter', nextProps)
-      });
+      return chartData;
     }
-  });
-  return children;
-}
-// CONCATENATED MODULE: ./node_modules/react-transition-group/esm/TransitionGroup.js
+  }, {
+    key: "getTimeChartData",
+    value: function getTimeChartData() {
+      var _this$props2 = this.props,
+          query = _this$props2.query,
+          primaryData = _this$props2.primaryData,
+          secondaryData = _this$props2.secondaryData,
+          selectedChart = _this$props2.selectedChart,
+          defaultDateRange = _this$props2.defaultDateRange;
+      var currentInterval = Object(external_wc_date_["getIntervalForQuery"])(query);
 
+      var _getCurrentDates = Object(external_wc_date_["getCurrentDates"])(query, defaultDateRange),
+          primary = _getCurrentDates.primary,
+          secondary = _getCurrentDates.secondary;
 
-
-
-
-
-
-
-
-var values = Object.values || function (obj) {
-  return Object.keys(obj).map(function (k) {
-    return obj[k];
-  });
-};
-
-var defaultProps = {
-  component: 'div',
-  childFactory: function childFactory(child) {
-    return child;
-  }
-  /**
-   * The `<TransitionGroup>` component manages a set of transition components
-   * (`<Transition>` and `<CSSTransition>`) in a list. Like with the transition
-   * components, `<TransitionGroup>` is a state machine for managing the mounting
-   * and unmounting of components over time.
-   *
-   * Consider the example below. As items are removed or added to the TodoList the
-   * `in` prop is toggled automatically by the `<TransitionGroup>`.
-   *
-   * Note that `<TransitionGroup>`  does not define any animation behavior!
-   * Exactly _how_ a list item animates is up to the individual transition
-   * component. This means you can mix and match animations across different list
-   * items.
-   */
-
-};
-
-var TransitionGroup_TransitionGroup =
-/*#__PURE__*/
-function (_React$Component) {
-  Object(inheritsLoose["a" /* default */])(TransitionGroup, _React$Component);
-
-  function TransitionGroup(props, context) {
-    var _this;
-
-    _this = _React$Component.call(this, props, context) || this;
-
-    var handleExited = _this.handleExited.bind(Object(assertThisInitialized["a" /* default */])(Object(assertThisInitialized["a" /* default */])(_this))); // Initial children should all be entering, dependent on appear
-
-
-    _this.state = {
-      contextValue: {
-        isMounting: true
-      },
-      handleExited: handleExited,
-      firstRender: true
-    };
-    return _this;
-  }
-
-  var _proto = TransitionGroup.prototype;
-
-  _proto.componentDidMount = function componentDidMount() {
-    this.mounted = true;
-    this.setState({
-      contextValue: {
-        isMounting: false
-      }
-    });
-  };
-
-  _proto.componentWillUnmount = function componentWillUnmount() {
-    this.mounted = false;
-  };
-
-  TransitionGroup.getDerivedStateFromProps = function getDerivedStateFromProps(nextProps, _ref) {
-    var prevChildMapping = _ref.children,
-        handleExited = _ref.handleExited,
-        firstRender = _ref.firstRender;
-    return {
-      children: firstRender ? getInitialChildMapping(nextProps, handleExited) : getNextChildMapping(nextProps, prevChildMapping, handleExited),
-      firstRender: false
-    };
-  };
-
-  _proto.handleExited = function handleExited(child, node) {
-    var currentChildMapping = getChildMapping(this.props.children);
-    if (child.key in currentChildMapping) return;
-
-    if (child.props.onExited) {
-      child.props.onExited(node);
-    }
-
-    if (this.mounted) {
-      this.setState(function (state) {
-        var children = Object(esm_extends["a" /* default */])({}, state.children);
-
-        delete children[child.key];
+      var chartData = primaryData.data.intervals.map(function (interval, index) {
+        var secondaryDate = Object(external_wc_date_["getPreviousDate"])(interval.date_start, primary.after, secondary.after, query.compare, currentInterval);
+        var secondaryInterval = secondaryData.data.intervals[index];
         return {
-          children: children
+          date: Object(external_wp_date_["format"])('Y-m-d\\TH:i:s', interval.date_start),
+          primary: {
+            label: "".concat(primary.label, " (").concat(primary.range, ")"),
+            labelDate: interval.date_start,
+            value: interval.subtotals[selectedChart.key] || 0
+          },
+          secondary: {
+            label: "".concat(secondary.label, " (").concat(secondary.range, ")"),
+            labelDate: secondaryDate.format('YYYY-MM-DD HH:mm:ss'),
+            value: secondaryInterval && secondaryInterval.subtotals[selectedChart.key] || 0
+          }
         };
       });
+      return chartData;
     }
+  }, {
+    key: "getTimeChartTotals",
+    value: function getTimeChartTotals() {
+      var _this$props3 = this.props,
+          primaryData = _this$props3.primaryData,
+          secondaryData = _this$props3.secondaryData,
+          selectedChart = _this$props3.selectedChart;
+      return {
+        primary: Object(external_lodash_["get"])(primaryData, ['data', 'totals', selectedChart.key], null),
+        secondary: Object(external_lodash_["get"])(secondaryData, ['data', 'totals', selectedChart.key], null)
+      };
+    }
+  }, {
+    key: "renderChart",
+    value: function renderChart(mode, isRequesting, chartData, legendTotals) {
+      var _this$props4 = this.props,
+          emptySearchResults = _this$props4.emptySearchResults,
+          filterParam = _this$props4.filterParam,
+          interactiveLegend = _this$props4.interactiveLegend,
+          itemsLabel = _this$props4.itemsLabel,
+          legendPosition = _this$props4.legendPosition,
+          path = _this$props4.path,
+          query = _this$props4.query,
+          selectedChart = _this$props4.selectedChart,
+          showHeaderControls = _this$props4.showHeaderControls,
+          primaryData = _this$props4.primaryData;
+      var currentInterval = Object(external_wc_date_["getIntervalForQuery"])(query);
+      var allowedIntervals = Object(external_wc_date_["getAllowedIntervalsForQuery"])(query);
+      var formats = Object(external_wc_date_["getDateFormatsForInterval"])(currentInterval, primaryData.data.intervals.length);
+      var emptyMessage = emptySearchResults ? Object(external_wp_i18n_["__"])('No data for the current search', 'woocommerce-admin') : Object(external_wp_i18n_["__"])('No data for the selected date range', 'woocommerce-admin');
+      var _this$context = this.context,
+          formatAmount = _this$context.formatAmount,
+          getCurrencyConfig = _this$context.getCurrencyConfig;
+      return Object(external_wp_element_["createElement"])(external_wc_components_["Chart"], {
+        allowedIntervals: allowedIntervals,
+        data: chartData,
+        dateParser: '%Y-%m-%dT%H:%M:%S',
+        emptyMessage: emptyMessage,
+        filterParam: filterParam,
+        interactiveLegend: interactiveLegend,
+        interval: currentInterval,
+        isRequesting: isRequesting,
+        itemsLabel: itemsLabel,
+        legendPosition: legendPosition,
+        legendTotals: legendTotals,
+        mode: mode,
+        path: path,
+        query: query,
+        screenReaderFormat: formats.screenReaderFormat,
+        showHeaderControls: showHeaderControls,
+        title: selectedChart.label,
+        tooltipLabelFormat: formats.tooltipLabelFormat,
+        tooltipTitle: mode === 'time-comparison' && selectedChart.label || null,
+        tooltipValueFormat: Object(external_wc_data_["getTooltipValueFormat"])(selectedChart.type, formatAmount),
+        chartType: Object(external_wc_date_["getChartTypeForQuery"])(query),
+        valueType: selectedChart.type,
+        xFormat: formats.xFormat,
+        x2Format: formats.x2Format,
+        currency: getCurrencyConfig()
+      });
+    }
+  }, {
+    key: "renderItemComparison",
+    value: function renderItemComparison() {
+      var _this$props5 = this.props,
+          isRequesting = _this$props5.isRequesting,
+          primaryData = _this$props5.primaryData;
+
+      if (primaryData.isError) {
+        return Object(external_wp_element_["createElement"])(report_error["a" /* default */], {
+          isError: true
+        });
+      }
+
+      var isChartRequesting = isRequesting || primaryData.isRequesting;
+      var chartData = this.getItemChartData();
+      return this.renderChart('item-comparison', isChartRequesting, chartData);
+    }
+  }, {
+    key: "renderTimeComparison",
+    value: function renderTimeComparison() {
+      var _this$props6 = this.props,
+          isRequesting = _this$props6.isRequesting,
+          primaryData = _this$props6.primaryData,
+          secondaryData = _this$props6.secondaryData;
+
+      if (!primaryData || primaryData.isError || secondaryData.isError) {
+        return Object(external_wp_element_["createElement"])(report_error["a" /* default */], {
+          isError: true
+        });
+      }
+
+      var isChartRequesting = isRequesting || primaryData.isRequesting || secondaryData.isRequesting;
+      var chartData = this.getTimeChartData();
+      var legendTotals = this.getTimeChartTotals();
+      return this.renderChart('time-comparison', isChartRequesting, chartData, legendTotals);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var mode = this.props.mode;
+
+      if (mode === 'item-comparison') {
+        return this.renderItemComparison();
+      }
+
+      return this.renderTimeComparison();
+    }
+  }]);
+
+  return ReportChart;
+}(external_wp_element_["Component"]);
+report_chart_ReportChart.contextType = currency_context["a" /* CurrencyContext */];
+report_chart_ReportChart.propTypes = {
+  /**
+   * Filters available for that report.
+   */
+  filters: prop_types_default.a.array,
+
+  /**
+   * Whether there is an API call running.
+   */
+  isRequesting: prop_types_default.a.bool,
+
+  /**
+   * Label describing the legend items.
+   */
+  itemsLabel: prop_types_default.a.string,
+
+  /**
+   * Allows specifying properties different from the `endpoint` that will be used
+   * to limit the items when there is an active search.
+   */
+  limitProperties: prop_types_default.a.array,
+
+  /**
+   * `items-comparison` (default) or `time-comparison`, this is used to generate correct
+   * ARIA properties.
+   */
+  mode: prop_types_default.a.string,
+
+  /**
+   * Current path
+   */
+  path: prop_types_default.a.string.isRequired,
+
+  /**
+   * Primary data to display in the chart.
+   */
+  primaryData: prop_types_default.a.object,
+
+  /**
+   * The query string represented in object form.
+   */
+  query: prop_types_default.a.object.isRequired,
+
+  /**
+   * Secondary data to display in the chart.
+   */
+  secondaryData: prop_types_default.a.object,
+
+  /**
+   * Properties of the selected chart.
+   */
+  selectedChart: prop_types_default.a.shape({
+    /**
+     * Key of the selected chart.
+     */
+    key: prop_types_default.a.string.isRequired,
+
+    /**
+     * Chart label.
+     */
+    label: prop_types_default.a.string.isRequired,
+
+    /**
+     * Order query argument.
+     */
+    order: prop_types_default.a.oneOf(['asc', 'desc']),
+
+    /**
+     * Order by query argument.
+     */
+    orderby: prop_types_default.a.string,
+
+    /**
+     * Number type for formatting.
+     */
+    type: prop_types_default.a.oneOf(['average', 'number', 'currency']).isRequired
+  }).isRequired
+};
+report_chart_ReportChart.defaultProps = {
+  isRequesting: false,
+  primaryData: {
+    data: {
+      intervals: []
+    },
+    isError: false,
+    isRequesting: false
+  },
+  secondaryData: {
+    data: {
+      intervals: []
+    },
+    isError: false,
+    isRequesting: false
+  }
+};
+/* harmony default export */ var report_chart = __webpack_exports__["a"] = (Object(external_wp_compose_["compose"])(Object(external_wp_data_["withSelect"])(function (select, props) {
+  var charts = props.charts,
+      endpoint = props.endpoint,
+      filters = props.filters,
+      isRequesting = props.isRequesting,
+      limitProperties = props.limitProperties,
+      query = props.query,
+      advancedFilters = props.advancedFilters;
+  var limitBy = limitProperties || [endpoint];
+  var selectedFilter = getSelectedFilter(filters, query);
+  var filterParam = Object(external_lodash_["get"])(selectedFilter, ['settings', 'param']);
+  var chartMode = props.mode || getChartMode(selectedFilter, query) || 'time-comparison';
+
+  var _select$getSetting = select(external_wc_data_["SETTINGS_STORE_NAME"]).getSetting('wc_admin', 'wcAdminSettings'),
+      defaultDateRange = _select$getSetting.woocommerce_default_date_range;
+
+  var newProps = {
+    mode: chartMode,
+    filterParam: filterParam,
+    defaultDateRange: defaultDateRange
   };
 
-  _proto.render = function render() {
-    var _this$props = this.props,
-        Component = _this$props.component,
-        childFactory = _this$props.childFactory,
-        props = Object(objectWithoutPropertiesLoose["a" /* default */])(_this$props, ["component", "childFactory"]);
+  if (isRequesting) {
+    return newProps;
+  }
 
-    var contextValue = this.state.contextValue;
-    var children = values(this.state.children).map(childFactory);
-    delete props.appear;
-    delete props.enter;
-    delete props.exit;
+  var hasLimitByParam = limitBy.some(function (item) {
+    return query[item] && query[item].length;
+  });
 
-    if (Component === null) {
-      return external_React_default.a.createElement(TransitionGroupContext["a" /* default */].Provider, {
-        value: contextValue
-      }, children);
-    }
+  if (query.search && !hasLimitByParam) {
+    return _objectSpread(_objectSpread({}, newProps), {}, {
+      emptySearchResults: true
+    });
+  }
 
-    return external_React_default.a.createElement(TransitionGroupContext["a" /* default */].Provider, {
-      value: contextValue
-    }, external_React_default.a.createElement(Component, props, children));
-  };
+  var fields = charts && charts.map(function (chart) {
+    return chart.key;
+  });
+  var primaryData = Object(external_wc_data_["getReportChartData"])({
+    endpoint: endpoint,
+    dataType: 'primary',
+    query: query,
+    select: select,
+    limitBy: limitBy,
+    filters: filters,
+    advancedFilters: advancedFilters,
+    defaultDateRange: defaultDateRange,
+    fields: fields
+  });
 
-  return TransitionGroup;
-}(external_React_default.a.Component);
+  if (chartMode === 'item-comparison') {
+    return _objectSpread(_objectSpread({}, newProps), {}, {
+      primaryData: primaryData
+    });
+  }
 
-TransitionGroup_TransitionGroup.propTypes =  false ? undefined : {};
-TransitionGroup_TransitionGroup.defaultProps = defaultProps;
-/* harmony default export */ var esm_TransitionGroup = __webpack_exports__["a"] = (TransitionGroup_TransitionGroup);
+  var secondaryData = Object(external_wc_data_["getReportChartData"])({
+    endpoint: endpoint,
+    dataType: 'secondary',
+    query: query,
+    select: select,
+    limitBy: limitBy,
+    filters: filters,
+    advancedFilters: advancedFilters,
+    defaultDateRange: defaultDateRange,
+    fields: fields
+  });
+  return _objectSpread(_objectSpread({}, newProps), {}, {
+    primaryData: primaryData,
+    secondaryData: secondaryData
+  });
+}))(report_chart_ReportChart));
 
 /***/ }),
 
-/***/ 88:
+/***/ 634:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return charts; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return filters; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return advancedFilters; });
+/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(51);
+/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_object_keys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
+/* harmony import */ var core_js_modules_es_object_keys_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_keys_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(141);
+/* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(85);
+/* harmony import */ var _lib_async_requests__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(600);
 
-/* harmony default export */ __webpack_exports__["a"] = (react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext(null));
+
+
+/**
+ * External dependencies
+ */
+
+
+
+/**
+ * Internal dependencies
+ */
+
+
+var ORDERS_REPORT_CHARTS_FILTER = 'woocommerce_admin_orders_report_charts';
+var ORDERS_REPORT_FILTERS_FILTER = 'woocommerce_admin_orders_report_filters';
+var ORDERS_REPORT_ADVANCED_FILTERS_FILTER = 'woocommerce_admin_orders_report_advanced_filters';
+var charts = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__["applyFilters"])(ORDERS_REPORT_CHARTS_FILTER, [{
+  key: 'orders_count',
+  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Orders', 'woocommerce-admin'),
+  type: 'number'
+}, {
+  key: 'net_revenue',
+  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Net Sales', 'woocommerce-admin'),
+  order: 'desc',
+  orderby: 'net_total',
+  type: 'currency'
+}, {
+  key: 'avg_order_value',
+  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Average Order Value', 'woocommerce-admin'),
+  type: 'currency'
+}, {
+  key: 'avg_items_per_order',
+  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Average Items Per Order', 'woocommerce-admin'),
+  order: 'desc',
+  orderby: 'num_items_sold',
+  type: 'average'
+}]);
+var filters = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__["applyFilters"])(ORDERS_REPORT_FILTERS_FILTER, [{
+  label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Show', 'woocommerce-admin'),
+  staticParams: ['chartType', 'paged', 'per_page'],
+  param: 'filter',
+  showFilters: function showFilters() {
+    return true;
+  },
+  filters: [{
+    label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('All Orders', 'woocommerce-admin'),
+    value: 'all'
+  }, {
+    label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Advanced Filters', 'woocommerce-admin'),
+    value: 'advanced'
+  }]
+}]);
+/*eslint-disable max-len*/
+
+var advancedFilters = Object(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__["applyFilters"])(ORDERS_REPORT_ADVANCED_FILTERS_FILTER, {
+  title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Orders Match {{select /}} Filters', 'A sentence describing filters for Orders. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ', 'woocommerce-admin'),
+  filters: {
+    status: {
+      labels: {
+        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Order Status', 'woocommerce-admin'),
+        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Remove order status filter', 'woocommerce-admin'),
+        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select an order status filter match', 'woocommerce-admin'),
+
+        /* translators: A sentence describing an Order Status filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
+        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('{{title}}Order Status{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
+        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select an order status', 'woocommerce-admin')
+      },
+      rules: [{
+        value: 'is',
+
+        /* translators: Sentence fragment, logical, "Is" refers to searching for orders matching a chosen order status. Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Is', 'order status', 'woocommerce-admin')
+      }, {
+        value: 'is_not',
+
+        /* translators: Sentence fragment, logical, "Is Not" refers to searching for orders that don\'t match a chosen order status. Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Is Not', 'order status', 'woocommerce-admin')
+      }],
+      input: {
+        component: 'SelectControl',
+        options: Object.keys(_woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_4__[/* ORDER_STATUSES */ "d"]).map(function (key) {
+          return {
+            value: key,
+            label: _woocommerce_wc_admin_settings__WEBPACK_IMPORTED_MODULE_4__[/* ORDER_STATUSES */ "d"][key]
+          };
+        })
+      }
+    },
+    product: {
+      labels: {
+        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Products', 'woocommerce-admin'),
+        placeholder: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Search products', 'woocommerce-admin'),
+        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Remove products filter', 'woocommerce-admin'),
+        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select a product filter match', 'woocommerce-admin'),
+
+        /* translators: A sentence describing a Product filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
+        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('{{title}}Product{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
+        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select products', 'woocommerce-admin')
+      },
+      rules: [{
+        value: 'includes',
+
+        /* translators: Sentence fragment, logical, "Includes" refers to orders including a given product(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Includes', 'products', 'woocommerce-admin')
+      }, {
+        value: 'excludes',
+
+        /* translators: Sentence fragment, logical, "Excludes" refers to orders excluding a given product(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Excludes', 'products', 'woocommerce-admin')
+      }],
+      input: {
+        component: 'Search',
+        type: 'products',
+        getLabels: _lib_async_requests__WEBPACK_IMPORTED_MODULE_5__[/* getProductLabels */ "d"]
+      }
+    },
+    variation: {
+      labels: {
+        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Variations', 'woocommerce-admin'),
+        placeholder: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Search variations', 'woocommerce-admin'),
+        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Remove variations filter', 'woocommerce-admin'),
+        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select a variation filter match', 'woocommerce-admin'),
+
+        /* translators: A sentence describing a Variation filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
+        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('{{title}}Variation{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
+        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select variation', 'woocommerce-admin')
+      },
+      rules: [{
+        value: 'includes',
+
+        /* translators: Sentence fragment, logical, "Includes" refers to orders including a given variation(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Includes', 'variations', 'woocommerce-admin')
+      }, {
+        value: 'excludes',
+
+        /* translators: Sentence fragment, logical, "Excludes" refers to orders excluding a given variation(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Excludes', 'variations', 'woocommerce-admin')
+      }],
+      input: {
+        component: 'Search',
+        type: 'variations',
+        getLabels: _lib_async_requests__WEBPACK_IMPORTED_MODULE_5__[/* getVariationLabels */ "g"]
+      }
+    },
+    coupon: {
+      labels: {
+        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Coupon Codes', 'woocommerce-admin'),
+        placeholder: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Search coupons', 'woocommerce-admin'),
+        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Remove coupon filter', 'woocommerce-admin'),
+        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select a coupon filter match', 'woocommerce-admin'),
+
+        /* translators: A sentence describing a Coupon filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
+        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('{{title}}Coupon Code{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
+        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select coupon codes', 'woocommerce-admin')
+      },
+      rules: [{
+        value: 'includes',
+
+        /* translators: Sentence fragment, logical, "Includes" refers to orders including a given coupon code(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Includes', 'coupon code', 'woocommerce-admin')
+      }, {
+        value: 'excludes',
+
+        /* translators: Sentence fragment, logical, "Excludes" refers to orders excluding a given coupon code(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Excludes', 'coupon code', 'woocommerce-admin')
+      }],
+      input: {
+        component: 'Search',
+        type: 'coupons',
+        getLabels: _lib_async_requests__WEBPACK_IMPORTED_MODULE_5__[/* getCouponLabels */ "b"]
+      }
+    },
+    customer_type: {
+      labels: {
+        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Customer Type', 'woocommerce-admin'),
+        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Remove customer filter', 'woocommerce-admin'),
+        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select a customer filter match', 'woocommerce-admin'),
+
+        /* translators: A sentence describing a Customer filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
+        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('{{title}}Customer is{{/title}} {{filter /}}', 'woocommerce-admin'),
+        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select a customer type', 'woocommerce-admin')
+      },
+      input: {
+        component: 'SelectControl',
+        options: [{
+          value: 'new',
+          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('New', 'woocommerce-admin')
+        }, {
+          value: 'returning',
+          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Returning', 'woocommerce-admin')
+        }],
+        defaultOption: 'new'
+      }
+    },
+    refunds: {
+      labels: {
+        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Refunds', 'woocommerce-admin'),
+        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Remove refunds filter', 'woocommerce-admin'),
+        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select a refund filter match', 'woocommerce-admin'),
+        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('{{title}}Refunds{{/title}} {{filter /}}', 'woocommerce-admin'),
+        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select a refund type', 'woocommerce-admin')
+      },
+      input: {
+        component: 'SelectControl',
+        options: [{
+          value: 'all',
+          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('All', 'woocommerce-admin')
+        }, {
+          value: 'partial',
+          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Partially refunded', 'woocommerce-admin')
+        }, {
+          value: 'full',
+          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Fully refunded', 'woocommerce-admin')
+        }, {
+          value: 'none',
+          label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('None', 'woocommerce-admin')
+        }],
+        defaultOption: 'all'
+      }
+    },
+    tax_rate: {
+      labels: {
+        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Tax Rates', 'woocommerce-admin'),
+        placeholder: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Search tax rates', 'woocommerce-admin'),
+        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Remove tax rate filter', 'woocommerce-admin'),
+        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select a tax rate filter match', 'woocommerce-admin'),
+
+        /* translators: A sentence describing a tax rate filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
+        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('{{title}}Tax Rate{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
+        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select tax rates', 'woocommerce-admin')
+      },
+      rules: [{
+        value: 'includes',
+
+        /* translators: Sentence fragment, logical, "Includes" refers to orders including a given tax rate(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Includes', 'tax rate', 'woocommerce-admin')
+      }, {
+        value: 'excludes',
+
+        /* translators: Sentence fragment, logical, "Excludes" refers to orders excluding a given tax rate(s). Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Excludes', 'tax rate', 'woocommerce-admin')
+      }],
+      input: {
+        component: 'Search',
+        type: 'taxes',
+        getLabels: _lib_async_requests__WEBPACK_IMPORTED_MODULE_5__[/* getTaxRateLabels */ "f"]
+      }
+    },
+    attribute: {
+      allowMultiple: true,
+      labels: {
+        add: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Attribute', 'woocommerce-admin'),
+        placeholder: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Search attributes', 'woocommerce-admin'),
+        remove: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Remove attribute filter', 'woocommerce-admin'),
+        rule: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select a product attribute filter match', 'woocommerce-admin'),
+
+        /* translators: A sentence describing a Product filter. See screen shot for context: https://cloudup.com/cSsUY9VeCVJ */
+        title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('{{title}}Attribute{{/title}} {{rule /}} {{filter /}}', 'woocommerce-admin'),
+        filter: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["__"])('Select attributes', 'woocommerce-admin')
+      },
+      rules: [{
+        value: 'is',
+
+        /* translators: Sentence fragment, logical, "Is" refers to searching for products matching a chosen attribute. Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Is', 'product attribute', 'woocommerce-admin')
+      }, {
+        value: 'is_not',
+
+        /* translators: Sentence fragment, logical, "Is Not" refers to searching for products that don\'t match a chosen attribute. Screenshot for context: https://cloudup.com/cSsUY9VeCVJ */
+        label: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__["_x"])('Is Not', 'product attribute', 'woocommerce-admin')
+      }],
+      input: {
+        component: 'ProductAttribute'
+      }
+    }
+  }
+});
+/*eslint-enable max-len*/
 
 /***/ })
 

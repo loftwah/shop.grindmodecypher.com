@@ -14,12 +14,14 @@ if ( ! function_exists( 'wc_admin_get_feature_config' ) ) {
 			'marketing' => true,
 			'minified-js' => true,
 			'mobile-app-banner' => true,
-			'navigation' => false,
+			'navigation' => true,
 			'onboarding' => true,
 			'remote-inbox-notifications' => true,
+			'settings' => false,
 			'shipping-label-banner' => true,
 			'store-alerts' => true,
 			'wcpay' => true,
+			'wcpay/support-international-countries' => true,
 		);
 	}
 }

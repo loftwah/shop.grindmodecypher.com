@@ -82,19 +82,4190 @@ this["wc"] = this["wc"] || {}; this["wc"]["data"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 539);
+/******/ 	return __webpack_require__(__webpack_require__.s = 571);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports) {
 
-(function() { module.exports = this["wp"]["element"]; }());
+(function() { module.exports = window["wp"]["element"]; }());
 
 /***/ }),
+/* 1 */,
+/* 2 */
+/***/ (function(module, exports) {
 
-/***/ 100:
+(function() { module.exports = window["wp"]["i18n"]; }());
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {var check = function (it) {
+  return it && it.Math == Math && it;
+};
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+module.exports =
+  /* global globalThis -- safe */
+  check(typeof globalThis == 'object' && globalThis) ||
+  check(typeof window == 'object' && window) ||
+  check(typeof self == 'object' && self) ||
+  check(typeof global == 'object' && global) ||
+  // eslint-disable-next-line no-new-func -- fallback
+  (function () { return this; })() || Function('return this')();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(96)))
+
+/***/ }),
+/* 4 */,
+/* 5 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["lodash"]; }());
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = function (exec) {
+  try {
+    return !!exec();
+  } catch (error) {
+    return true;
+  }
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var shared = __webpack_require__(58);
+var has = __webpack_require__(11);
+var uid = __webpack_require__(55);
+var NATIVE_SYMBOL = __webpack_require__(62);
+var USE_SYMBOL_AS_UID = __webpack_require__(93);
+
+var WellKnownSymbolsStore = shared('wks');
+var Symbol = global.Symbol;
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
+
+module.exports = function (name) {
+  if (!has(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
+    if (NATIVE_SYMBOL && has(Symbol, name)) {
+      WellKnownSymbolsStore[name] = Symbol[name];
+    } else {
+      WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+    }
+  } return WellKnownSymbolsStore[name];
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(10);
+
+module.exports = function (it) {
+  if (!isObject(it)) {
+    throw TypeError(String(it) + ' is not an object');
+  } return it;
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = function (it) {
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+var hasOwnProperty = {}.hasOwnProperty;
+
+module.exports = function (it, key) {
+  return hasOwnProperty.call(it, key);
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var getOwnPropertyDescriptor = __webpack_require__(33).f;
+var createNonEnumerableProperty = __webpack_require__(19);
+var redefine = __webpack_require__(27);
+var setGlobal = __webpack_require__(46);
+var copyConstructorProperties = __webpack_require__(103);
+var isForced = __webpack_require__(74);
+
+/*
+  options.target      - name of the target object
+  options.global      - target is the global object
+  options.stat        - export as static methods of target
+  options.proto       - export as prototype methods of target
+  options.real        - real prototype method for the `pure` version
+  options.forced      - export even if the native feature is available
+  options.bind        - bind methods to the target, required for the `pure` version
+  options.wrap        - wrap constructors to preventing global pollution, required for the `pure` version
+  options.unsafe      - use the simple assignment of property instead of delete + defineProperty
+  options.sham        - add a flag to not completely full polyfills
+  options.enumerable  - export as enumerable property
+  options.noTargetGet - prevent calling a getter on target
+*/
+module.exports = function (options, source) {
+  var TARGET = options.target;
+  var GLOBAL = options.global;
+  var STATIC = options.stat;
+  var FORCED, target, key, targetProperty, sourceProperty, descriptor;
+  if (GLOBAL) {
+    target = global;
+  } else if (STATIC) {
+    target = global[TARGET] || setGlobal(TARGET, {});
+  } else {
+    target = (global[TARGET] || {}).prototype;
+  }
+  if (target) for (key in source) {
+    sourceProperty = source[key];
+    if (options.noTargetGet) {
+      descriptor = getOwnPropertyDescriptor(target, key);
+      targetProperty = descriptor && descriptor.value;
+    } else targetProperty = target[key];
+    FORCED = isForced(GLOBAL ? key : TARGET + (STATIC ? '.' : '#') + key, options.forced);
+    // contained in target
+    if (!FORCED && targetProperty !== undefined) {
+      if (typeof sourceProperty === typeof targetProperty) continue;
+      copyConstructorProperties(sourceProperty, targetProperty);
+    }
+    // add a flag to not completely full polyfills
+    if (options.sham || (targetProperty && targetProperty.sham)) {
+      createNonEnumerableProperty(sourceProperty, 'sham', true);
+    }
+    // extend global
+    redefine(target, key, sourceProperty, options);
+  }
+};
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fails = __webpack_require__(6);
+
+// Detect IE8's incomplete defineProperty implementation
+module.exports = !fails(function () {
+  return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
+});
+
+
+/***/ }),
+/* 14 */,
+/* 15 */,
+/* 16 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["regeneratorRuntime"]; }());
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(13);
+var IE8_DOM_DEFINE = __webpack_require__(72);
+var anObject = __webpack_require__(9);
+var toPrimitive = __webpack_require__(40);
+
+var nativeDefineProperty = Object.defineProperty;
+
+// `Object.defineProperty` method
+// https://tc39.es/ecma262/#sec-object.defineproperty
+exports.f = DESCRIPTORS ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if (IE8_DOM_DEFINE) try {
+    return nativeDefineProperty(O, P, Attributes);
+  } catch (error) { /* empty */ }
+  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported');
+  if ('value' in Attributes) O[P] = Attributes.value;
+  return O;
+};
+
+
+/***/ }),
+/* 18 */,
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(13);
+var definePropertyModule = __webpack_require__(17);
+var createPropertyDescriptor = __webpack_require__(39);
+
+module.exports = DESCRIPTORS ? function (object, key, value) {
+  return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
+} : function (object, key, value) {
+  object[key] = value;
+  return object;
+};
+
+
+/***/ }),
+/* 20 */,
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// toObject with fallback for non-array-like ES3 strings
+var IndexedObject = __webpack_require__(71);
+var requireObjectCoercible = __webpack_require__(32);
+
+module.exports = function (it) {
+  return IndexedObject(requireObjectCoercible(it));
+};
+
+
+/***/ }),
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["data"]; }());
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var createNonEnumerableProperty = __webpack_require__(19);
+var has = __webpack_require__(11);
+var setGlobal = __webpack_require__(46);
+var inspectSource = __webpack_require__(68);
+var InternalStateModule = __webpack_require__(45);
+
+var getInternalState = InternalStateModule.get;
+var enforceInternalState = InternalStateModule.enforce;
+var TEMPLATE = String(String).split('String');
+
+(module.exports = function (O, key, value, options) {
+  var unsafe = options ? !!options.unsafe : false;
+  var simple = options ? !!options.enumerable : false;
+  var noTargetGet = options ? !!options.noTargetGet : false;
+  var state;
+  if (typeof value == 'function') {
+    if (typeof key == 'string' && !has(value, 'name')) {
+      createNonEnumerableProperty(value, 'name', key);
+    }
+    state = enforceInternalState(value);
+    if (!state.source) {
+      state.source = TEMPLATE.join(typeof key == 'string' ? key : '');
+    }
+  }
+  if (O === global) {
+    if (simple) O[key] = value;
+    else setGlobal(key, value);
+    return;
+  } else if (!unsafe) {
+    delete O[key];
+  } else if (!noTargetGet && O[key]) {
+    simple = true;
+  }
+  if (simple) O[key] = value;
+  else createNonEnumerableProperty(O, key, value);
+// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
+})(Function.prototype, 'toString', function toString() {
+  return typeof this == 'function' && getInternalState(this).source || inspectSource(this);
+});
+
+
+/***/ }),
+/* 28 */,
+/* 29 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["moment"]; }());
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = function (it) {
+  return toString.call(it).slice(8, -1);
+};
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var path = __webpack_require__(81);
+var global = __webpack_require__(3);
+
+var aFunction = function (variable) {
+  return typeof variable == 'function' ? variable : undefined;
+};
+
+module.exports = function (namespace, method) {
+  return arguments.length < 2 ? aFunction(path[namespace]) || aFunction(global[namespace])
+    : path[namespace] && path[namespace][method] || global[namespace] && global[namespace][method];
+};
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+// `RequireObjectCoercible` abstract operation
+// https://tc39.es/ecma262/#sec-requireobjectcoercible
+module.exports = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on " + it);
+  return it;
+};
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(13);
+var propertyIsEnumerableModule = __webpack_require__(76);
+var createPropertyDescriptor = __webpack_require__(39);
+var toIndexedObject = __webpack_require__(21);
+var toPrimitive = __webpack_require__(40);
+var has = __webpack_require__(11);
+var IE8_DOM_DEFINE = __webpack_require__(72);
+
+var nativeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+// `Object.getOwnPropertyDescriptor` method
+// https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
+exports.f = DESCRIPTORS ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
+  O = toIndexedObject(O);
+  P = toPrimitive(P, true);
+  if (IE8_DOM_DEFINE) try {
+    return nativeGetOwnPropertyDescriptor(O, P);
+  } catch (error) { /* empty */ }
+  if (has(O, P)) return createPropertyDescriptor(!propertyIsEnumerableModule.f.call(O, P), O[P]);
+};
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(42);
+
+var min = Math.min;
+
+// `ToLength` abstract operation
+// https://tc39.es/ecma262/#sec-tolength
+module.exports = function (argument) {
+  return argument > 0 ? min(toInteger(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+};
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["dataControls"]; }());
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports) {
+
+module.exports = {};
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(12);
+var toObject = __webpack_require__(38);
+var nativeKeys = __webpack_require__(54);
+var fails = __webpack_require__(6);
+
+var FAILS_ON_PRIMITIVES = fails(function () { nativeKeys(1); });
+
+// `Object.keys` method
+// https://tc39.es/ecma262/#sec-object.keys
+$({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
+  keys: function keys(it) {
+    return nativeKeys(toObject(it));
+  }
+});
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var requireObjectCoercible = __webpack_require__(32);
+
+// `ToObject` abstract operation
+// https://tc39.es/ecma262/#sec-toobject
+module.exports = function (argument) {
+  return Object(requireObjectCoercible(argument));
+};
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports) {
+
+module.exports = function (bitmap, value) {
+  return {
+    enumerable: !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable: !(bitmap & 4),
+    value: value
+  };
+};
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(10);
+
+// `ToPrimitive` abstract operation
+// https://tc39.es/ecma262/#sec-toprimitive
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function (input, PREFERRED_STRING) {
+  if (!isObject(input)) return input;
+  var fn, val;
+  if (PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
+  if (typeof (fn = input.valueOf) == 'function' && !isObject(val = fn.call(input))) return val;
+  if (!PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var $filter = __webpack_require__(75).filter;
+var arrayMethodHasSpeciesSupport = __webpack_require__(89);
+
+var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('filter');
+
+// `Array.prototype.filter` method
+// https://tc39.es/ecma262/#sec-array.prototype.filter
+// with adding support of @@species
+$({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
+  filter: function filter(callbackfn /* , thisArg */) {
+    return $filter(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
+
+var ceil = Math.ceil;
+var floor = Math.floor;
+
+// `ToInteger` abstract operation
+// https://tc39.es/ecma262/#sec-tointeger
+module.exports = function (argument) {
+  return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor : ceil)(argument);
+};
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithHoles = __webpack_require__(182);
+
+var iterableToArrayLimit = __webpack_require__(183);
+
+var unsupportedIterableToArray = __webpack_require__(131);
+
+var nonIterableRest = __webpack_require__(184);
+
+function _slicedToArray(arr, i) {
+  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || unsupportedIterableToArray(arr, i) || nonIterableRest();
+}
+
+module.exports = _slicedToArray;
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithoutHoles = __webpack_require__(179);
+
+var iterableToArray = __webpack_require__(180);
+
+var unsupportedIterableToArray = __webpack_require__(131);
+
+var nonIterableSpread = __webpack_require__(181);
+
+function _toConsumableArray(arr) {
+  return arrayWithoutHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableSpread();
+}
+
+module.exports = _toConsumableArray;
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var NATIVE_WEAK_MAP = __webpack_require__(106);
+var global = __webpack_require__(3);
+var isObject = __webpack_require__(10);
+var createNonEnumerableProperty = __webpack_require__(19);
+var objectHas = __webpack_require__(11);
+var shared = __webpack_require__(47);
+var sharedKey = __webpack_require__(52);
+var hiddenKeys = __webpack_require__(36);
+
+var WeakMap = global.WeakMap;
+var set, get, has;
+
+var enforce = function (it) {
+  return has(it) ? get(it) : set(it, {});
+};
+
+var getterFor = function (TYPE) {
+  return function (it) {
+    var state;
+    if (!isObject(it) || (state = get(it)).type !== TYPE) {
+      throw TypeError('Incompatible receiver, ' + TYPE + ' required');
+    } return state;
+  };
+};
+
+if (NATIVE_WEAK_MAP) {
+  var store = shared.state || (shared.state = new WeakMap());
+  var wmget = store.get;
+  var wmhas = store.has;
+  var wmset = store.set;
+  set = function (it, metadata) {
+    metadata.facade = it;
+    wmset.call(store, it, metadata);
+    return metadata;
+  };
+  get = function (it) {
+    return wmget.call(store, it) || {};
+  };
+  has = function (it) {
+    return wmhas.call(store, it);
+  };
+} else {
+  var STATE = sharedKey('state');
+  hiddenKeys[STATE] = true;
+  set = function (it, metadata) {
+    metadata.facade = it;
+    createNonEnumerableProperty(it, STATE, metadata);
+    return metadata;
+  };
+  get = function (it) {
+    return objectHas(it, STATE) ? it[STATE] : {};
+  };
+  has = function (it) {
+    return objectHas(it, STATE);
+  };
+}
+
+module.exports = {
+  set: set,
+  get: get,
+  has: has,
+  enforce: enforce,
+  getterFor: getterFor
+};
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var createNonEnumerableProperty = __webpack_require__(19);
+
+module.exports = function (key, value) {
+  try {
+    createNonEnumerableProperty(global, key, value);
+  } catch (error) {
+    global[key] = value;
+  } return value;
+};
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var setGlobal = __webpack_require__(46);
+
+var SHARED = '__core-js_shared__';
+var store = global[SHARED] || setGlobal(SHARED, {});
+
+module.exports = store;
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports) {
+
+// IE8- don't enum bug keys
+module.exports = [
+  'constructor',
+  'hasOwnProperty',
+  'isPrototypeOf',
+  'propertyIsEnumerable',
+  'toLocaleString',
+  'toString',
+  'valueOf'
+];
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var DOMIterables = __webpack_require__(127);
+var forEach = __webpack_require__(149);
+var createNonEnumerableProperty = __webpack_require__(19);
+
+for (var COLLECTION_NAME in DOMIterables) {
+  var Collection = global[COLLECTION_NAME];
+  var CollectionPrototype = Collection && Collection.prototype;
+  // some Chrome versions have non-configurable methods on DOMTokenList
+  if (CollectionPrototype && CollectionPrototype.forEach !== forEach) try {
+    createNonEnumerableProperty(CollectionPrototype, 'forEach', forEach);
+  } catch (error) {
+    CollectionPrototype.forEach = forEach;
+  }
+}
+
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wc"]["navigation"]; }());
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var $map = __webpack_require__(75).map;
+var arrayMethodHasSpeciesSupport = __webpack_require__(89);
+
+var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('map');
+
+// `Array.prototype.map` method
+// https://tc39.es/ecma262/#sec-array.prototype.map
+// with adding support of @@species
+$({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
+  map: function map(callbackfn /* , thisArg */) {
+    return $map(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var shared = __webpack_require__(58);
+var uid = __webpack_require__(55);
+
+var keys = shared('keys');
+
+module.exports = function (key) {
+  return keys[key] || (keys[key] = uid(key));
+};
+
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var global = __webpack_require__(3);
+var getBuiltIn = __webpack_require__(31);
+var IS_PURE = __webpack_require__(57);
+var DESCRIPTORS = __webpack_require__(13);
+var NATIVE_SYMBOL = __webpack_require__(62);
+var USE_SYMBOL_AS_UID = __webpack_require__(93);
+var fails = __webpack_require__(6);
+var has = __webpack_require__(11);
+var isArray = __webpack_require__(84);
+var isObject = __webpack_require__(10);
+var anObject = __webpack_require__(9);
+var toObject = __webpack_require__(38);
+var toIndexedObject = __webpack_require__(21);
+var toPrimitive = __webpack_require__(40);
+var createPropertyDescriptor = __webpack_require__(39);
+var nativeObjectCreate = __webpack_require__(69);
+var objectKeys = __webpack_require__(54);
+var getOwnPropertyNamesModule = __webpack_require__(56);
+var getOwnPropertyNamesExternal = __webpack_require__(147);
+var getOwnPropertySymbolsModule = __webpack_require__(79);
+var getOwnPropertyDescriptorModule = __webpack_require__(33);
+var definePropertyModule = __webpack_require__(17);
+var propertyIsEnumerableModule = __webpack_require__(76);
+var createNonEnumerableProperty = __webpack_require__(19);
+var redefine = __webpack_require__(27);
+var shared = __webpack_require__(58);
+var sharedKey = __webpack_require__(52);
+var hiddenKeys = __webpack_require__(36);
+var uid = __webpack_require__(55);
+var wellKnownSymbol = __webpack_require__(8);
+var wrappedWellKnownSymbolModule = __webpack_require__(119);
+var defineWellKnownSymbol = __webpack_require__(148);
+var setToStringTag = __webpack_require__(90);
+var InternalStateModule = __webpack_require__(45);
+var $forEach = __webpack_require__(75).forEach;
+
+var HIDDEN = sharedKey('hidden');
+var SYMBOL = 'Symbol';
+var PROTOTYPE = 'prototype';
+var TO_PRIMITIVE = wellKnownSymbol('toPrimitive');
+var setInternalState = InternalStateModule.set;
+var getInternalState = InternalStateModule.getterFor(SYMBOL);
+var ObjectPrototype = Object[PROTOTYPE];
+var $Symbol = global.Symbol;
+var $stringify = getBuiltIn('JSON', 'stringify');
+var nativeGetOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
+var nativeDefineProperty = definePropertyModule.f;
+var nativeGetOwnPropertyNames = getOwnPropertyNamesExternal.f;
+var nativePropertyIsEnumerable = propertyIsEnumerableModule.f;
+var AllSymbols = shared('symbols');
+var ObjectPrototypeSymbols = shared('op-symbols');
+var StringToSymbolRegistry = shared('string-to-symbol-registry');
+var SymbolToStringRegistry = shared('symbol-to-string-registry');
+var WellKnownSymbolsStore = shared('wks');
+var QObject = global.QObject;
+// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
+var USE_SETTER = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
+
+// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
+var setSymbolDescriptor = DESCRIPTORS && fails(function () {
+  return nativeObjectCreate(nativeDefineProperty({}, 'a', {
+    get: function () { return nativeDefineProperty(this, 'a', { value: 7 }).a; }
+  })).a != 7;
+}) ? function (O, P, Attributes) {
+  var ObjectPrototypeDescriptor = nativeGetOwnPropertyDescriptor(ObjectPrototype, P);
+  if (ObjectPrototypeDescriptor) delete ObjectPrototype[P];
+  nativeDefineProperty(O, P, Attributes);
+  if (ObjectPrototypeDescriptor && O !== ObjectPrototype) {
+    nativeDefineProperty(ObjectPrototype, P, ObjectPrototypeDescriptor);
+  }
+} : nativeDefineProperty;
+
+var wrap = function (tag, description) {
+  var symbol = AllSymbols[tag] = nativeObjectCreate($Symbol[PROTOTYPE]);
+  setInternalState(symbol, {
+    type: SYMBOL,
+    tag: tag,
+    description: description
+  });
+  if (!DESCRIPTORS) symbol.description = description;
+  return symbol;
+};
+
+var isSymbol = USE_SYMBOL_AS_UID ? function (it) {
+  return typeof it == 'symbol';
+} : function (it) {
+  return Object(it) instanceof $Symbol;
+};
+
+var $defineProperty = function defineProperty(O, P, Attributes) {
+  if (O === ObjectPrototype) $defineProperty(ObjectPrototypeSymbols, P, Attributes);
+  anObject(O);
+  var key = toPrimitive(P, true);
+  anObject(Attributes);
+  if (has(AllSymbols, key)) {
+    if (!Attributes.enumerable) {
+      if (!has(O, HIDDEN)) nativeDefineProperty(O, HIDDEN, createPropertyDescriptor(1, {}));
+      O[HIDDEN][key] = true;
+    } else {
+      if (has(O, HIDDEN) && O[HIDDEN][key]) O[HIDDEN][key] = false;
+      Attributes = nativeObjectCreate(Attributes, { enumerable: createPropertyDescriptor(0, false) });
+    } return setSymbolDescriptor(O, key, Attributes);
+  } return nativeDefineProperty(O, key, Attributes);
+};
+
+var $defineProperties = function defineProperties(O, Properties) {
+  anObject(O);
+  var properties = toIndexedObject(Properties);
+  var keys = objectKeys(properties).concat($getOwnPropertySymbols(properties));
+  $forEach(keys, function (key) {
+    if (!DESCRIPTORS || $propertyIsEnumerable.call(properties, key)) $defineProperty(O, key, properties[key]);
+  });
+  return O;
+};
+
+var $create = function create(O, Properties) {
+  return Properties === undefined ? nativeObjectCreate(O) : $defineProperties(nativeObjectCreate(O), Properties);
+};
+
+var $propertyIsEnumerable = function propertyIsEnumerable(V) {
+  var P = toPrimitive(V, true);
+  var enumerable = nativePropertyIsEnumerable.call(this, P);
+  if (this === ObjectPrototype && has(AllSymbols, P) && !has(ObjectPrototypeSymbols, P)) return false;
+  return enumerable || !has(this, P) || !has(AllSymbols, P) || has(this, HIDDEN) && this[HIDDEN][P] ? enumerable : true;
+};
+
+var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(O, P) {
+  var it = toIndexedObject(O);
+  var key = toPrimitive(P, true);
+  if (it === ObjectPrototype && has(AllSymbols, key) && !has(ObjectPrototypeSymbols, key)) return;
+  var descriptor = nativeGetOwnPropertyDescriptor(it, key);
+  if (descriptor && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key])) {
+    descriptor.enumerable = true;
+  }
+  return descriptor;
+};
+
+var $getOwnPropertyNames = function getOwnPropertyNames(O) {
+  var names = nativeGetOwnPropertyNames(toIndexedObject(O));
+  var result = [];
+  $forEach(names, function (key) {
+    if (!has(AllSymbols, key) && !has(hiddenKeys, key)) result.push(key);
+  });
+  return result;
+};
+
+var $getOwnPropertySymbols = function getOwnPropertySymbols(O) {
+  var IS_OBJECT_PROTOTYPE = O === ObjectPrototype;
+  var names = nativeGetOwnPropertyNames(IS_OBJECT_PROTOTYPE ? ObjectPrototypeSymbols : toIndexedObject(O));
+  var result = [];
+  $forEach(names, function (key) {
+    if (has(AllSymbols, key) && (!IS_OBJECT_PROTOTYPE || has(ObjectPrototype, key))) {
+      result.push(AllSymbols[key]);
+    }
+  });
+  return result;
+};
+
+// `Symbol` constructor
+// https://tc39.es/ecma262/#sec-symbol-constructor
+if (!NATIVE_SYMBOL) {
+  $Symbol = function Symbol() {
+    if (this instanceof $Symbol) throw TypeError('Symbol is not a constructor');
+    var description = !arguments.length || arguments[0] === undefined ? undefined : String(arguments[0]);
+    var tag = uid(description);
+    var setter = function (value) {
+      if (this === ObjectPrototype) setter.call(ObjectPrototypeSymbols, value);
+      if (has(this, HIDDEN) && has(this[HIDDEN], tag)) this[HIDDEN][tag] = false;
+      setSymbolDescriptor(this, tag, createPropertyDescriptor(1, value));
+    };
+    if (DESCRIPTORS && USE_SETTER) setSymbolDescriptor(ObjectPrototype, tag, { configurable: true, set: setter });
+    return wrap(tag, description);
+  };
+
+  redefine($Symbol[PROTOTYPE], 'toString', function toString() {
+    return getInternalState(this).tag;
+  });
+
+  redefine($Symbol, 'withoutSetter', function (description) {
+    return wrap(uid(description), description);
+  });
+
+  propertyIsEnumerableModule.f = $propertyIsEnumerable;
+  definePropertyModule.f = $defineProperty;
+  getOwnPropertyDescriptorModule.f = $getOwnPropertyDescriptor;
+  getOwnPropertyNamesModule.f = getOwnPropertyNamesExternal.f = $getOwnPropertyNames;
+  getOwnPropertySymbolsModule.f = $getOwnPropertySymbols;
+
+  wrappedWellKnownSymbolModule.f = function (name) {
+    return wrap(wellKnownSymbol(name), name);
+  };
+
+  if (DESCRIPTORS) {
+    // https://github.com/tc39/proposal-Symbol-description
+    nativeDefineProperty($Symbol[PROTOTYPE], 'description', {
+      configurable: true,
+      get: function description() {
+        return getInternalState(this).description;
+      }
+    });
+    if (!IS_PURE) {
+      redefine(ObjectPrototype, 'propertyIsEnumerable', $propertyIsEnumerable, { unsafe: true });
+    }
+  }
+}
+
+$({ global: true, wrap: true, forced: !NATIVE_SYMBOL, sham: !NATIVE_SYMBOL }, {
+  Symbol: $Symbol
+});
+
+$forEach(objectKeys(WellKnownSymbolsStore), function (name) {
+  defineWellKnownSymbol(name);
+});
+
+$({ target: SYMBOL, stat: true, forced: !NATIVE_SYMBOL }, {
+  // `Symbol.for` method
+  // https://tc39.es/ecma262/#sec-symbol.for
+  'for': function (key) {
+    var string = String(key);
+    if (has(StringToSymbolRegistry, string)) return StringToSymbolRegistry[string];
+    var symbol = $Symbol(string);
+    StringToSymbolRegistry[string] = symbol;
+    SymbolToStringRegistry[symbol] = string;
+    return symbol;
+  },
+  // `Symbol.keyFor` method
+  // https://tc39.es/ecma262/#sec-symbol.keyfor
+  keyFor: function keyFor(sym) {
+    if (!isSymbol(sym)) throw TypeError(sym + ' is not a symbol');
+    if (has(SymbolToStringRegistry, sym)) return SymbolToStringRegistry[sym];
+  },
+  useSetter: function () { USE_SETTER = true; },
+  useSimple: function () { USE_SETTER = false; }
+});
+
+$({ target: 'Object', stat: true, forced: !NATIVE_SYMBOL, sham: !DESCRIPTORS }, {
+  // `Object.create` method
+  // https://tc39.es/ecma262/#sec-object.create
+  create: $create,
+  // `Object.defineProperty` method
+  // https://tc39.es/ecma262/#sec-object.defineproperty
+  defineProperty: $defineProperty,
+  // `Object.defineProperties` method
+  // https://tc39.es/ecma262/#sec-object.defineproperties
+  defineProperties: $defineProperties,
+  // `Object.getOwnPropertyDescriptor` method
+  // https://tc39.es/ecma262/#sec-object.getownpropertydescriptors
+  getOwnPropertyDescriptor: $getOwnPropertyDescriptor
+});
+
+$({ target: 'Object', stat: true, forced: !NATIVE_SYMBOL }, {
+  // `Object.getOwnPropertyNames` method
+  // https://tc39.es/ecma262/#sec-object.getownpropertynames
+  getOwnPropertyNames: $getOwnPropertyNames,
+  // `Object.getOwnPropertySymbols` method
+  // https://tc39.es/ecma262/#sec-object.getownpropertysymbols
+  getOwnPropertySymbols: $getOwnPropertySymbols
+});
+
+// Chrome 38 and 39 `Object.getOwnPropertySymbols` fails on primitives
+// https://bugs.chromium.org/p/v8/issues/detail?id=3443
+$({ target: 'Object', stat: true, forced: fails(function () { getOwnPropertySymbolsModule.f(1); }) }, {
+  getOwnPropertySymbols: function getOwnPropertySymbols(it) {
+    return getOwnPropertySymbolsModule.f(toObject(it));
+  }
+});
+
+// `JSON.stringify` method behavior with symbols
+// https://tc39.es/ecma262/#sec-json.stringify
+if ($stringify) {
+  var FORCED_JSON_STRINGIFY = !NATIVE_SYMBOL || fails(function () {
+    var symbol = $Symbol();
+    // MS Edge converts symbol values to JSON as {}
+    return $stringify([symbol]) != '[null]'
+      // WebKit converts symbol values to JSON as null
+      || $stringify({ a: symbol }) != '{}'
+      // V8 throws on boxed symbols
+      || $stringify(Object(symbol)) != '{}';
+  });
+
+  $({ target: 'JSON', stat: true, forced: FORCED_JSON_STRINGIFY }, {
+    // eslint-disable-next-line no-unused-vars -- required for `.length`
+    stringify: function stringify(it, replacer, space) {
+      var args = [it];
+      var index = 1;
+      var $replacer;
+      while (arguments.length > index) args.push(arguments[index++]);
+      $replacer = replacer;
+      if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+      if (!isArray(replacer)) replacer = function (key, value) {
+        if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
+        if (!isSymbol(value)) return value;
+      };
+      args[1] = replacer;
+      return $stringify.apply(null, args);
+    }
+  });
+}
+
+// `Symbol.prototype[@@toPrimitive]` method
+// https://tc39.es/ecma262/#sec-symbol.prototype-@@toprimitive
+if (!$Symbol[PROTOTYPE][TO_PRIMITIVE]) {
+  createNonEnumerableProperty($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+}
+// `Symbol.prototype[@@toStringTag]` property
+// https://tc39.es/ecma262/#sec-symbol.prototype-@@tostringtag
+setToStringTag($Symbol, SYMBOL);
+
+hiddenKeys[HIDDEN] = true;
+
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var internalObjectKeys = __webpack_require__(73);
+var enumBugKeys = __webpack_require__(48);
+
+// `Object.keys` method
+// https://tc39.es/ecma262/#sec-object.keys
+module.exports = Object.keys || function keys(O) {
+  return internalObjectKeys(O, enumBugKeys);
+};
+
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports) {
+
+var id = 0;
+var postfix = Math.random();
+
+module.exports = function (key) {
+  return 'Symbol(' + String(key === undefined ? '' : key) + ')_' + (++id + postfix).toString(36);
+};
+
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var internalObjectKeys = __webpack_require__(73);
+var enumBugKeys = __webpack_require__(48);
+
+var hiddenKeys = enumBugKeys.concat('length', 'prototype');
+
+// `Object.getOwnPropertyNames` method
+// https://tc39.es/ecma262/#sec-object.getownpropertynames
+exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+  return internalObjectKeys(O, hiddenKeys);
+};
+
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports) {
+
+module.exports = false;
+
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var IS_PURE = __webpack_require__(57);
+var store = __webpack_require__(47);
+
+(module.exports = function (key, value) {
+  return store[key] || (store[key] = value !== undefined ? value : {});
+})('versions', []).push({
+  version: '3.9.1',
+  mode: IS_PURE ? 'pure' : 'global',
+  copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
+});
+
+
+/***/ }),
+/* 59 */,
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(12);
+var fails = __webpack_require__(6);
+var toIndexedObject = __webpack_require__(21);
+var nativeGetOwnPropertyDescriptor = __webpack_require__(33).f;
+var DESCRIPTORS = __webpack_require__(13);
+
+var FAILS_ON_PRIMITIVES = fails(function () { nativeGetOwnPropertyDescriptor(1); });
+var FORCED = !DESCRIPTORS || FAILS_ON_PRIMITIVES;
+
+// `Object.getOwnPropertyDescriptor` method
+// https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
+$({ target: 'Object', stat: true, forced: FORCED, sham: !DESCRIPTORS }, {
+  getOwnPropertyDescriptor: function getOwnPropertyDescriptor(it, key) {
+    return nativeGetOwnPropertyDescriptor(toIndexedObject(it), key);
+  }
+});
+
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(12);
+var DESCRIPTORS = __webpack_require__(13);
+var ownKeys = __webpack_require__(86);
+var toIndexedObject = __webpack_require__(21);
+var getOwnPropertyDescriptorModule = __webpack_require__(33);
+var createProperty = __webpack_require__(102);
+
+// `Object.getOwnPropertyDescriptors` method
+// https://tc39.es/ecma262/#sec-object.getownpropertydescriptors
+$({ target: 'Object', stat: true, sham: !DESCRIPTORS }, {
+  getOwnPropertyDescriptors: function getOwnPropertyDescriptors(object) {
+    var O = toIndexedObject(object);
+    var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
+    var keys = ownKeys(O);
+    var result = {};
+    var index = 0;
+    var key, descriptor;
+    while (keys.length > index) {
+      descriptor = getOwnPropertyDescriptor(O, key = keys[index++]);
+      if (descriptor !== undefined) createProperty(result, key, descriptor);
+    }
+    return result;
+  }
+});
+
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var IS_NODE = __webpack_require__(77);
+var V8_VERSION = __webpack_require__(63);
+var fails = __webpack_require__(6);
+
+module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
+  /* global Symbol -- required for testing */
+  return !Symbol.sham &&
+    // Chrome 38 Symbol has incorrect toString conversion
+    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
+    (IS_NODE ? V8_VERSION === 38 : V8_VERSION > 37 && V8_VERSION < 41);
+});
+
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var userAgent = __webpack_require__(87);
+
+var process = global.process;
+var versions = process && process.versions;
+var v8 = versions && versions.v8;
+var match, version;
+
+if (v8) {
+  match = v8.split('.');
+  version = match[0] + match[1];
+} else if (userAgent) {
+  match = userAgent.match(/Edge\/(\d+)/);
+  if (!match || match[1] >= 74) {
+    match = userAgent.match(/Chrome\/(\d+)/);
+    if (match) version = match[1];
+  }
+}
+
+module.exports = version && +version;
+
+
+/***/ }),
+/* 64 */,
+/* 65 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["compose"]; }());
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var fails = __webpack_require__(6);
+var isArray = __webpack_require__(84);
+var isObject = __webpack_require__(10);
+var toObject = __webpack_require__(38);
+var toLength = __webpack_require__(34);
+var createProperty = __webpack_require__(102);
+var arraySpeciesCreate = __webpack_require__(109);
+var arrayMethodHasSpeciesSupport = __webpack_require__(89);
+var wellKnownSymbol = __webpack_require__(8);
+var V8_VERSION = __webpack_require__(63);
+
+var IS_CONCAT_SPREADABLE = wellKnownSymbol('isConcatSpreadable');
+var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
+var MAXIMUM_ALLOWED_INDEX_EXCEEDED = 'Maximum allowed index exceeded';
+
+// We can't use this feature detection in V8 since it causes
+// deoptimization and serious performance degradation
+// https://github.com/zloirock/core-js/issues/679
+var IS_CONCAT_SPREADABLE_SUPPORT = V8_VERSION >= 51 || !fails(function () {
+  var array = [];
+  array[IS_CONCAT_SPREADABLE] = false;
+  return array.concat()[0] !== array;
+});
+
+var SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('concat');
+
+var isConcatSpreadable = function (O) {
+  if (!isObject(O)) return false;
+  var spreadable = O[IS_CONCAT_SPREADABLE];
+  return spreadable !== undefined ? !!spreadable : isArray(O);
+};
+
+var FORCED = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT;
+
+// `Array.prototype.concat` method
+// https://tc39.es/ecma262/#sec-array.prototype.concat
+// with adding support of @@isConcatSpreadable and @@species
+$({ target: 'Array', proto: true, forced: FORCED }, {
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  concat: function concat(arg) {
+    var O = toObject(this);
+    var A = arraySpeciesCreate(O, 0);
+    var n = 0;
+    var i, k, length, len, E;
+    for (i = -1, length = arguments.length; i < length; i++) {
+      E = i === -1 ? O : arguments[i];
+      if (isConcatSpreadable(E)) {
+        len = toLength(E.length);
+        if (n + len > MAX_SAFE_INTEGER) throw TypeError(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
+        for (k = 0; k < len; k++, n++) if (k in E) createProperty(A, n, E[k]);
+      } else {
+        if (n >= MAX_SAFE_INTEGER) throw TypeError(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
+        createProperty(A, n++, E);
+      }
+    }
+    A.length = n;
+    return A;
+  }
+});
+
+
+/***/ }),
+/* 67 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var isObject = __webpack_require__(10);
+
+var document = global.document;
+// typeof document.createElement is 'object' in old IE
+var EXISTS = isObject(document) && isObject(document.createElement);
+
+module.exports = function (it) {
+  return EXISTS ? document.createElement(it) : {};
+};
+
+
+/***/ }),
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var store = __webpack_require__(47);
+
+var functionToString = Function.toString;
+
+// this helper broken in `3.4.1-3.4.4`, so we can't use `shared` helper
+if (typeof store.inspectSource != 'function') {
+  store.inspectSource = function (it) {
+    return functionToString.call(it);
+  };
+}
+
+module.exports = store.inspectSource;
+
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject = __webpack_require__(9);
+var defineProperties = __webpack_require__(104);
+var enumBugKeys = __webpack_require__(48);
+var hiddenKeys = __webpack_require__(36);
+var html = __webpack_require__(98);
+var documentCreateElement = __webpack_require__(67);
+var sharedKey = __webpack_require__(52);
+
+var GT = '>';
+var LT = '<';
+var PROTOTYPE = 'prototype';
+var SCRIPT = 'script';
+var IE_PROTO = sharedKey('IE_PROTO');
+
+var EmptyConstructor = function () { /* empty */ };
+
+var scriptTag = function (content) {
+  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+};
+
+// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+var NullProtoObjectViaActiveX = function (activeXDocument) {
+  activeXDocument.write(scriptTag(''));
+  activeXDocument.close();
+  var temp = activeXDocument.parentWindow.Object;
+  activeXDocument = null; // avoid memory leak
+  return temp;
+};
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var NullProtoObjectViaIFrame = function () {
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = documentCreateElement('iframe');
+  var JS = 'java' + SCRIPT + ':';
+  var iframeDocument;
+  iframe.style.display = 'none';
+  html.appendChild(iframe);
+  // https://github.com/zloirock/core-js/issues/475
+  iframe.src = String(JS);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(scriptTag('document.F=Object'));
+  iframeDocument.close();
+  return iframeDocument.F;
+};
+
+// Check for document.domain and active x support
+// No need to use active x approach when document.domain is not set
+// see https://github.com/es-shims/es5-shim/issues/150
+// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+// avoid IE GC bug
+var activeXDocument;
+var NullProtoObject = function () {
+  try {
+    /* global ActiveXObject -- old IE */
+    activeXDocument = document.domain && new ActiveXObject('htmlfile');
+  } catch (error) { /* ignore */ }
+  NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
+  var length = enumBugKeys.length;
+  while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
+  return NullProtoObject();
+};
+
+hiddenKeys[IE_PROTO] = true;
+
+// `Object.create` method
+// https://tc39.es/ecma262/#sec-object.create
+module.exports = Object.create || function create(O, Properties) {
+  var result;
+  if (O !== null) {
+    EmptyConstructor[PROTOTYPE] = anObject(O);
+    result = new EmptyConstructor();
+    EmptyConstructor[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = NullProtoObject();
+  return Properties === undefined ? result : defineProperties(result, Properties);
+};
+
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports) {
+
+module.exports = function (it) {
+  if (typeof it != 'function') {
+    throw TypeError(String(it) + ' is not a function');
+  } return it;
+};
+
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fails = __webpack_require__(6);
+var classof = __webpack_require__(30);
+
+var split = ''.split;
+
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+module.exports = fails(function () {
+  // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
+  // eslint-disable-next-line no-prototype-builtins -- safe
+  return !Object('z').propertyIsEnumerable(0);
+}) ? function (it) {
+  return classof(it) == 'String' ? split.call(it, '') : Object(it);
+} : Object;
+
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(13);
+var fails = __webpack_require__(6);
+var createElement = __webpack_require__(67);
+
+// Thank's IE8 for his funny defineProperty
+module.exports = !DESCRIPTORS && !fails(function () {
+  return Object.defineProperty(createElement('div'), 'a', {
+    get: function () { return 7; }
+  }).a != 7;
+});
+
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var has = __webpack_require__(11);
+var toIndexedObject = __webpack_require__(21);
+var indexOf = __webpack_require__(83).indexOf;
+var hiddenKeys = __webpack_require__(36);
+
+module.exports = function (object, names) {
+  var O = toIndexedObject(object);
+  var i = 0;
+  var result = [];
+  var key;
+  for (key in O) !has(hiddenKeys, key) && has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while (names.length > i) if (has(O, key = names[i++])) {
+    ~indexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fails = __webpack_require__(6);
+
+var replacement = /#|\.prototype\./;
+
+var isForced = function (feature, detection) {
+  var value = data[normalize(feature)];
+  return value == POLYFILL ? true
+    : value == NATIVE ? false
+    : typeof detection == 'function' ? fails(detection)
+    : !!detection;
+};
+
+var normalize = isForced.normalize = function (string) {
+  return String(string).replace(replacement, '.').toLowerCase();
+};
+
+var data = isForced.data = {};
+var NATIVE = isForced.NATIVE = 'N';
+var POLYFILL = isForced.POLYFILL = 'P';
+
+module.exports = isForced;
+
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var bind = __webpack_require__(94);
+var IndexedObject = __webpack_require__(71);
+var toObject = __webpack_require__(38);
+var toLength = __webpack_require__(34);
+var arraySpeciesCreate = __webpack_require__(109);
+
+var push = [].push;
+
+// `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterOut }` methods implementation
+var createMethod = function (TYPE) {
+  var IS_MAP = TYPE == 1;
+  var IS_FILTER = TYPE == 2;
+  var IS_SOME = TYPE == 3;
+  var IS_EVERY = TYPE == 4;
+  var IS_FIND_INDEX = TYPE == 6;
+  var IS_FILTER_OUT = TYPE == 7;
+  var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
+  return function ($this, callbackfn, that, specificCreate) {
+    var O = toObject($this);
+    var self = IndexedObject(O);
+    var boundFunction = bind(callbackfn, that, 3);
+    var length = toLength(self.length);
+    var index = 0;
+    var create = specificCreate || arraySpeciesCreate;
+    var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_OUT ? create($this, 0) : undefined;
+    var value, result;
+    for (;length > index; index++) if (NO_HOLES || index in self) {
+      value = self[index];
+      result = boundFunction(value, index, O);
+      if (TYPE) {
+        if (IS_MAP) target[index] = result; // map
+        else if (result) switch (TYPE) {
+          case 3: return true;              // some
+          case 5: return value;             // find
+          case 6: return index;             // findIndex
+          case 2: push.call(target, value); // filter
+        } else switch (TYPE) {
+          case 4: return false;             // every
+          case 7: push.call(target, value); // filterOut
+        }
+      }
+    }
+    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : target;
+  };
+};
+
+module.exports = {
+  // `Array.prototype.forEach` method
+  // https://tc39.es/ecma262/#sec-array.prototype.foreach
+  forEach: createMethod(0),
+  // `Array.prototype.map` method
+  // https://tc39.es/ecma262/#sec-array.prototype.map
+  map: createMethod(1),
+  // `Array.prototype.filter` method
+  // https://tc39.es/ecma262/#sec-array.prototype.filter
+  filter: createMethod(2),
+  // `Array.prototype.some` method
+  // https://tc39.es/ecma262/#sec-array.prototype.some
+  some: createMethod(3),
+  // `Array.prototype.every` method
+  // https://tc39.es/ecma262/#sec-array.prototype.every
+  every: createMethod(4),
+  // `Array.prototype.find` method
+  // https://tc39.es/ecma262/#sec-array.prototype.find
+  find: createMethod(5),
+  // `Array.prototype.findIndex` method
+  // https://tc39.es/ecma262/#sec-array.prototype.findIndex
+  findIndex: createMethod(6),
+  // `Array.prototype.filterOut` method
+  // https://github.com/tc39/proposal-array-filtering
+  filterOut: createMethod(7)
+};
+
+
+/***/ }),
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var nativePropertyIsEnumerable = {}.propertyIsEnumerable;
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+// Nashorn ~ JDK8 bug
+var NASHORN_BUG = getOwnPropertyDescriptor && !nativePropertyIsEnumerable.call({ 1: 2 }, 1);
+
+// `Object.prototype.propertyIsEnumerable` method implementation
+// https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable
+exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
+  var descriptor = getOwnPropertyDescriptor(this, V);
+  return !!descriptor && descriptor.enumerable;
+} : nativePropertyIsEnumerable;
+
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof = __webpack_require__(30);
+var global = __webpack_require__(3);
+
+module.exports = classof(global.process) == 'process';
+
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["url"]; }());
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports) {
+
+exports.f = Object.getOwnPropertySymbols;
+
+
+/***/ }),
+/* 80 */,
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+
+module.exports = global;
+
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var wellKnownSymbol = __webpack_require__(8);
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+var test = {};
+
+test[TO_STRING_TAG] = 'z';
+
+module.exports = String(test) === '[object z]';
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toIndexedObject = __webpack_require__(21);
+var toLength = __webpack_require__(34);
+var toAbsoluteIndex = __webpack_require__(97);
+
+// `Array.prototype.{ indexOf, includes }` methods implementation
+var createMethod = function (IS_INCLUDES) {
+  return function ($this, el, fromIndex) {
+    var O = toIndexedObject($this);
+    var length = toLength(O.length);
+    var index = toAbsoluteIndex(fromIndex, length);
+    var value;
+    // Array#includes uses SameValueZero equality algorithm
+    // eslint-disable-next-line no-self-compare -- NaN check
+    if (IS_INCLUDES && el != el) while (length > index) {
+      value = O[index++];
+      // eslint-disable-next-line no-self-compare -- NaN check
+      if (value != value) return true;
+    // Array#indexOf ignores holes, Array#includes - not
+    } else for (;length > index; index++) {
+      if ((IS_INCLUDES || index in O) && O[index] === el) return IS_INCLUDES || index || 0;
+    } return !IS_INCLUDES && -1;
+  };
+};
+
+module.exports = {
+  // `Array.prototype.includes` method
+  // https://tc39.es/ecma262/#sec-array.prototype.includes
+  includes: createMethod(true),
+  // `Array.prototype.indexOf` method
+  // https://tc39.es/ecma262/#sec-array.prototype.indexof
+  indexOf: createMethod(false)
+};
+
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof = __webpack_require__(30);
+
+// `IsArray` abstract operation
+// https://tc39.es/ecma262/#sec-isarray
+module.exports = Array.isArray || function isArray(arg) {
+  return classof(arg) == 'Array';
+};
+
+
+/***/ }),
+/* 85 */,
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getBuiltIn = __webpack_require__(31);
+var getOwnPropertyNamesModule = __webpack_require__(56);
+var getOwnPropertySymbolsModule = __webpack_require__(79);
+var anObject = __webpack_require__(9);
+
+// all object keys, includes non-enumerable and symbols
+module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
+  var keys = getOwnPropertyNamesModule.f(anObject(it));
+  var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
+  return getOwnPropertySymbols ? keys.concat(getOwnPropertySymbols(it)) : keys;
+};
+
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getBuiltIn = __webpack_require__(31);
+
+module.exports = getBuiltIn('navigator', 'userAgent') || '';
+
+
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var exec = __webpack_require__(91);
+
+// `RegExp.prototype.exec` method
+// https://tc39.es/ecma262/#sec-regexp.prototype.exec
+$({ target: 'RegExp', proto: true, forced: /./.exec !== exec }, {
+  exec: exec
+});
+
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fails = __webpack_require__(6);
+var wellKnownSymbol = __webpack_require__(8);
+var V8_VERSION = __webpack_require__(63);
+
+var SPECIES = wellKnownSymbol('species');
+
+module.exports = function (METHOD_NAME) {
+  // We can't use this feature detection in V8 since it causes
+  // deoptimization and serious performance degradation
+  // https://github.com/zloirock/core-js/issues/677
+  return V8_VERSION >= 51 || !fails(function () {
+    var array = [];
+    var constructor = array.constructor = {};
+    constructor[SPECIES] = function () {
+      return { foo: 1 };
+    };
+    return array[METHOD_NAME](Boolean).foo !== 1;
+  });
+};
+
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var defineProperty = __webpack_require__(17).f;
+var has = __webpack_require__(11);
+var wellKnownSymbol = __webpack_require__(8);
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+
+module.exports = function (it, TAG, STATIC) {
+  if (it && !has(it = STATIC ? it : it.prototype, TO_STRING_TAG)) {
+    defineProperty(it, TO_STRING_TAG, { configurable: true, value: TAG });
+  }
+};
+
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var regexpFlags = __webpack_require__(114);
+var stickyHelpers = __webpack_require__(137);
+
+var nativeExec = RegExp.prototype.exec;
+// This always refers to the native implementation, because the
+// String#replace polyfill uses ./fix-regexp-well-known-symbol-logic.js,
+// which loads this file before patching the method.
+var nativeReplace = String.prototype.replace;
+
+var patchedExec = nativeExec;
+
+var UPDATES_LAST_INDEX_WRONG = (function () {
+  var re1 = /a/;
+  var re2 = /b*/g;
+  nativeExec.call(re1, 'a');
+  nativeExec.call(re2, 'a');
+  return re1.lastIndex !== 0 || re2.lastIndex !== 0;
+})();
+
+var UNSUPPORTED_Y = stickyHelpers.UNSUPPORTED_Y || stickyHelpers.BROKEN_CARET;
+
+// nonparticipating capturing group, copied from es5-shim's String#split patch.
+// eslint-disable-next-line regexp/no-assertion-capturing-group, regexp/no-empty-group -- required for testing
+var NPCG_INCLUDED = /()??/.exec('')[1] !== undefined;
+
+var PATCH = UPDATES_LAST_INDEX_WRONG || NPCG_INCLUDED || UNSUPPORTED_Y;
+
+if (PATCH) {
+  patchedExec = function exec(str) {
+    var re = this;
+    var lastIndex, reCopy, match, i;
+    var sticky = UNSUPPORTED_Y && re.sticky;
+    var flags = regexpFlags.call(re);
+    var source = re.source;
+    var charsAdded = 0;
+    var strCopy = str;
+
+    if (sticky) {
+      flags = flags.replace('y', '');
+      if (flags.indexOf('g') === -1) {
+        flags += 'g';
+      }
+
+      strCopy = String(str).slice(re.lastIndex);
+      // Support anchored sticky behavior.
+      if (re.lastIndex > 0 && (!re.multiline || re.multiline && str[re.lastIndex - 1] !== '\n')) {
+        source = '(?: ' + source + ')';
+        strCopy = ' ' + strCopy;
+        charsAdded++;
+      }
+      // ^(? + rx + ) is needed, in combination with some str slicing, to
+      // simulate the 'y' flag.
+      reCopy = new RegExp('^(?:' + source + ')', flags);
+    }
+
+    if (NPCG_INCLUDED) {
+      reCopy = new RegExp('^' + source + '$(?!\\s)', flags);
+    }
+    if (UPDATES_LAST_INDEX_WRONG) lastIndex = re.lastIndex;
+
+    match = nativeExec.call(sticky ? reCopy : re, strCopy);
+
+    if (sticky) {
+      if (match) {
+        match.input = match.input.slice(charsAdded);
+        match[0] = match[0].slice(charsAdded);
+        match.index = re.lastIndex;
+        re.lastIndex += match[0].length;
+      } else re.lastIndex = 0;
+    } else if (UPDATES_LAST_INDEX_WRONG && match) {
+      re.lastIndex = re.global ? match.index + match[0].length : lastIndex;
+    }
+    if (NPCG_INCLUDED && match && match.length > 1) {
+      // Fix browsers whose `exec` methods don't consistently return `undefined`
+      // for NPCG, like IE8. NOTE: This doesn' work for /(.?)?/
+      nativeReplace.call(match[0], reCopy, function () {
+        for (i = 1; i < arguments.length - 2; i++) {
+          if (arguments[i] === undefined) match[i] = undefined;
+        }
+      });
+    }
+
+    return match;
+  };
+}
+
+module.exports = patchedExec;
+
+
+/***/ }),
+/* 92 */,
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var NATIVE_SYMBOL = __webpack_require__(62);
+
+module.exports = NATIVE_SYMBOL
+  /* global Symbol -- safe */
+  && !Symbol.sham
+  && typeof Symbol.iterator == 'symbol';
+
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var aFunction = __webpack_require__(70);
+
+// optional / simple context binding
+module.exports = function (fn, that, length) {
+  aFunction(fn);
+  if (that === undefined) return fn;
+  switch (length) {
+    case 0: return function () {
+      return fn.call(that);
+    };
+    case 1: return function (a) {
+      return fn.call(that, a);
+    };
+    case 2: return function (a, b) {
+      return fn.call(that, a, b);
+    };
+    case 3: return function (a, b, c) {
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
+
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["apiFetch"]; }());
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(42);
+
+var max = Math.max;
+var min = Math.min;
+
+// Helper for a popular repeating case of the spec:
+// Let integer be ? ToInteger(index).
+// If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
+module.exports = function (index, length) {
+  var integer = toInteger(index);
+  return integer < 0 ? max(integer + length, 0) : min(integer, length);
+};
+
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getBuiltIn = __webpack_require__(31);
+
+module.exports = getBuiltIn('document', 'documentElement');
+
+
+/***/ }),
+/* 99 */,
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var TO_STRING_TAG_SUPPORT = __webpack_require__(82);
+var redefine = __webpack_require__(27);
+var toString = __webpack_require__(130);
+
+// `Object.prototype.toString` method
+// https://tc39.es/ecma262/#sec-object.prototype.tostring
+if (!TO_STRING_TAG_SUPPORT) {
+  redefine(Object.prototype, 'toString', toString, { unsafe: true });
+}
+
+
+/***/ }),
+/* 101 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wc"]["date"]; }());
+
+/***/ }),
+/* 102 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var toPrimitive = __webpack_require__(40);
+var definePropertyModule = __webpack_require__(17);
+var createPropertyDescriptor = __webpack_require__(39);
+
+module.exports = function (object, key, value) {
+  var propertyKey = toPrimitive(key);
+  if (propertyKey in object) definePropertyModule.f(object, propertyKey, createPropertyDescriptor(0, value));
+  else object[propertyKey] = value;
+};
+
+
+/***/ }),
+/* 103 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var has = __webpack_require__(11);
+var ownKeys = __webpack_require__(86);
+var getOwnPropertyDescriptorModule = __webpack_require__(33);
+var definePropertyModule = __webpack_require__(17);
+
+module.exports = function (target, source) {
+  var keys = ownKeys(source);
+  var defineProperty = definePropertyModule.f;
+  var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    if (!has(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
+  }
+};
+
+
+/***/ }),
+/* 104 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(13);
+var definePropertyModule = __webpack_require__(17);
+var anObject = __webpack_require__(9);
+var objectKeys = __webpack_require__(54);
+
+// `Object.defineProperties` method
+// https://tc39.es/ecma262/#sec-object.defineproperties
+module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperties(O, Properties) {
+  anObject(O);
+  var keys = objectKeys(Properties);
+  var length = keys.length;
+  var index = 0;
+  var key;
+  while (length > index) definePropertyModule.f(O, key = keys[index++], Properties[key]);
+  return O;
+};
+
+
+/***/ }),
+/* 105 */,
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var inspectSource = __webpack_require__(68);
+
+var WeakMap = global.WeakMap;
+
+module.exports = typeof WeakMap === 'function' && /native code/.test(inspectSource(WeakMap));
+
+
+/***/ }),
+/* 107 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var $includes = __webpack_require__(83).includes;
+var addToUnscopables = __webpack_require__(118);
+
+// `Array.prototype.includes` method
+// https://tc39.es/ecma262/#sec-array.prototype.includes
+$({ target: 'Array', proto: true }, {
+  includes: function includes(el /* , fromIndex = 0 */) {
+    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
+addToUnscopables('includes');
+
+
+/***/ }),
+/* 108 */,
+/* 109 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(10);
+var isArray = __webpack_require__(84);
+var wellKnownSymbol = __webpack_require__(8);
+
+var SPECIES = wellKnownSymbol('species');
+
+// `ArraySpeciesCreate` abstract operation
+// https://tc39.es/ecma262/#sec-arrayspeciescreate
+module.exports = function (originalArray, length) {
+  var C;
+  if (isArray(originalArray)) {
+    C = originalArray.constructor;
+    // cross-realm fallback
+    if (typeof C == 'function' && (C === Array || isArray(C.prototype))) C = undefined;
+    else if (isObject(C)) {
+      C = C[SPECIES];
+      if (C === null) C = undefined;
+    }
+  } return new (C === undefined ? Array : C)(length === 0 ? 0 : length);
+};
+
+
+/***/ }),
+/* 110 */
+/***/ (function(module, exports) {
+
+module.exports = {};
+
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// TODO: Remove from `core-js@4` since it's moved to entry points
+__webpack_require__(88);
+var redefine = __webpack_require__(27);
+var fails = __webpack_require__(6);
+var wellKnownSymbol = __webpack_require__(8);
+var regexpExec = __webpack_require__(91);
+var createNonEnumerableProperty = __webpack_require__(19);
+
+var SPECIES = wellKnownSymbol('species');
+
+var REPLACE_SUPPORTS_NAMED_GROUPS = !fails(function () {
+  // #replace needs built-in support for named groups.
+  // #match works fine because it just return the exec results, even if it has
+  // a "grops" property.
+  var re = /./;
+  re.exec = function () {
+    var result = [];
+    result.groups = { a: '7' };
+    return result;
+  };
+  return ''.replace(re, '$<a>') !== '7';
+});
+
+// IE <= 11 replaces $0 with the whole match, as if it was $&
+// https://stackoverflow.com/questions/6024666/getting-ie-to-replace-a-regex-with-the-literal-string-0
+var REPLACE_KEEPS_$0 = (function () {
+  return 'a'.replace(/./, '$0') === '$0';
+})();
+
+var REPLACE = wellKnownSymbol('replace');
+// Safari <= 13.0.3(?) substitutes nth capture where n>m with an empty string
+var REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE = (function () {
+  if (/./[REPLACE]) {
+    return /./[REPLACE]('a', '$0') === '';
+  }
+  return false;
+})();
+
+// Chrome 51 has a buggy "split" implementation when RegExp#exec !== nativeExec
+// Weex JS has frozen built-in prototypes, so use try / catch wrapper
+var SPLIT_WORKS_WITH_OVERWRITTEN_EXEC = !fails(function () {
+  // eslint-disable-next-line regexp/no-empty-group -- required for testing
+  var re = /(?:)/;
+  var originalExec = re.exec;
+  re.exec = function () { return originalExec.apply(this, arguments); };
+  var result = 'ab'.split(re);
+  return result.length !== 2 || result[0] !== 'a' || result[1] !== 'b';
+});
+
+module.exports = function (KEY, length, exec, sham) {
+  var SYMBOL = wellKnownSymbol(KEY);
+
+  var DELEGATES_TO_SYMBOL = !fails(function () {
+    // String methods call symbol-named RegEp methods
+    var O = {};
+    O[SYMBOL] = function () { return 7; };
+    return ''[KEY](O) != 7;
+  });
+
+  var DELEGATES_TO_EXEC = DELEGATES_TO_SYMBOL && !fails(function () {
+    // Symbol-named RegExp methods call .exec
+    var execCalled = false;
+    var re = /a/;
+
+    if (KEY === 'split') {
+      // We can't use real regex here since it causes deoptimization
+      // and serious performance degradation in V8
+      // https://github.com/zloirock/core-js/issues/306
+      re = {};
+      // RegExp[@@split] doesn't call the regex's exec method, but first creates
+      // a new one. We need to return the patched regex when creating the new one.
+      re.constructor = {};
+      re.constructor[SPECIES] = function () { return re; };
+      re.flags = '';
+      re[SYMBOL] = /./[SYMBOL];
+    }
+
+    re.exec = function () { execCalled = true; return null; };
+
+    re[SYMBOL]('');
+    return !execCalled;
+  });
+
+  if (
+    !DELEGATES_TO_SYMBOL ||
+    !DELEGATES_TO_EXEC ||
+    (KEY === 'replace' && !(
+      REPLACE_SUPPORTS_NAMED_GROUPS &&
+      REPLACE_KEEPS_$0 &&
+      !REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE
+    )) ||
+    (KEY === 'split' && !SPLIT_WORKS_WITH_OVERWRITTEN_EXEC)
+  ) {
+    var nativeRegExpMethod = /./[SYMBOL];
+    var methods = exec(SYMBOL, ''[KEY], function (nativeMethod, regexp, str, arg2, forceStringMethod) {
+      if (regexp.exec === regexpExec) {
+        if (DELEGATES_TO_SYMBOL && !forceStringMethod) {
+          // The native String method already delegates to @@method (this
+          // polyfilled function), leasing to infinite recursion.
+          // We avoid it by directly calling the native @@method method.
+          return { done: true, value: nativeRegExpMethod.call(regexp, str, arg2) };
+        }
+        return { done: true, value: nativeMethod.call(str, regexp, arg2) };
+      }
+      return { done: false };
+    }, {
+      REPLACE_KEEPS_$0: REPLACE_KEEPS_$0,
+      REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE: REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE
+    });
+    var stringMethod = methods[0];
+    var regexMethod = methods[1];
+
+    redefine(String.prototype, KEY, stringMethod);
+    redefine(RegExp.prototype, SYMBOL, length == 2
+      // 21.2.5.8 RegExp.prototype[@@replace](string, replaceValue)
+      // 21.2.5.11 RegExp.prototype[@@split](string, limit)
+      ? function (string, arg) { return regexMethod.call(string, this, arg); }
+      // 21.2.5.6 RegExp.prototype[@@match](string)
+      // 21.2.5.9 RegExp.prototype[@@search](string)
+      : function (string) { return regexMethod.call(string, this); }
+    );
+  }
+
+  if (sham) createNonEnumerableProperty(RegExp.prototype[SYMBOL], 'sham', true);
+};
+
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof = __webpack_require__(30);
+var regexpExec = __webpack_require__(91);
+
+// `RegExpExec` abstract operation
+// https://tc39.es/ecma262/#sec-regexpexec
+module.exports = function (R, S) {
+  var exec = R.exec;
+  if (typeof exec === 'function') {
+    var result = exec.call(R, S);
+    if (typeof result !== 'object') {
+      throw TypeError('RegExp exec method returned something other than an Object or null');
+    }
+    return result;
+  }
+
+  if (classof(R) !== 'RegExp') {
+    throw TypeError('RegExp#exec called on incompatible receiver');
+  }
+
+  return regexpExec.call(R, S);
+};
+
+
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var TO_STRING_TAG_SUPPORT = __webpack_require__(82);
+var classofRaw = __webpack_require__(30);
+var wellKnownSymbol = __webpack_require__(8);
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+// ES3 wrong here
+var CORRECT_ARGUMENTS = classofRaw(function () { return arguments; }()) == 'Arguments';
+
+// fallback for IE11 Script Access Denied error
+var tryGet = function (it, key) {
+  try {
+    return it[key];
+  } catch (error) { /* empty */ }
+};
+
+// getting tag from ES6+ `Object.prototype.toString`
+module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
+  var O, tag, result;
+  return it === undefined ? 'Undefined' : it === null ? 'Null'
+    // @@toStringTag case
+    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG)) == 'string' ? tag
+    // builtinTag case
+    : CORRECT_ARGUMENTS ? classofRaw(O)
+    // ES3 arguments fallback
+    : (result = classofRaw(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : result;
+};
+
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var anObject = __webpack_require__(9);
+
+// `RegExp.prototype.flags` getter implementation
+// https://tc39.es/ecma262/#sec-get-regexp.prototype.flags
+module.exports = function () {
+  var that = anObject(this);
+  var result = '';
+  if (that.global) result += 'g';
+  if (that.ignoreCase) result += 'i';
+  if (that.multiline) result += 'm';
+  if (that.dotAll) result += 's';
+  if (that.unicode) result += 'u';
+  if (that.sticky) result += 'y';
+  return result;
+};
+
+
+/***/ }),
+/* 115 */,
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var objectWithoutPropertiesLoose = __webpack_require__(233);
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+  var target = objectWithoutPropertiesLoose(source, excluded);
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+module.exports = _objectWithoutProperties;
+
+/***/ }),
+/* 117 */,
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var wellKnownSymbol = __webpack_require__(8);
+var create = __webpack_require__(69);
+var definePropertyModule = __webpack_require__(17);
+
+var UNSCOPABLES = wellKnownSymbol('unscopables');
+var ArrayPrototype = Array.prototype;
+
+// Array.prototype[@@unscopables]
+// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
+if (ArrayPrototype[UNSCOPABLES] == undefined) {
+  definePropertyModule.f(ArrayPrototype, UNSCOPABLES, {
+    configurable: true,
+    value: create(null)
+  });
+}
+
+// add a key to Array.prototype[@@unscopables]
+module.exports = function (key) {
+  ArrayPrototype[UNSCOPABLES][key] = true;
+};
+
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var wellKnownSymbol = __webpack_require__(8);
+
+exports.f = wellKnownSymbol;
+
+
+/***/ }),
+/* 120 */,
+/* 121 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var fails = __webpack_require__(6);
+
+module.exports = function (METHOD_NAME, argument) {
+  var method = [][METHOD_NAME];
+  return !!method && fails(function () {
+    // eslint-disable-next-line no-useless-call,no-throw-literal -- required for testing
+    method.call(null, argument || function () { throw 1; }, 1);
+  });
+};
+
+
+/***/ }),
+/* 122 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var charAt = __webpack_require__(125).charAt;
+
+// `AdvanceStringIndex` abstract operation
+// https://tc39.es/ecma262/#sec-advancestringindex
+module.exports = function (S, index, unicode) {
+  return index + (unicode ? charAt(S, index).length : 1);
+};
+
+
+/***/ }),
+/* 123 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var toIndexedObject = __webpack_require__(21);
+var addToUnscopables = __webpack_require__(118);
+var Iterators = __webpack_require__(110);
+var InternalStateModule = __webpack_require__(45);
+var defineIterator = __webpack_require__(166);
+
+var ARRAY_ITERATOR = 'Array Iterator';
+var setInternalState = InternalStateModule.set;
+var getInternalState = InternalStateModule.getterFor(ARRAY_ITERATOR);
+
+// `Array.prototype.entries` method
+// https://tc39.es/ecma262/#sec-array.prototype.entries
+// `Array.prototype.keys` method
+// https://tc39.es/ecma262/#sec-array.prototype.keys
+// `Array.prototype.values` method
+// https://tc39.es/ecma262/#sec-array.prototype.values
+// `Array.prototype[@@iterator]` method
+// https://tc39.es/ecma262/#sec-array.prototype-@@iterator
+// `CreateArrayIterator` internal method
+// https://tc39.es/ecma262/#sec-createarrayiterator
+module.exports = defineIterator(Array, 'Array', function (iterated, kind) {
+  setInternalState(this, {
+    type: ARRAY_ITERATOR,
+    target: toIndexedObject(iterated), // target
+    index: 0,                          // next index
+    kind: kind                         // kind
+  });
+// `%ArrayIteratorPrototype%.next` method
+// https://tc39.es/ecma262/#sec-%arrayiteratorprototype%.next
+}, function () {
+  var state = getInternalState(this);
+  var target = state.target;
+  var kind = state.kind;
+  var index = state.index++;
+  if (!target || index >= target.length) {
+    state.target = undefined;
+    return { value: undefined, done: true };
+  }
+  if (kind == 'keys') return { value: index, done: false };
+  if (kind == 'values') return { value: target[index], done: false };
+  return { value: [index, target[index]], done: false };
+}, 'values');
+
+// argumentsList[@@iterator] is %ArrayProto_values%
+// https://tc39.es/ecma262/#sec-createunmappedargumentsobject
+// https://tc39.es/ecma262/#sec-createmappedargumentsobject
+Iterators.Arguments = Iterators.Array;
+
+// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
+addToUnscopables('keys');
+addToUnscopables('values');
+addToUnscopables('entries');
+
+
+/***/ }),
+/* 124 */
+/***/ (function(module, exports) {
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+
+module.exports = _arrayLikeToArray;
+
+/***/ }),
+/* 125 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(42);
+var requireObjectCoercible = __webpack_require__(32);
+
+// `String.prototype.{ codePointAt, at }` methods implementation
+var createMethod = function (CONVERT_TO_STRING) {
+  return function ($this, pos) {
+    var S = String(requireObjectCoercible($this));
+    var position = toInteger(pos);
+    var size = S.length;
+    var first, second;
+    if (position < 0 || position >= size) return CONVERT_TO_STRING ? '' : undefined;
+    first = S.charCodeAt(position);
+    return first < 0xD800 || first > 0xDBFF || position + 1 === size
+      || (second = S.charCodeAt(position + 1)) < 0xDC00 || second > 0xDFFF
+        ? CONVERT_TO_STRING ? S.charAt(position) : first
+        : CONVERT_TO_STRING ? S.slice(position, position + 2) : (first - 0xD800 << 10) + (second - 0xDC00) + 0x10000;
+  };
+};
+
+module.exports = {
+  // `String.prototype.codePointAt` method
+  // https://tc39.es/ecma262/#sec-string.prototype.codepointat
+  codeAt: createMethod(false),
+  // `String.prototype.at` method
+  // https://github.com/mathiasbynens/String.prototype.at
+  charAt: createMethod(true)
+};
+
+
+/***/ }),
+/* 126 */,
+/* 127 */
+/***/ (function(module, exports) {
+
+// iterable DOM collections
+// flag - `iterable` interface - 'entries', 'keys', 'values', 'forEach' methods
+module.exports = {
+  CSSRuleList: 0,
+  CSSStyleDeclaration: 0,
+  CSSValueList: 0,
+  ClientRectList: 0,
+  DOMRectList: 0,
+  DOMStringList: 0,
+  DOMTokenList: 1,
+  DataTransferItemList: 0,
+  FileList: 0,
+  HTMLAllCollection: 0,
+  HTMLCollection: 0,
+  HTMLFormElement: 0,
+  HTMLSelectElement: 0,
+  MediaList: 0,
+  MimeTypeArray: 0,
+  NamedNodeMap: 0,
+  NodeList: 1,
+  PaintRequestList: 0,
+  Plugin: 0,
+  PluginArray: 0,
+  SVGLengthList: 0,
+  SVGNumberList: 0,
+  SVGPathSegList: 0,
+  SVGPointList: 0,
+  SVGStringList: 0,
+  SVGTransformList: 0,
+  SourceBufferList: 0,
+  StyleSheetList: 0,
+  TextTrackCueList: 0,
+  TextTrackList: 0,
+  TouchList: 0
+};
+
+
+/***/ }),
+/* 128 */,
+/* 129 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(13);
+var defineProperty = __webpack_require__(17).f;
+
+var FunctionPrototype = Function.prototype;
+var FunctionPrototypeToString = FunctionPrototype.toString;
+var nameRE = /^\s*function ([^ (]*)/;
+var NAME = 'name';
+
+// Function instances `.name` property
+// https://tc39.es/ecma262/#sec-function-instances-name
+if (DESCRIPTORS && !(NAME in FunctionPrototype)) {
+  defineProperty(FunctionPrototype, NAME, {
+    configurable: true,
+    get: function () {
+      try {
+        return FunctionPrototypeToString.call(this).match(nameRE)[1];
+      } catch (error) {
+        return '';
+      }
+    }
+  });
+}
+
+
+/***/ }),
+/* 130 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var TO_STRING_TAG_SUPPORT = __webpack_require__(82);
+var classof = __webpack_require__(113);
+
+// `Object.prototype.toString` method implementation
+// https://tc39.es/ecma262/#sec-object.prototype.tostring
+module.exports = TO_STRING_TAG_SUPPORT ? {}.toString : function toString() {
+  return '[object ' + classof(this) + ']';
+};
+
+
+/***/ }),
+/* 131 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayLikeToArray = __webpack_require__(124);
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
+}
+
+module.exports = _unsupportedIterableToArray;
+
+/***/ }),
+/* 132 */,
+/* 133 */,
+/* 134 */
+/***/ (function(module, exports) {
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
+
+module.exports = _asyncToGenerator;
+
+/***/ }),
+/* 135 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var fixRegExpWellKnownSymbolLogic = __webpack_require__(111);
+var anObject = __webpack_require__(9);
+var toLength = __webpack_require__(34);
+var toInteger = __webpack_require__(42);
+var requireObjectCoercible = __webpack_require__(32);
+var advanceStringIndex = __webpack_require__(122);
+var getSubstitution = __webpack_require__(168);
+var regExpExec = __webpack_require__(112);
+
+var max = Math.max;
+var min = Math.min;
+
+var maybeToString = function (it) {
+  return it === undefined ? it : String(it);
+};
+
+// @@replace logic
+fixRegExpWellKnownSymbolLogic('replace', 2, function (REPLACE, nativeReplace, maybeCallNative, reason) {
+  var REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE = reason.REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE;
+  var REPLACE_KEEPS_$0 = reason.REPLACE_KEEPS_$0;
+  var UNSAFE_SUBSTITUTE = REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE ? '$' : '$0';
+
+  return [
+    // `String.prototype.replace` method
+    // https://tc39.es/ecma262/#sec-string.prototype.replace
+    function replace(searchValue, replaceValue) {
+      var O = requireObjectCoercible(this);
+      var replacer = searchValue == undefined ? undefined : searchValue[REPLACE];
+      return replacer !== undefined
+        ? replacer.call(searchValue, O, replaceValue)
+        : nativeReplace.call(String(O), searchValue, replaceValue);
+    },
+    // `RegExp.prototype[@@replace]` method
+    // https://tc39.es/ecma262/#sec-regexp.prototype-@@replace
+    function (regexp, replaceValue) {
+      if (
+        (!REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE && REPLACE_KEEPS_$0) ||
+        (typeof replaceValue === 'string' && replaceValue.indexOf(UNSAFE_SUBSTITUTE) === -1)
+      ) {
+        var res = maybeCallNative(nativeReplace, regexp, this, replaceValue);
+        if (res.done) return res.value;
+      }
+
+      var rx = anObject(regexp);
+      var S = String(this);
+
+      var functionalReplace = typeof replaceValue === 'function';
+      if (!functionalReplace) replaceValue = String(replaceValue);
+
+      var global = rx.global;
+      if (global) {
+        var fullUnicode = rx.unicode;
+        rx.lastIndex = 0;
+      }
+      var results = [];
+      while (true) {
+        var result = regExpExec(rx, S);
+        if (result === null) break;
+
+        results.push(result);
+        if (!global) break;
+
+        var matchStr = String(result[0]);
+        if (matchStr === '') rx.lastIndex = advanceStringIndex(S, toLength(rx.lastIndex), fullUnicode);
+      }
+
+      var accumulatedResult = '';
+      var nextSourcePosition = 0;
+      for (var i = 0; i < results.length; i++) {
+        result = results[i];
+
+        var matched = String(result[0]);
+        var position = max(min(toInteger(result.index), S.length), 0);
+        var captures = [];
+        // NOTE: This is equivalent to
+        //   captures = result.slice(1).map(maybeToString)
+        // but for some reason `nativeSlice.call(result, 1, result.length)` (called in
+        // the slice polyfill when slicing native arrays) "doesn't work" in safari 9 and
+        // causes a crash (https://pastebin.com/N21QzeQA) when trying to debug it.
+        for (var j = 1; j < result.length; j++) captures.push(maybeToString(result[j]));
+        var namedCaptures = result.groups;
+        if (functionalReplace) {
+          var replacerArgs = [matched].concat(captures, position, S);
+          if (namedCaptures !== undefined) replacerArgs.push(namedCaptures);
+          var replacement = String(replaceValue.apply(undefined, replacerArgs));
+        } else {
+          replacement = getSubstitution(matched, S, position, captures, namedCaptures, replaceValue);
+        }
+        if (position >= nextSourcePosition) {
+          accumulatedResult += S.slice(nextSourcePosition, position) + replacement;
+          nextSourcePosition = position + matched.length;
+        }
+      }
+      return accumulatedResult + S.slice(nextSourcePosition);
+    }
+  ];
+});
+
+
+/***/ }),
+/* 136 */
+/***/ (function(module, exports) {
+
+module.exports = function (it, Constructor, name) {
+  if (!(it instanceof Constructor)) {
+    throw TypeError('Incorrect ' + (name ? name + ' ' : '') + 'invocation');
+  } return it;
+};
+
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var fails = __webpack_require__(6);
+
+// babel-minify transpiles RegExp('a', 'y') -> /a/y and it causes SyntaxError,
+// so we use an intermediate function.
+function RE(s, f) {
+  return RegExp(s, f);
+}
+
+exports.UNSUPPORTED_Y = fails(function () {
+  // babel-minify transpiles RegExp('a', 'y') -> /a/y and it causes SyntaxError
+  var re = RE('a', 'y');
+  re.lastIndex = 2;
+  return re.exec('abcd') != null;
+});
+
+exports.BROKEN_CARET = fails(function () {
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=773687
+  var re = RE('^r', 'gy');
+  re.lastIndex = 2;
+  return re.exec('str') != null;
+});
+
+
+/***/ }),
+/* 138 */,
+/* 139 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var IndexedObject = __webpack_require__(71);
+var toIndexedObject = __webpack_require__(21);
+var arrayMethodIsStrict = __webpack_require__(121);
+
+var nativeJoin = [].join;
+
+var ES3_STRINGS = IndexedObject != Object;
+var STRICT_METHOD = arrayMethodIsStrict('join', ',');
+
+// `Array.prototype.join` method
+// https://tc39.es/ecma262/#sec-array.prototype.join
+$({ target: 'Array', proto: true, forced: ES3_STRINGS || !STRICT_METHOD }, {
+  join: function join(separator) {
+    return nativeJoin.call(toIndexedObject(this), separator === undefined ? ',' : separator);
+  }
+});
+
+
+/***/ }),
+/* 140 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var notARegExp = __webpack_require__(207);
+var requireObjectCoercible = __webpack_require__(32);
+var correctIsRegExpLogic = __webpack_require__(208);
+
+// `String.prototype.includes` method
+// https://tc39.es/ecma262/#sec-string.prototype.includes
+$({ target: 'String', proto: true, forced: !correctIsRegExpLogic('includes') }, {
+  includes: function includes(searchString /* , position = 0 */) {
+    return !!~String(requireObjectCoercible(this))
+      .indexOf(notARegExp(searchString), arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+/* 141 */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["hooks"]; }());
+
+/***/ }),
+/* 142 */,
+/* 143 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable no-proto -- safe */
+var anObject = __webpack_require__(9);
+var aPossiblePrototype = __webpack_require__(160);
+
+// `Object.setPrototypeOf` method
+// https://tc39.es/ecma262/#sec-object.setprototypeof
+// Works with __proto__ only. Old v8 can't work with null proto objects.
+module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
+  var CORRECT_SETTER = false;
+  var test = {};
+  var setter;
+  try {
+    setter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set;
+    setter.call(test, []);
+    CORRECT_SETTER = test instanceof Array;
+  } catch (error) { /* empty */ }
+  return function setPrototypeOf(O, proto) {
+    anObject(O);
+    aPossiblePrototype(proto);
+    if (CORRECT_SETTER) setter.call(O, proto);
+    else O.__proto__ = proto;
+    return O;
+  };
+}() : undefined);
+
+
+/***/ }),
+/* 144 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(10);
+var classof = __webpack_require__(30);
+var wellKnownSymbol = __webpack_require__(8);
+
+var MATCH = wellKnownSymbol('match');
+
+// `IsRegExp` abstract operation
+// https://tc39.es/ecma262/#sec-isregexp
+module.exports = function (it) {
+  var isRegExp;
+  return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classof(it) == 'RegExp');
+};
+
+
+/***/ }),
+/* 145 */,
+/* 146 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var DOMIterables = __webpack_require__(127);
+var ArrayIteratorMethods = __webpack_require__(123);
+var createNonEnumerableProperty = __webpack_require__(19);
+var wellKnownSymbol = __webpack_require__(8);
+
+var ITERATOR = wellKnownSymbol('iterator');
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+var ArrayValues = ArrayIteratorMethods.values;
+
+for (var COLLECTION_NAME in DOMIterables) {
+  var Collection = global[COLLECTION_NAME];
+  var CollectionPrototype = Collection && Collection.prototype;
+  if (CollectionPrototype) {
+    // some Chrome versions have non-configurable methods on DOMTokenList
+    if (CollectionPrototype[ITERATOR] !== ArrayValues) try {
+      createNonEnumerableProperty(CollectionPrototype, ITERATOR, ArrayValues);
+    } catch (error) {
+      CollectionPrototype[ITERATOR] = ArrayValues;
+    }
+    if (!CollectionPrototype[TO_STRING_TAG]) {
+      createNonEnumerableProperty(CollectionPrototype, TO_STRING_TAG, COLLECTION_NAME);
+    }
+    if (DOMIterables[COLLECTION_NAME]) for (var METHOD_NAME in ArrayIteratorMethods) {
+      // some Chrome versions have non-configurable methods on DOMTokenList
+      if (CollectionPrototype[METHOD_NAME] !== ArrayIteratorMethods[METHOD_NAME]) try {
+        createNonEnumerableProperty(CollectionPrototype, METHOD_NAME, ArrayIteratorMethods[METHOD_NAME]);
+      } catch (error) {
+        CollectionPrototype[METHOD_NAME] = ArrayIteratorMethods[METHOD_NAME];
+      }
+    }
+  }
+}
+
+
+/***/ }),
+/* 147 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toIndexedObject = __webpack_require__(21);
+var nativeGetOwnPropertyNames = __webpack_require__(56).f;
+
+var toString = {}.toString;
+
+var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
+  ? Object.getOwnPropertyNames(window) : [];
+
+var getWindowNames = function (it) {
+  try {
+    return nativeGetOwnPropertyNames(it);
+  } catch (error) {
+    return windowNames.slice();
+  }
+};
+
+// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
+module.exports.f = function getOwnPropertyNames(it) {
+  return windowNames && toString.call(it) == '[object Window]'
+    ? getWindowNames(it)
+    : nativeGetOwnPropertyNames(toIndexedObject(it));
+};
+
+
+/***/ }),
+/* 148 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var path = __webpack_require__(81);
+var has = __webpack_require__(11);
+var wrappedWellKnownSymbolModule = __webpack_require__(119);
+var defineProperty = __webpack_require__(17).f;
+
+module.exports = function (NAME) {
+  var Symbol = path.Symbol || (path.Symbol = {});
+  if (!has(Symbol, NAME)) defineProperty(Symbol, NAME, {
+    value: wrappedWellKnownSymbolModule.f(NAME)
+  });
+};
+
+
+/***/ }),
+/* 149 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $forEach = __webpack_require__(75).forEach;
+var arrayMethodIsStrict = __webpack_require__(121);
+
+var STRICT_METHOD = arrayMethodIsStrict('forEach');
+
+// `Array.prototype.forEach` method implementation
+// https://tc39.es/ecma262/#sec-array.prototype.foreach
+module.exports = !STRICT_METHOD ? function forEach(callbackfn /* , thisArg */) {
+  return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+} : [].forEach;
+
+
+/***/ }),
+/* 150 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject = __webpack_require__(9);
+var aFunction = __webpack_require__(70);
+var wellKnownSymbol = __webpack_require__(8);
+
+var SPECIES = wellKnownSymbol('species');
+
+// `SpeciesConstructor` abstract operation
+// https://tc39.es/ecma262/#sec-speciesconstructor
+module.exports = function (O, defaultConstructor) {
+  var C = anObject(O).constructor;
+  var S;
+  return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? defaultConstructor : aFunction(S);
+};
+
+
+/***/ }),
+/* 151 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var charAt = __webpack_require__(125).charAt;
+var InternalStateModule = __webpack_require__(45);
+var defineIterator = __webpack_require__(166);
+
+var STRING_ITERATOR = 'String Iterator';
+var setInternalState = InternalStateModule.set;
+var getInternalState = InternalStateModule.getterFor(STRING_ITERATOR);
+
+// `String.prototype[@@iterator]` method
+// https://tc39.es/ecma262/#sec-string.prototype-@@iterator
+defineIterator(String, 'String', function (iterated) {
+  setInternalState(this, {
+    type: STRING_ITERATOR,
+    string: String(iterated),
+    index: 0
+  });
+// `%StringIteratorPrototype%.next` method
+// https://tc39.es/ecma262/#sec-%stringiteratorprototype%.next
+}, function next() {
+  var state = getInternalState(this);
+  var string = state.string;
+  var index = state.index;
+  var point;
+  if (index >= string.length) return { value: undefined, done: true };
+  point = charAt(string, index);
+  state.index += point.length;
+  return { value: point, done: false };
+});
+
+
+/***/ }),
+/* 152 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var redefine = __webpack_require__(27);
+
+module.exports = function (target, src, options) {
+  for (var key in src) redefine(target, key, src[key], options);
+  return target;
+};
+
+
+/***/ }),
+/* 153 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var getBuiltIn = __webpack_require__(31);
+var definePropertyModule = __webpack_require__(17);
+var wellKnownSymbol = __webpack_require__(8);
+var DESCRIPTORS = __webpack_require__(13);
+
+var SPECIES = wellKnownSymbol('species');
+
+module.exports = function (CONSTRUCTOR_NAME) {
+  var Constructor = getBuiltIn(CONSTRUCTOR_NAME);
+  var defineProperty = definePropertyModule.f;
+
+  if (DESCRIPTORS && Constructor && !Constructor[SPECIES]) {
+    defineProperty(Constructor, SPECIES, {
+      configurable: true,
+      get: function () { return this; }
+    });
+  }
+};
+
+
+/***/ }),
+/* 154 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject = __webpack_require__(9);
+var isArrayIteratorMethod = __webpack_require__(171);
+var toLength = __webpack_require__(34);
+var bind = __webpack_require__(94);
+var getIteratorMethod = __webpack_require__(155);
+var iteratorClose = __webpack_require__(172);
+
+var Result = function (stopped, result) {
+  this.stopped = stopped;
+  this.result = result;
+};
+
+module.exports = function (iterable, unboundFunction, options) {
+  var that = options && options.that;
+  var AS_ENTRIES = !!(options && options.AS_ENTRIES);
+  var IS_ITERATOR = !!(options && options.IS_ITERATOR);
+  var INTERRUPTED = !!(options && options.INTERRUPTED);
+  var fn = bind(unboundFunction, that, 1 + AS_ENTRIES + INTERRUPTED);
+  var iterator, iterFn, index, length, result, next, step;
+
+  var stop = function (condition) {
+    if (iterator) iteratorClose(iterator);
+    return new Result(true, condition);
+  };
+
+  var callFn = function (value) {
+    if (AS_ENTRIES) {
+      anObject(value);
+      return INTERRUPTED ? fn(value[0], value[1], stop) : fn(value[0], value[1]);
+    } return INTERRUPTED ? fn(value, stop) : fn(value);
+  };
+
+  if (IS_ITERATOR) {
+    iterator = iterable;
+  } else {
+    iterFn = getIteratorMethod(iterable);
+    if (typeof iterFn != 'function') throw TypeError('Target is not iterable');
+    // optimisation for array iterators
+    if (isArrayIteratorMethod(iterFn)) {
+      for (index = 0, length = toLength(iterable.length); length > index; index++) {
+        result = callFn(iterable[index]);
+        if (result && result instanceof Result) return result;
+      } return new Result(false);
+    }
+    iterator = iterFn.call(iterable);
+  }
+
+  next = iterator.next;
+  while (!(step = next.call(iterator)).done) {
+    try {
+      result = callFn(step.value);
+    } catch (error) {
+      iteratorClose(iterator);
+      throw error;
+    }
+    if (typeof result == 'object' && result && result instanceof Result) return result;
+  } return new Result(false);
+};
+
+
+/***/ }),
+/* 155 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof = __webpack_require__(113);
+var Iterators = __webpack_require__(110);
+var wellKnownSymbol = __webpack_require__(8);
+
+var ITERATOR = wellKnownSymbol('iterator');
+
+module.exports = function (it) {
+  if (it != undefined) return it[ITERATOR]
+    || it['@@iterator']
+    || Iterators[classof(it)];
+};
+
+
+/***/ }),
+/* 156 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(10);
+var setPrototypeOf = __webpack_require__(143);
+
+// makes subclassing work correct for wrapped built-ins
+module.exports = function ($this, dummy, Wrapper) {
+  var NewTarget, NewTargetPrototype;
+  if (
+    // it can work only with native `setPrototypeOf`
+    setPrototypeOf &&
+    // we haven't completely correct pre-ES6 way for getting `new.target`, so use this
+    typeof (NewTarget = dummy.constructor) == 'function' &&
+    NewTarget !== Wrapper &&
+    isObject(NewTargetPrototype = NewTarget.prototype) &&
+    NewTargetPrototype !== Wrapper.prototype
+  ) setPrototypeOf($this, NewTargetPrototype);
+  return $this;
+};
+
+
+/***/ }),
+/* 157 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var fails = __webpack_require__(6);
+var bind = __webpack_require__(94);
+var html = __webpack_require__(98);
+var createElement = __webpack_require__(67);
+var IS_IOS = __webpack_require__(158);
+var IS_NODE = __webpack_require__(77);
+
+var location = global.location;
+var set = global.setImmediate;
+var clear = global.clearImmediate;
+var process = global.process;
+var MessageChannel = global.MessageChannel;
+var Dispatch = global.Dispatch;
+var counter = 0;
+var queue = {};
+var ONREADYSTATECHANGE = 'onreadystatechange';
+var defer, channel, port;
+
+var run = function (id) {
+  // eslint-disable-next-line no-prototype-builtins -- safe
+  if (queue.hasOwnProperty(id)) {
+    var fn = queue[id];
+    delete queue[id];
+    fn();
+  }
+};
+
+var runner = function (id) {
+  return function () {
+    run(id);
+  };
+};
+
+var listener = function (event) {
+  run(event.data);
+};
+
+var post = function (id) {
+  // old engines have not location.origin
+  global.postMessage(id + '', location.protocol + '//' + location.host);
+};
+
+// Node.js 0.9+ & IE10+ has setImmediate, otherwise:
+if (!set || !clear) {
+  set = function setImmediate(fn) {
+    var args = [];
+    var i = 1;
+    while (arguments.length > i) args.push(arguments[i++]);
+    queue[++counter] = function () {
+      // eslint-disable-next-line no-new-func -- spec requirement
+      (typeof fn == 'function' ? fn : Function(fn)).apply(undefined, args);
+    };
+    defer(counter);
+    return counter;
+  };
+  clear = function clearImmediate(id) {
+    delete queue[id];
+  };
+  // Node.js 0.8-
+  if (IS_NODE) {
+    defer = function (id) {
+      process.nextTick(runner(id));
+    };
+  // Sphere (JS game engine) Dispatch API
+  } else if (Dispatch && Dispatch.now) {
+    defer = function (id) {
+      Dispatch.now(runner(id));
+    };
+  // Browsers with MessageChannel, includes WebWorkers
+  // except iOS - https://github.com/zloirock/core-js/issues/624
+  } else if (MessageChannel && !IS_IOS) {
+    channel = new MessageChannel();
+    port = channel.port2;
+    channel.port1.onmessage = listener;
+    defer = bind(port.postMessage, port, 1);
+  // Browsers with postMessage, skip WebWorkers
+  // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
+  } else if (
+    global.addEventListener &&
+    typeof postMessage == 'function' &&
+    !global.importScripts &&
+    location && location.protocol !== 'file:' &&
+    !fails(post)
+  ) {
+    defer = post;
+    global.addEventListener('message', listener, false);
+  // IE8-
+  } else if (ONREADYSTATECHANGE in createElement('script')) {
+    defer = function (id) {
+      html.appendChild(createElement('script'))[ONREADYSTATECHANGE] = function () {
+        html.removeChild(this);
+        run(id);
+      };
+    };
+  // Rest old browsers
+  } else {
+    defer = function (id) {
+      setTimeout(runner(id), 0);
+    };
+  }
+}
+
+module.exports = {
+  set: set,
+  clear: clear
+};
+
+
+/***/ }),
+/* 158 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var userAgent = __webpack_require__(87);
+
+module.exports = /(iphone|ipod|ipad).*applewebkit/i.test(userAgent);
+
+
+/***/ }),
+/* 159 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var aFunction = __webpack_require__(70);
+
+var PromiseCapability = function (C) {
+  var resolve, reject;
+  this.promise = new C(function ($$resolve, $$reject) {
+    if (resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
+    resolve = $$resolve;
+    reject = $$reject;
+  });
+  this.resolve = aFunction(resolve);
+  this.reject = aFunction(reject);
+};
+
+// 25.4.1.5 NewPromiseCapability(C)
+module.exports.f = function (C) {
+  return new PromiseCapability(C);
+};
+
+
+/***/ }),
+/* 160 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(10);
+
+module.exports = function (it) {
+  if (!isObject(it) && it !== null) {
+    throw TypeError("Can't set " + String(it) + ' as a prototype');
+  } return it;
+};
+
+
+/***/ }),
+/* 161 */,
+/* 162 */,
+/* 163 */,
+/* 164 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var IS_PURE = __webpack_require__(57);
+var global = __webpack_require__(3);
+var getBuiltIn = __webpack_require__(31);
+var NativePromise = __webpack_require__(193);
+var redefine = __webpack_require__(27);
+var redefineAll = __webpack_require__(152);
+var setToStringTag = __webpack_require__(90);
+var setSpecies = __webpack_require__(153);
+var isObject = __webpack_require__(10);
+var aFunction = __webpack_require__(70);
+var anInstance = __webpack_require__(136);
+var inspectSource = __webpack_require__(68);
+var iterate = __webpack_require__(154);
+var checkCorrectnessOfIteration = __webpack_require__(165);
+var speciesConstructor = __webpack_require__(150);
+var task = __webpack_require__(157).set;
+var microtask = __webpack_require__(194);
+var promiseResolve = __webpack_require__(196);
+var hostReportErrors = __webpack_require__(197);
+var newPromiseCapabilityModule = __webpack_require__(159);
+var perform = __webpack_require__(198);
+var InternalStateModule = __webpack_require__(45);
+var isForced = __webpack_require__(74);
+var wellKnownSymbol = __webpack_require__(8);
+var IS_NODE = __webpack_require__(77);
+var V8_VERSION = __webpack_require__(63);
+
+var SPECIES = wellKnownSymbol('species');
+var PROMISE = 'Promise';
+var getInternalState = InternalStateModule.get;
+var setInternalState = InternalStateModule.set;
+var getInternalPromiseState = InternalStateModule.getterFor(PROMISE);
+var PromiseConstructor = NativePromise;
+var TypeError = global.TypeError;
+var document = global.document;
+var process = global.process;
+var $fetch = getBuiltIn('fetch');
+var newPromiseCapability = newPromiseCapabilityModule.f;
+var newGenericPromiseCapability = newPromiseCapability;
+var DISPATCH_EVENT = !!(document && document.createEvent && global.dispatchEvent);
+var NATIVE_REJECTION_EVENT = typeof PromiseRejectionEvent == 'function';
+var UNHANDLED_REJECTION = 'unhandledrejection';
+var REJECTION_HANDLED = 'rejectionhandled';
+var PENDING = 0;
+var FULFILLED = 1;
+var REJECTED = 2;
+var HANDLED = 1;
+var UNHANDLED = 2;
+var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen;
+
+var FORCED = isForced(PROMISE, function () {
+  var GLOBAL_CORE_JS_PROMISE = inspectSource(PromiseConstructor) !== String(PromiseConstructor);
+  if (!GLOBAL_CORE_JS_PROMISE) {
+    // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
+    // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
+    // We can't detect it synchronously, so just check versions
+    if (V8_VERSION === 66) return true;
+    // Unhandled rejections tracking support, NodeJS Promise without it fails @@species test
+    if (!IS_NODE && !NATIVE_REJECTION_EVENT) return true;
+  }
+  // We need Promise#finally in the pure version for preventing prototype pollution
+  if (IS_PURE && !PromiseConstructor.prototype['finally']) return true;
+  // We can't use @@species feature detection in V8 since it causes
+  // deoptimization and performance degradation
+  // https://github.com/zloirock/core-js/issues/679
+  if (V8_VERSION >= 51 && /native code/.test(PromiseConstructor)) return false;
+  // Detect correctness of subclassing with @@species support
+  var promise = PromiseConstructor.resolve(1);
+  var FakePromise = function (exec) {
+    exec(function () { /* empty */ }, function () { /* empty */ });
+  };
+  var constructor = promise.constructor = {};
+  constructor[SPECIES] = FakePromise;
+  return !(promise.then(function () { /* empty */ }) instanceof FakePromise);
+});
+
+var INCORRECT_ITERATION = FORCED || !checkCorrectnessOfIteration(function (iterable) {
+  PromiseConstructor.all(iterable)['catch'](function () { /* empty */ });
+});
+
+// helpers
+var isThenable = function (it) {
+  var then;
+  return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
+};
+
+var notify = function (state, isReject) {
+  if (state.notified) return;
+  state.notified = true;
+  var chain = state.reactions;
+  microtask(function () {
+    var value = state.value;
+    var ok = state.state == FULFILLED;
+    var index = 0;
+    // variable length - can't use forEach
+    while (chain.length > index) {
+      var reaction = chain[index++];
+      var handler = ok ? reaction.ok : reaction.fail;
+      var resolve = reaction.resolve;
+      var reject = reaction.reject;
+      var domain = reaction.domain;
+      var result, then, exited;
+      try {
+        if (handler) {
+          if (!ok) {
+            if (state.rejection === UNHANDLED) onHandleUnhandled(state);
+            state.rejection = HANDLED;
+          }
+          if (handler === true) result = value;
+          else {
+            if (domain) domain.enter();
+            result = handler(value); // can throw
+            if (domain) {
+              domain.exit();
+              exited = true;
+            }
+          }
+          if (result === reaction.promise) {
+            reject(TypeError('Promise-chain cycle'));
+          } else if (then = isThenable(result)) {
+            then.call(result, resolve, reject);
+          } else resolve(result);
+        } else reject(value);
+      } catch (error) {
+        if (domain && !exited) domain.exit();
+        reject(error);
+      }
+    }
+    state.reactions = [];
+    state.notified = false;
+    if (isReject && !state.rejection) onUnhandled(state);
+  });
+};
+
+var dispatchEvent = function (name, promise, reason) {
+  var event, handler;
+  if (DISPATCH_EVENT) {
+    event = document.createEvent('Event');
+    event.promise = promise;
+    event.reason = reason;
+    event.initEvent(name, false, true);
+    global.dispatchEvent(event);
+  } else event = { promise: promise, reason: reason };
+  if (!NATIVE_REJECTION_EVENT && (handler = global['on' + name])) handler(event);
+  else if (name === UNHANDLED_REJECTION) hostReportErrors('Unhandled promise rejection', reason);
+};
+
+var onUnhandled = function (state) {
+  task.call(global, function () {
+    var promise = state.facade;
+    var value = state.value;
+    var IS_UNHANDLED = isUnhandled(state);
+    var result;
+    if (IS_UNHANDLED) {
+      result = perform(function () {
+        if (IS_NODE) {
+          process.emit('unhandledRejection', value, promise);
+        } else dispatchEvent(UNHANDLED_REJECTION, promise, value);
+      });
+      // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
+      state.rejection = IS_NODE || isUnhandled(state) ? UNHANDLED : HANDLED;
+      if (result.error) throw result.value;
+    }
+  });
+};
+
+var isUnhandled = function (state) {
+  return state.rejection !== HANDLED && !state.parent;
+};
+
+var onHandleUnhandled = function (state) {
+  task.call(global, function () {
+    var promise = state.facade;
+    if (IS_NODE) {
+      process.emit('rejectionHandled', promise);
+    } else dispatchEvent(REJECTION_HANDLED, promise, state.value);
+  });
+};
+
+var bind = function (fn, state, unwrap) {
+  return function (value) {
+    fn(state, value, unwrap);
+  };
+};
+
+var internalReject = function (state, value, unwrap) {
+  if (state.done) return;
+  state.done = true;
+  if (unwrap) state = unwrap;
+  state.value = value;
+  state.state = REJECTED;
+  notify(state, true);
+};
+
+var internalResolve = function (state, value, unwrap) {
+  if (state.done) return;
+  state.done = true;
+  if (unwrap) state = unwrap;
+  try {
+    if (state.facade === value) throw TypeError("Promise can't be resolved itself");
+    var then = isThenable(value);
+    if (then) {
+      microtask(function () {
+        var wrapper = { done: false };
+        try {
+          then.call(value,
+            bind(internalResolve, wrapper, state),
+            bind(internalReject, wrapper, state)
+          );
+        } catch (error) {
+          internalReject(wrapper, error, state);
+        }
+      });
+    } else {
+      state.value = value;
+      state.state = FULFILLED;
+      notify(state, false);
+    }
+  } catch (error) {
+    internalReject({ done: false }, error, state);
+  }
+};
+
+// constructor polyfill
+if (FORCED) {
+  // 25.4.3.1 Promise(executor)
+  PromiseConstructor = function Promise(executor) {
+    anInstance(this, PromiseConstructor, PROMISE);
+    aFunction(executor);
+    Internal.call(this);
+    var state = getInternalState(this);
+    try {
+      executor(bind(internalResolve, state), bind(internalReject, state));
+    } catch (error) {
+      internalReject(state, error);
+    }
+  };
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  Internal = function Promise(executor) {
+    setInternalState(this, {
+      type: PROMISE,
+      done: false,
+      notified: false,
+      parent: false,
+      reactions: [],
+      rejection: false,
+      state: PENDING,
+      value: undefined
+    });
+  };
+  Internal.prototype = redefineAll(PromiseConstructor.prototype, {
+    // `Promise.prototype.then` method
+    // https://tc39.es/ecma262/#sec-promise.prototype.then
+    then: function then(onFulfilled, onRejected) {
+      var state = getInternalPromiseState(this);
+      var reaction = newPromiseCapability(speciesConstructor(this, PromiseConstructor));
+      reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
+      reaction.fail = typeof onRejected == 'function' && onRejected;
+      reaction.domain = IS_NODE ? process.domain : undefined;
+      state.parent = true;
+      state.reactions.push(reaction);
+      if (state.state != PENDING) notify(state, false);
+      return reaction.promise;
+    },
+    // `Promise.prototype.catch` method
+    // https://tc39.es/ecma262/#sec-promise.prototype.catch
+    'catch': function (onRejected) {
+      return this.then(undefined, onRejected);
+    }
+  });
+  OwnPromiseCapability = function () {
+    var promise = new Internal();
+    var state = getInternalState(promise);
+    this.promise = promise;
+    this.resolve = bind(internalResolve, state);
+    this.reject = bind(internalReject, state);
+  };
+  newPromiseCapabilityModule.f = newPromiseCapability = function (C) {
+    return C === PromiseConstructor || C === PromiseWrapper
+      ? new OwnPromiseCapability(C)
+      : newGenericPromiseCapability(C);
+  };
+
+  if (!IS_PURE && typeof NativePromise == 'function') {
+    nativeThen = NativePromise.prototype.then;
+
+    // wrap native Promise#then for native async functions
+    redefine(NativePromise.prototype, 'then', function then(onFulfilled, onRejected) {
+      var that = this;
+      return new PromiseConstructor(function (resolve, reject) {
+        nativeThen.call(that, resolve, reject);
+      }).then(onFulfilled, onRejected);
+    // https://github.com/zloirock/core-js/issues/640
+    }, { unsafe: true });
+
+    // wrap fetch result
+    if (typeof $fetch == 'function') $({ global: true, enumerable: true, forced: true }, {
+      // eslint-disable-next-line no-unused-vars -- required for `.length`
+      fetch: function fetch(input /* , init */) {
+        return promiseResolve(PromiseConstructor, $fetch.apply(global, arguments));
+      }
+    });
+  }
+}
+
+$({ global: true, wrap: true, forced: FORCED }, {
+  Promise: PromiseConstructor
+});
+
+setToStringTag(PromiseConstructor, PROMISE, false, true);
+setSpecies(PROMISE);
+
+PromiseWrapper = getBuiltIn(PROMISE);
+
+// statics
+$({ target: PROMISE, stat: true, forced: FORCED }, {
+  // `Promise.reject` method
+  // https://tc39.es/ecma262/#sec-promise.reject
+  reject: function reject(r) {
+    var capability = newPromiseCapability(this);
+    capability.reject.call(undefined, r);
+    return capability.promise;
+  }
+});
+
+$({ target: PROMISE, stat: true, forced: IS_PURE || FORCED }, {
+  // `Promise.resolve` method
+  // https://tc39.es/ecma262/#sec-promise.resolve
+  resolve: function resolve(x) {
+    return promiseResolve(IS_PURE && this === PromiseWrapper ? PromiseConstructor : this, x);
+  }
+});
+
+$({ target: PROMISE, stat: true, forced: INCORRECT_ITERATION }, {
+  // `Promise.all` method
+  // https://tc39.es/ecma262/#sec-promise.all
+  all: function all(iterable) {
+    var C = this;
+    var capability = newPromiseCapability(C);
+    var resolve = capability.resolve;
+    var reject = capability.reject;
+    var result = perform(function () {
+      var $promiseResolve = aFunction(C.resolve);
+      var values = [];
+      var counter = 0;
+      var remaining = 1;
+      iterate(iterable, function (promise) {
+        var index = counter++;
+        var alreadyCalled = false;
+        values.push(undefined);
+        remaining++;
+        $promiseResolve.call(C, promise).then(function (value) {
+          if (alreadyCalled) return;
+          alreadyCalled = true;
+          values[index] = value;
+          --remaining || resolve(values);
+        }, reject);
+      });
+      --remaining || resolve(values);
+    });
+    if (result.error) reject(result.value);
+    return capability.promise;
+  },
+  // `Promise.race` method
+  // https://tc39.es/ecma262/#sec-promise.race
+  race: function race(iterable) {
+    var C = this;
+    var capability = newPromiseCapability(C);
+    var reject = capability.reject;
+    var result = perform(function () {
+      var $promiseResolve = aFunction(C.resolve);
+      iterate(iterable, function (promise) {
+        $promiseResolve.call(C, promise).then(capability.resolve, reject);
+      });
+    });
+    if (result.error) reject(result.value);
+    return capability.promise;
+  }
+});
+
+
+/***/ }),
+/* 165 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var wellKnownSymbol = __webpack_require__(8);
+
+var ITERATOR = wellKnownSymbol('iterator');
+var SAFE_CLOSING = false;
+
+try {
+  var called = 0;
+  var iteratorWithReturn = {
+    next: function () {
+      return { done: !!called++ };
+    },
+    'return': function () {
+      SAFE_CLOSING = true;
+    }
+  };
+  iteratorWithReturn[ITERATOR] = function () {
+    return this;
+  };
+  // eslint-disable-next-line no-throw-literal -- required for testing
+  Array.from(iteratorWithReturn, function () { throw 2; });
+} catch (error) { /* empty */ }
+
+module.exports = function (exec, SKIP_CLOSING) {
+  if (!SKIP_CLOSING && !SAFE_CLOSING) return false;
+  var ITERATION_SUPPORT = false;
+  try {
+    var object = {};
+    object[ITERATOR] = function () {
+      return {
+        next: function () {
+          return { done: ITERATION_SUPPORT = true };
+        }
+      };
+    };
+    exec(object);
+  } catch (error) { /* empty */ }
+  return ITERATION_SUPPORT;
+};
+
+
+/***/ }),
+/* 166 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var createIteratorConstructor = __webpack_require__(199);
+var getPrototypeOf = __webpack_require__(174);
+var setPrototypeOf = __webpack_require__(143);
+var setToStringTag = __webpack_require__(90);
+var createNonEnumerableProperty = __webpack_require__(19);
+var redefine = __webpack_require__(27);
+var wellKnownSymbol = __webpack_require__(8);
+var IS_PURE = __webpack_require__(57);
+var Iterators = __webpack_require__(110);
+var IteratorsCore = __webpack_require__(173);
+
+var IteratorPrototype = IteratorsCore.IteratorPrototype;
+var BUGGY_SAFARI_ITERATORS = IteratorsCore.BUGGY_SAFARI_ITERATORS;
+var ITERATOR = wellKnownSymbol('iterator');
+var KEYS = 'keys';
+var VALUES = 'values';
+var ENTRIES = 'entries';
+
+var returnThis = function () { return this; };
+
+module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, IS_SET, FORCED) {
+  createIteratorConstructor(IteratorConstructor, NAME, next);
+
+  var getIterationMethod = function (KIND) {
+    if (KIND === DEFAULT && defaultIterator) return defaultIterator;
+    if (!BUGGY_SAFARI_ITERATORS && KIND in IterablePrototype) return IterablePrototype[KIND];
+    switch (KIND) {
+      case KEYS: return function keys() { return new IteratorConstructor(this, KIND); };
+      case VALUES: return function values() { return new IteratorConstructor(this, KIND); };
+      case ENTRIES: return function entries() { return new IteratorConstructor(this, KIND); };
+    } return function () { return new IteratorConstructor(this); };
+  };
+
+  var TO_STRING_TAG = NAME + ' Iterator';
+  var INCORRECT_VALUES_NAME = false;
+  var IterablePrototype = Iterable.prototype;
+  var nativeIterator = IterablePrototype[ITERATOR]
+    || IterablePrototype['@@iterator']
+    || DEFAULT && IterablePrototype[DEFAULT];
+  var defaultIterator = !BUGGY_SAFARI_ITERATORS && nativeIterator || getIterationMethod(DEFAULT);
+  var anyNativeIterator = NAME == 'Array' ? IterablePrototype.entries || nativeIterator : nativeIterator;
+  var CurrentIteratorPrototype, methods, KEY;
+
+  // fix native
+  if (anyNativeIterator) {
+    CurrentIteratorPrototype = getPrototypeOf(anyNativeIterator.call(new Iterable()));
+    if (IteratorPrototype !== Object.prototype && CurrentIteratorPrototype.next) {
+      if (!IS_PURE && getPrototypeOf(CurrentIteratorPrototype) !== IteratorPrototype) {
+        if (setPrototypeOf) {
+          setPrototypeOf(CurrentIteratorPrototype, IteratorPrototype);
+        } else if (typeof CurrentIteratorPrototype[ITERATOR] != 'function') {
+          createNonEnumerableProperty(CurrentIteratorPrototype, ITERATOR, returnThis);
+        }
+      }
+      // Set @@toStringTag to native iterators
+      setToStringTag(CurrentIteratorPrototype, TO_STRING_TAG, true, true);
+      if (IS_PURE) Iterators[TO_STRING_TAG] = returnThis;
+    }
+  }
+
+  // fix Array#{values, @@iterator}.name in V8 / FF
+  if (DEFAULT == VALUES && nativeIterator && nativeIterator.name !== VALUES) {
+    INCORRECT_VALUES_NAME = true;
+    defaultIterator = function values() { return nativeIterator.call(this); };
+  }
+
+  // define iterator
+  if ((!IS_PURE || FORCED) && IterablePrototype[ITERATOR] !== defaultIterator) {
+    createNonEnumerableProperty(IterablePrototype, ITERATOR, defaultIterator);
+  }
+  Iterators[NAME] = defaultIterator;
+
+  // export additional methods
+  if (DEFAULT) {
+    methods = {
+      values: getIterationMethod(VALUES),
+      keys: IS_SET ? defaultIterator : getIterationMethod(KEYS),
+      entries: getIterationMethod(ENTRIES)
+    };
+    if (FORCED) for (KEY in methods) {
+      if (BUGGY_SAFARI_ITERATORS || INCORRECT_VALUES_NAME || !(KEY in IterablePrototype)) {
+        redefine(IterablePrototype, KEY, methods[KEY]);
+      }
+    } else $({ target: NAME, proto: true, forced: BUGGY_SAFARI_ITERATORS || INCORRECT_VALUES_NAME }, methods);
+  }
+
+  return methods;
+};
+
+
+/***/ }),
+/* 167 */,
+/* 168 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toObject = __webpack_require__(38);
+
+var floor = Math.floor;
+var replace = ''.replace;
+var SUBSTITUTION_SYMBOLS = /\$([$&'`]|\d{1,2}|<[^>]*>)/g;
+var SUBSTITUTION_SYMBOLS_NO_NAMED = /\$([$&'`]|\d{1,2})/g;
+
+// https://tc39.es/ecma262/#sec-getsubstitution
+module.exports = function (matched, str, position, captures, namedCaptures, replacement) {
+  var tailPos = position + matched.length;
+  var m = captures.length;
+  var symbols = SUBSTITUTION_SYMBOLS_NO_NAMED;
+  if (namedCaptures !== undefined) {
+    namedCaptures = toObject(namedCaptures);
+    symbols = SUBSTITUTION_SYMBOLS;
+  }
+  return replace.call(replacement, symbols, function (match, ch) {
+    var capture;
+    switch (ch.charAt(0)) {
+      case '$': return '$';
+      case '&': return matched;
+      case '`': return str.slice(0, position);
+      case "'": return str.slice(tailPos);
+      case '<':
+        capture = namedCaptures[ch.slice(1, -1)];
+        break;
+      default: // \d\d?
+        var n = +ch;
+        if (n === 0) return match;
+        if (n > m) {
+          var f = floor(n / 10);
+          if (f === 0) return match;
+          if (f <= m) return captures[f - 1] === undefined ? ch.charAt(1) : captures[f - 1] + ch.charAt(1);
+          return match;
+        }
+        capture = captures[n - 1];
+    }
+    return capture === undefined ? '' : capture;
+  });
+};
+
+
+/***/ }),
+/* 169 */,
+/* 170 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var fixRegExpWellKnownSymbolLogic = __webpack_require__(111);
+var anObject = __webpack_require__(9);
+var requireObjectCoercible = __webpack_require__(32);
+var sameValue = __webpack_require__(214);
+var regExpExec = __webpack_require__(112);
+
+// @@search logic
+fixRegExpWellKnownSymbolLogic('search', 1, function (SEARCH, nativeSearch, maybeCallNative) {
+  return [
+    // `String.prototype.search` method
+    // https://tc39.es/ecma262/#sec-string.prototype.search
+    function search(regexp) {
+      var O = requireObjectCoercible(this);
+      var searcher = regexp == undefined ? undefined : regexp[SEARCH];
+      return searcher !== undefined ? searcher.call(regexp, O) : new RegExp(regexp)[SEARCH](String(O));
+    },
+    // `RegExp.prototype[@@search]` method
+    // https://tc39.es/ecma262/#sec-regexp.prototype-@@search
+    function (regexp) {
+      var res = maybeCallNative(nativeSearch, regexp, this);
+      if (res.done) return res.value;
+
+      var rx = anObject(regexp);
+      var S = String(this);
+
+      var previousLastIndex = rx.lastIndex;
+      if (!sameValue(previousLastIndex, 0)) rx.lastIndex = 0;
+      var result = regExpExec(rx, S);
+      if (!sameValue(rx.lastIndex, previousLastIndex)) rx.lastIndex = previousLastIndex;
+      return result === null ? -1 : result.index;
+    }
+  ];
+});
+
+
+/***/ }),
+/* 171 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var wellKnownSymbol = __webpack_require__(8);
+var Iterators = __webpack_require__(110);
+
+var ITERATOR = wellKnownSymbol('iterator');
+var ArrayPrototype = Array.prototype;
+
+// check on default Array iterator
+module.exports = function (it) {
+  return it !== undefined && (Iterators.Array === it || ArrayPrototype[ITERATOR] === it);
+};
+
+
+/***/ }),
+/* 172 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject = __webpack_require__(9);
+
+module.exports = function (iterator) {
+  var returnMethod = iterator['return'];
+  if (returnMethod !== undefined) {
+    return anObject(returnMethod.call(iterator)).value;
+  }
+};
+
+
+/***/ }),
+/* 173 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var fails = __webpack_require__(6);
+var getPrototypeOf = __webpack_require__(174);
+var createNonEnumerableProperty = __webpack_require__(19);
+var has = __webpack_require__(11);
+var wellKnownSymbol = __webpack_require__(8);
+var IS_PURE = __webpack_require__(57);
+
+var ITERATOR = wellKnownSymbol('iterator');
+var BUGGY_SAFARI_ITERATORS = false;
+
+var returnThis = function () { return this; };
+
+// `%IteratorPrototype%` object
+// https://tc39.es/ecma262/#sec-%iteratorprototype%-object
+var IteratorPrototype, PrototypeOfArrayIteratorPrototype, arrayIterator;
+
+if ([].keys) {
+  arrayIterator = [].keys();
+  // Safari 8 has buggy iterators w/o `next`
+  if (!('next' in arrayIterator)) BUGGY_SAFARI_ITERATORS = true;
+  else {
+    PrototypeOfArrayIteratorPrototype = getPrototypeOf(getPrototypeOf(arrayIterator));
+    if (PrototypeOfArrayIteratorPrototype !== Object.prototype) IteratorPrototype = PrototypeOfArrayIteratorPrototype;
+  }
+}
+
+var NEW_ITERATOR_PROTOTYPE = IteratorPrototype == undefined || fails(function () {
+  var test = {};
+  // FF44- legacy iterators case
+  return IteratorPrototype[ITERATOR].call(test) !== test;
+});
+
+if (NEW_ITERATOR_PROTOTYPE) IteratorPrototype = {};
+
+// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+if ((!IS_PURE || NEW_ITERATOR_PROTOTYPE) && !has(IteratorPrototype, ITERATOR)) {
+  createNonEnumerableProperty(IteratorPrototype, ITERATOR, returnThis);
+}
+
+module.exports = {
+  IteratorPrototype: IteratorPrototype,
+  BUGGY_SAFARI_ITERATORS: BUGGY_SAFARI_ITERATORS
+};
+
+
+/***/ }),
+/* 174 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var has = __webpack_require__(11);
+var toObject = __webpack_require__(38);
+var sharedKey = __webpack_require__(52);
+var CORRECT_PROTOTYPE_GETTER = __webpack_require__(213);
+
+var IE_PROTO = sharedKey('IE_PROTO');
+var ObjectPrototype = Object.prototype;
+
+// `Object.getPrototypeOf` method
+// https://tc39.es/ecma262/#sec-object.getprototypeof
+module.exports = CORRECT_PROTOTYPE_GETTER ? Object.getPrototypeOf : function (O) {
+  O = toObject(O);
+  if (has(O, IE_PROTO)) return O[IE_PROTO];
+  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
+    return O.constructor.prototype;
+  } return O instanceof Object ? ObjectPrototype : null;
+};
+
+
+/***/ }),
+/* 175 */,
+/* 176 */,
+/* 177 */,
+/* 178 */,
+/* 179 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayLikeToArray = __webpack_require__(124);
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return arrayLikeToArray(arr);
+}
+
+module.exports = _arrayWithoutHoles;
+
+/***/ }),
+/* 180 */
+/***/ (function(module, exports) {
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+module.exports = _iterableToArray;
+
+/***/ }),
+/* 181 */
+/***/ (function(module, exports) {
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+module.exports = _nonIterableSpread;
+
+/***/ }),
+/* 182 */
 /***/ (function(module, exports) {
 
 function _arrayWithHoles(arr) {
@@ -104,8 +4275,7 @@ function _arrayWithHoles(arr) {
 module.exports = _arrayWithHoles;
 
 /***/ }),
-
-/***/ 101:
+/* 183 */
 /***/ (function(module, exports) {
 
 function _iterableToArrayLimit(arr, i) {
@@ -138,8 +4308,7 @@ function _iterableToArrayLimit(arr, i) {
 module.exports = _iterableToArrayLimit;
 
 /***/ }),
-
-/***/ 102:
+/* 184 */
 /***/ (function(module, exports) {
 
 function _nonIterableRest() {
@@ -149,771 +4318,558 @@ function _nonIterableRest() {
 module.exports = _nonIterableRest;
 
 /***/ }),
-
-/***/ 119:
+/* 185 */,
+/* 186 */,
+/* 187 */,
+/* 188 */,
+/* 189 */,
+/* 190 */,
+/* 191 */,
+/* 192 */,
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * Copyright (c) 2014-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
+var global = __webpack_require__(3);
 
-var runtime = (function (exports) {
-  "use strict";
+module.exports = global.Promise;
 
-  var Op = Object.prototype;
-  var hasOwn = Op.hasOwnProperty;
-  var undefined; // More compressible than void 0.
-  var $Symbol = typeof Symbol === "function" ? Symbol : {};
-  var iteratorSymbol = $Symbol.iterator || "@@iterator";
-  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
-  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
 
-  function define(obj, key, value) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-    return obj[key];
-  }
-  try {
-    // IE 8 has a broken Object.defineProperty that only works on DOM objects.
-    define({}, "");
-  } catch (err) {
-    define = function(obj, key, value) {
-      return obj[key] = value;
+/***/ }),
+/* 194 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var getOwnPropertyDescriptor = __webpack_require__(33).f;
+var macrotask = __webpack_require__(157).set;
+var IS_IOS = __webpack_require__(158);
+var IS_WEBOS_WEBKIT = __webpack_require__(195);
+var IS_NODE = __webpack_require__(77);
+
+var MutationObserver = global.MutationObserver || global.WebKitMutationObserver;
+var document = global.document;
+var process = global.process;
+var Promise = global.Promise;
+// Node.js 11 shows ExperimentalWarning on getting `queueMicrotask`
+var queueMicrotaskDescriptor = getOwnPropertyDescriptor(global, 'queueMicrotask');
+var queueMicrotask = queueMicrotaskDescriptor && queueMicrotaskDescriptor.value;
+
+var flush, head, last, notify, toggle, node, promise, then;
+
+// modern engines have queueMicrotask method
+if (!queueMicrotask) {
+  flush = function () {
+    var parent, fn;
+    if (IS_NODE && (parent = process.domain)) parent.exit();
+    while (head) {
+      fn = head.fn;
+      head = head.next;
+      try {
+        fn();
+      } catch (error) {
+        if (head) notify();
+        else last = undefined;
+        throw error;
+      }
+    } last = undefined;
+    if (parent) parent.enter();
+  };
+
+  // browsers with MutationObserver, except iOS - https://github.com/zloirock/core-js/issues/339
+  // also except WebOS Webkit https://github.com/zloirock/core-js/issues/898
+  if (!IS_IOS && !IS_NODE && !IS_WEBOS_WEBKIT && MutationObserver && document) {
+    toggle = true;
+    node = document.createTextNode('');
+    new MutationObserver(flush).observe(node, { characterData: true });
+    notify = function () {
+      node.data = toggle = !toggle;
+    };
+  // environments with maybe non-completely correct, but existent Promise
+  } else if (Promise && Promise.resolve) {
+    // Promise.resolve without an argument throws an error in LG WebOS 2
+    promise = Promise.resolve(undefined);
+    then = promise.then;
+    notify = function () {
+      then.call(promise, flush);
+    };
+  // Node.js without promises
+  } else if (IS_NODE) {
+    notify = function () {
+      process.nextTick(flush);
+    };
+  // for other environments - macrotask based on:
+  // - setImmediate
+  // - MessageChannel
+  // - window.postMessag
+  // - onreadystatechange
+  // - setTimeout
+  } else {
+    notify = function () {
+      // strange IE + webpack dev server bug - use .call(global)
+      macrotask.call(global, flush);
     };
   }
-
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
-    var generator = Object.create(protoGenerator.prototype);
-    var context = new Context(tryLocsList || []);
-
-    // The ._invoke method unifies the implementations of the .next,
-    // .throw, and .return methods.
-    generator._invoke = makeInvokeMethod(innerFn, self, context);
-
-    return generator;
-  }
-  exports.wrap = wrap;
-
-  // Try/catch helper to minimize deoptimizations. Returns a completion
-  // record like context.tryEntries[i].completion. This interface could
-  // have been (and was previously) designed to take a closure to be
-  // invoked without arguments, but in all the cases we care about we
-  // already have an existing method we want to call, so there's no need
-  // to create a new function object. We can even get away with assuming
-  // the method takes exactly one argument, since that happens to be true
-  // in every case, so we don't have to touch the arguments object. The
-  // only additional allocation required is the completion record, which
-  // has a stable shape and so hopefully should be cheap to allocate.
-  function tryCatch(fn, obj, arg) {
-    try {
-      return { type: "normal", arg: fn.call(obj, arg) };
-    } catch (err) {
-      return { type: "throw", arg: err };
-    }
-  }
-
-  var GenStateSuspendedStart = "suspendedStart";
-  var GenStateSuspendedYield = "suspendedYield";
-  var GenStateExecuting = "executing";
-  var GenStateCompleted = "completed";
-
-  // Returning this object from the innerFn has the same effect as
-  // breaking out of the dispatch switch statement.
-  var ContinueSentinel = {};
-
-  // Dummy constructor functions that we use as the .constructor and
-  // .constructor.prototype properties for functions that return Generator
-  // objects. For full spec compliance, you may wish to configure your
-  // minifier not to mangle the names of these two functions.
-  function Generator() {}
-  function GeneratorFunction() {}
-  function GeneratorFunctionPrototype() {}
-
-  // This is a polyfill for %IteratorPrototype% for environments that
-  // don't natively support it.
-  var IteratorPrototype = {};
-  IteratorPrototype[iteratorSymbol] = function () {
-    return this;
-  };
-
-  var getProto = Object.getPrototypeOf;
-  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  if (NativeIteratorPrototype &&
-      NativeIteratorPrototype !== Op &&
-      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
-    // This environment has a native %IteratorPrototype%; use it instead
-    // of the polyfill.
-    IteratorPrototype = NativeIteratorPrototype;
-  }
-
-  var Gp = GeneratorFunctionPrototype.prototype =
-    Generator.prototype = Object.create(IteratorPrototype);
-  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
-  GeneratorFunctionPrototype.constructor = GeneratorFunction;
-  GeneratorFunction.displayName = define(
-    GeneratorFunctionPrototype,
-    toStringTagSymbol,
-    "GeneratorFunction"
-  );
-
-  // Helper for defining the .next, .throw, and .return methods of the
-  // Iterator interface in terms of a single ._invoke method.
-  function defineIteratorMethods(prototype) {
-    ["next", "throw", "return"].forEach(function(method) {
-      define(prototype, method, function(arg) {
-        return this._invoke(method, arg);
-      });
-    });
-  }
-
-  exports.isGeneratorFunction = function(genFun) {
-    var ctor = typeof genFun === "function" && genFun.constructor;
-    return ctor
-      ? ctor === GeneratorFunction ||
-        // For the native GeneratorFunction constructor, the best we can
-        // do is to check its .name property.
-        (ctor.displayName || ctor.name) === "GeneratorFunction"
-      : false;
-  };
-
-  exports.mark = function(genFun) {
-    if (Object.setPrototypeOf) {
-      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
-    } else {
-      genFun.__proto__ = GeneratorFunctionPrototype;
-      define(genFun, toStringTagSymbol, "GeneratorFunction");
-    }
-    genFun.prototype = Object.create(Gp);
-    return genFun;
-  };
-
-  // Within the body of any async function, `await x` is transformed to
-  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
-  // `hasOwn.call(value, "__await")` to determine if the yielded value is
-  // meant to be awaited.
-  exports.awrap = function(arg) {
-    return { __await: arg };
-  };
-
-  function AsyncIterator(generator, PromiseImpl) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-      if (record.type === "throw") {
-        reject(record.arg);
-      } else {
-        var result = record.arg;
-        var value = result.value;
-        if (value &&
-            typeof value === "object" &&
-            hasOwn.call(value, "__await")) {
-          return PromiseImpl.resolve(value.__await).then(function(value) {
-            invoke("next", value, resolve, reject);
-          }, function(err) {
-            invoke("throw", err, resolve, reject);
-          });
-        }
-
-        return PromiseImpl.resolve(value).then(function(unwrapped) {
-          // When a yielded Promise is resolved, its final value becomes
-          // the .value of the Promise<{value,done}> result for the
-          // current iteration.
-          result.value = unwrapped;
-          resolve(result);
-        }, function(error) {
-          // If a rejected Promise was yielded, throw the rejection back
-          // into the async generator function so it can be handled there.
-          return invoke("throw", error, resolve, reject);
-        });
-      }
-    }
-
-    var previousPromise;
-
-    function enqueue(method, arg) {
-      function callInvokeWithMethodAndArg() {
-        return new PromiseImpl(function(resolve, reject) {
-          invoke(method, arg, resolve, reject);
-        });
-      }
-
-      return previousPromise =
-        // If enqueue has been called before, then we want to wait until
-        // all previous Promises have been resolved before calling invoke,
-        // so that results are always delivered in the correct order. If
-        // enqueue has not been called before, then it is important to
-        // call invoke immediately, without waiting on a callback to fire,
-        // so that the async generator function has the opportunity to do
-        // any necessary setup in a predictable way. This predictability
-        // is why the Promise constructor synchronously invokes its
-        // executor callback, and why async functions synchronously
-        // execute code before the first await. Since we implement simple
-        // async functions in terms of async generators, it is especially
-        // important to get this right, even though it requires care.
-        previousPromise ? previousPromise.then(
-          callInvokeWithMethodAndArg,
-          // Avoid propagating failures to Promises returned by later
-          // invocations of the iterator.
-          callInvokeWithMethodAndArg
-        ) : callInvokeWithMethodAndArg();
-    }
-
-    // Define the unified helper method that is used to implement .next,
-    // .throw, and .return (see defineIteratorMethods).
-    this._invoke = enqueue;
-  }
-
-  defineIteratorMethods(AsyncIterator.prototype);
-  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
-    return this;
-  };
-  exports.AsyncIterator = AsyncIterator;
-
-  // Note that simple async functions are implemented on top of
-  // AsyncIterator objects; they just return a Promise for the value of
-  // the final result produced by the iterator.
-  exports.async = function(innerFn, outerFn, self, tryLocsList, PromiseImpl) {
-    if (PromiseImpl === void 0) PromiseImpl = Promise;
-
-    var iter = new AsyncIterator(
-      wrap(innerFn, outerFn, self, tryLocsList),
-      PromiseImpl
-    );
-
-    return exports.isGeneratorFunction(outerFn)
-      ? iter // If outerFn is a generator, return the full iterator.
-      : iter.next().then(function(result) {
-          return result.done ? result.value : iter.next();
-        });
-  };
-
-  function makeInvokeMethod(innerFn, self, context) {
-    var state = GenStateSuspendedStart;
-
-    return function invoke(method, arg) {
-      if (state === GenStateExecuting) {
-        throw new Error("Generator is already running");
-      }
-
-      if (state === GenStateCompleted) {
-        if (method === "throw") {
-          throw arg;
-        }
-
-        // Be forgiving, per 25.3.3.3.3 of the spec:
-        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
-        return doneResult();
-      }
-
-      context.method = method;
-      context.arg = arg;
-
-      while (true) {
-        var delegate = context.delegate;
-        if (delegate) {
-          var delegateResult = maybeInvokeDelegate(delegate, context);
-          if (delegateResult) {
-            if (delegateResult === ContinueSentinel) continue;
-            return delegateResult;
-          }
-        }
-
-        if (context.method === "next") {
-          // Setting context._sent for legacy support of Babel's
-          // function.sent implementation.
-          context.sent = context._sent = context.arg;
-
-        } else if (context.method === "throw") {
-          if (state === GenStateSuspendedStart) {
-            state = GenStateCompleted;
-            throw context.arg;
-          }
-
-          context.dispatchException(context.arg);
-
-        } else if (context.method === "return") {
-          context.abrupt("return", context.arg);
-        }
-
-        state = GenStateExecuting;
-
-        var record = tryCatch(innerFn, self, context);
-        if (record.type === "normal") {
-          // If an exception is thrown from innerFn, we leave state ===
-          // GenStateExecuting and loop back for another invocation.
-          state = context.done
-            ? GenStateCompleted
-            : GenStateSuspendedYield;
-
-          if (record.arg === ContinueSentinel) {
-            continue;
-          }
-
-          return {
-            value: record.arg,
-            done: context.done
-          };
-
-        } else if (record.type === "throw") {
-          state = GenStateCompleted;
-          // Dispatch the exception by looping back around to the
-          // context.dispatchException(context.arg) call above.
-          context.method = "throw";
-          context.arg = record.arg;
-        }
-      }
-    };
-  }
-
-  // Call delegate.iterator[context.method](context.arg) and handle the
-  // result, either by returning a { value, done } result from the
-  // delegate iterator, or by modifying context.method and context.arg,
-  // setting context.delegate to null, and returning the ContinueSentinel.
-  function maybeInvokeDelegate(delegate, context) {
-    var method = delegate.iterator[context.method];
-    if (method === undefined) {
-      // A .throw or .return when the delegate iterator has no .throw
-      // method always terminates the yield* loop.
-      context.delegate = null;
-
-      if (context.method === "throw") {
-        // Note: ["return"] must be used for ES3 parsing compatibility.
-        if (delegate.iterator["return"]) {
-          // If the delegate iterator has a return method, give it a
-          // chance to clean up.
-          context.method = "return";
-          context.arg = undefined;
-          maybeInvokeDelegate(delegate, context);
-
-          if (context.method === "throw") {
-            // If maybeInvokeDelegate(context) changed context.method from
-            // "return" to "throw", let that override the TypeError below.
-            return ContinueSentinel;
-          }
-        }
-
-        context.method = "throw";
-        context.arg = new TypeError(
-          "The iterator does not provide a 'throw' method");
-      }
-
-      return ContinueSentinel;
-    }
-
-    var record = tryCatch(method, delegate.iterator, context.arg);
-
-    if (record.type === "throw") {
-      context.method = "throw";
-      context.arg = record.arg;
-      context.delegate = null;
-      return ContinueSentinel;
-    }
-
-    var info = record.arg;
-
-    if (! info) {
-      context.method = "throw";
-      context.arg = new TypeError("iterator result is not an object");
-      context.delegate = null;
-      return ContinueSentinel;
-    }
-
-    if (info.done) {
-      // Assign the result of the finished delegate to the temporary
-      // variable specified by delegate.resultName (see delegateYield).
-      context[delegate.resultName] = info.value;
-
-      // Resume execution at the desired location (see delegateYield).
-      context.next = delegate.nextLoc;
-
-      // If context.method was "throw" but the delegate handled the
-      // exception, let the outer generator proceed normally. If
-      // context.method was "next", forget context.arg since it has been
-      // "consumed" by the delegate iterator. If context.method was
-      // "return", allow the original .return call to continue in the
-      // outer generator.
-      if (context.method !== "return") {
-        context.method = "next";
-        context.arg = undefined;
-      }
-
-    } else {
-      // Re-yield the result returned by the delegate method.
-      return info;
-    }
-
-    // The delegate iterator is finished, so forget it and continue with
-    // the outer generator.
-    context.delegate = null;
-    return ContinueSentinel;
-  }
-
-  // Define Generator.prototype.{next,throw,return} in terms of the
-  // unified ._invoke helper method.
-  defineIteratorMethods(Gp);
-
-  define(Gp, toStringTagSymbol, "Generator");
-
-  // A Generator should always return itself as the iterator object when the
-  // @@iterator function is called on it. Some browsers' implementations of the
-  // iterator prototype chain incorrectly implement this, causing the Generator
-  // object to not be returned from this call. This ensures that doesn't happen.
-  // See https://github.com/facebook/regenerator/issues/274 for more details.
-  Gp[iteratorSymbol] = function() {
-    return this;
-  };
-
-  Gp.toString = function() {
-    return "[object Generator]";
-  };
-
-  function pushTryEntry(locs) {
-    var entry = { tryLoc: locs[0] };
-
-    if (1 in locs) {
-      entry.catchLoc = locs[1];
-    }
-
-    if (2 in locs) {
-      entry.finallyLoc = locs[2];
-      entry.afterLoc = locs[3];
-    }
-
-    this.tryEntries.push(entry);
-  }
-
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal";
-    delete record.arg;
-    entry.completion = record;
-  }
-
-  function Context(tryLocsList) {
-    // The root entry object (effectively a try statement without a catch
-    // or a finally block) gives us a place to store values thrown from
-    // locations where there is no enclosing try statement.
-    this.tryEntries = [{ tryLoc: "root" }];
-    tryLocsList.forEach(pushTryEntry, this);
-    this.reset(true);
-  }
-
-  exports.keys = function(object) {
-    var keys = [];
-    for (var key in object) {
-      keys.push(key);
-    }
-    keys.reverse();
-
-    // Rather than returning an object with a next method, we keep
-    // things simple and return the next function itself.
-    return function next() {
-      while (keys.length) {
-        var key = keys.pop();
-        if (key in object) {
-          next.value = key;
-          next.done = false;
-          return next;
-        }
-      }
-
-      // To avoid creating an additional object, we just hang the .value
-      // and .done properties off the next function object itself. This
-      // also ensures that the minifier will not anonymize the function.
-      next.done = true;
-      return next;
-    };
-  };
-
-  function values(iterable) {
-    if (iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) {
-        return iteratorMethod.call(iterable);
-      }
-
-      if (typeof iterable.next === "function") {
-        return iterable;
-      }
-
-      if (!isNaN(iterable.length)) {
-        var i = -1, next = function next() {
-          while (++i < iterable.length) {
-            if (hasOwn.call(iterable, i)) {
-              next.value = iterable[i];
-              next.done = false;
-              return next;
-            }
-          }
-
-          next.value = undefined;
-          next.done = true;
-
-          return next;
-        };
-
-        return next.next = next;
-      }
-    }
-
-    // Return an iterator with no values.
-    return { next: doneResult };
-  }
-  exports.values = values;
-
-  function doneResult() {
-    return { value: undefined, done: true };
-  }
-
-  Context.prototype = {
-    constructor: Context,
-
-    reset: function(skipTempReset) {
-      this.prev = 0;
-      this.next = 0;
-      // Resetting context._sent for legacy support of Babel's
-      // function.sent implementation.
-      this.sent = this._sent = undefined;
-      this.done = false;
-      this.delegate = null;
-
-      this.method = "next";
-      this.arg = undefined;
-
-      this.tryEntries.forEach(resetTryEntry);
-
-      if (!skipTempReset) {
-        for (var name in this) {
-          // Not sure about the optimal order of these conditions:
-          if (name.charAt(0) === "t" &&
-              hasOwn.call(this, name) &&
-              !isNaN(+name.slice(1))) {
-            this[name] = undefined;
-          }
-        }
-      }
-    },
-
-    stop: function() {
-      this.done = true;
-
-      var rootEntry = this.tryEntries[0];
-      var rootRecord = rootEntry.completion;
-      if (rootRecord.type === "throw") {
-        throw rootRecord.arg;
-      }
-
-      return this.rval;
-    },
-
-    dispatchException: function(exception) {
-      if (this.done) {
-        throw exception;
-      }
-
-      var context = this;
-      function handle(loc, caught) {
-        record.type = "throw";
-        record.arg = exception;
-        context.next = loc;
-
-        if (caught) {
-          // If the dispatched exception was caught by a catch block,
-          // then let that catch block handle the exception normally.
-          context.method = "next";
-          context.arg = undefined;
-        }
-
-        return !! caught;
-      }
-
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        var record = entry.completion;
-
-        if (entry.tryLoc === "root") {
-          // Exception thrown outside of any try block that could handle
-          // it, so set the completion value of the entire function to
-          // throw the exception.
-          return handle("end");
-        }
-
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc");
-          var hasFinally = hasOwn.call(entry, "finallyLoc");
-
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) {
-              return handle(entry.catchLoc, true);
-            } else if (this.prev < entry.finallyLoc) {
-              return handle(entry.finallyLoc);
-            }
-
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) {
-              return handle(entry.catchLoc, true);
-            }
-
-          } else if (hasFinally) {
-            if (this.prev < entry.finallyLoc) {
-              return handle(entry.finallyLoc);
-            }
-
-          } else {
-            throw new Error("try statement without catch or finally");
-          }
-        }
-      }
-    },
-
-    abrupt: function(type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc <= this.prev &&
-            hasOwn.call(entry, "finallyLoc") &&
-            this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
-          break;
-        }
-      }
-
-      if (finallyEntry &&
-          (type === "break" ||
-           type === "continue") &&
-          finallyEntry.tryLoc <= arg &&
-          arg <= finallyEntry.finallyLoc) {
-        // Ignore the finally entry if control is not jumping to a
-        // location outside the try/catch block.
-        finallyEntry = null;
-      }
-
-      var record = finallyEntry ? finallyEntry.completion : {};
-      record.type = type;
-      record.arg = arg;
-
-      if (finallyEntry) {
-        this.method = "next";
-        this.next = finallyEntry.finallyLoc;
-        return ContinueSentinel;
-      }
-
-      return this.complete(record);
-    },
-
-    complete: function(record, afterLoc) {
-      if (record.type === "throw") {
-        throw record.arg;
-      }
-
-      if (record.type === "break" ||
-          record.type === "continue") {
-        this.next = record.arg;
-      } else if (record.type === "return") {
-        this.rval = this.arg = record.arg;
-        this.method = "return";
-        this.next = "end";
-      } else if (record.type === "normal" && afterLoc) {
-        this.next = afterLoc;
-      }
-
-      return ContinueSentinel;
-    },
-
-    finish: function(finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) {
-          this.complete(entry.completion, entry.afterLoc);
-          resetTryEntry(entry);
-          return ContinueSentinel;
-        }
-      }
-    },
-
-    "catch": function(tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-          if (record.type === "throw") {
-            var thrown = record.arg;
-            resetTryEntry(entry);
-          }
-          return thrown;
-        }
-      }
-
-      // The context.catch method must only be called with a location
-      // argument that corresponds to a known catch block.
-      throw new Error("illegal catch attempt");
-    },
-
-    delegateYield: function(iterable, resultName, nextLoc) {
-      this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      };
-
-      if (this.method === "next") {
-        // Deliberately forget the last sent value so that we don't
-        // accidentally pass it on to the delegate.
-        this.arg = undefined;
-      }
-
-      return ContinueSentinel;
-    }
-  };
-
-  // Regardless of whether this script is executing as a CommonJS module
-  // or not, return the runtime object so that we can declare the variable
-  // regeneratorRuntime in the outer scope, which allows this module to be
-  // injected easily by `bin/regenerator --include-runtime script.js`.
-  return exports;
-
-}(
-  // If this script is executing as a CommonJS module, use module.exports
-  // as the regeneratorRuntime namespace. Otherwise create a new empty
-  // object. Either way, the resulting object will be used to initialize
-  // the regeneratorRuntime variable at the top of this file.
-   true ? module.exports : undefined
-));
-
-try {
-  regeneratorRuntime = runtime;
-} catch (accidentalStrictMode) {
-  // This module should not be running in strict mode, so the above
-  // assignment should always work unless something is misconfigured. Just
-  // in case runtime.js accidentally runs in strict mode, we can escape
-  // strict mode using a global Function call. This could conceivably fail
-  // if a Content Security Policy forbids using Function, but in that case
-  // the proper solution is to fix the accidental strict mode problem. If
-  // you've misconfigured your bundler to force strict mode and applied a
-  // CSP to forbid Function, and you're not willing to fix either of those
-  // problems, please detail your unique predicament in a GitHub issue.
-  Function("r", "regeneratorRuntime = r")(runtime);
 }
 
+module.exports = queueMicrotask || function (fn) {
+  var task = { fn: fn, next: undefined };
+  if (last) last.next = task;
+  if (!head) {
+    head = task;
+    notify();
+  } last = task;
+};
+
 
 /***/ }),
-
-/***/ 14:
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(119);
+var userAgent = __webpack_require__(87);
+
+module.exports = /web0s(?!.*chrome)/i.test(userAgent);
 
 
 /***/ }),
+/* 196 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 150:
+var anObject = __webpack_require__(9);
+var isObject = __webpack_require__(10);
+var newPromiseCapability = __webpack_require__(159);
+
+module.exports = function (C, x) {
+  anObject(C);
+  if (isObject(x) && x.constructor === C) return x;
+  var promiseCapability = newPromiseCapability.f(C);
+  var resolve = promiseCapability.resolve;
+  resolve(x);
+  return promiseCapability.promise;
+};
+
+
+/***/ }),
+/* 197 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+
+module.exports = function (a, b) {
+  var console = global.console;
+  if (console && console.error) {
+    arguments.length === 1 ? console.error(a) : console.error(a, b);
+  }
+};
+
+
+/***/ }),
+/* 198 */
+/***/ (function(module, exports) {
+
+module.exports = function (exec) {
+  try {
+    return { error: false, value: exec() };
+  } catch (error) {
+    return { error: true, value: error };
+  }
+};
+
+
+/***/ }),
+/* 199 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var IteratorPrototype = __webpack_require__(173).IteratorPrototype;
+var create = __webpack_require__(69);
+var createPropertyDescriptor = __webpack_require__(39);
+var setToStringTag = __webpack_require__(90);
+var Iterators = __webpack_require__(110);
+
+var returnThis = function () { return this; };
+
+module.exports = function (IteratorConstructor, NAME, next) {
+  var TO_STRING_TAG = NAME + ' Iterator';
+  IteratorConstructor.prototype = create(IteratorPrototype, { next: createPropertyDescriptor(1, next) });
+  setToStringTag(IteratorConstructor, TO_STRING_TAG, false, true);
+  Iterators[TO_STRING_TAG] = returnThis;
+  return IteratorConstructor;
+};
+
+
+/***/ }),
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var fixRegExpWellKnownSymbolLogic = __webpack_require__(111);
+var anObject = __webpack_require__(9);
+var toLength = __webpack_require__(34);
+var requireObjectCoercible = __webpack_require__(32);
+var advanceStringIndex = __webpack_require__(122);
+var regExpExec = __webpack_require__(112);
+
+// @@match logic
+fixRegExpWellKnownSymbolLogic('match', 1, function (MATCH, nativeMatch, maybeCallNative) {
+  return [
+    // `String.prototype.match` method
+    // https://tc39.es/ecma262/#sec-string.prototype.match
+    function match(regexp) {
+      var O = requireObjectCoercible(this);
+      var matcher = regexp == undefined ? undefined : regexp[MATCH];
+      return matcher !== undefined ? matcher.call(regexp, O) : new RegExp(regexp)[MATCH](String(O));
+    },
+    // `RegExp.prototype[@@match]` method
+    // https://tc39.es/ecma262/#sec-regexp.prototype-@@match
+    function (regexp) {
+      var res = maybeCallNative(nativeMatch, regexp, this);
+      if (res.done) return res.value;
+
+      var rx = anObject(regexp);
+      var S = String(this);
+
+      if (!rx.global) return regExpExec(rx, S);
+
+      var fullUnicode = rx.unicode;
+      rx.lastIndex = 0;
+      var A = [];
+      var n = 0;
+      var result;
+      while ((result = regExpExec(rx, S)) !== null) {
+        var matchStr = String(result[0]);
+        A[n] = matchStr;
+        if (matchStr === '') rx.lastIndex = advanceStringIndex(S, toLength(rx.lastIndex), fullUnicode);
+        n++;
+      }
+      return n === 0 ? null : A;
+    }
+  ];
+});
+
+
+/***/ }),
+/* 204 */,
+/* 205 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var hiddenKeys = __webpack_require__(36);
+var isObject = __webpack_require__(10);
+var has = __webpack_require__(11);
+var defineProperty = __webpack_require__(17).f;
+var uid = __webpack_require__(55);
+var FREEZING = __webpack_require__(253);
+
+var METADATA = uid('meta');
+var id = 0;
+
+var isExtensible = Object.isExtensible || function () {
+  return true;
+};
+
+var setMetadata = function (it) {
+  defineProperty(it, METADATA, { value: {
+    objectID: 'O' + ++id, // object ID
+    weakData: {}          // weak collections IDs
+  } });
+};
+
+var fastKey = function (it, create) {
+  // return a primitive with prefix
+  if (!isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+  if (!has(it, METADATA)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return 'F';
+    // not necessary to add metadata
+    if (!create) return 'E';
+    // add missing metadata
+    setMetadata(it);
+  // return object ID
+  } return it[METADATA].objectID;
+};
+
+var getWeakData = function (it, create) {
+  if (!has(it, METADATA)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return true;
+    // not necessary to add metadata
+    if (!create) return false;
+    // add missing metadata
+    setMetadata(it);
+  // return the store of weak collections IDs
+  } return it[METADATA].weakData;
+};
+
+// add metadata on freeze-family methods calling
+var onFreeze = function (it) {
+  if (FREEZING && meta.REQUIRED && isExtensible(it) && !has(it, METADATA)) setMetadata(it);
+  return it;
+};
+
+var meta = module.exports = {
+  REQUIRED: false,
+  fastKey: fastKey,
+  getWeakData: getWeakData,
+  onFreeze: onFreeze
+};
+
+hiddenKeys[METADATA] = true;
+
+
+/***/ }),
+/* 206 */,
+/* 207 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isRegExp = __webpack_require__(144);
+
+module.exports = function (it) {
+  if (isRegExp(it)) {
+    throw TypeError("The method doesn't accept regular expressions");
+  } return it;
+};
+
+
+/***/ }),
+/* 208 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var wellKnownSymbol = __webpack_require__(8);
+
+var MATCH = wellKnownSymbol('match');
+
+module.exports = function (METHOD_NAME) {
+  var regexp = /./;
+  try {
+    '/./'[METHOD_NAME](regexp);
+  } catch (error1) {
+    try {
+      regexp[MATCH] = false;
+      return '/./'[METHOD_NAME](regexp);
+    } catch (error2) { /* empty */ }
+  } return false;
+};
+
+
+/***/ }),
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fails = __webpack_require__(6);
+
+module.exports = !fails(function () {
+  function F() { /* empty */ }
+  F.prototype.constructor = null;
+  return Object.getPrototypeOf(new F()) !== F.prototype;
+});
+
+
+/***/ }),
+/* 214 */
+/***/ (function(module, exports) {
+
+// `SameValue` abstract operation
+// https://tc39.es/ecma262/#sec-samevalue
+module.exports = Object.is || function is(x, y) {
+  // eslint-disable-next-line no-self-compare -- NaN check
+  return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
+};
+
+
+/***/ }),
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__(13);
+var fails = __webpack_require__(6);
+var objectKeys = __webpack_require__(54);
+var getOwnPropertySymbolsModule = __webpack_require__(79);
+var propertyIsEnumerableModule = __webpack_require__(76);
+var toObject = __webpack_require__(38);
+var IndexedObject = __webpack_require__(71);
+
+var nativeAssign = Object.assign;
+var defineProperty = Object.defineProperty;
+
+// `Object.assign` method
+// https://tc39.es/ecma262/#sec-object.assign
+module.exports = !nativeAssign || fails(function () {
+  // should have correct order of operations (Edge bug)
+  if (DESCRIPTORS && nativeAssign({ b: 1 }, nativeAssign(defineProperty({}, 'a', {
+    enumerable: true,
+    get: function () {
+      defineProperty(this, 'b', {
+        value: 3,
+        enumerable: false
+      });
+    }
+  }), { b: 2 })).b !== 1) return true;
+  // should work with symbols and should have deterministic property order (V8 bug)
+  var A = {};
+  var B = {};
+  /* global Symbol -- required for testing */
+  var symbol = Symbol();
+  var alphabet = 'abcdefghijklmnopqrst';
+  A[symbol] = 7;
+  alphabet.split('').forEach(function (chr) { B[chr] = chr; });
+  return nativeAssign({}, A)[symbol] != 7 || objectKeys(nativeAssign({}, B)).join('') != alphabet;
+}) ? function assign(target, source) { // eslint-disable-line no-unused-vars -- required for `.length`
+  var T = toObject(target);
+  var argumentsLength = arguments.length;
+  var index = 1;
+  var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
+  var propertyIsEnumerable = propertyIsEnumerableModule.f;
+  while (argumentsLength > index) {
+    var S = IndexedObject(arguments[index++]);
+    var keys = getOwnPropertySymbols ? objectKeys(S).concat(getOwnPropertySymbols(S)) : objectKeys(S);
+    var length = keys.length;
+    var j = 0;
+    var key;
+    while (length > j) {
+      key = keys[j++];
+      if (!DESCRIPTORS || propertyIsEnumerable.call(S, key)) T[key] = S[key];
+    }
+  } return T;
+} : nativeAssign;
+
+
+/***/ }),
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(12);
+var global = __webpack_require__(3);
+var isForced = __webpack_require__(74);
+var redefine = __webpack_require__(27);
+var InternalMetadataModule = __webpack_require__(205);
+var iterate = __webpack_require__(154);
+var anInstance = __webpack_require__(136);
+var isObject = __webpack_require__(10);
+var fails = __webpack_require__(6);
+var checkCorrectnessOfIteration = __webpack_require__(165);
+var setToStringTag = __webpack_require__(90);
+var inheritIfRequired = __webpack_require__(156);
+
+module.exports = function (CONSTRUCTOR_NAME, wrapper, common) {
+  var IS_MAP = CONSTRUCTOR_NAME.indexOf('Map') !== -1;
+  var IS_WEAK = CONSTRUCTOR_NAME.indexOf('Weak') !== -1;
+  var ADDER = IS_MAP ? 'set' : 'add';
+  var NativeConstructor = global[CONSTRUCTOR_NAME];
+  var NativePrototype = NativeConstructor && NativeConstructor.prototype;
+  var Constructor = NativeConstructor;
+  var exported = {};
+
+  var fixMethod = function (KEY) {
+    var nativeMethod = NativePrototype[KEY];
+    redefine(NativePrototype, KEY,
+      KEY == 'add' ? function add(value) {
+        nativeMethod.call(this, value === 0 ? 0 : value);
+        return this;
+      } : KEY == 'delete' ? function (key) {
+        return IS_WEAK && !isObject(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
+      } : KEY == 'get' ? function get(key) {
+        return IS_WEAK && !isObject(key) ? undefined : nativeMethod.call(this, key === 0 ? 0 : key);
+      } : KEY == 'has' ? function has(key) {
+        return IS_WEAK && !isObject(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
+      } : function set(key, value) {
+        nativeMethod.call(this, key === 0 ? 0 : key, value);
+        return this;
+      }
+    );
+  };
+
+  var REPLACE = isForced(
+    CONSTRUCTOR_NAME,
+    typeof NativeConstructor != 'function' || !(IS_WEAK || NativePrototype.forEach && !fails(function () {
+      new NativeConstructor().entries().next();
+    }))
+  );
+
+  if (REPLACE) {
+    // create collection constructor
+    Constructor = common.getConstructor(wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER);
+    InternalMetadataModule.REQUIRED = true;
+  } else if (isForced(CONSTRUCTOR_NAME, true)) {
+    var instance = new Constructor();
+    // early implementations not supports chaining
+    var HASNT_CHAINING = instance[ADDER](IS_WEAK ? {} : -0, 1) != instance;
+    // V8 ~ Chromium 40- weak-collections throws on primitives, but should return false
+    var THROWS_ON_PRIMITIVES = fails(function () { instance.has(1); });
+    // most early implementations doesn't supports iterables, most modern - not close it correctly
+    // eslint-disable-next-line no-new -- required for testing
+    var ACCEPT_ITERABLES = checkCorrectnessOfIteration(function (iterable) { new NativeConstructor(iterable); });
+    // for early implementations -0 and +0 not the same
+    var BUGGY_ZERO = !IS_WEAK && fails(function () {
+      // V8 ~ Chromium 42- fails only with 5+ elements
+      var $instance = new NativeConstructor();
+      var index = 5;
+      while (index--) $instance[ADDER](index, index);
+      return !$instance.has(-0);
+    });
+
+    if (!ACCEPT_ITERABLES) {
+      Constructor = wrapper(function (dummy, iterable) {
+        anInstance(dummy, Constructor, CONSTRUCTOR_NAME);
+        var that = inheritIfRequired(new NativeConstructor(), dummy, Constructor);
+        if (iterable != undefined) iterate(iterable, that[ADDER], { that: that, AS_ENTRIES: IS_MAP });
+        return that;
+      });
+      Constructor.prototype = NativePrototype;
+      NativePrototype.constructor = Constructor;
+    }
+
+    if (THROWS_ON_PRIMITIVES || BUGGY_ZERO) {
+      fixMethod('delete');
+      fixMethod('has');
+      IS_MAP && fixMethod('get');
+    }
+
+    if (BUGGY_ZERO || HASNT_CHAINING) fixMethod(ADDER);
+
+    // weak collections should not contains .clear method
+    if (IS_WEAK && NativePrototype.clear) delete NativePrototype.clear;
+  }
+
+  exported[CONSTRUCTOR_NAME] = Constructor;
+  $({ global: true, forced: Constructor != NativeConstructor }, exported);
+
+  setToStringTag(Constructor, CONSTRUCTOR_NAME);
+
+  if (!IS_WEAK) common.setStrong(Constructor, CONSTRUCTOR_NAME, IS_MAP);
+
+  return Constructor;
+};
+
+
+/***/ }),
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */
 /***/ (function(module, exports) {
 
 function _objectWithoutPropertiesLoose(source, excluded) {
@@ -934,8 +4890,301 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 module.exports = _objectWithoutPropertiesLoose;
 
 /***/ }),
+/* 234 */,
+/* 235 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 176:
+"use strict";
+
+var defineProperty = __webpack_require__(17).f;
+var create = __webpack_require__(69);
+var redefineAll = __webpack_require__(152);
+var bind = __webpack_require__(94);
+var anInstance = __webpack_require__(136);
+var iterate = __webpack_require__(154);
+var defineIterator = __webpack_require__(166);
+var setSpecies = __webpack_require__(153);
+var DESCRIPTORS = __webpack_require__(13);
+var fastKey = __webpack_require__(205).fastKey;
+var InternalStateModule = __webpack_require__(45);
+
+var setInternalState = InternalStateModule.set;
+var internalStateGetterFor = InternalStateModule.getterFor;
+
+module.exports = {
+  getConstructor: function (wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER) {
+    var C = wrapper(function (that, iterable) {
+      anInstance(that, C, CONSTRUCTOR_NAME);
+      setInternalState(that, {
+        type: CONSTRUCTOR_NAME,
+        index: create(null),
+        first: undefined,
+        last: undefined,
+        size: 0
+      });
+      if (!DESCRIPTORS) that.size = 0;
+      if (iterable != undefined) iterate(iterable, that[ADDER], { that: that, AS_ENTRIES: IS_MAP });
+    });
+
+    var getInternalState = internalStateGetterFor(CONSTRUCTOR_NAME);
+
+    var define = function (that, key, value) {
+      var state = getInternalState(that);
+      var entry = getEntry(that, key);
+      var previous, index;
+      // change existing entry
+      if (entry) {
+        entry.value = value;
+      // create new entry
+      } else {
+        state.last = entry = {
+          index: index = fastKey(key, true),
+          key: key,
+          value: value,
+          previous: previous = state.last,
+          next: undefined,
+          removed: false
+        };
+        if (!state.first) state.first = entry;
+        if (previous) previous.next = entry;
+        if (DESCRIPTORS) state.size++;
+        else that.size++;
+        // add to index
+        if (index !== 'F') state.index[index] = entry;
+      } return that;
+    };
+
+    var getEntry = function (that, key) {
+      var state = getInternalState(that);
+      // fast case
+      var index = fastKey(key);
+      var entry;
+      if (index !== 'F') return state.index[index];
+      // frozen object case
+      for (entry = state.first; entry; entry = entry.next) {
+        if (entry.key == key) return entry;
+      }
+    };
+
+    redefineAll(C.prototype, {
+      // 23.1.3.1 Map.prototype.clear()
+      // 23.2.3.2 Set.prototype.clear()
+      clear: function clear() {
+        var that = this;
+        var state = getInternalState(that);
+        var data = state.index;
+        var entry = state.first;
+        while (entry) {
+          entry.removed = true;
+          if (entry.previous) entry.previous = entry.previous.next = undefined;
+          delete data[entry.index];
+          entry = entry.next;
+        }
+        state.first = state.last = undefined;
+        if (DESCRIPTORS) state.size = 0;
+        else that.size = 0;
+      },
+      // 23.1.3.3 Map.prototype.delete(key)
+      // 23.2.3.4 Set.prototype.delete(value)
+      'delete': function (key) {
+        var that = this;
+        var state = getInternalState(that);
+        var entry = getEntry(that, key);
+        if (entry) {
+          var next = entry.next;
+          var prev = entry.previous;
+          delete state.index[entry.index];
+          entry.removed = true;
+          if (prev) prev.next = next;
+          if (next) next.previous = prev;
+          if (state.first == entry) state.first = next;
+          if (state.last == entry) state.last = prev;
+          if (DESCRIPTORS) state.size--;
+          else that.size--;
+        } return !!entry;
+      },
+      // 23.2.3.6 Set.prototype.forEach(callbackfn, thisArg = undefined)
+      // 23.1.3.5 Map.prototype.forEach(callbackfn, thisArg = undefined)
+      forEach: function forEach(callbackfn /* , that = undefined */) {
+        var state = getInternalState(this);
+        var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+        var entry;
+        while (entry = entry ? entry.next : state.first) {
+          boundFunction(entry.value, entry.key, this);
+          // revert to the last existing entry
+          while (entry && entry.removed) entry = entry.previous;
+        }
+      },
+      // 23.1.3.7 Map.prototype.has(key)
+      // 23.2.3.7 Set.prototype.has(value)
+      has: function has(key) {
+        return !!getEntry(this, key);
+      }
+    });
+
+    redefineAll(C.prototype, IS_MAP ? {
+      // 23.1.3.6 Map.prototype.get(key)
+      get: function get(key) {
+        var entry = getEntry(this, key);
+        return entry && entry.value;
+      },
+      // 23.1.3.9 Map.prototype.set(key, value)
+      set: function set(key, value) {
+        return define(this, key === 0 ? 0 : key, value);
+      }
+    } : {
+      // 23.2.3.1 Set.prototype.add(value)
+      add: function add(value) {
+        return define(this, value = value === 0 ? 0 : value, value);
+      }
+    });
+    if (DESCRIPTORS) defineProperty(C.prototype, 'size', {
+      get: function () {
+        return getInternalState(this).size;
+      }
+    });
+    return C;
+  },
+  setStrong: function (C, CONSTRUCTOR_NAME, IS_MAP) {
+    var ITERATOR_NAME = CONSTRUCTOR_NAME + ' Iterator';
+    var getInternalCollectionState = internalStateGetterFor(CONSTRUCTOR_NAME);
+    var getInternalIteratorState = internalStateGetterFor(ITERATOR_NAME);
+    // add .keys, .values, .entries, [@@iterator]
+    // 23.1.3.4, 23.1.3.8, 23.1.3.11, 23.1.3.12, 23.2.3.5, 23.2.3.8, 23.2.3.10, 23.2.3.11
+    defineIterator(C, CONSTRUCTOR_NAME, function (iterated, kind) {
+      setInternalState(this, {
+        type: ITERATOR_NAME,
+        target: iterated,
+        state: getInternalCollectionState(iterated),
+        kind: kind,
+        last: undefined
+      });
+    }, function () {
+      var state = getInternalIteratorState(this);
+      var kind = state.kind;
+      var entry = state.last;
+      // revert to the last existing entry
+      while (entry && entry.removed) entry = entry.previous;
+      // get next entry
+      if (!state.target || !(state.last = entry = entry ? entry.next : state.state.first)) {
+        // or finish the iteration
+        state.target = undefined;
+        return { value: undefined, done: true };
+      }
+      // return step by kind
+      if (kind == 'keys') return { value: entry.key, done: false };
+      if (kind == 'values') return { value: entry.value, done: false };
+      return { value: [entry.key, entry.value], done: false };
+    }, IS_MAP ? 'entries' : 'values', !IS_MAP, true);
+
+    // add [@@species], 23.1.2.2, 23.2.2.2
+    setSpecies(CONSTRUCTOR_NAME);
+  }
+};
+
+
+/***/ }),
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var collection = __webpack_require__(229);
+var collectionStrong = __webpack_require__(235);
+
+// `Set` constructor
+// https://tc39.es/ecma262/#sec-set-objects
+module.exports = collection('Set', function (init) {
+  return function Set() { return init(this, arguments.length ? arguments[0] : undefined); };
+}, collectionStrong);
+
+
+/***/ }),
+/* 249 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(13);
+var objectKeys = __webpack_require__(54);
+var toIndexedObject = __webpack_require__(21);
+var propertyIsEnumerable = __webpack_require__(76).f;
+
+// `Object.{ entries, values }` methods implementation
+var createMethod = function (TO_ENTRIES) {
+  return function (it) {
+    var O = toIndexedObject(it);
+    var keys = objectKeys(O);
+    var length = keys.length;
+    var i = 0;
+    var result = [];
+    var key;
+    while (length > i) {
+      key = keys[i++];
+      if (!DESCRIPTORS || propertyIsEnumerable.call(O, key)) {
+        result.push(TO_ENTRIES ? [key, O[key]] : O[key]);
+      }
+    }
+    return result;
+  };
+};
+
+module.exports = {
+  // `Object.entries` method
+  // https://tc39.es/ecma262/#sec-object.entries
+  entries: createMethod(true),
+  // `Object.values` method
+  // https://tc39.es/ecma262/#sec-object.values
+  values: createMethod(false)
+};
+
+
+/***/ }),
+/* 250 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(12);
+var assign = __webpack_require__(221);
+
+// `Object.assign` method
+// https://tc39.es/ecma262/#sec-object.assign
+$({ target: 'Object', stat: true, forced: Object.assign !== assign }, {
+  assign: assign
+});
+
+
+/***/ }),
+/* 251 */,
+/* 252 */,
+/* 253 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fails = __webpack_require__(6);
+
+module.exports = !fails(function () {
+  return Object.isExtensible(Object.preventExtensions({}));
+});
+
+
+/***/ }),
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */
 /***/ (function(module, exports) {
 
 var charenc = {
@@ -974,15 +5223,15 @@ module.exports = charenc;
 
 
 /***/ }),
-
-/***/ 178:
+/* 262 */,
+/* 263 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function(){
-  var crypt = __webpack_require__(236),
-      utf8 = __webpack_require__(176).utf8,
-      isBuffer = __webpack_require__(237),
-      bin = __webpack_require__(176).bin,
+  var crypt = __webpack_require__(313),
+      utf8 = __webpack_require__(261).utf8,
+      isBuffer = __webpack_require__(314),
+      bin = __webpack_require__(261).bin,
 
   // The core
   md5 = function (message, options) {
@@ -1141,22 +5390,71 @@ module.exports = charenc;
 
 
 /***/ }),
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */,
+/* 269 */,
+/* 270 */,
+/* 271 */,
+/* 272 */,
+/* 273 */,
+/* 274 */,
+/* 275 */,
+/* 276 */,
+/* 277 */,
+/* 278 */,
+/* 279 */,
+/* 280 */,
+/* 281 */,
+/* 282 */,
+/* 283 */,
+/* 284 */,
+/* 285 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 19:
-/***/ (function(module, exports) {
+var $ = __webpack_require__(12);
+var $values = __webpack_require__(249).values;
 
-(function() { module.exports = this["moment"]; }());
+// `Object.values` method
+// https://tc39.es/ecma262/#sec-object.values
+$({ target: 'Object', stat: true }, {
+  values: function values(O) {
+    return $values(O);
+  }
+});
+
 
 /***/ }),
-
-/***/ 2:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["lodash"]; }());
-
-/***/ }),
-
-/***/ 236:
+/* 286 */,
+/* 287 */,
+/* 288 */,
+/* 289 */,
+/* 290 */,
+/* 291 */,
+/* 292 */,
+/* 293 */,
+/* 294 */,
+/* 295 */,
+/* 296 */,
+/* 297 */,
+/* 298 */,
+/* 299 */,
+/* 300 */,
+/* 301 */,
+/* 302 */,
+/* 303 */,
+/* 304 */,
+/* 305 */,
+/* 306 */,
+/* 307 */,
+/* 308 */,
+/* 309 */,
+/* 310 */,
+/* 311 */,
+/* 312 */,
+/* 313 */
 /***/ (function(module, exports) {
 
 (function() {
@@ -1258,8 +5556,7 @@ module.exports = charenc;
 
 
 /***/ }),
-
-/***/ 237:
+/* 314 */
 /***/ (function(module, exports) {
 
 /*!
@@ -1286,124 +5583,283 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-
-/***/ 25:
+/* 315 */,
+/* 316 */,
+/* 317 */,
+/* 318 */,
+/* 319 */,
+/* 320 */,
+/* 321 */,
+/* 322 */,
+/* 323 */,
+/* 324 */,
+/* 325 */,
+/* 326 */,
+/* 327 */,
+/* 328 */,
+/* 329 */,
+/* 330 */,
+/* 331 */,
+/* 332 */,
+/* 333 */,
+/* 334 */,
+/* 335 */,
+/* 336 */,
+/* 337 */,
+/* 338 */,
+/* 339 */,
+/* 340 */,
+/* 341 */,
+/* 342 */,
+/* 343 */,
+/* 344 */,
+/* 345 */,
+/* 346 */,
+/* 347 */,
+/* 348 */,
+/* 349 */,
+/* 350 */,
+/* 351 */,
+/* 352 */,
+/* 353 */,
+/* 354 */,
+/* 355 */,
+/* 356 */,
+/* 357 */,
+/* 358 */,
+/* 359 */,
+/* 360 */,
+/* 361 */,
+/* 362 */,
+/* 363 */,
+/* 364 */,
+/* 365 */,
+/* 366 */,
+/* 367 */,
+/* 368 */,
+/* 369 */,
+/* 370 */,
+/* 371 */,
+/* 372 */,
+/* 373 */,
+/* 374 */,
+/* 375 */,
+/* 376 */,
+/* 377 */,
+/* 378 */,
+/* 379 */,
+/* 380 */,
+/* 381 */,
+/* 382 */,
+/* 383 */,
+/* 384 */,
+/* 385 */,
+/* 386 */,
+/* 387 */,
+/* 388 */,
+/* 389 */,
+/* 390 */,
+/* 391 */,
+/* 392 */,
+/* 393 */,
+/* 394 */,
+/* 395 */,
+/* 396 */,
+/* 397 */,
+/* 398 */,
+/* 399 */,
+/* 400 */,
+/* 401 */,
+/* 402 */,
+/* 403 */,
+/* 404 */,
+/* 405 */,
+/* 406 */,
+/* 407 */,
+/* 408 */,
+/* 409 */,
+/* 410 */,
+/* 411 */,
+/* 412 */,
+/* 413 */,
+/* 414 */,
+/* 415 */,
+/* 416 */,
+/* 417 */,
+/* 418 */,
+/* 419 */,
+/* 420 */,
+/* 421 */,
+/* 422 */,
+/* 423 */,
+/* 424 */,
+/* 425 */,
+/* 426 */,
+/* 427 */,
+/* 428 */,
+/* 429 */,
+/* 430 */,
+/* 431 */,
+/* 432 */,
+/* 433 */,
+/* 434 */,
+/* 435 */,
+/* 436 */,
+/* 437 */,
+/* 438 */,
+/* 439 */,
+/* 440 */,
+/* 441 */,
+/* 442 */,
+/* 443 */,
+/* 444 */,
+/* 445 */,
+/* 446 */,
+/* 447 */,
+/* 448 */,
+/* 449 */,
+/* 450 */,
+/* 451 */,
+/* 452 */,
+/* 453 */,
+/* 454 */,
+/* 455 */,
+/* 456 */,
+/* 457 */,
+/* 458 */,
+/* 459 */,
+/* 460 */,
+/* 461 */,
+/* 462 */,
+/* 463 */,
+/* 464 */,
+/* 465 */,
+/* 466 */,
+/* 467 */,
+/* 468 */,
+/* 469 */,
+/* 470 */,
+/* 471 */,
+/* 472 */,
+/* 473 */,
+/* 474 */,
+/* 475 */,
+/* 476 */,
+/* 477 */,
+/* 478 */,
+/* 479 */,
+/* 480 */,
+/* 481 */,
+/* 482 */,
+/* 483 */,
+/* 484 */,
+/* 485 */,
+/* 486 */,
+/* 487 */,
+/* 488 */,
+/* 489 */,
+/* 490 */,
+/* 491 */,
+/* 492 */,
+/* 493 */,
+/* 494 */,
+/* 495 */,
+/* 496 */,
+/* 497 */,
+/* 498 */,
+/* 499 */,
+/* 500 */,
+/* 501 */,
+/* 502 */,
+/* 503 */,
+/* 504 */,
+/* 505 */,
+/* 506 */,
+/* 507 */,
+/* 508 */,
+/* 509 */,
+/* 510 */,
+/* 511 */,
+/* 512 */,
+/* 513 */,
+/* 514 */,
+/* 515 */,
+/* 516 */,
+/* 517 */,
+/* 518 */,
+/* 519 */,
+/* 520 */,
+/* 521 */,
+/* 522 */,
+/* 523 */,
+/* 524 */,
+/* 525 */,
+/* 526 */,
+/* 527 */,
+/* 528 */,
+/* 529 */,
+/* 530 */,
+/* 531 */,
+/* 532 */,
+/* 533 */,
+/* 534 */,
+/* 535 */,
+/* 536 */,
+/* 537 */,
+/* 538 */,
+/* 539 */,
+/* 540 */,
+/* 541 */,
+/* 542 */,
+/* 543 */,
+/* 544 */,
+/* 545 */,
+/* 546 */,
+/* 547 */,
+/* 548 */,
+/* 549 */,
+/* 550 */,
+/* 551 */,
+/* 552 */,
+/* 553 */,
+/* 554 */,
+/* 555 */,
+/* 556 */,
+/* 557 */,
+/* 558 */
 /***/ (function(module, exports) {
 
-(function() { module.exports = this["wp"]["data"]; }());
+(function() { module.exports = window["wp"]["coreData"]; }());
 
 /***/ }),
-
-/***/ 27:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["wp"]["dataControls"]; }());
-
-/***/ }),
-
-/***/ 28:
+/* 559 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayWithoutHoles = __webpack_require__(93);
+"use strict";
 
-var iterableToArray = __webpack_require__(94);
+var collection = __webpack_require__(229);
+var collectionStrong = __webpack_require__(235);
 
-var unsupportedIterableToArray = __webpack_require__(63);
+// `Map` constructor
+// https://tc39.es/ecma262/#sec-map-objects
+module.exports = collection('Map', function (init) {
+  return function Map() { return init(this, arguments.length ? arguments[0] : undefined); };
+}, collectionStrong);
 
-var nonIterableSpread = __webpack_require__(95);
-
-function _toConsumableArray(arr) {
-  return arrayWithoutHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableSpread();
-}
-
-module.exports = _toConsumableArray;
 
 /***/ }),
-
-/***/ 29:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["wc"]["navigation"]; }());
-
-/***/ }),
-
-/***/ 3:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["wp"]["i18n"]; }());
-
-/***/ }),
-
-/***/ 31:
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayWithHoles = __webpack_require__(100);
-
-var iterableToArrayLimit = __webpack_require__(101);
-
-var unsupportedIterableToArray = __webpack_require__(63);
-
-var nonIterableRest = __webpack_require__(102);
-
-function _slicedToArray(arr, i) {
-  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || unsupportedIterableToArray(arr, i) || nonIterableRest();
-}
-
-module.exports = _slicedToArray;
-
-/***/ }),
-
-/***/ 33:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["wp"]["url"]; }());
-
-/***/ }),
-
-/***/ 42:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["wc"]["date"]; }());
-
-/***/ }),
-
-/***/ 44:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["wp"]["apiFetch"]; }());
-
-/***/ }),
-
-/***/ 5:
-/***/ (function(module, exports) {
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-module.exports = _defineProperty;
-
-/***/ }),
-
-/***/ 51:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["wp"]["hooks"]; }());
-
-/***/ }),
-
-/***/ 539:
+/* 560 */,
+/* 561 */,
+/* 562 */,
+/* 563 */,
+/* 564 */,
+/* 565 */,
+/* 566 */,
+/* 567 */,
+/* 568 */,
+/* 569 */,
+/* 570 */,
+/* 571 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1421,6 +5877,7 @@ __webpack_require__.d(__webpack_exports__, "ONBOARDING_STORE_NAME", function() {
 __webpack_require__.d(__webpack_exports__, "withOnboardingHydration", function() { return /* reexport */ with_onboarding_hydration_withOnboardingHydration; });
 __webpack_require__.d(__webpack_exports__, "USER_STORE_NAME", function() { return /* reexport */ USER_STORE_NAME; });
 __webpack_require__.d(__webpack_exports__, "withCurrentUserHydration", function() { return /* reexport */ with_current_user_hydration_withCurrentUserHydration; });
+__webpack_require__.d(__webpack_exports__, "useUser", function() { return /* reexport */ use_user_useUser; });
 __webpack_require__.d(__webpack_exports__, "useUserPreferences", function() { return /* reexport */ use_user_preferences_useUserPreferences; });
 __webpack_require__.d(__webpack_exports__, "OPTIONS_STORE_NAME", function() { return /* reexport */ OPTIONS_STORE_NAME; });
 __webpack_require__.d(__webpack_exports__, "withOptionsHydration", function() { return /* reexport */ with_options_hydration_withOptionsHydration; });
@@ -1492,6 +5949,7 @@ __webpack_require__.d(plugins_selectors_namespaceObject, "getPluginsError", func
 __webpack_require__.d(plugins_selectors_namespaceObject, "isJetpackConnected", function() { return isJetpackConnected; });
 __webpack_require__.d(plugins_selectors_namespaceObject, "getJetpackConnectUrl", function() { return getJetpackConnectUrl; });
 __webpack_require__.d(plugins_selectors_namespaceObject, "getPluginInstallState", function() { return getPluginInstallState; });
+__webpack_require__.d(plugins_selectors_namespaceObject, "getPaypalOnboardingStatus", function() { return getPaypalOnboardingStatus; });
 
 // NAMESPACE OBJECT: ./packages/data/build-module/plugins/actions.js
 var plugins_actions_namespaceObject = {};
@@ -1510,6 +5968,29 @@ __webpack_require__.d(plugins_actions_namespaceObject, "connectToJetpack", funct
 __webpack_require__.d(plugins_actions_namespaceObject, "installJetpackAndConnect", function() { return installJetpackAndConnect; });
 __webpack_require__.d(plugins_actions_namespaceObject, "connectToJetpackWithFailureRedirect", function() { return connectToJetpackWithFailureRedirect; });
 __webpack_require__.d(plugins_actions_namespaceObject, "formatErrors", function() { return formatErrors; });
+__webpack_require__.d(plugins_actions_namespaceObject, "setPaypalOnboardingStatus", function() { return setPaypalOnboardingStatus; });
+
+// NAMESPACE OBJECT: ./packages/data/build-module/options/selectors.js
+var options_selectors_namespaceObject = {};
+__webpack_require__.r(options_selectors_namespaceObject);
+__webpack_require__.d(options_selectors_namespaceObject, "getOption", function() { return getOption; });
+__webpack_require__.d(options_selectors_namespaceObject, "getOptionsRequestingError", function() { return getOptionsRequestingError; });
+__webpack_require__.d(options_selectors_namespaceObject, "isOptionsUpdating", function() { return isOptionsUpdating; });
+__webpack_require__.d(options_selectors_namespaceObject, "getOptionsUpdatingError", function() { return getOptionsUpdatingError; });
+
+// NAMESPACE OBJECT: ./packages/data/build-module/options/actions.js
+var options_actions_namespaceObject = {};
+__webpack_require__.r(options_actions_namespaceObject);
+__webpack_require__.d(options_actions_namespaceObject, "receiveOptions", function() { return actions_receiveOptions; });
+__webpack_require__.d(options_actions_namespaceObject, "setRequestingError", function() { return setRequestingError; });
+__webpack_require__.d(options_actions_namespaceObject, "setUpdatingError", function() { return setUpdatingError; });
+__webpack_require__.d(options_actions_namespaceObject, "setIsUpdating", function() { return setIsUpdating; });
+__webpack_require__.d(options_actions_namespaceObject, "updateOptions", function() { return updateOptions; });
+
+// NAMESPACE OBJECT: ./packages/data/build-module/options/resolvers.js
+var options_resolvers_namespaceObject = {};
+__webpack_require__.r(options_resolvers_namespaceObject);
+__webpack_require__.d(options_resolvers_namespaceObject, "getOption", function() { return resolvers_getOption; });
 
 // NAMESPACE OBJECT: ./packages/data/build-module/plugins/resolvers.js
 var plugins_resolvers_namespaceObject = {};
@@ -1518,6 +5999,7 @@ __webpack_require__.d(plugins_resolvers_namespaceObject, "getActivePlugins", fun
 __webpack_require__.d(plugins_resolvers_namespaceObject, "getInstalledPlugins", function() { return resolvers_getInstalledPlugins; });
 __webpack_require__.d(plugins_resolvers_namespaceObject, "isJetpackConnected", function() { return resolvers_isJetpackConnected; });
 __webpack_require__.d(plugins_resolvers_namespaceObject, "getJetpackConnectUrl", function() { return resolvers_getJetpackConnectUrl; });
+__webpack_require__.d(plugins_resolvers_namespaceObject, "getPaypalOnboardingStatus", function() { return resolvers_getPaypalOnboardingStatus; });
 
 // NAMESPACE OBJECT: ./packages/data/build-module/onboarding/selectors.js
 var onboarding_selectors_namespaceObject = {};
@@ -1541,28 +6023,6 @@ var onboarding_resolvers_namespaceObject = {};
 __webpack_require__.r(onboarding_resolvers_namespaceObject);
 __webpack_require__.d(onboarding_resolvers_namespaceObject, "getProfileItems", function() { return resolvers_getProfileItems; });
 __webpack_require__.d(onboarding_resolvers_namespaceObject, "getTasksStatus", function() { return resolvers_getTasksStatus; });
-
-// NAMESPACE OBJECT: ./packages/data/build-module/options/selectors.js
-var options_selectors_namespaceObject = {};
-__webpack_require__.r(options_selectors_namespaceObject);
-__webpack_require__.d(options_selectors_namespaceObject, "getOption", function() { return getOption; });
-__webpack_require__.d(options_selectors_namespaceObject, "getOptionsRequestingError", function() { return getOptionsRequestingError; });
-__webpack_require__.d(options_selectors_namespaceObject, "isOptionsUpdating", function() { return isOptionsUpdating; });
-__webpack_require__.d(options_selectors_namespaceObject, "getOptionsUpdatingError", function() { return getOptionsUpdatingError; });
-
-// NAMESPACE OBJECT: ./packages/data/build-module/options/actions.js
-var options_actions_namespaceObject = {};
-__webpack_require__.r(options_actions_namespaceObject);
-__webpack_require__.d(options_actions_namespaceObject, "receiveOptions", function() { return actions_receiveOptions; });
-__webpack_require__.d(options_actions_namespaceObject, "setRequestingError", function() { return setRequestingError; });
-__webpack_require__.d(options_actions_namespaceObject, "setUpdatingError", function() { return setUpdatingError; });
-__webpack_require__.d(options_actions_namespaceObject, "setIsUpdating", function() { return setIsUpdating; });
-__webpack_require__.d(options_actions_namespaceObject, "updateOptions", function() { return updateOptions; });
-
-// NAMESPACE OBJECT: ./packages/data/build-module/options/resolvers.js
-var options_resolvers_namespaceObject = {};
-__webpack_require__.r(options_resolvers_namespaceObject);
-__webpack_require__.d(options_resolvers_namespaceObject, "getOption", function() { return resolvers_getOption; });
 
 // NAMESPACE OBJECT: ./packages/data/build-module/reviews/selectors.js
 var reviews_selectors_namespaceObject = {};
@@ -1651,6 +6111,7 @@ __webpack_require__.d(items_actions_namespaceObject, "setItems", function() { re
 __webpack_require__.d(items_actions_namespaceObject, "setItemsTotalCount", function() { return setItemsTotalCount; });
 __webpack_require__.d(items_actions_namespaceObject, "setError", function() { return items_actions_setError; });
 __webpack_require__.d(items_actions_namespaceObject, "updateProductStock", function() { return updateProductStock; });
+__webpack_require__.d(items_actions_namespaceObject, "createProductFromTemplate", function() { return createProductFromTemplate; });
 
 // NAMESPACE OBJECT: ./packages/data/build-module/items/resolvers.js
 var items_resolvers_namespaceObject = {};
@@ -1663,14 +6124,30 @@ __webpack_require__.d(items_resolvers_namespaceObject, "getItemsTotalCount", fun
 var navigation_selectors_namespaceObject = {};
 __webpack_require__.r(navigation_selectors_namespaceObject);
 __webpack_require__.d(navigation_selectors_namespaceObject, "getMenuItems", function() { return selectors_getMenuItems; });
-__webpack_require__.d(navigation_selectors_namespaceObject, "getActiveItem", function() { return getActiveItem; });
+__webpack_require__.d(navigation_selectors_namespaceObject, "getFavorites", function() { return getFavorites; });
+__webpack_require__.d(navigation_selectors_namespaceObject, "isNavigationRequesting", function() { return isNavigationRequesting; });
 
 // NAMESPACE OBJECT: ./packages/data/build-module/navigation/actions.js
 var navigation_actions_namespaceObject = {};
 __webpack_require__.r(navigation_actions_namespaceObject);
-__webpack_require__.d(navigation_actions_namespaceObject, "setActiveItem", function() { return setActiveItem; });
 __webpack_require__.d(navigation_actions_namespaceObject, "setMenuItems", function() { return actions_setMenuItems; });
 __webpack_require__.d(navigation_actions_namespaceObject, "addMenuItems", function() { return addMenuItems; });
+__webpack_require__.d(navigation_actions_namespaceObject, "getFavoritesFailure", function() { return getFavoritesFailure; });
+__webpack_require__.d(navigation_actions_namespaceObject, "getFavoritesRequest", function() { return getFavoritesRequest; });
+__webpack_require__.d(navigation_actions_namespaceObject, "getFavoritesSuccess", function() { return getFavoritesSuccess; });
+__webpack_require__.d(navigation_actions_namespaceObject, "addFavoriteRequest", function() { return addFavoriteRequest; });
+__webpack_require__.d(navigation_actions_namespaceObject, "addFavoriteFailure", function() { return addFavoriteFailure; });
+__webpack_require__.d(navigation_actions_namespaceObject, "addFavoriteSuccess", function() { return addFavoriteSuccess; });
+__webpack_require__.d(navigation_actions_namespaceObject, "removeFavoriteRequest", function() { return removeFavoriteRequest; });
+__webpack_require__.d(navigation_actions_namespaceObject, "removeFavoriteFailure", function() { return removeFavoriteFailure; });
+__webpack_require__.d(navigation_actions_namespaceObject, "removeFavoriteSuccess", function() { return removeFavoriteSuccess; });
+__webpack_require__.d(navigation_actions_namespaceObject, "addFavorite", function() { return addFavorite; });
+__webpack_require__.d(navigation_actions_namespaceObject, "removeFavorite", function() { return removeFavorite; });
+
+// NAMESPACE OBJECT: ./packages/data/build-module/navigation/resolvers.js
+var navigation_resolvers_namespaceObject = {};
+__webpack_require__.r(navigation_resolvers_namespaceObject);
+__webpack_require__.d(navigation_resolvers_namespaceObject, "getFavorites", function() { return resolvers_getFavorites; });
 
 // NAMESPACE OBJECT: ./packages/data/build-module/export/selectors.js
 var export_selectors_namespaceObject = {};
@@ -1713,19 +6190,57 @@ __webpack_require__.r(import_resolvers_namespaceObject);
 __webpack_require__.d(import_resolvers_namespaceObject, "getImportStatus", function() { return resolvers_getImportStatus; });
 __webpack_require__.d(import_resolvers_namespaceObject, "getImportTotals", function() { return resolvers_getImportTotals; });
 
-// EXTERNAL MODULE: external {"this":["wp","data"]}
-var external_this_wp_data_ = __webpack_require__(25);
+// EXTERNAL MODULE: external ["wp","coreData"]
+var external_wp_coreData_ = __webpack_require__(558);
 
-// EXTERNAL MODULE: external {"this":["wp","dataControls"]}
-var external_this_wp_dataControls_ = __webpack_require__(27);
+// EXTERNAL MODULE: external ["wp","data"]
+var external_wp_data_ = __webpack_require__(26);
+
+// EXTERNAL MODULE: external ["wp","dataControls"]
+var external_wp_dataControls_ = __webpack_require__(35);
 
 // CONCATENATED MODULE: ./packages/data/build-module/settings/constants.js
 var STORE_NAME = 'wc/admin/settings';
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.js
+var es_set = __webpack_require__(248);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.to-string.js
+var es_object_to_string = __webpack_require__(100);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.iterator.js
+var es_string_iterator = __webpack_require__(151);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.iterator.js
+var es_array_iterator = __webpack_require__(123);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.iterator.js
+var web_dom_collections_iterator = __webpack_require__(146);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.map.js
+var es_array_map = __webpack_require__(51);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.keys.js
+var es_object_keys = __webpack_require__(37);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.for-each.js
+var web_dom_collections_for_each = __webpack_require__(49);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.includes.js
+var es_array_includes = __webpack_require__(107);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.includes.js
+var es_string_includes = __webpack_require__(140);
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/toConsumableArray.js
-var toConsumableArray = __webpack_require__(28);
+var toConsumableArray = __webpack_require__(44);
 var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
 
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.concat.js
+var es_array_concat = __webpack_require__(66);
+
 // CONCATENATED MODULE: ./packages/data/build-module/utils.js
+
+
 function getResourceName(prefix, identifier) {
   var identifierString = JSON.stringify(identifier, Object.keys(identifier).sort());
   return "".concat(prefix, ":").concat(identifierString);
@@ -1743,6 +6258,16 @@ function getResourceIdentifier(resourceName) {
   return JSON.parse(identifierString);
 }
 // CONCATENATED MODULE: ./packages/data/build-module/settings/selectors.js
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Internal dependencies
@@ -1839,15 +6364,15 @@ var selectors_getSettingsError = function getSettingsError(state, group, id) {
 
   return state[getResourceName(group, id)].error || false;
 };
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(14);
-var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
+// EXTERNAL MODULE: external "regeneratorRuntime"
+var external_regeneratorRuntime_ = __webpack_require__(16);
+var external_regeneratorRuntime_default = /*#__PURE__*/__webpack_require__.n(external_regeneratorRuntime_);
 
-// EXTERNAL MODULE: external {"this":["wp","i18n"]}
-var external_this_wp_i18n_ = __webpack_require__(3);
+// EXTERNAL MODULE: external ["wp","i18n"]
+var external_wp_i18n_ = __webpack_require__(2);
 
 // EXTERNAL MODULE: external "lodash"
-var external_lodash_ = __webpack_require__(2);
+var external_lodash_ = __webpack_require__(5);
 
 // CONCATENATED MODULE: ./packages/data/build-module/constants.js
 var JETPACK_NAMESPACE = '/jetpack/v4';
@@ -1871,7 +6396,8 @@ var DEFAULT_ACTIONABLE_STATUSES = ['processing', 'on-hold'];
 var QUERY_DEFAULTS = {
   pageSize: 25,
   period: 'month',
-  compare: 'previous_year'
+  compare: 'previous_year',
+  noteTypes: ['info', 'marketing', 'survey', 'warning']
 };
 // CONCATENATED MODULE: ./packages/data/build-module/settings/action-types.js
 var TYPES = {
@@ -1885,8 +6411,11 @@ var TYPES = {
 // CONCATENATED MODULE: ./packages/data/build-module/settings/actions.js
 
 
-var _marked = /*#__PURE__*/regenerator_default.a.mark(actions_updateAndPersistSettingsForGroup),
-    _marked2 = /*#__PURE__*/regenerator_default.a.mark(actions_persistSettingsForGroup);
+
+
+
+var _marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(actions_updateAndPersistSettingsForGroup),
+    _marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(actions_persistSettingsForGroup);
 /**
  * External dependencies
  */
@@ -1936,7 +6465,7 @@ function actions_clearIsDirty(group) {
 } // allows updating and persisting immediately in one action.
 
 function actions_updateAndPersistSettingsForGroup(group, data) {
-  return regenerator_default.a.wrap(function updateAndPersistSettingsForGroup$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function updateAndPersistSettingsForGroup$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -1956,7 +6485,7 @@ function actions_updateAndPersistSettingsForGroup(group, data) {
 
 function actions_persistSettingsForGroup(group) {
   var dirtyKeys, dirtyData, url, update, results;
-  return regenerator_default.a.wrap(function persistSettingsForGroup$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function persistSettingsForGroup$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -1965,7 +6494,7 @@ function actions_persistSettingsForGroup(group) {
 
         case 2:
           _context2.next = 4;
-          return Object(external_this_wp_dataControls_["select"])(STORE_NAME, 'getDirtyKeys', group);
+          return Object(external_wp_dataControls_["select"])(STORE_NAME, 'getDirtyKeys', group);
 
         case 4:
           dirtyKeys = _context2.sent;
@@ -1983,7 +6512,7 @@ function actions_persistSettingsForGroup(group) {
 
         case 9:
           _context2.next = 11;
-          return Object(external_this_wp_dataControls_["select"])(STORE_NAME, 'getSettingsForGroup', group, dirtyKeys);
+          return Object(external_wp_dataControls_["select"])(STORE_NAME, 'getSettingsForGroup', group, dirtyKeys);
 
         case 11:
           dirtyData = _context2.sent;
@@ -1999,7 +6528,7 @@ function actions_persistSettingsForGroup(group) {
           }, []);
           _context2.prev = 14;
           _context2.next = 17;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'POST',
             data: {
@@ -2018,7 +6547,7 @@ function actions_persistSettingsForGroup(group) {
             break;
           }
 
-          throw new Error(Object(external_this_wp_i18n_["__"])('There was a problem updating your settings.', 'woocommerce-admin'));
+          throw new Error(Object(external_wp_i18n_["__"])('There was a problem updating your settings.', 'woocommerce-admin'));
 
         case 22:
           _context2.next = 24;
@@ -2054,15 +6583,15 @@ function clearSettings() {
   };
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/defineProperty.js
-var defineProperty = __webpack_require__(5);
+var defineProperty = __webpack_require__(7);
 var defineProperty_default = /*#__PURE__*/__webpack_require__.n(defineProperty);
 
 // CONCATENATED MODULE: ./packages/data/build-module/settings/resolvers.js
 
 
 
-var resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers_getSettings),
-    resolvers_marked2 = /*#__PURE__*/regenerator_default.a.mark(resolvers_getSettingsForGroup);
+var resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getSettings),
+    resolvers_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getSettingsForGroup);
 /**
  * External dependencies
  */
@@ -2086,18 +6615,18 @@ function settingsToSettingsResource(settings) {
 
 function resolvers_getSettings(group) {
   var url, results, resource;
-  return regenerator_default.a.wrap(function getSettings$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function getSettings$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           _context.next = 2;
-          return Object(external_this_wp_dataControls_["dispatch"])(STORE_NAME, 'setIsRequesting', group, true);
+          return Object(external_wp_dataControls_["dispatch"])(STORE_NAME, 'setIsRequesting', group, true);
 
         case 2:
           _context.prev = 2;
           url = NAMESPACE + '/settings/' + group;
           _context.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'GET'
           });
@@ -2120,7 +6649,7 @@ function resolvers_getSettings(group) {
   }, resolvers_marked, null, [[2, 11]]);
 }
 function resolvers_getSettingsForGroup(group) {
-  return regenerator_default.a.wrap(function getSettingsForGroup$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function getSettingsForGroup$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -2133,7 +6662,26 @@ function resolvers_getSettingsForGroup(group) {
     }
   }, resolvers_marked2);
 }
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.symbol.js
+var es_symbol = __webpack_require__(53);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.filter.js
+var es_array_filter = __webpack_require__(41);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.get-own-property-descriptor.js
+var es_object_get_own_property_descriptor = __webpack_require__(60);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.get-own-property-descriptors.js
+var es_object_get_own_property_descriptors = __webpack_require__(61);
+
 // CONCATENATED MODULE: ./packages/data/build-module/settings/reducer.js
+
+
+
+
+
+
+
 
 
 
@@ -2276,16 +6824,19 @@ var reducer_receiveSettings = function receiveSettings() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(STORE_NAME, {
+Object(external_wp_data_["registerStore"])(STORE_NAME, {
   reducer: settings_reducer,
   actions: actions_namespaceObject,
-  controls: external_this_wp_dataControls_["controls"],
+  controls: external_wp_dataControls_["controls"],
   selectors: selectors_namespaceObject,
   resolvers: resolvers_namespaceObject
 });
 var SETTINGS_STORE_NAME = STORE_NAME;
-// EXTERNAL MODULE: external {"this":["wp","element"]}
-var external_this_wp_element_ = __webpack_require__(0);
+// EXTERNAL MODULE: external ["wp","element"]
+var external_wp_element_ = __webpack_require__(0);
+
+// EXTERNAL MODULE: external ["wp","compose"]
+var external_wp_compose_ = __webpack_require__(65);
 
 // CONCATENATED MODULE: ./packages/data/build-module/settings/with-settings-hydration.js
 
@@ -2295,16 +6846,17 @@ var external_this_wp_element_ = __webpack_require__(0);
 
 
 
+
 /**
  * Internal dependencies
  */
 
 
 var with_settings_hydration_withSettingsHydration = function withSettingsHydration(group, settings) {
-  return function (OriginalComponent) {
+  return Object(external_wp_compose_["createHigherOrderComponent"])(function (OriginalComponent) {
     return function (props) {
-      var settingsRef = Object(external_this_wp_element_["useRef"])(settings);
-      Object(external_this_wp_data_["useSelect"])(function (select, registry) {
+      var settingsRef = Object(external_wp_element_["useRef"])(settings);
+      Object(external_wp_data_["useSelect"])(function (select, registry) {
         if (!settingsRef.current) {
           return;
         }
@@ -2326,11 +6878,19 @@ var with_settings_hydration_withSettingsHydration = function withSettingsHydrati
           finishResolution('getSettings', [group]);
         }
       }, []);
-      return Object(external_this_wp_element_["createElement"])(OriginalComponent, props);
+      return Object(external_wp_element_["createElement"])(OriginalComponent, props);
     };
-  };
+  }, 'withSettingsHydration');
 };
 // CONCATENATED MODULE: ./packages/data/build-module/settings/use-settings.js
+
+
+
+
+
+
+
+
 
 
 function use_settings_ownKeys(object, enumerableOnly) {
@@ -2381,7 +6941,7 @@ function use_settings_objectSpread(target) {
 var use_settings_useSettings = function useSettings(group) {
   var settingsKeys = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
-  var _useSelect = Object(external_this_wp_data_["useSelect"])(function (select) {
+  var _useSelect = Object(external_wp_data_["useSelect"])(function (select) {
     var _select = select(STORE_NAME),
         getLastSettingsErrorForGroup = _select.getLastSettingsErrorForGroup,
         getSettingsForGroup = _select.getSettingsForGroup,
@@ -2394,26 +6954,26 @@ var use_settings_useSettings = function useSettings(group) {
       isRequesting: isUpdateSettingsRequesting(group),
       isDirty: getIsDirty(group, settingsKeys)
     };
-  }, [group, settingsKeys]),
+  }, [group].concat(toConsumableArray_default()(settingsKeys.sort()))),
       requestedSettings = _useSelect.requestedSettings,
       settingsError = _useSelect.settingsError,
       isRequesting = _useSelect.isRequesting,
       isDirty = _useSelect.isDirty;
 
-  var _useDispatch = Object(external_this_wp_data_["useDispatch"])(STORE_NAME),
+  var _useDispatch = Object(external_wp_data_["useDispatch"])(STORE_NAME),
       persistSettingsForGroup = _useDispatch.persistSettingsForGroup,
       updateAndPersistSettingsForGroup = _useDispatch.updateAndPersistSettingsForGroup,
       updateSettingsForGroup = _useDispatch.updateSettingsForGroup;
 
-  var updateSettings = Object(external_this_wp_element_["useCallback"])(function (name, data) {
+  var updateSettings = Object(external_wp_element_["useCallback"])(function (name, data) {
     updateSettingsForGroup(group, defineProperty_default()({}, name, data));
   }, [group]);
-  var persistSettings = Object(external_this_wp_element_["useCallback"])(function () {
+  var persistSettings = Object(external_wp_element_["useCallback"])(function () {
     // this action would simply persist all settings marked as dirty in the
     // store state and then remove the dirty record in the isDirtyMap
     persistSettingsForGroup(group);
   }, [group]);
-  var updateAndPersistSettings = Object(external_this_wp_element_["useCallback"])(function (name, data) {
+  var updateAndPersistSettings = Object(external_wp_element_["useCallback"])(function (name, data) {
     updateAndPersistSettingsForGroup(group, defineProperty_default()({}, name, data));
   }, [group]);
   return use_settings_objectSpread(use_settings_objectSpread({
@@ -2432,27 +6992,34 @@ var use_settings_useSettings = function useSettings(group) {
  */
 
 var constants_STORE_NAME = 'wc/admin/plugins';
+var PAYPAL_NAMESPACE = '/wc-paypal/v1';
 /**
  * Plugin slugs and names as key/value pairs.
  */
 
 var pluginNames = {
-  'facebook-for-woocommerce': Object(external_this_wp_i18n_["__"])('Facebook for WooCommerce', 'woocommerce-admin'),
-  jetpack: Object(external_this_wp_i18n_["__"])('Jetpack', 'woocommerce-admin'),
-  'klarna-checkout-for-woocommerce': Object(external_this_wp_i18n_["__"])('Klarna Checkout for WooCommerce', 'woocommerce-admin'),
-  'klarna-payments-for-woocommerce': Object(external_this_wp_i18n_["__"])('Klarna Payments for WooCommerce', 'woocommerce-admin'),
-  'mailchimp-for-woocommerce': Object(external_this_wp_i18n_["__"])('Mailchimp for WooCommerce', 'woocommerce-admin'),
-  'creative-mail-by-constant-contact': Object(external_this_wp_i18n_["__"])('Creative Mail for WooCommerce', 'woocommerce-admin'),
-  'woocommerce-gateway-paypal-express-checkout': Object(external_this_wp_i18n_["__"])('WooCommerce PayPal', 'woocommerce-admin'),
-  'woocommerce-gateway-stripe': Object(external_this_wp_i18n_["__"])('WooCommerce Stripe', 'woocommerce-admin'),
-  'woocommerce-payfast-gateway': Object(external_this_wp_i18n_["__"])('WooCommerce PayFast', 'woocommerce-admin'),
-  'woocommerce-payments': Object(external_this_wp_i18n_["__"])('WooCommerce Payments', 'woocommerce-admin'),
-  'woocommerce-services': Object(external_this_wp_i18n_["__"])('WooCommerce Shipping & Tax', 'woocommerce-admin'),
-  'woocommerce-shipstation-integration': Object(external_this_wp_i18n_["__"])('WooCommerce ShipStation Gateway', 'woocommerce-admin'),
-  'kliken-marketing-for-google': Object(external_this_wp_i18n_["__"])('Google Ads', 'woocommerce-admin'),
-  'woo-razorpay': Object(external_this_wp_i18n_["__"])('Razorpay', 'woocommerce-admin')
+  'facebook-for-woocommerce': Object(external_wp_i18n_["__"])('Facebook for WooCommerce', 'woocommerce-admin'),
+  jetpack: Object(external_wp_i18n_["__"])('Jetpack', 'woocommerce-admin'),
+  'klarna-checkout-for-woocommerce': Object(external_wp_i18n_["__"])('Klarna Checkout for WooCommerce', 'woocommerce-admin'),
+  'klarna-payments-for-woocommerce': Object(external_wp_i18n_["__"])('Klarna Payments for WooCommerce', 'woocommerce-admin'),
+  'mailchimp-for-woocommerce': Object(external_wp_i18n_["__"])('Mailchimp for WooCommerce', 'woocommerce-admin'),
+  'creative-mail-by-constant-contact': Object(external_wp_i18n_["__"])('Creative Mail for WooCommerce', 'woocommerce-admin'),
+  'woocommerce-gateway-paypal-express-checkout': Object(external_wp_i18n_["__"])('WooCommerce PayPal', 'woocommerce-admin'),
+  'woocommerce-gateway-stripe': Object(external_wp_i18n_["__"])('WooCommerce Stripe', 'woocommerce-admin'),
+  'woocommerce-payfast-gateway': Object(external_wp_i18n_["__"])('WooCommerce PayFast', 'woocommerce-admin'),
+  'woocommerce-payments': Object(external_wp_i18n_["__"])('WooCommerce Payments', 'woocommerce-admin'),
+  'woocommerce-services': Object(external_wp_i18n_["__"])('WooCommerce Shipping & Tax', 'woocommerce-admin'),
+  'woocommerce-services:shipping': Object(external_wp_i18n_["__"])('WooCommerce Shipping & Tax', 'woocommerce-admin'),
+  'woocommerce-services:tax': Object(external_wp_i18n_["__"])('WooCommerce Shipping & Tax', 'woocommerce-admin'),
+  'woocommerce-shipstation-integration': Object(external_wp_i18n_["__"])('WooCommerce ShipStation Gateway', 'woocommerce-admin'),
+  'woocommerce-mercadopago': Object(external_wp_i18n_["__"])('Mercado Pago payments for WooCommerce', 'woocommerce-admin'),
+  'kliken-marketing-for-google': Object(external_wp_i18n_["__"])('Google Ads', 'woocommerce-admin'),
+  'woo-razorpay': Object(external_wp_i18n_["__"])('Razorpay', 'woocommerce-admin'),
+  mailpoet: Object(external_wp_i18n_["__"])('MailPoet', 'woocommerce-admin')
 };
 // CONCATENATED MODULE: ./packages/data/build-module/plugins/selectors.js
+
+
 var getActivePlugins = function getActivePlugins(state) {
   return state.active || [];
 };
@@ -2480,6 +7047,21 @@ var getPluginInstallState = function getPluginInstallState(state, plugin) {
 
   return 'unavailable';
 };
+var getPaypalOnboardingStatus = function getPaypalOnboardingStatus(state) {
+  return state.paypalOnboardingStatus;
+};
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.join.js
+var es_array_join = __webpack_require__(139);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.replace.js
+var es_string_replace = __webpack_require__(135);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.exec.js
+var es_regexp_exec = __webpack_require__(88);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.values.js
+var es_object_values = __webpack_require__(285);
+
 // CONCATENATED MODULE: ./packages/data/build-module/plugins/action-types.js
 var action_types_TYPES = {
   UPDATE_ACTIVE_PLUGINS: 'UPDATE_ACTIVE_PLUGINS',
@@ -2487,21 +7069,30 @@ var action_types_TYPES = {
   SET_IS_REQUESTING: 'SET_IS_REQUESTING',
   SET_ERROR: 'SET_ERROR',
   UPDATE_JETPACK_CONNECTION: 'UPDATE_JETPACK_CONNECTION',
-  UPDATE_JETPACK_CONNECT_URL: 'UPDATE_JETPACK_CONNECT_URL'
+  UPDATE_JETPACK_CONNECT_URL: 'UPDATE_JETPACK_CONNECT_URL',
+  SET_PAYPAL_ONBOARDING_STATUS: 'SET_PAYPAL_ONBOARDING_STATUS'
 };
 /* harmony default export */ var plugins_action_types = (action_types_TYPES);
 // CONCATENATED MODULE: ./packages/data/build-module/plugins/actions.js
 
 
-var actions_marked = /*#__PURE__*/regenerator_default.a.mark(installPlugins),
-    actions_marked2 = /*#__PURE__*/regenerator_default.a.mark(activatePlugins),
-    _marked3 = /*#__PURE__*/regenerator_default.a.mark(installAndActivatePlugins),
-    _marked4 = /*#__PURE__*/regenerator_default.a.mark(connectToJetpack),
-    _marked5 = /*#__PURE__*/regenerator_default.a.mark(installJetpackAndConnect),
-    _marked6 = /*#__PURE__*/regenerator_default.a.mark(connectToJetpackWithFailureRedirect);
+
+
+
+
+
+
+
+var actions_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(installPlugins),
+    actions_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(activatePlugins),
+    _marked3 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(installAndActivatePlugins),
+    _marked4 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(connectToJetpack),
+    _marked5 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(installJetpackAndConnect),
+    _marked6 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(connectToJetpackWithFailureRedirect);
 /**
  * External dependencies
  */
+
 
 
 
@@ -2557,7 +7148,7 @@ function updateJetpackConnectUrl(redirectUrl, jetpackConnectUrl) {
 }
 function installPlugins(plugins) {
   var results;
-  return regenerator_default.a.wrap(function installPlugins$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function installPlugins$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -2567,7 +7158,7 @@ function installPlugins(plugins) {
         case 2:
           _context.prev = 2;
           _context.next = 5;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: "".concat(WC_ADMIN_NAMESPACE, "/plugins/install"),
             method: 'POST',
             data: {
@@ -2592,7 +7183,7 @@ function installPlugins(plugins) {
             break;
           }
 
-          throw results.errors;
+          throw results.errors.errors;
 
         case 11:
           _context.next = 13;
@@ -2608,7 +7199,7 @@ function installPlugins(plugins) {
           return setError('installPlugins', _context.t0);
 
         case 20:
-          throw new Error(formatErrors(_context.t0));
+          throw new Error(actions_formatErrorMessage(_context.t0));
 
         case 21:
         case "end":
@@ -2619,7 +7210,7 @@ function installPlugins(plugins) {
 }
 function activatePlugins(plugins) {
   var results;
-  return regenerator_default.a.wrap(function activatePlugins$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function activatePlugins$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -2629,7 +7220,7 @@ function activatePlugins(plugins) {
         case 2:
           _context2.prev = 2;
           _context2.next = 5;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: "".concat(WC_ADMIN_NAMESPACE, "/plugins/activate"),
             method: 'POST',
             data: {
@@ -2654,7 +7245,7 @@ function activatePlugins(plugins) {
             break;
           }
 
-          throw results.errors;
+          throw results.errors.errors;
 
         case 11:
           _context2.next = 13;
@@ -2681,17 +7272,17 @@ function activatePlugins(plugins) {
 }
 function installAndActivatePlugins(plugins) {
   var activations;
-  return regenerator_default.a.wrap(function installAndActivatePlugins$(_context3) {
+  return external_regeneratorRuntime_default.a.wrap(function installAndActivatePlugins$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
           _context3.prev = 0;
           _context3.next = 3;
-          return Object(external_this_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'installPlugins', plugins);
+          return Object(external_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'installPlugins', plugins);
 
         case 3:
           _context3.next = 5;
-          return Object(external_this_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'activatePlugins', plugins);
+          return Object(external_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'activatePlugins', plugins);
 
         case 5:
           activations = _context3.sent;
@@ -2710,23 +7301,23 @@ function installAndActivatePlugins(plugins) {
   }, _marked3, null, [[0, 9]]);
 }
 var actions_createErrorNotice = function createErrorNotice(errorMessage) {
-  return Object(external_this_wp_dataControls_["dispatch"])('core/notices', 'createNotice', errorMessage);
+  return Object(external_wp_dataControls_["dispatch"])('core/notices', 'createNotice', errorMessage);
 };
 function connectToJetpack(getAdminLink) {
   var url, error;
-  return regenerator_default.a.wrap(function connectToJetpack$(_context4) {
+  return external_regeneratorRuntime_default.a.wrap(function connectToJetpack$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
           _context4.next = 2;
-          return Object(external_this_wp_dataControls_["select"])(constants_STORE_NAME, 'getJetpackConnectUrl', {
+          return Object(external_wp_dataControls_["select"])(constants_STORE_NAME, 'getJetpackConnectUrl', {
             redirect_url: getAdminLink('admin.php?page=wc-admin')
           });
 
         case 2:
           url = _context4.sent;
           _context4.next = 5;
-          return Object(external_this_wp_dataControls_["select"])(constants_STORE_NAME, 'getPluginsError', 'getJetpackConnectUrl');
+          return Object(external_wp_dataControls_["select"])(constants_STORE_NAME, 'getPluginsError', 'getJetpackConnectUrl');
 
         case 5:
           error = _context4.sent;
@@ -2750,21 +7341,21 @@ function connectToJetpack(getAdminLink) {
 }
 function installJetpackAndConnect(errorAction, getAdminLink) {
   var url;
-  return regenerator_default.a.wrap(function installJetpackAndConnect$(_context5) {
+  return external_regeneratorRuntime_default.a.wrap(function installJetpackAndConnect$(_context5) {
     while (1) {
       switch (_context5.prev = _context5.next) {
         case 0:
           _context5.prev = 0;
           _context5.next = 3;
-          return Object(external_this_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'installPlugins', ['jetpack']);
+          return Object(external_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'installPlugins', ['jetpack']);
 
         case 3:
           _context5.next = 5;
-          return Object(external_this_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'activatePlugins', ['jetpack']);
+          return Object(external_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'activatePlugins', ['jetpack']);
 
         case 5:
           _context5.next = 7;
-          return Object(external_this_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'connectToJetpack', getAdminLink);
+          return Object(external_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'connectToJetpack', getAdminLink);
 
         case 7:
           url = _context5.sent;
@@ -2787,13 +7378,13 @@ function installJetpackAndConnect(errorAction, getAdminLink) {
 }
 function connectToJetpackWithFailureRedirect(failureRedirect, errorAction, getAdminLink) {
   var url;
-  return regenerator_default.a.wrap(function connectToJetpackWithFailureRedirect$(_context6) {
+  return external_regeneratorRuntime_default.a.wrap(function connectToJetpackWithFailureRedirect$(_context6) {
     while (1) {
       switch (_context6.prev = _context6.next) {
         case 0:
           _context6.prev = 0;
           _context6.next = 3;
-          return Object(external_this_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'connectToJetpack', getAdminLink);
+          return Object(external_wp_dataControls_["dispatch"])(constants_STORE_NAME, 'connectToJetpack', getAdminLink);
 
         case 3:
           url = _context6.sent;
@@ -2829,16 +7420,487 @@ function formatErrors(response) {
 
   return response;
 }
-// EXTERNAL MODULE: external {"this":["wp","url"]}
-var external_this_wp_url_ = __webpack_require__(33);
+function setPaypalOnboardingStatus(status) {
+  return {
+    type: plugins_action_types.SET_PAYPAL_ONBOARDING_STATUS,
+    paypalOnboardingStatus: status
+  };
+}
 
+var actions_formatErrorMessage = function formatErrorMessage(pluginErrors) {
+  var actionType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'install';
+  return Object(external_wp_i18n_["sprintf"])(
+  /* translators: %(actionType): install or activate (the plugin). %(pluginName): a plugin slug (e.g. woocommerce-services). %(error): a single error message or in plural a comma separated error message list.*/
+  Object(external_wp_i18n_["_n"])('Could not %(actionType)s %(pluginName)s plugin, %(error)s', 'Could not %(actionType)s the following plugins: %(pluginName)s with these Errors: %(error)s', pluginErrors.length, 'woocommerce-admin'), {
+    actionType: actionType,
+    pluginName: Object.keys(pluginErrors).join(', '),
+    error: Object.values(pluginErrors).join(', \n')
+  });
+};
+// EXTERNAL MODULE: external ["wp","url"]
+var external_wp_url_ = __webpack_require__(78);
+
+// CONCATENATED MODULE: ./packages/data/build-module/options/constants.js
+var options_constants_STORE_NAME = 'wc/admin/options';
+// CONCATENATED MODULE: ./packages/data/build-module/options/selectors.js
+/**
+ * Get option from state tree.
+ *
+ * @param {Object} state - Reducer state
+ * @param {Array} name - Option name
+ */
+var getOption = function getOption(state, name) {
+  return state[name];
+};
+/**
+ * Determine if an options request resulted in an error.
+ *
+ * @param {Object} state - Reducer state
+ * @param {string} name - Option name
+ */
+
+var getOptionsRequestingError = function getOptionsRequestingError(state, name) {
+  return state.requestingErrors[name] || false;
+};
+/**
+ * Determine if options are being updated.
+ *
+ * @param {Object} state - Reducer state
+ */
+
+var isOptionsUpdating = function isOptionsUpdating(state) {
+  return state.isUpdating || false;
+};
+/**
+ * Determine if an options update resulted in an error.
+ *
+ * @param {Object} state - Reducer state
+ */
+
+var getOptionsUpdatingError = function getOptionsUpdatingError(state) {
+  return state.updatingError || false;
+};
+// CONCATENATED MODULE: ./packages/data/build-module/options/action-types.js
+var options_action_types_TYPES = {
+  RECEIVE_OPTIONS: 'RECEIVE_OPTIONS',
+  SET_IS_REQUESTING: 'SET_IS_REQUESTING',
+  SET_IS_UPDATING: 'SET_IS_UPDATING',
+  SET_REQUESTING_ERROR: 'SET_REQUESTING_ERROR',
+  SET_UPDATING_ERROR: 'SET_UPDATING_ERROR'
+};
+/* harmony default export */ var options_action_types = (options_action_types_TYPES);
+// CONCATENATED MODULE: ./packages/data/build-module/options/actions.js
+
+
+
+
+
+
+
+
+
+var options_actions_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(updateOptions);
+
+function actions_ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function actions_objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      actions_ownKeys(Object(source), true).forEach(function (key) {
+        defineProperty_default()(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      actions_ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+/**
+ * External dependencies
+ */
+
+
+
+/**
+ * Internal dependencies
+ */
+
+
+
+function actions_receiveOptions(options) {
+  return {
+    type: options_action_types.RECEIVE_OPTIONS,
+    options: options
+  };
+}
+function setRequestingError(error, name) {
+  return {
+    type: options_action_types.SET_REQUESTING_ERROR,
+    error: error,
+    name: name
+  };
+}
+function setUpdatingError(error) {
+  return {
+    type: options_action_types.SET_UPDATING_ERROR,
+    error: error
+  };
+}
+function setIsUpdating(isUpdating) {
+  return {
+    type: options_action_types.SET_IS_UPDATING,
+    isUpdating: isUpdating
+  };
+}
+function updateOptions(data) {
+  var results;
+  return external_regeneratorRuntime_default.a.wrap(function updateOptions$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return setIsUpdating(true);
+
+        case 2:
+          _context.next = 4;
+          return actions_receiveOptions(data);
+
+        case 4:
+          _context.prev = 4;
+          _context.next = 7;
+          return Object(external_wp_dataControls_["apiFetch"])({
+            path: WC_ADMIN_NAMESPACE + '/options',
+            method: 'POST',
+            data: data
+          });
+
+        case 7:
+          results = _context.sent;
+          _context.next = 10;
+          return setIsUpdating(false);
+
+        case 10:
+          return _context.abrupt("return", actions_objectSpread({
+            success: true
+          }, results));
+
+        case 13:
+          _context.prev = 13;
+          _context.t0 = _context["catch"](4);
+          _context.next = 17;
+          return setUpdatingError(_context.t0);
+
+        case 17:
+          return _context.abrupt("return", actions_objectSpread({
+            success: false
+          }, _context.t0));
+
+        case 18:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, options_actions_marked, null, [[4, 13]]);
+}
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.promise.js
+var es_promise = __webpack_require__(164);
+
+// EXTERNAL MODULE: external ["wp","apiFetch"]
+var external_wp_apiFetch_ = __webpack_require__(95);
+var external_wp_apiFetch_default = /*#__PURE__*/__webpack_require__.n(external_wp_apiFetch_);
+
+// CONCATENATED MODULE: ./packages/data/build-module/options/controls.js
+
+
+
+
+
+
+
+
+
+
+
+function controls_ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function controls_objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      controls_ownKeys(Object(source), true).forEach(function (key) {
+        defineProperty_default()(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      controls_ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+/**
+ * External dependencies
+ */
+
+
+
+
+/**
+ * Internal dependencies
+ */
+
+
+var optionNames = [];
+var fetches = {};
+var batchFetch = function batchFetch(optionName) {
+  return {
+    type: 'BATCH_FETCH',
+    optionName: optionName
+  };
+};
+var controls = controls_objectSpread(controls_objectSpread({}, external_wp_dataControls_["controls"]), {}, {
+  BATCH_FETCH: function BATCH_FETCH(_ref) {
+    var optionName = _ref.optionName;
+    optionNames.push(optionName);
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        var names = optionNames.join(',');
+
+        if (fetches[names]) {
+          return fetches[names].then(function (result) {
+            resolve(result[optionName]);
+          });
+        }
+
+        var url = WC_ADMIN_NAMESPACE + '/options?options=' + names;
+        fetches[names] = external_wp_apiFetch_default()({
+          path: url
+        });
+        fetches[names].then(function (result) {
+          return resolve(result);
+        }); // Clear option names after all resolved;
+
+        setTimeout(function () {
+          optionNames = []; // Delete the fetch after to allow wp data to handle cache invalidation.
+
+          delete fetches[names];
+        }, 1);
+      }, 1);
+    });
+  }
+});
+// CONCATENATED MODULE: ./packages/data/build-module/options/resolvers.js
+
+
+var options_resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getOption);
+/**
+ * Internal dependencies
+ */
+
+
+
+
+/**
+ * Request an option value.
+ *
+ * @param {string} name - Option name
+ */
+
+function resolvers_getOption(name) {
+  var result;
+  return external_regeneratorRuntime_default.a.wrap(function getOption$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.prev = 0;
+          _context.next = 3;
+          return batchFetch(name);
+
+        case 3:
+          result = _context.sent;
+          _context.next = 6;
+          return actions_receiveOptions(result);
+
+        case 6:
+          _context.next = 12;
+          break;
+
+        case 8:
+          _context.prev = 8;
+          _context.t0 = _context["catch"](0);
+          _context.next = 12;
+          return setRequestingError(_context.t0, name);
+
+        case 12:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, options_resolvers_marked, null, [[0, 8]]);
+}
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.function.name.js
+var es_function_name = __webpack_require__(129);
+
+// CONCATENATED MODULE: ./packages/data/build-module/options/reducer.js
+
+
+
+
+
+
+
+
+
+function reducer_ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function reducer_objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      reducer_ownKeys(Object(source), true).forEach(function (key) {
+        defineProperty_default()(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      reducer_ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+/**
+ * Internal dependencies
+ */
+
+
+
+
+var reducer_optionsReducer = function optionsReducer() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+    isUpdating: false,
+    requestingErrors: {}
+  };
+
+  var _ref = arguments.length > 1 ? arguments[1] : undefined,
+      type = _ref.type,
+      options = _ref.options,
+      error = _ref.error,
+      isUpdating = _ref.isUpdating,
+      name = _ref.name;
+
+  switch (type) {
+    case options_action_types.RECEIVE_OPTIONS:
+      state = reducer_objectSpread(reducer_objectSpread({}, state), options);
+      break;
+
+    case options_action_types.SET_IS_UPDATING:
+      state = reducer_objectSpread(reducer_objectSpread({}, state), {}, {
+        isUpdating: isUpdating
+      });
+      break;
+
+    case options_action_types.SET_REQUESTING_ERROR:
+      state = reducer_objectSpread(reducer_objectSpread({}, state), {}, {
+        requestingErrors: defineProperty_default()({}, name, error)
+      });
+      break;
+
+    case options_action_types.SET_UPDATING_ERROR:
+      state = reducer_objectSpread(reducer_objectSpread({}, state), {}, {
+        error: error,
+        updatingError: error,
+        isUpdating: false
+      });
+      break;
+  }
+
+  return state;
+};
+
+/* harmony default export */ var options_reducer = (reducer_optionsReducer);
+// CONCATENATED MODULE: ./packages/data/build-module/options/index.js
+/**
+ * External dependencies
+ */
+
+/**
+ * Internal dependencies
+ */
+
+
+
+
+
+
+
+Object(external_wp_data_["registerStore"])(options_constants_STORE_NAME, {
+  reducer: options_reducer,
+  actions: options_actions_namespaceObject,
+  controls: controls,
+  selectors: options_selectors_namespaceObject,
+  resolvers: options_resolvers_namespaceObject
+});
+var OPTIONS_STORE_NAME = options_constants_STORE_NAME;
 // CONCATENATED MODULE: ./packages/data/build-module/plugins/resolvers.js
 
 
-var plugins_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers_getActivePlugins),
-    plugins_resolvers_marked2 = /*#__PURE__*/regenerator_default.a.mark(resolvers_getInstalledPlugins),
-    resolvers_marked3 = /*#__PURE__*/regenerator_default.a.mark(resolvers_isJetpackConnected),
-    resolvers_marked4 = /*#__PURE__*/regenerator_default.a.mark(resolvers_getJetpackConnectUrl);
+var plugins_resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getActivePlugins),
+    plugins_resolvers_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getInstalledPlugins),
+    resolvers_marked3 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_isJetpackConnected),
+    resolvers_marked4 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getJetpackConnectUrl),
+    resolvers_marked5 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getPaypalOnboardingStatus),
+    resolvers_marked6 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(setOnboardingStatusWithOptions);
 /**
  * External dependencies
  */
@@ -2852,9 +7914,11 @@ var plugins_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers
 
 
 
+
+
 function resolvers_getActivePlugins() {
   var url, results;
-  return regenerator_default.a.wrap(function getActivePlugins$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function getActivePlugins$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -2865,7 +7929,7 @@ function resolvers_getActivePlugins() {
           _context.prev = 2;
           url = WC_ADMIN_NAMESPACE + '/plugins/active';
           _context.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'GET'
           });
@@ -2894,7 +7958,7 @@ function resolvers_getActivePlugins() {
 }
 function resolvers_getInstalledPlugins() {
   var url, results;
-  return regenerator_default.a.wrap(function getInstalledPlugins$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function getInstalledPlugins$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -2905,7 +7969,7 @@ function resolvers_getInstalledPlugins() {
           _context2.prev = 2;
           url = WC_ADMIN_NAMESPACE + '/plugins/installed';
           _context2.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'GET'
           });
@@ -2934,7 +7998,7 @@ function resolvers_getInstalledPlugins() {
 }
 function resolvers_isJetpackConnected() {
   var url, results;
-  return regenerator_default.a.wrap(function isJetpackConnected$(_context3) {
+  return external_regeneratorRuntime_default.a.wrap(function isJetpackConnected$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
@@ -2945,7 +8009,7 @@ function resolvers_isJetpackConnected() {
           _context3.prev = 2;
           url = JETPACK_NAMESPACE + '/connection';
           _context3.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'GET'
           });
@@ -2978,7 +8042,7 @@ function resolvers_isJetpackConnected() {
 }
 function resolvers_getJetpackConnectUrl(query) {
   var url, results;
-  return regenerator_default.a.wrap(function getJetpackConnectUrl$(_context4) {
+  return external_regeneratorRuntime_default.a.wrap(function getJetpackConnectUrl$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
@@ -2987,9 +8051,9 @@ function resolvers_getJetpackConnectUrl(query) {
 
         case 2:
           _context4.prev = 2;
-          url = Object(external_this_wp_url_["addQueryArgs"])(WC_ADMIN_NAMESPACE + '/plugins/connect-jetpack', query);
+          url = Object(external_wp_url_["addQueryArgs"])(WC_ADMIN_NAMESPACE + '/plugins/connect-jetpack', query);
           _context4.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'GET'
           });
@@ -3020,10 +8084,111 @@ function resolvers_getJetpackConnectUrl(query) {
     }
   }, resolvers_marked4, null, [[2, 11]]);
 }
+function resolvers_getPaypalOnboardingStatus() {
+  var errorData, url, results;
+  return external_regeneratorRuntime_default.a.wrap(function getPaypalOnboardingStatus$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.next = 2;
+          return actions_setIsRequesting('getPaypalOnboardingStatus', true);
+
+        case 2:
+          _context5.next = 4;
+          return Object(external_wp_dataControls_["select"])(constants_STORE_NAME, 'getPluginsError', 'getPaypalOnboardingStatus');
+
+        case 4:
+          errorData = _context5.sent;
+
+          if (!(errorData && errorData.data && errorData.data.status === 404)) {
+            _context5.next = 10;
+            break;
+          }
+
+          _context5.next = 8;
+          return setOnboardingStatusWithOptions();
+
+        case 8:
+          _context5.next = 25;
+          break;
+
+        case 10:
+          _context5.prev = 10;
+          url = PAYPAL_NAMESPACE + '/onboarding/get-status';
+          _context5.next = 14;
+          return Object(external_wp_dataControls_["apiFetch"])({
+            path: url,
+            method: 'GET'
+          });
+
+        case 14:
+          results = _context5.sent;
+          _context5.next = 17;
+          return setPaypalOnboardingStatus(results);
+
+        case 17:
+          _context5.next = 25;
+          break;
+
+        case 19:
+          _context5.prev = 19;
+          _context5.t0 = _context5["catch"](10);
+          _context5.next = 23;
+          return setOnboardingStatusWithOptions();
+
+        case 23:
+          _context5.next = 25;
+          return setError('getPaypalOnboardingStatus', _context5.t0);
+
+        case 25:
+          _context5.next = 27;
+          return actions_setIsRequesting('getPaypalOnboardingStatus', false);
+
+        case 27:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  }, resolvers_marked5, null, [[10, 19]]);
+}
+
+function setOnboardingStatusWithOptions() {
+  var options;
+  return external_regeneratorRuntime_default.a.wrap(function setOnboardingStatusWithOptions$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          _context6.next = 2;
+          return Object(external_wp_dataControls_["select"])(OPTIONS_STORE_NAME, 'getOption', 'woocommerce-ppcp-settings');
+
+        case 2:
+          options = _context6.sent;
+          _context6.next = 5;
+          return setPaypalOnboardingStatus({
+            production: {
+              onboarded: options.merchant_email_production && options.merchant_id_production && options.client_id_production && options.client_secret_production ? true : false
+            }
+          });
+
+        case 5:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  }, resolvers_marked6);
+}
 // CONCATENATED MODULE: ./packages/data/build-module/plugins/reducer.js
 
 
-function reducer_ownKeys(object, enumerableOnly) {
+
+
+
+
+
+
+
+
+function plugins_reducer_ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
 
   if (Object.getOwnPropertySymbols) {
@@ -3037,18 +8202,18 @@ function reducer_ownKeys(object, enumerableOnly) {
   return keys;
 }
 
-function reducer_objectSpread(target) {
+function plugins_reducer_objectSpread(target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = arguments[i] != null ? arguments[i] : {};
 
     if (i % 2) {
-      reducer_ownKeys(Object(source), true).forEach(function (key) {
+      plugins_reducer_ownKeys(Object(source), true).forEach(function (key) {
         defineProperty_default()(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
     } else {
-      reducer_ownKeys(Object(source)).forEach(function (key) {
+      plugins_reducer_ownKeys(Object(source)).forEach(function (key) {
         Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
       });
     }
@@ -3087,17 +8252,18 @@ var reducer_plugins = function plugins() {
       jetpackConnection = _ref.jetpackConnection,
       redirectUrl = _ref.redirectUrl,
       jetpackConnectUrl = _ref.jetpackConnectUrl,
+      paypalOnboardingStatus = _ref.paypalOnboardingStatus,
       replace = _ref.replace;
 
   switch (type) {
     case plugins_action_types.UPDATE_ACTIVE_PLUGINS:
-      state = reducer_objectSpread(reducer_objectSpread({}, state), {}, {
+      state = plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state), {}, {
         active: replace ? active : Object(external_lodash_["concat"])(state.active, active),
-        requesting: reducer_objectSpread(reducer_objectSpread({}, state.requesting), {}, {
+        requesting: plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state.requesting), {}, {
           getActivePlugins: false,
           activatePlugins: false
         }),
-        errors: reducer_objectSpread(reducer_objectSpread({}, state.errors), {}, {
+        errors: plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state.errors), {}, {
           getActivePlugins: false,
           activatePlugins: false
         })
@@ -3105,13 +8271,13 @@ var reducer_plugins = function plugins() {
       break;
 
     case plugins_action_types.UPDATE_INSTALLED_PLUGINS:
-      state = reducer_objectSpread(reducer_objectSpread({}, state), {}, {
+      state = plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state), {}, {
         installed: replace ? installed : Object(external_lodash_["concat"])(state.installed, installed),
-        requesting: reducer_objectSpread(reducer_objectSpread({}, state.requesting), {}, {
+        requesting: plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state.requesting), {}, {
           getInstalledPlugins: false,
           installPlugin: false
         }),
-        errors: reducer_objectSpread(reducer_objectSpread({}, state.errors), {}, {
+        errors: plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state.errors), {}, {
           getInstalledPlugins: false,
           installPlugin: false
         })
@@ -3119,28 +8285,35 @@ var reducer_plugins = function plugins() {
       break;
 
     case plugins_action_types.SET_IS_REQUESTING:
-      state = reducer_objectSpread(reducer_objectSpread({}, state), {}, {
-        requesting: reducer_objectSpread(reducer_objectSpread({}, state.requesting), {}, defineProperty_default()({}, selector, isRequesting))
+      state = plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state), {}, {
+        requesting: plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state.requesting), {}, defineProperty_default()({}, selector, isRequesting))
       });
       break;
 
     case plugins_action_types.SET_ERROR:
-      state = reducer_objectSpread(reducer_objectSpread({}, state), {}, {
-        requesting: reducer_objectSpread(reducer_objectSpread({}, state.requesting), {}, defineProperty_default()({}, selector, false)),
-        errors: reducer_objectSpread(reducer_objectSpread({}, state.errors), {}, defineProperty_default()({}, selector, error))
+      state = plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state), {}, {
+        requesting: plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state.requesting), {}, defineProperty_default()({}, selector, false)),
+        errors: plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state.errors), {}, defineProperty_default()({}, selector, error))
       });
       break;
 
     case plugins_action_types.UPDATE_JETPACK_CONNECTION:
-      state = reducer_objectSpread(reducer_objectSpread({}, state), {}, {
+      state = plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state), {}, {
         jetpackConnection: jetpackConnection
       });
       break;
 
     case plugins_action_types.UPDATE_JETPACK_CONNECT_URL:
-      state = reducer_objectSpread(reducer_objectSpread({}, state), {}, {
-        jetpackConnectUrls: reducer_objectSpread(reducer_objectSpread({}, state.jetpackConnectUrl), {}, defineProperty_default()({}, redirectUrl, jetpackConnectUrl))
+      state = plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state), {}, {
+        jetpackConnectUrls: plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state.jetpackConnectUrl), {}, defineProperty_default()({}, redirectUrl, jetpackConnectUrl))
       });
+      break;
+
+    case plugins_action_types.SET_PAYPAL_ONBOARDING_STATUS:
+      state = plugins_reducer_objectSpread(plugins_reducer_objectSpread({}, state), {}, {
+        paypalOnboardingStatus: paypalOnboardingStatus
+      });
+      break;
   }
 
   return state;
@@ -3162,10 +8335,10 @@ var reducer_plugins = function plugins() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(constants_STORE_NAME, {
+Object(external_wp_data_["registerStore"])(constants_STORE_NAME, {
   reducer: plugins_reducer,
   actions: plugins_actions_namespaceObject,
-  controls: external_this_wp_dataControls_["controls"],
+  controls: external_wp_dataControls_["controls"],
   selectors: plugins_selectors_namespaceObject,
   resolvers: plugins_resolvers_namespaceObject
 });
@@ -3178,16 +8351,17 @@ var PLUGINS_STORE_NAME = constants_STORE_NAME;
 
 
 
+
 /**
  * Internal dependencies
  */
 
 
 var with_plugins_hydration_withPluginsHydration = function withPluginsHydration(data) {
-  return function (OriginalComponent) {
+  return Object(external_wp_compose_["createHigherOrderComponent"])(function (OriginalComponent) {
     return function (props) {
-      var dataRef = Object(external_this_wp_element_["useRef"])(data);
-      Object(external_this_wp_data_["useSelect"])(function (select, registry) {
+      var dataRef = Object(external_wp_element_["useRef"])(data);
+      Object(external_wp_data_["useSelect"])(function (select, registry) {
         if (!dataRef.current) {
           return;
         }
@@ -3215,9 +8389,9 @@ var with_plugins_hydration_withPluginsHydration = function withPluginsHydration(
           finishResolution('isJetpackConnected', []);
         }
       }, []);
-      return Object(external_this_wp_element_["createElement"])(OriginalComponent, props);
+      return Object(external_wp_element_["createElement"])(OriginalComponent, props);
     };
-  };
+  }, 'withPluginsHydration');
 };
 // CONCATENATED MODULE: ./packages/data/build-module/onboarding/constants.js
 /**
@@ -3248,7 +8422,7 @@ var onboarding_action_types_TYPES = {
 // CONCATENATED MODULE: ./packages/data/build-module/onboarding/actions.js
 
 
-var onboarding_actions_marked = /*#__PURE__*/regenerator_default.a.mark(updateProfileItems);
+var onboarding_actions_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(updateProfileItems);
 /**
  * External dependencies
  */
@@ -3291,7 +8465,7 @@ function actions_setTasksStatus(tasksStatus) {
 }
 function updateProfileItems(items) {
   var results;
-  return regenerator_default.a.wrap(function updateProfileItems$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function updateProfileItems$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -3301,7 +8475,7 @@ function updateProfileItems(items) {
         case 2:
           _context.prev = 2;
           _context.next = 5;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: "".concat(WC_ADMIN_NAMESPACE, "/onboarding/profile"),
             method: 'POST',
             data: items
@@ -3351,8 +8525,8 @@ function updateProfileItems(items) {
 // CONCATENATED MODULE: ./packages/data/build-module/onboarding/resolvers.js
 
 
-var onboarding_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers_getProfileItems),
-    onboarding_resolvers_marked2 = /*#__PURE__*/regenerator_default.a.mark(resolvers_getTasksStatus);
+var onboarding_resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getProfileItems),
+    onboarding_resolvers_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getTasksStatus);
 /**
  * External dependencies
  */
@@ -3367,13 +8541,13 @@ var onboarding_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolv
 
 function resolvers_getProfileItems() {
   var results;
-  return regenerator_default.a.wrap(function getProfileItems$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function getProfileItems$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
           _context.next = 3;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: WC_ADMIN_NAMESPACE + '/onboarding/profile',
             method: 'GET'
           });
@@ -3402,13 +8576,13 @@ function resolvers_getProfileItems() {
 }
 function resolvers_getTasksStatus() {
   var results;
-  return regenerator_default.a.wrap(function getTasksStatus$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function getTasksStatus$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           _context2.prev = 0;
           _context2.next = 3;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: WC_ADMIN_NAMESPACE + '/onboarding/tasks/status',
             method: 'GET'
           });
@@ -3436,6 +8610,14 @@ function resolvers_getTasksStatus() {
   }, onboarding_resolvers_marked2, null, [[0, 8]]);
 }
 // CONCATENATED MODULE: ./packages/data/build-module/onboarding/reducer.js
+
+
+
+
+
+
+
+
 
 
 function onboarding_reducer_ownKeys(object, enumerableOnly) {
@@ -3537,10 +8719,10 @@ var reducer_onboarding = function onboarding() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(onboarding_constants_STORE_NAME, {
+Object(external_wp_data_["registerStore"])(onboarding_constants_STORE_NAME, {
   reducer: onboarding_reducer,
   actions: onboarding_actions_namespaceObject,
-  controls: external_this_wp_dataControls_["controls"],
+  controls: external_wp_dataControls_["controls"],
   selectors: onboarding_selectors_namespaceObject,
   resolvers: onboarding_resolvers_namespaceObject
 });
@@ -3553,6 +8735,7 @@ var ONBOARDING_STORE_NAME = onboarding_constants_STORE_NAME;
 
 
 
+
 /**
  * Internal dependencies
  */
@@ -3561,10 +8744,10 @@ var ONBOARDING_STORE_NAME = onboarding_constants_STORE_NAME;
 var with_onboarding_hydration_withOnboardingHydration = function withOnboardingHydration(data) {
   var hydratedProfileItems = false;
   var hydratedTasksStatus = false;
-  return function (OriginalComponent) {
+  return Object(external_wp_compose_["createHigherOrderComponent"])(function (OriginalComponent) {
     return function (props) {
-      var onboardingRef = Object(external_this_wp_element_["useRef"])(data);
-      Object(external_this_wp_data_["useSelect"])(function (select, registry) {
+      var onboardingRef = Object(external_wp_element_["useRef"])(data);
+      Object(external_wp_data_["useSelect"])(function (select, registry) {
         if (!onboardingRef.current) {
           return;
         }
@@ -3597,23 +8780,24 @@ var with_onboarding_hydration_withOnboardingHydration = function withOnboardingH
           hydratedTasksStatus = true;
         }
       }, []);
-      return Object(external_this_wp_element_["createElement"])(OriginalComponent, props);
+      return Object(external_wp_element_["createElement"])(OriginalComponent, props);
     };
-  };
+  }, 'withOnboardingHydration');
 };
-// CONCATENATED MODULE: ./packages/data/build-module/user-preferences/constants.js
-var user_preferences_constants_STORE_NAME = 'core';
-// CONCATENATED MODULE: ./packages/data/build-module/user-preferences/index.js
+// CONCATENATED MODULE: ./packages/data/build-module/user/constants.js
+var user_constants_STORE_NAME = 'core';
+// CONCATENATED MODULE: ./packages/data/build-module/user/index.js
 /**
  * Internal dependencies
  */
 
-var USER_STORE_NAME = user_preferences_constants_STORE_NAME;
-// CONCATENATED MODULE: ./packages/data/build-module/user-preferences/with-current-user-hydration.js
+var USER_STORE_NAME = user_constants_STORE_NAME;
+// CONCATENATED MODULE: ./packages/data/build-module/user/with-current-user-hydration.js
 
 /**
  * External dependencies
  */
+
 
 
 
@@ -3629,20 +8813,20 @@ var USER_STORE_NAME = user_preferences_constants_STORE_NAME;
  */
 
 var with_current_user_hydration_withCurrentUserHydration = function withCurrentUserHydration(currentUser) {
-  return function (OriginalComponent) {
+  return Object(external_wp_compose_["createHigherOrderComponent"])(function (OriginalComponent) {
     return function (props) {
-      var userRef = Object(external_this_wp_element_["useRef"])(currentUser); // Use currentUser to hydrate calls to @wordpress/core-data's getCurrentUser().
+      var userRef = Object(external_wp_element_["useRef"])(currentUser); // Use currentUser to hydrate calls to @wordpress/core-data's getCurrentUser().
 
-      Object(external_this_wp_data_["useSelect"])(function (select, registry) {
+      Object(external_wp_data_["useSelect"])(function (select, registry) {
         if (!userRef.current) {
           return;
         }
 
-        var _select = select(user_preferences_constants_STORE_NAME),
+        var _select = select(user_constants_STORE_NAME),
             isResolving = _select.isResolving,
             hasFinishedResolution = _select.hasFinishedResolution;
 
-        var _registry$dispatch = registry.dispatch(user_preferences_constants_STORE_NAME),
+        var _registry$dispatch = registry.dispatch(user_constants_STORE_NAME),
             startResolution = _registry$dispatch.startResolution,
             finishResolution = _registry$dispatch.finishResolution,
             receiveCurrentUser = _registry$dispatch.receiveCurrentUser;
@@ -3653,15 +8837,65 @@ var with_current_user_hydration_withCurrentUserHydration = function withCurrentU
           finishResolution('getCurrentUser', []);
         }
       });
-      return Object(external_this_wp_element_["createElement"])(OriginalComponent, props);
+      return Object(external_wp_element_["createElement"])(OriginalComponent, props);
     };
+  }, 'withCurrentUserHydration');
+};
+// CONCATENATED MODULE: ./packages/data/build-module/user/use-user.js
+/**
+ * External dependencies
+ */
+
+/**
+ * Internal dependencies
+ */
+
+
+/**
+ * Custom react hook for shortcut methods around user.
+ *
+ * This is a wrapper around @wordpress/core-data's getCurrentUser().
+ */
+
+var use_user_useUser = function useUser() {
+  var userData = Object(external_wp_data_["useSelect"])(function (select) {
+    var _select = select(user_constants_STORE_NAME),
+        getCurrentUser = _select.getCurrentUser,
+        hasStartedResolution = _select.hasStartedResolution,
+        hasFinishedResolution = _select.hasFinishedResolution;
+
+    return {
+      isRequesting: hasStartedResolution('getCurrentUser') && !hasFinishedResolution('getCurrentUser'),
+      user: getCurrentUser(),
+      getCurrentUser: getCurrentUser
+    };
+  });
+
+  var currentUserCan = function currentUserCan(capability) {
+    if (userData.user && userData.user && userData.user.capabilities[capability]) {
+      return true;
+    }
+
+    return false;
+  };
+
+  return {
+    currentUserCan: currentUserCan,
+    user: userData.user,
+    isRequesting: userData.isRequesting
   };
 };
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/asyncToGenerator.js
-var asyncToGenerator = __webpack_require__(75);
+var asyncToGenerator = __webpack_require__(134);
 var asyncToGenerator_default = /*#__PURE__*/__webpack_require__.n(asyncToGenerator);
 
-// CONCATENATED MODULE: ./packages/data/build-module/user-preferences/use-user-preferences.js
+// CONCATENATED MODULE: ./packages/data/build-module/user/use-user-preferences.js
+
+
+
+
+
+
 
 
 
@@ -3742,15 +8976,15 @@ function updateUserPrefs(_x, _x2, _x3, _x4, _x5) {
 
 
 function _updateUserPrefs() {
-  _updateUserPrefs = asyncToGenerator_default()( /*#__PURE__*/regenerator_default.a.mark(function _callee2(receiveCurrentUser, user, saveUser, getLastEntitySaveError, userPrefs) {
+  _updateUserPrefs = asyncToGenerator_default()( /*#__PURE__*/external_regeneratorRuntime_default.a.mark(function _callee2(receiveCurrentUser, user, saveUser, getLastEntitySaveError, userPrefs) {
     var userDataFields, metaData, updatedUser, error, updatedUserResponse;
-    return regenerator_default.a.wrap(function _callee2$(_context2) {
+    return external_regeneratorRuntime_default.a.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             // @todo Handle unresolved getCurrentUser() here.
             // Whitelist our meta fields.
-            userDataFields = ['categories_report_columns', 'coupons_report_columns', 'customers_report_columns', 'orders_report_columns', 'products_report_columns', 'revenue_report_columns', 'taxes_report_columns', 'variations_report_columns', 'dashboard_sections', 'dashboard_chart_type', 'dashboard_chart_interval', 'dashboard_leaderboard_rows', 'activity_panel_inbox_last_read', 'homepage_layout', 'homepage_stats', 'android_app_banner_dismissed']; // Prep valid fields for update.
+            userDataFields = ['categories_report_columns', 'coupons_report_columns', 'customers_report_columns', 'orders_report_columns', 'products_report_columns', 'revenue_report_columns', 'taxes_report_columns', 'variations_report_columns', 'dashboard_sections', 'dashboard_chart_type', 'dashboard_chart_interval', 'dashboard_leaderboard_rows', 'activity_panel_inbox_last_read', 'homepage_layout', 'homepage_stats', 'android_app_banner_dismissed', 'task_list_tracked_started_tasks', 'help_panel_highlight_shown']; // Prep valid fields for update.
 
             metaData = Object(external_lodash_["mapValues"])(Object(external_lodash_["pick"])(userPrefs, userDataFields), JSON.stringify);
 
@@ -3812,25 +9046,24 @@ function _updateUserPrefs() {
 
 var use_user_preferences_useUserPreferences = function useUserPreferences() {
   // Get our dispatch methods now - this can't happen inside the callback below.
-  var dispatch = Object(external_this_wp_data_["useDispatch"])(user_preferences_constants_STORE_NAME);
+  var dispatch = Object(external_wp_data_["useDispatch"])(user_constants_STORE_NAME);
   var addEntities = dispatch.addEntities,
       receiveCurrentUser = dispatch.receiveCurrentUser,
       saveEntityRecord = dispatch.saveEntityRecord;
   var saveUser = dispatch.saveUser;
-  var userData = Object(external_this_wp_data_["useSelect"])(function (select) {
-    var _select = select(user_preferences_constants_STORE_NAME),
+  var userData = Object(external_wp_data_["useSelect"])(function (select) {
+    var _select = select(user_constants_STORE_NAME),
         getCurrentUser = _select.getCurrentUser,
         getEntity = _select.getEntity,
         getEntityRecord = _select.getEntityRecord,
         getLastEntitySaveError = _select.getLastEntitySaveError,
         hasStartedResolution = _select.hasStartedResolution,
-        hasFinishedResolution = _select.hasFinishedResolution; // Use getCurrentUser() to get WooCommerce meta values.
+        hasFinishedResolution = _select.hasFinishedResolution;
 
-
-    var user = getCurrentUser();
     return {
       isRequesting: hasStartedResolution('getCurrentUser') && !hasFinishedResolution('getCurrentUser'),
-      user: user,
+      user: getCurrentUser(),
+      getCurrentUser: getCurrentUser,
       getEntity: getEntity,
       getEntityRecord: getEntityRecord,
       getLastEntitySaveError: getLastEntitySaveError
@@ -3842,9 +9075,9 @@ var use_user_preferences_useUserPreferences = function useUserPreferences() {
     if (typeof saveUser !== 'function') {
       // Polyfill saveUser() - wrapper of saveEntityRecord.
       saveUser = /*#__PURE__*/function () {
-        var _ref = asyncToGenerator_default()( /*#__PURE__*/regenerator_default.a.mark(function _callee(userToSave) {
+        var _ref = asyncToGenerator_default()( /*#__PURE__*/external_regeneratorRuntime_default.a.mark(function _callee(userToSave) {
           var entityDefined;
-          return regenerator_default.a.wrap(function _callee$(_context) {
+          return external_regeneratorRuntime_default.a.wrap(function _callee$(_context) {
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
@@ -3882,9 +9115,11 @@ var use_user_preferences_useUserPreferences = function useUserPreferences() {
           return _ref.apply(this, arguments);
         };
       }();
-    }
+    } // Get most recent user before update.
 
-    return updateUserPrefs(receiveCurrentUser, userData.user, saveUser, userData.getLastEntitySaveError, userPrefs);
+
+    var currentUser = userData.getCurrentUser();
+    return updateUserPrefs(receiveCurrentUser, currentUser, saveUser, userData.getLastEntitySaveError, userPrefs);
   };
 
   var userPreferences = userData.user ? use_user_preferences_getWooCommerceMeta(userData.user) : {};
@@ -3894,436 +9129,15 @@ var use_user_preferences_useUserPreferences = function useUserPreferences() {
     updateUserPreferences: updateUserPreferences
   });
 };
-// CONCATENATED MODULE: ./packages/data/build-module/options/constants.js
-var options_constants_STORE_NAME = 'wc/admin/options';
-// CONCATENATED MODULE: ./packages/data/build-module/options/selectors.js
-/**
- * Get option from state tree.
- *
- * @param {Object} state - Reducer state
- * @param {Array} name - Option name
- */
-var getOption = function getOption(state, name) {
-  return state[name];
-};
-/**
- * Determine if an options request resulted in an error.
- *
- * @param {Object} state - Reducer state
- * @param {string} name - Option name
- */
-
-var getOptionsRequestingError = function getOptionsRequestingError(state, name) {
-  return state.requestingErrors[name] || false;
-};
-/**
- * Determine if options are being updated.
- *
- * @param {Object} state - Reducer state
- */
-
-var isOptionsUpdating = function isOptionsUpdating(state) {
-  return state.isUpdating || false;
-};
-/**
- * Determine if an options update resulted in an error.
- *
- * @param {Object} state - Reducer state
- */
-
-var getOptionsUpdatingError = function getOptionsUpdatingError(state) {
-  return state.updatingError || false;
-};
-// CONCATENATED MODULE: ./packages/data/build-module/options/action-types.js
-var options_action_types_TYPES = {
-  RECEIVE_OPTIONS: 'RECEIVE_OPTIONS',
-  SET_IS_REQUESTING: 'SET_IS_REQUESTING',
-  SET_IS_UPDATING: 'SET_IS_UPDATING',
-  SET_REQUESTING_ERROR: 'SET_REQUESTING_ERROR',
-  SET_UPDATING_ERROR: 'SET_UPDATING_ERROR'
-};
-/* harmony default export */ var options_action_types = (options_action_types_TYPES);
-// CONCATENATED MODULE: ./packages/data/build-module/options/actions.js
-
-
-
-var options_actions_marked = /*#__PURE__*/regenerator_default.a.mark(updateOptions);
-
-function actions_ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function actions_objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      actions_ownKeys(Object(source), true).forEach(function (key) {
-        defineProperty_default()(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      actions_ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-/**
- * External dependencies
- */
-
-
-
-/**
- * Internal dependencies
- */
-
-
-
-function actions_receiveOptions(options) {
-  return {
-    type: options_action_types.RECEIVE_OPTIONS,
-    options: options
-  };
-}
-function setRequestingError(error, name) {
-  return {
-    type: options_action_types.SET_REQUESTING_ERROR,
-    error: error,
-    name: name
-  };
-}
-function setUpdatingError(error) {
-  return {
-    type: options_action_types.SET_UPDATING_ERROR,
-    error: error
-  };
-}
-function setIsUpdating(isUpdating) {
-  return {
-    type: options_action_types.SET_IS_UPDATING,
-    isUpdating: isUpdating
-  };
-}
-function updateOptions(data) {
-  var results;
-  return regenerator_default.a.wrap(function updateOptions$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.next = 2;
-          return setIsUpdating(true);
-
-        case 2:
-          _context.next = 4;
-          return actions_receiveOptions(data);
-
-        case 4:
-          _context.prev = 4;
-          _context.next = 7;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
-            path: WC_ADMIN_NAMESPACE + '/options',
-            method: 'POST',
-            data: data
-          });
-
-        case 7:
-          results = _context.sent;
-          _context.next = 10;
-          return setIsUpdating(false);
-
-        case 10:
-          return _context.abrupt("return", actions_objectSpread({
-            success: true
-          }, results));
-
-        case 13:
-          _context.prev = 13;
-          _context.t0 = _context["catch"](4);
-          _context.next = 17;
-          return setUpdatingError(_context.t0);
-
-        case 17:
-          return _context.abrupt("return", actions_objectSpread({
-            success: false
-          }, _context.t0));
-
-        case 18:
-        case "end":
-          return _context.stop();
-      }
-    }
-  }, options_actions_marked, null, [[4, 13]]);
-}
-// EXTERNAL MODULE: external {"this":["wp","apiFetch"]}
-var external_this_wp_apiFetch_ = __webpack_require__(44);
-var external_this_wp_apiFetch_default = /*#__PURE__*/__webpack_require__.n(external_this_wp_apiFetch_);
-
-// CONCATENATED MODULE: ./packages/data/build-module/options/controls.js
-
-
-function controls_ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function controls_objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      controls_ownKeys(Object(source), true).forEach(function (key) {
-        defineProperty_default()(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      controls_ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-/**
- * External dependencies
- */
-
-
-
-
-/**
- * Internal dependencies
- */
-
-
-var optionNames = [];
-var fetches = {};
-var batchFetch = function batchFetch(optionName) {
-  return {
-    type: 'BATCH_FETCH',
-    optionName: optionName
-  };
-};
-var controls = controls_objectSpread(controls_objectSpread({}, external_this_wp_dataControls_["controls"]), {}, {
-  BATCH_FETCH: function BATCH_FETCH(_ref) {
-    var optionName = _ref.optionName;
-    optionNames.push(optionName);
-    return new Promise(function (resolve) {
-      setTimeout(function () {
-        var names = optionNames.join(',');
-
-        if (fetches[names]) {
-          return fetches[names].then(function (result) {
-            resolve(result[optionName]);
-          });
-        }
-
-        var url = WC_ADMIN_NAMESPACE + '/options?options=' + names;
-        fetches[names] = external_this_wp_apiFetch_default()({
-          path: url
-        });
-        fetches[names].then(function (result) {
-          return resolve(result);
-        }); // Clear option names after all resolved;
-
-        setTimeout(function () {
-          optionNames = []; // Delete the fetch after to allow wp data to handle cache invalidation.
-
-          delete fetches[names];
-        }, 1);
-      }, 1);
-    });
-  }
-});
-// CONCATENATED MODULE: ./packages/data/build-module/options/resolvers.js
-
-
-var options_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers_getOption);
-/**
- * Internal dependencies
- */
-
-
-
-
-/**
- * Request an option value.
- *
- * @param {string} name - Option name
- */
-
-function resolvers_getOption(name) {
-  var result;
-  return regenerator_default.a.wrap(function getOption$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.prev = 0;
-          _context.next = 3;
-          return batchFetch(name);
-
-        case 3:
-          result = _context.sent;
-          _context.next = 6;
-          return actions_receiveOptions(result);
-
-        case 6:
-          _context.next = 12;
-          break;
-
-        case 8:
-          _context.prev = 8;
-          _context.t0 = _context["catch"](0);
-          _context.next = 12;
-          return setRequestingError(_context.t0, name);
-
-        case 12:
-        case "end":
-          return _context.stop();
-      }
-    }
-  }, options_resolvers_marked, null, [[0, 8]]);
-}
-// CONCATENATED MODULE: ./packages/data/build-module/options/reducer.js
-
-
-function options_reducer_ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function options_reducer_objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      options_reducer_ownKeys(Object(source), true).forEach(function (key) {
-        defineProperty_default()(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      options_reducer_ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-/**
- * Internal dependencies
- */
-
-
-
-
-var reducer_optionsReducer = function optionsReducer() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    isUpdating: false,
-    requestingErrors: {}
-  };
-
-  var _ref = arguments.length > 1 ? arguments[1] : undefined,
-      type = _ref.type,
-      options = _ref.options,
-      error = _ref.error,
-      isUpdating = _ref.isUpdating,
-      name = _ref.name;
-
-  switch (type) {
-    case options_action_types.RECEIVE_OPTIONS:
-      state = options_reducer_objectSpread(options_reducer_objectSpread({}, state), options);
-      break;
-
-    case options_action_types.SET_IS_UPDATING:
-      state = options_reducer_objectSpread(options_reducer_objectSpread({}, state), {}, {
-        isUpdating: isUpdating
-      });
-      break;
-
-    case options_action_types.SET_REQUESTING_ERROR:
-      state = options_reducer_objectSpread(options_reducer_objectSpread({}, state), {}, {
-        requestingErrors: defineProperty_default()({}, name, error)
-      });
-      break;
-
-    case options_action_types.SET_UPDATING_ERROR:
-      state = options_reducer_objectSpread(options_reducer_objectSpread({}, state), {}, {
-        error: error,
-        updatingError: error,
-        isUpdating: false
-      });
-      break;
-  }
-
-  return state;
-};
-
-/* harmony default export */ var options_reducer = (reducer_optionsReducer);
-// CONCATENATED MODULE: ./packages/data/build-module/options/index.js
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
-
-
-
-
-
-
-
-Object(external_this_wp_data_["registerStore"])(options_constants_STORE_NAME, {
-  reducer: options_reducer,
-  actions: options_actions_namespaceObject,
-  controls: controls,
-  selectors: options_selectors_namespaceObject,
-  resolvers: options_resolvers_namespaceObject
-});
-var OPTIONS_STORE_NAME = options_constants_STORE_NAME;
 // CONCATENATED MODULE: ./packages/data/build-module/options/with-options-hydration.js
 
 
+
+
 /**
  * External dependencies
  */
+
 
 
 
@@ -4333,10 +9147,10 @@ var OPTIONS_STORE_NAME = options_constants_STORE_NAME;
 
 
 var with_options_hydration_withOptionsHydration = function withOptionsHydration(data) {
-  return function (OriginalComponent) {
+  return Object(external_wp_compose_["createHigherOrderComponent"])(function (OriginalComponent) {
     return function (props) {
-      var dataRef = Object(external_this_wp_element_["useRef"])(data);
-      Object(external_this_wp_data_["useSelect"])(function (select, registry) {
+      var dataRef = Object(external_wp_element_["useRef"])(data);
+      Object(external_wp_data_["useSelect"])(function (select, registry) {
         if (!dataRef.current) {
           return;
         }
@@ -4359,13 +9173,14 @@ var with_options_hydration_withOptionsHydration = function withOptionsHydration(
           }
         });
       }, []);
-      return Object(external_this_wp_element_["createElement"])(OriginalComponent, props);
+      return Object(external_wp_element_["createElement"])(OriginalComponent, props);
     };
-  };
+  }, 'withOptionsHydration');
 };
 // CONCATENATED MODULE: ./packages/data/build-module/reviews/constants.js
 var reviews_constants_STORE_NAME = 'wc/admin/reviews';
 // CONCATENATED MODULE: ./packages/data/build-module/reviews/selectors.js
+
 var getReviews = function getReviews(state, query) {
   var stringifiedQuery = JSON.stringify(query);
   var ids = state.reviews[stringifiedQuery] && state.reviews[stringifiedQuery].data || [];
@@ -4392,8 +9207,9 @@ var reviews_action_types_TYPES = {
 // CONCATENATED MODULE: ./packages/data/build-module/reviews/actions.js
 
 
-var reviews_actions_marked = /*#__PURE__*/regenerator_default.a.mark(updateReview),
-    reviews_actions_marked2 = /*#__PURE__*/regenerator_default.a.mark(deleteReview);
+
+var reviews_actions_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(updateReview),
+    reviews_actions_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(deleteReview);
 /**
  * External dependencies
  */
@@ -4417,7 +9233,7 @@ function updateReviews(query, reviews, totalCount) {
 }
 function updateReview(reviewId, reviewFields, query) {
   var url, review;
-  return regenerator_default.a.wrap(function updateReview$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function updateReview$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -4426,9 +9242,9 @@ function updateReview(reviewId, reviewFields, query) {
 
         case 2:
           _context.prev = 2;
-          url = Object(external_this_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/products/reviews/").concat(reviewId), query || {});
+          url = Object(external_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/products/reviews/").concat(reviewId), query || {});
           _context.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'PUT',
             data: reviewFields
@@ -4469,7 +9285,7 @@ function updateReview(reviewId, reviewFields, query) {
 }
 function deleteReview(reviewId) {
   var url, response;
-  return regenerator_default.a.wrap(function deleteReview$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function deleteReview$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -4480,7 +9296,7 @@ function deleteReview(reviewId) {
           _context2.prev = 2;
           url = "".concat(NAMESPACE, "/products/reviews/").concat(reviewId);
           _context2.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'DELETE'
           });
@@ -4539,10 +9355,21 @@ function reviews_actions_setError(query, error) {
   };
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/slicedToArray.js
-var slicedToArray = __webpack_require__(31);
+var slicedToArray = __webpack_require__(43);
 var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
 
 // CONCATENATED MODULE: ./packages/data/build-module/controls.js
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4593,10 +9420,10 @@ var fetchWithHeaders = function fetchWithHeaders(options) {
   };
 };
 
-var controls_controls = build_module_controls_objectSpread(build_module_controls_objectSpread({}, external_this_wp_dataControls_["controls"]), {}, {
+var controls_controls = build_module_controls_objectSpread(build_module_controls_objectSpread({}, external_wp_dataControls_["controls"]), {}, {
   FETCH_WITH_HEADERS: function FETCH_WITH_HEADERS(_ref) {
     var options = _ref.options;
-    return external_this_wp_apiFetch_default()(build_module_controls_objectSpread(build_module_controls_objectSpread({}, options), {}, {
+    return external_wp_apiFetch_default()(build_module_controls_objectSpread(build_module_controls_objectSpread({}, options), {}, {
       parse: false
     })).then(function (response) {
       return Promise.all([response.headers, response.status, response.json()]);
@@ -4619,8 +9446,8 @@ var controls_controls = build_module_controls_objectSpread(build_module_controls
 // CONCATENATED MODULE: ./packages/data/build-module/reviews/resolvers.js
 
 
-var reviews_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers_getReviews),
-    reviews_resolvers_marked2 = /*#__PURE__*/regenerator_default.a.mark(resolvers_getReviewsTotalCount);
+var reviews_resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getReviews),
+    reviews_resolvers_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getReviewsTotalCount);
 /**
  * External dependencies
  */
@@ -4636,12 +9463,12 @@ var reviews_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers
 
 function resolvers_getReviews(query) {
   var url, response, totalCount;
-  return regenerator_default.a.wrap(function getReviews$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function getReviews$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
-          url = Object(external_this_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/products/reviews"), query);
+          url = Object(external_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/products/reviews"), query);
           _context.next = 4;
           return fetchWithHeaders({
             path: url,
@@ -4672,7 +9499,7 @@ function resolvers_getReviews(query) {
   }, reviews_resolvers_marked, null, [[0, 10]]);
 }
 function resolvers_getReviewsTotalCount(query) {
-  return regenerator_default.a.wrap(function getReviewsTotalCount$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function getReviewsTotalCount$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -4687,6 +9514,12 @@ function resolvers_getReviewsTotalCount(query) {
   }, reviews_resolvers_marked2);
 }
 // CONCATENATED MODULE: ./packages/data/build-module/reviews/reducer.js
+
+
+
+
+
+
 
 
 function reviews_reducer_ownKeys(object, enumerableOnly) {
@@ -4800,7 +9633,7 @@ var reducer_reducer = function reducer() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(reviews_constants_STORE_NAME, {
+Object(external_wp_data_["registerStore"])(reviews_constants_STORE_NAME, {
   reducer: reviews_reducer,
   actions: reviews_actions_namespaceObject,
   controls: build_module_controls,
@@ -4813,13 +9646,297 @@ var REVIEWS_STORE_NAME = reviews_constants_STORE_NAME;
  * Internal dependencies
  */
 var notes_constants_STORE_NAME = 'wc/admin/notes';
+// CONCATENATED MODULE: ./node_modules/rememo/es/rememo.js
+
+
+var LEAF_KEY, hasWeakMap;
+
+/**
+ * Arbitrary value used as key for referencing cache object in WeakMap tree.
+ *
+ * @type {Object}
+ */
+LEAF_KEY = {};
+
+/**
+ * Whether environment supports WeakMap.
+ *
+ * @type {boolean}
+ */
+hasWeakMap = typeof WeakMap !== 'undefined';
+
+/**
+ * Returns the first argument as the sole entry in an array.
+ *
+ * @param {*} value Value to return.
+ *
+ * @return {Array} Value returned as entry in array.
+ */
+function arrayOf( value ) {
+	return [ value ];
+}
+
+/**
+ * Returns true if the value passed is object-like, or false otherwise. A value
+ * is object-like if it can support property assignment, e.g. object or array.
+ *
+ * @param {*} value Value to test.
+ *
+ * @return {boolean} Whether value is object-like.
+ */
+function isObjectLike( value ) {
+	return !! value && 'object' === typeof value;
+}
+
+/**
+ * Creates and returns a new cache object.
+ *
+ * @return {Object} Cache object.
+ */
+function createCache() {
+	var cache = {
+		clear: function() {
+			cache.head = null;
+		},
+	};
+
+	return cache;
+}
+
+/**
+ * Returns true if entries within the two arrays are strictly equal by
+ * reference from a starting index.
+ *
+ * @param {Array}  a         First array.
+ * @param {Array}  b         Second array.
+ * @param {number} fromIndex Index from which to start comparison.
+ *
+ * @return {boolean} Whether arrays are shallowly equal.
+ */
+function isShallowEqual( a, b, fromIndex ) {
+	var i;
+
+	if ( a.length !== b.length ) {
+		return false;
+	}
+
+	for ( i = fromIndex; i < a.length; i++ ) {
+		if ( a[ i ] !== b[ i ] ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Returns a memoized selector function. The getDependants function argument is
+ * called before the memoized selector and is expected to return an immutable
+ * reference or array of references on which the selector depends for computing
+ * its own return value. The memoize cache is preserved only as long as those
+ * dependant references remain the same. If getDependants returns a different
+ * reference(s), the cache is cleared and the selector value regenerated.
+ *
+ * @param {Function} selector      Selector function.
+ * @param {Function} getDependants Dependant getter returning an immutable
+ *                                 reference or array of reference used in
+ *                                 cache bust consideration.
+ *
+ * @return {Function} Memoized selector.
+ */
+/* harmony default export */ var rememo = (function( selector, getDependants ) {
+	var rootCache, getCache;
+
+	// Use object source as dependant if getter not provided
+	if ( ! getDependants ) {
+		getDependants = arrayOf;
+	}
+
+	/**
+	 * Returns the root cache. If WeakMap is supported, this is assigned to the
+	 * root WeakMap cache set, otherwise it is a shared instance of the default
+	 * cache object.
+	 *
+	 * @return {(WeakMap|Object)} Root cache object.
+	 */
+	function getRootCache() {
+		return rootCache;
+	}
+
+	/**
+	 * Returns the cache for a given dependants array. When possible, a WeakMap
+	 * will be used to create a unique cache for each set of dependants. This
+	 * is feasible due to the nature of WeakMap in allowing garbage collection
+	 * to occur on entries where the key object is no longer referenced. Since
+	 * WeakMap requires the key to be an object, this is only possible when the
+	 * dependant is object-like. The root cache is created as a hierarchy where
+	 * each top-level key is the first entry in a dependants set, the value a
+	 * WeakMap where each key is the next dependant, and so on. This continues
+	 * so long as the dependants are object-like. If no dependants are object-
+	 * like, then the cache is shared across all invocations.
+	 *
+	 * @see isObjectLike
+	 *
+	 * @param {Array} dependants Selector dependants.
+	 *
+	 * @return {Object} Cache object.
+	 */
+	function getWeakMapCache( dependants ) {
+		var caches = rootCache,
+			isUniqueByDependants = true,
+			i, dependant, map, cache;
+
+		for ( i = 0; i < dependants.length; i++ ) {
+			dependant = dependants[ i ];
+
+			// Can only compose WeakMap from object-like key.
+			if ( ! isObjectLike( dependant ) ) {
+				isUniqueByDependants = false;
+				break;
+			}
+
+			// Does current segment of cache already have a WeakMap?
+			if ( caches.has( dependant ) ) {
+				// Traverse into nested WeakMap.
+				caches = caches.get( dependant );
+			} else {
+				// Create, set, and traverse into a new one.
+				map = new WeakMap();
+				caches.set( dependant, map );
+				caches = map;
+			}
+		}
+
+		// We use an arbitrary (but consistent) object as key for the last item
+		// in the WeakMap to serve as our running cache.
+		if ( ! caches.has( LEAF_KEY ) ) {
+			cache = createCache();
+			cache.isUniqueByDependants = isUniqueByDependants;
+			caches.set( LEAF_KEY, cache );
+		}
+
+		return caches.get( LEAF_KEY );
+	}
+
+	// Assign cache handler by availability of WeakMap
+	getCache = hasWeakMap ? getWeakMapCache : getRootCache;
+
+	/**
+	 * Resets root memoization cache.
+	 */
+	function clear() {
+		rootCache = hasWeakMap ? new WeakMap() : createCache();
+	}
+
+	// eslint-disable-next-line jsdoc/check-param-names
+	/**
+	 * The augmented selector call, considering first whether dependants have
+	 * changed before passing it to underlying memoize function.
+	 *
+	 * @param {Object} source    Source object for derivation.
+	 * @param {...*}   extraArgs Additional arguments to pass to selector.
+	 *
+	 * @return {*} Selector result.
+	 */
+	function callSelector( /* source, ...extraArgs */ ) {
+		var len = arguments.length,
+			cache, node, i, args, dependants;
+
+		// Create copy of arguments (avoid leaking deoptimization).
+		args = new Array( len );
+		for ( i = 0; i < len; i++ ) {
+			args[ i ] = arguments[ i ];
+		}
+
+		dependants = getDependants.apply( null, args );
+		cache = getCache( dependants );
+
+		// If not guaranteed uniqueness by dependants (primitive type or lack
+		// of WeakMap support), shallow compare against last dependants and, if
+		// references have changed, destroy cache to recalculate result.
+		if ( ! cache.isUniqueByDependants ) {
+			if ( cache.lastDependants && ! isShallowEqual( dependants, cache.lastDependants, 0 ) ) {
+				cache.clear();
+			}
+
+			cache.lastDependants = dependants;
+		}
+
+		node = cache.head;
+		while ( node ) {
+			// Check whether node arguments match arguments
+			if ( ! isShallowEqual( node.args, args, 1 ) ) {
+				node = node.next;
+				continue;
+			}
+
+			// At this point we can assume we've found a match
+
+			// Surface matched node to head if not already
+			if ( node !== cache.head ) {
+				// Adjust siblings to point to each other.
+				node.prev.next = node.next;
+				if ( node.next ) {
+					node.next.prev = node.prev;
+				}
+
+				node.next = cache.head;
+				node.prev = null;
+				cache.head.prev = node;
+				cache.head = node;
+			}
+
+			// Return immediately
+			return node.val;
+		}
+
+		// No cached value found. Continue to insertion phase:
+
+		node = {
+			// Generate the result from original function
+			val: selector.apply( null, args ),
+		};
+
+		// Avoid including the source object in the cache.
+		args[ 0 ] = null;
+		node.args = args;
+
+		// Don't need to check whether node is already head, since it would
+		// have been returned above already if it was
+
+		// Shift existing head down list
+		if ( cache.head ) {
+			cache.head.prev = node;
+			node.next = cache.head;
+		}
+
+		cache.head = node;
+
+		return node.val;
+	}
+
+	callSelector.getDependants = getDependants;
+	callSelector.clear = clear;
+	clear();
+
+	return callSelector;
+});
+
 // CONCATENATED MODULE: ./packages/data/build-module/notes/selectors.js
-var getNotes = function getNotes(state, query) {
+
+
+/**
+ * External dependencies
+ */
+
+var getNotes = rememo(function (state, query) {
   var noteIds = state.noteQueries[JSON.stringify(query)] || [];
   return noteIds.map(function (id) {
     return state.notes[id];
   });
-};
+}, function (state, query) {
+  return [state.noteQueries[JSON.stringify(query)], state.notes];
+});
 var getNotesError = function getNotesError(state, selector) {
   return state.errors[selector] || false;
 };
@@ -4837,6 +9954,13 @@ var notes_action_types_TYPES = {
 };
 /* harmony default export */ var notes_action_types = (notes_action_types_TYPES);
 // CONCATENATED MODULE: ./packages/data/build-module/notes/actions.js
+
+
+
+
+
+
+
 
 
 
@@ -4874,11 +9998,11 @@ function notes_actions_objectSpread(target) {
   return target;
 }
 
-var notes_actions_marked = /*#__PURE__*/regenerator_default.a.mark(triggerNoteAction),
-    notes_actions_marked2 = /*#__PURE__*/regenerator_default.a.mark(removeNote),
-    actions_marked3 = /*#__PURE__*/regenerator_default.a.mark(removeAllNotes),
-    actions_marked4 = /*#__PURE__*/regenerator_default.a.mark(batchUpdateNotes),
-    actions_marked5 = /*#__PURE__*/regenerator_default.a.mark(updateNote);
+var notes_actions_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(triggerNoteAction),
+    notes_actions_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(removeNote),
+    actions_marked3 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(removeAllNotes),
+    actions_marked4 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(batchUpdateNotes),
+    actions_marked5 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(updateNote);
 /**
  * External dependencies
  */
@@ -4893,7 +10017,7 @@ var notes_actions_marked = /*#__PURE__*/regenerator_default.a.mark(triggerNoteAc
 
 function triggerNoteAction(noteId, actionId) {
   var url, result;
-  return regenerator_default.a.wrap(function triggerNoteAction$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function triggerNoteAction$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -4904,7 +10028,7 @@ function triggerNoteAction(noteId, actionId) {
           url = "".concat(NAMESPACE, "/admin/notes/").concat(noteId, "/action/").concat(actionId);
           _context.prev = 3;
           _context.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'POST'
           });
@@ -4944,7 +10068,7 @@ function triggerNoteAction(noteId, actionId) {
 }
 function removeNote(noteId) {
   var url, response;
-  return regenerator_default.a.wrap(function removeNote$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function removeNote$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -4959,7 +10083,7 @@ function removeNote(noteId) {
           _context2.prev = 4;
           url = "".concat(NAMESPACE, "/admin/notes/delete/").concat(noteId);
           _context2.next = 8;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'DELETE'
           });
@@ -5002,7 +10126,7 @@ function removeNote(noteId) {
 }
 function removeAllNotes() {
   var url, notes;
-  return regenerator_default.a.wrap(function removeAllNotes$(_context3) {
+  return external_regeneratorRuntime_default.a.wrap(function removeAllNotes$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
@@ -5013,7 +10137,7 @@ function removeAllNotes() {
           _context3.prev = 2;
           url = "".concat(NAMESPACE, "/admin/notes/delete/all");
           _context3.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'DELETE'
           });
@@ -5052,7 +10176,7 @@ function removeAllNotes() {
 }
 function batchUpdateNotes(noteIds, noteFields) {
   var url, notes;
-  return regenerator_default.a.wrap(function batchUpdateNotes$(_context4) {
+  return external_regeneratorRuntime_default.a.wrap(function batchUpdateNotes$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
@@ -5063,7 +10187,7 @@ function batchUpdateNotes(noteIds, noteFields) {
           _context4.prev = 2;
           url = "".concat(NAMESPACE, "/admin/notes/update");
           _context4.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'PUT',
             data: notes_actions_objectSpread({
@@ -5106,7 +10230,7 @@ function batchUpdateNotes(noteIds, noteFields) {
 }
 function updateNote(noteId, noteFields) {
   var url, note;
-  return regenerator_default.a.wrap(function updateNote$(_context5) {
+  return external_regeneratorRuntime_default.a.wrap(function updateNote$(_context5) {
     while (1) {
       switch (_context5.prev = _context5.next) {
         case 0:
@@ -5121,7 +10245,7 @@ function updateNote(noteId, noteFields) {
           _context5.prev = 4;
           url = "".concat(NAMESPACE, "/admin/notes/").concat(noteId);
           _context5.next = 8;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'PUT',
             data: noteFields
@@ -5212,7 +10336,8 @@ function notes_actions_setIsRequesting(selector, isRequesting) {
 // CONCATENATED MODULE: ./packages/data/build-module/notes/resolvers.js
 
 
-var notes_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers_getNotes);
+
+var notes_resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getNotes);
 /**
  * External dependencies
  */
@@ -5231,15 +10356,15 @@ function resolvers_getNotes() {
       url,
       notes,
       _args = arguments;
-  return regenerator_default.a.wrap(function getNotes$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function getNotes$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           query = _args.length > 0 && _args[0] !== undefined ? _args[0] : {};
-          url = Object(external_this_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/admin/notes"), query);
+          url = Object(external_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/admin/notes"), query);
           _context.prev = 2;
           _context.next = 5;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url
           });
 
@@ -5272,6 +10397,12 @@ function resolvers_getNotes() {
   }, notes_resolvers_marked, null, [[2, 12]]);
 }
 // CONCATENATED MODULE: ./packages/data/build-module/notes/reducer.js
+
+
+
+
+
+
 
 
 function notes_reducer_ownKeys(object, enumerableOnly) {
@@ -5396,10 +10527,10 @@ var reducer_notesReducer = function notesReducer() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(notes_constants_STORE_NAME, {
+Object(external_wp_data_["registerStore"])(notes_constants_STORE_NAME, {
   reducer: notes_reducer,
   actions: notes_actions_namespaceObject,
-  controls: external_this_wp_dataControls_["controls"],
+  controls: external_wp_dataControls_["controls"],
   selectors: notes_selectors_namespaceObject,
   resolvers: notes_resolvers_namespaceObject
 });
@@ -5414,17 +10545,18 @@ var reports_constants_STORE_NAME = 'wc/admin/reports';
  * Internal dependencies
  */
 
+var EMPTY_OBJECT = {};
 var selectors_getReportItemsError = function getReportItemsError(state, endpoint, query) {
   var resourceName = getResourceName(endpoint, query);
   return state.itemErrors[resourceName] || false;
 };
 var selectors_getReportItems = function getReportItems(state, endpoint, query) {
   var resourceName = getResourceName(endpoint, query);
-  return state.items[resourceName] || {};
+  return state.items[resourceName] || EMPTY_OBJECT;
 };
 var selectors_getReportStats = function getReportStats(state, endpoint, query) {
   var resourceName = getResourceName(endpoint, query);
-  return state.stats[resourceName] || {};
+  return state.stats[resourceName] || EMPTY_OBJECT;
 };
 var selectors_getReportStatsError = function getReportStatsError(state, endpoint, query) {
   var resourceName = getResourceName(endpoint, query);
@@ -5479,8 +10611,9 @@ function setReportStatsError(endpoint, query, error) {
 // CONCATENATED MODULE: ./packages/data/build-module/reports/resolvers.js
 
 
-var reports_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers_getReportItems),
-    reports_resolvers_marked2 = /*#__PURE__*/regenerator_default.a.mark(resolvers_getReportStats);
+
+var reports_resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getReportItems),
+    reports_resolvers_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getReportStats);
 /**
  * External dependencies
  */
@@ -5496,13 +10629,13 @@ var reports_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers
 
 function resolvers_getReportItems(endpoint, query) {
   var fetchArgs, response, data, totalResults, totalPages;
-  return regenerator_default.a.wrap(function getReportItems$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function getReportItems$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           fetchArgs = {
             parse: false,
-            path: Object(external_this_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/reports/").concat(endpoint), query)
+            path: Object(external_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/reports/").concat(endpoint), query)
           };
           _context.prev = 1;
           _context.next = 4;
@@ -5539,13 +10672,13 @@ function resolvers_getReportItems(endpoint, query) {
 }
 function resolvers_getReportStats(endpoint, query) {
   var fetchArgs, response, data, totalResults, totalPages;
-  return regenerator_default.a.wrap(function getReportStats$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function getReportStats$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           fetchArgs = {
             parse: false,
-            path: Object(external_this_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/reports/").concat(endpoint, "/stats"), query)
+            path: Object(external_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/reports/").concat(endpoint, "/stats"), query)
           };
           _context2.prev = 1;
           _context2.next = 4;
@@ -5581,6 +10714,12 @@ function resolvers_getReportStats(endpoint, query) {
   }, reports_resolvers_marked2, null, [[1, 12]]);
 }
 // CONCATENATED MODULE: ./packages/data/build-module/reports/reducer.js
+
+
+
+
+
+
 
 
 function reports_reducer_ownKeys(object, enumerableOnly) {
@@ -5680,7 +10819,7 @@ var reducer_reports = function reports() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(reports_constants_STORE_NAME, {
+Object(external_wp_data_["registerStore"])(reports_constants_STORE_NAME, {
   reducer: reports_reducer,
   actions: reports_actions_namespaceObject,
   controls: build_module_controls,
@@ -5690,14 +10829,23 @@ Object(external_this_wp_data_["registerStore"])(reports_constants_STORE_NAME, {
 var REPORTS_STORE_NAME = reports_constants_STORE_NAME;
 // CONCATENATED MODULE: ./packages/data/build-module/items/constants.js
 var items_constants_STORE_NAME = 'wc/admin/items';
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.map.js
+var es_map = __webpack_require__(559);
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/objectWithoutProperties.js
-var objectWithoutProperties = __webpack_require__(58);
+var objectWithoutProperties = __webpack_require__(116);
 var objectWithoutProperties_default = /*#__PURE__*/__webpack_require__.n(objectWithoutProperties);
 
-// EXTERNAL MODULE: external {"this":["wc","date"]}
-var external_this_wc_date_ = __webpack_require__(42);
+// EXTERNAL MODULE: external ["wc","date"]
+var external_wc_date_ = __webpack_require__(101);
 
 // CONCATENATED MODULE: ./packages/data/build-module/items/utils.js
+
+
+
+
+
+
 
 
 
@@ -5777,11 +10925,11 @@ function getLeaderboard(options) {
     isError: false,
     rows: []
   };
-  var datesFromQuery = Object(external_this_wc_date_["getCurrentDates"])(query, options.defaultDateRange);
+  var datesFromQuery = Object(external_wc_date_["getCurrentDates"])(query, options.defaultDateRange);
 
   var leaderboardQuery = utils_objectSpread(utils_objectSpread({}, filterQuery), {}, {
-    after: Object(external_this_wc_date_["appendTimestamp"])(datesFromQuery.primary.after, 'start'),
-    before: Object(external_this_wc_date_["appendTimestamp"])(datesFromQuery.primary.before, 'end'),
+    after: Object(external_wc_date_["appendTimestamp"])(datesFromQuery.primary.after, 'start'),
+    before: Object(external_wc_date_["appendTimestamp"])(datesFromQuery.primary.before, 'end'),
     per_page: perPage,
     persisted_query: JSON.stringify(persistedQuery)
   }); // Disable eslint rule requiring `getItems` to be defined below because the next two statements
@@ -5871,6 +11019,12 @@ function getTotalCountResourceName(itemType, query) {
   return getResourceName('total-' + itemType, totalsQuery);
 }
 // CONCATENATED MODULE: ./packages/data/build-module/items/selectors.js
+
+
+
+
+
+
 /**
  * Internal dependencies
  */
@@ -5906,7 +11060,15 @@ var items_action_types_TYPES = {
 
 
 
-var items_actions_marked = /*#__PURE__*/regenerator_default.a.mark(updateProductStock);
+
+
+
+
+
+
+
+var items_actions_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(updateProductStock),
+    items_actions_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(createProductFromTemplate);
 
 function items_actions_ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -5944,6 +11106,7 @@ function items_actions_objectSpread(target) {
 /**
  * External dependencies
  */
+
 
 
 
@@ -5988,7 +11151,7 @@ function items_actions_setError(itemType, query, error) {
 }
 function updateProductStock(product, quantity) {
   var updatedProduct, id, parentId, type, url;
-  return regenerator_default.a.wrap(function updateProductStock$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function updateProductStock$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -6016,7 +11179,7 @@ function updateProductStock(product, quantity) {
         case 11:
           _context.prev = 11;
           _context.next = 14;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url,
             method: 'PUT',
             data: updatedProduct
@@ -6045,7 +11208,53 @@ function updateProductStock(product, quantity) {
     }
   }, items_actions_marked, null, [[11, 17]]);
 }
+function createProductFromTemplate(itemFields, query) {
+  var url, newItem;
+  return external_regeneratorRuntime_default.a.wrap(function createProductFromTemplate$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.prev = 0;
+          url = Object(external_wp_url_["addQueryArgs"])("".concat(WC_ADMIN_NAMESPACE, "/onboarding/tasks/create_product_from_template"), query || {});
+          _context2.next = 4;
+          return Object(external_wp_dataControls_["apiFetch"])({
+            path: url,
+            method: 'POST',
+            data: itemFields
+          });
+
+        case 4:
+          newItem = _context2.sent;
+          _context2.next = 7;
+          return setItem('products', newItem.id, newItem);
+
+        case 7:
+          return _context2.abrupt("return", newItem);
+
+        case 10:
+          _context2.prev = 10;
+          _context2.t0 = _context2["catch"](0);
+          _context2.next = 14;
+          return items_actions_setError('createProductFromTemplate', query, _context2.t0);
+
+        case 14:
+          throw _context2.t0;
+
+        case 15:
+        case "end":
+          return _context2.stop();
+      }
+    }
+  }, items_actions_marked2, null, [[0, 10]]);
+}
 // CONCATENATED MODULE: ./packages/data/build-module/items/resolvers.js
+
+
+
+
+
+
+
 
 
 
@@ -6083,10 +11292,10 @@ function resolvers_objectSpread(target) {
   return target;
 }
 
-var items_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(request),
-    items_resolvers_marked2 = /*#__PURE__*/regenerator_default.a.mark(resolvers_getItems),
-    items_resolvers_marked3 = /*#__PURE__*/regenerator_default.a.mark(items_resolvers_getReviewsTotalCount),
-    items_resolvers_marked4 = /*#__PURE__*/regenerator_default.a.mark(resolvers_getItemsTotalCount);
+var items_resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(request),
+    items_resolvers_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getItems),
+    items_resolvers_marked3 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(items_resolvers_getReviewsTotalCount),
+    items_resolvers_marked4 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getItemsTotalCount);
 /**
  * External dependencies
  */
@@ -6104,14 +11313,14 @@ var items_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(request),
 
 function request(itemType, query) {
   var endpoint, url, isUnboundedRequest, fetch, response, totalCount;
-  return regenerator_default.a.wrap(function request$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function request$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           endpoint = itemType === 'categories' ? 'products/categories' : itemType;
-          url = Object(external_this_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/").concat(endpoint), query);
+          url = Object(external_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/").concat(endpoint), query);
           isUnboundedRequest = query.per_page === -1;
-          fetch = isUnboundedRequest ? external_this_wp_dataControls_["apiFetch"] : fetchWithHeaders;
+          fetch = isUnboundedRequest ? external_wp_dataControls_["apiFetch"] : fetchWithHeaders;
           _context.next = 6;
           return fetch({
             path: url,
@@ -6149,7 +11358,7 @@ function request(itemType, query) {
 function resolvers_getItems(itemType, query) {
   var _yield$request, items, totalCount;
 
-  return regenerator_default.a.wrap(function getItems$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function getItems$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -6186,7 +11395,7 @@ function resolvers_getItems(itemType, query) {
   }, items_resolvers_marked2, null, [[0, 12]]);
 }
 function items_resolvers_getReviewsTotalCount(itemType, query) {
-  return regenerator_default.a.wrap(function getReviewsTotalCount$(_context3) {
+  return external_regeneratorRuntime_default.a.wrap(function getReviewsTotalCount$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
@@ -6203,7 +11412,7 @@ function items_resolvers_getReviewsTotalCount(itemType, query) {
 function resolvers_getItemsTotalCount(itemType, query) {
   var totalsQuery, _yield$request2, totalCount;
 
-  return regenerator_default.a.wrap(function getItemsTotalCount$(_context4) {
+  return external_regeneratorRuntime_default.a.wrap(function getItemsTotalCount$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
@@ -6239,6 +11448,12 @@ function resolvers_getItemsTotalCount(itemType, query) {
   }, items_resolvers_marked4, null, [[0, 10]]);
 }
 // CONCATENATED MODULE: ./packages/data/build-module/items/reducer.js
+
+
+
+
+
+
 
 
 function items_reducer_ownKeys(object, enumerableOnly) {
@@ -6302,8 +11517,9 @@ var items_reducer_reducer = function reducer() {
 
   switch (type) {
     case items_action_types.SET_ITEM:
+      var itemData = state.data[itemType] || {};
       return items_reducer_objectSpread(items_reducer_objectSpread({}, state), {}, {
-        data: items_reducer_objectSpread(items_reducer_objectSpread({}, state.data), {}, defineProperty_default()({}, itemType, items_reducer_objectSpread(items_reducer_objectSpread({}, state.data[itemType]), {}, defineProperty_default()({}, id, items_reducer_objectSpread(items_reducer_objectSpread({}, state.data[itemType][id]), item)))))
+        data: items_reducer_objectSpread(items_reducer_objectSpread({}, state.data), {}, defineProperty_default()({}, itemType, items_reducer_objectSpread(items_reducer_objectSpread({}, itemData), {}, defineProperty_default()({}, id, items_reducer_objectSpread(items_reducer_objectSpread({}, itemData[id] || {}), item)))))
       });
 
     case items_action_types.SET_ITEMS:
@@ -6353,7 +11569,7 @@ var items_reducer_reducer = function reducer() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(items_constants_STORE_NAME, {
+Object(external_wp_data_["registerStore"])(items_constants_STORE_NAME, {
   reducer: items_reducer,
   actions: items_actions_namespaceObject,
   controls: build_module_controls,
@@ -6363,8 +11579,8 @@ Object(external_this_wp_data_["registerStore"])(items_constants_STORE_NAME, {
 var ITEMS_STORE_NAME = items_constants_STORE_NAME;
 // CONCATENATED MODULE: ./packages/data/build-module/navigation/constants.js
 var navigation_constants_STORE_NAME = 'woocommerce-navigation';
-// EXTERNAL MODULE: external {"this":["wp","hooks"]}
-var external_this_wp_hooks_ = __webpack_require__(51);
+// EXTERNAL MODULE: external ["wp","hooks"]
+var external_wp_hooks_ = __webpack_require__(141);
 
 // CONCATENATED MODULE: ./packages/data/build-module/navigation/selectors.js
 /**
@@ -6373,29 +11589,46 @@ var external_this_wp_hooks_ = __webpack_require__(51);
 
 var MENU_ITEMS_HOOK = 'woocommerce_navigation_menu_items';
 var selectors_getMenuItems = function getMenuItems(state) {
-  return Object(external_this_wp_hooks_["applyFilters"])(MENU_ITEMS_HOOK, state.menuItems);
+  return Object(external_wp_hooks_["applyFilters"])(MENU_ITEMS_HOOK, state.menuItems);
 };
-var getActiveItem = function getActiveItem(state) {
-  return state.activeItem || null;
+var getFavorites = function getFavorites(state) {
+  return state.favorites || [];
+};
+var isNavigationRequesting = function isNavigationRequesting(state, selector) {
+  return state.requesting[selector] || false;
 };
 // CONCATENATED MODULE: ./packages/data/build-module/navigation/action-types.js
 var navigation_action_types_TYPES = {
   ADD_MENU_ITEMS: 'ADD_MENU_ITEMS',
   SET_MENU_ITEMS: 'SET_MENU_ITEMS',
-  SET_ACTIVE_ITEM: 'SET_ACTIVE_ITEM'
+  ADD_FAVORITE_FAILURE: 'ADD_FAVORITE_FAILURE',
+  ADD_FAVORITE_REQUEST: 'ADD_FAVORITE_REQUEST',
+  ADD_FAVORITE_SUCCESS: 'ADD_FAVORITE_SUCCESS',
+  GET_FAVORITES_FAILURE: 'GET_FAVORITES_FAILURE',
+  GET_FAVORITES_REQUEST: 'GET_FAVORITES_REQUEST',
+  GET_FAVORITES_SUCCESS: 'GET_FAVORITES_SUCCESS',
+  REMOVE_FAVORITE_FAILURE: 'REMOVE_FAVORITE_FAILURE',
+  REMOVE_FAVORITE_REQUEST: 'REMOVE_FAVORITE_REQUEST',
+  REMOVE_FAVORITE_SUCCESS: 'REMOVE_FAVORITE_SUCCESS'
 };
 /* harmony default export */ var navigation_action_types = (navigation_action_types_TYPES);
 // CONCATENATED MODULE: ./packages/data/build-module/navigation/actions.js
+
+
+var navigation_actions_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(addFavorite),
+    navigation_actions_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(removeFavorite);
+/**
+ * External dependencies
+ */
+
+
+
 /**
  * Internal dependencies
  */
 
-function setActiveItem(activeItem) {
-  return {
-    type: navigation_action_types.SET_ACTIVE_ITEM,
-    activeItem: activeItem
-  };
-}
+
+
 function actions_setMenuItems(menuItems) {
   return {
     type: navigation_action_types.SET_MENU_ITEMS,
@@ -6408,7 +11641,180 @@ function addMenuItems(menuItems) {
     menuItems: menuItems
   };
 }
+function getFavoritesFailure(error) {
+  return {
+    type: navigation_action_types.GET_FAVORITES_FAILURE,
+    error: error
+  };
+}
+function getFavoritesRequest(favorites) {
+  return {
+    type: navigation_action_types.GET_FAVORITES_REQUEST,
+    favorites: favorites
+  };
+}
+function getFavoritesSuccess(favorites) {
+  return {
+    type: navigation_action_types.GET_FAVORITES_SUCCESS,
+    favorites: favorites
+  };
+}
+function addFavoriteRequest(favorite) {
+  return {
+    type: navigation_action_types.ADD_FAVORITE_REQUEST,
+    favorite: favorite
+  };
+}
+function addFavoriteFailure(favorite, error) {
+  return {
+    type: navigation_action_types.ADD_FAVORITE_FAILURE,
+    favorite: favorite,
+    error: error
+  };
+}
+function addFavoriteSuccess(favorite) {
+  return {
+    type: navigation_action_types.ADD_FAVORITE_SUCCESS,
+    favorite: favorite
+  };
+}
+function removeFavoriteRequest(favorite) {
+  return {
+    type: navigation_action_types.REMOVE_FAVORITE_REQUEST,
+    favorite: favorite
+  };
+}
+function removeFavoriteFailure(favorite, error) {
+  return {
+    type: navigation_action_types.REMOVE_FAVORITE_FAILURE,
+    favorite: favorite,
+    error: error
+  };
+}
+function removeFavoriteSuccess(favorite, error) {
+  return {
+    type: navigation_action_types.REMOVE_FAVORITE_SUCCESS,
+    favorite: favorite,
+    error: error
+  };
+}
+function addFavorite(favorite) {
+  var results;
+  return external_regeneratorRuntime_default.a.wrap(function addFavorite$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return addFavoriteRequest(favorite);
+
+        case 2:
+          _context.prev = 2;
+          _context.next = 5;
+          return external_wp_apiFetch_default()({
+            path: "".concat(WC_ADMIN_NAMESPACE, "/navigation/favorites/me"),
+            method: 'POST',
+            data: {
+              item_id: favorite
+            }
+          });
+
+        case 5:
+          results = _context.sent;
+
+          if (!results) {
+            _context.next = 10;
+            break;
+          }
+
+          _context.next = 9;
+          return addFavoriteSuccess(favorite);
+
+        case 9:
+          return _context.abrupt("return", results);
+
+        case 10:
+          throw new Error();
+
+        case 13:
+          _context.prev = 13;
+          _context.t0 = _context["catch"](2);
+          _context.next = 17;
+          return addFavoriteFailure(favorite, _context.t0);
+
+        case 17:
+          throw new Error();
+
+        case 18:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, navigation_actions_marked, null, [[2, 13]]);
+}
+function removeFavorite(favorite) {
+  var results;
+  return external_regeneratorRuntime_default.a.wrap(function removeFavorite$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.next = 2;
+          return removeFavoriteRequest(favorite);
+
+        case 2:
+          _context2.prev = 2;
+          _context2.next = 5;
+          return external_wp_apiFetch_default()({
+            path: "".concat(WC_ADMIN_NAMESPACE, "/navigation/favorites/me"),
+            method: 'DELETE',
+            data: {
+              item_id: favorite
+            }
+          });
+
+        case 5:
+          results = _context2.sent;
+
+          if (!results) {
+            _context2.next = 10;
+            break;
+          }
+
+          _context2.next = 9;
+          return removeFavoriteSuccess(favorite);
+
+        case 9:
+          return _context2.abrupt("return", results);
+
+        case 10:
+          throw new Error();
+
+        case 13:
+          _context2.prev = 13;
+          _context2.t0 = _context2["catch"](2);
+          _context2.next = 17;
+          return removeFavoriteFailure(favorite, _context2.t0);
+
+        case 17:
+          throw new Error();
+
+        case 18:
+        case "end":
+          return _context2.stop();
+      }
+    }
+  }, navigation_actions_marked2, null, [[2, 13]]);
+}
 // CONCATENATED MODULE: ./packages/data/build-module/navigation/reducer.js
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6454,22 +11860,20 @@ function navigation_reducer_objectSpread(target) {
 
 var navigation_reducer_reducer = function reducer() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    activeItem: null,
-    menuItems: []
+    error: null,
+    menuItems: [],
+    favorites: [],
+    requesting: {}
   };
 
   var _ref = arguments.length > 1 ? arguments[1] : undefined,
       type = _ref.type,
-      activeItem = _ref.activeItem,
+      error = _ref.error,
+      favorite = _ref.favorite,
+      favorites = _ref.favorites,
       menuItems = _ref.menuItems;
 
   switch (type) {
-    case navigation_action_types.SET_ACTIVE_ITEM:
-      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
-        activeItem: activeItem
-      });
-      break;
-
     case navigation_action_types.SET_MENU_ITEMS:
       state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
         menuItems: menuItems
@@ -6481,12 +11885,176 @@ var navigation_reducer_reducer = function reducer() {
         menuItems: [].concat(toConsumableArray_default()(state.menuItems), toConsumableArray_default()(menuItems))
       });
       break;
+
+    case navigation_action_types.GET_FAVORITES_FAILURE:
+      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
+        requesting: navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state.requesting), {}, {
+          getFavorites: false
+        })
+      });
+      break;
+
+    case navigation_action_types.GET_FAVORITES_REQUEST:
+      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
+        requesting: navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state.requesting), {}, {
+          getFavorites: true
+        })
+      });
+      break;
+
+    case navigation_action_types.GET_FAVORITES_SUCCESS:
+      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
+        favorites: favorites,
+        requesting: navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state.requesting), {}, {
+          getFavorites: false
+        })
+      });
+      break;
+
+    case navigation_action_types.ADD_FAVORITE_FAILURE:
+      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
+        error: error,
+        requesting: navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state.requesting), {}, {
+          addFavorite: false
+        })
+      });
+      break;
+
+    case navigation_action_types.ADD_FAVORITE_REQUEST:
+      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
+        requesting: navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state.requesting), {}, {
+          addFavorite: true
+        })
+      });
+      break;
+
+    case navigation_action_types.ADD_FAVORITE_SUCCESS:
+      var newFavorites = !state.favorites.includes(favorite) ? [].concat(toConsumableArray_default()(state.favorites), [favorite]) : state.favorites;
+      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
+        favorites: newFavorites,
+        menuItems: state.menuItems.map(function (item) {
+          if (item.id === favorite) {
+            return navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, item), {}, {
+              menuId: 'favorites'
+            });
+          }
+
+          return item;
+        }),
+        requesting: navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state.requesting), {}, {
+          addFavorite: false
+        })
+      });
+      break;
+
+    case navigation_action_types.REMOVE_FAVORITE_FAILURE:
+      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
+        requesting: navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state.requesting), {}, {
+          error: error,
+          removeFavorite: false
+        })
+      });
+      break;
+
+    case navigation_action_types.REMOVE_FAVORITE_REQUEST:
+      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
+        requesting: navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state.requesting), {}, {
+          removeFavorite: true
+        })
+      });
+      break;
+
+    case navigation_action_types.REMOVE_FAVORITE_SUCCESS:
+      var filteredFavorites = state.favorites.filter(function (f) {
+        return f !== favorite;
+      });
+      state = navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state), {}, {
+        favorites: filteredFavorites,
+        menuItems: state.menuItems.map(function (item) {
+          if (item.id === favorite) {
+            return navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, item), {}, {
+              menuId: 'plugins'
+            });
+          }
+
+          return item;
+        }),
+        requesting: navigation_reducer_objectSpread(navigation_reducer_objectSpread({}, state.requesting), {}, {
+          removeFavorite: false
+        })
+      });
+      break;
   }
 
   return state;
 };
 
 /* harmony default export */ var navigation_reducer = (navigation_reducer_reducer);
+// CONCATENATED MODULE: ./packages/data/build-module/navigation/resolvers.js
+
+
+var navigation_resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getFavorites);
+/**
+ * External dependencies
+ */
+
+
+
+/**
+ * Internal dependencies
+ */
+
+
+
+function resolvers_getFavorites() {
+  var results;
+  return external_regeneratorRuntime_default.a.wrap(function getFavorites$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return getFavoritesRequest();
+
+        case 2:
+          _context.prev = 2;
+          _context.next = 5;
+          return Object(external_wp_dataControls_["apiFetch"])({
+            path: "".concat(WC_ADMIN_NAMESPACE, "/navigation/favorites/me")
+          });
+
+        case 5:
+          results = _context.sent;
+
+          if (!results) {
+            _context.next = 10;
+            break;
+          }
+
+          _context.next = 9;
+          return getFavoritesSuccess(results);
+
+        case 9:
+          return _context.abrupt("return");
+
+        case 10:
+          throw new Error();
+
+        case 13:
+          _context.prev = 13;
+          _context.t0 = _context["catch"](2);
+          _context.next = 17;
+          return getFavoritesFailure(_context.t0);
+
+        case 17:
+          throw new Error();
+
+        case 18:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, navigation_resolvers_marked, null, [[2, 13]]);
+}
 // CONCATENATED MODULE: ./packages/data/build-module/navigation/index.js
 /**
  * External dependencies
@@ -6501,10 +12069,12 @@ var navigation_reducer_reducer = function reducer() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(navigation_constants_STORE_NAME, {
+
+Object(external_wp_data_["registerStore"])(navigation_constants_STORE_NAME, {
   reducer: navigation_reducer,
   actions: navigation_actions_namespaceObject,
-  controls: external_this_wp_dataControls_["controls"],
+  controls: external_wp_dataControls_["controls"],
+  resolvers: navigation_resolvers_namespaceObject,
   selectors: navigation_selectors_namespaceObject
 });
 var NAVIGATION_STORE_NAME = navigation_constants_STORE_NAME;
@@ -6513,6 +12083,7 @@ var NAVIGATION_STORE_NAME = navigation_constants_STORE_NAME;
 /**
  * External dependencies
  */
+
 
 
 
@@ -6528,10 +12099,10 @@ var NAVIGATION_STORE_NAME = navigation_constants_STORE_NAME;
  */
 
 var with_navigation_hydration_withNavigationHydration = function withNavigationHydration(data) {
-  return function (OriginalComponent) {
+  return Object(external_wp_compose_["createHigherOrderComponent"])(function (OriginalComponent) {
     return function (props) {
-      var dataRef = Object(external_this_wp_element_["useRef"])(data);
-      Object(external_this_wp_data_["useSelect"])(function (select, registry) {
+      var dataRef = Object(external_wp_element_["useRef"])(data);
+      Object(external_wp_data_["useSelect"])(function (select, registry) {
         if (!dataRef.current) {
           return;
         }
@@ -6551,18 +12122,40 @@ var with_navigation_hydration_withNavigationHydration = function withNavigationH
           finishResolution('getMenuItems', []);
         }
       });
-      return Object(external_this_wp_element_["createElement"])(OriginalComponent, props);
+      return Object(external_wp_element_["createElement"])(OriginalComponent, props);
     };
-  };
+  }, 'withNavigationHydration');
 };
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.search.js
+var es_string_search = __webpack_require__(170);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.assign.js
+var es_object_assign = __webpack_require__(250);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.match.js
+var es_string_match = __webpack_require__(203);
+
 // EXTERNAL MODULE: external "moment"
-var external_moment_ = __webpack_require__(19);
+var external_moment_ = __webpack_require__(29);
 var external_moment_default = /*#__PURE__*/__webpack_require__.n(external_moment_);
 
-// EXTERNAL MODULE: external {"this":["wc","navigation"]}
-var external_this_wc_navigation_ = __webpack_require__(29);
+// EXTERNAL MODULE: external ["wc","navigation"]
+var external_wc_navigation_ = __webpack_require__(50);
 
 // CONCATENATED MODULE: ./packages/data/build-module/reports/utils.js
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6611,6 +12204,7 @@ function reports_utils_objectSpread(target) {
 /**
  * Internal dependencies
  */
+
 
 
 
@@ -6682,12 +12276,12 @@ function timeStampFilterDates(config, activeFilter) {
         before = _value[1];
 
     return Object.assign({}, activeFilter, {
-      value: [Object(external_this_wc_date_["appendTimestamp"])(external_moment_default()(after), timeOfDayMap.after), Object(external_this_wc_date_["appendTimestamp"])(external_moment_default()(before), timeOfDayMap.before)]
+      value: [Object(external_wc_date_["appendTimestamp"])(external_moment_default()(after), timeOfDayMap.after), Object(external_wc_date_["appendTimestamp"])(external_moment_default()(before), timeOfDayMap.before)]
     });
   }
 
   return Object.assign({}, activeFilter, {
-    value: Object(external_this_wc_date_["appendTimestamp"])(external_moment_default()(value), timeOfDayMap[rule])
+    value: Object(external_wc_date_["appendTimestamp"])(external_moment_default()(value), timeOfDayMap[rule])
   });
 }
 function getQueryFromConfig(config, advancedFilters, query) {
@@ -6698,13 +12292,13 @@ function getQueryFromConfig(config, advancedFilters, query) {
   }
 
   if (queryValue === 'advanced') {
-    var activeFilters = Object(external_this_wc_navigation_["getActiveFiltersFromQuery"])(query, advancedFilters.filters);
+    var activeFilters = Object(external_wc_navigation_["getActiveFiltersFromQuery"])(query, advancedFilters.filters);
 
     if (activeFilters.length === 0) {
       return {};
     }
 
-    var filterQuery = Object(external_this_wc_navigation_["getQueryFromActiveFilters"])(activeFilters.map(function (filter) {
+    var filterQuery = Object(external_wc_navigation_["getQueryFromActiveFilters"])(activeFilters.map(function (filter) {
       return timeStampFilterDates(advancedFilters, filter);
     }), {}, advancedFilters.filters);
     return reports_utils_objectSpread({
@@ -6712,7 +12306,7 @@ function getQueryFromConfig(config, advancedFilters, query) {
     }, filterQuery);
   }
 
-  var filter = Object(external_lodash_["find"])(Object(external_this_wc_navigation_["flattenFilters"])(config.filters), {
+  var filter = Object(external_lodash_["find"])(Object(external_wc_navigation_["flattenFilters"])(config.filters), {
     value: queryValue
   });
 
@@ -6778,8 +12372,8 @@ function getRequestQuery(options) {
       dataType = options.dataType,
       query = options.query,
       fields = options.fields;
-  var datesFromQuery = Object(external_this_wc_date_["getCurrentDates"])(query, options.defaultDateRange);
-  var interval = Object(external_this_wc_date_["getIntervalForQuery"])(query);
+  var datesFromQuery = Object(external_wc_date_["getCurrentDates"])(query, options.defaultDateRange);
+  var interval = Object(external_wc_date_["getIntervalForQuery"])(query);
   var filterQuery = getFilterQuery(options);
   var end = datesFromQuery[dataType].before;
   var noIntervals = Object(external_lodash_["includes"])(noIntervalEndpoints, endpoint);
@@ -6789,8 +12383,8 @@ function getRequestQuery(options) {
     order: 'asc',
     interval: interval,
     per_page: MAX_PER_PAGE,
-    after: Object(external_this_wc_date_["appendTimestamp"])(datesFromQuery[dataType].after, 'start'),
-    before: Object(external_this_wc_date_["appendTimestamp"])(end, 'end'),
+    after: Object(external_wc_date_["appendTimestamp"])(datesFromQuery[dataType].after, 'start'),
+    before: Object(external_wc_date_["appendTimestamp"])(end, 'end'),
     segmentby: query.segmentby,
     fields: fields
   }, filterQuery);
@@ -6871,6 +12465,59 @@ function getSummaryNumbers(options) {
   });
 }
 /**
+ * Static responses object to avoid returning new references each call.
+ */
+
+var reportChartDataResponses = {
+  requesting: {
+    isEmpty: false,
+    isError: false,
+    isRequesting: true,
+    data: {
+      totals: {},
+      intervals: []
+    }
+  },
+  error: {
+    isEmpty: false,
+    isError: true,
+    isRequesting: false,
+    data: {
+      totals: {},
+      intervals: []
+    }
+  },
+  empty: {
+    isEmpty: true,
+    isError: false,
+    isRequesting: false,
+    data: {
+      totals: {},
+      intervals: []
+    }
+  }
+};
+var EMPTY_ARRAY = [];
+/**
+ * Cache helper for returning the full chart dataset after multiple
+ * requests. Memoized on the request query (string), only called after
+ * all the requests have resolved successfully.
+ */
+
+var getReportChartDataResponse = Object(external_lodash_["memoize"])(function (requestString, totals, intervals) {
+  return {
+    isEmpty: false,
+    isError: false,
+    isRequesting: false,
+    data: {
+      totals: totals,
+      intervals: intervals
+    }
+  };
+}, function (requestString, totals, intervals) {
+  return [requestString, totals.length, intervals.length].join(':');
+});
+/**
  * Returns all of the data needed to render a chart with summary numbers on a report page.
  *
  * @param  {Object} options           arguments
@@ -6892,15 +12539,6 @@ function getReportChartData(options) {
       getReportStatsError = _select2.getReportStatsError,
       isResolving = _select2.isResolving;
 
-  var response = {
-    isEmpty: false,
-    isError: false,
-    isRequesting: false,
-    data: {
-      totals: {},
-      intervals: []
-    }
-  };
   var requestQuery = getRequestQuery(options); // Disable eslint rule requiring `stats` to be defined below because the next two if statements
   // depend on `getReportStats` to have been called.
   // eslint-disable-next-line @wordpress/no-unused-vars-before-return
@@ -6908,25 +12546,19 @@ function getReportChartData(options) {
   var stats = getReportStats(endpoint, requestQuery);
 
   if (isResolving('getReportStats', [endpoint, requestQuery])) {
-    return reports_utils_objectSpread(reports_utils_objectSpread({}, response), {}, {
-      isRequesting: true
-    });
+    return reportChartDataResponses.requesting;
   }
 
   if (getReportStatsError(endpoint, requestQuery)) {
-    return reports_utils_objectSpread(reports_utils_objectSpread({}, response), {}, {
-      isError: true
-    });
+    return reportChartDataResponses.error;
   }
 
   if (isReportDataEmpty(stats, endpoint)) {
-    return reports_utils_objectSpread(reports_utils_objectSpread({}, response), {}, {
-      isEmpty: true
-    });
+    return reportChartDataResponses.empty;
   }
 
   var totals = stats && stats.data && stats.data.totals || null;
-  var intervals = stats && stats.data && stats.data.intervals || []; // If we have more than 100 results for this time period,
+  var intervals = stats && stats.data && stats.data.intervals || EMPTY_ARRAY; // If we have more than 100 results for this time period,
   // we need to make additional requests to complete the response.
 
   if (stats.totalResults > MAX_PER_PAGE) {
@@ -6963,13 +12595,9 @@ function getReportChartData(options) {
     }
 
     if (isFetching) {
-      return reports_utils_objectSpread(reports_utils_objectSpread({}, response), {}, {
-        isRequesting: true
-      });
+      return reportChartDataResponses.requesting;
     } else if (isError) {
-      return reports_utils_objectSpread(reports_utils_objectSpread({}, response), {}, {
-        isError: true
-      });
+      return reportChartDataResponses.error;
     }
 
     Object(external_lodash_["forEach"])(pagedData, function (_data) {
@@ -6979,12 +12607,7 @@ function getReportChartData(options) {
     });
   }
 
-  return reports_utils_objectSpread(reports_utils_objectSpread({}, response), {}, {
-    data: {
-      totals: totals,
-      intervals: intervals
-    }
-  });
+  return getReportChartDataResponse(getResourceName(endpoint, requestQuery), totals, intervals);
 }
 /**
  * Returns a formatting function or string to be used by d3-format
@@ -7027,13 +12650,13 @@ function getReportTableQuery(options) {
       _options$tableQuery = options.tableQuery,
       tableQuery = _options$tableQuery === void 0 ? {} : _options$tableQuery;
   var filterQuery = getFilterQuery(options);
-  var datesFromQuery = Object(external_this_wc_date_["getCurrentDates"])(query, options.defaultDateRange);
+  var datesFromQuery = Object(external_wc_date_["getCurrentDates"])(query, options.defaultDateRange);
   var noIntervals = Object(external_lodash_["includes"])(noIntervalEndpoints, options.endpoint);
   return reports_utils_objectSpread(reports_utils_objectSpread({
     orderby: query.orderby || 'date',
     order: query.order || 'desc',
-    after: noIntervals ? undefined : Object(external_this_wc_date_["appendTimestamp"])(datesFromQuery.primary.after, 'start'),
-    before: noIntervals ? undefined : Object(external_this_wc_date_["appendTimestamp"])(datesFromQuery.primary.before, 'end'),
+    after: noIntervals ? undefined : Object(external_wc_date_["appendTimestamp"])(datesFromQuery.primary.after, 'start'),
+    before: noIntervals ? undefined : Object(external_wc_date_["appendTimestamp"])(datesFromQuery.primary.before, 'end'),
     page: query.paged || 1,
     per_page: query.per_page || QUERY_DEFAULTS.pageSize
   }, filterQuery), tableQuery);
@@ -7094,7 +12717,7 @@ function getReportTableData(options) {
  */
 var export_constants_STORE_NAME = 'wc/admin/export';
 // EXTERNAL MODULE: ./node_modules/md5/md5.js
-var md5 = __webpack_require__(178);
+var md5 = __webpack_require__(263);
 var md5_default = /*#__PURE__*/__webpack_require__.n(md5);
 
 // CONCATENATED MODULE: ./packages/data/build-module/export/utils.js
@@ -7135,7 +12758,8 @@ var export_action_types_TYPES = {
 // CONCATENATED MODULE: ./packages/data/build-module/export/actions.js
 
 
-var export_actions_marked = /*#__PURE__*/regenerator_default.a.mark(startExport);
+
+var export_actions_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(startExport);
 /**
  * Internal dependencies
  */
@@ -7171,7 +12795,7 @@ function export_actions_setError(selector, selectorArgs, error) {
 function startExport(type, args) {
   var response, _response$data, exportId, message;
 
-  return regenerator_default.a.wrap(function startExport$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function startExport$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -7249,6 +12873,12 @@ function startExport(type, args) {
   }, export_actions_marked, null, [[2, 18]]);
 }
 // CONCATENATED MODULE: ./packages/data/build-module/export/reducer.js
+
+
+
+
+
+
 
 
 function export_reducer_ownKeys(object, enumerableOnly) {
@@ -7353,7 +12983,7 @@ var reducer_exportReducer = function exportReducer() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(export_constants_STORE_NAME, {
+Object(external_wp_data_["registerStore"])(export_constants_STORE_NAME, {
   reducer: export_reducer,
   actions: export_actions_namespaceObject,
   controls: build_module_controls,
@@ -7366,6 +12996,12 @@ var EXPORT_STORE_NAME = export_constants_STORE_NAME;
  */
 var import_constants_STORE_NAME = 'wc/admin/import';
 // CONCATENATED MODULE: ./packages/data/build-module/import/selectors.js
+
+
+
+
+
+
 
 
 function selectors_ownKeys(object, enumerableOnly) {
@@ -7448,7 +13084,7 @@ var import_action_types_TYPES = {
 // CONCATENATED MODULE: ./packages/data/build-module/import/actions.js
 
 
-var import_actions_marked = /*#__PURE__*/regenerator_default.a.mark(updateImportation);
+var import_actions_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(updateImportation);
 /**
  * External dependencies
  */
@@ -7510,7 +13146,7 @@ function updateImportation(path) {
   var importStarted,
       response,
       _args = arguments;
-  return regenerator_default.a.wrap(function updateImportation$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function updateImportation$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
@@ -7521,7 +13157,7 @@ function updateImportation(path) {
         case 3:
           _context.prev = 3;
           _context.next = 6;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: path,
             method: 'POST'
           });
@@ -7549,8 +13185,8 @@ function updateImportation(path) {
 // CONCATENATED MODULE: ./packages/data/build-module/import/resolvers.js
 
 
-var import_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers_getImportStatus),
-    import_resolvers_marked2 = /*#__PURE__*/regenerator_default.a.mark(resolvers_getImportTotals);
+var import_resolvers_marked = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getImportStatus),
+    import_resolvers_marked2 = /*#__PURE__*/external_regeneratorRuntime_default.a.mark(resolvers_getImportTotals);
 /**
  * External dependencies
  */
@@ -7567,14 +13203,14 @@ var import_resolvers_marked = /*#__PURE__*/regenerator_default.a.mark(resolvers_
 
 function resolvers_getImportStatus(query) {
   var url, response;
-  return regenerator_default.a.wrap(function getImportStatus$(_context) {
+  return external_regeneratorRuntime_default.a.wrap(function getImportStatus$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
-          url = Object(external_this_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/reports/import/status"), Object(external_lodash_["omit"])(query, ['timestamp']));
+          url = Object(external_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/reports/import/status"), Object(external_lodash_["omit"])(query, ['timestamp']));
           _context.next = 4;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url
           });
 
@@ -7602,14 +13238,14 @@ function resolvers_getImportStatus(query) {
 }
 function resolvers_getImportTotals(query) {
   var url, response;
-  return regenerator_default.a.wrap(function getImportTotals$(_context2) {
+  return external_regeneratorRuntime_default.a.wrap(function getImportTotals$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           _context2.prev = 0;
-          url = Object(external_this_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/reports/import/totals"), query);
+          url = Object(external_wp_url_["addQueryArgs"])("".concat(NAMESPACE, "/reports/import/totals"), query);
           _context2.next = 4;
-          return Object(external_this_wp_dataControls_["apiFetch"])({
+          return Object(external_wp_dataControls_["apiFetch"])({
             path: url
           });
 
@@ -7636,6 +13272,12 @@ function resolvers_getImportTotals(query) {
   }, import_resolvers_marked2, null, [[0, 9]]);
 }
 // CONCATENATED MODULE: ./packages/data/build-module/import/reducer.js
+
+
+
+
+
+
 
 
 function import_reducer_ownKeys(object, enumerableOnly) {
@@ -7692,7 +13334,7 @@ var import_reducer_reducer = function reducer() {
     errors: {},
     lastImportStartTimestamp: 0,
     period: {
-      date: external_moment_default()().format(Object(external_this_wp_i18n_["__"])('MM/DD/YYYY', 'woocommerce-admin')),
+      date: external_moment_default()().format(Object(external_wp_i18n_["__"])('MM/DD/YYYY', 'woocommerce-admin')),
       label: 'all'
     },
     skipPrevious: true
@@ -7781,15 +13423,18 @@ var import_reducer_reducer = function reducer() {
 
 
 
-Object(external_this_wp_data_["registerStore"])(import_constants_STORE_NAME, {
+Object(external_wp_data_["registerStore"])(import_constants_STORE_NAME, {
   reducer: import_reducer,
   actions: import_actions_namespaceObject,
-  controls: external_this_wp_dataControls_["controls"],
+  controls: external_wp_dataControls_["controls"],
   selectors: import_selectors_namespaceObject,
   resolvers: import_resolvers_namespaceObject
 });
 var IMPORT_STORE_NAME = import_constants_STORE_NAME;
 // CONCATENATED MODULE: ./packages/data/build-module/index.js
+/**
+ * External dependencies
+ */
 
 
 
@@ -7815,147 +13460,7 @@ var IMPORT_STORE_NAME = import_constants_STORE_NAME;
 
 
 
-/***/ }),
 
-/***/ 58:
-/***/ (function(module, exports, __webpack_require__) {
-
-var objectWithoutPropertiesLoose = __webpack_require__(150);
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-  var target = objectWithoutPropertiesLoose(source, excluded);
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-module.exports = _objectWithoutProperties;
-
-/***/ }),
-
-/***/ 62:
-/***/ (function(module, exports) {
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
-
-  return arr2;
-}
-
-module.exports = _arrayLikeToArray;
-
-/***/ }),
-
-/***/ 63:
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayLikeToArray = __webpack_require__(62);
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
-}
-
-module.exports = _unsupportedIterableToArray;
-
-/***/ }),
-
-/***/ 75:
-/***/ (function(module, exports) {
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
-
-module.exports = _asyncToGenerator;
-
-/***/ }),
-
-/***/ 93:
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayLikeToArray = __webpack_require__(62);
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return arrayLikeToArray(arr);
-}
-
-module.exports = _arrayWithoutHoles;
-
-/***/ }),
-
-/***/ 94:
-/***/ (function(module, exports) {
-
-function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-}
-
-module.exports = _iterableToArray;
-
-/***/ }),
-
-/***/ 95:
-/***/ (function(module, exports) {
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-module.exports = _nonIterableSpread;
 
 /***/ })
-
-/******/ });
+/******/ ]);
