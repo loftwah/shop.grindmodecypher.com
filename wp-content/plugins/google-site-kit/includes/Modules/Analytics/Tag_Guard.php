@@ -3,7 +3,7 @@
  * Class Google\Site_Kit\Modules\Analytics\Tag_Guard
  *
  * @package   Google\Site_Kit\Modules\Analytics
- * @copyright 2020 Google LLC
+ * @copyright 2021 Google LLC
  * @license   https://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://sitekit.withgoogle.com
  */
@@ -30,7 +30,7 @@ class Tag_Guard extends Module_Tag_Guard {
 	 */
 	public function can_activate() {
 		$settings = $this->settings->get();
-		return ! empty( $settings['useSnippet'] ) && ! empty( $settings['propertyID'] );
+		return $settings['canUseSnippet'] && ! empty( $settings['useSnippet'] ) && ! empty( $settings['propertyID'] );
 	}
 
 }
