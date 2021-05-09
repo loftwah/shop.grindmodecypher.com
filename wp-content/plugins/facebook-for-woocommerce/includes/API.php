@@ -32,7 +32,7 @@ class API extends Framework\SV_WC_API_Base {
 
 
 	/** @var string URI used for the request */
-	protected $request_uri = 'https://graph.facebook.com/v7.0';
+	protected $request_uri = \WC_Facebookcommerce_Graph_API::GRAPH_API_URL . \WC_Facebookcommerce_Graph_API::API_VERSION;
 
 	/** @var string the configured access token */
 	protected $access_token;
@@ -256,25 +256,6 @@ class API extends Framework\SV_WC_API_Base {
 		$request = new API\Pages\Read\Request( $page_id );
 
 		$this->set_response_handler( API\Pages\Read\Response::class );
-
-		return $this->perform_request( $request );
-	}
-
-
-	/**
-	 * Gets a business manager object from Facebook.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $business_manager_id business manager ID
-	 * @return API\Business_Manager\Response
-	 * @throws Framework\SV_WC_API_Exception
-	 */
-	public function get_business_manager( $business_manager_id ) {
-
-		$request = new API\Business_Manager\Request( $business_manager_id );
-
-		$this->set_response_handler( API\Business_Manager\Response::class );
 
 		return $this->perform_request( $request );
 	}

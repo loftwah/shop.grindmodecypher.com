@@ -22,7 +22,7 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 
 
 		/** @var string the plugin version */
-		const VERSION = '2.2.0';
+		const VERSION = '2.4.0';
 
 		/** @var string for backwards compatibility TODO: remove this in v2.0.0 {CW 2020-02-06} */
 		const PLUGIN_VERSION = self::VERSION;
@@ -32,6 +32,9 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 
 		/** @var string the integration ID */
 		const INTEGRATION_ID = 'facebookcommerce';
+
+		/** @var string the product set categories meta name */
+		const PRODUCT_SET_META = '_wc_facebook_product_cats';
 
 
 		/** @var \WC_Facebookcommerce singleton instance */
@@ -70,8 +73,14 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 		/** @var \SkyVerge\WooCommerce\Facebook\Products\Sync\Background background sync handler */
 		private $sync_background_handler;
 
+		/** @var \SkyVerge\WooCommerce\Facebook\ProductSets\Sync product sets sync handler */
+		private $product_sets_sync_handler;
+
 		/** @var \SkyVerge\WooCommerce\Facebook\Handlers\Connection connection handler */
 		private $connection_handler;
+
+		/** @var \SkyVerge\WooCommerce\Facebook\Handlers\WebHook webhook handler */
+		private $webhook_handler;
 
 		/** @var \SkyVerge\WooCommerce\Facebook\Integrations\Integrations integrations handler */
 		private $integrations;
@@ -79,6 +88,8 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 		/** @var \SkyVerge\WooCommerce\Facebook\Commerce commerce handler */
 		private $commerce_handler;
 
+		/** @var \SkyVerge\WooCommerce\Facebook\Tracker */
+		private $tracker;
 
 		/**
 		 * Constructs the plugin.
@@ -107,6 +118,14 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 		public function init() {
 
 			add_action( 'init', [ $this, 'get_integration' ] );
+			add_action( 'init', [ $this, 'register_custom_taxonomy' ] );
+			add_action( 'add_meta_boxes_product' , [ $this, 'remove_product_fb_product_set_metabox' ], 50 );
+			add_filter( 'fb_product_set_row_actions', [ $this, 'product_set_links' ] );
+			add_filter( 'manage_edit-fb_product_set_columns', [ $this, 'manage_fb_product_set_columns' ] );
+
+			// Product Set breadcrumb filters
+			add_filter( 'woocommerce_navigation_is_connected_page', [ $this, 'is_current_page_conected_filter' ], 99, 2 );
+			add_filter( 'woocommerce_navigation_get_breadcrumbs', [ $this, 'wc_page_breadcrumbs_filter' ], 99 );
 
 			if ( \WC_Facebookcommerce_Utils::isWoocommerceIntegration() ) {
 
@@ -118,6 +137,7 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 				require_once __DIR__ . '/includes/Locale.php';
 				require_once __DIR__ . '/includes/AJAX.php';
 				require_once __DIR__ . '/includes/Handlers/Connection.php';
+				require_once __DIR__ . '/includes/Handlers/WebHook.php';
 				require_once __DIR__ . '/includes/Integrations/Integrations.php';
 				require_once __DIR__ . '/includes/Product_Categories.php';
 				require_once __DIR__ . '/includes/Products.php';
@@ -126,6 +146,7 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 				require_once __DIR__ . '/includes/Products/Stock.php';
 				require_once __DIR__ . '/includes/Products/Sync.php';
 				require_once __DIR__ . '/includes/Products/Sync/Background.php';
+				require_once __DIR__ . '/includes/ProductSets/Sync.php';
 				require_once __DIR__ . '/includes/fbproductfeed.php';
 				require_once __DIR__ . '/facebook-commerce-messenger-chat.php';
 				require_once __DIR__ . '/includes/Commerce.php';
@@ -133,13 +154,17 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 				require_once __DIR__ . '/includes/Events/Normalizer.php';
 				require_once __DIR__ . '/includes/Events/AAMSettings.php';
 				require_once __DIR__ . '/includes/Utilities/Shipment.php';
+				require_once __DIR__ . '/includes/Utilities/Tracker.php';
+				require_once __DIR__ . '/includes/Debug/ProfilingLogger.php';
+				require_once __DIR__ . '/includes/Debug/ProfilingLoggerProcess.php';
 
-				$this->product_feed            = new \SkyVerge\WooCommerce\Facebook\Products\Feed();
-				$this->products_stock_handler  = new \SkyVerge\WooCommerce\Facebook\Products\Stock();
-				$this->products_sync_handler   = new \SkyVerge\WooCommerce\Facebook\Products\Sync();
-				$this->sync_background_handler = new \SkyVerge\WooCommerce\Facebook\Products\Sync\Background();
-				$this->commerce_handler        = new \SkyVerge\WooCommerce\Facebook\Commerce();
-				$this->fb_categories 					 = new \SkyVerge\WooCommerce\Facebook\Products\FBCategories();
+				$this->product_feed              = new \SkyVerge\WooCommerce\Facebook\Products\Feed();
+				$this->products_stock_handler    = new \SkyVerge\WooCommerce\Facebook\Products\Stock();
+				$this->products_sync_handler     = new \SkyVerge\WooCommerce\Facebook\Products\Sync();
+				$this->sync_background_handler   = new \SkyVerge\WooCommerce\Facebook\Products\Sync\Background();
+				$this->product_sets_sync_handler = new \SkyVerge\WooCommerce\Facebook\ProductSets\Sync();
+				$this->commerce_handler          = new \SkyVerge\WooCommerce\Facebook\Commerce();
+				$this->fb_categories             = new \SkyVerge\WooCommerce\Facebook\Products\FBCategories();
 
 				if ( is_ajax() ) {
 					$this->ajax = new \SkyVerge\WooCommerce\Facebook\AJAX();
@@ -163,6 +188,9 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 				}
 
 				$this->connection_handler = new \SkyVerge\WooCommerce\Facebook\Handlers\Connection( $this );
+				$this->webhook_handler = new \SkyVerge\WooCommerce\Facebook\Handlers\WebHook( $this );
+
+				$this->tracker = new \SkyVerge\WooCommerce\Facebook\Utilities\Tracker();
 
 				// load admin handlers, before admin_init
 				if ( is_admin() ) {
@@ -171,6 +199,7 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 					require_once __DIR__ . '/includes/Admin/Abstract_Settings_Screen.php';
 					require_once __DIR__ . '/includes/Admin/Settings_Screens/Connection.php';
 					require_once __DIR__ . '/includes/Admin/Settings_Screens/Product_Sync.php';
+					require_once __DIR__ . '/includes/Admin/Settings_Screens/Product_Sets.php';
 					require_once __DIR__ . '/includes/Admin/Settings_Screens/Messenger.php';
 					require_once __DIR__ . '/includes/Admin/Settings_Screens/Advertise.php';
 					require_once __DIR__ . '/includes/Admin/Google_Product_Category_Field.php';
@@ -346,6 +375,21 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 			new WP_Facebook_Integration();
 		}
 
+		/**
+		 * Saves errors or messages to WooCommerce Log (woocommerce/logs/plugin-id-xxx.txt)
+		 *
+		 * @since 2.3.3
+		 * @param string $message error or message to save to log
+		 * @param string $log_id optional log id to segment the files by, defaults to plugin id
+		 */
+		public function log( $message, $log_id = null ) {
+			// bail if logging isn't enabled
+			if ( ! $this->get_integration() || ! $this->get_integration()->is_debug_mode_enabled() ) {
+				return;
+			}
+
+			parent::log( $message, $log_id );
+		}
 
 		/**
 		 * Logs an API request.
@@ -364,6 +408,135 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 			}
 
 			parent::log_api_request( $request, $response, $log_id );
+		}
+
+		/**
+		 * Remove Product Set metabox from Product edit page
+		 *
+		 * @since 2.3.0
+		 */
+		public function remove_product_fb_product_set_metabox() {
+			remove_meta_box( 'fb_product_setdiv', 'product', 'side' );
+		}
+
+		/**
+		 * Register FB Product Set Taxonomy
+		 *
+		 * @since 2.3.0
+		 */
+		public function register_custom_taxonomy() {
+
+			$plural   = esc_html__( 'FB Product Sets', 'facebook-for-woocommerce' );
+			$singular = esc_html__( 'FB Product Set', 'facebook-for-woocommerce' );
+
+			$args = array(
+				'labels'            => array(
+					'name'                       => $plural,
+					'singular_name'              => $singular,
+					'menu_name'                  => $plural,
+					// translators: Edit item label
+					'edit_item'                  => sprintf( esc_html__( 'Edit %s', 'facebook-for-woocommerce' ), $singular ),
+					// translators: Add new label
+					'add_new_item'               => sprintf( esc_html__( 'Add new %s', 'facebook-for-woocommerce' ), $singular ),
+					'menu_name'                  => $plural,
+					// translators: No items found text
+					'not_found'                  => sprintf( esc_html__( 'No %s found.', 'facebook-for-woocommerce' ), $plural ),
+					// translators: Search label
+					'search_items'               => sprintf( esc_html__( 'Search %s.', 'facebook-for-woocommerce' ), $plural ),
+					// translators: Text label
+					'separate_items_with_commas' => sprintf( esc_html__( 'Separate %s with commas', 'facebook-for-woocommerce' ), $plural ),
+					// translators: Text label
+					'choose_from_most_used'      => sprintf( esc_html__( 'Choose from the most used %s', 'facebook-for-woocommerce' ), $plural ),
+				),
+				'hierarchical'      => true,
+				'public'            => true,
+				'show_in_nav_menus' => false,
+				'show_tagcloud'     => false,
+			);
+
+			register_taxonomy( 'fb_product_set', array( 'product' ), $args );
+		}
+
+
+		/**
+		 * Filter FB Product Set Taxonomy table links
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array $actions Item Actions.
+		 *
+		 * @return array
+		 */
+		public function product_set_links( $actions ) {
+			unset( $actions['inline hide-if-no-js'] );
+			unset( $actions['view'] );
+			return $actions;
+		}
+
+
+		/**
+		 * Remove posts count column from FB Product Set custom taxonomy
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array $columns Taxonomy columns.
+		 *
+		 * @return array
+		 */
+		public function manage_fb_product_set_columns( $columns ) {
+			unset( $columns['posts'] );
+			return $columns;
+		}
+
+
+		/**
+		 * Filter WC Breadcrumbs when the page is FB Product Sets
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array $breadcrumbs Page breadcrumbs.
+		 *
+		 * @return array
+		 */
+		public function wc_page_breadcrumbs_filter( $breadcrumbs ) {
+
+			if ( 'edit-fb_product_set' !== $this->get_current_page_id() ) {
+				return $breadcrumbs;
+			}
+
+			$breadcrumbs = array(
+				array( 'admin.php?page=wc-admin', 'WooCommerce' ),
+				array( 'edit.php?post_type=product', 'Products' ),
+			);
+
+			$term_id = empty( $_GET['tag_ID'] ) ? '' : $_GET['tag_ID']; //phpcs:ignore WordPress.Security
+
+			if ( ! empty( $term_id ) ) {
+				$breadcrumbs[] = array( 'edit-tags.php?taxonomy=fb_product_set&post_type=product', 'Products Sets' );
+			}
+
+			$breadcrumbs[] = ( empty( $term_id ) ? 'Product Sets' : 'Edit Product Set' );
+
+			return $breadcrumbs;
+		}
+
+
+		/**
+		 * Return that FB Product Set page is a WC Conected Page
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param boolean $is_conected If it's connected or not.
+		 *
+		 * @return boolean
+		 */
+		public function is_current_page_conected_filter( $is_conected ) {
+
+			if ( 'edit-fb_product_set' === $this->get_current_page_id() ) {
+				return true;
+			}
+
+			return $is_conected;
 		}
 
 
@@ -426,14 +599,6 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 
 				if ( ! class_exists( API\Pixel\Events\Request::class ) ) {
 					require_once __DIR__ . '/includes/API/Pixel/Events/Request.php';
-				}
-
-				if ( ! class_exists( API\Business_Manager\Request::class ) ) {
-					require_once __DIR__ . '/includes/API/Business_Manager/Request.php';
-				}
-
-				if ( ! class_exists( API\Business_Manager\Response::class ) ) {
-					require_once __DIR__ . '/includes/API/Business_Manager/Response.php';
 				}
 
 				if ( ! class_exists( API\Catalog\Request::class ) ) {
@@ -728,6 +893,21 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 		}
 
 		/**
+		 * Gets the debug profiling logger instance.
+		 *
+		 * @return \SkyVerge\WooCommerce\Facebook\Debug\ProfilingLogger
+		 */
+		public function get_profiling_logger() {
+			static $instance = null;
+			if ( null === $instance ) {
+				$is_enabled = defined( 'FACEBOOK_FOR_WOOCOMMERCE_PROFILING_LOG_ENABLED' ) && FACEBOOK_FOR_WOOCOMMERCE_PROFILING_LOG_ENABLED;
+				$instance = new \SkyVerge\WooCommerce\Facebook\Debug\ProfilingLogger( $is_enabled );
+			}
+
+			return $instance;
+		}
+
+		/**
 		 * Gets the settings page URL.
 		 *
 		 * @since 1.10.0
@@ -867,6 +1047,24 @@ if ( ! class_exists( 'WC_Facebookcommerce' ) ) :
 		protected function get_file() {
 
 			return __FILE__;
+		}
+
+
+		/**
+		 * Return current page ID
+		 *
+		 * @since 2.3.0
+		 *
+		 * @return string
+		 */
+		protected function get_current_page_id() {
+
+			$current_screen_id = '';
+			$current_screen    = get_current_screen();
+			if ( ! empty( $current_screen ) ) {
+				$current_screen_id = $current_screen->id;
+			}
+			return $current_screen_id;
 		}
 
 
