@@ -34,15 +34,16 @@ class PDF_Maker {
 
 		// set options
 		$options = new Options( apply_filters( 'wpo_wcpdf_dompdf_options', array(
-			'defaultFont'				=> 'dejavu sans',
 			'tempDir'					=> WPO_WCPDF()->main->get_tmp_path('dompdf'),
-			'logOutputFile'				=> WPO_WCPDF()->main->get_tmp_path('dompdf') . "/log.htm",
 			'fontDir'					=> WPO_WCPDF()->main->get_tmp_path('fonts'),
 			'fontCache'					=> WPO_WCPDF()->main->get_tmp_path('fonts'),
+			'chroot'					=> $this->get_chroot_paths(),
+			'logOutputFile'				=> WPO_WCPDF()->main->get_tmp_path('dompdf') . "/log.htm",
+			'defaultFont'				=> 'dejavu sans',
 			'isRemoteEnabled'			=> true,
-			'isFontSubsettingEnabled'	=> $this->settings['font_subsetting'],
 			// HTML5 parser requires iconv
 			'isHtml5ParserEnabled'		=> ( isset(WPO_WCPDF()->settings->debug_settings['use_html5_parser']) && extension_loaded('iconv') ) ? true : false,
+			'isFontSubsettingEnabled'	=> $this->settings['font_subsetting'],
 		) ) );
 
 		// instantiate and use the dompdf class
@@ -54,6 +55,19 @@ class PDF_Maker {
 		$dompdf = apply_filters( 'wpo_wcpdf_after_dompdf_render', $dompdf, $this->html );
 
 		return $dompdf->output();
+	}
+
+	private function get_chroot_paths() {
+		$chroot = array( WP_CONTENT_DIR ); // default
+
+		if( $wp_upload_base = WPO_WCPDF()->main->get_wp_upload_base() ) {
+			$chroot[] = $wp_upload_base;
+		}
+		if( $tmp_base = WPO_WCPDF()->main->get_tmp_base() ) {
+			$chroot[] = $tmp_base;
+		}
+
+		return apply_filters( 'wpo_wcpdf_dompdf_chroot', $chroot );
 	}
 }
 

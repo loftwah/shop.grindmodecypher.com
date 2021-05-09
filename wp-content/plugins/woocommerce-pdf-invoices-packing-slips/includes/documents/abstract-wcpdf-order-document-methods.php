@@ -25,7 +25,7 @@ if ( !class_exists( '\\WPO\\WC\\PDF_Invoices\\Documents\\Order_Document_Methods'
 
 abstract class Order_Document_Methods extends Order_Document {
 	public function is_refund( $order ) {
-		if ( method_exists( $order, 'get_type') ) { // WC 3.0+
+		if ( is_callable( array( $order, 'get_type' ) ) ) { // WC 3.0+
 			$is_refund = $order->get_type() == 'shop_order_refund';
 		} else {
 			$is_refund = get_post_type( WCX_Order::get_id( $order ) ) == 'shop_order_refund';
@@ -35,7 +35,7 @@ abstract class Order_Document_Methods extends Order_Document {
 	}
 
 	public function get_refund_parent_id( $order ) {
-		if ( method_exists( $order, 'get_parent_id') ) { // WC3.0+
+		if ( is_callable( array( $order, 'get_parent_id' ) ) ) { // WC3.0+
 			$parent_order_id = $order->get_parent_id();
 		} else {
 			$parent_order_id = wp_get_post_parent_id( WCX_Order::get_id( $order ) );
@@ -411,7 +411,7 @@ abstract class Order_Document_Methods extends Order_Document {
 	 * Return/Show the current date
 	 */
 	public function get_current_date() {
-		return apply_filters( 'wpo_wcpdf_date', date_i18n( wc_date_format() ) );
+		return apply_filters( 'wpo_wcpdf_date', date_i18n( wcpdf_date_format( $this, 'current_date' ) ) );
 	}
 	public function current_date() {
 		echo $this->get_current_date();
@@ -482,7 +482,7 @@ abstract class Order_Document_Methods extends Order_Document {
 			$order_date = WCX_Order::get_prop( $this->order, 'date_created' );
 		}
 
-		$date = $order_date->date_i18n( wc_date_format() );
+		$date = $order_date->date_i18n( wcpdf_date_format( $this, 'order_date' ) );
 		$mysql_date = $order_date->date( "Y-m-d H:i:s" );
 		return apply_filters( 'wpo_wcpdf_order_date', $date, $mysql_date, $this );
 	}
@@ -548,8 +548,10 @@ abstract class Order_Document_Methods extends Order_Document {
 				// Get the product to add more info
 				if ( is_callable( array( $item, 'get_product' ) ) ) { // WC4.4+
 					$product = $item->get_product();
-				} else {
+				} elseif ( defined( 'WOOCOMMERCE_VERSION' ) && version_compare( WOOCOMMERCE_VERSION, '4.4', '<' ) ) {
 					$product = $this->order->get_product_from_item( $item );
+				} else {
+					$product = null;
 				}
 				
 				// Checking fo existance, thanks to MDesigner0 
@@ -709,7 +711,7 @@ abstract class Order_Document_Methods extends Order_Document {
 	}
 
 	public function get_tax_rates_from_order( $order ) {
-		if ( !empty( $order ) && method_exists( $order, 'get_version' ) && version_compare( $order->get_version(), '3.7', '>=' ) && version_compare( WC_VERSION, '3.7', '>=' ) ) {
+		if ( !empty( $order ) && is_callable( array( $order, 'get_version' ) ) && version_compare( $order->get_version(), '3.7', '>=' ) && version_compare( WC_VERSION, '3.7', '>=' ) ) {
 			$tax_rates = array();
 			$tax_items = $order->get_items( array('tax') );
 
@@ -864,7 +866,7 @@ abstract class Order_Document_Methods extends Order_Document {
 		// WC2.4 fix order_total for refunded orders
 		// not if this is the actual refund!
 		if ( ! $this->is_refund( $this->order ) && apply_filters( 'wpo_wcpdf_remove_refund_totals', true, $this ) ) {
-			$total_refunded = method_exists($this->order, 'get_total_refunded') ? $this->order->get_total_refunded() : 0;
+			$total_refunded = is_callable( array( $this->order, 'get_total_refunded' ) ) ? $this->order->get_total_refunded() : 0;
 			if ( version_compare( WOOCOMMERCE_VERSION, '2.4', '>=' ) && isset($totals['order_total']) && $total_refunded ) {
 				if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
 					$tax_display = get_option( 'woocommerce_tax_display_cart' );
@@ -1123,7 +1125,7 @@ abstract class Order_Document_Methods extends Order_Document {
 			// return reason for refund if order is a refund
 			if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) ) {
 				$shipping_notes = $this->order->get_reason();
-			} elseif ( method_exists($this->order, 'get_refund_reason') ) {
+			} elseif ( is_callable( array( $this->order, 'get_refund_reason' ) ) ) {
 				$shipping_notes = $this->order->get_refund_reason();
 			} else {
 				$shipping_notes = wpautop( wptexturize( WCX_Order::get_prop( $this->order, 'customer_note', 'view' ) ) );
@@ -1203,7 +1205,7 @@ abstract class Order_Document_Methods extends Order_Document {
 
 	public function get_invoice_date() {
 		if ( $invoice_date = $this->get_date('invoice') ) {
-			return $invoice_date->date_i18n( apply_filters( 'wpo_wcpdf_date_format', wc_date_format(), $this ) );
+			return $invoice_date->date_i18n( wcpdf_date_format( $this, 'invoice_date' ) );
 		} else {
 			return '';
 		}
