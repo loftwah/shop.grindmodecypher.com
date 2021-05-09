@@ -21,6 +21,12 @@ var Printful_Product_Size_Guide;
         sizeGuideData: null,
 
         /**
+         * Key is unit identifier (e.g. 'inch') value is translated unit name (e.g. 'Inches')
+         * @var {{}}
+         */
+        translatedUnitNames: null,
+
+        /**
          * Handle click event
          */
         onSizeGuideClick: function () {
@@ -28,6 +34,11 @@ var Printful_Product_Size_Guide;
                 return;
             }
             this.sizeGuideData = JSON.parse(window.pfGlobal.sg_data_raw);
+
+            this.translatedUnitNames = {};
+            if (window.pfGlobal && window.pfGlobal.sg_unit_translations) {
+                this.translatedUnitNames = JSON.parse(window.pfGlobal.sg_unit_translations);
+            }
             document.body.appendChild(this.createModal());
         },
 
@@ -385,12 +396,25 @@ var Printful_Product_Size_Guide;
                 if (uniqueUnits.hasOwnProperty(i)) {
                     units.push({
                         key: i,
-                        title: uniqueUnits[i]
+                        title: this.getTranslatedUnitName(i, uniqueUnits[i])
                     });
                 }
             }
 
             return units;
+        },
+
+        /**
+         * @param {string} unit
+         * @param {string} defaultValue
+         * @return {null|string}
+         */
+        getTranslatedUnitName: function(unit, defaultValue) {
+            if (this.translatedUnitNames[unit]) {
+                return this.translatedUnitNames[unit];
+            }
+
+            return defaultValue;
         },
 
         getBackGroundColor: function () {

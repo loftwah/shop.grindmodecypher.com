@@ -50,7 +50,11 @@ class Printful_Size_Guide {
 				'sg_data_raw'                    => json_encode( $sizeGuideData ),
 				'sg_tab_title_person'            => __( 'Measure yourself', 'printful' ),
 				'sg_tab_title_product'           => __( 'Product measurements', 'printful' ),
-                'sg_table_header_size'           => __( 'Size', 'printful' ),
+				'sg_table_header_size'           => __( 'Size', 'printful' ),
+				'sg_unit_translations'           => json_encode( [
+					'inch'       => __( 'Inches', 'printful' ),
+					'centimeter' => __( 'Centimeters', 'printful' ),
+				] )
 			)
 		);
 		wp_register_style( $handle, plugins_url( '../assets/css/size-guide.css', __FILE__ ) );
