@@ -165,10 +165,11 @@ class WC_Stripe_Payment_Request {
 	 * This is needed so nonces can be verified by AJAX Request.
 	 *
 	 * @since  4.0.0
+	 * @version 5.2.0
 	 * @return void
 	 */
 	public function set_session() {
-		if ( ! is_product() || ( isset( WC()->session ) && WC()->session->has_session() ) ) {
+		if ( ! $this->is_product() || ( isset( WC()->session ) && WC()->session->has_session() ) ) {
 			return;
 		}
 
@@ -204,8 +205,6 @@ class WC_Stripe_Payment_Request {
 		add_action( 'wc_ajax_wc_stripe_log_errors', [ $this, 'ajax_log_errors' ] );
 
 		add_filter( 'woocommerce_gateway_title', [ $this, 'filter_gateway_title' ], 10, 2 );
-		add_filter( 'woocommerce_validate_postcode', [ $this, 'postal_code_validation' ], 10, 3 );
-
 		add_action( 'woocommerce_checkout_order_processed', [ $this, 'add_order_meta' ], 10, 2 );
 	}
 
@@ -298,23 +297,49 @@ class WC_Stripe_Payment_Request {
 	}
 
 	/**
+	 * Gets the product total price.
+	 *
+	 * @since 5.2.0
+	 *
+	 * @param object $product WC_Product_* object.
+	 * @return integer Total price.
+	 */
+	public function get_product_price( $product ) {
+		$product_price = $product->get_price();
+		// Add subscription sign-up fees to product price.
+		if ( 'subscription' === $product->get_type() && class_exists( 'WC_Subscriptions_Product' ) ) {
+			$product_price = $product->get_price() + WC_Subscriptions_Product::get_sign_up_fee( $product );
+		}
+
+		return $product_price;
+	}
+
+	/**
 	 * Gets the product data for the currently viewed page
 	 *
 	 * @since   4.0.0
-	 * @version 4.0.0
+	 * @version 5.2.0
 	 * @return  mixed Returns false if not on a product page, the product information otherwise.
 	 */
 	public function get_product_data() {
-		if ( ! is_product() ) {
+		if ( ! $this->is_product() ) {
 			return false;
 		}
 
-		global $post;
-
-		$product = wc_get_product( $post->ID );
+		$product = $this->get_product();
 
 		if ( 'variable' === $product->get_type() ) {
-			$attributes = wc_clean( wp_unslash( $_GET ) );
+			$variation_attributes = $product->get_variation_attributes();
+			$attributes           = [];
+
+			foreach ( $variation_attributes as $attribute_name => $attribute_values ) {
+				$attribute_key = 'attribute_' . sanitize_title( $attribute_name );
+
+				// Passed value via GET takes precedence. Otherwise get the default value for given attribute
+				$attributes[ $attribute_key ] = isset( $_GET[ $attribute_key ] )
+					? wc_clean( wp_unslash( $_GET[ $attribute_key ] ) )
+					: $product->get_variation_default_attribute( $attribute_name );
+			}
 
 			$data_store   = WC_Data_Store::load( 'product' );
 			$variation_id = $data_store->find_matching_product_variation( $product, $attributes );
@@ -329,7 +354,7 @@ class WC_Stripe_Payment_Request {
 
 		$items[] = [
 			'label'  => $product->get_name(),
-			'amount' => WC_Stripe_Helper::get_stripe_amount( $product->get_price() ),
+			'amount' => WC_Stripe_Helper::get_stripe_amount( $this->get_product_price( $product ) ),
 		];
 
 		if ( wc_tax_enabled() ) {
@@ -358,7 +383,7 @@ class WC_Stripe_Payment_Request {
 		$data['displayItems'] = $items;
 		$data['total']        = [
 			'label'   => apply_filters( 'wc_stripe_payment_request_total_label', $this->total_label ),
-			'amount'  => WC_Stripe_Helper::get_stripe_amount( $product->get_price() ),
+			'amount'  => WC_Stripe_Helper::get_stripe_amount( $this->get_product_price( $product ) ),
 			'pending' => true,
 		];
 
@@ -382,47 +407,50 @@ class WC_Stripe_Payment_Request {
 		$order        = wc_get_order( $post->ID );
 		$method_title = is_object( $order ) ? $order->get_payment_method_title() : '';
 
-		if ( 'stripe' === $id && ! empty( $method_title ) && 'Apple Pay (Stripe)' === $method_title ) {
-			return $method_title;
-		}
+		if ( 'stripe' === $id && ! empty( $method_title ) ) {
+			if ( 'Apple Pay (Stripe)' === $method_title
+				|| 'Google Pay (Stripe)' === $method_title
+				|| 'Payment Request (Stripe)' === $method_title
+			) {
+				return $method_title;
+			}
 
-		if ( 'stripe' === $id && ! empty( $method_title ) && 'Chrome Payment Request (Stripe)' === $method_title ) {
-			return $method_title;
+			// We renamed 'Chrome Payment Request' to just 'Payment Request' since Payment Requests
+			// are supported by other browsers besides Chrome. As such, we need to check for the
+			// old title to make sure older orders still reflect that they were paid via Payment
+			// Request Buttons.
+			if ( 'Chrome Payment Request (Stripe)' === $method_title ) {
+				return 'Payment Request (Stripe)';
+			}
 		}
 
 		return $title;
 	}
 
 	/**
-	 * Removes postal code validation from WC.
+	 * Normalizes postal code in case of redacted data from Apple Pay.
 	 *
-	 * @since   3.1.4
-	 * @version 4.0.0
+	 * @since 5.2.0
+	 *
+	 * @param string $postcode Postal code.
+	 * @param string $country Country.
 	 */
-	public function postal_code_validation( $valid, $postcode, $country ) {
-		$gateways = WC()->payment_gateways->get_available_payment_gateways();
-
-		if ( ! isset( $gateways['stripe'] ) ) {
-			return $valid;
-		}
-
-		$payment_request_type = isset( $_POST['payment_request_type'] ) ? wc_clean( wp_unslash( $_POST['payment_request_type'] ) ) : '';
-
-		if ( 'apple_pay' !== $payment_request_type ) {
-			return $valid;
-		}
-
+	public function get_normalized_postal_code( $postcode, $country ) {
 		/**
-		 * Currently Apple Pay truncates postal codes from UK and Canada to first 3 characters
+		 * Currently, Apple Pay truncates the UK and Canadian postal codes to the first 4 and 3 characters respectively
 		 * when passing it back from the shippingcontactselected object. This causes WC to invalidate
-		 * the order and not let it go through. The remedy for now is just to remove this validation.
-		 * Note that this only works with shipping providers that don't validate full postal codes.
+		 * the postal code and not calculate shipping zones correctly.
 		 */
-		if ( 'GB' === $country || 'CA' === $country ) {
-			return true;
+		if ( 'GB' === $country ) {
+			// Replaces a redacted string with something like LN10***.
+			return str_pad( preg_replace( '/\s+/', '', $postcode ), 7, '*' );
+		}
+		if ( 'CA' === $country ) {
+			// Replaces a redacted string with something like L4Y***.
+			return str_pad( preg_replace( '/\s+/', '', $postcode ), 6, '*' );
 		}
 
-		return $valid;
+		return $postcode;
 	}
 
 	/**
@@ -447,10 +475,11 @@ class WC_Stripe_Payment_Request {
 		if ( 'apple_pay' === $payment_request_type ) {
 			$order->set_payment_method_title( 'Apple Pay (Stripe)' );
 			$order->save();
-		}
-
-		if ( 'payment_request_api' === $payment_request_type ) {
-			$order->set_payment_method_title( 'Chrome Payment Request (Stripe)' );
+		} elseif ( 'google_pay' === $payment_request_type ) {
+			$order->set_payment_method_title( 'Google Pay (Stripe)' );
+			$order->save();
+		} elseif ( 'payment_request_api' === $payment_request_type ) {
+			$order->set_payment_method_title( 'Payment Request (Stripe)' );
 			$order->save();
 		}
 	}
@@ -514,35 +543,52 @@ class WC_Stripe_Payment_Request {
 	}
 
 	/**
-	 * Load public scripts and styles.
+	 * Checks if this is a product page or content contains a product_page shortcode.
 	 *
-	 * @since   3.1.0
-	 * @version 4.0.0
+	 * @since 5.2.0
+	 * @return boolean
 	 */
-	public function scripts() {
-		// If keys are not set bail.
-		if ( ! $this->are_keys_set() ) {
-			WC_Stripe_Logger::log( 'Keys are not set correctly.' );
-			return;
+	public function is_product() {
+		return is_product() || wc_post_content_has_shortcode( 'product_page' );
+	}
+
+	/**
+	 * Get product from product page or product_page shortcode.
+	 *
+	 * @since 5.2.0
+	 * @return WC_Product Product object.
+	 */
+	public function get_product() {
+		global $post;
+
+		if ( is_product() ) {
+			return wc_get_product( $post->ID );
+		} elseif ( wc_post_content_has_shortcode( 'product_page' ) ) {
+			// Get id from product_page shortcode.
+			preg_match( '/\[product_page id="(?<id>\d+)"\]/', $post->post_content, $shortcode_match );
+
+			if ( ! isset( $shortcode_match['id'] ) ) {
+				return false;
+			}
+
+			return wc_get_product( $shortcode_match['id'] );
 		}
 
-		// If no SSL bail.
-		if ( ! $this->testmode && ! is_ssl() ) {
-			WC_Stripe_Logger::log( 'Stripe Payment Request live mode requires SSL.' );
-			return;
+		return false;
+	}
+
+	/**
+	 * Returns the JavaScript configuration object used for any pages with a payment request button.
+	 *
+	 * @return array  The settings used for the payment request button in JavaScript.
+	 */
+	public function javascript_params() {
+		$needs_shipping = 'no';
+		if ( ! is_null( WC()->cart ) && WC()->cart->needs_shipping() ) {
+			$needs_shipping = 'yes';
 		}
 
-		if ( ! is_product() && ! is_cart() && ! is_checkout() && ! isset( $_GET['pay_for_order'] ) ) {
-			return;
-		}
-
-		if ( is_product() && ! $this->should_show_payment_button_on_product_page() ) {
-			return;
-		}
-
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		$stripe_params = [
+		return [
 			'ajax_url'        => WC_AJAX::get_endpoint( '%%endpoint%%' ),
 			'stripe'          => [
 				'key'                => $this->publishable_key,
@@ -567,7 +613,7 @@ class WC_Stripe_Payment_Request {
 				'url'               => wc_get_checkout_url(),
 				'currency_code'     => strtolower( get_woocommerce_currency() ),
 				'country_code'      => substr( get_option( 'woocommerce_default_country' ), 0, 2 ),
-				'needs_shipping'    => WC()->cart->needs_shipping() ? 'yes' : 'no',
+				'needs_shipping'    => $needs_shipping,
 				// Defaults to 'required' to match how core initializes this option.
 				'needs_payer_phone' => 'required' === get_option( 'woocommerce_checkout_phone_field', 'required' ),
 			],
@@ -581,14 +627,58 @@ class WC_Stripe_Payment_Request {
 				'css_selector' => $this->custom_button_selector(),
 				'branded_type' => $this->get_button_branded_type(),
 			],
-			'is_product_page' => is_product(),
+			'is_product_page' => $this->is_product(),
 			'product'         => $this->get_product_data(),
 		];
+	}
+
+	/**
+	 * Load public scripts and styles.
+	 *
+	 * @since   3.1.0
+	 * @version 5.2.0
+	 */
+	public function scripts() {
+		// If keys are not set bail.
+		if ( ! $this->are_keys_set() ) {
+			WC_Stripe_Logger::log( 'Keys are not set correctly.' );
+			return;
+		}
+
+		// If no SSL bail.
+		if ( ! $this->testmode && ! is_ssl() ) {
+			WC_Stripe_Logger::log( 'Stripe Payment Request live mode requires SSL.' );
+			return;
+		}
+
+		// If page is not supported, bail.
+		if (
+			! $this->is_product()
+			&& ! WC_Stripe_Helper::has_cart_or_checkout_on_current_page()
+			&& ! isset( $_GET['pay_for_order'] )
+		) {
+			return;
+		}
+
+		if ( $this->is_product() && ! $this->should_show_payment_button_on_product_page() ) {
+			return;
+		} elseif ( ! $this->should_show_payment_button_on_cart() ) {
+			return;
+		}
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script( 'stripe', 'https://js.stripe.com/v3/', '', '3.0', true );
 		wp_register_script( 'wc_stripe_payment_request', plugins_url( 'assets/js/stripe-payment-request' . $suffix . '.js', WC_STRIPE_MAIN_FILE ), [ 'jquery', 'stripe' ], WC_STRIPE_VERSION, true );
 
-		wp_localize_script( 'wc_stripe_payment_request', 'wc_stripe_payment_request_params', apply_filters( 'wc_stripe_payment_request_params', $stripe_params ) );
+		wp_localize_script(
+			'wc_stripe_payment_request',
+			'wc_stripe_payment_request_params',
+			apply_filters(
+				'wc_stripe_payment_request_params',
+				$this->javascript_params()
+			)
+		);
 
 		wp_enqueue_script( 'wc_stripe_payment_request' );
 
@@ -602,7 +692,7 @@ class WC_Stripe_Payment_Request {
 	 * Display the payment request button.
 	 *
 	 * @since   4.0.0
-	 * @version 4.0.0
+	 * @version 5.2.0
 	 */
 	public function display_payment_request_button_html() {
 		global $post;
@@ -613,17 +703,11 @@ class WC_Stripe_Payment_Request {
 			return;
 		}
 
-		if ( ! is_cart() && ! is_checkout() && ! is_product() && ! isset( $_GET['pay_for_order'] ) ) {
+		if ( ! is_cart() && ! is_checkout() && ! $this->is_product() && ! isset( $_GET['pay_for_order'] ) ) {
 			return;
 		}
 
 		if ( is_checkout() && ! apply_filters( 'wc_stripe_show_payment_request_on_checkout', false, $post ) ) {
-			return;
-		}
-
-		if ( is_product() && ! $this->should_show_payment_button_on_product_page() ) {
-			return;
-		} elseif ( ! $this->should_show_payment_button_on_cart() ) {
 			return;
 		}
 		?>
@@ -647,7 +731,7 @@ class WC_Stripe_Payment_Request {
 	 * Display payment request button separator.
 	 *
 	 * @since   4.0.0
-	 * @version 4.0.0
+	 * @version 5.2.0
 	 */
 	public function display_payment_request_button_separator_html() {
 		global $post;
@@ -658,17 +742,11 @@ class WC_Stripe_Payment_Request {
 			return;
 		}
 
-		if ( ! is_cart() && ! is_checkout() && ! is_product() && ! isset( $_GET['pay_for_order'] ) ) {
+		if ( ! is_cart() && ! is_checkout() && ! $this->is_product() && ! isset( $_GET['pay_for_order'] ) ) {
 			return;
 		}
 
 		if ( is_checkout() && ! apply_filters( 'wc_stripe_show_payment_request_on_checkout', false, $post ) ) {
-			return;
-		}
-
-		if ( is_product() && ! $this->should_show_payment_button_on_product_page() ) {
-			return;
-		} elseif ( ! $this->should_show_payment_button_on_cart() ) {
 			return;
 		}
 		?>
@@ -703,16 +781,17 @@ class WC_Stripe_Payment_Request {
 	 * Whether payment button html should be rendered
 	 *
 	 * @since  4.3.2
+	 * @version 5.2.0
 	 * @return boolean
 	 */
 	private function should_show_payment_button_on_product_page() {
 		global $post;
 
-		$product = wc_get_product( $post->ID );
-
 		if ( apply_filters( 'wc_stripe_hide_payment_request_on_product_page', false, $post ) ) {
 			return false;
 		}
+
+		$product = $this->get_product();
 
 		if ( ! is_object( $product ) || ! in_array( $product->get_type(), $this->supported_product_types() ) ) {
 			return false;
@@ -1001,7 +1080,7 @@ class WC_Stripe_Payment_Request {
 				throw new Exception( sprintf( __( 'You cannot add that amount of "%1$s"; to the cart because there is not enough stock (%2$s remaining).', 'woocommerce-gateway-stripe' ), $product->get_name(), wc_format_stock_quantity_for_display( $product->get_stock_quantity(), $product ) ) );
 			}
 
-			$total = $qty * $product->get_price() + $addon_value;
+			$total = $qty * $this->get_product_price( $product ) + $addon_value;
 
 			$quantity_label = 1 < $qty ? ' (x' . $qty . ')' : '';
 
@@ -1323,6 +1402,9 @@ class WC_Stripe_Payment_Request {
 		// Normalizes state to calculate shipping zones.
 		$state = $this->get_normalized_state( $state, $country );
 
+		// Normalizes postal code in case of redacted data from Apple Pay.
+		$postcode = $this->get_normalized_postal_code( $postcode, $country );
+
 		WC()->shipping->reset_shipping();
 
 		if ( $postcode && WC_Validation::is_postcode( $postcode, $country ) ) {
@@ -1485,5 +1567,3 @@ class WC_Stripe_Payment_Request {
 		];
 	}
 }
-
-new WC_Stripe_Payment_Request();
