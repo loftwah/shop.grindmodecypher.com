@@ -12,6 +12,7 @@ namespace SkyVerge\WooCommerce\Facebook\Handlers;
 
 use SkyVerge\WooCommerce\PluginFramework\v5_10_0\SV_WC_API_Exception;
 use SkyVerge\WooCommerce\PluginFramework\v5_10_0\SV_WC_Helper;
+use SkyVerge\WooCommerce\Facebook\API\Exceptions\Connect_WC_API_Exception;
 
 defined( 'ABSPATH' ) or exit;
 
@@ -92,6 +93,8 @@ class Connection {
 	/** @var \WC_Facebookcommerce */
 	private $plugin;
 
+	/** @var array */
+	protected $proxy_error_messages;
 
 	/**
 	 * Constructs a new Connection.
@@ -102,15 +105,15 @@ class Connection {
 
 		$this->plugin = $plugin;
 
-		add_action( 'init', [ $this, 'refresh_business_configuration' ] );
+		add_action( 'init', array( $this, 'refresh_business_configuration' ) );
 
-		add_action( 'admin_init', [ $this, 'refresh_installation_data' ] );
+		add_action( 'admin_init', array( $this, 'refresh_installation_data' ) );
 
-		add_action( 'woocommerce_api_' . self::ACTION_CONNECT, [ $this, 'handle_connect' ] );
+		add_action( 'woocommerce_api_' . self::ACTION_CONNECT, array( $this, 'handle_connect' ) );
 
-		add_action( 'admin_action_' . self::ACTION_DISCONNECT, [ $this, 'handle_disconnect' ] );
+		add_action( 'admin_action_' . self::ACTION_DISCONNECT, array( $this, 'handle_disconnect' ) );
 
-		add_action( 'woocommerce_api_' . self::ACTION_FBE_REDIRECT, [ $this, 'handle_fbe_redirect' ] );
+		add_action( 'woocommerce_api_' . self::ACTION_FBE_REDIRECT, array( $this, 'handle_fbe_redirect' ) );
 
 		add_action( 'fbe_webhook', array( $this, 'fbe_install_webhook' ) );
 
@@ -140,6 +143,10 @@ class Connection {
 		try {
 
 			$response = $this->get_plugin()->get_api()->get_business_configuration( $this->get_external_business_id() );
+			facebook_for_woocommerce()->get_tracker()->track_facebook_business_config(
+				$response->is_ig_shopping_enabled(),
+				$response->is_ig_cta_enabled()
+			);
 
 			// update the messenger settings
 			if ( $messenger_configuration = $response->get_messenger_configuration() ) {
@@ -159,12 +166,9 @@ class Connection {
 					$this->get_plugin()->get_api()->update_messenger_configuration( $this->get_external_business_id(), $messenger_configuration );
 				}
 			}
-
 		} catch ( SV_WC_API_Exception $exception ) {
-
-			if ( $this->get_plugin()->get_integration()->is_debug_mode_enabled() ) {
-				$this->get_plugin()->log( 'Could not refresh business configuration. ' . $exception->getMessage() );
-			}
+			
+			$this->get_plugin()->log( 'Could not refresh business configuration. ' . $exception->getMessage() );
 		}
 
 		set_transient( 'wc_facebook_business_configuration_refresh', time(), HOUR_IN_SECONDS );
@@ -194,9 +198,7 @@ class Connection {
 
 		} catch ( SV_WC_API_Exception $exception ) {
 
-			if ( $this->get_plugin()->get_integration()->is_debug_mode_enabled() ) {
-				$this->get_plugin()->log( 'Could not refresh installation data. ' . $exception->getMessage() );
-			}
+			$this->get_plugin()->log( 'Could not refresh installation data. ' . $exception->getMessage() );
 		}
 
 		set_transient( 'wc_facebook_connection_refresh', time(), DAY_IN_SECONDS );
@@ -272,19 +274,23 @@ class Connection {
 				throw new SV_WC_API_Exception( 'Invalid nonce' );
 			}
 
-			$merchant_access_token = ! empty( $_GET['merchant_access_token'] ) ? sanitize_text_field( $_GET['merchant_access_token'] ) : '';
+			$is_error                 = ! empty( $_GET['err'] ) ? true : false;
+			$error_code               = ! empty( $_GET['err_code'] ) ? sanitize_text_field( $_GET['err_code'] ) : '';
+			$merchant_access_token    = ! empty( $_GET['merchant_access_token'] ) ? sanitize_text_field( $_GET['merchant_access_token'] ) : '';
+			$system_user_access_token = ! empty( $_GET['system_user_access_token'] ) ? sanitize_text_field( $_GET['system_user_access_token'] ) : '';
+			$system_user_id           = ! empty( $_GET['system_user_id'] ) ? sanitize_text_field( $_GET['system_user_id'] ) : '';
+
+			if ( $is_error && $error_code ) {
+				throw new Connect_WC_API_Exception( $error_code );
+			}
 
 			if ( ! $merchant_access_token ) {
 				throw new SV_WC_API_Exception( 'Access token is missing' );
 			}
 
-			$system_user_access_token = ! empty( $_GET['system_user_access_token'] ) ? sanitize_text_field( $_GET['system_user_access_token'] ) : '';
-
 			if ( ! $system_user_access_token ) {
 				throw new SV_WC_API_Exception( 'System User access token is missing' );
 			}
-
-			$system_user_id = ! empty( $_GET['system_user_id'] ) ? sanitize_text_field( $_GET['system_user_id'] ) : '';
 
 			if ( ! $system_user_id ) {
 				throw new SV_WC_API_Exception( 'System User ID is missing' );
@@ -295,7 +301,14 @@ class Connection {
 			$this->update_system_user_id( $system_user_id );
 			$this->update_installation_data();
 
-			facebook_for_woocommerce()->get_products_sync_handler()->create_or_update_all_products();
+			// Allow opt-out of full batch-API sync, for example if store has a large number of products.
+			if ( facebook_for_woocommerce()->get_integration()->allow_full_batch_api_sync() ) {
+				facebook_for_woocommerce()->get_products_sync_handler()->create_or_update_all_products();
+			}
+			else {
+				facebook_for_woocommerce()->log( 'Initial full product sync disabled by filter hook `facebook_for_woocommerce_allow_full_batch_api_sync`', 'facebook_for_woocommerce_connect' );
+			}
+
 
 			update_option( 'wc_facebook_has_connected_fbe_2', 'yes' );
 			update_option( 'wc_facebook_has_authorized_pages_read_engagement', 'yes' );
@@ -312,6 +325,11 @@ class Connection {
 		} catch ( SV_WC_API_Exception $exception ) {
 
 			facebook_for_woocommerce()->log( sprintf( 'Connection failed: %s', $exception->getMessage() ) );
+
+			set_transient( 'wc_facebook_connection_failed', time(), 30 );
+		} catch ( Connect_WC_API_Exception $exception ) {
+
+			facebook_for_woocommerce()->log( sprintf( 'Failed to connect to Facebook. Facebook API returned error code: %s', $exception->getMessage() ), 'facebook_for_woocommerce_connect' );
 
 			set_transient( 'wc_facebook_connection_failed', time(), 30 );
 		}
@@ -405,11 +423,13 @@ class Connection {
 
 			facebook_for_woocommerce()->log( print_r( $body, true ) );
 
-			throw new SV_WC_API_Exception( sprintf(
+			throw new SV_WC_API_Exception(
+				sprintf(
 				/* translators: Placeholders: %s - API error message */
-				__( 'Could not retrieve page access data. %s', 'facebook for woocommerce' ),
-				wp_remote_retrieve_response_message( $response )
-			) );
+					__( 'Could not retrieve page access data. %s', 'facebook for woocommerce' ),
+					wp_remote_retrieve_response_message( $response )
+				)
+			);
 		}
 
 		$page_access_tokens = wp_list_pluck( $body['data'], 'access_token', 'id' );
@@ -417,11 +437,13 @@ class Connection {
 		// bail if the user isn't authorized to manage the page
 		if ( empty( $page_access_tokens[ $page_id ] ) ) {
 
-			throw new SV_WC_API_Exception( sprintf(
+			throw new SV_WC_API_Exception(
+				sprintf(
 				/* translators: Placeholders: %s - Facebook page ID */
-				__( 'Page %s not authorized.', 'facebook-for-woocommerce' ),
-				$page_id
-			) );
+					__( 'Page %s not authorized.', 'facebook-for-woocommerce' ),
+					$page_id
+				)
+			);
 		}
 
 		return $page_access_tokens[ $page_id ];
@@ -534,19 +556,25 @@ class Connection {
 	public function get_commerce_connect_url() {
 
 		// build the site URL to which the user will ultimately return
-		$site_url = add_query_arg( [
-			'wc-api' => self::ACTION_CONNECT_COMMERCE,
-			'nonce'  => wp_create_nonce( self::ACTION_CONNECT_COMMERCE ),
-		], home_url( '/' ) );
+		$site_url = add_query_arg(
+			array(
+				'wc-api' => self::ACTION_CONNECT_COMMERCE,
+				'nonce'  => wp_create_nonce( self::ACTION_CONNECT_COMMERCE ),
+			),
+			home_url( '/' )
+		);
 
 		// build the proxy app URL where the user will land after onboarding, to be redirected to the site URL
 		$redirect_url = add_query_arg( 'site_url', urlencode( $site_url ), 'https://connect.woocommerce.com/auth/facebookcommerce/' );
 
 		// build the final connect URL, direct to Facebook
-		$connect_url = add_query_arg( [
-			'app_id'       => $this->get_client_id(), // this endpoint calls the client ID "app ID"
-			'redirect_url' => urlencode( $redirect_url ),
-		], 'https://www.facebook.com/commerce_manager/onboarding/' );
+		$connect_url = add_query_arg(
+			array(
+				'app_id'       => $this->get_client_id(), // this endpoint calls the client ID "app ID"
+				'redirect_url' => urlencode( $redirect_url ),
+			),
+			'https://www.facebook.com/commerce_manager/onboarding/'
+		);
 
 		/**
 		 * Filters the URL used to connect to Facebook Commerce.
@@ -599,14 +627,14 @@ class Connection {
 	 */
 	public function get_scopes() {
 
-		$scopes = [
+		$scopes = array(
 			'manage_business_extension',
 			'catalog_management',
 			'ads_management',
 			'ads_read',
 			'pages_read_engagement', // this scope is needed to enable order management if using the Commerce feature
 			'instagram_basic',
-		];
+		);
 
 		/**
 		 * Filters the scopes that will be requested during the connection flow.
@@ -648,7 +676,7 @@ class Connection {
 				$external_id = sanitize_key( (string) apply_filters( 'wc_facebook_connection_business_id', get_bloginfo( 'name' ) ) );
 
 				if ( empty( $external_id ) ) {
-					$external_id = sanitize_key( str_replace( [ 'http', 'https', 'www' ], '', get_bloginfo( 'url' ) ) );
+					$external_id = sanitize_key( str_replace( array( 'http', 'https', 'www' ), '', get_bloginfo( 'url' ) ) );
 				}
 
 				$external_id = uniqid( sprintf( '%s-', $external_id ), false );
@@ -829,12 +857,15 @@ class Connection {
 	 */
 	public function get_redirect_url() {
 
-		$redirect_url = add_query_arg( [
-			'wc-api'               => self::ACTION_CONNECT,
-			'external_business_id' => $this->get_external_business_id(),
-			'nonce'                => wp_create_nonce( self::ACTION_CONNECT ),
-			'type'                 => self::AUTH_TYPE_STANDARD,
-		], home_url( '/' ) );
+		$redirect_url = add_query_arg(
+			array(
+				'wc-api'               => self::ACTION_CONNECT,
+				'external_business_id' => $this->get_external_business_id(),
+				'nonce'                => wp_create_nonce( self::ACTION_CONNECT ),
+				'type'                 => self::AUTH_TYPE_STANDARD,
+			),
+			home_url( '/' )
+		);
 
 		/**
 		 * Filters the redirect URL where the user will return to after OAuth.
@@ -871,15 +902,18 @@ class Connection {
 		 *
 		 * @param array $parameters connection parameters
 		 */
-		return apply_filters( 'wc_facebook_connection_parameters', [
-			'client_id'     => $this->get_client_id(),
-			'redirect_uri'  => $this->get_proxy_url(),
-			'state'         => $state,
-			'display'       => 'page',
-			'response_type' => 'code',
-			'scope'         => implode( ',', $this->get_scopes() ),
-			'extras'        => json_encode( $this->get_connect_parameters_extras() ),
-		] );
+		return apply_filters(
+			'wc_facebook_connection_parameters',
+			array(
+				'client_id'     => $this->get_client_id(),
+				'redirect_uri'  => $this->get_proxy_url(),
+				'state'         => $state,
+				'display'       => 'page',
+				'response_type' => 'code',
+				'scope'         => implode( ',', $this->get_scopes() ),
+				'extras'        => json_encode( $this->get_connect_parameters_extras() ),
+			)
+		);
 	}
 
 
@@ -894,22 +928,22 @@ class Connection {
 	 */
 	private function get_connect_parameters_extras() {
 
-		$parameters = [
-			'setup' => [
+		$parameters = array(
+			'setup'           => array(
 				'external_business_id' => $this->get_external_business_id(),
 				'timezone'             => $this->get_timezone_string(),
 				'currency'             => get_woocommerce_currency(),
 				'business_vertical'    => 'ECOMMERCE',
 				'domain'               => home_url(),
 				'channel'              => 'COMMERCE_OFFSITE',
-			],
-			'business_config' => [
-				'business' => [
+			),
+			'business_config' => array(
+				'business' => array(
 					'name' => $this->get_business_name(),
-				],
-			],
-			'repeat' => false,
-		];
+				),
+			),
+			'repeat'          => false,
+		);
 
 		if ( $external_merchant_settings_id = facebook_for_woocommerce()->get_integration()->get_external_merchant_settings_id() ) {
 			$parameters['setup']['merchant_settings_id'] = $external_merchant_settings_id;
@@ -918,12 +952,12 @@ class Connection {
 		// if messenger was previously enabled
 		if ( facebook_for_woocommerce()->get_integration()->is_messenger_enabled() ) {
 
-			$parameters['business_config']['messenger_chat'] = [
+			$parameters['business_config']['messenger_chat'] = array(
 				'enabled' => true,
-				'domains' => [
+				'domains' => array(
 					home_url( '/' ),
-				],
-			];
+				),
+			);
 		}
 
 		return $parameters;
@@ -1158,19 +1192,17 @@ class Connection {
 		// Reject other objects other than subscribed object
 		if ( empty( $data ) || ! isset( $data->object ) || self::WEBHOOK_SUBSCRIBED_OBJECT !== $data->object ) {
 
-			if ( $this->get_plugin()->get_integration()->is_debug_mode_enabled() ) {
-				$this->get_plugin()->log( 'Wrong (or empty) WebHook Event received' );
-				$this->get_plugin()->log( print_r( $data, true ) ); //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-			}
-
+			$this->get_plugin()->log( 'Wrong (or empty) WebHook Event received' );
+			$this->get_plugin()->log( print_r( $data, true ) ); //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+			
 			return;
 		}
 
 		$log_data = array();
-		if ( $this->get_plugin()->get_integration()->is_debug_mode_enabled() ) {
-			$this->get_plugin()->log( 'WebHook User Event received' );
-			$this->get_plugin()->log( print_r( $data, true ) ); //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-		}
+		
+		$this->get_plugin()->log( 'WebHook User Event received' );
+		$this->get_plugin()->log( print_r( $data, true ) ); //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		
 
 		$entry = (array) $data->entry[0];
 		if ( empty( $entry ) ) {
@@ -1282,16 +1314,12 @@ class Connection {
 
 			} catch ( \Exception $e ) {
 
-				if ( $this->get_plugin()->get_integration()->is_debug_mode_enabled() ) {
-					$this->get_plugin()->log( 'Could not request Page Token: ' . $e->getMessage() );
-				}
+				$this->get_plugin()->log( 'Could not request Page Token: ' . $e->getMessage() );
 			}
 		}//end if
 
-		if ( $this->get_plugin()->get_integration()->is_debug_mode_enabled() ) {
-			$this->get_plugin()->log( 'WebHook User event saved data' );
-			$this->get_plugin()->log( print_r( $log_data, true ) ); //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-		}
+		$this->get_plugin()->log( 'WebHook User event saved data' );
+		$this->get_plugin()->log( print_r( $log_data, true ) ); //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 	}
 
 
@@ -1368,11 +1396,11 @@ class Connection {
 
 		if ( empty( $_REQUEST['success'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-			$url_params = [
+			$url_params = array(
 				'store_url'    => '',
 				'redirect_uri' => rawurlencode( $redirect_uri ),
-				'errors'       => [ 'You need to grant access to WooCommerce.' ],
-			];
+				'errors'       => array( 'You need to grant access to WooCommerce.' ),
+			);
 
 			$redirect_url = add_query_arg(
 				$url_params,

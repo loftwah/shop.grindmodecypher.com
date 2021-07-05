@@ -52,12 +52,12 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 
 			$api_key = $api_key ?: $this->api_key;
 
-			$request_args = [
-				'headers' => [
+			$request_args = array(
+				'headers' => array(
 					'Authorization' => 'Bearer ' . $api_key,
-				],
+				),
 				'timeout' => self::CURL_TIMEOUT,
-			];
+			);
 
 			$response = wp_remote_get( $url, $request_args );
 
@@ -80,12 +80,12 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 		 */
 		public function perform_request( $url ) {
 
-			$request_args = [
-				'headers' => [
+			$request_args = array(
+				'headers' => array(
 					'Authorization' => 'Bearer ' . $this->api_key,
-				],
+				),
 				'timeout' => self::CURL_TIMEOUT,
-			];
+			);
 
 			$response = wp_remote_get( $url, $request_args );
 
@@ -102,7 +102,7 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 				if ( isset( $response_body->error->code, $response_body->error->message ) ) {
 					throw new Framework\SV_WC_API_Exception( $response_body->error->message, $response_body->error->code );
 				} else {
-					throw new Framework\SV_WC_API_Exception( sprintf( __( 'HTTP %s: %s', 'facebook-for-woocommerce' ), wp_remote_retrieve_response_code( $response ), wp_remote_retrieve_response_message( $response ) ) );
+					throw new Framework\SV_WC_API_Exception( sprintf( __( 'HTTP %1$s: %2$s', 'facebook-for-woocommerce' ), wp_remote_retrieve_response_code( $response ), wp_remote_retrieve_response_message( $response ) ) );
 				}
 			}
 
@@ -121,13 +121,13 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 		public function _post_sync( $url, $data, $api_key = '' ) {
 			$api_key = $api_key ?: $this->api_key;
 
-			$request_args = [
+			$request_args = array(
 				'body'    => $data,
-				'headers' => [
+				'headers' => array(
 					'Authorization' => 'Bearer ' . $api_key,
-				],
+				),
 				'timeout' => self::CURL_TIMEOUT,
-			];
+			);
 
 			$response = wp_remote_post( $url, $request_args );
 
@@ -141,7 +141,7 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 		 * Issues an asynchronous POST request to the Graph API.
 		 *
 		 * @param string $url request URL
-		 * @param array $data request data
+		 * @param array  $data request data
 		 * @param string $api_key Graph API key
 		 * @return array|\WP_Error
 		 */
@@ -153,16 +153,15 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 
 			$api_key = $api_key ?: $this->api_key;
 
-			$request_args = [
+			$request_args = array(
 				'body'    => $data,
-				'headers' => [
+				'headers' => array(
 					'Authorization' => 'Bearer ' . $api_key,
-				],
+				),
 				'timeout' => self::CURL_TIMEOUT,
-			];
+			);
 
-
-			$fbasync = new WC_Facebookcommerce_Async_Request();
+			$fbasync             = new WC_Facebookcommerce_Async_Request();
 			$fbasync->query_url  = $url;
 			$fbasync->query_args = array();
 			$fbasync->post_args  = $request_args;
@@ -186,13 +185,13 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 
 			$api_key = $api_key ?: $this->api_key;
 
-			$request_args = [
-				'headers' => [
+			$request_args = array(
+				'headers' => array(
 					'Authorization' => 'Bearer ' . $api_key,
-				],
+				),
 				'timeout' => self::CURL_TIMEOUT,
 				'method'  => 'DELETE',
-			];
+			);
 
 			$response = wp_remote_request( $url, $request_args );
 
@@ -210,7 +209,7 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 		 * @param $url
 		 * @param $request_args
 		 * @param array|\WP_Error $response WordPress response object
-		 * @param string $method
+		 * @param string          $method
 		 */
 		private function log_request( $url, $request_args, $response, $method = '' ) {
 
@@ -220,9 +219,12 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 			}
 
 			// add the URI to the data
-			$request_data = array_merge( [
-				'uri' => $url,
-			], $request_args );
+			$request_data = array_merge(
+				array(
+					'uri' => $url,
+				),
+				$request_args
+			);
 
 			// the request args may not include the method, so allow it to be set
 			if ( $method ) {
@@ -242,7 +244,7 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 
 				$code    = $response->get_error_code();
 				$message = $response->get_error_message();
-				$headers = [];
+				$headers = array();
 				$body    = '';
 
 			} else {
@@ -252,7 +254,7 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 				if ( is_object( $headers ) ) {
 					$headers = $headers->getAll();
 				} elseif ( ! is_array( $headers ) ) {
-					$headers = [];
+					$headers = array();
 				}
 
 				$code    = wp_remote_retrieve_response_code( $response );
@@ -260,12 +262,12 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 				$body    = wp_remote_retrieve_body( $response );
 			}
 
-			$response_data = [
+			$response_data = array(
 				'code'    => $code,
 				'message' => $message,
 				'headers' => $headers,
 				'body'    => $body,
-			];
+			);
 
 			facebook_for_woocommerce()->log_api_request( $request_data, $response_data );
 		}
@@ -298,7 +300,7 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 		 * Endpoint: https://graph.facebook.com/vX.X/{page-id}/?fields=link
 		 *
 		 * @param string|int $page_id page identifier
-		 * @param string $api_key API key
+		 * @param string     $api_key API key
 		 * @return string URL
 		 */
 		public function get_page_url( $page_id, $api_key = '' ) {
@@ -441,15 +443,15 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 		}
 
 		public function create_upload( $facebook_feed_id, $path_to_feed_file ) {
-			$url  = $this->build_url(
+			$url = $this->build_url(
 				$facebook_feed_id,
 				'/uploads?access_token=' . $this->api_key
 			);
 
-			$data = [
+			$data = array(
 				'file'        => new CurlFile( $path_to_feed_file, 'text/csv' ),
 				'update_only' => true,
-			];
+			);
 
 			$curl = curl_init();
 			curl_setopt_array(
@@ -471,9 +473,78 @@ if ( ! class_exists( 'WC_Facebookcommerce_Graph_API' ) ) :
 
 		public function create_feed( $facebook_catalog_id, $data ) {
 			$url = $this->build_url( $facebook_catalog_id, '/product_feeds' );
+			$url = $this->get_feed_endpoint_url( $facebook_catalog_id );
 			// success API call will return {id: <product feed id>}
 			// failure API will return {error: <error message>}
 			return self::_post( $url, $data );
+		}
+
+		/**
+		 * Get all feed configurations for a given catalog id.
+		 *
+		 * @see https://developers.facebook.com/docs/marketing-api/reference/product-feed/
+		 * @since 2.6.0
+		 *
+		 * @param String $facebook_catalog_id Facebook Catalog Id.
+		 * @return Array Facebook feeds configurations.
+		 */
+		public function read_feeds( $facebook_catalog_id ) {
+			$url = $this->get_feed_endpoint_url( $facebook_catalog_id );
+			return $this->_get( $url );
+		}
+
+		/**
+		 * Get general info about a feed (data source) configured in Facebook Business.
+		 *
+		 * @see https://developers.facebook.com/docs/marketing-api/reference/product-feed/
+		 * @since 2.6.0
+		 *
+		 * @param String $feed_id Feed Id.
+		 * @return Array Facebook feeds configurations.
+		 */
+		public function read_feed_information( $feed_id ) {
+			$url = $this->build_url( $feed_id, '/?fields=id,name,schedule,update_schedule,uploads' );
+			return $this->_get( $url );
+		}
+
+		/**
+		 * Get metadata about a feed (data source) configured in Facebook Business.
+		 *
+		 * @see https://developers.facebook.com/docs/marketing-api/reference/product-feed/
+		 * @since 2.6.0
+		 *
+		 * @param String $feed_id Facebook Catalog Id.
+		 * @return Array Facebook feed metadata.
+		 */
+		public function read_feed_metadata( $feed_id ) {
+			$url = $this->build_url( $feed_id, '/?fields=created_time,latest_upload,product_count,schedule,update_schedule' );
+			return $this->_get( $url );
+		}
+
+		/**
+		 * Get metadata about a recent feed upload.
+		 *
+		 * @see https://developers.facebook.com/docs/marketing-api/reference/product-feed-upload/
+		 * @since 2.6.0
+		 *
+		 * @param String $upload_id Feed Upload Id.
+		 * @return Array Feed upload metadata.
+		 */
+		public function read_upload_metadata( $upload_id ) {
+			$url = $this->build_url( $upload_id, '/?fields=error_count,warning_count,num_detected_items,num_persisted_items,url' );
+			return $this->_get( $url );
+		}
+
+		/**
+		 * Create product_feeds graph edge url.
+		 *
+		 * @since 2.6.0
+		 *
+		 * @param String $facebook_catalog_id Facebook Catalog Id.
+		 * @return String Graph edge url.
+		 */
+		public function get_feed_endpoint_url( $facebook_catalog_id ) {
+			return $this->build_url( $facebook_catalog_id, '/product_feeds' );
 		}
 
 		public function get_upload_status( $facebook_upload_id ) {

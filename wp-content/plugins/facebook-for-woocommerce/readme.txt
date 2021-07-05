@@ -2,8 +2,8 @@
 Contributors: facebook, automattic, woothemes
 Tags: facebook, shop, catalog, advertise, pixel, product
 Requires at least: 4.4
-Tested up to: 5.6
-Stable tag: 2.4.0
+Tested up to: 5.7
+Stable tag: 2.6.1
 Requires PHP: 5.6 or greater
 MySQL: 5.6 or greater
 License: GPLv2 or later
@@ -38,6 +38,36 @@ When opening a bug on GitHub, please give us as many details as possible.
 * Current version of Facebook-for-WooCommerce, WooCommerce, Wordpress, PHP
 
 == Changelog ==
+
+= 2.6.1 - 2021-06-28 =
+ * Dev: Add `facebook_for_woocommerce_allow_full_batch_api_sync` filter to allow opt-out full batch API sync, to avoid possible performance issues on large sites
+
+= 2.6.0 - 2021-06-10 =
+ * Fix – Add cron heartbeat and use to offload feed generation from init / admin_init (performance) #1953
+ * Fix – Clean up background sync options (performance) #1962
+ * Dev – Add tracker props to understand usage of feed-based sync and other FB business config options #1972
+ * Dev – Configure release tooling to auto-update version numbers in code #1982
+ * Dev – Refactor code responsible for validating whether a product should be synced to FB into one place #19333
+
+= 2.5.1 - 2021-05-28 =
+ * Fix - Reinstate reset and delete functions in Facebook metabox on Edit product admin screen
+
+= 2.5.0 - 2021-05-19 =
+ * New - Option to allow larger sites to opt-out of feed generation (product sync) job
+ * New - Log connection errors to allow easier troubleshooting
+ * Fix - Reduce default feed generation (product sync) interval to once per day to reduce overhead
+ * Fix - Trigger feed (product sync) job from to `admin_init` to reduce impact on front-end requests
+ * Fix - Ensure variable product attribute values containing comma (`,`) sync correctly
+ * Fix - Use existing / current tab for connection `Get Started` button
+ * Dev - Require PHP version 7.0 or newer
+ * Dev - Adopt Composer autoloader to avoid manually `require`ing PHP class files
+ * Dev - Adopt WooRelease release tool for deploying releases
+ * Dev - Use wp-scripts to build assets
+ * Dev - Add `phpcs` tooling to help standardise PHP code style
+ * Dev - Add JobRegistry engine for managing periodic background batch jobs
+
+= 2021.04.29 - version 2.4.1 =
+ * Fix - PHP<7.1 incompatible code for Google Taxonomy Setting in products.
 
 = 2021.04.23 - version 2.4.0 =
  * Tweak - Add an initial performance debug mode to measure resource usage in some areas
