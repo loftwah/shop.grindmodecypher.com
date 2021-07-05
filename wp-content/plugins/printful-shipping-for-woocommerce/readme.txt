@@ -4,7 +4,7 @@ Tags: woocommerce, printful, drop shipping, shipping, shipping rates, fulfillmen
 Requires at least: 5.3
 Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 2.1.22
+Stable tag: 2.1.24
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,9 +16,9 @@ Grow your store with the top print-on-demand dropshipping plugin
 
 With Printful, you can focus on building your store. We'll print, fulfill and ship your products for you. Simply upload your design, add it to your store, and we'll do the rest.
 
-We offer more than 260+ products in various categories—apparel, home & living items, jewelry, accessories, and more!  Once your orders start rolling in, we’ll fulfill and ship each one under your brand at our in-house and partner facilities, located globally.
+We offer more than 270+ products in various categories—apparel, home & living items, jewelry, accessories, and more!  Once your orders start rolling in, we’ll fulfill and ship each one under your brand at our in-house and partner facilities, located globally.
 
-Printful customers have already made more than $690 million in sales, so start selling today!
+Printful customers have already made more than $795 million in sales, so start selling today!
 
 = How does Printful work? =
 
@@ -32,7 +32,7 @@ Learn more about the WooCommerce + Printful integration [here](https://www.print
 
 - Control over your profit: We charge you to cover production while you set your retail price, and what's left is your profit
 - Automated tax settings and live shipping rates
-- Free design templates: Get creative with our product generator
+- Free design templates: Get creative with our Design Maker
 - Product personalization: Sell designs your customers can personalize themselves
 - Warehousing & Fulfillment services: Store your inventory at our warehouse, and we'll fulfill all your orders
 - Stress-free shipping: Lost shipments are on us, and we offer shipping methods with tracking
@@ -64,6 +64,12 @@ Go to https://www.printful.com/dashboard/store , select your WooCommerce store, 
 5. Support page
 
 == Upgrade Notice ==
+
+= 2.1.24 =
+Woocommerce compatibility raised to 5.4. Minor bug fixes
+
+= 2.1.23 =
+Woocommerce compatibility raised to 5.3. Minor bug fixes
 
 = 2.1.22 =
 Woocommerce compatibility raised to 5.2
@@ -207,6 +213,13 @@ Minor improvements
 First release
 
 == Changelog ==
+
+= 2.1.24 =
+* Woocommerce compatibility raised to 5.4
+
+= 2.1.23 =
+* Woocommerce compatibility raised to 5.3
+* Minor bug fixes
 
 = 2.1.22 =
 * Woocommerce compatibility raised to 5.2

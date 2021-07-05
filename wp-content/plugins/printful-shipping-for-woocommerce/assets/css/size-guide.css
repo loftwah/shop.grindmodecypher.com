@@ -144,7 +144,6 @@
     table-layout: fixed;
     width: 100%;
     overflow-x: auto;
-    white-space: nowrap;
 }
 
 .pf-size-guide-modal-size-chart__table thead {

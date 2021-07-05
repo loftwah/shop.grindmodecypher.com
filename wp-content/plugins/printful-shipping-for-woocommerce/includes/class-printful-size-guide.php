@@ -2,6 +2,11 @@
 
 
 class Printful_Size_Guide {
+    /**
+     * Bump this everytime you make changes to size guide CSS file
+     */
+    const CSS_VERSION = '1';
+
 	public static function init() {
 		$sizeGuide = new self();
 
@@ -57,7 +62,7 @@ class Printful_Size_Guide {
 				] )
 			)
 		);
-		wp_register_style( $handle, plugins_url( '../assets/css/size-guide.css', __FILE__ ) );
+		wp_register_style( $handle, plugins_url( '../assets/css/size-guide.css', __FILE__ ), [], self::CSS_VERSION );
 		wp_enqueue_style( $handle );
 	}
 
