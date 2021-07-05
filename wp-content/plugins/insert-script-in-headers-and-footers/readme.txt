@@ -4,29 +4,30 @@ Donate link: http://geekwebsolution.com/
 Tags: Insert javascript, Insert custom style,Insert Html,Insert Facebook pixel code, Add Google Analytics code
 Requires PHP: 5.2.4
 Requires at least: 3.0.1
-Tested up to: 5.5
-Stable tag: 1.2
+Tested up to: 5.7.2
+Stable tag: 1.3
 
-By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header and footer. no need to edit theme!
+By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header, footer and body. no need to edit theme!
 
 == Description ==
 
-By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header and footer. no need to edit theme!
+By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header, footer and body. no need to edit theme!
 
 you can add custom script easily from admin side 
 
 **Plugin Features**
-
-*Quick to set up
-*Simple to insert scripts
-*Insert header code and/or footer code
-*Add Google Analytics code to any theme
-*Add custom CSS across themes
-*Add any Website tracking code 
-*Add Advertisement script code 
-*Insert Facebook pixel code
-*Insert any code or script, including HTML and Javascript
-
+<ul>
+<li>Quick to set up</li>
+<li>Simple to insert scripts</li>
+<li>Insert header code and/or footer code</li>
+<li>Insert Script in Body</li>
+<li>Add Google Analytics code to any theme</li>
+<li>Add custom CSS across themes</li>
+<li>Add any Website tracking code </li>
+<li>Add Advertisement script code </li>
+<li>Insert Facebook pixel code</li>
+<li>Insert any code or script, including HTML and Javascript</li>
+</ul>
 
 == Installation ==
 
@@ -49,3 +50,6 @@ After active plugin go to Setting->Insert Script In Headers And Footers.
   == Changelog ==
 = 1.2 =
  Fix bug
+== Changelog ==
+= 1.3 =
+ Added Option:Add Script in Body

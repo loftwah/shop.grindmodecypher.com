@@ -4,6 +4,10 @@ function ishf_get_option_header_script()
 {
 	return $header_script=   wp_unslash(get_option('insert_header_script_gk'));
 }
+function ishf_get_option_body_script()
+{
+	return $body_script=  wp_unslash(get_option('insert_body_script_gk'));
+}
 function ishf_get_option_footer_script()
 {
 	return $footer_script=  wp_unslash(get_option('insert_footer_script_gk'));
@@ -22,15 +26,21 @@ function  ishf_success_option_msg_header_footer_script($msg)
 	echo ' <div class="notice notice-success ishf-success-msg is-dismissible"><p>'. $msg . '</p></div>';			
 	
 }
+
 function ishf_output($setting){
 	
 	if ( apply_filters( 'disable_insert', false ) ) {
-			return;
-		}
-
+		return;
+	}
+	
 	if('insert_header_script_bk'==$setting && apply_filters( 'disable_insert_header', false )){
 		return;
 	}
+	
+	if('insert_body_script_gk'==$setting && apply_filters( 'disable_insert_body', false )){
+		return;
+	}
+
 	if('insert_footer_script_bk'==$setting && apply_filters( 'disable_insert_footer', false )){
 		return;
 	}

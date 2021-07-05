@@ -1,12 +1,19 @@
 <?php 
 if( !defined( 'ABSPATH' ) ) exit;
 if(isset($_POST['submit_option'])){
-	$header_script=sanitize_text_field(htmlentities($_POST['header_script']));
-	$footer_script=sanitize_text_field(htmlentities($_POST['footer_script']));
+
+	$header_script = $_POST['header_script'];
+	$body_script = $_POST['body_script'];
+	$footer_script = $_POST['footer_script'];
+
+
+	// die;
 	$nonce=$_POST['insert_script_wpnonce'];
+
 	if(wp_verify_nonce( $nonce, 'insert_script_option_nonce' ))
 	{
 		update_option('insert_header_script_gk',$header_script);
+		update_option('insert_body_script_gk',$body_script);
 		update_option('insert_footer_script_gk',$footer_script);
 		$successmsg= ishf_success_option_msg_header_footer_script('Settings Saved.');
 		
@@ -18,6 +25,8 @@ if(isset($_POST['submit_option'])){
 }
 
 $header_script= ishf_get_option_header_script();
+
+$body_script=ishf_get_option_body_script();
 
 $footer_script=ishf_get_option_footer_script();
 
@@ -49,6 +58,11 @@ $footer_script=ishf_get_option_footer_script();
 				<label for="script_in_header"> Scripts in Header </label>
 				<textarea name="header_script" rows="8" class="header-footer-textarea" ><?php  echo $header_script; ?></textarea>
 				These scripts will be printed in the <code>&lt;head&gt;</code> section.
+			</p>
+			<p>
+				<label for="script_in_body"> Scripts in Body </label>
+				<textarea name="body_script" rows="8" class="header-footer-textarea" ><?php  echo $body_script; ?></textarea>
+				These scripts will be printed below the <code>&lt;body&gt;</code> section.
 			</p>
 			<p>
 				<label for="script_in_footer"> Scripts in Footer </label>

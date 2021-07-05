@@ -2,19 +2,19 @@
 	min-width: 763px;
 	float: left;
 	background-color: #fff;
-	padding: 10px;
+	padding: 20px;
 } 
 .header-footer-textarea{
 	width:100%;
 	
 }
 .wrap .ishf_inner h4.heading-h4{
-	cursor:move;
-	font-size: 14px;
-    margin: 0;
+	font-size: 24px;
+	margin: 0;
 	padding-bottom:12px;
-    line-height: 1.7;
+	line-height: 34px;
 	border-bottom: 1px solid #eee;
+	padding-top: 4px;
 }
 .column-2{
 	width:auto;
@@ -43,4 +43,22 @@ div.error, div.ishf_updated {
 .notice-error.ishf-error-msg
 {
 	border-left-color: red! important;
+}
+
+#your-profile label+a, label {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 14px;
+    display: block;
+    margin-top: 25px;
+}
+
+
+.postbox .inside h2, .wrap [class$=icon32]+h2, .wrap h1, .wrap>h2:first-child {
+    padding: 0;
+    font-size: 25px;
+    line-height: 35px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    margin-top: 30px;
 }

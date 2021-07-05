@@ -8,7 +8,7 @@ Description: a plugin to insert script in headers and footers
 
 Author: Geek Web Solution
 
-Version: 1.2
+Version: 1.3
 
 Author URI: http://geekwebsolution.com/
 
@@ -26,42 +26,50 @@ add_action( 'admin_enqueue_scripts', 'ishf_enqueue_styles_scripts_header_footer_
 
 add_action('wp_head', 'ishf_frontendHeaderScript',100);
 
+add_action('wp_body_open', 'ishf_frontendBodyScript',100);
+
 add_action('wp_footer', 'ishf_frontendFooterScript',100);
 
 register_activation_hook( __FILE__, 'ishf_plugin_active_header_footer_script' );
 
+$plugin = plugin_basename( __FILE__ );
+add_filter( "plugin_action_links_$plugin", 'ishf_plugin_add_settings_link');
+
+function ishf_plugin_add_settings_link( $links ) { 	
+	$settings_link = '<a href="admin.php?page=insert-script-in-header-and-footer-option">' . __( 'Settings' ) . '</a>'; 
+	array_push( $links, $settings_link );	
+	return $links;	
+}
+
 
 
 function ishf_plugin_active_header_footer_script(){
+	$header_script= ishf_get_option_header_script();
+	$body_script= ishf_get_option_body_script();
+	$footer_script= ishf_get_option_footer_script();
 	
-	 $header_script= ishf_get_option_header_script();
-	 $footer_script= ishf_get_option_footer_script();
-	 
+	if(empty($header_script))
+	{
+		update_option('insert_header_script_gk', $header_script);
+	}
 
-	 if(empty($header_script))
-
-	 {
-
-		 update_option('insert_header_script_gk', $header_script);
-
-	 }
-
-	 if(empty($footer_script))
-
-	 { 
-
+	if(empty($body_script))
+	{ 
+		update_option('insert_body_script_gk', $body_script);
+	}
+	
+	if(empty($footer_script))
+	{ 
 		update_option('insert_footer_script_gk', $footer_script);
-
-	 }
-
-	
+	}
 }
 
 function ishf_registerSettings() {
-		$plugin_data = get_plugin_data( __FILE__ );
-		$plugin_name = $plugin_data['Name'];
-		register_setting( $plugin_name, 'insert_header_script_gk', 'trim' );
-		register_setting( $plugin_name, 'insert_footer_script_gk', 'trim' );
+	$plugin_data = get_plugin_data( __FILE__ );
+	$plugin_name = $plugin_data['Name'];
+	register_setting( $plugin_name, 'insert_header_script_gk', 'trim' );
+	register_setting( $plugin_name, 'insert_body_script_gk', 'trim' );
+	register_setting( $plugin_name, 'insert_footer_script_gk', 'trim' );
 }
 
 
@@ -74,6 +82,12 @@ function ishf_frontendFooterScript(){
 	
 	ishf_output('insert_footer_script_gk');
 	
+}
+
+function ishf_frontendBodyScript() {
+	
+	ishf_output('insert_body_script_gk');
+    // echo '<script type="text/javascript"> function body_fun(){ alert("hi this is body code"); } </script>';
 }
 
 function ishf_admin_menu_header_footer_script(){
