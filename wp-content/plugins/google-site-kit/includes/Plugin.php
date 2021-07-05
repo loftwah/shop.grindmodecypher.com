@@ -131,7 +131,10 @@ final class Plugin {
 		);
 
 		$display_site_kit_meta = function() {
-			printf( '<meta name="generator" content="Site Kit by Google %s" />', esc_attr( GOOGLESITEKIT_VERSION ) );
+			echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				'googlesitekit_generator',
+				sprintf( '<meta name="generator" content="Site Kit by Google %s" />', esc_attr( GOOGLESITEKIT_VERSION ) )
+			);
 		};
 		add_action( 'wp_head', $display_site_kit_meta );
 		add_action( 'login_head', $display_site_kit_meta );
@@ -185,6 +188,7 @@ final class Plugin {
 				( new Core\Admin\Standalone( $this->context ) )->register();
 				( new Core\Util\Activation_Notice( $this->context, $activation_flag, $assets ) )->register();
 				( new Core\Feature_Tours\Feature_Tours( $this->context, $user_options ) )->register();
+				( new Core\User_Surveys\REST_User_Surveys_Controller( $authentication ) )->register();
 				( new Core\Util\Migration_1_3_0( $this->context, $options, $user_options ) )->register();
 				( new Core\Util\Migration_1_8_1( $this->context, $options, $user_options, $authentication ) )->register();
 

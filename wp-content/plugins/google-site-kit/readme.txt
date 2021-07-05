@@ -4,7 +4,7 @@ Contributors:      google
 Requires at least: 4.7
 Tested up to:      5.7
 Requires PHP:      5.6
-Stable tag:        1.31.0
+Stable tag:        1.35.0
 License:           Apache License 2.0
 License URI:       https://www.apache.org/licenses/LICENSE-2.0
 Tags:              google, search-console, analytics, adsense, pagespeed-insights, optimize, tag-manager, site-kit
@@ -38,7 +38,7 @@ Site Kit shows key metrics and insights from different Google products:
 
 == Installation ==
 **Note**: Make sure that your website is live. If your website isn't live yet, Site Kit can't show you any data. 
-However, if you have a staging environment in addition to your production site, Site Kit can display data from your production site in the staging environment. Learn how to use [Site Kit with a staging environment] (https://sitekit.withgoogle.com/documentation/using-site-kit-on-a-staging-environment/).
+However, if you have a staging environment in addition to your production site, Site Kit can display data from your production site in the staging environment. Learn how to use [Site Kit with a staging environment](https://sitekit.withgoogle.com/documentation/using-site-kit-on-a-staging-environment/).
 
 = Installation from within WordPress =
 
@@ -87,6 +87,125 @@ We plan to expand the plugin’s capabilities and integrations in the future; we
 If you have some ideas to improve the plugin or to solve a bug, feel free to raise an issue or submit a pull request in the [GitHub repository for the plugin](https://github.com/google/site-kit-wp). Please stick to the [contributing guidelines](https://github.com/google/site-kit-wp/blob/main/CONTRIBUTING.md). You can also contribute to the plugin by translating it. Simply visit [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/google-site-kit) to get started.
 
 == Changelog ==
+
+= 1.35.0 =
+
+**Enhanced**
+
+* Update shadow used by user surveys to enhance contrast and improve visibility. See [#3529](https://github.com/google/site-kit-wp/issues/3529).
+* Make text casing in User Feedback and Idea Hub buttons consistent with the rest of the plugin. See [#3507](https://github.com/google/site-kit-wp/issues/3507).
+* Add React components for rendering and managing user surveys. See [#3380](https://github.com/google/site-kit-wp/issues/3380).
+* Add React components for rendering user survey UI. See [#3379](https://github.com/google/site-kit-wp/issues/3379).
+* Add React component for triggering a user survey on view. See [#3376](https://github.com/google/site-kit-wp/issues/3376).
+* Implement a component to render the current survey. See [#3375](https://github.com/google/site-kit-wp/issues/3375).
+* Add REST routes for user survey endpoints. See [#3374](https://github.com/google/site-kit-wp/issues/3374).
+* Add Idea Hub widget support for creating idea draft posts. See [#3357](https://github.com/google/site-kit-wp/issues/3357).
+* Add support for Google Analytics 4 tags in the notices for existing Google Analytics tags in the Analytics setup. See [#3289](https://github.com/google/site-kit-wp/issues/3289).
+* Added GA4 script tag detection. See [#3288](https://github.com/google/site-kit-wp/issues/3288).
+* Add a module activation CTA for Idea Hub to the Site Kit dashboard. See [#3275](https://github.com/google/site-kit-wp/issues/3275).
+* Show GA4 property in Analytics Settings when available. See [#3254](https://github.com/google/site-kit-wp/issues/3254).
+* Update Analytics account provisioning screen to inform about GA4 property creation. See [#3253](https://github.com/google/site-kit-wp/issues/3253).
+* Update Analytics account provisioning to create a corresponding GA4 property as well. See [#3252](https://github.com/google/site-kit-wp/issues/3252).
+* Added a UI to manage Analytics Accounts with both Universal Analytics and GA4 properties. See [#3250](https://github.com/google/site-kit-wp/issues/3250).
+* Add setup variant for Analytics accounts with only GA4 properties. See [#3249](https://github.com/google/site-kit-wp/issues/3249).
+* Fix a bug where Google API requests would be made when necessary scopes were not granted. See [#3227](https://github.com/google/site-kit-wp/issues/3227).
+* Improve the AdSense AdBlocker check. See [#2749](https://github.com/google/site-kit-wp/issues/2749).
+* Enable Prefetch DNS Requests on external Google services used by Site Kit. Props glanglois. See [#2203](https://github.com/google/site-kit-wp/issues/2203).
+
+**Changed**
+
+* Limit effective values for Google proxy base URL. See [#3217](https://github.com/google/site-kit-wp/issues/3217).
+
+**Fixed**
+
+* Fix a React console error when viewing widget-based module screens. See [#3559](https://github.com/google/site-kit-wp/issues/3559).
+* Fix a problem where GA4 property selection is not preserved after granting additional scopes. See [#3550](https://github.com/google/site-kit-wp/issues/3550).
+* Fix a problem where Analytics settings cannot be saved when selected account has UA and GA4 properties with different URLs. See [#3538](https://github.com/google/site-kit-wp/issues/3538).
+* Update All Traffic widget legend slice labels to use title case. See [#3327](https://github.com/google/site-kit-wp/issues/3327).
+* Improve behaviour of the "confirm changes" button in Search Console settings on load. See [#3318](https://github.com/google/site-kit-wp/issues/3318).
+* Fix output of AdSense snippet in AMP Reader mode. See [#3218](https://github.com/google/site-kit-wp/issues/3218).
+* Update charts to use consistent styles between modules. See [#3083](https://github.com/google/site-kit-wp/issues/3083).
+
+= 1.34.1 =
+
+**Fixed**
+
+* Fix a problem for some hosts where requests for Analytics account creation or other on-demand permissions were blocked. See [#3532](https://github.com/google/site-kit-wp/issues/3532).
+
+= 1.34.0 =
+
+**Enhanced**
+
+* Add Idea Hub notice to the WP dashboard widget. See [#3358](https://github.com/google/site-kit-wp/issues/3358).
+* Add initial actions and selectors to `core/user` data store for handling user surveys. See [#3355](https://github.com/google/site-kit-wp/issues/3355).
+* Enhance default Analytics property selection when selecting an Analytics account. See [#3291](https://github.com/google/site-kit-wp/issues/3291).
+* Update success notification for the Analytics module when GA4 support is activated. See [#3290](https://github.com/google/site-kit-wp/issues/3290).
+* Update Analytics setup to pre-select the GA4 property based on current site URL. See [#3286](https://github.com/google/site-kit-wp/issues/3286).
+* Implement idea list tabs and basic interaction in Idea Hub widget. See [#3276](https://github.com/google/site-kit-wp/issues/3276).
+* Add Idea Hub context for draft posts generated by Idea Hub. See [#3271](https://github.com/google/site-kit-wp/issues/3271).
+* Add selectors to get draft and published posts created using Idea Hub ideas. See [#3270](https://github.com/google/site-kit-wp/issues/3270).
+* Add Idea Hub draft post support. See [#3269](https://github.com/google/site-kit-wp/issues/3269).
+* Add Analytics property select component for showing all UA and GA4 properties. See [#3246](https://github.com/google/site-kit-wp/issues/3246).
+* Only show Google Analytics property and profile selection if the parent (account/property) is valid. See [#3243](https://github.com/google/site-kit-wp/issues/3243).
+* Add upper boundary for how long manual user input responses can be. See [#3229](https://github.com/google/site-kit-wp/issues/3229).
+* Enhance widgets to combine into one widget if all widgets in an area have the same special state. See [#3225](https://github.com/google/site-kit-wp/issues/3225).
+* Update the wording used for the anonymous usage tracking checkbox label. See [#1238](https://github.com/google/site-kit-wp/issues/1238).
+
+**Fixed**
+
+* Fix regression where widget-based single URL screen would show up completely empty for content not found in the WordPress site. See [#3493](https://github.com/google/site-kit-wp/issues/3493).
+* Fix potential `dateRangeLength must be a positive integer.` error for Search Console reports with missing dates. See [#3418](https://github.com/google/site-kit-wp/issues/3418).
+
+= 1.33.0 =
+
+**Enhanced**
+
+* Update `amp-analytics` tag to include configuration for an ads conversion ID when provided. See [#3282](https://github.com/google/site-kit-wp/issues/3282).
+* Add an initial widget for the Idea Hub ideas. See [#3274](https://github.com/google/site-kit-wp/issues/3274).
+* Add Idea Hub JS module (only active with the Idea Hub feature flag). See [#3273](https://github.com/google/site-kit-wp/issues/3273).
+* Update Analytics setup form UI to support different variants of setup flows. See [#3247](https://github.com/google/site-kit-wp/issues/3247).
+* Update Analytics data store settings `submitChanges` infrastructure to include GA4 when enabled. See [#3245](https://github.com/google/site-kit-wp/issues/3245).
+* Add change validation logic to Google Analytics 4 data store. See [#3244](https://github.com/google/site-kit-wp/issues/3244).
+* Add selectors to check which Google Analytics UI should be active. See [#3170](https://github.com/google/site-kit-wp/issues/3170).
+* Add selectors to select a GA4 property from webdata stream contents. See [#3168](https://github.com/google/site-kit-wp/issues/3168).
+* Add Idea Hub saved idea selectors and actions. See [#3156](https://github.com/google/site-kit-wp/issues/3156).
+* Introduce PHP classes for modeling post metadata in Site Kit. See [#3154](https://github.com/google/site-kit-wp/issues/3154).
+* Migrate all components to use the new version of the GoogleChart component. See [#2887](https://github.com/google/site-kit-wp/issues/2887).
+* Clarify explanation of user input responses' potential effects on other users of the site. See [#2853](https://github.com/google/site-kit-wp/issues/2853).
+* Add the ability to exclude users who can write posts from being tracked by Google Analytics. Props scottshefler. See [#1891](https://github.com/google/site-kit-wp/issues/1891).
+
+**Fixed**
+
+* Fix potential `Cannot read property 'clicks' of undefined` JS error that could occur when an uneven number of Search Console report rows was returned. See [#3348](https://github.com/google/site-kit-wp/issues/3348).
+* Fix a bug where Analytics report data was incomplete for the 90-day date range when also requesting data for the previous period affecting the widget-based module dashboard. See [#3232](https://github.com/google/site-kit-wp/issues/3232).
+* Standardize punctuation and formatting of various sentences and phrases throughout the plugin. See [#2597](https://github.com/google/site-kit-wp/issues/2597).
+
+= 1.32.0 =
+
+**Enhanced**
+
+* Update Analytics property select options to display property IDs in addition to names. See [#3164](https://github.com/google/site-kit-wp/issues/3164).
+* Allow administrators to paste Google Ads conversion ID in Analytics settings so that it is integrated into the Site Kit-placed Analytics snippet. See [#3161](https://github.com/google/site-kit-wp/issues/3161).
+* Scaffold new `modules/idea-hub` data store in JS. See [#3152](https://github.com/google/site-kit-wp/issues/3152).
+* Scaffold new `Idea_Hub` PHP class. See [#3150](https://github.com/google/site-kit-wp/issues/3150).
+* Add a selector to the `core/site` datastore for checking whether or not a given URL matches the site's reference URL. See [#3105](https://github.com/google/site-kit-wp/issues/3105).
+* Implement a data store selector for selecting GA4 web data streams for multiple property IDs at once. See [#3104](https://github.com/google/site-kit-wp/issues/3104).
+* Add data store selector and matching REST datapoint to the GA4 module to retrieve account summaries. See [#3103](https://github.com/google/site-kit-wp/issues/3103).
+* Update AdSense summary dashboard widget to show change values for each metric relative to the previous period. See [#3091](https://github.com/google/site-kit-wp/issues/3091).
+* Update the background color of open menu buttons in the Site Kit header. See [#3069](https://github.com/google/site-kit-wp/issues/3069).
+* Allow programmatic modification of the Site Kit generator meta tag. See [#938](https://github.com/google/site-kit-wp/issues/938).
+* Clarify some AdSense labels and format the monetary values in top earning pages tables with the relevant currency. See [#656](https://github.com/google/site-kit-wp/issues/656).
+* Update popular pages list tables on the Analytics module dashboard to be consistent with the same components on the main Site Kit and WordPress dashboards. See [#98](https://github.com/google/site-kit-wp/issues/98).
+
+**Fixed**
+
+* Fix regression where jump link to PageSpeed Insights widget in success notification no longer worked. See [#3310](https://github.com/google/site-kit-wp/issues/3310).
+* Update AdSense "Performance by page over the last X days" deep links to include date range. See [#2951](https://github.com/google/site-kit-wp/issues/2951).
+* Fix a bug that could cause the first profile to be selected in Analytics Settings when an existing tag was detected. See [#2888](https://github.com/google/site-kit-wp/issues/2888).
+* Fix User Input Settings flow accessibility issues. See [#2851](https://github.com/google/site-kit-wp/issues/2851).
+* Resolved analytics URL linking issue in subfolder based installs. See [#2821](https://github.com/google/site-kit-wp/issues/2821).
+* Redirect users from the splash screen to the dashboard if they are already authenticated. See [#2529](https://github.com/google/site-kit-wp/issues/2529).
+* Resolved language issue on AdSense dashboard for certain Site Languages. See [#2105](https://github.com/google/site-kit-wp/issues/2105).
 
 = 1.31.0 =
 
