@@ -3,7 +3,7 @@ Contributors: tychesoftwares
 Donate link: https://www.paypal.me/TycheSoftwares
 Tags: woocommerce, payment, gateway, fee, discount
 Requires at least: 4.4
-Tested up to: 5.5
+Tested up to: 5.7
 Stable tag: trunk
 Requires PHP: 5.6
 License: GNU General Public License v3.0
@@ -98,6 +98,12 @@ Plugin requires **minimum setup**: after enabling the fee/discount for selected 
 3. Go to "WooCommerce > Settings > Payment Gateway Based Fees and Discounts".
 
 == Changelog ==
+
+= 2.6.3 - 12/05/2021 =
+* Enhancement - Now the discount/fees will be added or removed on the "Pay for order" endpoint also.
+* Fix - Compatibility with WooCommerce ERIP Gateway Payment plugin.
+* Fix - Compatibility with Klarna payment gateway.
+* Fix - HTML code was coming in the titles of payment gateway on settings page. This is fixed now.
 
 = 2.6.2 - 12/11/2020 =
 * Update compatibility with WooCommerce 4.7

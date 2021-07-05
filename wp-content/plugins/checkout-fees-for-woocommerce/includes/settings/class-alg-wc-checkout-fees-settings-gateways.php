@@ -41,7 +41,7 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees_Settings_Gateways' ) ) :
 			if ( function_exists( 'WC' ) ) {
 				$available_gateways = WC()->payment_gateways->payment_gateways();
 				foreach ( $available_gateways as $key => $gateway ) {
-					$sections[ sanitize_title( $key ) ] = '<span style="font-style:italic;">' . $gateway->title . '</span>';
+					$sections[ sanitize_title( $key ) ] = $gateway->title;
 				}
 			}
 			return $sections;
@@ -77,11 +77,16 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees_Settings_Gateways' ) ) :
 			}
 			$available_gateways = WC()->payment_gateways->payment_gateways();
 			$key                = sanitize_title( wp_unslash( $_GET['section'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
-			if ( ! isset( $available_gateways[ $key ] ) ) {
+			if ( ! isset( $available_gateways[ $key ] ) && ! isset( $available_gateways[ strtoupper( $key ) ] ) ) {
 				return array();
 			}
-			$gateway = $available_gateways[ $key ];
-
+			$gateway = '';
+			if ( isset( $available_gateways[ $key ] ) ) {
+				$gateway = $available_gateways[ $key ];
+			}
+			if ( null === $gateway || '' === $gateway ) {
+				$gateway = $available_gateways[ strtoupper( $key ) ];
+			}
 			// Countries.
 			$countries = array_merge( alg_checkout_fees_get_countries_sets(), alg_checkout_fees_get_countries() );
 
