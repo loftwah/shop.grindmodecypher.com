@@ -9,15 +9,15 @@ import type {
 	CartResponseTotals,
 	CartResponseShippingAddress,
 	CartResponseBillingAddress,
-	CartResponseShippingRateItem,
+	CartResponseShippingRate,
 	CartResponse,
 } from './cart-response';
 import type { ResponseError } from '../data/types';
 export interface StoreCartItemQuantity {
 	isPendingDelete: boolean;
 	quantity: number;
-	changeQuantity: ( quantity: number ) => void;
-	removeItem: () => Promise< void > | false;
+	setItemQuantity: React.Dispatch< React.SetStateAction< number > >;
+	removeItem: () => Promise< boolean >;
 	cartItemQuantityErrors: Array< CartResponseErrorItem >;
 }
 
@@ -44,7 +44,7 @@ export interface StoreCart {
 	cartErrors: Array< ResponseError >;
 	billingAddress: CartResponseBillingAddress;
 	shippingAddress: CartResponseShippingAddress;
-	shippingRates: Array< CartResponseShippingRateItem >;
+	shippingRates: Array< CartResponseShippingRate >;
 	extensions: Record< string, unknown >;
 	shippingRatesLoading: boolean;
 	cartHasCalculatedShipping: boolean;

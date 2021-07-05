@@ -9,6 +9,7 @@ import type {
 	CartBillingAddress,
 	CartShippingAddress,
 } from '@woocommerce/types';
+import { ReturnOrGeneratorYieldUnion } from '@automattic/data-stores';
 import { camelCase, mapKeys } from 'lodash';
 
 /**
@@ -18,7 +19,6 @@ import { ACTION_TYPES as types } from './action-types';
 import { STORE_KEY as CART_STORE_KEY } from './constants';
 import { apiFetchWithHeaders } from '../shared-controls';
 import type { ResponseError } from '../types';
-import { ReturnOrGeneratorYieldUnion } from '../../mapped-types';
 
 /**
  * Returns an action object used in updating the store with the provided items
@@ -122,6 +122,18 @@ export const itemIsPendingDelete = (
 		cartItemKey,
 		isPendingDelete,
 	} as const );
+/**
+ * Returns an action object to mark the cart data in the store as stale.
+ *
+ * @param   {boolean} [isCartDataStale=true] Flag to mark cart data as stale; true if
+ * 											 lastCartUpdate timestamp is newer than the
+ * 											 one in wcSettings.
+ */
+export const setIsCartDataStale = ( isCartDataStale = true ) =>
+	( {
+		type: types.SET_IS_CART_DATA_STALE,
+		isCartDataStale,
+	} as const );
 
 /**
  * Returns an action object used to track when customer data is being updated
@@ -143,6 +155,14 @@ export const shippingRatesBeingSelected = ( isResolving: boolean ) =>
 	( {
 		type: types.UPDATING_SELECTED_SHIPPING_RATE,
 		isResolving,
+	} as const );
+
+/**
+ * Returns an action object for updating legacy cart fragments.
+ */
+export const updateCartFragments = () =>
+	( {
+		type: types.UPDATE_LEGACY_CART_FRAGMENTS,
 	} as const );
 
 /**
@@ -169,6 +189,7 @@ export function* applyCoupon(
 
 		yield receiveCart( response );
 		yield receiveApplyingCoupon( '' );
+		yield updateCartFragments();
 	} catch ( error ) {
 		yield receiveError( error );
 		yield receiveApplyingCoupon( '' );
@@ -209,6 +230,7 @@ export function* removeCoupon(
 
 		yield receiveCart( response );
 		yield receiveRemovingCoupon( '' );
+		yield updateCartFragments();
 	} catch ( error ) {
 		yield receiveError( error );
 		yield receiveRemovingCoupon( '' );
@@ -251,6 +273,7 @@ export function* addItemToCart(
 		} );
 
 		yield receiveCart( response );
+		yield updateCartFragments();
 	} catch ( error ) {
 		yield receiveError( error );
 
@@ -280,12 +303,16 @@ export function* removeItemFromCart(
 
 	try {
 		const { response } = yield apiFetchWithHeaders( {
-			path: `/wc/store/cart/remove-item/?key=${ cartItemKey }`,
+			path: `/wc/store/cart/remove-item`,
+			data: {
+				key: cartItemKey,
+			},
 			method: 'POST',
 			cache: 'no-store',
 		} );
 
 		yield receiveCart( response );
+		yield updateCartFragments();
 	} catch ( error ) {
 		yield receiveError( error );
 
@@ -329,6 +356,7 @@ export function* changeCartItemQuantity(
 		} );
 
 		yield receiveCart( response );
+		yield updateCartFragments();
 	} catch ( error ) {
 		yield receiveError( error );
 
@@ -435,8 +463,10 @@ export type CartAction = ReturnOrGeneratorYieldUnion<
 	| typeof itemIsPendingDelete
 	| typeof updatingCustomerData
 	| typeof shippingRatesBeingSelected
+	| typeof setIsCartDataStale
 	| typeof updateCustomerData
 	| typeof removeItemFromCart
 	| typeof changeCartItemQuantity
 	| typeof addItemToCart
+	| typeof updateCartFragments
 >;

@@ -2,9 +2,9 @@
 Contributors: woocommerce, automattic
 Tags: ecommerce, e-commerce, store, sales, reports, analytics, dashboard, activity, notices, insights, stats, woo commerce, woocommerce
 Requires at least: 5.4.0
-Tested up to: 5.6.0
+Tested up to: 5.7.0
 Requires PHP: 7.0
-Stable tag: 2.1.5
+Stable tag: 2.3.1
 License: GPLv3
 License URI: https://github.com/woocommerce/woocommerce-admin/blob/main/license.txt
 
@@ -73,6 +73,156 @@ Release and roadmap notes are available on the [WooCommerce Developers Blog](htt
 
 == Changelog ==
 
+== 2.3.1 5/24/2021 ==
+- Tweak: Store profiler - Changed MailPoet's title and description #6990
+- Update: Payment recommendation screen transition and add external link icon. #7022
+- Fix: Show Google Listing and Ads in installed marketing extensions section. #7029
+- Tweak: Adjust WC Pay supported countries #7048
+
+== 2.3.0 5/13/2021 ==
+- Add: Add plugin installer to allow installation of plugins via URL #6805
+- Add: Optional children prop to SummaryNumber component #6748
+- Dev: Add data source filter to remote inbox notification system #6794
+- Dev: Add A/A test #6669
+- Dev: Add support for nonces in note actions #6726
+- Dev: Add support for running php unit tests in PHP 8. #6678
+- Dev: Add event recording to start of gateway connections #6801
+- Dev: Do a git clean before the core release. #6945
+- Dev: Fix a bug where trying to load an asset registry causes a crash. #6951
+- Feature: Add recommended payment methods in payment settings. #6760
+- Fix: Disable the continue btn on OBW when requested are being made #6838
+- Fix: Event tracking for merchant email notes #6616
+- Fix: Use the store timezone to make time data requests #6632
+- Fix: Update the checked input radio button margin style #6701
+- Fix: Convert date to timestamp before passing to set_date_prop to persist timezone #6795
+- Fix: Make pagination buttons height and width consistent #6725
+- Fix: Retain persisted queries when navigating to Homescreen #6614
+- Fix: Update folded header style #6724
+- Fix: Unreleated variations showing up in the Products reports #6647
+- Fix: Check active plugins before getting the PayPal onboarding status #6625
+- Fix: Remove no-reply from inbox notification emails #6644
+- Fix: Set up shipping costs task, redirect to shipping settings after completion. #6791
+- Fix: Onboarding logic on WooCommerce update to keep task list present. #6803
+- Fix: Pause inbox message “GivingFeedbackNotes” #6802
+- Fix: Missed DB version number updates causing unnecessary upgrades. #6818
+- Fix: Parsing bad JSON string data from user WooCommerce meta. #6819
+- Fix: Remove PayPal for India #6828
+- Fix: Address an issue with OBW when installing only WooCommerce payments and Jetpack. #6957
+- Fix: Calling of get_script_asset_filename with extra parameter #6955
+- Performance: Avoid updating customer info synchronously from the front end. #6765
+- Tweak: Add settings_section event prop for CES #6762
+- Tweak: Refactor payments to allow management of methods #6786
+- Tweak: Add tracking data for the preview site button #6623
+- Tweak: Update WC Payments copy on the task list #6734
+- Tweak: Add check to see if value for contains is array, show warning if not. #6645
+- Tweak: Sort the extension task list by completion status and allow toggling visibility. #6792
+- Tweak: Update PayU logo #6829
+- Tweak: Store profiler - Changed MailPoet's title and description #6886
+- Tweak: Only fetch remote payment gateway recommendations when opted in #6964
+- Update: Replace marketing extension - Google Listings and Ads. #6939
+- Update: Update choose niche note cta URL #6733
+- Update: UI updates to Payment Task screen #6766
+- Update: Adding setup required icon for non-configured payment methods #6811
+
+== 2.2.6 5/7/2021 ==
+
+- Fix: Address an issue with OBW when installing only WooCommerce payments and Jetpack. #6957
+
+== 2.2.5 5/7/2021 ==
+
+- Fix: Calling of get_script_asset_filename with extra parameter #6955
+
+== 2.2.4 5/7/2021 ==
+
+- Dev: Fix a bug where trying to load an asset registry causes a crash. #6951
+
+== 2.2.3 5/6/2021 ==
+
+- Dev: Do a git clean before the core release. #6945
+
+== 2.2.2 4/28/2021 ==
+
+- Fix: Disable the continue btn on OBW when requested are being made #6838
+- Tweak: Revert WCPay international support for bundled package #6901
+- Tweak: Store profiler - Changed MailPoet's title and description #6886
+- Tweak: Update PayU logo #6829
+
+== 2.2.0 3/30/2021  ==
+
+- Fix: Check if features are currently being enabled #6688
+- Add: Next new novel navigation nudge note #6610
+- Fix: Fix the activity panel toggle not closing on click #6679
+- Tweak: Add default value for contains op #6622
+- Fix: Fix use of feature checks and remove deprecated method calls #6687
+- Dev: Close activity panel tabs by default and track #6566
+- Dev: Update undefined task name properties for help panel tracks #6565
+- Fix: Allow the manager role to query certain options #6577
+- Dev: Refactor profile wizard benefits step and add tests #6583
+- Fix: Delete customer data on network user deletion #6574
+- Fix: Fix Themes step visibility in IE 11 #6578
+- Fix: Fix hidden menu title on smaller screens #6562
+- Fix: Add gross sales column to CSV export #6567
+- Dev: Add filter to profile wizard steps #6564
+- Tweak: Adjust targeting store age for the Add First Product note #6554
+- Tweak: Improve WC Shipping & Tax logic #6547
+- Tweak: Update Insight inbox note content #6555
+- Dev: Add nav intro modal tests #6518
+- Dev: Use wc filter to get status tabs for tools category #6525
+- Tweak: Remove mobile activity panel toggle #6539
+- Dev: Add nav header component tests #6509
+- Add: Add legacy report items to new navigation #6507
+- Dev: Add initial tests for navigation Menu class #6492
+- Dev: Remove active item from navigation store #6486
+- Dev: Add navigation container tests #6464
+- Add: Add preview site button on the appearance task #6457
+- Fix: Add check for navigating being enabled. #6462
+- Dev: Add nav favorite button tests #6446
+- Dev: Add a changelog lint check to PRs. #6414
+- Dev: Add navigation favorites tests #6409
+- Fix: Move the shipping input and text 1px lower. #6408
+- Dev: support use of Array.flat in client and packages. #6411
+- Fix: Correct the Klarna slug #6440
+- Tweak: Refactor autoloader to remove global variable. #6412
+- Dev: Deprecate Onboarding::has_woocommerce_support. #6401
+- Fix: Broken link anchors to online documentation. #6455
+- Dev: Add Dependency Extraction Webpack Plugin #5762
+- Dev: Add client-side filter for Navigation rootBackUrl #6505
+- Add: Back button to go to home screen from tasks in the task list. #6397
+- Fix: Update payment card style on mobile #6413
+- Fix: Missing i18n in Welcome modal. #6456
+- Fix: Restore visual styles back to Analytics tabs. #5913
+- Add: Add a "rather not say" option to revenue in the profile wizard. #6475
+- Fix: Update contrast and hover / active colors for analytics dropdown buttons #6504
+- Dev: Remove `items_purchased` and `account_type` props from onboarding profile API. #6520
+- Dev: Added warning when WC-Admin is active but not being used #6453
+- Fix: Associated Order Number for refunds was hidden #6428
+- Add: Remove Mollie promo note on install #6510
+- Add: Remote Inbox Notifications rule to trigger when WooCommerce Admin is upgraded. #6040
+- Dev: Store profiler - Added MailPoet to Business Details step  #6503
+- Dev: Store profiler - Added MailPoet to new Business Details step  #6515
+- Dev: Add tilde (~) to represent client root directory for imports. #6517
+- Fix: Fix issue where Loader::is_admin_page() would error if WooCommerce admin is disabled. #6563
+- Add: Add Ireland to Square payment method #6559
+- Add: CES survey for search product, order, customer #6420
+- Add: CES survey for importing products #6419
+- Add: CES survey for adding product categories, tags, and attributes #6418
+- Add: Additional analytics tracking for the business details step. #6575
+- Add: Include tracking for mail poet installs in the selective bundle install #6603
+- Dev: Add script automation for gathering hooks and filters. #6454
+- Dev: Add TypeScript to CustomerFeedbackModal component. #6498
+- Fix: Correct a bug where the JP connection flow would not happen when installing JP in the OBW. #6521
+- Dev: Add TypeScript and page objects to the E2E test suite. #6582
+- Dev: Introduce Typescript to Navigation utils #6477
+- Add: Paystack payment provider to several african countries. #6579
+- Dev: Payments task: include Mercado Pago #6572
+- Dev: Ensure script asset.php files are included in builds #6635
+- Fix: Show management links when the task list is complete (even if its not hidden). #6657
+- Fix: Adding New Zealand and Ireland to selective bundle option, previously missed. #6649
+- Fix: Update the Mercado option used for enabling/disabling. #6677
+- Dev: Ensure production script asset names don't include .min suffix #6681
+- Fix: Improve AddFirstProduct email note contents. #6617
+- Fix: Missing margin between cards and viewport in setup wizard #6620
+
 == 2.1.4 3/29/2021  ==
 
 - Fix: Adding New Zealand and Ireland to selective bundle option, previously missed. #6649
@@ -81,6 +231,7 @@ Release and roadmap notes are available on the [WooCommerce Developers Blog](htt
 
 - Feature: Increase target audience for business feature step. #6508
 - Fix: Correct a bug where the JP connection flow would not happen when installing JP in the OBW. #6521
+- Fix: Add customer name column to CSV export #6556
 
 == 2.1.2 3/10/2021  ==
 
@@ -135,9 +286,11 @@ Release and roadmap notes are available on the [WooCommerce Developers Blog](htt
 - Dev: Change `siteUrl` to `homeUrl` on navigation site title #6240
 - Dev: Add navigation favorites data store #6275
 - Add: Add navigation intro modal. #6367
+- Fix: Fix double prefixing of full navigation URLs #6460
 - Fix: Reset Navigation submenu before making Flyout #6396
-- Fix: Broken link anchors to online documentation. #6455
-- Fix: Add check for navigating being enabled. #6462
+- Dev: Add a changelog lint check to PRs. #6414
+- Fix: Move the shipping input and text 1px lower. #6408
+- Add: WC Admin Docker setup with WP-ENV
 
 == 2.0.3 03/10/2021 ==
 
