@@ -263,7 +263,7 @@ class OnboardingTasks {
 			return;
 		}
 
-		$script_assets_filename = Loader::get_script_asset_filename( 'onboarding-product-notice' );
+		$script_assets_filename = Loader::get_script_asset_filename( 'wp-admin-scripts', 'onboarding-product-notice' );
 		$script_assets          = require WC_ADMIN_ABSPATH . WC_ADMIN_DIST_JS_FOLDER . 'wp-admin-scripts/' . $script_assets_filename;
 
 		wp_enqueue_script(
@@ -283,7 +283,7 @@ class OnboardingTasks {
 	public static function add_onboarding_homepage_notice_admin_script( $hook ) {
 		global $post;
 		if ( 'post.php' === $hook && 'page' === $post->post_type && isset( $_GET[ self::ACTIVE_TASK_TRANSIENT ] ) && 'homepage' === $_GET[ self::ACTIVE_TASK_TRANSIENT ] ) { // phpcs:ignore csrf ok.
-			$script_assets_filename = Loader::get_script_asset_filename( 'onboarding-homepage-notice' );
+			$script_assets_filename = Loader::get_script_asset_filename( 'wp-admin-scripts', 'onboarding-homepage-notice' );
 			$script_assets          = require WC_ADMIN_ABSPATH . WC_ADMIN_DIST_JS_FOLDER . 'wp-admin-scripts/' . $script_assets_filename;
 
 			wp_enqueue_script(
@@ -309,7 +309,7 @@ class OnboardingTasks {
 			'tax' === self::get_active_task() &&
 			! self::is_active_task_complete()
 		) {
-			$script_assets_filename = Loader::get_script_asset_filename( 'onboarding-tax-notice' );
+			$script_assets_filename = Loader::get_script_asset_filename( 'wp-admin-scripts', 'onboarding-tax-notice' );
 			$script_assets          = require WC_ADMIN_ABSPATH . WC_ADMIN_DIST_JS_FOLDER . 'wp-admin-scripts/' . $script_assets_filename;
 
 			wp_enqueue_script(
@@ -332,7 +332,7 @@ class OnboardingTasks {
 		if ( 'product_page_product_importer' === $hook && 'done' === $step && 'product-import' === self::get_active_task() ) {
 			delete_transient( self::ACTIVE_TASK_TRANSIENT );
 
-			$script_assets_filename = Loader::get_script_asset_filename( 'onboarding-product-import-notice' );
+			$script_assets_filename = Loader::get_script_asset_filename( 'wp-admin-scripts', 'onboarding-product-import-notice' );
 			$script_assets          = require WC_ADMIN_ABSPATH . WC_ADMIN_DIST_JS_FOLDER . 'wp-admin-scripts/' . $script_assets_filename;
 
 			wp_enqueue_script(
@@ -365,7 +365,7 @@ class OnboardingTasks {
 	 *
 	 * @return array
 	 */
-	private static function get_stripe_supported_countries() {
+	public static function get_stripe_supported_countries() {
 		// https://stripe.com/global.
 		return array(
 			'AU',
@@ -443,6 +443,7 @@ class OnboardingTasks {
 	 */
 	public static function track_task_completion( $old_value, $new_value ) {
 		$old_value       = is_array( $old_value ) ? $old_value : array();
+		$new_value       = is_array( $new_value ) ? $new_value : array();
 		$untracked_tasks = array_diff( $new_value, $old_value );
 
 		foreach ( $untracked_tasks as $task ) {
