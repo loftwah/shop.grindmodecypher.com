@@ -32,7 +32,7 @@ class ET_Builder_Plugin_Compat_Relevanssi extends ET_Builder_Plugin_Compat_Base 
 	/**
 	 * Get the currently activated plugin id as the FREE and PRO versions are separate plugins.
 	 *
-	 * @since ??
+	 * @since 4.9.4
 	 *
 	 * @return string
 	 */

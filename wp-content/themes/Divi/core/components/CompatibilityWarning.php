@@ -436,10 +436,32 @@ if ( ! class_exists( 'ET_Core_CompatibilityWarning' ) ) :
 			} elseif ( 'themes.php' === $pagenow ) {
 				$compatibility_warning['manage_themes_data'] = true;
 			} elseif ( 'customize.php' === $pagenow ) {
+				// Ensure style.css file exist.
+				$theme_root = $wp_customize->theme()->theme_root;
+				$theme_slug = $wp_customize->theme()->stylesheet;
+				$theme_file = "{$theme_root}/{$theme_slug}/style.css";
+
+				// Get WP & PHP compatibility info.
+				$theme_headers = array();
+
+				if ( file_exists( $theme_file ) ) {
+					$theme_headers = get_file_data(
+						$theme_file,
+						array(
+							'RequiresWP'  => 'Requires at least',
+							'RequiresPHP' => 'Requires PHP',
+						),
+						'theme'
+					);
+				}
+
+				$requires_wp  = et_()->array_get( $theme_headers, 'RequiresWP', false );
+				$requires_php = et_()->array_get( $theme_headers, 'RequiresPHP', false );
+
 				// Theme Customizer - Used for disable publish button.
 				$compatibility_warning['customizer_data'] = array(
-					'compatible_wp'  => is_wp_version_compatible( $wp_customize->theme()->get( 'RequiresWP' ) ),
-					'compatible_php' => is_php_version_compatible( $wp_customize->theme()->get( 'RequiresPHP' ) ),
+					'compatible_wp'  => is_wp_version_compatible( $requires_wp ),
+					'compatible_php' => is_php_version_compatible( $requires_php ),
 					'disabled_text'  => esc_html_x( 'Cannot Activate', 'theme' ),
 				);
 			}

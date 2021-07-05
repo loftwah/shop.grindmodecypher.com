@@ -1573,17 +1573,19 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				<?php } ?>
 
 					<?php
-					$multi_view->render_element(
-						array(
-							'tag'            => 'p',
-							'content'        => '{{post_meta_removes}}',
-							'attrs'          => array(
-								'class' => 'post-meta',
+					if ( 'on' === $show_author || 'on' === $show_date || 'on' === $show_categories || 'on' === $show_comments ) {
+						$multi_view->render_element(
+							array(
+								'tag'            => 'p',
+								'content'        => '{{post_meta_removes}}',
+								'attrs'          => array(
+									'class' => 'post-meta',
+								),
+								'hover_selector' => '%%order_class%% .et_pb_post',
 							),
-							'hover_selector' => '%%order_class%% .et_pb_post',
-						),
-						true
-					);
+							true
+						);
+					}
 
 					echo '<div class="post-content">';
 

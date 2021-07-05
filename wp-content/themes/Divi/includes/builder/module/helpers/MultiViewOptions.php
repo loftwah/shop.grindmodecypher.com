@@ -1956,6 +1956,15 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 		$temp_values = array();
 
 		foreach ( $values as $mode => $value ) {
+			// Decode HTML special characters such as "&amp;" to "&"
+			// to make the value consistence and the comparison is accurate.
+			// $temp_values variable is not used anywhere except to compare
+			// the values of each view mode. It will not printed anywhere.
+			// So we won't need to sanitize it.
+			if ( is_string( $value ) ) {
+				$value = htmlspecialchars_decode( $value );
+			}
+
 			// Stringify the value so can be easily compared.
 			$temp_values[ $mode ] = wp_json_encode( $value );
 		}

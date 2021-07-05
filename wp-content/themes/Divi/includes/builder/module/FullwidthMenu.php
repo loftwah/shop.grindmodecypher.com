@@ -784,6 +784,19 @@ class ET_Builder_Module_Fullwidth_Menu extends ET_Builder_Module {
 			ET_Builder_Element::set_style( $render_slug, $el_style );
 		}
 
+		$logo_width      = $this->props['logo_width'];
+		$logo_height     = $this->props['logo_height'];
+		$logo_max_height = $this->props['logo_max_height'];
+
+		// Only height or max-height is set, no width set.
+		if ( 'auto' === $logo_width && 'auto' !== $logo_height || 'none' !== $logo_max_height ) {
+			$el_style = array(
+				'selector'    => '%%order_class%% .et_pb_menu__logo-wrap .et_pb_menu__logo img',
+				'declaration' => 'width: auto;',
+			);
+			ET_Builder_Element::set_style( $render_slug, $el_style );
+		}
+
 		$logo_width_selector  = '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap .et_pb_menu__logo, %%order_class%% .et_pb_menu__logo-slot';
 		$logo_height_selector = '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap .et_pb_menu__logo img, %%order_class%% .et_pb_menu__logo-slot .et_pb_menu__logo-wrap img';
 
@@ -961,8 +974,6 @@ class ET_Builder_Module_Fullwidth_Menu extends ET_Builder_Module {
 		$logo_image_attrs = array(
 			'src'    => '{{logo}}',
 			'alt'    => $logo_alt,
-			'height' => 'auto',
-			'width'  => 'auto',
 		);
 
 		$logo_image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'logo' );
@@ -1303,9 +1314,9 @@ class ET_Builder_Module_Fullwidth_Menu extends ET_Builder_Module {
 
 		$mobile_menu = sprintf(
 			'<div class="et_mobile_nav_menu">
-				<a href="#" class="mobile_nav closed%1$s">
+				<div class="mobile_nav closed%1$s">
 					<span class="mobile_menu_bar"></span>
-				</a>
+				</div>
 			</div>',
 			'upwards' === $submenu_direction ? ' et_pb_mobile_menu_upwards' : ''
 		);

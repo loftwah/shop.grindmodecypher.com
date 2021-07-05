@@ -338,12 +338,13 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		$icon_font_size_values     = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
 		$icon_font_size_any_values = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size', '16px', true ); // 16px is default toggle icon size.
 		$icon_font_size_hover      = $this->get_hover_value( 'icon_font_size' );
+		$accordion_item_class      = 'et_pb_accordion_item' === $render_slug ? '.et_pb_accordion_item' : '';
 
 		// Open Toggle Background Color.
 		$this->generate_styles(
 			array(
 				'base_attr_name'                  => 'open_toggle_background_color',
-				'selector'                        => '%%order_class%%.et_pb_toggle.et_pb_toggle_open',
+				'selector'                        => "{$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_open",
 				'hover_pseudo_selector_location'  => 'suffix',
 				'sticky_pseudo_selector_location' => 'prefix',
 				'css_property'                    => 'background-color',
@@ -356,7 +357,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		$this->generate_styles(
 			array(
 				'base_attr_name'                  => 'closed_toggle_background_color',
-				'selector'                        => '%%order_class%%.et_pb_toggle.et_pb_toggle_close',
+				'selector'                        => "{$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_close",
 				'hover_pseudo_selector_location'  => 'suffix',
 				'sticky_pseudo_selector_location' => 'prefix',
 				'css_property'                    => 'background-color',
@@ -369,7 +370,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		$this->generate_styles(
 			array(
 				'base_attr_name'                  => 'open_toggle_text_color',
-				'selector'                        => '%%order_class%%.et_pb_toggle.et_pb_toggle_open h5.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h1.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_open h6.et_pb_toggle_title',
+				'selector'                        => "{$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_open h5.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_open h1.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_open h2.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_open h3.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_open h4.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_open h6.et_pb_toggle_title",
 				'hover_pseudo_selector_location'  => 'suffix',
 				'sticky_pseudo_selector_location' => 'prefix',
 				'css_property'                    => 'color',
@@ -383,7 +384,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		$this->generate_styles(
 			array(
 				'base_attr_name'                  => 'closed_toggle_text_color',
-				'selector'                        => '%%order_class%%.et_pb_toggle.et_pb_toggle_close h5.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h1.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h2.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h3.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h4.et_pb_toggle_title, %%order_class%%.et_pb_toggle.et_pb_toggle_close h6.et_pb_toggle_title',
+				'selector'                        => "{$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_close h5.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_close h1.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_close h2.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_close h3.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_close h4.et_pb_toggle_title, {$accordion_item_class}%%order_class%%.et_pb_toggle.et_pb_toggle_close h6.et_pb_toggle_title",
 				'hover_pseudo_selector_location'  => 'suffix',
 				'sticky_pseudo_selector_location' => 'prefix',
 				'css_property'                    => 'color',
@@ -399,7 +400,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 			$this->generate_styles(
 				array(
 					'base_attr_name'                  => 'icon_font_size',
-					'selector'                        => '%%order_class%% .et_pb_toggle_title:before',
+					'selector'                        => "{$accordion_item_class}%%order_class%% .et_pb_toggle_title:before",
 					'hover_pseudo_selector_location'  => 'suffix',
 					'sticky_pseudo_selector_location' => 'prefix',
 					'render_slug'                     => $render_slug,
@@ -420,7 +421,7 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		$this->generate_styles(
 			array(
 				'base_attr_name' => 'icon_color',
-				'selector'       => '%%order_class%% .et_pb_toggle_title:before',
+				'selector'       => "{$accordion_item_class}%%order_class%% .et_pb_toggle_title:before",
 				'css_property'   => 'color',
 				'render_slug'    => $render_slug,
 				'type'           => 'color',
@@ -434,7 +435,13 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 
 			$et_pb_accordion_item_number++;
 
-			$header_level = $et_pb_accordion_header_level;
+			// Respect the individual level first.
+			if ( '' !== $this->props['toggle_level'] ) {
+				$header_level = $this->props['toggle_level'];
+			} else {
+				// If individual tag is not there choose global.
+				$header_level = $et_pb_accordion_header_level;
+			}
 
 			$this->add_classname( 'et_pb_accordion_item' );
 		}

@@ -896,8 +896,6 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 			$image_attrs = array(
 				'src'    => '{{image}}',
 				'alt'    => esc_attr( $image_alt ),
-				'height' => 'auto',
-				'width'  => 'auto',
 			);
 
 			$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'image' );

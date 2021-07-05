@@ -82,6 +82,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 					'css'            => array(
 						'main'         => "{$this->main_css_element}.et_pb_module .et_pb_button",
 						'limited_main' => "{$this->main_css_element}.et_pb_module .et_pb_button",
+						'important'    => 'plugin_only',
 					),
 					'no_rel_attr'    => true,
 					'box_shadow'     => array(
@@ -533,10 +534,10 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 						}
 
 						// additional check for email field
-						if ( 'email' === $value['field_type'] && 'required' === $value['required_mark'] && ! empty( $field_value ) ) {
+						if ( 'email' === $value['field_type'] && ! empty( $field_value ) ) {
 							$contact_email = isset( $_POST[ $value['field_id'] ] ) ? sanitize_email( $_POST[ $value['field_id'] ] ) : '';
 
-							if ( ! empty( $contact_email ) && ! is_email( $contact_email ) ) {
+							if ( 'required' === $value['required_mark'] && ( empty( $contact_email ) || ! is_email( $contact_email ) ) ) {
 								$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Invalid Email.', 'et_builder' ) );
 								$et_contact_error  = true;
 							}

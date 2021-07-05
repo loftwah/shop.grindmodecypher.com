@@ -315,8 +315,6 @@ class ET_Builder_Module_Fullwidth_Image extends ET_Builder_Module {
 			'src'    => '{{src}}',
 			'alt'    => esc_attr( $alt ),
 			'title'  => esc_attr( $title_text ),
-			'height' => 'auto',
-			'width'  => 'auto',
 		);
 
 		$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'src' );

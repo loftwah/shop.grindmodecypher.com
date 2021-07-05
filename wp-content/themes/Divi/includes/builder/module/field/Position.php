@@ -465,7 +465,7 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				array_push( $views, 'tablet', 'phone' );
 			}
 
-			if ( $sticky->is_inside_sticky_module() ) {
+			if ( $sticky->is_inside_sticky_module() && $sticky->is_enabled( 'positioning', $props ) ) {
 				array_push( $views, 'sticky' );
 			}
 

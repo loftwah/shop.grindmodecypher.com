@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.9.4' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.9.7' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -3324,7 +3324,7 @@ function et_builder_preprint_font() {
 		return;
 	}
 
-	$unique_subsets = $post_fonts_data['subset'];
+	$unique_subsets = array_filter( $post_fonts_data['subset'] );
 	$protocol       = is_ssl() ? 'https' : 'http';
 
 	$googlefonts_cached_url_args = array(
@@ -3827,20 +3827,8 @@ function et_builder_maybe_ensure_heartbeat_script() {
 	}
 	// phpcs:enable
 }
-
-/**
- * Enqueue dashicons in front-end if they are not enqueued (that happens when not logged in as admin).
- */
-function et_builder_maybe_enqueue_dashicons() {
-	if ( wp_style_is( 'dashicons' ) ) {
-		return;
-	}
-
-	wp_enqueue_style( 'dashicons' );
-}
 add_action( 'admin_print_scripts-post-new.php', 'et_builder_maybe_ensure_heartbeat_script', 9 );
 add_action( 'admin_print_scripts-post.php', 'et_builder_maybe_ensure_heartbeat_script', 9 );
-add_action( 'wp_enqueue_scripts', 'et_builder_maybe_enqueue_dashicons', 19 );
 add_action( 'wp_footer', 'et_builder_maybe_ensure_heartbeat_script', 19 );
 
 /**

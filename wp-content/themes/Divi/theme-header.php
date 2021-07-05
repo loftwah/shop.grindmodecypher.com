@@ -205,12 +205,21 @@ $et_slide_header          = 'slide' === et_get_option( 'header_style', 'left' ) 
 				? $user_logo
 				: $template_directory_uri . '/images/logo.png';
 
+			// Get logo image size based on attachment URL.
+			$logo_size   = et_get_attachment_size_by_url( $logo );
+			$logo_width  = ( ! empty( $logo_size ) && is_numeric( $logo_size[0] ) )
+					? $logo_size[0]
+					: '93'; // 93 is the width of the default logo.
+			$logo_height = ( ! empty( $logo_size ) && is_numeric( $logo_size[1] ) )
+					? $logo_size[1]
+					: '43'; // 43 is the height of the default logo.
+
 			ob_start();
 		?>
 			<div class="logo_container">
 				<span class="logo_helper"></span>
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>">
-					<img src="<?php echo esc_attr( $logo ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" id="logo" data-height-percentage="<?php echo esc_attr( et_get_option( 'logo_height', '54' ) ); ?>" />
+				<img src="<?php echo esc_attr( $logo ); ?>" width="<?php echo esc_attr( $logo_width ); ?>" height="<?php echo esc_attr( $logo_height ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" id="logo" data-height-percentage="<?php echo esc_attr( et_get_option( 'logo_height', '54' ) ); ?>" />
 				</a>
 			</div>
 		<?php

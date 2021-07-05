@@ -5168,7 +5168,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   }
 
-  $(window).on('unload', function () {
+  $(window).on('visibilitychange', function () {
     /**
      * Fix the issue with Fullscreen menu, that remains open,
      * when back button is clicked in Firefox

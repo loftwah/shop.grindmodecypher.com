@@ -424,6 +424,7 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 				),
 				'responsive'       => true,
 				'sticky'           => true,
+				'hover'            => 'tabs',
 			),
 			'content_max_width'   => array(
 				'label'            => esc_html__( 'Content Width', 'et_builder' ),
@@ -446,6 +447,7 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 				),
 				'responsive'       => true,
 				'sticky'           => true,
+				'hover'            => 'tabs',
 			),
 			'use_icon_font_size'  => array(
 				'label'            => esc_html__( 'Use Icon Font Size', 'et_builder' ),
@@ -672,6 +674,38 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 			);
 		}
 
+		// Hover image.
+		$image_max_width_selector = 'top' === $icon_placement && $is_image_svg ? '%%order_class%% .et_pb_main_blurb_image' : '%%order_class%% .et_pb_main_blurb_image .et_pb_image_wrap';
+		$image_max_width_prop     = $is_image_svg || false !== strpos( $image_max_width, 'px' ) ? 'width' : 'max-width';
+
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'image_max_width',
+				'selector'       => $image_max_width_selector,
+				'css_property'   => $image_max_width_prop,
+				'render_slug'    => $render_slug,
+				'type'           => 'input',
+				'sticky'         => false,
+				'responsive'     => false,
+			)
+		);
+
+		// Hover content.
+		$content_max_width_selector = '%%order_class%% .et_pb_blurb_content';
+		$content_max_width_prop     = 'max-width';
+
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'content_max_width',
+				'selector'       => $content_max_width_selector,
+				'css_property'   => $content_max_width_prop,
+				'render_slug'    => $render_slug,
+				'type'           => 'input',
+				'sticky'         => false,
+				'responsive'     => false,
+			)
+		);
+
 		if ( '' !== $image_max_width_tablet || '' !== $image_max_width_phone || '' !== $image_max_width || '' !== $image_max_width_sticky || $is_image_svg ) {
 			$is_size_px = false;
 
@@ -794,7 +828,8 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 				'phone'   => $content_max_width_responsive_active ? $content_max_width_phone : '',
 			);
 
-			et_pb_generate_responsive_css( $content_max_width_values, '%%order_class%% .et_pb_blurb_content', 'max-width', $render_slug );
+			et_pb_responsive_options()->generate_responsive_css( $content_max_width_values, '%%order_class%% .et_pb_blurb_content', 'max-width', $render_slug );
+
 		}
 
 		// Sticky Content Width.
@@ -857,7 +892,7 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 
 		$image_classes = array( 'et-waypoint', 'et_pb_animation_' . $multi_view->get_value_desktop( 'animation', 'top' ) );
 
-		$animations = $multi_view->get_values( 'animation' );
+		$animations = $multi_view->get_values( 'animation', false );
 		foreach ( $animations as $mode => $animation ) {
 			if ( ! in_array( $mode, array( 'tablet', 'phone' ), true ) ) {
 				continue;

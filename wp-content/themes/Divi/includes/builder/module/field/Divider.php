@@ -206,9 +206,9 @@ class ET_Builder_Module_Field_Divider extends ET_Builder_Module_Field_Base {
 							'min'       => 1,
 							'max'       => 20,
 							'step'      => 1,
-							'min_limit' => 0,
+							'min_limit' => 1, // Changed to 1 from 0 since it's basically the same result for both values.
 						),
-						'default'        => '1x',
+						'default'        => '1', // Dont use the fixed_unit in default value ( i.e. 1x, just use 1 ), or else input will return undefined.
 						'fixed_unit'     => 'x',
 						'show_if_not'    => array(
 							"{$placement}_divider_style" => array( 'none', 'clouds', 'clouds2', 'triangle' ),

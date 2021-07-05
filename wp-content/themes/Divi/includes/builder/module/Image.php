@@ -319,6 +319,9 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 		$use_overlay       = $this->props['use_overlay'];
 		$animation_style   = $this->props['animation_style'];
 		$box_shadow_style  = self::$_->array_get( $this->props, 'box_shadow_style', '' );
+		$width             = $this->props['width'];
+		$height            = $this->props['height'];
+		$max_height        = $this->props['max_height'];
 
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
@@ -459,9 +462,19 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 			'src'    => '{{src}}',
 			'alt'    => esc_attr( $alt ),
 			'title'  => esc_attr( $title_text ),
-			'height' => 'auto',
-			'width'  => 'auto',
 		);
+
+		// Only if force fullwidth is not set.
+		if ( 'on' !== $force_fullwidth ) {
+			// Only height or max-height is set, no width set.
+			if ( 'auto' === $width && 'auto' !== $height || ! empty( $max_height ) ) {
+				$el_style = array(
+					'selector'    => '%%order_class%% .et_pb_image_wrap img',
+					'declaration' => 'width: auto;',
+				);
+				ET_Builder_Element::set_style( $render_slug, $el_style );
+			}
+		}
 
 		$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'src' );
 

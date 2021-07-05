@@ -216,14 +216,10 @@ function et_theme_builder_frontend_override_partial( $partial, $name, $action = 
 function et_theme_builder_extract_head( $html ) {
 	// We could use DOMDocument here to guarantee proper parsing but we need
 	// the most performant solution since we cannot reliably cache the result.
-	$matches = array();
-	$matched = preg_match( '/^[\s\S]*?<head[\s\S]*?>([\s\S]*?)<\/head>[\s\S]*$/i', $html, $matches );
+	$head = array();
+	preg_match( '/^[\s\S]*?<head[\s\S]*?>([\s\S]*?)<\/head>[\s\S]*$/i', $html, $head );
 
-	if ( $matched && ! isset( $matches[1] ) ) {
-		return '';
-	}
-
-	return trim( $matches[1] );
+	return ! empty( $head[1] ) ? trim( $head[1] ) : '';
 }
 
 /**

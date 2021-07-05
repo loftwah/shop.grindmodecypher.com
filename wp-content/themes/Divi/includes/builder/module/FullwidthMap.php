@@ -258,8 +258,8 @@ class ET_Builder_Module_Fullwidth_Map extends ET_Builder_Module {
 				<div class="et_pb_map" data-center-lat="%1$s" data-center-lng="%2$s" data-zoom="%3$d" data-mouse-wheel="%7$s" data-mobile-dragging="%8$s"></div>
 				%4$s
 			</div>',
-			esc_attr( $address_lat ),
-			esc_attr( $address_lng ),
+			esc_attr( et_()->to_css_decimal( $address_lat ) ),
+			esc_attr( et_()->to_css_decimal( $address_lng ) ),
 			esc_attr( $zoom_level ),
 			$all_pins_content,
 			$this->module_id(),

@@ -3,6 +3,13 @@
 require_once 'helpers/Slider.php';
 
 class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
+	/**
+	 * Track if the module is currently rendering to prevent unnecessary rendering and recursion.
+	 *
+	 * @var bool
+	 */
+	protected static $_rendering = false;
+
 	function init() {
 		$this->name       = esc_html__( 'Post Slider', 'et_builder' );
 		$this->plural     = esc_html__( 'Post Sliders', 'et_builder' );
@@ -716,6 +723,14 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 	static function get_blog_posts( $args = array(), $conditional_tags = array(), $current_page = array(), $is_ajax_request = true ) {
 		global $wp_query, $paged, $post;
 
+		if ( self::$_rendering ) {
+			// We are trying to render a Post Slider module while a Post Slider module is already being rendered
+			// which means we have most probably hit an infinite recursion. While not necessarily
+			// the case, rendering a post which renders a Post Slider module which renders a post
+			// which renders a Post Slider module is not a sensible use-case.
+			return '';
+		}
+
 		$defaults = array(
 			'use_current_loop'   => 'off',
 			'posts_number'       => '',
@@ -785,6 +800,12 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 			}
 		}
 
+		$main_query_post = ET_Post_Stack::get_main_post();
+
+		if ( $main_query_post && is_singular( $main_query_post->post_type ) && ! isset( $query_args['post__not_in'] ) ) {
+			$query_args['post__not_in'][] = $main_query_post->ID;
+		}
+
 		$query = new WP_Query( $query_args );
 
 		// Keep page's $wp_query global
@@ -792,6 +813,8 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 
 		// Turn page's $wp_query into this module's query
 		$wp_query = $query; //phpcs:ignore WordPress.Variables.GlobalVariables.OverrideProhibited
+
+		self::$_rendering = true;
 
 		if ( $query->have_posts() ) {
 			$post_index = 0;
@@ -922,6 +945,8 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 		// Reset $wp_query to its origin
 		$wp_query = $wp_query_page; // phpcs:ignore WordPress.Variables.GlobalVariables.OverrideProhibited
 
+		self::$_rendering = false;
+
 		return $query;
 	}
 
@@ -936,6 +961,14 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 	 */
 	public function render( $attrs, $content, $render_slug ) {
 		global $post;
+
+		if ( self::$_rendering ) {
+			// We are trying to render a Post Slider module while a Blog module is already being rendered
+			// which means we have most probably hit an infinite recursion. While not necessarily
+			// the case, rendering a post which renders a Post Slider module which renders a post
+			// which renders a Post Slider module is not a sensible use-case.
+			return '';
+		}
 
 		$multi_view              = et_pb_multi_view_options( $this );
 		$use_current_loop        = isset( $this->props['use_current_loop'] ) ? $this->props['use_current_loop'] : 'off';
@@ -1117,7 +1150,15 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 			}
 		}
 
+		$main_query_post = ET_Post_Stack::get_main_post();
+
+		if ( $main_query_post && is_singular( $main_query_post->post_type ) && ! isset( $args['post__not_in'] ) ) {
+			$args['post__not_in'] = array( $main_query_post->ID );
+		}
+
 		$query = self::get_blog_posts( $args, array(), array(), false );
+
+		self::$_rendering = true;
 
 		if ( $query->have_posts() ) {
 			while ( $query->have_posts() ) {
@@ -1308,6 +1349,8 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 			$content .= self::get_no_results_template();
 			$content .= '</div>';
 		}
+
+		self::$_rendering = false;
 
 		// Images: Add CSS Filters and Mix Blend Mode rules (if set)
 		if ( array_key_exists( 'image', $this->advanced_fields ) && array_key_exists( 'css', $this->advanced_fields['image'] ) ) {

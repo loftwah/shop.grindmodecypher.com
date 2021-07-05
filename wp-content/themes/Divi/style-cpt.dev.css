@@ -762,6 +762,7 @@ body.admin-bar.et_non_fixed_nav.et_transparent_nav.et_header_style_slide #main-h
 
 /* Logo */
 #logo {
+  width: auto;
   -webkit-transition: all 0.4s ease-in-out;
   transition: all 0.4s ease-in-out;
   margin-bottom: 0;
@@ -4278,6 +4279,10 @@ body #main-content .et_builder_inner_content > p {
  * - In the Divi Builder plugin, these styles are wrapped to increase specificity.
  * - In the Divi Theme, these styles are not wrapped since wrapping body classes would break the selector.
  */
+@media all and (min-width: 981px) {
+  .et_pb_row [class*="et_pb_gutters"] .et_pb_gallery .et_pb_gallery_items .et_pb_gallery_item.et_pb_grid_item.last_in_row {
+    margin-right: 0; } }
+
 /* Gutters */
 /* Responsive Styles Desktop Only */
 @media all and (min-width: 981px) {
@@ -11887,13 +11892,15 @@ span.comment_date {
             transform: translate(-50%, -50%); }
   .et-db #et-boc .et-l .et_pb_contact p input[type="checkbox"]:checked + label i:before,
   .et-db #et-boc .et-l .et_pb_subscribe .et_pb_contact_field input[type="checkbox"]:checked + label i:before {
-    content: '\f147';
-    font-family: 'dashicons';
+    content: 'N';
+    font-family: 'ETmodules';
     color: #2EA3F2;
     width: 17px;
     height: 17px;
-    font-size: 17px;
-    line-height: 17px; }
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 17px;
+    text-align: center; }
   .et-db #et-boc .et-l .et_pb_contact p input[type="radio"]:checked + label i:before,
   .et-db #et-boc .et-l .et_pb_subscribe .et_pb_contact_field input[type="radio"]:checked + label i:before {
     background: #2EA3F2;
@@ -13382,6 +13389,7 @@ span.comment_date {
     -webkit-animation-name: fadeLeft;
     animation-name: fadeLeft; }
   .et-db #et-boc .et-l .et_pb_slide_image img {
+    width: auto;
     vertical-align: bottom; }
   .et-db #et-boc .et-l .et_pb_slide_image,
   .et-db #et-boc .et-l .et_pb_slide_video {
@@ -15377,6 +15385,10 @@ span.comment_date {
     -webkit-animation: fadeIn 1s 1 cubic-bezier(0.77, 0, 0.175, 1);
     animation: fadeIn 1s 1 cubic-bezier(0.77, 0, 0.175, 1); }
   @media all and (max-width: 980px) {
+    .et-db #et-boc .et-l .et_pb_animation_off_tablet, .et-db #et-boc .et-l .et-waypoint.et_pb_animation_off_tablet {
+      opacity: 1;
+      -webkit-animation: none;
+              animation: none; }
     .et-db #et-boc .et-l .et_pb_animation_left_tablet.et-animated {
       opacity: 1;
       -webkit-animation: fadeLeft 1s 1 cubic-bezier(0.77, 0, 0.175, 1);
@@ -15398,6 +15410,10 @@ span.comment_date {
       -webkit-animation: fadeIn 1s 1 cubic-bezier(0.77, 0, 0.175, 1);
       animation: fadeIn 1s 1 cubic-bezier(0.77, 0, 0.175, 1); } }
   @media all and (max-width: 767px) {
+    .et-db #et-boc .et-l .et_pb_animation_off_phone, .et-db #et-boc .et-l .et-waypoint.et_pb_animation_off_phone {
+      opacity: 1;
+      -webkit-animation: none;
+              animation: none; }
     .et-db #et-boc .et-l .et_pb_animation_left_phone.et-animated {
       opacity: 1;
       -webkit-animation: fadeLeft 1s 1 cubic-bezier(0.77, 0, 0.175, 1);
@@ -17173,6 +17189,7 @@ span.comment_date {
       .et-db #et-boc .et-l .et_pb_slide_image,
       .et-db #et-boc .et-l .et_pb_slide_video {
         position: relative;
+        top: auto;
         margin: 50px auto 0;
         padding: 0; }
       .et-db #et-boc .et-l .et_pb_slide_image img {

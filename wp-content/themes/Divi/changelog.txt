@@ -1,3 +1,100 @@
+version 4.9.7 ( updated 06-14-2021 )
+- Fixed issue with builder freezing while scrolling when there is Blurb module with image in the content.
+- Fixed Theme Builder templates assignments are getting duplicated after the saving.
+- Fixed an issue with slide images that may appear distorted in some cases.
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/api.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+
+version 4.9.6 ( updated 06-10-2021 )
+- Fixed the Image Module Force Fullwidth option not working.
+- Fixed a bug with the blurb content applying to the wrong selector.
+- Fixed an issue where changing the Horizontal repeat setting for the section divider wasn't resetting the divider repeat.
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/Blurb.php
+	* includes/builder/module/Image.php
+	* includes/builder/module/field/Divider.php
+	* includes/builder/scripts/utils/sticky.js
+
+version 4.9.5 ( updated 06-09-2021 )
+- Fixed group heading for Accordion module not working on the Frontend.
+- Fixed issue where existing theme builder templates could unintentionally get deleted if interrupting the saving templates process.
+- Fixed an issue with the Post Slider module that could cause an infinite loop when the module is used in a post.
+- Added hover option for sizing the content and image on Blurb module.
+- Fixed an issue with anchor links when vertical menu is present causing the links to not scroll to proper sections.
+- Fixed a bug that caused the left button alignment to not work on the frontend on RTL pages.
+- Fixed an issue with the Shop module where a specific overlay icon would not be rendered on the frontend.
+- Fixed the animation stop working on the sticky state.
+- Fixed text module's blockquote line height that's overridden by paragraph line height inherited from the module.
+- Fixed extra space that is caused by WP 5.7 when post meta is not shown for the blog module.
+- Fixed contact form module button background color in Divi Builder Plugin.
+- Fixed issue with Accordion icon color.
+- Fixed slider module content overlaps the video on mobile.
+- Removed nested links for Menu module on mobile.
+- Fixed accordion title heading level not working for individual accordion items.
+- Fixed custom gutters breaking gallery layout.
+- Fixed Body Text Size changes not reflecting in VB for Blog module with grid layout.
+- Fixed an issue with the Blurb module where the blurb image animation couldn't be disabled on tablet and phone devices.
+- Updated React to 16.12.0 in package.json.
+- Removed auto width and height attributes from images to fix CLS ranking factor.
+- Fixed an issue with the Map module where the latitude and longitude values used the wrong decimal point.
+- Fixed a PHP 8 Uncaught Error: Unknown named parameter $interval.
+- Introduces new class as unique identifier for categories field type on post or page settings.
+- Fixed reply-to email address missing in email headers when email field is not required in contact form module.
+- Fixed an issue with anchor, list, and blockquote color styles not applying correctly on the Fullwidth Post Content module.
+- Fixed a PHP warning that may occur in very rare cases where the Theme Builder cannot extract the theme default head.
+- Fixed an issue where the font subsets array contained an item with an empty value.
+- Fixed issue causing lagging during scroll action.
+- Fixed responsive content not visible in mobile devices when  having content the same with desktop mode and contains HTML special characters.
+- Fixed an issue with comments not displaying on LearnDash lesson pages.
+- Fixed JavaScript error Cannot read property et_slider_destroy of null that may have occurred in modules that use the et_slider_destroy() function.
+- Fixed an issue where scroll to anchor will trigger scroll even when the target element is in sticky state (in view).
+- Fixed compatibility warnings are not shown up on Theme Customizer.
+- Fix a long standing bug that caused page styles to break when a cache plugin is used while static css file generation is enabled in the theme options.
+- Fixed logo max height does not update on the front-end for phones.
+- Fixed issues with layout for shop module when an RTL language is used.
+- Fixed Body Link Color setting in Customizer affecting links in the Post Title module while editing in the Customizer.
+- Fixed an issue with Lighthouse Best Practices "Registers an unload listener" by replacing the unload with visibilitychange.
+- Fixed a CLS error by adding explicit width and height for the logo image element.
+	* comments.php
+	* core/admin/js/compatibility-warning.js
+	* core/components/CompatibilityWarning.php
+	* core/components/init.php
+	* core/functions.php
+	* header.php
+	* includes/builder/ab-testing.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/comments_template.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/api.php
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/functions.php
+	* includes/builder/module/Blog.php
+	* includes/builder/module/Blurb.php
+	* includes/builder/module/ContactForm.php
+	* includes/builder/module/FullwidthImage.php
+	* includes/builder/module/FullwidthMap.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/Image.php
+	* includes/builder/module/Map.php
+	* includes/builder/module/MapItem.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/PostSlider.php
+	* includes/builder/module/SliderItem.php
+	* includes/builder/module/Text.php
+	* includes/builder/module/Toggle.php
+	* includes/builder/module/field/Position.php
+	* includes/builder/module/helpers/MultiViewOptions.php
+	* includes/builder/module/type/PostContent.php
+	* includes/builder/plugin-compat/relevanssi.php
+	* includes/builder/scripts/frontend/global-functions.js
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/utils/sticky.js
+	* js/src/custom.js
+	* js/src/theme-customizer.js
+	* theme-header.php
+
 version 4.9.4 ( updated 04-13-2021 )
 - Fixed search module custom left and right padding not working when you hide the search button.
 - Fixed incorrect scrollTo behavior when the $target is sticky module that sticks to top.

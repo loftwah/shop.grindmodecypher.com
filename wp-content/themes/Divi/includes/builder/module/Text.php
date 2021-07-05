@@ -89,7 +89,7 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'text'     => array(
 					'label'           => et_builder_i18n( 'Text' ),
 					'css'             => array(
-						'line_height' => "{$this->main_css_element} p",
+						'line_height' => "{$this->main_css_element}",
 						'color'       => "{$this->main_css_element}.et_pb_text",
 					),
 					'line_height'     => array(

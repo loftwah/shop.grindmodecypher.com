@@ -1193,13 +1193,13 @@ function et_pb_ab_get_goal_module( $post_id ) {
  */
 function et_pb_create_ab_cron() {
 	// schedule daily event.
-	if ( ! wp_next_scheduled( 'et_pb_ab_cron', array( 'interval' => 'daily' ) ) ) {
-		wp_schedule_event( time(), 'daily', 'et_pb_ab_cron', array( 'interval' => 'daily' ) );
+	if ( ! wp_next_scheduled( 'et_pb_ab_cron', array( 'daily' ) ) ) {
+		wp_schedule_event( time(), 'daily', 'et_pb_ab_cron', array( 'daily' ) );
 	}
 
 	// schedule hourly event.
-	if ( ! wp_next_scheduled( 'et_pb_ab_cron', array( 'interval' => 'hourly' ) ) ) {
-		wp_schedule_event( time(), 'hourly', 'et_pb_ab_cron', array( 'interval' => 'hourly' ) );
+	if ( ! wp_next_scheduled( 'et_pb_ab_cron', array( 'hourly' ) ) ) {
+		wp_schedule_event( time(), 'hourly', 'et_pb_ab_cron', array( 'hourly' ) );
 	}
 }
 

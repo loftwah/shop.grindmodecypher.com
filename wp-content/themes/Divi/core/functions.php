@@ -1204,7 +1204,7 @@ if ( ! function_exists( 'et_get_attachment_id_by_url_sql' ) ) :
 		$cleaned_url = preg_replace( '/^https?:/i', '', $normalized_url );
 
 		// Remove any thumbnail size suffix from the filename and use that as a fallback.
-		$fallback_url = preg_replace( '/-(\d+)x(\d+)\.(jpg|jpeg|gif|png)$/', '.$3', $cleaned_url );
+		$fallback_url = preg_replace( '/-(\d+)x(\d+)\.(jpg|jpeg|gif|png|svg)$/', '.$3', $cleaned_url );
 
 		if ( $cleaned_url === $fallback_url ) {
 			$attachments_query = $wpdb->prepare(
@@ -1331,7 +1331,7 @@ function et_get_attachment_id_by_url( $url ) {
 
 		if ( 0 === strpos( $normalized_url, $uploads_baseurl ) ) {
 			$file_path = str_replace( $uploads_baseurl, '', $normalized_url );
-			$file_path_no_resize = preg_replace( '/-(\d+)x(\d+)\.(jpg|jpeg|gif|png)$/', '.$3', $file_path );
+			$file_path_no_resize = preg_replace( '/-(\d+)x(\d+)\.(jpg|jpeg|gif|png|svg)$/', '.$3', $file_path );
 
 			if ( $file_path === $file_path_no_resize ) {
 				$attachments_sql_query = $wpdb->prepare(
@@ -1422,7 +1422,7 @@ function et_get_attachment_size_by_url( $url, $default_size = 'full' ) {
 
 	if ( strpos( $url, $metadata['file'] ) === ( strlen( $url ) - strlen( $metadata['file'] ) ) ) {
 		$size = array( $metadata['width'], $metadata['height'] );
-	} else if ( preg_match( '/-(\d+)x(\d+)\.(jpg|jpeg|gif|png)$/', $url, $match ) ) {
+	} else if ( preg_match( '/-(\d+)x(\d+)\.(jpg|jpeg|gif|png|svg)$/', $url, $match ) ) {
 		// Get the image width and height.
 		// Example: https://regex101.com/r/7JwGz7/1.
 		$size = array( $match[1], $match[2] );
@@ -1534,7 +1534,7 @@ function et_attachment_normalize_url( $url ) {
 
 	// Validate URL format and file extension.
 	// Example: https://regex101.com/r/dXcpto/1.
-	if ( ! filter_var( $url, FILTER_VALIDATE_URL ) || ! preg_match( '/^(.+)\.(jpg|jpeg|gif|png)$/', $url ) ) {
+	if ( ! filter_var( $url, FILTER_VALIDATE_URL ) || ! preg_match( '/^(.+)\.(jpg|jpeg|gif|png|svg)$/', $url ) ) {
 		return false;
 	}
 

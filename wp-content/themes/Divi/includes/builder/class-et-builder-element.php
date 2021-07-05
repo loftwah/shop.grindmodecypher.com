@@ -16039,6 +16039,11 @@ class ET_Builder_Element {
 						$button_key       = ! $is_desktop ? "{$option_name}_alignment_{$device}" : "{$option_name}_alignment";
 						$button_alignment = $this->props[ "{$button_key}" ];
 
+						// For RTL the left allignment is 'force_left', however, the actual value for the 'text-align' property has to be 'left'.
+						if ( 'force_left' === $button_alignment ) {
+							$button_alignment = 'left';
+						}
+
 						// Ensure button alignment value is not empty.
 						if ( empty( $button_alignment ) ) {
 							continue;

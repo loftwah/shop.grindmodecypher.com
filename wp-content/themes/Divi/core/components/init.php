@@ -305,7 +305,7 @@ function et_core_page_resource_fallback() {
 	}
 
 	$resource_id = sanitize_text_field( $_GET['et_core_page_resource'] );
-	$pattern     = '/et-(\w+)-([\w-]+)-cached-inline-(?>styles|scripts)(global|\d+)/';
+	$pattern     = '/et-(\w+)-([\w-]+)-(global|\d+)-cached-inline-(?>styles|scripts)/';
 	$has_matches = preg_match( $pattern, $resource_id, $matches );
 
 	if ( $has_matches ) {
