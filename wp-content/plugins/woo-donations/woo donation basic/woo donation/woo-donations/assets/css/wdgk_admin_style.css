@@ -1,0 +1,129 @@
+.wdgk_inner .wdgk-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.wdgk_inner label.wdgk-switch {
+    cursor: pointer;
+}
+
+.wdgk_inner input:checked+.wdgk-slider {
+    background-color: #2196F3;
+}
+
+.wdgk_inner .wdgk-slider.wdgk-round {
+    border-radius: 34px;
+}
+
+.wdgk_inner .wdgk-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.wdgk_inner .wdgk-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input.wdgk-cart,
+input.wdgk-checkout,
+input.wdgk-campaign,
+input.wdgk-note {
+    display: none;
+}
+
+input.wdgk-cart:checked+.wdgk-slider:before,
+input.wdgk-checkout:checked+.wdgk-slider:before,
+input.wdgk-campaign:checked+.wdgk-slider:before,
+input.wdgk-note:checked+.wdgk-slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+.notice.notice-success.wdgk-success-msg {
+    border-left: 3px solid green;
+}
+
+.notice.notice-error.wdgk-error-msg {
+    border-left: 3px solid red;
+}
+
+span.dashicons.dashicons-yes-alt.wdgk_right_icon {
+    color: #00a0d2;
+}
+
+.wdgk-hidden {
+    display: none;
+}
+
+.wdgk_inner span.wdgk_note {
+    display: block;
+    font-weight: 376;
+    padding-top: 5px;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.wdgk_pro_details {
+    background: #fff;
+    padding: 30px;
+    max-width: 480px;
+    margin-top: 30px;
+    border-radius: 10px;
+    box-shadow: -10px 10px 30px rgb(0 0 0 / 10%);
+}
+
+.wdgk_pro_details h2 {
+    margin-top: 0;
+    font-size: 24px;
+    line-height: 28px;
+}
+
+.wdgk_pro_details ul li {
+    position: relative;
+    margin-bottom: 18px;
+    font-size: 16px;
+}
+
+.wdgk_pro_details ul li:before {
+    content: "✓";
+    margin-right: 8px;
+}
+
+.wdgk_pro_details .wdgk_premium_btn {
+    font-size: 16px;
+    padding: 0 22px;
+    background: #00CB95;
+    color: #ffffff;
+    text-decoration: none;
+    outline: none;
+    text-transform: capitalize;
+    height: 46px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    transition: 0.5s;
+}
+
+.wdgk_pro_details .wdgk_premium_btn:hover {
+    background: #333333;
+}
