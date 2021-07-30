@@ -64,6 +64,7 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 			'prefix'              => '',
 			'tab_slug'            => 'advanced',
 			'toggle_slug'         => 'margin_padding',
+			'sub_toggle'          => null,
 			'option_category'     => 'layout',
 			'depends_show_if'     => '',
 			'depends_show_if_not' => '',
@@ -145,6 +146,7 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 		// Config details.
 		$tab_slug    = $config['tab_slug'];
 		$toggle_slug = $config['toggle_slug'];
+		$sub_toggle  = $config['sub_toggle'];
 
 		list(
 			$custom_padding,
@@ -174,6 +176,7 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 				'depends_show_if' => $config['depends_show_if'],
 				'tab_slug'        => $tab_slug,
 				'toggle_slug'     => $toggle_slug,
+				'sub_toggle'      => $sub_toggle,
 				'priority'        => $config['priority'],
 			);
 			$fields[ $custom_margin_tablet ] = array(
@@ -235,6 +238,7 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 				'depends_show_if' => $config['depends_show_if'],
 				'tab_slug'        => $tab_slug,
 				'toggle_slug'     => $toggle_slug,
+				'sub_toggle'      => $sub_toggle,
 				'priority'        => $config['priority'],
 			);
 			$fields[ $custom_padding_tablet ] = array(

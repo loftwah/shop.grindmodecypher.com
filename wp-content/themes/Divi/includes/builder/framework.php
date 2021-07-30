@@ -115,6 +115,7 @@ require_once ET_BUILDER_DIR . 'frontend-builder/theme-builder/theme-builder.php'
 require_once ET_BUILDER_DIR . 'feature/global-presets/Settings.php';
 require_once ET_BUILDER_DIR . 'feature/global-presets/History.php';
 require_once ET_BUILDER_DIR . 'feature/window.php';
+require_once ET_BUILDER_DIR . 'feature/BlockTemplates.php';
 
 // Conditional Includes.
 if ( et_is_woocommerce_plugin_active() ) {

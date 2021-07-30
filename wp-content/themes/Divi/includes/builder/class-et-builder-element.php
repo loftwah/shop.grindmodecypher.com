@@ -5450,6 +5450,7 @@ class ET_Builder_Element {
 		$tab_slug        = isset( $this->advanced_fields['margin_padding']['tab_slug'] ) ? $this->advanced_fields['margin_padding']['tab_slug'] : 'advanced';
 		$toggle_disabled = isset( $this->advanced_fields['margin_padding']['disable_toggle'] ) && $this->advanced_fields['margin_padding']['disable_toggle'];
 		$toggle_slug     = isset( $this->advanced_fields['margin_padding']['toggle_slug'] ) ? $this->advanced_fields['margin_padding']['toggle_slug'] : 'margin_padding';
+		$sub_toggle      = et_()->array_get( $this->advanced_fields['margin_padding'], 'sub_toggle', null );
 
 		$i18n =& self::$i18n;
 
@@ -5504,6 +5505,11 @@ class ET_Builder_Element {
 				'tab_slug'    => $tab_slug,
 				'toggle_slug' => $toggle_slug,
 			);
+
+			// Only adds `sub_toggle` for the margin settings when it's not empty.
+			if ( ! empty( $sub_toggle ) ) {
+				$additional_options['custom_margin']['sub_toggle'] = $sub_toggle;
+			}
 
 			// make it possible to override/add options.
 			if ( ! empty( $this->advanced_fields['margin_padding']['custom_margin'] ) ) {
@@ -5564,6 +5570,11 @@ class ET_Builder_Element {
 				'tab_slug'    => $tab_slug,
 				'toggle_slug' => $toggle_slug,
 			);
+
+			// Only adds `sub_toggle` for the padding settings when it's not empty.
+			if ( ! empty( $sub_toggle ) ) {
+				$additional_options['custom_padding']['sub_toggle'] = $sub_toggle;
+			}
 
 			// make it possible to override/add options.
 			if ( ! empty( $this->advanced_fields['margin_padding']['custom_padding'] ) ) {
@@ -6795,6 +6806,7 @@ class ET_Builder_Element {
 		$tab_slug        = self::$_->array_get( $filter_settings, 'tab_slug', 'advanced' );
 		$toggle_slug     = self::$_->array_get( $filter_settings, 'toggle_slug', 'filters' );
 		$toggle_name     = self::$_->array_get( $filter_settings, 'toggle_name', $i18n['filter']['toggle']['title'] );
+		$sub_toggle      = self::$_->array_get( $filter_settings, 'sub_toggle', 'filters' );
 
 		$modal_toggles = array(
 			$toggle_slug => array(
@@ -7036,7 +7048,8 @@ class ET_Builder_Element {
 		$child_filter = $this->advanced_fields['filters']['child_filters_target'];
 
 		// Allow to modify child filter options label. Default is Image.
-		$child_filter_label = isset( $child_filter['label'] ) ? $child_filter['label'] : et_builder_i18n( 'Image' );
+		$child_filter_label      = isset( $child_filter['label'] ) ? $child_filter['label'] : et_builder_i18n( 'Image' );
+		$child_filter_sub_toggle = et_()->array_get( $child_filter, 'sub_toggle', null );
 
 		$additional_child_options = array(
 			'child_filter_hue_rotate' => array(
@@ -7056,6 +7069,7 @@ class ET_Builder_Element {
 				'fixed_range'      => true,
 				'tab_slug'         => $child_filter['tab_slug'],
 				'toggle_slug'      => $child_filter['toggle_slug'],
+				'sub_toggle'       => $child_filter_sub_toggle,
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
@@ -7078,6 +7092,7 @@ class ET_Builder_Element {
 				'fixed_range'      => true,
 				'tab_slug'         => $child_filter['tab_slug'],
 				'toggle_slug'      => $child_filter['toggle_slug'],
+				'sub_toggle'       => $child_filter_sub_toggle,
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
@@ -7100,6 +7115,7 @@ class ET_Builder_Element {
 				'fixed_range'      => true,
 				'tab_slug'         => $child_filter['tab_slug'],
 				'toggle_slug'      => $child_filter['toggle_slug'],
+				'sub_toggle'       => $child_filter_sub_toggle,
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
@@ -7122,6 +7138,7 @@ class ET_Builder_Element {
 				'fixed_range'      => true,
 				'tab_slug'         => $child_filter['tab_slug'],
 				'toggle_slug'      => $child_filter['toggle_slug'],
+				'sub_toggle'       => $child_filter_sub_toggle,
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
@@ -7144,6 +7161,7 @@ class ET_Builder_Element {
 				'fixed_range'      => true,
 				'tab_slug'         => $child_filter['tab_slug'],
 				'toggle_slug'      => $child_filter['toggle_slug'],
+				'sub_toggle'       => $child_filter_sub_toggle,
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
@@ -7166,6 +7184,7 @@ class ET_Builder_Element {
 				'fixed_range'      => true,
 				'tab_slug'         => $child_filter['tab_slug'],
 				'toggle_slug'      => $child_filter['toggle_slug'],
+				'sub_toggle'       => $child_filter_sub_toggle,
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
@@ -7190,6 +7209,7 @@ class ET_Builder_Element {
 				'fixed_range'      => true,
 				'tab_slug'         => $child_filter['tab_slug'],
 				'toggle_slug'      => $child_filter['toggle_slug'],
+				'sub_toggle'       => $child_filter_sub_toggle,
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
@@ -7213,6 +7233,7 @@ class ET_Builder_Element {
 				'fixed_range'      => true,
 				'tab_slug'         => $child_filter['tab_slug'],
 				'toggle_slug'      => $child_filter['toggle_slug'],
+				'sub_toggle'       => $child_filter_sub_toggle,
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,
@@ -7245,6 +7266,7 @@ class ET_Builder_Element {
 				),
 				'tab_slug'         => $child_filter['tab_slug'],
 				'toggle_slug'      => $child_filter['toggle_slug'],
+				'sub_toggle'       => $child_filter_sub_toggle,
 				'reset_animation'  => false,
 				'hover'            => 'tabs',
 				'mobile_options'   => true,

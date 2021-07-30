@@ -1341,7 +1341,7 @@ class ET_Core_Portability {
 				}
 			}
 
-			if ( is_array( $module['content'] ) ) {
+			if ( isset( $module['content'] ) && is_array( $module['content'] ) ) {
 				$this->rewrite_module_preset_ids( $module['content'], $global_presets, $preset_rewrite_map );
 			}
 		}
@@ -1379,7 +1379,7 @@ class ET_Core_Portability {
 				}
 			}
 
-			if ( is_array( $module['content'] ) ) {
+			if ( isset( $module['content'] ) && is_array( $module['content'] ) ) {
 				$this->apply_global_presets( $module['content'], $global_presets );
 			}
 		}
@@ -1563,28 +1563,27 @@ class ET_Core_Portability {
 		foreach ( $data as $value ) {
 			if ( is_array( $value ) || is_object( $value ) ) {
 				$images = array_merge( $images, $this->get_data_images( (array) $value ) );
-				continue;
 			}
 
-			// Extract images from html or shortcodes.
+			// Extract images from HTML or shortcodes.
 			if ( preg_match_all( '/(' . implode( '|', $images_src ) . ')="(?P<src>\w+[^"]*)"/i', $value, $matches ) ) {
 				foreach ( array_unique( $matches['src'] ) as $key => $src ) {
 					$images = array_merge( $images, $this->get_data_images( array( $key => $src ) ) );
 				}
-				continue;
 			}
 
 			// Extract images from shortcodes gallery.
 			if ( preg_match_all( '/gallery_ids="(?P<ids>\w+[^"]*)"/i', $value, $matches ) ) {
-				$explode = explode( ',', str_replace( ' ', '', $matches['ids'][0] ) );
+				foreach ( array_unique( $matches['ids'] ) as $galleries ) {
+					$explode = explode( ',', str_replace( ' ', '', $galleries ) );
 
-				foreach ( $explode as $image_id ) {
-					$images = array_merge( $images, $this->get_data_images( array( (int) $image_id ), true ) );
+					foreach ( $explode as $image_id ) {
+						$images = array_merge( $images, $this->get_data_images( array( (int) $image_id ), true ) );
+					}
 				}
-				continue;
 			}
 
-			if ( preg_match( '/^.+?\.(jpg|jpeg|jpe|png|gif)/', $value, $match ) || $force ) {
+			if ( preg_match( '/^.+?\.(jpg|jpeg|jpe|png|gif|webp)/', $value, $match ) || $force ) {
 				$basename = basename( $value );
 
 				// Avoid duplicates.
@@ -2168,7 +2167,7 @@ class ET_Core_Portability {
 				}
 			}
 
-			if ( is_array( $module['content'] ) ) {
+			if ( isset( $module['content'] ) && is_array( $module['content'] ) ) {
 				$used_global_presets = array_merge( $used_global_presets, $this->get_used_global_presets( $module['content'], $used_global_presets ) );
 			}
 		}

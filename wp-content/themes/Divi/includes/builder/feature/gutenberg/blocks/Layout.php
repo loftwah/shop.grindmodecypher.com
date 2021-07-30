@@ -77,7 +77,7 @@ class ET_GB_Block_Layout {
 
 		// Block rendering on frontend
 		add_filter( 'render_block', array( $this, 'render_block' ), 100, 2 );
-
+		add_filter( 'get_the_excerpt', array( $this, 'get_the_excerpt' ), 10, 2 );
 	}
 
 	/**
@@ -192,6 +192,51 @@ class ET_GB_Block_Layout {
 		$et_is_layout_block = false;
 
 		return $block_content;
+	}
+
+	/**
+	 * Always convert post excerpt built with builder.
+	 *
+	 * @since 4.9.10
+	 *
+	 * @param string $post_excerpt Current post excerpt generated.
+	 * @param array  $post         Current post object.
+	 *
+	 * @return string Modified post excerpt.
+	 */
+	public function get_the_excerpt( $post_excerpt, $post ) {
+		if ( ! et_pb_is_pagebuilder_used( $post->ID ) ) {
+			return $post_excerpt;
+		}
+
+		// Process post excerpt if it's empty or contains ET shortcode.
+		if ( empty( $post_excerpt ) || false !== strpos( $post_excerpt, '[et_pb_' ) ) {
+			// Ensure all the ET shortcode are registered.
+			if ( ! did_action( 'et_builder_ready' ) ) {
+				// When the `get_the_excerpt` filter is called by Query Loop block on the FE,
+				// the `ET_Builder_Element` class is loaded properly but no ET shortcode is
+				// registered yet. In this case, we can call `et_builder_init_global_settings`
+				// & `et_builder_add_main_elements` methods directly. However, this class is not
+				// loaded on the Block Editor, so we have to load all related files manually
+				// before we can call those methods to register the shortcode.
+				if ( ! class_exists( 'ET_Builder_Element' ) ) {
+					require_once ET_BUILDER_DIR . 'class-et-builder-value.php';
+					require_once ET_BUILDER_DIR . 'class-et-builder-element.php';
+					require_once ET_BUILDER_DIR . 'ab-testing.php';
+				}
+
+				et_builder_init_global_settings();
+				et_builder_add_main_elements();
+				et_builder_settings_init();
+			}
+
+			// WordPress post excerpt length comes from `excerpt_length` filter. And, it's
+			// words based length, not characters based length.
+			$excerpt_length = apply_filters( 'excerpt_length', 55 );
+			$post_excerpt   = et_core_intentionally_unescaped( wpautop( et_delete_post_first_video( strip_shortcodes( truncate_post( $excerpt_length, false, $post, false, true ) ) ) ), 'html' );
+		}
+
+		return $post_excerpt;
 	}
 
 	/**

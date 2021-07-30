@@ -38,7 +38,7 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 							'option_category'     => null,
 							'tab_slug'            => null,
 							'toggle_slug'         => null,
-							'sub_toggle_slug'     => null,
+							'sub_toggle'          => null,
 							'depends_show_if_not' => null,
 							'depends_show_if'     => null,
 							'depends_on'          => null,
@@ -75,7 +75,8 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 				'option_category'     => '',
 				'tab_slug'            => '',
 				'toggle_slug'         => '',
-				'sub_toggle_slug'     => null,
+				'sub_toggle_slug'     => null, // @deprecated Use {@see `sub_toggle`} instead. Keep it here as backward compatibility.
+				'sub_toggle'          => null,
 				'depends_show_if_not' => null,
 				'depends_show_if'     => null,
 				'depends_on'          => null,
@@ -85,6 +86,12 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 			),
 			$args
 		);
+
+		// The `sub_toggle_slug` is deprecated in favor of `sub_toggle` which are used by
+		// other option groups. Keep it here for backward compatibiluty.
+		if ( ! empty( $arguments['sub_toggle_slug'] ) && empty( $arguments['sub_toggle'] ) ) {
+			$arguments['sub_toggle'] = $arguments['sub_toggle_slug'];
+		}
 
 		if ( $this->template->is_enabled() && $this->template->has( 'box_shadow' ) ) {
 			return $this->template->create( 'box_shadow', $arguments );
@@ -104,6 +111,7 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 			'option_category'  => $arguments['option_category'],
 			'tab_slug'         => $arguments['tab_slug'],
 			'toggle_slug'      => $arguments['toggle_slug'],
+			'sub_toggle'       => $arguments['sub_toggle'],
 			'show_if_not'      => array(
 				"{$style}" => 'none',
 			),
@@ -128,10 +136,6 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 				'sticky'         => true,
 			)
 		);
-
-		if ( $arguments['sub_toggle_slug'] ) {
-			$option['sub_toggle'] = $arguments['sub_toggle_slug'];
-		}
 
 		$presets = array();
 

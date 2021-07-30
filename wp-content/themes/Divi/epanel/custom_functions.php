@@ -300,8 +300,20 @@ if ( ! function_exists( 'et_delete_option' ) ) {
 
 /*this function allows for the auto-creation of post excerpts*/
 if ( ! function_exists( 'truncate_post' ) ) {
-
-	function truncate_post( $amount, $echo = true, $post = '', $strip_shortcodes = false ) {
+	/**
+	 * Truncate post content to generate post excerpt.
+	 *
+	 * @since ?? Add new paramter $is_words_length to cut the text based on words length.
+	 *
+	 * @param integer $amount           Amount of text that should be kept.
+	 * @param boolean $echo             Whether to print the output or not.
+	 * @param object  $post             Post object.
+	 * @param boolean $strip_shortcodes Whether to strip the shortcodes or not.
+	 * @param boolean $is_words_length  Whether to cut the text based on words length or not.
+	 *
+	 * @return string Generated post post excerpt.
+	 */
+	function truncate_post( $amount, $echo = true, $post = '', $strip_shortcodes = false, $is_words_length = false ) {
 		global $shortname;
 
 		if ( empty( $post ) ) global $post;
@@ -373,8 +385,20 @@ if ( ! function_exists( 'truncate_post' ) ) {
 				// $amount = $amount - 3;
 			}
 
-			// trim text to a certain number of characters, also remove spaces from the end of a string ( space counts as a character )
-			$truncate = rtrim( et_wp_trim_words( $truncate, $amount, '' ) );
+			$trim_words = '';
+
+			if ( $is_words_length ) {
+				// Reset `$echo_out` text because it will be added by wp_trim_words() with
+				// default WordPress `excerpt_more` text.
+				$echo_out     = '';
+				$excerpt_more = apply_filters( 'excerpt_more', ' [&hellip;]' );
+				$trim_words   = wp_trim_words( $truncate, $amount, $excerpt_more );
+			} else {
+				$trim_words = et_wp_trim_words( $truncate, $amount, '' );
+			}
+
+			// trim text to a certain number of characters, also remove spaces from the end of a string ( space counts as a character ).
+			$truncate = rtrim( $trim_words );
 
 			// remove the last word to make sure we display all words correctly
 			if ( ! empty( $echo_out ) ) {

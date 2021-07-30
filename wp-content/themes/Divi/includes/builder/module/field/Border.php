@@ -60,6 +60,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 					'color_type'      => null,
 					'depends_on'      => null,
 					'depends_show_if' => null,
+					'sub_toggle'      => null,
 					'defaults'        => array(
 						'border_radii'  => null,
 						'border_styles' => array(
@@ -95,6 +96,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 				'color_type'      => 'color-alpha',
 				'depends_on'      => null,
 				'depends_show_if' => null,
+				'sub_toggle'      => null,
 				'use_radius'      => true,
 				'defaults'        => array(
 					'border_radii'  => 'on||||',
@@ -126,6 +128,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 				'default'         => $settings['defaults']['border_radii'],
 				'tab_slug'        => $settings['tab_slug'],
 				'toggle_slug'     => $settings['toggle_slug'],
+				'sub_toggle'      => $settings['sub_toggle'],
 				'attr_suffix'     => $suffix,
 				'option_category' => 'border',
 				'description'     => esc_html__( 'Here you can control the corner radius of this element. Enable the link icon to control all four corners at once, or disable to define custom values for each.', 'et_builder' ),
@@ -143,6 +146,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 			'description'         => esc_html__( 'You can add borders to any element, customize their appearance and assign unique styles to each edge.', 'et_builder' ),
 			'tab_slug'            => $settings['tab_slug'],
 			'toggle_slug'         => $settings['toggle_slug'],
+			'sub_toggle'          => $settings['sub_toggle'],
 			'type'                => 'composite',
 			'attr_suffix'         => $suffix,
 			'option_category'     => 'border',

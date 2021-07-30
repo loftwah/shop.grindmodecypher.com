@@ -636,7 +636,12 @@ class ET_Builder_Settings {
 		$is_default       = array();
 
 		// Page settings fields.
-		$fields = self::$_PAGE_SETTINGS_FIELDS;
+		$fields = array();
+		// phpcs:disable ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase -- Needed for consistency with other variable names.
+		if ( ! empty( self::$_PAGE_SETTINGS_FIELDS ) ) {
+			$fields = self::$_PAGE_SETTINGS_FIELDS;
+		}
+		// phpcs:enable
 
 		// Defaults.
 		$default_bounce_rate_limit = 5;
@@ -653,28 +658,28 @@ class ET_Builder_Settings {
 		$is_default[]               = $et_pb_saved_color_palette === $default ? 'et_pb_color_palette' : '';
 
 		$gutter_width            = get_post_meta( $post_id, '_et_pb_gutter_width', true );
-		$default                 = $fields['et_pb_page_gutter_width']['default'];
+		$default                 = et_()->array_get( $fields, array( 'et_pb_page_gutter_width', 'default' ) );
 		$et_pb_page_gutter_width = '' !== $gutter_width ? $gutter_width : $default;
 		$is_default[]            = $et_pb_page_gutter_width === $default ? 'et_pb_page_gutter_width' : '';
 
 		$light_text_color       = get_post_meta( $post_id, '_et_pb_light_text_color', true );
-		$default                = $fields['et_pb_light_text_color']['default'];
+		$default                = et_()->array_get( $fields, array( 'et_pb_light_text_color', 'default' ) );
 		$et_pb_light_text_color = '' !== $light_text_color ? $light_text_color : $default;
 		$is_default[]           = strtolower( $et_pb_light_text_color ) === $default ? 'et_pb_light_text_color' : '';
 
 		$dark_text_color       = get_post_meta( $post_id, '_et_pb_dark_text_color', true );
-		$default               = $fields['et_pb_dark_text_color']['default'];
+		$default               = et_()->array_get( $fields, array( 'et_pb_dark_text_color', 'default' ) );
 		$et_pb_dark_text_color = '' !== $dark_text_color ? $dark_text_color : $default;
 		$is_default[]          = strtolower( $et_pb_dark_text_color ) === $default ? 'et_pb_dark_text_color' : '';
 
 		$content_area_background_color       = get_post_meta( $post_id, '_et_pb_content_area_background_color', true );
-		$default                             = $fields['et_pb_content_area_background_color']['default'];
+		$default                             = et_()->array_get( $fields, array( 'et_pb_content_area_background_color', 'default' ) );
 		$et_pb_content_area_background_color = '' !== $content_area_background_color ? $content_area_background_color : $default;
 		$is_default[]                        = strtolower( $et_pb_content_area_background_color ) === $default ? 'et_pb_content_area_background_color' : '';
 
 		$section_background_color = get_post_meta( $post_id, '_et_pb_section_background_color', true );
 
-		$default                        = $fields['et_pb_section_background_color']['default'];
+		$default                        = et_()->array_get( $fields, array( 'et_pb_section_background_color', 'default' ) );
 		$et_pb_section_background_color = '' !== $section_background_color ? $section_background_color : $default;
 		$is_default[]                   = strtolower( $et_pb_section_background_color ) === $default ? 'et_pb_section_background_color' : '';
 
@@ -685,7 +690,7 @@ class ET_Builder_Settings {
 		$is_default[] = empty( $overflow_y ) || $overflow_y === $OVERFLOW_DEFAULT ? $overflow->get_field_y( 'et_pb_' ) : '';
 
 		$static_css_file       = get_post_meta( $post_id, '_et_pb_static_css_file', true );
-		$default               = $fields['et_pb_static_css_file']['default'];
+		$default               = et_()->array_get( $fields, array( 'et_pb_static_css_file', 'default' ) );
 		$et_pb_static_css_file = '' !== $static_css_file ? $static_css_file : $default;
 		$is_default[]          = $et_pb_static_css_file === $default ? 'et_pb_static_css_file' : '';
 

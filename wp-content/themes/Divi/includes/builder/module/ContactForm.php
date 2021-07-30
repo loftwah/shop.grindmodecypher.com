@@ -492,8 +492,9 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 			if ( '' !== $current_form_fields ) {
 				$fields_data_json  = str_replace( '\\', '', $current_form_fields );
 				$fields_data_array = json_decode( $fields_data_json, true );
+				$fields_data_array = null === $fields_data_array ? [] : $fields_data_array;
 
-				// check whether captcha field is not empty
+				// check whether captcha field is not empty.
 				if ( 'on' === $captcha && 'off' === $use_spam_service && ( ! isset( $_POST[ 'et_pb_contact_captcha_' . $et_pb_contact_form_num ] ) || empty( $_POST[ 'et_pb_contact_captcha_' . $et_pb_contact_form_num ] ) ) ) {
 					$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Make sure you entered the captcha.', 'et_builder' ) );
 					$et_contact_error  = true;
@@ -504,65 +505,65 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 				}
 
 				// check all fields on current form and generate error message if needed
-				if ( ! empty( $fields_data_array ) ) {
+				// Generate form map of submitted form.
+				$submitted_form_map = array(
+					'form_number' => $et_pb_contact_form_num,
+					'fields'      => array(),
+				);
 
-					// Generate form map of submitted form
-					$submitted_form_map = array(
-						'form_number' => $et_pb_contact_form_num,
-						'fields'      => array(),
+				foreach ( $fields_data_array as $index => $value ) {
+					if ( ! isset( $value['field_id'], $value['field_label'], $value['field_type'], $value['original_id'], $value['required_mark'] ) ) {
+						continue;
+					}
+
+					if ( 'et_pb_contact_et_number_' . $et_pb_contact_form_num === $value['field_id'] ) {
+						continue;
+					}
+
+					// Populate form map's fields.
+					$submitted_form_map['fields'][] = array(
+						'field_type'    => self::$_->array_get( $value, 'field_type', 'input' ),
+						'field_id'      => self::$_->array_get( $value, 'original_id' ),
+						'required_mark' => 'required' === self::$_->array_get( $value, 'required_mark', 'required' ) ? 'on' : 'off',
 					);
 
-					foreach ( $fields_data_array as $index => $value ) {
-						if ( isset( $value['field_id'] ) && 'et_pb_contact_et_number_' . $et_pb_contact_form_num === $value['field_id'] ) {
-							continue;
-						}
+					// check all the required fields, generate error message if required field is empty.
+					$field_value = isset( $_POST[ $value['field_id'] ] ) ? trim( sanitize_text_field( $_POST[ $value['field_id'] ] ) ) : '';
 
-						// Populate form map's fields
-						$submitted_form_map['fields'][] = array(
-							'field_type'    => self::$_->array_get( $value, 'field_type', 'input' ),
-							'field_id'      => self::$_->array_get( $value, 'original_id' ),
-							'required_mark' => 'required' === self::$_->array_get( $value, 'required_mark', 'required' ) ? 'on' : 'off',
-						);
+					if ( 'required' === $value['required_mark'] && empty( $field_value ) && ! is_numeric( $field_value ) ) {
+						$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Make sure you fill in all required fields.', 'et_builder' ) );
+						$et_contact_error  = true;
+						continue;
+					}
 
-						// check all the required fields, generate error message if required field is empty
-						$field_value = isset( $_POST[ $value['field_id'] ] ) ? trim( $_POST[ $value['field_id'] ] ) : '';
+					// additional check for email field.
+					if ( 'email' === $value['field_type'] && ! empty( $field_value ) ) {
+						$contact_email = isset( $_POST[ $value['field_id'] ] ) ? sanitize_email( $_POST[ $value['field_id'] ] ) : '';
 
-						if ( 'required' === $value['required_mark'] && empty( $field_value ) && ! is_numeric( $field_value ) ) {
-							$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Make sure you fill in all required fields.', 'et_builder' ) );
+						if ( 'required' === $value['required_mark'] && ( empty( $contact_email ) || ! is_email( $contact_email ) ) ) {
+							$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Invalid Email.', 'et_builder' ) );
 							$et_contact_error  = true;
-							continue;
-						}
-
-						// additional check for email field
-						if ( 'email' === $value['field_type'] && ! empty( $field_value ) ) {
-							$contact_email = isset( $_POST[ $value['field_id'] ] ) ? sanitize_email( $_POST[ $value['field_id'] ] ) : '';
-
-							if ( 'required' === $value['required_mark'] && ( empty( $contact_email ) || ! is_email( $contact_email ) ) ) {
-								$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Invalid Email.', 'et_builder' ) );
-								$et_contact_error  = true;
-							}
-						}
-
-						// prepare the array of processed field values in convenient format
-						if ( false === $et_contact_error ) {
-							$processed_fields_values[ $value['original_id'] ]['value'] = $field_value;
-							$processed_fields_values[ $value['original_id'] ]['label'] = $value['field_label'];
 						}
 					}
 
-					// Check form's integrity by comparing fields structure (used for required fields check, etc)
-					// stored in the shortcode against submitted value generated using JS on the front end
-					// to prevent data being altered by modifying form markup.
-					$form_map = $this->get_form_map( $shortcode_content, $et_pb_contact_form_num, $hidden_form_fields );
-
-					if ( serialize( $submitted_form_map ) !== serialize( $form_map ) ) {
-						$et_error_message .= sprintf(
-							'<p class="et_pb_contact_error_text">%1$s</p>',
-							esc_html__( 'Invalid submission. Please refresh the page and try again.', 'et_builder' )
-						);
-						$et_contact_error  = true;
+					// prepare the array of processed field values in convenient format.
+					if ( false === $et_contact_error ) {
+						$processed_fields_values[ $value['original_id'] ]['value'] = $field_value;
+						$processed_fields_values[ $value['original_id'] ]['label'] = $value['field_label'];
 					}
 				}
+
+				// Check form's integrity by comparing fields structure (used for required fields check, etc)
+				// stored in the shortcode against submitted value generated using JS on the front end
+				// to prevent data being altered by modifying form markup.
+				$form_map = $this->get_form_map( $shortcode_content, $et_pb_contact_form_num, $hidden_form_fields );
+
+				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- doing equality check between two serialized arrays
+				if ( serialize( $submitted_form_map ) !== serialize( $form_map ) ) {
+					$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Invalid submission. Please refresh the page and try again.', 'et_builder' ) );
+					$et_contact_error  = true;
+				}
+
 			} else {
 				$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Make sure you fill in all required fields.', 'et_builder' ) );
 				$et_contact_error  = true;

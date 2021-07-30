@@ -61,6 +61,7 @@ class ET_Builder_Plugin_Compat_Imagify extends ET_Builder_Plugin_Compat_Base {
 					display: inherit;
 				}
 				picture#logo source, picture#logo img {
+					width: auto;
 					max-height: {$logo_height}%;
 					vertical-align: middle;
 				}

@@ -1,3 +1,58 @@
+version 4.9.10 ( updated 07-19-2021 )
+- Improved custom widget area feature on Widget page to adapt new Widget Block Editor.
+- Fixed builder crash when extending styles of child modules that were newly created.
+- Fixed the post excerpt return empty when the posts on the Query Loop block use Divi Builder layout.
+- Fixed global colors tab showing error after updating react package.
+	* core/components/VersionRollback.php
+	* includes/builder/class-et-builder-settings.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/scripts/ext/widgets.js
+	* includes/builder/scripts/src/builder.js
+
+version 4.9.9 ( updated 07-14-2021 )
+- Fixed error regarding ET_Builder_Element not being found.
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+
+version 4.9.8 ( updated 07-14-2021 )
+- Fixed default Shop module overlay icon not displaying on the frontend.
+- Fixed the post excerpt return empty when the posts on the Query Loop block use Divi Builder layout.
+- Fixed broken Divi Layout block preview when Template Editor is active.
+- Fixed issue with Theme Builder layouts not working when posts or pages use custom block templates.
+- Fix a bug in the Contact Form module that made it possible to submit the form with invalid form data triggering an email to be sent (spam).
+- Added support for some option group to be displayed under sub toggle system on module settings modal.
+- Fixed error in the browser console"Invalid attempt to spread non-iterable instance"  when motion effect for a module is enabled.
+- Fixed an issue with the current window mode (device) detection in JavaScript.
+- Fixed a compatibility issue with the Imagify plugin where logo images may appear distorted in some cases.
+- Fixed JS Error printed in the browser console after moving a module.
+- Fixed a PHP notice that may occur in some cases when importing layouts that contain modules without content.
+- Fixed a Portability bug where images from Gallary modules would not be included in the .json export file in some cases.
+- Add Lazy Loading support for webp image format on Divi Builder modules.
+- Fixed an error in the sortable list component that occurred when a string couldn't be parsed as JSON.
+- Fixed a bug with the Imagify plugin where the wrong element was used to retrieve the image src.
+	* core/components/Portability.php
+	* core/functions.php
+	* core/ui/utils/utils.js
+	* epanel/custom_functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/feature/BlockTemplates.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/ContactForm.php
+	* includes/builder/module/field/Border.php
+	* includes/builder/module/field/BoxShadow.php
+	* includes/builder/module/field/MarginPadding.php
+	* includes/builder/plugin-compat/imagify.php
+	* includes/builder/scripts/frontend/motion-effects.js
+	* includes/builder/scripts/frontend/preview.js
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/src/block-layout-frontend-preview.js
+	* includes/builder/scripts/stores/window.js
+	* includes/builder/templates/block-template-canvas.php
+	* js/src/custom.js
+
 version 4.9.7 ( updated 06-14-2021 )
 - Fixed issue with builder freezing while scrolling when there is Blurb module with image in the content.
 - Fixed Theme Builder templates assignments are getting duplicated after the saving.
