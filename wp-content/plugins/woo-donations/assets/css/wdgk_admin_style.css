@@ -85,7 +85,7 @@ span.dashicons.dashicons-yes-alt.wdgk_right_icon {
 .wdgk_pro_details {
     background: #fff;
     padding: 30px;
-    max-width: 480px;
+    max-width: 500px;
     margin-top: 30px;
     border-radius: 10px;
     box-shadow: -10px 10px 30px rgb(0 0 0 / 10%);
@@ -104,7 +104,7 @@ span.dashicons.dashicons-yes-alt.wdgk_right_icon {
 }
 
 .wdgk_pro_details ul li:before {
-    content: "✓";
+    content: "🗸";
     margin-right: 8px;
 }
 
@@ -126,4 +126,10 @@ span.dashicons.dashicons-yes-alt.wdgk_right_icon {
 
 .wdgk_pro_details .wdgk_premium_btn:hover {
     background: #333333;
+}
+
+.nav-tab svg {
+    position: relative;
+    top: 3px;
+    margin-left: 1px;
 }

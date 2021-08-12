@@ -16,14 +16,13 @@ function ishf_get_option_footer_script()
 function  ishf_failure_option_msg_header_footer_script($msg)
 {
 	
-	echo  '<div class="notice notice-error ishf-error-msg is-dismissible"><p>' . $msg . '</p></div>';	
+	echo  '<div class="notice notice-error ishf-error-msg is-dismissible"><p>' . $msg . '</p></div>';
 	
 }
 function  ishf_success_option_msg_header_footer_script($msg)
-{
+{	
 	
-	
-	echo ' <div class="notice notice-success ishf-success-msg is-dismissible"><p>'. $msg . '</p></div>';			
+	echo ' <div class="notice notice-success ishf-success-msg is-dismissible"><p>'. $msg . '</p></div>';
 	
 }
 
@@ -33,7 +32,7 @@ function ishf_output($setting){
 		return;
 	}
 	
-	if('insert_header_script_bk'==$setting && apply_filters( 'disable_insert_header', false )){
+	if('insert_header_script_gk'==$setting && apply_filters( 'disable_insert_header', false )){
 		return;
 	}
 	
@@ -41,7 +40,7 @@ function ishf_output($setting){
 		return;
 	}
 
-	if('insert_footer_script_bk'==$setting && apply_filters( 'disable_insert_footer', false )){
+	if('insert_footer_script_gk'==$setting && apply_filters( 'disable_insert_footer', false )){
 		return;
 	}
 	$meta = get_option( $setting );

@@ -3,7 +3,7 @@
 Plugin Name: Woo Donations
 Description: A plugin to add donation for campaign
 Author: Geek Code Lab
-Version: 1.7
+Version: 1.8
 WC tested up to: 5.3.0
 Author URI: https://geekcodelab.com/
 */
@@ -42,10 +42,7 @@ function wdgk_plugin_active_woocommerce_donation(){
 	$btncolor="#289dcc";
 	$options=array();
 	$setting=get_option('wdgk_donation_settings');
-	// echo "<pre>";
-	// print_r($setting);
 
-	// die;
 	if(!isset($setting['Text']))  $options['Text'] = $btntext;
 	if(!isset($setting['TextColor']))  $options['TextColor'] = $textcolor;
 	if(!isset($setting['Color']))  $options['Color'] = $btncolor;
@@ -127,10 +124,10 @@ function wdgk_donation_shortcode(){
 		$ajax_url= admin_url('admin-ajax.php');
 		ob_start();
 		echo '<div class="wdgk_donation_content"><input type="text" name="donation-price" class="wdgk_donation" placeholder="Ex.100">'.$note_html.'<a 
-href="javascript:void(0)" class="button wdgk_add_donation" data-product-id="'.$product.'" data-product-url="'.$cart_url.'">'.$text.'</a><input 
-type="hidden" name="wdgk_product_id" value="" class="wdgk_product_id"><input type="hidden" name="wdgk_ajax_url" value="'.$ajax_url.'" 
-class="wdgk_ajax_url"><img src="'.wdgk_PLUGIN_URL.'/assets/images/ajax-loader.gif" class="wdgk_loader wdgk_loader_img"><div 
-class="wdgk_error_front"></div></div>';
+		href="javascript:void(0)" class="button wdgk_add_donation" data-product-id="'.$product.'" data-product-url="'.$cart_url.'">'.$text.'</a><input 
+		type="hidden" name="wdgk_product_id" value="" class="wdgk_product_id"><input type="hidden" name="wdgk_ajax_url" value="'.$ajax_url.'" 
+		class="wdgk_ajax_url"><img src="'.wdgk_PLUGIN_URL.'/assets/images/ajax-loader.gif" class="wdgk_loader wdgk_loader_img"><div 
+		class="wdgk_error_front"></div></div>';
 		return ob_get_clean();
 	
 	}
@@ -258,7 +255,7 @@ function wdgk_add_cart_item_data( $cart_item_data, $product_id, $variation_id ) 
 	if(isset($options['Product'])){
 		$pid = $options['Product'];
 	}
-	if(isset($_COOKIE['product_price'])){
+	if(isset($_COOKIE['wdgk_product_price'])){
 	
 		$product = wc_get_product( $product_id );
 		$price=$_GET['price'];
@@ -268,8 +265,8 @@ function wdgk_add_cart_item_data( $cart_item_data, $product_id, $variation_id ) 
 		// die;
 		if($product_id == $pid){
 
-			$cart_item_data['donation_price'] = $_COOKIE['product_price'];
-			$cart_item_data['donation_note'] = $_COOKIE['donation_note'];
+			$cart_item_data['donation_price'] = $_COOKIE['wdgk_product_price'];
+			$cart_item_data['donation_note'] = $_COOKIE['wdgk_donation_note'];
 		
 		}
 	}
@@ -377,8 +374,8 @@ function wdgk_footer_script(){
 			  return false;
 		 }
 		  jQuery('.wdgk_loader').removeClass("wdgk_loader_img");
-			setCookie('product_price',price,1);
-			setCookie('donation_note',note,2);
+			setCookie('wdgk_product_price',price,1);
+			setCookie('wdgk_donation_note',note,2);
 					
 			  jQuery.ajax({
 					url: ajaxurl,
@@ -411,13 +408,18 @@ function wdgk_footer_script(){
 
 }
 function wdgk_plugin_add_settings_link( $links ) { 	
+	$support_link = '<a href="https://geekcodelab.com/contact/"  target="_blank" >' . __( 'Support' ) . '</a>'; 
+	array_unshift( $links, $support_link );	
+
+	$pro_link = '<a href="https://geekcodelab.com/wordpress-plugins/woo-donation-pro/"  target="_blank" style="color:#46b450;font-weight: 600;">' . __( 'Premium Upgrade' ) . '</a>'; 
+	array_unshift( $links, $pro_link );	
+
 	$settings_link = '<a href="admin.php?page=wdgk-donation-page">' . __( 'Settings' ) . '</a>'; 
-	array_push( $links, $settings_link );	
+	array_unshift( $links, $settings_link );	
 	return $links;	
 }
 $plugin = plugin_basename( __FILE__ );
 add_filter( "plugin_action_links_$plugin", 'wdgk_plugin_add_settings_link');
-
 
 
 /**

@@ -1,17 +1,17 @@
 === Insert Script In Headers And Footers  === 
-Contributors: rajkakadiya
-Donate link: http://geekwebsolution.com/
+Contributors: rajkakadiya, rvadhel
+Donate link: https://paypal.me/rvadhel
 Tags: Insert javascript, Insert custom style,Insert Html,Insert Facebook pixel code, Add Google Analytics code
 Requires PHP: 5.2.4
 Requires at least: 3.0.1
-Tested up to: 5.7.2
-Stable tag: 1.3
+Tested up to: 5.8
+Stable tag: 1.4
 
 By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header, footer and body. no need to edit theme!
 
 == Description ==
 
-By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header, footer and body. no need to edit theme!
+By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header,footer and body. no need to edit theme!
 
 you can add custom script easily from admin side 
 
@@ -29,6 +29,31 @@ you can add custom script easily from admin side
 <li>Insert any code or script, including HTML and Javascript</li>
 </ul>
 
+**Pro Plugin Features** 
+<ul>
+	<li>Add script to single page priority of loading script.</li>
+	<li>Add header script to single post, custom post and page.</li>
+	<li>Add Footer script to single post, custom Post and page.</li>
+	<li>Give Priority to Script(At Beginning or At End)</li>
+	<li>Select where to Show Script - Admin or Front Side</li>
+	<li>Add Script to Post, Custom Post and Page</li>
+	<li>Controlling the priority of loading script code.</li>
+	<li>
+		Basic code editor options
+		<ul>
+			<li>Code syntax highlighting</li>
+			<li>Line numbering</li>
+			<li>Active line highlighting</li>
+			<li>Tab indentation</li>
+		</ul>
+	</li>
+	<li>Timely <a href="https://geekcodelab.com/contact/" target="_blank">support</a> 24/7.</li>
+	<li>Regular updates.</li>
+	<li>Well documented.</li>
+</ul>
+
+== GET PRO PLUGIN <a href="https://geekcodelab.com/wordpress-plugins/insert-script-in-headers-and-footers-pro/" target="_blank"> BUY NOW </a> ==
+
 == Installation ==
 
 Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
@@ -44,12 +69,14 @@ After active plugin go to Setting->Insert Script In Headers And Footers.
 = 1.0 =
  Inital release
 
- == Changelog ==
 = 1.1 =
  Fix bug
-  == Changelog ==
+ 
 = 1.2 =
  Fix bug
-== Changelog ==
+
 = 1.3 =
  Added Option:Add Script in Body
+ 
+= 1.4 =
+ Added pro version descriptions and link
