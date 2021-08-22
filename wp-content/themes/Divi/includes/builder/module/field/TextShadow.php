@@ -747,6 +747,31 @@ class ET_Builder_Module_Field_TextShadow extends ET_Builder_Module_Field_Base {
 
 	}//end process_advanced_css()
 
+	/**
+	 * Determine if Text Shadow is used.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param array $attrs Module attributes/props.
+	 *
+	 * @return bool
+	 */
+	public function is_used( $attrs ) {
+		foreach ( $attrs as $attr => $value ) {
+			if ( ! $value ) {
+				continue;
+			}
+
+			$is_attr = false !== strpos( $attr, 'text_shadow_' );
+
+			if ( $is_attr ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 }
 
 return new ET_Builder_Module_Field_TextShadow();

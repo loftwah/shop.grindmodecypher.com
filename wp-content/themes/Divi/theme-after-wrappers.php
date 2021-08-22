@@ -6,4 +6,4 @@
  */
 
 ?>
-</div> <!-- #page-container -->
+</div>

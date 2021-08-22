@@ -77,7 +77,7 @@ class ET_GB_Block_Layout {
 
 		// Block rendering on frontend
 		add_filter( 'render_block', array( $this, 'render_block' ), 100, 2 );
-		add_filter( 'get_the_excerpt', array( $this, 'get_the_excerpt' ), 10, 2 );
+		add_filter( 'get_the_excerpt', array( $this, 'get_the_post_excerpt' ) );
 	}
 
 	/**
@@ -164,79 +164,137 @@ class ET_GB_Block_Layout {
 	}
 
 	/**
-	 * Render layout block
+	 * Filter rendered blocks on FE.
 	 *
 	 * @since 4.1.0
+	 * @since 4.10.0 Filter core/post-excerpt rendered output.
 	 *
-	 * @param string $block_content saved & serialized block data
-	 * @param array  $block         block info
+	 * @param string $block_content Saved & serialized block data.
+	 * @param array  $block         Block info.
 	 */
 	public function render_block( $block_content, $block ) {
-		// Layout block only
-		if ( 'divi/layout' !== $block['blockName'] ) {
-			return $block_content;
+		// Core - Post Excerpt block.
+		if ( 'core/post-excerpt' === $block['blockName'] ) {
+			return $this->get_rendered_post_excerpt( $block_content, true );
 		}
 
-		global $et_is_layout_block;
+		// Divi - Layout block.
+		if ( 'divi/layout' === $block['blockName'] ) {
+			global $et_is_layout_block;
 
-		// Set flag
-		$et_is_layout_block = true;
+			// Set flag.
+			$et_is_layout_block = true;
 
-		// Render block content's shortcode. Block content actually can be rendered without this
-		// method and only depending to WordPress' `do_shortcode` hooked into `the_content`. However
-		// layout block need to set global for detecting that shortcode is rendered inside layout
-		// block hence the early shortcode rendering between global variables.
-		$block_content = do_shortcode( $block_content );
+			// Render block content's shortcode. Block content actually can be rendered without this
+			// method and only depending to WordPress' `do_shortcode` hooked into `the_content`. However
+			// layout block need to set global for detecting that shortcode is rendered inside layout
+			// block hence the early shortcode rendering between global variables.
+			$block_content = do_shortcode( $block_content );
 
-		// Reset flag
-		$et_is_layout_block = false;
+			// Reset flag.
+			$et_is_layout_block = false;
+
+			return $block_content;
+		}
 
 		return $block_content;
 	}
 
 	/**
-	 * Always convert post excerpt built with builder.
+	 * Filter post excerpt of REST API request.
 	 *
 	 * @since 4.9.10
+	 * @since 4.10.0 Only filter post excerpt rendered from REST API request. This API request
+	 *               is being used by Block Editor.
 	 *
-	 * @param string $post_excerpt Current post excerpt generated.
-	 * @param array  $post         Current post object.
+	 * @param string $post_excerpt Current post excerpt rendered.
 	 *
 	 * @return string Modified post excerpt.
 	 */
-	public function get_the_excerpt( $post_excerpt, $post ) {
+	public function get_the_post_excerpt( $post_excerpt ) {
+		// Bail early if current request is not REST API request.
+		if ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) {
+			return $post_excerpt;
+		}
+
+		return $this->get_rendered_post_excerpt( $post_excerpt );
+	}
+
+	/**
+	 * Get rendered post excerpt built with builder. Always return rendered $post_excerpt
+	 * because it's already wrapped with Post Excerpt block wrapper.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param string  $post_excerpt Current rendered post excerpt.
+	 * @param boolean $is_wrapped   Whether the post excerpt is wrapped or not.
+	 *
+	 * @return string Old or new rendered post excerpt.
+	 */
+	public function get_rendered_post_excerpt( $post_excerpt, $is_wrapped = false ) {
+		// Bail early if no global post. Need to get the post here due to some issues with
+		// 3rd party plugins regarding missing 2nd arg on the `get_the_excerpt` filter.
+		$post = get_post();
+		if ( empty( $post ) ) {
+			return $post_excerpt;
+		}
+
+		if ( ! empty( $post->post_excerpt ) ) {
+			return $post_excerpt;
+		}
+
+		// Bail early if Builder framework is not loaded. There are some cases where 3rd
+		// party plugins run scan without visiting theme functions file.
+		if ( ! function_exists( 'et_builder_load_framework' ) ) {
+			return $post_excerpt;
+		}
+
 		if ( ! et_pb_is_pagebuilder_used( $post->ID ) ) {
 			return $post_excerpt;
 		}
 
-		// Process post excerpt if it's empty or contains ET shortcode.
-		if ( empty( $post_excerpt ) || false !== strpos( $post_excerpt, '[et_pb_' ) ) {
-			// Ensure all the ET shortcode are registered.
-			if ( ! did_action( 'et_builder_ready' ) ) {
-				// When the `get_the_excerpt` filter is called by Query Loop block on the FE,
-				// the `ET_Builder_Element` class is loaded properly but no ET shortcode is
-				// registered yet. In this case, we can call `et_builder_init_global_settings`
-				// & `et_builder_add_main_elements` methods directly. However, this class is not
-				// loaded on the Block Editor, so we have to load all related files manually
-				// before we can call those methods to register the shortcode.
-				if ( ! class_exists( 'ET_Builder_Element' ) ) {
-					require_once ET_BUILDER_DIR . 'class-et-builder-value.php';
-					require_once ET_BUILDER_DIR . 'class-et-builder-element.php';
-					require_once ET_BUILDER_DIR . 'ab-testing.php';
-				}
+		static $et_rendered_post_excerpt = array();
 
-				et_builder_init_global_settings();
-				et_builder_add_main_elements();
-				et_builder_settings_init();
-			}
-
-			// WordPress post excerpt length comes from `excerpt_length` filter. And, it's
-			// words based length, not characters based length.
-			$excerpt_length = apply_filters( 'excerpt_length', 55 );
-			$post_excerpt   = et_core_intentionally_unescaped( wpautop( et_delete_post_first_video( strip_shortcodes( truncate_post( $excerpt_length, false, $post, false, true ) ) ) ), 'html' );
+		// Bail early if current post is already processed.
+		if ( isset( $et_rendered_post_excerpt[ $post->ID ] ) ) {
+			return $et_rendered_post_excerpt[ $post->ID ];
 		}
 
-		return $post_excerpt;
+		// 1. Ensure all the ET shortcode are registered.
+		if ( ! did_action( 'et_builder_ready' ) ) {
+			// When the `get_the_excerpt` filter is called by Query Loop block on the FE,
+			// the `ET_Builder_Element` class is loaded properly but no ET shortcode is
+			// registered yet. In this case, we can call `et_builder_init_global_settings`
+			// & `et_builder_add_main_elements` methods directly. However, this class is not
+			// loaded on the Block Editor, so we have to load all related files manually
+			// before we can call those methods to register the shortcode.
+			if ( ! class_exists( 'ET_Builder_Element' ) ) {
+				require_once ET_BUILDER_DIR . 'class-et-builder-value.php';
+				require_once ET_BUILDER_DIR . 'class-et-builder-element.php';
+				require_once ET_BUILDER_DIR . 'ab-testing.php';
+			}
+
+			et_builder_init_global_settings();
+			et_builder_add_main_elements();
+			et_builder_settings_init();
+		}
+
+		// 2. Generate Builder post excerpt.
+		// WordPress post excerpt length comes from `excerpt_length` filter. And, it's
+		// words based length, not characters based length.
+		$excerpt_length   = apply_filters( 'excerpt_length', 55 );
+		$new_post_excerpt = et_core_intentionally_unescaped( wpautop( et_delete_post_first_video( truncate_post( $excerpt_length, false, $post, true, true ) ) ), 'html' );
+
+		// 3. Ensure to return the block wrapper if the $post_excerpt is already wrapped.
+		if ( $is_wrapped ) {
+			$wrapper          = '/(<p class="wp-block-post-excerpt__excerpt">)(.*?)(<a|<\/p>)/';
+			$new_post_excerpt = wp_strip_all_tags( $new_post_excerpt );
+			$new_post_excerpt = preg_replace( $wrapper, "$1{$new_post_excerpt}$3", $post_excerpt );
+		}
+
+		$et_rendered_post_excerpt[ $post->ID ] = $new_post_excerpt;
+
+		return $new_post_excerpt;
 	}
 
 	/**
@@ -316,14 +374,8 @@ class ET_GB_Block_Layout {
 			);
 		}
 
-		// frontend-builder-scripts.js handle might change when scripts are minified
-		$builder_script_handle = apply_filters(
-			'et_builder_modules_script_handle',
-			'et-builder-modules-script'
-		);
-
 		wp_localize_script(
-			$builder_script_handle,
+			et_get_combined_script_handle(),
 			'ETBlockLayoutModulesScript',
 			array(
 				// blockId is dash separated alphanumeric uuid value

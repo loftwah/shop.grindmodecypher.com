@@ -1155,7 +1155,7 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 		);
 
 		// Start checking if current field is enabled or disabled.
-		$base_enable_field_name = et_()->array_get( $enable_fields, $base_setting, '' );
+		$base_enable_field_name = ! empty( $enable_fields[ $base_setting ] ) ? $enable_fields[ $base_setting ] : '';
 
 		// Bail early if setting name is different.
 		if ( '' === $base_enable_field_name || ! isset( $map_slugs[ $preview_mode ] ) ) {
@@ -1175,9 +1175,9 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 			if ( in_array( $base_setting, array( "{$background_base}_color", "{$background_base}_image" ) ) ) {
 
 				$base_type      = str_replace( "{$background_base}_", '', $base_setting );
-				$enable_default = et_()->array_get( $fields, "{$background_base}_enable_{$base_type}{$slug}.default", '' );
-				$enable_value   = et_()->array_get( $attrs, "{$background_base}_enable_{$base_type}{$slug}", $enable_default );
-				$bg_value       = et_()->array_get( $attrs, "{$background_base}_{$base_type}{$slug}", '' );
+				$enable_default = ! empty( $fields[ "{$background_base}_enable_{$base_type}{$slug}" ] ) && ! empty( $fields[ "{$background_base}_enable_{$base_type}{$slug}" ]['default'] ) ? $fields[ "{$background_base}_enable_{$base_type}{$slug}" ]['default'] : '';
+				$enable_value   = ! empty( $attrs[ "{$background_base}_enable_{$base_type}{$slug}" ] ) ? $attrs[ "{$background_base}_enable_{$base_type}{$slug}" ] : $enable_default;
+				$bg_value       = ! empty( $attrs[ "{$background_base}_{$base_type}{$slug}" ] ) ? $attrs[ "{$background_base}_{$base_type}{$slug}" ] : '';
 				$is_bg_enabled  = 'off' !== $enable_value;
 
 				if ( '' !== $bg_value && $is_bg_enabled ) {
@@ -1206,14 +1206,20 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 					),
 				);
 
-				$field_value = et_()->array_get( $field_map, "{$base_setting}.value", '' );
-				$field_start = et_()->array_get( $field_map, "{$base_setting}.start", '' );
-				$field_end   = et_()->array_get( $field_map, "{$base_setting}.end", '' );
+				$field_value = '';
+				$field_start = '';
+				$field_end   = '';
 
-				$use_gradient_default = et_()->array_get( $fields, $field_value, '' );
-				$use_gradient_value   = et_()->array_get( $attrs, $field_value, $use_gradient_default );
-				$gradient_start_value = et_()->array_get( $attrs, $field_start, '' );
-				$gradient_end_value   = et_()->array_get( $attrs, $field_end, '' );
+				if ( ! empty( $field_map[ $base_setting ] ) ) {
+					$field_value = ! empty( $field_map[ $base_setting ]['value'] ) ? $field_map[ $base_setting ]['value'] : '';
+					$field_start = ! empty( $field_map[ $base_setting ]['start'] ) ? $field_map[ $base_setting ]['start'] : '';
+					$field_end   = ! empty( $field_map[ $base_setting ]['end'] ) ? $field_map[ $base_setting ]['end'] : '';
+				}
+
+				$use_gradient_default = ! empty( $fields[ $field_value ] ) ? $fields[ $field_value ] : '';
+				$use_gradient_value   = ! empty( $attrs[ $field_value ] ) ? $attrs[ $field_value ] : $use_gradient_default;
+				$gradient_start_value = ! empty( $attrs[ $field_start ] ) ? $attrs[ $field_start ] : '';
+				$gradient_end_value   = ! empty( $attrs[ $field_end ] ) ? $attrs[ $field_end ] : '';
 				$is_gradient_enabled  = 'off' !== $use_gradient_value;
 
 				if ( ( '' !== $gradient_start_value || '' !== $gradient_end_value ) && $is_gradient_enabled ) {

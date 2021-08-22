@@ -227,6 +227,9 @@ function et_theme_builder_api_save() {
 
 		// Always reset the cached templates on last request after data stored into database.
 		ET_Core_Cache_File::set( 'et_theme_builder_templates', array() );
+
+		// Remove static resources on save. It's necessary because how we are generating the dynamic assets for the TB.
+		ET_Core_PageResource::remove_static_resources( 'all', 'all', false, 'dynamic' );
 	}
 
 	wp_send_json_success(

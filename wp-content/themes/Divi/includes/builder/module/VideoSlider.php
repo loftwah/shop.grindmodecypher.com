@@ -338,9 +338,9 @@ class ET_Builder_Module_Video_Slider extends ET_Builder_Module {
 				<div class="et_pb_slider et_pb_preload%1$s"%7$s>
 					<div class="et_pb_slides">
 						%2$s
-					</div> <!-- .et_pb_slides -->
-				</div> <!-- .et_pb_slider -->
-			</div> <!-- .et_pb_video_slider -->
+					</div>
+				</div>
+			</div>
 			',
 			esc_attr( $slider_classname ),
 			$content,
@@ -355,4 +355,6 @@ class ET_Builder_Module_Video_Slider extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Video_Slider();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Video_Slider();
+}

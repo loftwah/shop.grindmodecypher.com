@@ -611,6 +611,41 @@ class ET_Builder_Module_Field_Transform extends ET_Builder_Module_Field_Base {
 
 		return array();
 	}
+
+	/**
+	 * Check if we need to process transform.
+	 * Here we also check positions since some of it
+	 * requires transform css.
+	 *
+	 * @param array $attrs     Module attributes.
+	 * @param array $positions Position locations.
+	 *
+	 * @return bool
+	 */
+	public function is_used( $attrs, $positions ) {
+		// Check for transform attrs first.
+		foreach ( $attrs as $attr => $value ) {
+			if ( ! $value ) {
+				continue;
+			}
+
+			$is_attr = 0 === strpos( $attr, 'transform_' );
+
+			if ( $is_attr ) {
+				return true;
+			}
+		}
+
+		// Then check the current positions.
+		foreach ( $positions as $pos => $value ) {
+			$default_strpos = strpos( $value, '_is_default' );
+			if ( false === $default_strpos ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
 
 return new ET_Builder_Module_Field_Transform();

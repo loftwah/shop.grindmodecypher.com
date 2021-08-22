@@ -576,11 +576,87 @@ class ET_Builder_Module_Field_BoxShadow extends ET_Builder_Module_Field_Base {
 
 		return $attr_value;
 	}
+
+	/**
+	 * Check if box shadow is used.
+	 *
+	 * @since 4.10.0
+	 * @param array  $attrs All module attributes.
+	 * @param string $key   Box shadow property.
+	 */
+	public function is_used( $attrs, $key = '' ) {
+		foreach ( $attrs as $attr => $value ) {
+			if ( ! $value ) {
+				continue;
+			}
+
+			$has_attr = false !== strpos( $attr, 'box_shadow_style' );
+
+			if ( ! $has_attr ) {
+				continue;
+			}
+
+			return ! empty( $attr );
+		}
+
+	}
+
+	/**
+	 * Check if module has inset.
+	 *
+	 * @since 4.10.0
+	 * @param array $attrs            All module attributes.
+	 * @param array $advanced_options Advanced module options.
+	 */
+	public function has_inset( $attrs, $advanced_options, $_ ) {
+		$has_box_inset = false;
+		foreach ( $advanced_options as $option_name => $option_settings ) {
+			if ( true === $has_box_inset ) {
+				break;
+			}
+			// Enable module to explicitly disable box shadow fields (box shadow is automatically)
+			// added to all module by default.
+			if ( false === $option_settings ) {
+				continue;
+			}
+
+			// Prepare attribute for getting box shadow's css declaration.
+			$declaration_args = array(
+				'suffix'    => 'default' === $option_name ? '' : "_{$option_name}",
+				'important' => $_->array_get( $option_settings, 'css.important', false ),
+			);
+
+			$overlay = $_->array_get( $option_settings, 'css.overlay', false );
+			$inset   = $this->is_inset( $this->get_value( $attrs, $declaration_args ) );
+
+			$inset_hover = $this->is_inset(
+				$this->get_value(
+					$attrs,
+					array_merge( $declaration_args, array( 'hover' => true ) )
+				)
+			);
+
+			$has_video_bg = ! empty( $atts['background_video_mp4'] ) || ! empty( $atts['background_video_webm'] );
+
+			foreach ( et_pb_responsive_options()->get_modes() as $device ) {
+				// Add device argument.
+				$device_declaration_args = array_merge( $declaration_args, array( 'device' => $device ) );
+				if ( ( $inset && 'inset' === $overlay ) || 'always' === $overlay || $has_video_bg ) {
+					$has_box_inset = true;
+					break;
+				}
+			}
+			// Get box-shadow styles.
+
+		}
+		return $has_box_inset;
+
+	}
 }
 
 function _action_et_pb_box_shadow_overlay() {
 	wp_localize_script(
-		apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' ),
+		et_get_combined_script_handle(),
 		'et_pb_box_shadow_elements',
 		ET_Builder_Module_Field_BoxShadow::get_elements()
 	);

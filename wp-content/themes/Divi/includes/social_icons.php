@@ -14,13 +14,6 @@
 		</a>
 	</li>
 <?php endif; ?>
-<?php if ( 'on' === et_get_option( 'divi_show_google_icon', 'on' ) ) : ?>
-	<li class="et-social-icon et-social-google-plus">
-		<a href="<?php echo esc_url( et_get_option( 'divi_google_url', '#' ) ); ?>" class="icon">
-			<span><?php esc_html_e( 'Google', 'Divi' ); ?></span>
-		</a>
-	</li>
-<?php endif; ?>
 <?php $et_instagram_default = ( true === et_divi_is_fresh_install() ) ? 'on' : 'false'; ?>
 <?php if ( 'on' === et_get_option( 'divi_show_instagram_icon', $et_instagram_default ) ) : ?>
 	<li class="et-social-icon et-social-instagram">

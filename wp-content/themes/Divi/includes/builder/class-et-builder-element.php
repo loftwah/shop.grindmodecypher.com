@@ -14,8 +14,6 @@ define( 'ET_BUILDER_AJAX_TEMPLATES_AMOUNT', apply_filters( 'et_pb_templates_load
 
 add_action( 'init', array( 'ET_Builder_Element', 'set_media_queries' ), 11 );
 
-add_action( 'wp_footer', array( 'ET_Builder_Element', 'enqueue_scroll_effects_fields' ), 11 );
-
 /**
  * Base class for all builder elements.
  *
@@ -307,7 +305,7 @@ class ET_Builder_Element {
 	/**
 	 * Modules cache.
 	 *
-	 * @var bool
+	 * @var bool|array
 	 */
 	private static $_cache = false;
 
@@ -560,6 +558,13 @@ class ET_Builder_Element {
 	public static $advanced_styles_manager = null;
 
 	/**
+	 * `ET_Core_PageResource` class instance.
+	 *
+	 * @var ET_Core_PageResource
+	 */
+	public static $deferred_styles_manager = null;
+
+	/**
 	 * Whether to force inline styles.
 	 *
 	 * @var bool
@@ -702,9 +707,26 @@ class ET_Builder_Element {
 	protected static $layout_block_assistive_settings = array();
 
 	/**
+	 * Holds feature manager object.
+	 *
+	 * @var object
+	 */
+	protected $_features_manager;
+
+	/**
+	 * All module slugs.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @var array
+	 */
+	public static $all_module_slugs = array();
+
+	/**
 	 * ET_Builder_Element constructor.
 	 */
 	public function __construct() {
+
 		self::$current_module_index++;
 
 		if ( ! self::$_deprecations ) {
@@ -747,6 +769,9 @@ class ET_Builder_Element {
 		if ( null === self::$advanced_styles_manager && ! is_admin() && ! et_fb_is_enabled() ) {
 			$result                        = self::setup_advanced_styles_manager();
 			self::$advanced_styles_manager = $result['manager'];
+			if ( isset( $result['deferred'] ) ) {
+				self::$deferred_styles_manager = $result['deferred'];
+			}
 
 			if ( $result['add_hooks'] ) {
 				// Schedule callback to run in the footer so we can pass the module design styles to the page resource.
@@ -763,6 +788,10 @@ class ET_Builder_Element {
 		if ( null === self::$data_utils ) {
 			self::$data_utils = ET_Core_Data_Utils::instance();
 			self::$_          = self::$data_utils;
+
+			// Disable wptexturize for code modules because it break things.
+			// Doing that here so it only happen once.
+			add_filter( 'no_texturize_shortcodes', array( $this, 'disable_wptexturize' ) );
 		}
 
 		if ( null === self::$global_presets_manager ) {
@@ -812,6 +841,9 @@ class ET_Builder_Element {
 			$use_compression = false;
 		}
 
+		// Need to instantiate this early so that it can add its hooks.
+		$this->_features_manager = ET_Builder_Module_Features::instance();
+
 		if ( ! empty( self::$_cache[ $slug ] ) ) {
 			// We got sum cache, let's use it.
 			$cache              = self::$_cache[ $slug ];
@@ -849,7 +881,6 @@ class ET_Builder_Element {
 			// Claim some RAM not needed anymore.
 			unset( self::$_cache[ $slug ] );
 		} else {
-
 			// Compute expensive stuff.
 			$this->_add_additional_fields();
 			$this->_add_custom_css_fields();
@@ -1060,6 +1091,22 @@ class ET_Builder_Element {
 			self::$has_content_modules[] = $this->slug;
 		}
 
+	}
+
+	/**
+	 * Return all module slugs.
+	 *
+	 * @return array
+	 *
+	 * @since 4.10.0
+	 */
+	public static function get_all_module_slugs() {
+		// cache this only after et_builder_ready has run.
+		if ( ! did_action( 'et_builder_ready' ) || empty( self::$all_module_slugs ) ) {
+			self::$all_module_slugs = array_merge( self::get_structure_module_slugs(), self::get_module_slugs_by_post_type() );
+		}
+
+		return self::$all_module_slugs;
 	}
 
 	/**
@@ -1413,15 +1460,20 @@ class ET_Builder_Element {
 			$post_id = et_core_page_resource_get_the_ID();
 		}
 
-		$is_preview       = is_preview() || is_et_pb_preview();
-		$forced_in_footer = $post_id && et_builder_setting_is_on( 'et_pb_css_in_footer', $post_id );
-		$forced_inline    = ! $post_id || $is_preview || $forced_in_footer || et_builder_setting_is_off( 'et_pb_static_css_file', $post_id ) || et_core_is_safe_mode_active() || ET_GB_Block_Layout::is_layout_block_preview();
-		$unified_styles   = ! $forced_inline && ! $forced_in_footer;
+		/** This filter is documented in frontend-builder/theme-builder/frontend.php */
+		$is_critical_enabled = apply_filters( 'et_builder_critical_css_enabled', false );
+		$deferred            = false;
+		$is_preview          = is_preview() || is_et_pb_preview();
+		$forced_in_footer    = $post_id && et_builder_setting_is_on( 'et_pb_css_in_footer', $post_id );
+		$forced_inline       = ! $post_id || $is_preview || $forced_in_footer || et_builder_setting_is_off( 'et_pb_static_css_file', $post_id ) || et_core_is_safe_mode_active() || ET_GB_Block_Layout::is_layout_block_preview();
+		$unified_styles      = ! $forced_inline && ! $forced_in_footer;
 
 		$resource_owner = $unified_styles ? 'core' : 'builder';
 		$resource_slug  = $unified_styles ? 'unified' : 'module-design';
+
 		$resource_slug .= $unified_styles && et_builder_post_is_of_custom_post_type( $post_id ) ? '-cpt' : '';
-		$resource_slug  = et_theme_builder_decorate_page_resource_slug( $post_id, $resource_slug );
+
+		$resource_slug = et_theme_builder_decorate_page_resource_slug( $post_id, $resource_slug );
 
 		// If the post is password protected and a password has not been provided yet,
 		// no content (including any custom style) will be printed.
@@ -1435,28 +1487,55 @@ class ET_Builder_Element {
 			$resource_slug .= '-preview';
 		}
 
-		$manager = et_core_page_resource_get( $resource_owner, $resource_slug, $post_id, 40 );
+		$manager  = et_core_page_resource_get( $resource_owner, $resource_slug, $post_id, 40 );
+		$has_file = $manager->has_file();
 
-		if ( ! $forced_inline && ! $forced_in_footer && $manager->has_file() ) {
+		$manager_data = [
+			'manager'   => $manager,
+			'add_hooks' => true,
+		];
+
+		if ( $is_critical_enabled ) {
+			$deferred                 = et_core_page_resource_get( $resource_owner, $resource_slug . '-deferred', $post_id, 40 );
+			$has_file                 = $has_file && $deferred->has_file();
+			$manager_data['deferred'] = $deferred;
+		}
+
+		if ( ! $forced_inline && ! $forced_in_footer && $has_file ) {
 			// This post currently has a fully configured styles manager.
-			return array(
-				'manager'   => $manager,
-				'add_hooks' => false,
-			);
+			$manager_data['add_hooks'] = false;
+			/**
+			 * Filters the Style Managers used to output Critical/Deferred Builder CSS.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param array $manager_data Style Managers.
+			 */
+			$manager_data = apply_filters( 'et_builder_module_style_manager', $manager_data );
+
+			return $manager_data;
 		}
 
 		$manager->forced_inline       = $forced_inline;
 		$manager->write_file_location = 'footer';
 
+		if ( $deferred ) {
+			$deferred->forced_inline       = $forced_inline;
+			$deferred->write_file_location = 'footer';
+		}
+
 		if ( $forced_in_footer || $forced_inline ) {
 			// Restore legacy behavior--output inline styles in the footer.
 			$manager->set_output_location( 'footer' );
+			if ( $deferred ) {
+				$deferred->set_output_location( 'footer' );
+			}
 		}
 
-		return array(
-			'manager'   => $manager,
-			'add_hooks' => true,
-		);
+		/** This filter is documented in class-et-builder-element.php */
+		$manager_data = apply_filters( 'et_builder_module_style_manager', $manager_data );
+
+		return $manager_data;
 	}
 
 	/**
@@ -1465,19 +1544,38 @@ class ET_Builder_Element {
 	 */
 	public static function set_advanced_styles() {
 		$styles = '';
+		$custom = '';
 
 		if ( et_core_is_builder_used_on_current_request() ) {
-			$styles .= et_pb_get_page_custom_css();
-		}
-
-		$styles .= self::get_style() . self::get_style( true );
-
-		if ( ! $styles ) {
-			return;
+			$custom = et_pb_get_page_custom_css();
 		}
 
 		// Pass styles to page resource which will handle their output.
-		self::$advanced_styles_manager->set_data( $styles, 40 );
+		/** This filter is documented in frontend-builder/theme-builder/frontend.php */
+		$is_critical_enabled = apply_filters( 'et_builder_critical_css_enabled', false );
+
+		$critical = $is_critical_enabled ? self::get_style( false, 0, true ) . self::get_style( true, 0, true ) : [];
+		$styles   = self::get_style() . self::get_style( true );
+
+		if ( empty( $critical ) ) {
+			// No critical styles defined, just enqueue everything as usual.
+			$styles .= $custom;
+			if ( ! empty( $styles ) ) {
+				if ( isset( self::$deferred_styles_manager ) ) {
+					self::$deferred_styles_manager->set_data( $styles, 40 );
+				} else {
+					self::$advanced_styles_manager->set_data( $styles, 40 );
+				}
+			}
+		} else {
+			// Add page css to the critical section.
+			$critical .= $custom;
+			self::$advanced_styles_manager->set_data( $critical, 40 );
+			if ( ! empty( $styles ) ) {
+				// Defer everything else.
+				self::$deferred_styles_manager->set_data( $styles, 40 );
+			}
+		}
 	}
 
 	/**
@@ -1491,6 +1589,12 @@ class ET_Builder_Element {
 		self::$advanced_styles_manager->forced_inline       = true;
 		self::$advanced_styles_manager->write_file_location = 'footer';
 		self::$advanced_styles_manager->set_output_location( 'footer' );
+
+		if ( isset( self::$deferred_styles_manager ) ) {
+			self::$deferred_styles_manager->forced_inline       = true;
+			self::$deferred_styles_manager->write_file_location = 'footer';
+			self::$deferred_styles_manager->set_output_location( 'footer' );
+		}
 	}
 
 	/**
@@ -1543,13 +1647,23 @@ class ET_Builder_Element {
 	 */
 	public static function get_module_slugs_by_post_type( $post_type = 'post' ) {
 		if ( $post_type ) {
-			if ( ! isset( self::$_module_slugs_by_post_type[ $post_type ] ) ) {
+			if ( isset( self::$_module_slugs_by_post_type[ $post_type ] ) ) {
+				$slugs = self::$_module_slugs_by_post_type[ $post_type ];
+			} else {
 				// We get all modules when post type is not enabled so that posts that have
 				// had their post type support disabled still load all necessary modules.
-				return array_keys( self::get_modules() );
+				$slugs = array_keys( self::get_modules() );
 			}
 
-			return self::$_module_slugs_by_post_type[ $post_type ];
+			/**
+			 * Filters the module slugs and post type.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param array $slugs Module Slugs.
+			 * @param string $post_type Current post type.
+			 */
+			return apply_filters( 'et_builder_get_module_slugs_by_post_type', $slugs, $post_type );
 		}
 
 		return self::$_module_slugs_by_post_type;
@@ -1952,11 +2066,14 @@ class ET_Builder_Element {
 		// need to encode HTML entities in Admin Area( for BB ) if Visual Editor disabled for the user.
 		$need_html_entities_decode = is_admin() && ! user_can_richedit();
 
-		$shortcode_attributes = array();
-		$font_icon_options    = array( 'font_icon', 'button_icon', 'button_one_icon', 'button_two_icon', 'hover_icon' );
+		$shortcode_attributes      = array();
+		$font_icon_options         = array( 'font_icon', 'button_icon', 'button_one_icon', 'button_two_icon', 'hover_icon' );
+		$font_icon_options_as_keys = array_flip( $font_icon_options );
+		$url_options               = array( 'url', 'button_link', 'button_url' );
+		$url_options_as_keys       = array_flip( $url_options );
 
 		foreach ( $this->props as $attribute_key => $attribute_value ) {
-			if ( $et_fb_processing_shortcode_object && in_array( $attribute_key, $enabled_dynamic_attributes, true ) ) {
+			if ( $et_fb_processing_shortcode_object && ! empty( $enabled_dynamic_attributes ) && in_array( $attribute_key, $enabled_dynamic_attributes, true ) ) {
 				// Do not decode dynamic content values when preparing them for VB.
 				$shortcode_attributes[ $attribute_key ] = $attribute_value;
 				continue;
@@ -1966,7 +2083,7 @@ class ET_Builder_Element {
 			$processed_attr_value = $need_html_entities_decode ? trim( htmlspecialchars_decode( $attribute_value, ENT_QUOTES ), '"' ) : $attribute_value;
 
 			// the icon shortcodes are fine.
-			if ( in_array( $attribute_key, $font_icon_options, true ) ) {
+			if ( isset( $font_icon_options_as_keys[ $attribute_key ] ) ) {
 				$shortcode_attributes[ $attribute_key ] = $processed_attr_value;
 				// icon attributes must not be str_replaced.
 				continue;
@@ -1979,7 +2096,7 @@ class ET_Builder_Element {
 			}
 
 			// URLs are weird since they can allow non-ascii characters so we escape those separately.
-			if ( in_array( $attribute_key, array( 'url', 'button_link', 'button_url' ), true ) ) {
+			if ( isset( $url_options_as_keys[ $attribute_key ] ) ) {
 				$url        = $processed_attr_value;
 				$url_parsed = wp_parse_url( $url );
 
@@ -1995,13 +2112,7 @@ class ET_Builder_Element {
 
 				$shortcode_attributes[ $attribute_key ] = esc_url_raw( $url );
 			} else {
-				// Manipulate string for font icon attribute with value "%%xx%%" to "##xx##".
-				$processed_attr_value = preg_replace( '/%%([0-9]+)%%/', '##$1##', $processed_attr_value );
-
 				$processed_attr_value = str_replace( array( '%22', '%92', '%91', '%93', '%5c' ), array( '"', '\\', '&#91;', '&#93;', '\\' ), $processed_attr_value );
-
-				// Restore string for font icon attribute from "##xx##" to "%%xx%%".
-				$processed_attr_value = preg_replace( '/##([0-9]+)##/', '%%$1%%', $processed_attr_value );
 
 				$shortcode_attributes[ $attribute_key ] = $processed_attr_value;
 			}
@@ -2531,6 +2642,8 @@ class ET_Builder_Element {
 			return call_user_func_array( array( $clone, '_render' ), func_get_args() );
 		}
 
+		self::set_order_class( $render_slug );
+
 		$this->_maybe_rebuild_option_template();
 
 		$attrs = $this->_maybe_add_global_presets_settings( $attrs, $render_slug );
@@ -2723,8 +2836,6 @@ class ET_Builder_Element {
 			}
 		}
 
-		self::set_order_class( $render_slug );
-
 		$this->before_render();
 
 		$this->content_unprocessed = $this->_encode_legacy_dynamic_content_value(
@@ -2784,7 +2895,10 @@ class ET_Builder_Element {
 			$this->shortcode_atts();
 		}
 
-		$this->process_global_colors();
+		if ( ! $et_fb_processing_shortcode_object ) {
+			$this->process_global_colors();
+		}
+
 		$this->process_additional_options( $render_slug );
 		$this->process_custom_css_fields( $render_slug );
 
@@ -2829,163 +2943,188 @@ class ET_Builder_Element {
 		$animation_starting_opacity = isset( $this->props['animation_starting_opacity'] ) && '' !== $this->props['animation_starting_opacity'] ? $this->props['animation_starting_opacity'] : '0%';
 		$animation_speed_curve      = isset( $this->props['animation_speed_curve'] ) && '' !== $this->props['animation_speed_curve'] ? $this->props['animation_speed_curve'] : 'ease-in-out';
 
-		// Animation style and direction values for Tablet & Phone. Basically, style for tablet and
-		// phone are same with the desktop because we only edit responsive settings for the affected
-		// fields under animation style. Variable $animation_style_responsive need to be kept as
-		// unmodified variable because it will be used by animation intensity.
-		$animation_style_responsive = $animation_style;
-		$animation_style_tablet     = $animation_style;
-		$animation_style_phone      = $animation_style;
-		$animation_direction_tablet = et_pb_responsive_options()->get_any_value( $this->props, 'animation_direction_tablet' );
-		$animation_direction_phone  = et_pb_responsive_options()->get_any_value( $this->props, 'animation_direction_phone' );
+		// Check if animation is enabled.
+		$animation_enabled = $this->_features_manager->get(
+			'has_animation_enableds',
+			function() use ( $animation_style, $animation_direction ) {
+				return ! empty( $animation_style ) || ! empty( $animation_direction );
+			}
+		);
 
-		// Check if this is an AJAX request since this is how VB loads the initial module data
-		// et_core_is_fb_enabled() always returns `false` here.
-		if ( $animation_style && 'none' !== $animation_style && ! wp_doing_ajax() ) {
-			$transformed_animations = array(
-				'desktop' => false,
-				'tablet'  => false,
-				'phone'   => false,
-			);
-			// Fade doesn't have direction.
-			if ( 'fade' === $animation_style ) {
-				$animation_direction_tablet = '';
-				$animation_direction_phone  = '';
-			} else {
-				$directions_list = array( 'top', 'right', 'bottom', 'left' );
-				if ( in_array( $animation_direction, $directions_list, true ) ) {
-					$animation_style .= ucfirst( $animation_direction );
+		if ( $animation_enabled ) {
+
+			// Animation style and direction values for Tablet & Phone. Basically, style for tablet and
+			// phone are same with the desktop because we only edit responsive settings for the affected
+			// fields under animation style. Variable $animation_style_responsive need to be kept as
+			// unmodified variable because it will be used by animation intensity.
+			$animation_style_responsive = $animation_style;
+			$animation_style_tablet     = $animation_style;
+			$animation_style_phone      = $animation_style;
+			$animation_direction_tablet = et_pb_responsive_options()->get_any_value( $this->props, 'animation_direction_tablet' );
+			$animation_direction_phone  = et_pb_responsive_options()->get_any_value( $this->props, 'animation_direction_phone' );
+
+			// Check if this is an AJAX request since this is how VB loads the initial module data
+			// et_core_is_fb_enabled() always returns `false` here.
+			if ( $animation_style && 'none' !== $animation_style && ! wp_doing_ajax() ) {
+				$transformed_animations = array(
+					'desktop' => false,
+					'tablet'  => false,
+					'phone'   => false,
+				);
+				// Fade doesn't have direction.
+				if ( 'fade' === $animation_style ) {
+					$animation_direction_tablet = '';
+					$animation_direction_phone  = '';
+				} else {
+					$directions_list = array( 'top', 'right', 'bottom', 'left' );
+					if ( in_array( $animation_direction, $directions_list, true ) ) {
+						$animation_style .= ucfirst( $animation_direction );
+					}
+
+					// avoid custom animation on button because animation is applied to the wrapper so transforms do not need to combine.
+					if ( 'et_pb_button' !== $render_slug ) {
+						foreach ( preg_grep( '/(transform_)/', array_keys( $this->props ) ) as $index => $key ) {
+							if ( strpos( $key, 'link' ) !== false || strpos( $key, 'hover' ) !== false || strpos( $key, 'last_edited' ) !== false ) {
+								continue;
+							}
+
+							if ( ! empty( $this->props[ $key ] ) ) {
+								if ( ! $transformed_animations['desktop'] && strpos( $key, 'tablet' ) === false && strpos( $key, 'phone' ) === false ) {
+									$transformed_animations['desktop'] = true;
+									$transformed_animations['tablet']  = true;
+									$transformed_animations['phone']   = true;
+								} elseif ( ! $transformed_animations['tablet'] && strpos( $key, 'tablet' ) !== false ) {
+									$transformed_animations['tablet'] = true;
+									$transformed_animations['phone']  = true;
+								} elseif ( ! $transformed_animations['phone'] && strpos( $key, 'phone' ) !== false ) {
+									$transformed_animations['phone'] = true;
+								}
+
+								if ( $transformed_animations['desktop'] && $transformed_animations['tablet'] && $transformed_animations['phone'] ) {
+									break;
+								}
+							}
+						}
+					}
 				}
 
-				// avoid custom animation on button because animation is applied to the wrapper so transforms do not need to combine.
-				if ( 'et_pb_button' !== $render_slug ) {
-					foreach ( preg_grep( '/(transform_)/', array_keys( $this->props ) ) as $index => $key ) {
-						if ( strpos( $key, 'link' ) !== false || strpos( $key, 'hover' ) !== false || strpos( $key, 'last_edited' ) !== false ) {
+				$module_class = self::get_module_order_class( $render_slug );
+
+				if ( $module_class ) {
+					// Desktop animation data.
+					$animation_data = array(
+						'class'            => esc_attr( trim( $module_class ) ),
+						'style'            => esc_html( $animation_style ),
+						'repeat'           => esc_html( $animation_repeat ),
+						'duration'         => esc_html( $animation_duration ),
+						'delay'            => esc_html( $animation_delay ),
+						'intensity'        => esc_html( $animation_intensity ),
+						'starting_opacity' => esc_html( $animation_starting_opacity ),
+						'speed_curve'      => esc_html( $animation_speed_curve ),
+					);
+
+					// Being save to generate Tablet & Phone data attributes. As default, tablet
+					// default value will inherit desktop value and phone default value will inherit
+					// tablet value. Ensure to pass the value only if it's different compared to
+					// desktop value to avoid duplicate values.
+					$animation_attributes = array(
+						'repeat'           => 'animation_repeat',
+						'duration'         => 'animation_duration',
+						'delay'            => 'animation_delay',
+						'intensity'        => "animation_intensity_{$animation_style_responsive}",
+						'starting_opacity' => 'animation_starting_opacity',
+						'speed_curve'      => 'animation_speed_curve',
+					);
+
+					foreach ( $animation_attributes as $animation_key => $animation_attribute ) {
+						$animation_attribute_tablet = '';
+						$animation_attribute_phone  = '';
+
+						// Ensure responsive status for current attribute is activated.
+						if ( ! et_pb_responsive_options()->is_responsive_enabled( $this->props, $animation_attribute ) ) {
 							continue;
 						}
 
-						if ( ! empty( $this->props[ $key ] ) ) {
-							if ( ! $transformed_animations['desktop'] && strpos( $key, 'tablet' ) === false && strpos( $key, 'phone' ) === false ) {
-								$transformed_animations['desktop'] = true;
-								$transformed_animations['tablet']  = true;
-								$transformed_animations['phone']   = true;
-							} elseif ( ! $transformed_animations['tablet'] && strpos( $key, 'tablet' ) !== false ) {
-								$transformed_animations['tablet'] = true;
-								$transformed_animations['phone']  = true;
-							} elseif ( ! $transformed_animations['phone'] && strpos( $key, 'phone' ) !== false ) {
-								$transformed_animations['phone'] = true;
-							}
+						// Tablet animation value.
+						$animation_attribute_tablet = et_pb_responsive_options()->get_any_value( $this->props, "{$animation_attribute}_tablet", $animation_data[ $animation_key ] );
+						if ( ! empty( $animation_attribute_tablet ) ) {
+							$animation_data[ "{$animation_key}_tablet" ] = $animation_attribute_tablet;
+						}
 
-							if ( $transformed_animations['desktop'] && $transformed_animations['tablet'] && $transformed_animations['phone'] ) {
-								break;
-							}
+						// Phone animation value.
+						$animation_attribute_phone = et_pb_responsive_options()->get_any_value( $this->props, "{$animation_attribute}_phone", $animation_data[ $animation_key ] );
+						if ( ! empty( $animation_attribute_phone ) ) {
+							$animation_data[ "{$animation_key}_phone" ] = $animation_attribute_phone;
 						}
 					}
-				}
-			}
 
-			$module_class = self::get_module_order_class( $render_slug );
+					// Animation style is little bit different. We need to check the direction to get
+					// the correct style. We need to ensure the direction is valid, then add it as
+					// suffix for the animation style.
+					if ( et_pb_responsive_options()->is_responsive_enabled( $this->props, 'animation_direction' ) ) {
+						// Tablet animation style.
+						if ( ! empty( $animation_direction_tablet ) ) {
+							$animation_style_tablet_suffix  = in_array( $animation_direction_tablet, $directions_list, true ) ? ucfirst( $animation_direction_tablet ) : '';
+							$animation_data['style_tablet'] = $animation_style_tablet . $animation_style_tablet_suffix;
+						}
 
-			if ( $module_class ) {
-				// Desktop animation data.
-				$animation_data = array(
-					'class'            => esc_attr( trim( $module_class ) ),
-					'style'            => esc_html( $animation_style ),
-					'repeat'           => esc_html( $animation_repeat ),
-					'duration'         => esc_html( $animation_duration ),
-					'delay'            => esc_html( $animation_delay ),
-					'intensity'        => esc_html( $animation_intensity ),
-					'starting_opacity' => esc_html( $animation_starting_opacity ),
-					'speed_curve'      => esc_html( $animation_speed_curve ),
-				);
-
-				// Being save to generate Tablet & Phone data attributes. As default, tablet
-				// default value will inherit desktop value and phone default value will inherit
-				// tablet value. Ensure to pass the value only if it's different compared to
-				// desktop value to avoid duplicate values.
-				$animation_attributes = array(
-					'repeat'           => 'animation_repeat',
-					'duration'         => 'animation_duration',
-					'delay'            => 'animation_delay',
-					'intensity'        => "animation_intensity_{$animation_style_responsive}",
-					'starting_opacity' => 'animation_starting_opacity',
-					'speed_curve'      => 'animation_speed_curve',
-				);
-
-				foreach ( $animation_attributes as $animation_key => $animation_attribute ) {
-					$animation_attribute_tablet = '';
-					$animation_attribute_phone  = '';
-
-					// Ensure responsive status for current attribute is activated.
-					if ( ! et_pb_responsive_options()->is_responsive_enabled( $this->props, $animation_attribute ) ) {
-						continue;
+						// Phone animation style.
+						if ( ! empty( $animation_direction_phone ) ) {
+							$animation_style_phone_suffix  = in_array( $animation_direction_phone, $directions_list, true ) ? ucfirst( $animation_direction_phone ) : '';
+							$animation_data['style_phone'] = $animation_style_phone . $animation_style_phone_suffix;
+						} elseif ( ! empty( $animation_data['style_tablet'] ) ) {
+							$animation_data['style_phone'] = $animation_data['style_tablet'];
+						}
 					}
 
-					// Tablet animation value.
-					$animation_attribute_tablet = et_pb_responsive_options()->get_any_value( $this->props, "{$animation_attribute}_tablet", $animation_data[ $animation_key ] );
-					if ( ! empty( $animation_attribute_tablet ) ) {
-						$animation_data[ "{$animation_key}_tablet" ] = $animation_attribute_tablet;
+					// overwrite animation name to match the custom animation generated on transforms options processing.
+					if ( $transformed_animations['desktop'] ) {
+						$animation_data['style'] = 'transformAnim';
+					}
+					if ( $transformed_animations['tablet'] ) {
+						$animation_data['style_tablet'] = 'transformAnim';
+					}
+					if ( $transformed_animations['phone'] ) {
+						$animation_data['style_phone'] = 'transformAnim';
 					}
 
-					// Phone animation value.
-					$animation_attribute_phone = et_pb_responsive_options()->get_any_value( $this->props, "{$animation_attribute}_phone", $animation_data[ $animation_key ] );
-					if ( ! empty( $animation_attribute_phone ) ) {
-						$animation_data[ "{$animation_key}_phone" ] = $animation_attribute_phone;
-					}
+					et_builder_handle_animation_data( $animation_data );
 				}
 
-				// Animation style is little bit different. We need to check the direction to get
-				// the correct style. We need to ensure the direction is valid, then add it as
-				// suffix for the animation style.
-				if ( et_pb_responsive_options()->is_responsive_enabled( $this->props, 'animation_direction' ) ) {
-					// Tablet animation style.
-					if ( ! empty( $animation_direction_tablet ) ) {
-						$animation_style_tablet_suffix  = in_array( $animation_direction_tablet, $directions_list, true ) ? ucfirst( $animation_direction_tablet ) : '';
-						$animation_data['style_tablet'] = $animation_style_tablet . $animation_style_tablet_suffix;
-					}
-
-					// Phone animation style.
-					if ( ! empty( $animation_direction_phone ) ) {
-						$animation_style_phone_suffix  = in_array( $animation_direction_phone, $directions_list, true ) ? ucfirst( $animation_direction_phone ) : '';
-						$animation_data['style_phone'] = $animation_style_phone . $animation_style_phone_suffix;
-					} elseif ( ! empty( $animation_data['style_tablet'] ) ) {
-						$animation_data['style_phone'] = $animation_data['style_tablet'];
-					}
+				// Try to apply old method for plugins without vb support.
+				if ( ! $et_fb_processing_shortcode_object && 'on' !== $this->vb_support ) {
+					add_filter( "{$render_slug}_shortcode_output", array( $this, 'add_et_animated_class' ), 10, 2 );
 				}
 
-				// overwrite animation name to match the custom animation generated on transforms options processing.
-				if ( $transformed_animations['desktop'] ) {
-					$animation_data['style'] = 'transformAnim';
+				// Only print et_animated on front-end. Avoid adding it on computed callback of post slider(s)
+				// and modules because it'll cause the module to be visually hidden.
+				if ( ! et_core_is_fb_enabled() ) {
+					$this->add_classname( 'et_animated' );
 				}
-				if ( $transformed_animations['tablet'] ) {
-					$animation_data['style_tablet'] = 'transformAnim';
-				}
-				if ( $transformed_animations['phone'] ) {
-					$animation_data['style_phone'] = 'transformAnim';
-				}
-
-				et_builder_handle_animation_data( $animation_data );
-			}
-
-			// Try to apply old method for plugins without vb support.
-			if ( ! $et_fb_processing_shortcode_object && 'on' !== $this->vb_support ) {
-				add_filter( "{$render_slug}_shortcode_output", array( $this, 'add_et_animated_class' ), 10, 2 );
-			}
-
-			// Only print et_animated on front-end. Avoid adding it on computed callback of post slider(s)
-			// and modules because it'll cause the module to be visually hidden.
-			if ( ! et_core_is_fb_enabled() ) {
-				$this->add_classname( 'et_animated' );
 			}
 		}
 
+		$has_hover_enabled = $this->_features_manager->get(
+			'has_hover_enabled',
+			function() {
+				return et_has_hover_enabled( $this->props );
+			}
+		);
+
 		// Add "et_hover_enabled" class to elements that have at least one hover prop enabled.
-		if ( et_has_hover_enabled( $this->props ) ) {
+		if ( $has_hover_enabled ) {
 			$this->add_classname( 'et_hover_enabled' );
 		}
 
 		// Add sticky element module classname to determine nested sticky module.
-		if ( ! $et_fb_processing_shortcode_object && et_()->array_get( self::$sticky_elements, self::get_module_order_class( $render_slug ), false ) ) {
+		$needs_sticky_class = $this->_features_manager->get(
+			'needs_sticky_class',
+			function() use ( $et_fb_processing_shortcode_object, $render_slug ) {
+				return ! $et_fb_processing_shortcode_object && et_()->array_get( self::$sticky_elements, self::get_module_order_class( $render_slug ), false );
+			}
+		);
+
+		if ( $needs_sticky_class ) {
 			$this->add_classname( 'et_pb_sticky_module' );
 		}
 
@@ -3023,7 +3162,7 @@ class ET_Builder_Element {
 					$selector    = 'et_pb_video' === $render_slug ? '.et_pb_video%%order_class%%' : '%%order_class%%';
 					$declaration = 'et_pb_video' === $render_slug ? 'min-height: 0; height: 0; margin: 0 !important; padding: 0; overflow: hidden;' : 'display: none !important;';
 
-					$el_style    = array(
+					$el_style = array(
 						'selector'    => $selector,
 						'declaration' => $declaration,
 						'media_query' => self::get_media_query( $current_media_query ),
@@ -3174,15 +3313,29 @@ class ET_Builder_Element {
 		$module_slug            = self::$global_presets_manager->maybe_convert_module_type( $this->slug, $this->props );
 		$module_preset_settings = self::$global_presets_manager->get_module_presets_settings( $module_slug, $this->props );
 
-		foreach ( $fields as $field_key => $field_settings ) {
-			$global_setting_name  = "$slug-$field_key";
-			$global_setting_value = ET_Global_Settings::get_value( $global_setting_name );
+		$global_default_fields = $this->_features_manager->get(
+			'global_default_fields',
+			function() use ( $fields, $slug, $must_print_fields ) {
 
-			if ( ! $global_setting_value || in_array( $field_key, $must_print_fields, true ) ) {
-				continue;
+				$global_default_fields = [];
+
+				foreach ( $fields as $field_key => $field_settings ) {
+					$global_setting_name  = "$slug-$field_key";
+					$global_setting_value = ET_Global_Settings::get_value( $global_setting_name );
+
+					if ( ! $global_setting_value || in_array( $field_key, $must_print_fields, true ) ) {
+						continue;
+					}
+
+					$global_default_fields[ $field_key ] = $global_setting_value;
+				}
+
+				return $global_default_fields;
 			}
+		);
 
-			$attr_value = self::$_->array_get( $this->props, $field_key, '' );
+		foreach ( $global_default_fields as $field_key => $global_setting_value ) {
+			$attr_value = ! empty( $this->props[ $field_key ] ) ? $this->props[ $field_key ] : '';
 
 			if ( $attr_value && $attr_value === $global_setting_value && ! array_key_exists( $field_key, $module_preset_settings ) ) {
 				$this->props[ $field_key ] = '';
@@ -3576,9 +3729,9 @@ class ET_Builder_Element {
 			}
 		}
 
-		// Enable `Global Colors` inside preset attrs.
-		if ( ! empty( $module_preset_settings['global_colors_info'] ) ) {
-			$attrs['global_colors_info'] = $module_preset_settings['global_colors_info'];
+		// Decode all characters inside json object so it can be parsed correctly.
+		if ( ! empty( $attrs['global_colors_info'] ) ) {
+			$attrs['global_colors_info'] = str_replace( array( '%91', '%93', '%22' ), array( '[', ']', '"' ), $attrs['global_colors_info'] );
 		}
 
 		// Format FB component path
@@ -7845,9 +7998,9 @@ class ET_Builder_Element {
 	 * @return array
 	 */
 	public function get_transition_font_fields_css_props() {
-		$items = self::$_->array_get( $this->advanced_fields, 'fonts' );
+		$items = ! empty( $this->advanced_fields['fonts'] ) ? $this->advanced_fields['fonts'] : false;
 
-		if ( ! is_array( $items ) ) {
+		if ( ! $items ) {
 			return array();
 		}
 
@@ -7907,8 +8060,12 @@ class ET_Builder_Element {
 
 		foreach ( $items as $item => $field ) {
 			foreach ( $font_options as $key ) {
-				$default                              = self::$_->array_get( $field, 'css.main', '%%order_class%%' );
-				$fields[ "{$item}_{$key['option']}" ] = array( $key['prop'] => self::$_->array_get( $field, "css.{$key['slug']}", $default ) );
+				$default = ! empty( $field['css'] ) && ! empty( $field['css']['main'] ) ? $field['css']['main'] : '%%order_class%%';
+				$value   = ! empty( $field['css'] ) && ! empty( $field['css'][ $key['slug'] ] ) ? $field['css'][ $key['slug'] ] : $default;
+
+				$fields[ "{$item}_{$key['option']}" ] = array(
+					$key['prop'] => $value,
+				);
 			}
 		}
 
@@ -8262,35 +8419,39 @@ class ET_Builder_Element {
 	 */
 	public function setup_hover_transitions( $function_name ) {
 
-		// List of all property names and their respective CSS property names.
-		$transitions_map = $this->get_transition_fields_css_props();
+		// This is an array.
+		// Cache this since it is a heavy function.
+		$transitions_map = $this->_features_manager->get(
+			'transition_fields_css_props',
+			function() {
+				return $this->get_transition_fields_css_props();
+			}
+		);
 
-		$selectors             = array();
-		$transitions           = array();
-		$hover                 = et_pb_hover_options();
-		$hover_suffix          = $hover->get_suffix();
-		$hover_enabled_suffix  = $hover->get_enabled_suffix();
-		$sticky                = et_pb_sticky_options();
-		$sticky_suffix         = $sticky->get_suffix();
-		$sticky_enabled_suffix = $sticky->get_enabled_suffix();
+		$selectors     = array();
+		$transitions   = array();
+		$hover         = et_pb_hover_options();
+		$hover_suffix  = $hover->get_suffix();
+		$sticky        = et_pb_sticky_options();
+		$sticky_suffix = $sticky->get_suffix();
 
-		// We need to loop transitions array so cases of prefixed prop names can also be caught.
+		// we need to loop transitions array so cases of prefixed prop names can also be caught.
 		foreach ( $transitions_map as $prop_name => $css_props ) {
 			$prop_name_hover  = "{$prop_name}{$hover_suffix}";
 			$prop_name_sticky = "{$prop_name}{$sticky_suffix}";
 
-			// Background is a special case because it also contains the "background_color" property.
+			// background is a special case because it also contains the "background_color" property.
 			if ( 'background' === $prop_name ) {
-				// We can continue if hover background color is not set because it is the only animatable property.
+				// we can continue if hover background color is not set because it is the only animatable property.
 				if ( ! $hover->get_value( 'background_color', $this->props ) && ! $sticky->get_value( 'background_color', $this->props ) ) {
 					continue;
 				}
 			} elseif ( empty( $this->props[ $prop_name_hover ] ) && empty( $this->props[ $prop_name_sticky ] ) ) {
-				// Continue if hover or sticky value is empty.
+				// continue if hover or sticky value is empty.
 				continue;
 			}
 
-			// Continue if sticky / hover option is not enabled.
+			// continue if sticky / hover option is not enabled.
 			$is_hover_option_enabled      = $hover->is_enabled( $prop_name, $this->props );
 			$is_sticky_option_enabled     = $sticky->is_enabled( $prop_name, $this->props );
 			$is_sticky_transition_enabled = 'on' === et_()->array_get( $this->props, 'sticky_transition' );
@@ -8299,7 +8460,7 @@ class ET_Builder_Element {
 				continue;
 			}
 
-			// Add the CSS property for the transition.
+			// add the css property for the transition.
 			$transitions = array_merge( $transitions, array_keys( $css_props ) );
 			foreach ( $css_props as $selector ) {
 				$selector  = is_array( $selector ) ? $selector : array( $selector );
@@ -8307,7 +8468,32 @@ class ET_Builder_Element {
 			}
 		}
 
-		// Don't apply transitions if none are needed.
+		return [ $transitions, $selectors ];
+	}
+
+	/**
+	 * Process hover transitions.
+	 *
+	 * @param string $function_name Module alias.
+	 *
+	 * @since 4.6.0 add sticky style support
+	 */
+	public function process_hover_transitions( $function_name ) {
+		/**
+		 * Translation data.
+		 *
+		 * @var array $transitions_data Array of transitions and selectors (not bool "is enabled").
+		 */
+		$transitions_data = $this->_features_manager->get(
+			'hover_transitions',
+			function() use ( $function_name ) {
+				return $this->setup_hover_transitions( $function_name );
+			}
+		);
+
+		list( $transitions, $selectors ) = $transitions_data;
+
+		// don't apply transitions if none are needed.
 		if ( empty( $transitions ) ) {
 			return;
 		}
@@ -12073,7 +12259,7 @@ class ET_Builder_Element {
 		$fields['template_type']      = '';
 		$fields['inline_fonts']       = '';
 		$fields['collapsed']          = '';
-		$fields['global_colors_info'] = '';
+		$fields['global_colors_info'] = '{}';
 
 		// Default props of each modules are always identical; thus saves it as static prop
 		// so the next same modules doesn't need to process all of these again repetitively.
@@ -12518,10 +12704,11 @@ class ET_Builder_Element {
 			return;
 		}
 
+
 		$module->process_advanced_fonts_options( $function_name );
 
 		// Process Text Shadow CSS.
-		$module->text_shadow->process_advanced_css( $module, $function_name );
+		$this->process_text_shadow( $function_name );
 
 		$module->process_advanced_background_options( $function_name );
 
@@ -12551,9 +12738,9 @@ class ET_Builder_Element {
 		$this->process_transform( $function_name );
 
 		// Process Margin & Padding CSS.
-		$module->margin_padding->process_advanced_css( $module, $function_name );
+		$this->process_margin_padding_advanced_css( $function_name );
 
-		$this->setup_hover_transitions( $function_name );
+		$this->process_hover_transitions( $function_name );
 	}
 
 	/**
@@ -12583,6 +12770,7 @@ class ET_Builder_Element {
 	 * @param  string $function_name Module slug.
 	 */
 	public function process_advanced_fonts_options( $function_name ) {
+
 		// Disable if module doesn't set advanced_fields property and has no VB support.
 		if ( ! $this->has_vb_support() && ! $this->has_advanced_fields ) {
 			return;
@@ -12629,6 +12817,17 @@ class ET_Builder_Element {
 		);
 
 		$slugs = array_merge( $slugs, $mobile_options_last_edited_slugs );
+
+		$is_enabled = $this->_features_manager->get(
+			'is_custom_font_options_enabled',
+			function() use ( $slugs ) {
+				return $this->font_options_are_used( $slugs );
+			}
+		);
+
+		if ( ! $is_enabled ) {
+			return;
+		}
 
 		foreach ( $this->advanced_fields['fonts'] as $option_name => $option_settings ) {
 			$style             = '';
@@ -13677,8 +13876,15 @@ class ET_Builder_Element {
 			$is_background_color_gradient_disabled = false;
 			$is_background_image_disabled          = false;
 
+			$is_enabled = $this->_features_manager->get(
+				'background_responsive_' . $device . '_is_enabled',
+				function() use ( $responsive ) {
+					return $responsive->is_responsive_enabled( $this->props, 'background' );
+				}
+			);
+
 			// Ensure responsive settings is enabled on mobile.
-			if ( ! $is_desktop && ! $responsive->is_responsive_enabled( $this->props, 'background' ) ) {
+			if ( ! $is_desktop && ! $is_enabled ) {
 				continue;
 			}
 
@@ -13929,8 +14135,15 @@ class ET_Builder_Element {
 			}
 		}
 
+		$is_enabled = $this->_features_manager->get(
+			'background_hover_is_enabled',
+			function() use ( $hover ) {
+				return $hover->is_enabled( 'background', $this->props );
+			}
+		);
+
 		// Background Hover.
-		if ( $hover->is_enabled( 'background', $this->props ) ) {
+		if ( $is_enabled ) {
 			$background_images_hover                     = array();
 			$has_background_color_gradient_hover         = false;
 			$has_background_image_hover                  = false;
@@ -14171,9 +14384,16 @@ class ET_Builder_Element {
 			}
 		}
 
+		$is_enabled = $this->_features_manager->get(
+			'background_sticky_is_enabled',
+			function() use ( $sticky ) {
+				return $sticky->is_enabled( 'background', $this->props );
+			}
+		);
+
 		// Background Sticky.
 		// Mostly similar with how hover works but there are edge cases where different logic is applied.
-		if ( $sticky->is_enabled( 'background', $this->props ) ) {
+		if ( $is_enabled ) {
 			$background_images_sticky                        = array();
 			$has_background_color_gradient_sticky            = false;
 			$has_background_image_sticky                     = false;
@@ -14416,6 +14636,50 @@ class ET_Builder_Element {
 	}
 
 	/**
+	 * Process margin and padding advanced css.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param string $function_name Module slug.
+	 */
+	public function process_margin_padding_advanced_css( $function_name ) {
+		$is_enabled = $this->_features_manager->get(
+			'margin_padding_css_is_enabled',
+			function() {
+				return $this->margin_padding->is_used( $this->props );
+			}
+		);
+
+		if ( ! $is_enabled ) {
+			return;
+		}
+
+		$this->margin_padding->process_advanced_css( $this, $function_name );
+	}
+
+	/**
+	 * Process text shadow options.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param string $function_name Module slug.
+	 */
+	public function process_text_shadow( $function_name ) {
+		$is_enabled = $this->_features_manager->get(
+			'text_shadow_is_enabled',
+			function() {
+				return $this->text_shadow->is_used( $this->props );
+			}
+		);
+
+		if ( ! $is_enabled ) {
+			return;
+		}
+
+		$this->text_shadow->process_advanced_css( $this, $function_name );
+	}
+
+	/**
 	 * Process advanced text options.
 	 *
 	 * @since 3.23 Add support to generate responsive styles of text orientation.
@@ -14470,11 +14734,27 @@ class ET_Builder_Element {
 			return;
 		}
 
+		/**
+		 * Border field
+		 *
+		 * @var ET_Builder_Module_Field_Border $border_field
+		 */
+		$border_field = ET_Builder_Module_Fields_Factory::get( 'Border' );
+		$is_enabled   = $this->_features_manager->get(
+			'border_is_enabled',
+			function() use ( $border_field ) {
+				return $border_field->has_any_border_attrs( $this->props );
+			}
+		);
+
+		if ( ! $is_enabled ) {
+			return;
+		}
+
 		global $et_fb_processing_shortcode_object;
 
-		$borders      = self::$_->array_get( $this->advanced_fields, 'borders', array( 'default' => array() ) );
-		$border_field = ET_Builder_Module_Fields_Factory::get( 'Border' );
-		$sticky       = et_pb_sticky_options();
+		$borders = self::$_->array_get( $this->advanced_fields, 'borders', array( 'default' => array() ) );
+		$sticky  = et_pb_sticky_options();
 
 		if ( is_array( $borders ) && ! empty( $borders ) ) {
 			foreach ( $borders as $border_name => $border ) {
@@ -14683,6 +14963,7 @@ class ET_Builder_Element {
 	 * @since 4.6.0 Add sticky style support.
 	 */
 	public function process_transform( $function_name ) {
+
 		$transform = self::$_->array_get( $this->advanced_fields, 'transform', array() );
 
 		if ( false === $transform || ! is_array( $transform ) ) {
@@ -14709,18 +14990,35 @@ class ET_Builder_Element {
 		$responsive_direction  = isset( $this->props['animation_direction_last_edited'] ) && et_pb_get_responsive_status( $this->props['animation_direction_last_edited'] );
 		$animation_type        = self::$_->array_get( $this->props, 'animation_style', 'none' );
 
-		/** Transform field class instance. @var $class ET_Builder_Module_Field_Transform */
+		/**
+		 * Transform instance.
+		 *
+		 * @var ET_Builder_Module_Field_Transform $class Transform field class instance.
+		 */
 		$class = ET_Builder_Module_Fields_Factory::get( 'Transform' );
 		$class->set_props( $this->props + array( 'transforms_important' => $important ) );
-
 		$position_locations = $this->get_position_locations();
-		$views              = array( 'desktop' );
+
+		$is_enabled = $this->_features_manager->get(
+			'transforms_is_enabled',
+			function() use ( $class, $position_locations ) {
+				return $class->is_used( $this->props, $position_locations );
+			}
+		);
+
+		if ( ! $is_enabled ) {
+			return;
+		}
+
+		$views = array( 'desktop' );
 		if ( $is_hover_enabled || isset( $position_locations['hover'] ) ) {
 			array_push( $views, 'hover' );
 		}
+
 		if ( $is_sticky_enabled || isset( $position_locations['sticky'] ) ) {
 			array_push( $views, 'sticky' );
 		}
+
 		if ( $is_responsive_enabled || ( 'none' !== $animation_type && $responsive_direction )
 			 || ( isset( $position_locations['hover'] ) || isset( $position_locations['phone'] ) ) ) {
 			array_push( $views, 'tablet', 'phone' );
@@ -14826,11 +15124,25 @@ class ET_Builder_Element {
 		global $et_fb_processing_shortcode_object;
 
 		/**
-		 * Position field instance.  @var $position_class of  `ET_Builder_Module_Field_Position`.
+		 * Position field instance.
+		 *
+		 * @var $position_class of  `ET_Builder_Module_Field_Position`.
 		 */
 		$position_class = ET_Builder_Module_Fields_Factory::get( 'Position' );
 		$position_class->set_module( $this );
-		$position_class->process( $function_name );
+
+		$is_enabled = $this->_features_manager->get(
+			'position_is_enabled',
+			function() use ( $position_class ) {
+				return $position_class->is_used( $this->props );
+			}
+		);
+
+		$this->set_position_locations( [] );
+
+		if ( $is_enabled ) {
+			$position_class->process( $function_name );
+		}
 
 		// Expose position settings on layout block preview so necesary adjustment can be applied.
 		if ( ET_GB_Block_Layout::is_layout_block_preview() ) {
@@ -14917,7 +15229,56 @@ class ET_Builder_Element {
 			return;
 		}
 
+		$is_enabled = $this->_features_manager->get(
+			'filters_are_enabled',
+			function() {
+				return $this->are_filters_used();
+			}
+		);
+
+		if ( ! $is_enabled ) {
+			return;
+		}
+
 		return $this->generate_css_filters( $function_name );
+	}
+
+	/**
+	 * Determine if max_width is used
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param  string $slug Module slug.
+	 * @return bool
+	 */
+	public function max_width_is_used( $slug ) {
+		foreach ( $this->props as $attr => $value ) {
+			if ( ! $value ) {
+				continue;
+			}
+
+			$is_attr = false !== strpos( $attr, 'max_width' ) || false !== strpos( $attr, 'width' );
+
+			// Ignore default value for section.
+			if ( 'et_pb_section' === $slug && 'inner_max_width' === $attr && '1080px' === $value ) {
+				continue;
+			}
+
+			// Ignore default value for row.
+			if ( 'et_pb_row' === $slug && 'max_width' === $attr && '1080px' === $value ) {
+				continue;
+			}
+
+			$default_values = [
+				'none',
+			];
+
+			if ( $is_attr && ! in_array( $value, $default_values, true ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -14936,6 +15297,17 @@ class ET_Builder_Element {
 		}
 
 		if ( ! is_array( self::$_->array_get( $this->advanced_fields, 'max_width', false ) ) ) {
+			return;
+		}
+
+		$is_enabled = $this->_features_manager->get(
+			'max_width_is_enabled',
+			function() use ( $function_name ) {
+				return $this->max_width_is_used( $function_name );
+			}
+		);
+
+		if ( ! $is_enabled ) {
 			return;
 		}
 
@@ -15145,7 +15517,7 @@ class ET_Builder_Element {
 					} else {
 						$default_selector = self::$_->array_get( $field, 'css.main', '%%order_class%%.et_pb_module' );
 					}
-					$selector         = self::$_->array_get( $field, 'css.module_alignment', $default_selector );
+					$selector = self::$_->array_get( $field, 'css.module_alignment', $default_selector );
 
 					$el_style = array(
 						'selector'    => $selector,
@@ -15311,7 +15683,7 @@ class ET_Builder_Element {
 		// Accordion Module reuses the Toggle Module and its child are not marked as child on FE, so check this specific case.
 		$is_child_element = 'child' === $this->type || 'et_pb_accordion_item' === $function_name;
 		$options          = $this->get_scroll_effects_options();
-		$motion           = ET_Builder_Module_Helper_Motion::instance();
+		$motion           = ET_Builder_Module_Helper_Motion_Motions::instance();
 		$responsive       = et_pb_responsive_options();
 		$devices          = array(
 			$responsive::DESKTOP,
@@ -15322,6 +15694,18 @@ class ET_Builder_Element {
 		// Reset saved parent effects to not apply them on subsequent modules.
 		if ( ! $is_child_element ) {
 			self::$parent_motion_effects = array();
+		}
+
+		// Check if animation is enabled.
+		$scroll_effects_enabled = $this->_features_manager->get(
+			'scroll_effects_enabled',
+			function() use ( $options ) {
+				return $this->is_scroll_effects_enabled( $options );
+			}
+		);
+
+		if ( ! $scroll_effects_enabled ) {
+			return;
 		}
 
 		foreach ( $options as $id => $option ) {
@@ -15405,6 +15789,23 @@ class ET_Builder_Element {
 	}
 
 	/**
+	 * Check if scroll effects is enabled.
+	 *
+	 * @param string $options Scroll options.
+	 *
+	 * @since 4.10.0
+	 */
+	public function is_scroll_effects_enabled( $options ) {
+		foreach ( $options as $id => $option ) {
+			if ( 'on' === $this->prop( $id . '_enable' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Process height options
 	 *
 	 * @param string $function_name Function name.
@@ -15441,7 +15842,14 @@ class ET_Builder_Element {
 				$css_props = $this->field_to_css_prop( $key );
 				$selector  = self::$_->array_get( $settings, "css.{$key}", $default_selector );
 
-				if ( $responsive->is_enabled( $slug, $this->props ) ) {
+				$responsive_is_enabled = $this->_features_manager->get(
+					"height_{$slug}_responsive_is_enabled",
+					function() use ( $responsive, $slug ) {
+						return $responsive->is_enabled( $slug, $this->props );
+					}
+				);
+
+				if ( $responsive_is_enabled ) {
 					$values = array();
 					foreach ( $responsive->get_modes() as $mode ) {
 						$default_field   = ET_Builder_Module_Helper_ResponsiveOptions::DESKTOP === $mode ? 'default' : "default_$mode";
@@ -15464,7 +15872,14 @@ class ET_Builder_Element {
 					}
 				}
 
-				if ( $hover->is_enabled( $slug, $this->props ) ) {
+				$hover_is_enabled = $this->_features_manager->get(
+					"height_{$slug}_hover_is_enabled",
+					function() use ( $hover, $slug ) {
+						return $hover->is_enabled( $slug, $this->props );
+					}
+				);
+
+				if ( $hover_is_enabled ) {
 					$default     = self::$_->array_get( $field, 'default' );
 					$value       = $helper->get_value( $this->props, $default );
 					$hover_value = $hover->get_value( $slug, $this->props, $value );
@@ -15479,7 +15894,14 @@ class ET_Builder_Element {
 					}
 				}
 
-				if ( $sticky->is_enabled( $slug, $this->props ) ) {
+				$sticky_is_enabled = $this->_features_manager->get(
+					"height_{$slug}_sticky_is_enabled",
+					function() use ( $sticky, $slug ) {
+						return $sticky->is_enabled( $slug, $this->props );
+					}
+				);
+
+				if ( $sticky_is_enabled ) {
 					$default      = self::$_->array_get( $field, 'default' );
 					$value        = $helper->get_value( $this->props, $default );
 					$sticky_value = $sticky->get_value( $slug, $this->props, $value );
@@ -15541,7 +15963,14 @@ class ET_Builder_Element {
 			$overflow_values = et_pb_responsive_options()->get_property_values( $this->props, $field, $default_value );
 			et_pb_responsive_options()->generate_responsive_css( $overflow_values, $selector, $field, $function_name, '', 'overflow' );
 
-			if ( $hover->is_enabled( $field, $this->props ) ) {
+			$hover_is_enabled = $this->_features_manager->get(
+				"overflow_{$field}_hover_is_enabled",
+				function() use ( $hover, $field ) {
+					return $hover->is_enabled( $field, $this->props );
+				}
+			);
+
+			if ( $hover_is_enabled ) {
 				$value = $hover->get_value( $field, $this->props, '' );
 
 				if ( '' !== $value ) {
@@ -15553,7 +15982,14 @@ class ET_Builder_Element {
 				}
 			}
 
-			if ( $sticky->is_enabled( $field, $this->props ) ) {
+			$sticky_is_enabled = $this->_features_manager->get(
+				"overflow_{$field}_sticky_is_enabled",
+				function() use ( $sticky, $field ) {
+					return $sticky->is_enabled( $field, $this->props );
+				}
+			);
+
+			if ( $sticky_is_enabled ) {
 				$value = $sticky->get_value( $field, $this->props, '' );
 
 				if ( '' !== $value ) {
@@ -15565,6 +16001,56 @@ class ET_Builder_Element {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Determine if custom margin or padding is used.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public function custom_margin_is_used() {
+		foreach ( $this->props as $attr => $value ) {
+			if ( ! $value ) {
+				continue;
+			}
+
+			$is_attr = false !== strpos( $attr, 'custom_margin' ) || false !== strpos( $attr, 'custom_padding' );
+
+			if ( $is_attr ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if font options are being used.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param string $slugs font option slugs.
+	 * @return bool
+	 */
+	public function font_options_are_used( $slugs ) {
+		$is_used = false;
+		foreach ( $this->props as $attr => $value ) {
+			if ( ! $value ) {
+				continue;
+			}
+
+			foreach ( $slugs as $slug ) {
+				$is_attr = false !== strpos( $attr, "_{$slug}" ) || false !== strpos( $attr, "{$slug}_" );
+
+				if ( $is_attr ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -15581,6 +16067,17 @@ class ET_Builder_Element {
 		}
 
 		if ( ! self::$_->array_get( $this->advanced_fields, 'margin_padding', false ) ) {
+			return;
+		}
+
+		$is_enabled = $this->_features_manager->get(
+			'custom_margin_padding_is_enabled',
+			function() {
+				return $this->custom_margin_is_used();
+			}
+		);
+
+		if ( ! $is_enabled ) {
 			return;
 		}
 
@@ -15954,8 +16451,30 @@ class ET_Builder_Element {
 
 		$has_wrapper = et_()->array_get( $this->wrapper_settings, 'order_class_wrapper', false );
 
+		$is_enabled = $this->_features_manager->get(
+			'is_button_visible',
+			function() use ( $function_name ) {
+
+				foreach ( $this->advanced_fields['button'] as $option_name => $option_settings ) {
+					$custom_button = "custom_{$option_name}";
+					if ( isset( $this->props[ $custom_button ] ) && 'on' === $this->props[ $custom_button ] ) {
+						return true;
+					}
+				}
+
+				// For button only we need either name or link.
+				return ! empty( $this->props['button_url'] ) || ! empty( $this->props['button_text'] ) || ! empty( $this->props['button_alignment'] );
+
+			}
+		);
+
+		if ( ! $is_enabled ) {
+			return;
+		}
+
 		foreach ( $this->advanced_fields['button'] as $option_name => $option_settings ) {
-			$button_custom   = $this->props[ "custom_{$option_name}" ];
+			$button_custom = $this->props[ "custom_{$option_name}" ];
+
 			$button_use_icon = isset( $this->props[ "{$option_name}_use_icon" ] ) ? $this->props[ "{$option_name}_use_icon" ] : 'on';
 
 			// Button Icon.
@@ -17182,6 +17701,25 @@ class ET_Builder_Element {
 			return '';
 		}
 
+		$is_enabled = $this->_features_manager->get(
+			'box_shadow_is_enabled',
+			function() use ( $box_shadow, $advanced_fields ) {
+				if ( $box_shadow->is_used( $this->props ) ) {
+					return true;
+				}
+
+				if ( $box_shadow->has_inset( $this->props, $advanced_fields, self::$_ ) ) {
+					return true;
+				}
+
+				return false;
+			}
+		);
+
+		if ( ! $is_enabled ) {
+			return;
+		}
+
 		// A module can have multiple advanced box shadow fields (i.e. default + button's box shadow) which are
 		// generated by advanced button fields.
 		foreach ( $advanced_fields as $option_name => $option_settings ) {
@@ -17246,13 +17784,14 @@ class ET_Builder_Element {
 			$overlay      = self::$_->array_get( $option_settings, 'css.overlay', false );
 			$has_video_bg = ! empty( $atts['background_video_mp4'] ) || ! empty( $atts['background_video_webm'] );
 			$inset        = $box_shadow->is_inset( $box_shadow->get_value( $this->props, $declaration_args ) );
-			$inset_hover  = $box_shadow->is_inset(
+
+			$inset_hover = $box_shadow->is_inset(
 				$box_shadow->get_value(
 					$this->props,
 					array_merge( $declaration_args, array( 'hover' => true ) )
 				)
 			);
-			$selector     = self::$_->array_get( $option_settings, 'css.main', '%%order_class%%' );
+			$selector    = self::$_->array_get( $option_settings, 'css.main', '%%order_class%%' );
 
 			// Default box shadow affects module while other affects group element it belongs to (ie image, button, etc).
 			$hover_selector = 'default' === $option_name ? $this->add_hover_to_order_class( $selector ) : $this->add_hover_to_selectors( $selector );
@@ -17284,11 +17823,11 @@ class ET_Builder_Element {
 						$device_declaration_args
 					);
 				}
-
 				// Compare current device declaration and previous declaration to avoid
 				// duplicate rendered styles. Or don't render if current declaration is
 				// empty string.
 				$declaration = isset( $box_shadow_style['declaration'] ) ? $box_shadow_style['declaration'] : '';
+
 				if ( $prev_declaration === $declaration || empty( $declaration ) ) {
 					continue;
 				}
@@ -17309,6 +17848,7 @@ class ET_Builder_Element {
 			}
 
 			if ( ( $inset_hover && 'inset' === $overlay ) || 'always' === $overlay || $has_video_bg ) {
+
 				self::set_style(
 					$function_name,
 					$box_shadow->get_overlay_style(
@@ -17406,7 +17946,8 @@ class ET_Builder_Element {
 	 * @return array
 	 */
 	public function disable_wptexturize( $shortcodes ) {
-		$shortcodes[] = $this->slug;
+		$shortcodes[] = 'et_pb_code';
+		$shortcodes[] = 'et_pb_fullwidth_code';
 
 		return $shortcodes;
 	}
@@ -17874,7 +18415,14 @@ class ET_Builder_Element {
 			self::$structure_module_slugs[] = $structural_module->slug;
 		}
 
-		return self::$structure_module_slugs;
+		/**
+		 * Filters structural module slugs.
+		 *
+		 * @since 4.10.0
+		 *
+		 * @param array $structure_module_slugs.
+		 */
+		return apply_filters( 'et_builder_get_structural_module_slugs', self::$structure_module_slugs );
 	}
 
 	/**
@@ -18781,7 +19329,7 @@ class ET_Builder_Element {
 	 * @param string $post_type Post type.
 	 * @param string $module Parent module slug.
 	 *
-	 * @return bool
+	 * @return array|bool
 	 */
 	public static function get_module_fields( $post_type, $module ) {
 		$_modules = self::get_parent_and_child_modules( $post_type );
@@ -19009,7 +19557,7 @@ class ET_Builder_Element {
 	 *
 	 * @return string
 	 */
-	public static function get_style( $internal = false, $key = 0 ) {
+	public static function get_style( $internal = false, $key = 0, $critical = false ) {
 		// use appropriate array depending on which styles we need.
 		$styles_array = self::get_style_array( $internal, $key );
 
@@ -19044,11 +19592,61 @@ class ET_Builder_Element {
 			// sort styles by priority.
 			et_()->uasort( $styles, array( 'ET_Builder_Element', 'compare_by_priority' ) );
 
-			// get each rule in a media query.
+			// merge styles with identical declarations.
+			$merged_declarations = [];
 			foreach ( $styles as $selector => $settings ) {
+
+				if ( false === $critical && isset( $settings['critical'] ) ) {
+					continue;
+				} elseif ( true === $critical && empty( $settings['critical'] ) ) {
+					continue;
+				}
+
+				$this_declaration = md5( $settings['declaration'] );
+
+				// we want to skip combining anything with psuedo selectors or keyframes.
+				if ( false !== strpos( $selector, ':-' ) || false !== strpos( $selector, '@keyframes' ) ) {
+					// set unique key so that it cant be matched.
+
+					$unique_key                         = $this_declaration . '-' . uniqid();
+					$merged_declarations[ $unique_key ] = [
+						'declaration' => $settings['declaration'],
+						'selector'    => $selector,
+					];
+
+					if ( ! empty( $settings['priority'] ) ) {
+						$merged_declarations[ $unique_key ]['priority'] = $settings['priority'];
+					}
+
+					continue;
+				}
+
+				if ( empty( $merged_declarations[ $this_declaration ] ) ) {
+					$merged_declarations[ $this_declaration ] = [
+						'selector' => '',
+						'priority' => '',
+					];
+				}
+
+				$new_selector = ! empty( $merged_declarations[ $this_declaration ]['selector'] )
+					? $merged_declarations[ $this_declaration ]['selector'] . ', ' . $selector
+					: $selector;
+
+				$merged_declarations[ $this_declaration ] = [
+					'declaration' => $settings['declaration'],
+					'selector'    => $new_selector,
+				];
+
+				if ( ! empty( $settings['priority'] ) ) {
+					$merged_declarations[ $this_declaration ]['priority'] = $settings['priority'];
+				}
+			}
+
+			// get each rule in a media query.
+			foreach ( $merged_declarations as $settings ) {
 				$media_query_output .= sprintf(
 					'%3$s%4$s%1$s { %2$s }',
-					$selector,
+					$settings['selector'],
 					$settings['declaration'],
 					"\n",
 					( $wrap_into_media_query ? "\t" : '' )
@@ -19057,7 +19655,7 @@ class ET_Builder_Element {
 
 			// All css rules that don't use media queries are assigned to the "general" key.
 			// Wrap all non-general settings into media query.
-			if ( $wrap_into_media_query ) {
+			if ( $wrap_into_media_query && '' !== $media_query_output ) {
 				$media_query_output = sprintf(
 					'%3$s%3$s%1$s {%2$s%3$s}',
 					$media_query,
@@ -19531,13 +20129,26 @@ class ET_Builder_Element {
 	 * @param array  $style Style array.
 	 */
 	protected static function _set_style( $function_name, $style ) {
+		static $builder_post_types = null;
+		static $allowed_post_types = null;
+
 		$declaration = rtrim( $style['declaration'] );
 		if ( empty( $declaration ) ) {
 			// Do not add empty declarations.
 			return;
 		}
-		$builder_post_types = et_builder_get_builder_post_types();
-		$allowed_post_types = apply_filters( 'et_builder_set_style_allowed_post_types', $builder_post_types );
+
+		if ( null === $builder_post_types ) {
+			$builder_post_types = et_builder_get_builder_post_types();
+			/**
+			 * Filters the Builder Post Types.
+			 *
+			 * @since 4.10.0
+			 *
+			 * @param array $builder_post_types Builder Post Types.
+			 */
+			$allowed_post_types = apply_filters( 'et_builder_set_style_allowed_post_types', $builder_post_types );
+		}
 
 		if ( $builder_post_types !== $allowed_post_types ) {
 			$matches = array_intersect( $allowed_post_types, array_keys( self::$_module_slugs_by_post_type ) );
@@ -19606,6 +20217,18 @@ class ET_Builder_Element {
 		if ( isset( $style['priority'] ) ) {
 			$styles[ $media_query ][ $selector ]['priority'] = (int) $style['priority'];
 		}
+
+		$style = $styles[ $media_query ][ $selector ];
+		/**
+		 * Filters the Builder CSS
+		 *
+		 * @since 4.10.0
+		 *
+		 * @param array $style Style Declaration.
+		 * @param string $selector Style Selector.
+		 */
+		$style                               = apply_filters( 'et_builder_set_style', $style, $selector );
+		$styles[ $media_query ][ $selector ] = $style;
 
 		if ( $internal ) {
 			self::$internal_modules_styles[ $style_key ] = $styles;
@@ -20073,6 +20696,44 @@ class ET_Builder_Element {
 	}
 
 	/**
+	 * Check if filters are used in a module.
+	 *
+	 * @since 4.10.0
+	 * @return bool Use of filter.
+	 */
+	public function are_filters_used() {
+
+		$filter_keys = array(
+			'filter_hue_rotate' => '0deg',
+			'filter_saturate'   => '100%',
+			'filter_brightness' => '100%',
+			'filter_contrast'   => '100%',
+			'filter_invert'     => '0%',
+			'filter_sepia'      => '0%',
+			'filter_opacity'    => '100%',
+			'filter_blur'       => '0px',
+			'mix_blend_mode'    => 'normal',
+		);
+
+		foreach ( $this->props as $attr => $value ) {
+			if ( ! $value ) {
+				continue;
+			}
+
+			foreach ( array_keys( $filter_keys ) as $filter_key ) {
+				$is_attr       = false !== strpos( $attr, $filter_key );
+				$default_value = $filter_keys[ $filter_key ];
+
+				if ( $is_attr && $value !== $default_value ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Generate CSS Filters
 	 * Check our shortcode arguments for CSS `filter` properties. If found, set the style rules for this block. (This
 	 * function reads options set by the 'Filters' and 'Image Filters' builder menu fields.)
@@ -20115,6 +20776,16 @@ class ET_Builder_Element {
 		$filters_default_fb = array();
 		$filters_hover      = array();
 		$hover_selectors    = array();
+		$filter_keys        = array(
+			'hue_rotate',
+			'saturate',
+			'brightness',
+			'contrast',
+			'invert',
+			'sepia',
+			'opacity',
+			'blur',
+		);
 
 		foreach ( $field_suffixes as $suffix ) {
 			$sticky_mode = $sticky_suffix === $suffix;
@@ -20159,16 +20830,6 @@ class ET_Builder_Element {
 			// Filters.
 			$filter       = array();
 			$filter_names = array();
-			$filter_keys  = array(
-				'hue_rotate',
-				'saturate',
-				'brightness',
-				'contrast',
-				'invert',
-				'sepia',
-				'opacity',
-				'blur',
-			);
 
 			// Assign filter values and names.
 			foreach ( $filter_keys as $filter_key ) {
@@ -21154,7 +21815,8 @@ class ET_Builder_Element {
 			// a FE page or during AJAX call would result in cache missing data.
 			self::$_cache = array();
 			add_filter( 'et_builder_modules_is_saving_cache', '__return_true' );
-			add_action( 'et_builder_modules_loaded', array( 'ET_Builder_Element', 'save_cache' ) );
+			add_filter( 'et_builder_should_load_all_module_data', '__return_true' );
+			add_action( 'et_builder_ready', array( 'ET_Builder_Element', 'save_cache' ) );
 		}
 	}
 
@@ -21363,25 +22025,6 @@ class ET_Builder_Element {
 	 */
 	public static function get_layout_block_assistive_settings() {
 		return self::$layout_block_assistive_settings;
-	}
-
-	/**
-	 * Enqueue scroll effects fields.
-	 */
-	public static function enqueue_scroll_effects_fields() {
-		// Motion Effects.
-		wp_localize_script(
-			apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' ),
-			'et_pb_motion_elements',
-			self::$_scroll_effects_fields
-		);
-
-		// Sticky Elements.
-		wp_localize_script(
-			apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' ),
-			'et_pb_sticky_elements',
-			self::$sticky_elements
-		);
 	}
 
 	/**
@@ -21824,7 +22467,14 @@ do_action( 'et_pagebuilder_module_init' );
  *
  * Class ET_Builder_Module
  */
-class ET_Builder_Module extends ET_Builder_Element {}
+class ET_Builder_Module extends ET_Builder_Element {
+	/**
+	 * Whether element is structure element.
+	 *
+	 * @var bool
+	 */
+	public $is_structure_element = false;
+}
 
 /**
  * Base class for structure elements.

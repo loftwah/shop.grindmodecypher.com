@@ -1,3 +1,329 @@
+version 4.10.3 ( updated 08-20-2021 )
+- Fixed broken search and cart icon styles in the fullwidth menu module.
+- Fixed conflict with Absolutely Glamorous Custom Admin plugin.
+- Fixed some latest JS optimization being incompable with certain Popular Caching Plugin.
+- Fixed filters not working on hover state and mobile.
+- Fixed issue with renamed CTA.php file being duplicated in some cases.
+- Fixed a php warning related to preset attributes.
+	* core/functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-module-shortcode-manager.php
+	* includes/builder/compat/early.php
+	* includes/builder/feature/JQueryBody.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/Cta.php
+
+version 4.10.2 ( updated 08-19-2021 )
+- Fixed broken header and footer styles on custom post types such as WooCommerce products.
+- Fixed some columns not extending full width on mobile breakpoint.
+- Fixed Google recaptcha badge visibility.
+- Fixed width property not being computed on FE if it's set to 100%.
+- Fixed missing text overlay styles in the slider module.
+- Introduces new filter to allow 3rd-party developers filter global assets on late processing.
+- Fixed dynamic icon's default value when 3p modules are present.
+- Fixed a minor PHP warning appearing on front end pages when no builder presets were available.
+- Fixed broken module styles on custom post types when using the Divi Builder Plugin with Dynamic CSS.
+- Fixed incorrect text transformations being applied to Code Modules.
+- Fixed an error that could happen when using SiteGround Plugin JS Combine feature.
+- Fixed error on heartbeat ajax call due to extension registers custom module which extends official module which ends up requiring function and class in unexpected call.
+- Fixed broken builder due to class-et-builder-element.php is not loaded by autoload when it is needed; Mostly when third party module is called in unexpected location.
+- Fixed styles that were missing for the standard WordPress gallery shortcode.
+- Fixed child theme styles not being enqueued correctly in some cases.
+	* core/functions.php
+	* includes/builder/autoload.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/compat/early.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/Code.php
+	* includes/builder/module/FullwidthCode.php
+
+version 4.10.1 ( updated 08-18-2021 )
+- Fixes PHP errors on save occurring with some 3rd Party Divi Extensions.
+- Fixed woff2 fonts not being used in favor of ttf fonts.
+- Fixed responsive text alignment options not working.
+- Fixes issue with 3rd Part Divi Extensions not loading in some cases.
+- Fixed JavaScript error when motion effects was used in some cases.
+- Fixed the cart icon not being clickable in the main navigation bar.
+- Fixed issue where the Main Navigation was duplicated if the primary menu bar background is transparent.
+	* core/components/PageResource.php
+	* core/components/Portability.php
+	* core/components/VersionRollback.php
+	* core/functions.php
+	* includes/builder/api/DiviExtension.php
+	* includes/builder/class-et-builder-dynamic-assets-feature.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-global-feature-base.php
+	* includes/builder/class-et-builder-google-fonts-feature.php
+	* includes/builder/class-et-builder-module-features.php
+	* includes/builder/class-et-builder-module-shortcode-manager.php
+	* includes/builder/class-et-builder-module-use-detection.php
+	* includes/builder/class-et-builder-post-feature-base.php
+	* includes/builder/class-et-builder-theme-compat-base.php
+	* includes/builder/class-et-builder-theme-compat-handler.php
+	* includes/builder/conditions.php
+	* includes/builder/feature/CriticalCSS.php
+	* includes/builder/feature/JQueryBody.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/feature/global-presets/History.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/field/BoxShadow.php
+	* includes/builder/module/field/MarginPadding.php
+	* includes/builder/module/field/Position.php
+	* includes/builder/module/field/TextShadow.php
+	* includes/builder/module/helpers/MultiViewOptions.php
+	* includes/builder/plugin-compat/ds-divi-rocket.php
+	* includes/builder/plugin-compat/easy-digital-downloads.php
+	* includes/builder/theme-compat/divi-chef.php
+
+version 4.10 ( updated 08-18-2021 )
+- Added new performance features that speed up Divi from every angle and eliminate bloat.
+- Fixed an issue that was causing errors on VB while parsing Google Fonts data from cache.
+	* 404.php
+	* CREDITS.md
+	* comments.php
+	* core/admin/css/core.css
+	* core/admin/fonts/modules/all/modules.eot
+	* core/admin/fonts/modules/all/modules.svg
+	* core/admin/fonts/modules/all/modules.ttf
+	* core/admin/fonts/modules/all/modules.woff
+	* core/admin/fonts/modules/base/modules.eot
+	* core/admin/fonts/modules/base/modules.svg
+	* core/admin/fonts/modules/base/modules.ttf
+	* core/admin/fonts/modules/base/modules.woff
+	* core/admin/fonts/modules/social/modules.eot
+	* core/admin/fonts/modules/social/modules.svg
+	* core/admin/fonts/modules/social/modules.ttf
+	* core/admin/fonts/modules/social/modules.woff
+	* core/admin/js/page-resource-fallback.js
+	* core/components/PageResource.php
+	* core/components/SupportCenter.php
+	* core/components/VersionRollback.php
+	* core/components/init.php
+	* core/functions.php
+	* epanel/css/panel.css
+	* epanel/custom_functions.php
+	* epanel/js/functions-init.js
+	* epanel/shortcodes/shortcodes.php
+	* footer.php
+	* functions.php
+	* header.php
+	* includes/builder/api/DiviExtension.php
+	* includes/builder/autoload.php
+	* includes/builder/class-et-builder-dynamic-assets-feature.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-global-feature-base.php
+	* includes/builder/class-et-builder-google-fonts-feature.php
+	* includes/builder/class-et-builder-module-features.php
+	* includes/builder/class-et-builder-module-shortcode-manager.php
+	* includes/builder/class-et-builder-module-use-detection.php
+	* includes/builder/class-et-builder-post-feature-base.php
+	* includes/builder/class-et-builder-theme-compat-base.php
+	* includes/builder/class-et-builder-theme-compat-handler.php
+	* includes/builder/comments_template.php
+	* includes/builder/conditions.php
+	* includes/builder/core.php
+	* includes/builder/feature/CriticalCSS.php
+	* includes/builder/feature/JQueryBody.php
+	* includes/builder/feature/dynamic-assets/assets/js/animations.js
+	* includes/builder/feature/dynamic-assets/assets/js/audio.js
+	* includes/builder/feature/dynamic-assets/assets/js/circle_counter.js
+	* includes/builder/feature/dynamic-assets/assets/js/comments.js
+	* includes/builder/feature/dynamic-assets/assets/js/countdown_timer.js
+	* includes/builder/feature/dynamic-assets/assets/js/easypiechart.js
+	* includes/builder/feature/dynamic-assets/assets/js/filterable_portfolio.js
+	* includes/builder/feature/dynamic-assets/assets/js/fitvids.js
+	* includes/builder/feature/dynamic-assets/assets/js/fitvids_slider_fullscreen_init.js
+	* includes/builder/feature/dynamic-assets/assets/js/gallery.js
+	* includes/builder/feature/dynamic-assets/assets/js/hash.js
+	* includes/builder/feature/dynamic-assets/assets/js/hashchange.js
+	* includes/builder/feature/dynamic-assets/assets/js/jquery.fitvids.js
+	* includes/builder/feature/dynamic-assets/assets/js/jquery.mobile.js
+	* includes/builder/feature/dynamic-assets/assets/js/jquery_mobile_custom.js
+	* includes/builder/feature/dynamic-assets/assets/js/lightbox_image.js
+	* includes/builder/feature/dynamic-assets/assets/js/link_options.js
+	* includes/builder/feature/dynamic-assets/assets/js/magnific-popup.js
+	* includes/builder/feature/dynamic-assets/assets/js/map.js
+	* includes/builder/feature/dynamic-assets/assets/js/menu.js
+	* includes/builder/feature/dynamic-assets/assets/js/number_counter.js
+	* includes/builder/feature/dynamic-assets/assets/js/parallax.js
+	* includes/builder/feature/dynamic-assets/assets/js/salvattore.js
+	* includes/builder/feature/dynamic-assets/assets/js/search.js
+	* includes/builder/feature/dynamic-assets/assets/js/set_fullwidth_portfolio_columns.js
+	* includes/builder/feature/dynamic-assets/assets/js/shop_add_hover_class.js
+	* includes/builder/feature/dynamic-assets/assets/js/slider.js
+	* includes/builder/feature/dynamic-assets/assets/js/src/motion-effects.js
+	* includes/builder/feature/dynamic-assets/assets/js/src/sticky-element.js
+	* includes/builder/feature/dynamic-assets/assets/js/src/sticky-elements.js
+	* includes/builder/feature/dynamic-assets/assets/js/submit_newsletter.js
+	* includes/builder/feature/dynamic-assets/assets/js/tabs_init.js
+	* includes/builder/feature/dynamic-assets/assets/js/video_section.js
+	* includes/builder/feature/dynamic-assets/assets/js/woo_attribute_fields_in_span.js
+	* includes/builder/feature/dynamic-assets/assets/js/woo_star_rating.js
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/feature/global-presets/History.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/api.php
+	* includes/builder/frontend-builder/theme-builder/frontend-footer-template.php
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/functions.php
+	* includes/builder/languages/en_US.po
+	* includes/builder/languages/et_builder-en_US-et-builder-gutenberg.po
+	* includes/builder/main-modules.php
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/Accordion.php
+	* includes/builder/module/AccordionItem.php
+	* includes/builder/module/Audio.php
+	* includes/builder/module/BarCounters.php
+	* includes/builder/module/BarCountersItem.php
+	* includes/builder/module/Blog.php
+	* includes/builder/module/Blurb.php
+	* includes/builder/module/Button.php
+	* includes/builder/module/CTA.php
+	* includes/builder/module/CircleCounter.php
+	* includes/builder/module/Code.php
+	* includes/builder/module/Comments.php
+	* includes/builder/module/ContactForm.php
+	* includes/builder/module/ContactFormItem.php
+	* includes/builder/module/CountdownTimer.php
+	* includes/builder/module/Divider.php
+	* includes/builder/module/FilterablePortfolio.php
+	* includes/builder/module/FullwidthCode.php
+	* includes/builder/module/FullwidthHeader.php
+	* includes/builder/module/FullwidthImage.php
+	* includes/builder/module/FullwidthMap.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/FullwidthPortfolio.php
+	* includes/builder/module/FullwidthPostContent.php
+	* includes/builder/module/FullwidthPostSlider.php
+	* includes/builder/module/FullwidthPostTitle.php
+	* includes/builder/module/FullwidthSlider.php
+	* includes/builder/module/Gallery.php
+	* includes/builder/module/Image.php
+	* includes/builder/module/Login.php
+	* includes/builder/module/Map.php
+	* includes/builder/module/MapItem.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/NumberCounter.php
+	* includes/builder/module/Portfolio.php
+	* includes/builder/module/PostContent.php
+	* includes/builder/module/PostSlider.php
+	* includes/builder/module/PostTitle.php
+	* includes/builder/module/PostsNavigation.php
+	* includes/builder/module/PricingTables.php
+	* includes/builder/module/PricingTablesItem.php
+	* includes/builder/module/Search.php
+	* includes/builder/module/Shop.php
+	* includes/builder/module/Sidebar.php
+	* includes/builder/module/Signup.php
+	* includes/builder/module/Slider.php
+	* includes/builder/module/SliderItem.php
+	* includes/builder/module/SocialMediaFollow.php
+	* includes/builder/module/SocialMediaFollowItem.php
+	* includes/builder/module/Tabs.php
+	* includes/builder/module/TabsItem.php
+	* includes/builder/module/TeamMember.php
+	* includes/builder/module/Testimonial.php
+	* includes/builder/module/Text.php
+	* includes/builder/module/Toggle.php
+	* includes/builder/module/Video.php
+	* includes/builder/module/VideoSlider.php
+	* includes/builder/module/VideoSliderItem.php
+	* includes/builder/module/field/Border.php
+	* includes/builder/module/field/BoxShadow.php
+	* includes/builder/module/field/MarginPadding.php
+	* includes/builder/module/field/Position.php
+	* includes/builder/module/field/TextShadow.php
+	* includes/builder/module/field/Transform.php
+	* includes/builder/module/helpers/HoverOptions.php
+	* includes/builder/module/helpers/Media.php
+	* includes/builder/module/helpers/MultiViewOptions.php
+	* includes/builder/module/helpers/OptionTemplate.php
+	* includes/builder/module/helpers/ResponsiveOptions.php
+	* includes/builder/module/helpers/StickyOptions.php
+	* includes/builder/module/helpers/TransitionOptions.php
+	* includes/builder/module/helpers/WoocommerceModules.php
+	* includes/builder/module/helpers/motion/Motions.php
+	* includes/builder/module/type/PostContent.php
+	* includes/builder/module/woocommerce/Gallery.php
+	* includes/builder/module/woocommerce/Reviews.php
+	* includes/builder/module/woocommerce/Tabs.php
+	* includes/builder/plugin-compat/ds-divi-rocket.php
+	* includes/builder/scripts/frontend/scripts-dynamic.js
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/theme-compat/divi-chef.php
+	* includes/functions/dynamic-assets.php
+	* includes/functions/sidebars.php
+	* includes/no-results.php
+	* includes/social_icons.php
+	* includes/widgets/widget-about.php
+	* includes/widgets/widget-ads.php
+	* includes/widgets/widget-adsense.php
+	* index.php
+	* js/src/custom-dynamic.js
+	* js/src/custom.js
+	* js/src/custom.unified.js
+	* js/src/dynamic-assets/fullscreen_header.js
+	* js/src/dynamic-assets/slide_in_header.js
+	* js/src/dynamic-assets/split_header.js
+	* js/src/scripts-dynamic.js
+	* js/src/scripts-static.js
+	* js/src/scripts.js
+	* lang/en_US.po
+	* options_divi.php
+	* page-template-blank.php
+	* page.php
+	* sidebar-footer.php
+	* sidebar.php
+	* single-et_pb_layout.php
+	* single-project.php
+	* single.php
+	* theme-after-footer.php
+	* theme-after-wrappers.php
+	* theme-footer.php
+	* theme-header.php
+	* webpack.config.js
+	* webpack.production.config.js
+
+version 4.9.11 ( updated 08-11-2021 )
+- Fixed broken widget styles after WordPress 5.8 update.
+- Fixed an issue with Google Fonts sync where when there was an error in the API response (ex: invalid API Key) the sync would be attempted on each page load instead of once every 24 hours.
+- The setting of the video backgrounds In the Bar Counters module was fixed on VB.
+- Improved Global Colors performance.
+- Fixed Global Colors usage in presets.
+- Fixed fatal error when a post contains post excerpt dynamic content.
+- Fixes the "Invalid argument supplied for foreach()" warning.
+- Fixed a bug where conditional logic would return an error when the conditional value used the double-quote character.
+- Fixed fatal error on Extra theme when users open new Widget Block Editor.
+- Fixed theme settings color palette on Firefox.
+	* core/components/Portability.php
+	* epanel/css/panel.css
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/core.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/module/ContactFormItem.php
+	* includes/builder/scripts/src/builder.js
+
 version 4.9.10 ( updated 07-19-2021 )
 - Improved custom widget area feature on Widget page to adapt new Widget Block Editor.
 - Fixed builder crash when extending styles of child modules that were newly created.

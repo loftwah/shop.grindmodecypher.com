@@ -131,6 +131,10 @@ class ET_Core_Portability {
 			$import['data'] = $this->replace_images_urls( $images, $import['data'] );
 		}
 
+		if ( ! empty( $import['global_colors'] ) ) {
+			$import['data'] = $this->_maybe_inject_gcid( $import['data'] );
+		}
+
 		$data = $import['data'];
 		$success = array( 'timestamp' => $timestamp );
 
@@ -1073,6 +1077,9 @@ class ET_Core_Portability {
 
 					$global_presets->$module_type->presets->$preset_id->settings->$setting_name_sanitized = $value_sanitized;
 				}
+
+				// Inject Global colors into imported presets.
+				$global_presets->$module_type->presets->$preset_id->settings = ET_Builder_Global_Presets_Settings::maybe_set_global_colors( $global_presets->$module_type->presets->$preset_id->settings );
 			}
 		}
 
@@ -1343,6 +1350,67 @@ class ET_Core_Portability {
 
 			if ( isset( $module['content'] ) && is_array( $module['content'] ) ) {
 				$this->rewrite_module_preset_ids( $module['content'], $global_presets, $preset_rewrite_map );
+			}
+		}
+	}
+
+	/**
+	 * Injects global color ids into the imported layout
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param array $data - The multidimensional array representing a import object structure.
+	 */
+	protected function _maybe_inject_gcid( &$data ) {
+		foreach ( $data as $post_id => &$post_data ) {
+			if ( is_array( $post_data ) ) {
+				foreach ( $post_data as $post_param => &$param_value ) {
+					if ( ! is_array( $param_value ) ) {
+						$shortcode_object = et_fb_process_shortcode( $param_value );
+						$this->_inject_gcid( $shortcode_object );
+						$data[ $post_id ][ $post_param ] = et_fb_process_to_shortcode( $shortcode_object, array(), '', false );
+					}
+				}
+				unset( $param_value );
+			} else {
+				$shortcode_object = et_fb_process_shortcode( $post_data );
+				$this->_inject_gcid( $shortcode_object );
+				$data[ $post_id ] = et_fb_process_to_shortcode( $shortcode_object, array(), '', false );
+			}
+		}
+		unset( $post_data );
+
+		return $data;
+	}
+
+	/**
+	 * Process and inject global color ids into the shortcode
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param array $shortcode_object - The multidimensional array representing a page/module structure.
+	 */
+	protected function _inject_gcid( &$shortcode_object ) {
+		foreach ( $shortcode_object as &$module ) {
+			// No global colors set for this module.
+			if ( ! empty( $module['attrs']['global_colors_info'] ) ) {
+				$colors_array = json_decode( $module['attrs']['global_colors_info'], true );
+
+				if ( ! empty( $colors_array ) ) {
+					foreach ( $colors_array as $color_id => $attrs_array ) {
+						if ( ! empty( $attrs_array ) ) {
+							foreach ( $attrs_array as $attr_name ) {
+								if ( isset( $module['attrs'][ $attr_name ] ) && '' !== $module['attrs'][ $attr_name ] ) {
+									$module['attrs'][ $attr_name ] = $color_id;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if ( isset( $module['content'] ) && is_array( $module['content'] ) ) {
+				$this->_inject_gcid( $module['content'] );
 			}
 		}
 	}

@@ -500,7 +500,7 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 		$output = sprintf(
 			'<div class="%1$s"%3$s%4$s%5$s>
 				%2$s
-			</div> <!-- .et_pb_slide -->
+			</div>
 			',
 			$this->module_classname( $render_slug ),
 			( '' !== $video_output ? $video_output : '' ),
@@ -513,4 +513,6 @@ class ET_Builder_Module_Video_Slider_Item extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Video_Slider_Item();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Video_Slider_Item();
+}

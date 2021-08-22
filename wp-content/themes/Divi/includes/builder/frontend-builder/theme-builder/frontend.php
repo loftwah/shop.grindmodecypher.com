@@ -331,21 +331,45 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 		$result = ET_Builder_Element::setup_advanced_styles_manager( $layout->ID );
 	}
 
-	$manager = $result['manager'];
+	$advanced_styles_manager = $result['manager'];
+	if ( isset( $result['deferred'] ) ) {
+		$deferred_styles_manager = $result['deferred'];
+	}
 
-	if ( ET_Builder_Element::$forced_inline_styles || ! $manager->has_file() ) {
-		$styles = et_pb_get_page_custom_css( $layout->ID ) . ET_Builder_Element::get_style( false, $layout->ID ) . ET_Builder_Element::get_style( true, $layout->ID );
+	// Pass styles to page resource which will handle their output.
+	/**
+	 * Filters whether Critical CSS feature is enabled or not.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param bool $enabled Critical CSS enabled value.
+	 */
+	$is_critical_enabled = apply_filters( 'et_builder_critical_css_enabled', false );
 
-		if ( $styles ) {
-			$manager->set_data( $styles, 40 );
+	if ( ET_Builder_Element::$forced_inline_styles || ! $advanced_styles_manager->has_file() ) {
+		$custom = et_pb_get_page_custom_css( $layout->ID );
 
-			// Output the styles inline in the footer on first render as we are already
-			// past "head-late" where they will be enqueued once static files are generated.
-			if ( ET_Builder_Element::$forced_inline_styles ) {
-				$manager->forced_inline = true;
+		$critical = $is_critical_enabled ? ET_Builder_Element::get_style( false, $layout->ID, true ) . ET_Builder_Element::get_style( true, $layout->ID, true ) : [];
+		$styles   = ET_Builder_Element::get_style( false, $layout->ID ) . ET_Builder_Element::get_style( true, $layout->ID );
+
+		if ( empty( $critical ) ) {
+			// No critical styles defined, just enqueue everything as usual.
+			$styles .= $custom;
+			if ( ! empty( $styles ) ) {
+				if ( isset( $deferred_styles_manager ) ) {
+					$deferred_styles_manager->set_data( $styles, 40 );
+				} else {
+					$advanced_styles_manager->set_data( $styles, 40 );
+				}
 			}
-			$manager->write_file_location = 'footer';
-			$manager->set_output_location( 'footer' );
+		} else {
+			// Add page css to the critical section.
+			$critical .= $custom;
+			$advanced_styles_manager->set_data( $critical, 40 );
+			if ( ! empty( $styles ) ) {
+				// Defer everything else.
+				$deferred_styles_manager->set_data( $styles, 40 );
+			}
 		}
 	}
 

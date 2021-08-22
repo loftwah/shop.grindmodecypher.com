@@ -1351,12 +1351,12 @@ add_action( 'wp_head', 'add_favicon' );
 function add_favicon(){
 	global $shortname;
 
-	$faviconUrl = et_get_option( $shortname.'_favicon' );
+	$favicon_url = et_get_option( $shortname . '_favicon' );
 
 	// If the `has_site_icon` function doesn't exist (ie we're on < WP 4.3) or if the site icon has not been set,
 	// and when we have a icon URL from theme option
-	if ( ( ! function_exists( 'has_site_icon' ) || ! has_site_icon() ) && '' !== $faviconUrl ) {
-		echo '<link rel="shortcut icon" href="' . esc_url( $faviconUrl ) . '" />';
+	if ( ( ! function_exists( 'has_site_icon' ) || ! has_site_icon() ) && false !== $favicon_url && '' !== $favicon_url ) {
+		echo '<link rel="shortcut icon" href="' . esc_url( $favicon_url ) . '" />';
 	} elseif ( function_exists( 'has_site_icon' ) && has_site_icon() ) {
 		et_update_option( $shortname . '_favicon', '' );
 	}
@@ -1710,6 +1710,57 @@ function et_add_fullwidth_body_class( $classes ){
 	return $classes;
 }
 
+/**
+ * Enqueue legacy shortcodes' CSS.
+ *
+ * @since ??
+ */
+function et_add_legacy_shortcode_css() {
+	wp_enqueue_style(
+		'et-shortcodes-css',
+		ET_SHORTCODES_DIR . '/css/shortcodes-legacy.css',
+		array(),
+		ET_SHORTCODES_VERSION,
+		'all'
+	);
+
+	wp_enqueue_style(
+		'et-shortcodes-responsive-css',
+		ET_SHORTCODES_DIR . '/css/shortcodes_responsive.css',
+		false,
+		ET_SHORTCODES_VERSION,
+		'all'
+	);
+}
+
+/**
+ * Enqueue legacy shortcode JS.
+ *
+ * @return void
+ * @since ??
+ */
+function et_add_legacy_shortcode_js() {
+	global $themename;
+
+	$shortcode_strings_handle = apply_filters( 'et_shortcodes_strings_handle', 'et-shortcodes-js' );
+
+	wp_enqueue_script( 'et-shortcodes-js', ET_SHORTCODES_DIR . '/js/et_shortcodes_frontend.js', array( 'jquery' ), ET_SHORTCODES_VERSION, false );
+
+	wp_localize_script(
+		$shortcode_strings_handle,
+		'et_shortcodes_strings',
+		array(
+			'previous' => esc_html__( 'Previous', $themename ),
+			'next'     => esc_html__( 'Next', $themename ),
+		)
+	);
+}
+
+/**
+ * Enqueue responsive shortcode CSS in legacy themes when the ePanel option is enabled.
+ *
+ * @since ??
+ */
 function et_add_responsive_shortcodes_css() {
 	global $shortname;
 

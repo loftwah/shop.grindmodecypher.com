@@ -195,4 +195,6 @@ class ET_Builder_Module_Map_Item extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Map_Item();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Map_Item();
+}

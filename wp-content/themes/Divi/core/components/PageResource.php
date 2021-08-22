@@ -28,15 +28,26 @@
  * @package ET\Core
  */
 class ET_Core_PageResource {
+	/**
+	 * Lock file.
+	 *
+	 * @var string[]
+	 */
+	protected static $_lock_file;
 
-	private static $_LOCK_FILE;
+	/**
+	 * Onload attribute for stylesheet output.
+	 *
+	 * @var string[]
+	 */
+	private static $_onload = '';
 
 	/**
 	 * Output locations.
 	 *
 	 * @var string[]
 	 */
-	private static $_OUTPUT_LOCATIONS = array(
+	protected static $_output_locations = array(
 		'head-early',
 		'head',
 		'head-late',
@@ -48,7 +59,7 @@ class ET_Core_PageResource {
 	 *
 	 * @var string[]
 	 */
-	private static $_OWNERS = array(
+	protected static $_owners = array(
 		'divi',
 		'builder',
 		'epanel',
@@ -65,19 +76,24 @@ class ET_Core_PageResource {
 	 *
 	 * @var string[]
 	 */
-	private static $_SCOPES = array(
+	protected static $_scopes = array(
 		'global',
 		'post',
 	);
 
-	private static $_TEMP_DIRS = array();
+	/**
+	 * Temp DIRS.
+	 *
+	 * @var array
+	 */
+	protected static $_temp_dirs = array();
 
 	/**
 	 * Resource types.
 	 *
 	 * @var string[]
 	 */
-	private static $_TYPES = array(
+	protected static $_types = array(
 		'style',
 		'script',
 	);
@@ -87,13 +103,21 @@ class ET_Core_PageResource {
 	 *
 	 * @var bool
 	 */
-	private static $_can_write;
+	protected static $_can_write;
 
-	private static $_onerror = 'et_core_page_resource_fallback(this, true)';
-	private static $_onload  = 'et_core_page_resource_fallback(this)';
+	/**
+	 * Request ID.
+	 *
+	 * @var int
+	 */
+	protected static $_request_id;
 
-	private static $_request_id;
-	private static $_request_time;
+	/**
+	 * Request time.
+	 *
+	 * @var string
+	 */
+	protected static $_request_time;
 
 	/**
 	 * All instances of this class.
@@ -103,14 +127,14 @@ class ET_Core_PageResource {
 	 *     @type ET_Core_PageResource $slug
 	 * }
 	 */
-	private static $_resources;
+	protected static $_resources;
 
 	/**
 	 * All instances of this class organized by output location and sorted by priority.
 	 *
 	 * @var array[] {
 	 *
-	 *     @type array[] $location {@see self::$_OUTPUT_LOCATIONS} {
+	 *     @type array[] $location {@see self::$_output_locations} {
 	 *
 	 *         @type ET_Core_PageResource[] $priority {
 	 *
@@ -119,7 +143,7 @@ class ET_Core_PageResource {
 	 *     }
 	 * }
 	 */
-	private static $_resources_by_location;
+	protected static $_resources_by_location;
 
 	/**
 	 * All instances of this class organized by scope.
@@ -132,7 +156,7 @@ class ET_Core_PageResource {
 	 *     }
 	 * }
 	 */
-	private static $_resources_by_scope;
+	protected static $_resources_by_scope;
 
 	/**
 	 * @var string
@@ -159,23 +183,28 @@ class ET_Core_PageResource {
 	 *
 	 * @var string
 	 */
-	public $BASE_DIR;
+	public $base_dir;
 
 	/**
 	 * The absolute path to the static resource on the server.
 	 *
 	 * @var string
 	 */
-	public $PATH;
+	public $path;
 
-	public $TEMP_DIR;
+	/**
+	 * Temp DIR.
+	 *
+	 * @var array
+	 */
+	public $temp_dir;
 
 	/**
 	 * The absolute URL through which the static resource can be downloaded.
 	 *
 	 * @var string
 	 */
-	public $URL;
+	public $url;
 
 	/**
 	 * The data/contents for/of the static resource sorted by priority.
@@ -307,16 +336,17 @@ class ET_Core_PageResource {
 		self::$_resources    = array();
 		self::$data_utils    = new ET_Core_Data_Utils();
 
-		foreach ( self::$_OUTPUT_LOCATIONS as $location ) {
+		foreach ( self::$_output_locations as $location ) {
 			self::$_resources_by_location[ $location ] = array();
 		}
 
-		foreach( self::$_SCOPES as $scope ) {
+		foreach ( self::$_scopes as $scope ) {
 			self::$_resources_by_scope[ $scope ] = array();
 		}
+		// phpcs:enable
 
 		self::$WP_CONTENT_DIR = self::$data_utils->normalize_path( WP_CONTENT_DIR );
-		self::$_LOCK_FILE     = self::$_request_id . '~';
+		self::$_lock_file     = self::$_request_id . '~';
 
 		self::_register_callbacks();
 		self::_setup_wp_filesystem();
@@ -325,7 +355,7 @@ class ET_Core_PageResource {
 	}
 
 	/**
-	 * Updates our resource array in the database if needed.
+	 * Cleanup and save
 	 */
 	public static function shutdown() {
 		if ( ! self::$_resources || ! self::$_can_write ) {
@@ -333,8 +363,8 @@ class ET_Core_PageResource {
 		}
 
 		// Remove any leftover temporary directories that belong to this request
-		foreach ( self::$_TEMP_DIRS as $temp_directory ) {
-			if ( file_exists( $temp_directory . '/' . self::$_LOCK_FILE ) ) {
+		foreach ( self::$_temp_dirs as $temp_directory ) {
+			if ( file_exists( $temp_directory . '/' . self::$_lock_file ) ) {
 				@self::$wpfs->delete( $temp_directory, true );
 			}
 		}
@@ -363,18 +393,24 @@ class ET_Core_PageResource {
 	/**
 	 * Enqueues static file for provided script resource.
 	 *
-	 * @param ET_Core_PageResource $resource
+	 * @param ET_Core_PageResource $resource page resources.
 	 */
 	protected static function _enqueue_script( $resource ) {
+		// Bust PHP's stats cache for the resource file to ensure we get the latest timestamp.
+		clearstatcache( true, $resource->path );
+
 		$can_enqueue = 0 === did_action( 'wp_print_scripts' );
+		$timestamp   = filemtime( $resource->path );
 
 		if ( $can_enqueue ) {
-			wp_enqueue_script( $resource->slug, set_url_scheme( $resource->URL ), array(), ET_CORE_VERSION, true );
+			wp_enqueue_script( $resource->slug, set_url_scheme( $resource->url ), array(), $timestamp, true );
 		} else {
+			$timestamp = $timestamp ? $timestamp : ET_CORE_VERSION;
+
 			printf(
 				'<script id="%1$s" src="%2$s"></script>', // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 				esc_attr( $resource->slug ),
-				esc_url( set_url_scheme( $resource->URL ) )
+				esc_url( set_url_scheme( $resource->url . "?ver={$timestamp}" ) )
 			);
 		}
 
@@ -391,18 +427,31 @@ class ET_Core_PageResource {
 			return;
 		}
 
-		$can_enqueue = 0 === did_action( 'wp_print_styles' );
+		// Bust PHP's stats cache for the resource file to ensure we get the latest timestamp.
+		clearstatcache( true, $resource->path );
+
+		$can_enqueue = 0 === did_action( 'wp_print_scripts' );
+		// reason: We do this on purpose when a style can't be enqueued.
+		// phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
+		$template = '<link rel="stylesheet" id="%1$s" href="%2$s" />';
+		// phpcs:enable
+		$timestamp = filemtime( $resource->path );
 
 		if ( $can_enqueue ) {
-			wp_enqueue_style( $resource->slug, set_url_scheme( $resource->URL ) );
+			wp_enqueue_style( $resource->slug, set_url_scheme( $resource->url ), array(), $timestamp );
 		} else {
-			printf(
-				'<link rel="stylesheet" id="%1$s" href="%2$s" onerror="%3$s" onload="%4$s" />', // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
-				esc_attr( $resource->slug ),
-				esc_url( set_url_scheme( $resource->URL ) ),
-				et_core_esc_previously( self::$_onerror ),
-				et_core_esc_previously( self::$_onload )
-			);
+			// reason: this whole file needs to be converted.
+			// phpcs:disable ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase
+			$timestamp = $timestamp ?: ET_CORE_VERSION;
+			$slug      = esc_attr( $resource->slug );
+			$scheme    = esc_url( set_url_scheme( $resource->url . "?ver={$timestamp}" ) );
+			$tag       = sprintf( $template, $slug, $scheme );
+			$onload    = et_core_esc_previously( self::$_onload );
+			// phpcs:enable
+
+			$tag = apply_filters( 'et_core_page_resource_tag', $tag, $slug, $scheme, $onload );
+
+			print( et_core_esc_previously( $tag ) );
 		}
 
 		$resource->enqueued = true;
@@ -411,12 +460,12 @@ class ET_Core_PageResource {
 	/**
 	 * Returns the next output location.
 	 *
-	 * @see self::$_OUTPUT_LOCATIONS
+	 * @see self::$_output_locations
 	 *
 	 * @return string
 	 */
 	protected static function _get_next_output_location() {
-		$current_index = array_search( self::$current_output_location, self::$_OUTPUT_LOCATIONS );
+		$current_index = array_search( self::$current_output_location, self::$_output_locations, true );
 
 		if ( false === $current_index || ! is_int( $current_index ) ) {
 			ET_Core_Logger::error( '$current_output_location is invalid!' );
@@ -424,13 +473,13 @@ class ET_Core_PageResource {
 
 		$current_index += 1;
 
-		return self::$_OUTPUT_LOCATIONS[ $current_index ];
+		return self::$_output_locations[ $current_index ];
 	}
 
 	/**
 	 * Creates static resource files for an output location if needed.
 	 *
-	 * @param string $location {@link self::$_OUTPUT_LOCATIONS}
+	 * @param string $location {@link self::$_output_locations}.
 	 */
 	protected static function _maybe_create_static_resources( $location ) {
 		self::$current_output_location = $location;
@@ -467,12 +516,14 @@ class ET_Core_PageResource {
 					continue;
 				}
 
-				if ( empty( $data ) ) {
+				$force_write = apply_filters( 'et_core_page_resource_force_write', false, $resource );
+
+				if ( ! $force_write && empty( $data ) ) {
 					continue;
 				}
 
 				// Make sure directory exists.
-				if ( ! self::$data_utils->ensure_directory_exists( $resource->BASE_DIR ) ) {
+				if ( ! self::$data_utils->ensure_directory_exists( $resource->base_dir ) ) {
 					self::$_can_write = false;
 					return;
 				}
@@ -480,23 +531,22 @@ class ET_Core_PageResource {
 				$can_continue = true;
 
 				// Try to create a temporary directory which we'll use as a pseudo file lock
-				if ( @mkdir( $resource->TEMP_DIR, 0755 ) ) {
-					self::$_TEMP_DIRS[] = $resource->TEMP_DIR;
+				if ( @mkdir( $resource->temp_dir, 0755 ) ) { //phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Just ignore this since it's an internal use.
+					self::$_temp_dirs[] = $resource->temp_dir;
 
-					// Make sure another request doesn't delete our temp directory
-					$lock_file = $resource->TEMP_DIR . '/' . self::$_LOCK_FILE;
+					// Make sure another request doesn't delete our temp directory.
+					$lock_file = $resource->temp_dir . '/' . self::$_lock_file;
 					self::$wpfs->put_contents( $lock_file, '' );
 
 					// Create the static resource file
-					if ( ! self::$wpfs->put_contents( $resource->PATH, $data, 0644 ) ) {
+					if ( ! self::$wpfs->put_contents( $resource->path, $data, 0644 ) ) {
 						// There's no point in continuing
 						self::$_can_write = $can_continue = false;
 					} else {
 						// Remove the temporary directory
-						self::$wpfs->delete( $resource->TEMP_DIR, true );
+						self::$wpfs->delete( $resource->temp_dir, true );
 					}
-
-				} else if ( file_exists( $resource->TEMP_DIR ) ) {
+				} elseif ( file_exists( $resource->temp_dir ) ) {
 					// The static resource file is currently being created by another request
 					continue;
 				} else {
@@ -519,7 +569,7 @@ class ET_Core_PageResource {
 	/**
 	 * Enqueues static files for an output location if available.
 	 *
-	 * @param string $location {@link self::$_OUTPUT_LOCATIONS}
+	 * @param string $location {@link self::$_output_locations}.
 	 */
 	protected static function _maybe_enqueue_static_resources( $location ) {
 		$sorted_resources = self::get_resources_by_output_location( $location );
@@ -532,13 +582,13 @@ class ET_Core_PageResource {
 					continue;
 				}
 
-				if ( $resource->forced_inline || ! $resource->URL || ! $resource->has_file() ) {
+				if ( $resource->forced_inline || ! $resource->url || ! $resource->has_file() ) {
 					continue;
 				}
 
 				if ( 'style' === $resource->type ) {
 					self::_enqueue_style( $resource );
-				} else if ( 'script' === $resource->type ) {
+				} elseif ( 'script' === $resource->type ) {
 					self::_enqueue_script( $resource );
 				}
 
@@ -552,7 +602,7 @@ class ET_Core_PageResource {
 	/**
 	 * Outputs all non-enqueued resources for an output location inline.
 	 *
-	 * @param string $location {@link self::$_OUTPUT_LOCATIONS}
+	 * @param string $location {@link self::$_output_locations}.
 	 */
 	protected static function _maybe_output_inline_resources( $location ) {
 		$sorted_resources = self::get_resources_by_output_location( $location );
@@ -574,7 +624,7 @@ class ET_Core_PageResource {
 					$next_location = self::_get_next_output_location();
 					$resource->set_output_location( $next_location );
 					continue;
-				} else if ( empty( $data ) ) {
+				} elseif ( empty( $data ) ) {
 					continue;
 				}
 
@@ -615,10 +665,10 @@ class ET_Core_PageResource {
 		add_action( 'save_post', array( $class, 'save_post_cb' ), 10, 3 );
 
 		// Always delete cached resources for theme customizer upon saving.
-		add_action( 'customize_save_after', array( $class, 'customize_save_after_cb') );
+		add_action( 'customize_save_after', array( $class, 'customize_save_after_cb' ) );
 
-		// Add fallback callbacks (lol) to link/script tags
-		add_filter( 'style_loader_tag', array( $class, 'link_and_script_tags_filter_cb' ), 999, 2 );
+		// Always delete dynamic css when saving widgets.
+		add_filter( 'widget_update_callback', array( $class, 'widget_update_callback_cb' ) );
 	}
 
 	/**
@@ -632,7 +682,7 @@ class ET_Core_PageResource {
 	/**
 	 * Unassign a resource from an output location.
 	 *
-	 * @param string               $location {@link self::$_OUTPUT_LOCATIONS}
+	 * @param string               $location {@link self::$_output_locations}.
 	 * @param ET_Core_PageResource $resource
 	 */
 	protected static function _unassign_output_location( $location, $resource ) {
@@ -641,12 +691,12 @@ class ET_Core_PageResource {
 
 	protected static function _validate_property( $property, $value ) {
 		$valid_values = array(
-			'location' => self::$_OUTPUT_LOCATIONS,
-			'owner'    => self::$_OWNERS,
-			'type'     => self::$_TYPES,
+			'location' => self::$_output_locations,
+			'owner'    => self::$_owners,
+			'type'     => self::$_types,
 		);
 
-		switch( $property ) {
+		switch ( $property ) {
 			case 'path':
 				$value    = et_()->normalize_path( realpath( $value ) );
 				$is_valid = et_()->starts_with( $value, et_core_cache_dir()->path );
@@ -710,7 +760,7 @@ class ET_Core_PageResource {
 	/**
 	 * Returns the current resources for the provided output location, sorted by priority.
 	 *
-	 * @param string $location The desired output location {@see self::$_OUTPUT_LOCATIONS}.
+	 * @param string $location The desired output location {@see self::$_output_locations}.
 	 *
 	 * @return array[] {
 	 *
@@ -768,49 +818,13 @@ class ET_Core_PageResource {
 	}
 
 	/**
-	 * Adds fallback handlers to the link and script tags of our page resources.
-	 * {@see 'style_loader_tag'}
-	 * {@see 'script_loader_tag'}
+	 * {@see 'widget_update_callback'}
+	 *
+	 * @param array $instance Widget settings being saved.
 	 */
-	public static function link_and_script_tags_filter_cb( $tag, $handle ) {
-		if ( ! isset( self::$_resources[ $handle ] ) ) {
-			return $tag;
-		}
-
-		if ( function_exists( 'et_get_option' ) && 'off' === et_get_option( 'et_pb_static_css_file', 'on' ) ) {
-			return $tag;
-		}
-
-		/** @see ET_Core_SupportCenter::toggle_safe_mode */
-		if ( et_core_is_safe_mode_active() ) {
-			return $tag;
-		}
-
-		$existing_onerror = "/(?<=onerror=')(.*?)(;?')/";
-		$existing_onload  = "/(?<=onload=')(.*?)(;?')/"; // Internet Explorer :face_with_rolling_eyes:
-
-		$onerror_callback = self::$_onerror;
-		$onload_callback  = self::$_onload;
-
-		$onerror_replacement = $onerror_callback . ';$1';
-		$onload_replacement  = $onload_callback . ';$1';
-
-		$tag = preg_replace( $existing_onerror, $onerror_replacement, $tag, 1, $onerror_replaced_count );
-		$tag = preg_replace( $existing_onload, $onload_replacement, $tag, 1, $onload_replaced_count );
-
-		if ( 1 === $onerror_replaced_count && 1 === $onload_replaced_count ) {
-			return $tag;
-		}
-
-		if ( 1 !== $onerror_replaced_count ) {
-			$tag = str_replace( '/>', "onerror='{$onerror_callback}' />", $tag );
-		}
-
-		if ( 1 !== $onload_replaced_count ) {
-			$tag = str_replace( '/>', "onload='{$onload_callback}' />", $tag );
-		}
-
-		return $tag;
+	public static function widget_update_callback_cb( $instance ) {
+		self::remove_static_resources( 'all', 'all', false, 'dynamic' );
+		return $instance;
 	}
 
 	/**
@@ -844,10 +858,12 @@ class ET_Core_PageResource {
 	/**
 	 * Remove static resources for a post, or optionally all resources, if any exist.
 	 *
-	 * @param string|int $post_id
-	 * @param string     $owner
+	 * @param string $post_id id of post.
+	 * @param string $owner owner of file.
+	 * @param bool   $force remove all resources.
+	 * @param string $slug file slug.
 	 */
-	public static function remove_static_resources( $post_id, $owner = 'core', $force = false ) {
+	public static function remove_static_resources( $post_id, $owner = 'core', $force = false, $slug = 'all' ) {
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
@@ -864,8 +880,21 @@ class ET_Core_PageResource {
 			self::startup();
 		}
 
+		self::do_remove_static_resources( $post_id, $owner, $force, $slug );
+	}
+
+	/**
+	 * Remove static resources action.
+	 *
+	 * @param string $post_id id of post.
+	 * @param string $owner owner of file.
+	 * @param bool   $force remove all resources.
+	 * @param string $slug file slug.
+	 */
+	public static function do_remove_static_resources( $post_id, $owner = 'core', $force = false, $slug = 'all' ) {
 		$post_id = self::_validate_property( 'post_id', $post_id );
 		$owner   = self::_validate_property( 'owner', $owner );
+		$slug    = sanitize_key( $slug );
 
 		if ( '' === $owner || '' === $post_id ) {
 			return;
@@ -873,17 +902,89 @@ class ET_Core_PageResource {
 
 		$_post_id = 'all' === $post_id ? '*' : $post_id;
 		$_owner   = 'all' === $owner ? '*' : $owner;
+		$_slug    = 'all' === $slug ? '*' : $slug;
 
 		$cache_dir = self::get_cache_directory();
 
 		$files = array_merge(
+			// Remove any CSS files missing a parent folder.
 			(array) glob( "{$cache_dir}/et-{$_owner}-*" ),
-			(array) glob( "{$cache_dir}/{$_post_id}/et-{$_owner}-*" ),
-			(array) glob( "{$cache_dir}/*/et-{$_owner}-*-tb-{$_post_id}-*" ),
-			(array) glob( "{$cache_dir}/*/et-{$_owner}-*-tb-for-{$_post_id}-*" )
+			// Remove CSS files for individual posts or all posts if $post_id set to 'all'.
+			(array) glob( "{$cache_dir}/{$_post_id}/et-{$_owner}-{$_slug}*" ),
+			(array) glob( "{$cache_dir}/*/et-{$_owner}-{$_slug}-*tb-{$_post_id}*" ),
+			(array) glob( "{$cache_dir}/*/et-{$_owner}-{$_slug}-*tb-for-{$_post_id}*" ),
+			// Remove Dynamic CSS files for categories, tags, authors, archives, homepage post feed and search results.
+			(array) glob( "{$cache_dir}/category/*/et-{$_owner}-dynamic*" ),
+			(array) glob( "{$cache_dir}/author/*/et-{$_owner}-dynamic*" ),
+			(array) glob( "{$cache_dir}/post_tag/et-{$_owner}-dynamic*" ),
+			(array) glob( "{$cache_dir}/archive/et-{$_owner}-dynamic*" ),
+			(array) glob( "{$cache_dir}/search/et-{$_owner}-dynamic*" ),
+			(array) glob( "{$cache_dir}/notfound/et-{$_owner}-dynamic*" ),
+			(array) glob( "{$cache_dir}/home/et-{$_owner}-dynamic*" )
 		);
 
-		foreach( (array) $files as $file ) {
+		self::_remove_files_in_directory( $files, $cache_dir );
+
+		// Remove empty directories.
+		self::$data_utils->remove_empty_directories( $cache_dir );
+
+		// Clear cache managed by 3rd-party cache plugins.
+		$post_id = ! empty( $post_id ) && absint( $post_id ) > 0 ? $post_id : '';
+
+		et_core_clear_wp_cache( $post_id );
+
+		// Purge the module features cache.
+		if ( class_exists( 'ET_Builder_Module_Features' ) ) {
+			if ( ! empty( $post_id ) ) {
+				ET_Builder_Module_Features::purge_cache( $post_id );
+			} else {
+				ET_Builder_Module_Features::purge_cache();
+			}
+		}
+
+		// Purge the google fonts cache.
+		if ( empty( $post_id ) && class_exists( 'ET_Builder_Google_Fonts_Feature' ) ) {
+			ET_Builder_Google_Fonts_Feature::purge_cache();
+		}
+
+		// Purge the dynamic assets cache.
+		if ( empty( $post_id ) && class_exists( 'ET_Builder_Dynamic_Assets_Feature' ) ) {
+			ET_Builder_Dynamic_Assets_Feature::purge_cache();
+		}
+
+		$post_meta_caches = array(
+			'et_enqueued_post_fonts',
+			'_et_dynamic_cached_shortcodes',
+			'_et_dynamic_cached_attributes',
+			'_et_builder_module_features_cache',
+		);
+
+		// Clear post meta caches.
+		foreach ( $post_meta_caches as $post_meta_cache ) {
+			if ( ! empty( $post_id ) ) {
+				delete_post_meta( $post_id, $post_meta_cache );
+			} else {
+				delete_post_meta_by_key( $post_meta_cache );
+			}
+		}
+
+		// Set our DONOTCACHEPAGE file for the next request.
+		self::$data_utils->ensure_directory_exists( $cache_dir );
+		self::$wpfs->put_contents( $cache_dir . '/DONOTCACHEPAGE', '' );
+
+		if ( $force ) {
+			delete_option( 'et_core_page_resource_remove_all' );
+		}
+	}
+
+	/**
+	 * Removes a list of files from the designated directory.
+	 *
+	 * @param array[] $files     List of patterns to match.
+	 * @param string  $cache_dir Cache directory.
+	 */
+	protected static function _remove_files_in_directory( $files, $cache_dir ) {
+		foreach ( $files as $file ) {
 			$file = self::$data_utils->normalize_path( $file );
 
 			if ( ! et_()->starts_with( $file, $cache_dir ) ) {
@@ -894,21 +995,6 @@ class ET_Core_PageResource {
 			if ( is_file( $file ) ) {
 				self::$wpfs->delete( $file );
 			}
-		}
-
-		// Remove empty directories
-		self::$data_utils->remove_empty_directories( $cache_dir );
-
-		// Clear cache managed by 3rd-party cache plugins
-		$post_id = ! empty( $post_id ) && absint( $post_id ) > 0 ? $post_id : '';
-		et_core_clear_wp_cache( $post_id );
-
-		// Set our DONOTCACHEPAGE file for the next request.
-		self::$data_utils->ensure_directory_exists( $cache_dir );
-		self::$wpfs->put_contents( $cache_dir . '/DONOTCACHEPAGE', '' );
-
-		if ( $force ) {
-			delete_option( 'et_core_page_resource_remove_all' );
 		}
 	}
 
@@ -924,7 +1010,7 @@ class ET_Core_PageResource {
 
 	protected function _initialize_resource() {
 		if ( ! self::can_write_to_filesystem() ) {
-			$this->BASE_DIR = $this->TEMP_DIR = $this->PATH = $this->URL = '';
+			$this->base_dir = $this->temp_dir = $this->path = $this->url = ''; //phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found -- Just ignore this since it's an internal use.
 
 			$this->_register_resource();
 			return;
@@ -934,34 +1020,23 @@ class ET_Core_PageResource {
 		$path           = self::get_cache_directory();
 		$url            = et_core_cache_dir()->url;
 
-		$files = glob( $path . "/{$this->post_id}/{$this->filename}-[0-9]*{$file_extension}" );
+		$file = et_()->path( $path, $this->post_id, $this->filename . $file_extension );
 
-		if ( $files ) {
+		if ( file_exists( $file ) ) {
 			// Static resource file exists
-			$file           = array_pop( $files );
-			$this->PATH     = self::$data_utils->normalize_path( $file );
-			$this->BASE_DIR = dirname( $this->PATH );
-			$this->URL      = et_()->path( $url, $this->post_id, basename( $this->PATH ) );
-
-			if ( $files ) {
-				// There are multiple files for this resource. Let's delete the extras.
-				foreach ( $files as $extra_file ) {
-					ET_Core_Logger::debug( 'Removing extra page resource file: ' . $extra_file );
-					@self::$wpfs->delete( $extra_file );
-				}
-			}
+			$this->path     = self::$data_utils->normalize_path( $file );
+			$this->base_dir = dirname( $this->path );
+			$this->url      = et_()->path( $url, $this->post_id, basename( $this->path ) );
 
 		} else {
 			// Static resource file doesn't exist
-			$time = self::$_request_time;
+			$url  .= "/{$this->post_id}/{$this->filename}{$file_extension}";
+			$path .= "/{$this->post_id}/{$this->filename}{$file_extension}";
 
-			$url  .= "/{$this->post_id}/{$this->filename}-{$time}{$file_extension}";
-			$path .= "/{$this->post_id}/{$this->filename}-{$time}{$file_extension}";
-
-			$this->BASE_DIR = self::$data_utils->normalize_path( dirname( $path ) );
-			$this->TEMP_DIR = $this->BASE_DIR . "/{$this->slug}~";
-			$this->PATH     = $path;
-			$this->URL      = $url;
+			$this->base_dir = self::$data_utils->normalize_path( dirname( $path ) );
+			$this->temp_dir = $this->base_dir . "/{$this->slug}~";
+			$this->path     = $path;
+			$this->url      = $url;
 		}
 
 		$this->_register_resource();
@@ -1015,11 +1090,11 @@ class ET_Core_PageResource {
 	 * @return bool
 	 */
 	public function has_file() {
-		if ( ! self::$wpfs || empty( $this->PATH ) || ! self::can_write_to_filesystem() ) {
+		if ( ! self::$wpfs || empty( $this->path ) || ! self::can_write_to_filesystem() ) {
 			return false;
 		}
 
-		return self::$wpfs->exists( $this->PATH );
+		return self::$wpfs->exists( $this->path );
 	}
 
 	/**

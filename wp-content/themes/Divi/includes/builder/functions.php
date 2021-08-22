@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.9.10' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.10.3' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -1814,7 +1814,8 @@ function et_fb_process_to_shortcode( $object, $options = array(), $library_item_
 					}
 
 					// Encode backslash for custom CSS-related and json attributes.
-					$json_attributes = array( 'checkbox_options', 'radio_options', 'select_options' );
+					$json_attributes = array( 'checkbox_options', 'radio_options', 'select_options', 'conditional_logic_rules' );
+
 					if ( 0 === strpos( $attribute, 'custom_css_' ) || in_array( $attribute, $json_attributes, true ) ) {
 						$value = str_ireplace( '\\', '%92', $value );
 
@@ -3180,6 +3181,19 @@ endif;
 add_action( 'after_switch_theme', 'et_font_subset_force_check' );
 
 /**
+ * Preconnect to Google Fonts to allow async dns lookup.
+ */
+function et_builder_preconnect_google_fonts() {
+	$feature_manager = ET_Builder_Google_Fonts_Feature::instance();
+	$output_inline   = $feature_manager->is_option_enabled( 'google_fonts_inline' );
+
+	if ( $output_inline && et_core_use_google_fonts() ) {
+		echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />';
+	}
+}
+add_action( 'wp_enqueue_scripts', 'et_builder_preconnect_google_fonts', 9 );
+
+/**
  * Enqueue queued Google Fonts into WordPress' wp_enqueue_style as one request
  *
  * @return void
@@ -3192,7 +3206,6 @@ function et_builder_print_font() {
 		return;
 	}
 
-	$protocol       = is_ssl() ? 'https' : 'http';
 	$fonts          = wp_list_pluck( $et_fonts_queue, 'font' );
 	$subsets        = wp_list_pluck( $et_fonts_queue, 'subset' );
 	$unique_subsets = array_unique( explode( ',', implode( ',', $subsets ) ) );
@@ -3210,21 +3223,29 @@ function et_builder_print_font() {
 		$post_fonts_data = array();
 	}
 
-	if ( empty( $post_fonts_data ) ) {
+	if ( empty( $post_fonts_data ) || ! is_array( $post_fonts_data['family'] ) || ! is_array( $post_fonts_data['subset'] ) ) {
 		$post_fonts_data = array(
 			'family' => array(),
 			'subset' => array(),
 		);
 	}
 
+	$google_fonts_feature_cache_key = ET_Builder_Google_Fonts_Feature::_get_cache_index();
+
 	// We only need the difference in the fonts since the subsets might be needed
 	// in cases where a new font is added to the page and it is not yet present
 	// in the option cache.
-	$cached_fonts = $post_fonts_data['family'];
+	$cached_fonts          = $post_fonts_data['family'];
+	$cached_subsets        = $post_fonts_data['subset'];
+	$unique_cached_subsets = array_unique( explode( ',', implode( ',', $cached_subsets ) ) );
+	$cached_cache_key      = ! empty( $post_fonts_data['cache_key'] ) ? $post_fonts_data['cache_key'] : $google_fonts_feature_cache_key;
 
-	$fonts_diff = array_diff( $fonts, $cached_fonts );
+	// compare if things have changed since the post cache.
+	$fonts_diff     = array_diff( $fonts, $cached_fonts );
+	$subsets_diff   = array_diff( $unique_subsets, $unique_cached_subsets );
+	$cache_key_diff = $cached_cache_key !== $google_fonts_feature_cache_key;
 
-	if ( ! $fonts_diff ) {
+	if ( ! $fonts_diff && ! $subsets_diff ) {
 		// The `$fonts` variable stores all the fonts used on the page (cache does not matter)
 		// while the `$cached_fonts` one only stores the fonts that were lastly saved into
 		// the post meta. When we run `array_diff` we would only get a result if there
@@ -3233,7 +3254,7 @@ function et_builder_print_font() {
 		// `array_diff`. To fix this if the item count in `$fonts` is different
 		// than the one in `$cached_fonts` we update the post meta with the
 		// data from the `$fonts` variable to force unused fonts removal.
-		if ( count( $fonts ) !== count( $cached_fonts ) ) {
+		if ( count( $fonts ) !== count( $cached_fonts ) || ! empty( $cache_key_diff ) ) {
 			// Update the option for the current page with the new data.
 			$post_fonts_data = array(
 				'family' => et_core_sanitized_previously( $fonts ),
@@ -3250,13 +3271,37 @@ function et_builder_print_font() {
 
 	if ( et_core_use_google_fonts() ) {
 		// Append combined subset at the end of the URL as different query string.
-		$fonts_googleapi_url_args = array(
+		$google_fonts_url_args = array(
 			'family'  => implode( '|', $fonts ),
 			'subset'  => implode( ',', $unique_subsets ),
 			'display' => 'swap',
 		);
-		$fonts_googleapi_url      = add_query_arg( $fonts_googleapi_url_args, "$protocol://fonts.googleapis.com/css" );
-		wp_enqueue_style( 'et-builder-googlefonts', esc_url_raw( $fonts_googleapi_url ), array(), null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters --  Google fonts api does not have versions
+
+		$google_fonts_url = add_query_arg( $google_fonts_url_args, 'https://fonts.googleapis.com/css' );
+		$google_fonts_url = esc_url_raw( $google_fonts_url );
+		$feature_manager  = ET_Builder_Google_Fonts_Feature::instance();
+		$output_inline    = $feature_manager->is_option_enabled( 'google_fonts_inline' );
+
+		if ( $output_inline ) {
+			$contents = $feature_manager->get(
+				'google-fonts',
+				function() use ( $feature_manager, $google_fonts_url ) {
+					return $feature_manager->fetch( $google_fonts_url );
+				},
+				sanitize_text_field( et_core_esc_previously( $google_fonts_url ) )
+			);
+
+			// if something went wrong fetching the contents.
+			if ( false === $contents ) {
+				// phpcs:ignore WordPress.WP.EnqueuedResourceParameters --  Google fonts api does not have versions
+				wp_enqueue_style( 'et-builder-googlefonts', et_core_esc_previously( $google_fonts_url ), array(), null );
+			} else {
+				echo '<style id="et-builder-googlefonts-inline">' . $contents . '</style>';
+			}
+		} else {
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters --  Google fonts api does not have versions
+			wp_enqueue_style( 'et-builder-googlefonts', et_core_esc_previously( $google_fonts_url ), array(), null );
+		}
 	}
 
 	// Create a merge of the existing fonts and subsets in the option and the newly added ones.
@@ -3265,8 +3310,9 @@ function et_builder_print_font() {
 
 	// Update the option for the current page with the new data.
 	$post_fonts_data = array(
-		'family' => array_unique( $updated_fonts ),
-		'subset' => array_unique( $updated_subsets ),
+		'family'    => array_unique( $updated_fonts ),
+		'subset'    => array_unique( $updated_subsets ),
+		'cache_key' => $google_fonts_feature_cache_key,
 	);
 
 	// Do not update post meta here, save the value to global variable and update it at `shutdown` hook.
@@ -3313,29 +3359,52 @@ function et_builder_preprint_font() {
 
 	$post_fonts_data = get_post_meta( $post_id, 'et_enqueued_post_fonts', true );
 
-	// No need to proceed if the proper data is missing from the cache.
-	if ( ! is_array( $post_fonts_data ) || ! isset( $post_fonts_data['family'], $post_fonts_data['subset'] ) ) {
+	// Bail early if the post fonts data is not an array.
+	if ( ! is_array( $post_fonts_data ) ) {
 		return;
 	}
 
-	$fonts = $post_fonts_data['family'];
+	$fonts_family = isset( $post_fonts_data['family'] ) ? $post_fonts_data['family'] : '';
+	$fonts_subset = isset( $post_fonts_data['subset'] ) ? $post_fonts_data['subset'] : '';
 
-	if ( ! $fonts ) {
+	// We expect both 'family' and 'subset' to contain an array so bail early if one of them does not contain an array.
+	if ( ! is_array( $fonts_family ) || ! is_array( $fonts_subset ) ) {
 		return;
 	}
 
-	$unique_subsets = array_filter( $post_fonts_data['subset'] );
-	$protocol       = is_ssl() ? 'https' : 'http';
+	$unique_subsets = array_filter( $fonts_subset );
 
-	$googlefonts_cached_url_args = array(
-		'family'  => implode( '|', $fonts ),
+	$google_fonts_url_args = array(
+		'family'  => implode( '|', $fonts_family ),
 		'subset'  => implode( ',', $unique_subsets ),
 		'display' => 'swap',
 	);
-	$googlefonts_cached_url      = add_query_arg( $googlefonts_cached_url_args, "$protocol://fonts.googleapis.com/css" );
 
-	// phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Google fonts api does not have versions.
-	wp_enqueue_style( 'et-builder-googlefonts-cached', esc_url_raw( $googlefonts_cached_url ), array(), null );
+	$google_fonts_url = add_query_arg( $google_fonts_url_args, 'https://fonts.googleapis.com/css' );
+	$google_fonts_url = esc_url_raw( $google_fonts_url );
+	$feature_manager  = ET_Builder_Google_Fonts_Feature::instance();
+	$output_inline    = $feature_manager->is_option_enabled( 'google_fonts_inline' );
+
+	if ( $output_inline ) {
+		$contents = $feature_manager->get(
+			'google-fonts',
+			function() use ( $feature_manager, $google_fonts_url ) {
+				return $feature_manager->fetch( $google_fonts_url );
+			},
+			sanitize_text_field( et_core_esc_previously( $google_fonts_url ) )
+		);
+
+		// if something went wrong fetching the contents.
+		if ( false === $contents ) {
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters --  Google fonts api does not have versions
+			wp_enqueue_style( 'et-builder-googlefonts-cached', et_core_esc_previously( $google_fonts_url ), array(), null );
+		} else {
+			echo '<style id="et-builder-googlefonts-cached-inline">' . $contents . '</style>';
+		}
+	} else {
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Google fonts api does not have versions.
+		wp_enqueue_style( 'et-builder-googlefonts-cached', et_core_esc_previously( $google_fonts_url ), array(), null );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'et_builder_preprint_font' );
 
@@ -8498,7 +8567,7 @@ if ( ! function_exists( 'et_pb_get_audio_player' ) ) :
 		$output = sprintf(
 			'<div class="et_audio_container">
 			    %1$s
-		    </div> <!-- .et_audio_container -->',
+		    </div>',
 			$shortcode_audio
 		);
 
@@ -8531,7 +8600,7 @@ if ( ! function_exists( 'et_divi_post_format_content' ) ) :
 					'<div class="et_audio_content%4$s"%5$s>
                         <h2><a href="%3$s">%1$s</a></h2>
                         %2$s
-				    </div> <!-- .et_audio_content -->',
+				    </div>',
 					esc_html( get_the_title() ),
 					et_core_intentionally_unescaped( et_pb_get_audio_player(), 'html' ),
 					esc_url( get_permalink() ),
@@ -8545,7 +8614,7 @@ if ( ! function_exists( 'et_divi_post_format_content' ) ) :
 					'<div class="et_quote_content%4$s"%5$s>
                         %1$s
                         <a href="%2$s" class="et_quote_main_link">%3$s</a>
-				    </div> <!-- .et_quote_content -->',
+				    </div>',
 					et_core_intentionally_unescaped( et_get_blockquote_in_content(), 'html' ),
 					esc_url( get_permalink() ),
 					esc_html__( 'Read more', 'et_builder' ),
@@ -8559,7 +8628,7 @@ if ( ! function_exists( 'et_divi_post_format_content' ) ) :
 					'<div class="et_link_content%5$s"%6$s>
                         <h2><a href="%2$s">%1$s</a></h2>
                         <a href="%3$s" class="et_link_main_url">%4$s</a>
-				    </div> <!-- .et_link_content -->',
+				    </div>',
 					esc_html( get_the_title() ),
 					esc_url( get_permalink() ),
 					esc_url( et_get_link_url() ),
@@ -9737,7 +9806,7 @@ if ( ! function_exists( 'et_custom_comments_display' ) ) :
 				);
 				$et_comment_reply_link   = get_comment_reply_link( array_merge( $args, $comment_reply_link_args ) );
 				?>
-			</div> <!-- .comment_postinfo -->
+			</div>
 
 			<div class="comment_area">
 				<?php if ( '0' === $comment->comment_approved ) : ?>
@@ -9752,9 +9821,9 @@ if ( ! function_exists( 'et_custom_comments_display' ) ) :
 					echo '<span class="reply-container">' . et_core_esc_previously( $et_comment_reply_link ) . '</span>';
 				}
 				?>
-				</div> <!-- end comment-content-->
-			</div> <!-- end comment_area-->
-		</article> <!-- .comment-body -->
+				</div>
+			</div>
+		</article>
 		<?php
 	}
 endif;

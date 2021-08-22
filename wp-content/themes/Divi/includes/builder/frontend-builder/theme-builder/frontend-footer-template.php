@@ -17,7 +17,7 @@ $layouts = et_theme_builder_get_template_layouts();
 	<?php else : ?>
 		<?php wp_footer(); ?>
 	<?php endif; ?>
-	
+
 	<?php if ( ! et_is_builder_plugin_active() && 'on' === et_get_option( 'divi_back_to_top', 'false' ) ) : ?>
 		<span class="et_pb_scroll_top et-pb-icon"></span>
 	<?php endif; ?>

@@ -8,119 +8,119 @@
  */
 
 /**
+ * Autoloader for module fields.
+ *
+ * @param string $class The class name.
+ */
+function _et_pb_autoload_fields( $class ) {
+	// For multipart classnames.
+	$class = str_replace( '_', '', $class );
+	require_once "module/field/{$class}.php";
+}
+
+/**
+ * Autoloader for module helpers.
+ *
+ * @param string $class The class name.
+ */
+function _et_pb_autoload_helpers( $class ) {
+	// For multipart classnames.
+	$class = str_replace( '_', '', $class );
+	require_once "module/helpers/{$class}.php";
+}
+
+/**
+ * Autoloader for module motion helpers.
+ *
+ * @param string $class The class name.
+ */
+function _et_pb_autoload_helpers_motion( $class ) {
+	// For multipart classnames.
+	$class = str_replace( '_', '', $class );
+	require_once "module/helpers/motion/{$class}.php";
+}
+
+/**
+ * Autoloader for module types.
+ *
+ * @param string $class The class name.
+ */
+function _et_pb_autoload_types( $class ) {
+	// For multipart classnames.
+	$class = str_replace( '_', '', $class );
+	require_once "module/type/{$class}.php";
+}
+
+/**
+ * Autoloader for woo modules.
+ *
+ * @param string $class The class name.
+ */
+function _et_pb_autoload_woo_modules( $class ) {
+	// For multipart classnames.
+	$class = str_replace( '_', '', $class );
+	require_once "module/woocommerce/{$class}.php";
+}
+
+/**
+ * Autoloader for modules.
+ *
+ * @param string $class The class name.
+ */
+function _et_pb_autoload_modules( $class ) {
+	// For multipart classnames.
+	$class = str_replace( '_', '', $class );
+
+	if ( file_exists( ET_BUILDER_DIR . "module/{$class}.php" ) ) {
+		require_once "module/{$class}.php";
+	}
+}
+
+/**
  * Autoloader for module helpers and structure elements.
  *
  * @param string $class The class name.
  */
 function _et_pb_autoload( $class ) {
-	switch ( $class ) {
-		case 'ET_Builder_Section':
-		case 'ET_Builder_Row':
-		case 'ET_Builder_Row_Inner':
-		case 'ET_Builder_Column':
-			require_once 'main-structure-elements.php';
-			break;
-		case 'ET_Builder_Module_Helper_Multi_Value':
-			require_once 'module/helpers/MultiValue.php';
-			break;
-		case 'ET_Builder_Module_Helper_Overflow':
-			require_once 'module/helpers/Overflow.php';
-			break;
-		case 'ET_Builder_Module_Helper_Alignment':
-			require_once 'module/helpers/Alignment.php';
-			break;
-		case 'ET_Builder_Module_Helper_Sizing':
-			require_once 'module/helpers/Sizing.php';
-			break;
-		case 'ET_Builder_Module_Helper_Height':
-			require_once 'module/helpers/Height.php';
-			break;
-		case 'ET_Builder_Module_Hover_Options':
-			require_once 'module/helpers/HoverOptions.php';
-			break;
-		case 'ET_Builder_Module_Sticky_Options':
-			require_once 'module/helpers/StickyOptions.php';
-			break;
-		case 'ET_Builder_Module_Helper_Max_Height':
-			require_once 'module/helpers/MaxHeight.php';
-			break;
-		case 'ET_Builder_Module_Helper_Max_Width':
-			require_once 'module/helpers/MaxWidth.php';
-			break;
-		case 'ET_Builder_Module_Helper_Min_Height':
-			require_once 'module/helpers/MinHeight.php';
-			break;
-		case 'ET_Builder_Module_Helper_ResponsiveOptions':
-			require_once 'module/helpers/ResponsiveOptions.php';
-			break;
-		case 'ET_Builder_Module_Helper_Slider':
-			require_once 'module/helpers/Slider.php';
-			break;
-		case 'ET_Builder_Module_Transition_Options':
-			require_once 'module/helpers/TransitionOptions.php';
-			break;
-		case 'ET_Builder_Module_Helper_Width':
-			require_once 'module/helpers/Width.php';
-			break;
-		case 'ET_Builder_Module_Helper_Motion':
-			require_once 'module/helpers/motion/Motion.php';
-			break;
-		case 'ET_Builder_Module_Helper_Motion_Sanitizer':
-			require_once 'module/helpers/motion/Sanitizer.php';
-			break;
-		case 'ET_Builder_Module_Helper_Motion_Opacity':
-			require_once 'module/helpers/motion/Opacity.php';
-			break;
-		case 'ET_Builder_Module_Helper_Motion_Translate':
-			require_once 'module/helpers/motion/Translate.php';
-			break;
-		case 'ET_Builder_Module_Helper_Motion_Scale':
-			require_once 'module/helpers/motion/Scale.php';
-			break;
-		case 'ET_Builder_Module_Helper_Motion_Rotate':
-			require_once 'module/helpers/motion/Rotate.php';
-			break;
-		case 'ET_Builder_Module_Helper_Motion_Blur':
-			require_once 'module/helpers/motion/Blur.php';
-			break;
-		case 'ET_Builder_Module_Field_Base':
-			require_once 'module/field/Base.php';
-			break;
-		case 'ET_Builder_Module_Fields_Factory':
-			require_once 'module/field/Factory.php';
-			break;
-		case 'ET_Builder_Module_Helper_Overlay':
-			require_once 'module/helpers/Overlay.php';
-			break;
-		case 'ET_Builder_Module_Helper_MultiViewOptions':
-			require_once 'module/helpers/MultiViewOptions.php';
-			break;
-		case 'ET_Builder_Module_Helper_OptionTemplate':
-			require_once 'module/helpers/OptionTemplate.php';
-			break;
-		case 'ET_Builder_Module_Helper_Style_Processor':
-			require_once 'module/helpers/StyleProcessor.php';
-			break;
-		case 'ET_Builder_Module_Helper_Font':
-			require_once 'module/helpers/Font.php';
-			break;
-		case 'ET_Builder_Module_Helper_Background':
-			require_once 'module/helpers/Background.php';
-			break;
-		case 'ET_Builder_Module_Helper_BackgroundLayout':
-			require_once 'module/helpers/BackgroundLayout.php';
-			break;
-		case 'ET_Builder_Module_Helper_Woocommerce_Modules':
-			if ( et_is_woocommerce_plugin_active() ) {
-				require_once 'module/helpers/WooCommerceModules.php';
-			}
-			break;
-		case 'ET_Builder_I18n':
-			require_once 'feature/I18n.php';
-			break;
-		case 'ET_Builder_Module_Helper_Media':
-			require_once 'module/helpers/class-et-builder-module-helper-media.php';
-			break;
+	if ( in_array( $class, [ 'ET_Builder_Section', 'ET_Builder_Row', 'ET_Builder_Row_Inner', 'ET_Builder_Column' ], true ) ) {
+		require_once 'main-structure-elements.php';
+	} elseif ( 'ET_Builder_I18n' === $class ) {
+		require_once 'feature/I18n.php';
+	} elseif ( in_array( $class, [ 'ET_Builder_Element', 'ET_Builder_Module', 'ET_Builder_Structure_Element' ], true ) ) {
+		// This is needed for custom module that extends official module and gets registered in unexpected location.
+		require_once ET_BUILDER_DIR . 'functions.php';
+
+		require_once 'class-et-builder-element.php';
+	} elseif ( 'ET_Builder_Module_Shortcode_Manager' === $class ) {
+		require_once 'class-et-builder-module-shortcode-manager.php';
+	} elseif ( 'ET_Builder_Post_Feature_Base' === $class ) {
+		require_once 'class-et-builder-post-feature-base.php';
+	} elseif ( 'ET_Builder_Module_Features' === $class ) {
+		require_once 'class-et-builder-module-features.php';
+	} elseif ( 'ET_Builder_Module_Fields_Factory' === $class ) {
+		require_once 'module/field/Factory.php';
+	} elseif ( 'ET_Builder_Module_Use_Detection' === $class ) {
+		require_once 'class-et-builder-module-use-detection.php';
+	} elseif ( 'ET_Global_Settings' === $class ) {
+		require_once 'class-et-global-settings.php';
+	} elseif ( 'ET_Builder_Global_Feature_Base' === $class ) {
+		require_once 'class-et-builder-global-feature-base.php';
+	} elseif ( 'ET_Builder_Google_Fonts_Feature' === $class ) {
+		require_once 'class-et-builder-google-fonts-feature.php';
+	} elseif ( 'ET_Builder_Dynamic_Assets_Feature' === $class ) {
+		require_once 'class-et-builder-dynamic-assets-feature.php';
+	} elseif ( strpos( $class, 'ET_Builder_Module_Helper_Motion_' ) !== false ) {
+		_et_pb_autoload_helpers_motion( str_replace( 'ET_Builder_Module_Helper_Motion_', '', $class ) );
+	} elseif ( strpos( $class, 'ET_Builder_Module_Helper_' ) !== false ) {
+		_et_pb_autoload_helpers( str_replace( 'ET_Builder_Module_Helper_', '', $class ) );
+	} elseif ( strpos( $class, 'ET_Builder_Module_Field_' ) !== false ) {
+		_et_pb_autoload_fields( str_replace( 'ET_Builder_Module_Field_', '', $class ) );
+	} elseif ( strpos( $class, 'ET_Builder_Module_Type_' ) !== false ) {
+		_et_pb_autoload_types( str_replace( 'ET_Builder_Module_Type_', '', $class ) );
+	} elseif ( strpos( $class, 'ET_Builder_Module_Woocommerce_' ) !== false ) {
+		_et_pb_autoload_woo_modules( str_replace( 'ET_Builder_Module_Woocommerce_', '', $class ) );
+	} elseif ( strpos( $class, 'ET_Builder_Module_' ) !== false ) {
+		_et_pb_autoload_modules( str_replace( 'ET_Builder_Module_', '', $class ) );
 	}
 }
 
@@ -169,10 +169,10 @@ function et_pb_height_options( $prefix = '' ) {
 /**
  * Get an instance of `ET_Builder_Module_Hover_Options`.
  *
- * @return ET_Builder_Module_Hover_Options
+ * @return ET_Builder_Module_Helper_Hover_Options
  */
 function et_pb_hover_options() {
-	return ET_Builder_Module_Hover_Options::get();
+	return ET_Builder_Module_Helper_Hover_Options::get();
 }
 
 /**
@@ -180,10 +180,10 @@ function et_pb_hover_options() {
  *
  * @since 4.6.0
  *
- * @return ET_Builder_Module_Sticky_Options
+ * @return ET_Builder_Module_Helper_Sticky_Options
  */
 function et_pb_sticky_options() {
-	return ET_Builder_Module_Sticky_Options::get();
+	return ET_Builder_Module_Helper_Sticky_Options::get();
 }
 
 /**
@@ -243,7 +243,7 @@ function et_pb_slider_options() {
  * @return ET_Builder_Module_Transition_Options
  */
 function et_pb_transition_options() {
-	return ET_Builder_Module_Transition_Options::get();
+	return ET_Builder_Module_Helper_Transition_Options::get();
 }
 
 /**

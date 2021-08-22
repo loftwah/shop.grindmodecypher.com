@@ -494,7 +494,7 @@ abstract class ET_Builder_Module_Type_PostContent extends ET_Builder_Module {
 				%5$s
 				%4$s
 				%1$s
-			</div> <!-- .et_pb_post_content -->',
+			</div>',
 			et_theme_builder_frontend_render_post_content(),
 			$this->module_classname( $render_slug ),
 			$this->module_id(),

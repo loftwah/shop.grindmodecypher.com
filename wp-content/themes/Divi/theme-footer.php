@@ -38,7 +38,7 @@ do_action( 'et_after_main_content' );
 					) );
 					?>
 				</div>
-			</div> <!-- #et-footer-nav -->
+			</div>
 
 		<?php endif; ?>
 
@@ -53,7 +53,7 @@ do_action( 'et_after_main_content' );
 				echo et_core_fix_unclosed_html_tags( et_core_esc_previously( et_get_footer_credits() ) );
 				// phpcs:enable
 				?>
-			</div>	<!-- .container -->
+			</div>
 		</div>
-	</footer> <!-- #main-footer -->
+	</footer>
 <?php endif; ?>

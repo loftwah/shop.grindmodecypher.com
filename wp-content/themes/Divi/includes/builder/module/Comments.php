@@ -569,7 +569,9 @@ class ET_Builder_Module_Comments extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Comments();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Comments();
+}
 
 if ( et_is_woocommerce_plugin_active() && defined( 'ET_BUILDER_DIR' ) ) {
 	// Use separate files for better organization.

@@ -20,7 +20,7 @@
 		<div class="clearfix">
 			<img src="<?php echo et_core_esc_previously( et_new_thumb_resize( et_multisite_thumbnail( $imagePath ), 74, 74, '', true ) ); ?>" id="about-image" alt="" />
 			<?php echo wp_kses_post( $aboutText )?>
-		</div> <!-- end about me section -->
+		</div>
 	<?php
 		echo et_core_intentionally_unescaped( $after_widget, 'html' );
 	}

@@ -281,8 +281,8 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 				</ul>
 				<div class="et_pb_all_tabs">
 					%2$s
-				</div> <!-- .et_pb_all_tabs -->
-			</div> <!-- .et_pb_tabs -->',
+				</div>
+			</div>',
 			$tabs,
 			$all_tabs_content,
 			$this->module_id(),
@@ -314,4 +314,6 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Tabs();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Tabs();
+}

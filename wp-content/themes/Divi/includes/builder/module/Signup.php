@@ -1308,4 +1308,7 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 		return $raw_value;
 	}
 }
-new ET_Builder_Module_Signup();
+
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Signup();
+}

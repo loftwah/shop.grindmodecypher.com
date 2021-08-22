@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Class ET_Builder_Module_Sticky_Options
  */
-class ET_Builder_Module_Sticky_Options {
+class ET_Builder_Module_Helper_Sticky_Options {
 
 	/**
 	 * Class instance object
@@ -36,7 +36,7 @@ class ET_Builder_Module_Sticky_Options {
 	 */
 	public static function get() {
 		if ( empty( self::$instance ) ) {
-			self::$instance = new ET_Builder_Module_Sticky_Options();
+			self::$instance = new ET_Builder_Module_Helper_Sticky_Options();
 		}
 
 		return self::$instance;
@@ -104,7 +104,11 @@ class ET_Builder_Module_Sticky_Options {
 	public function is_enabled( $setting, $attrs ) {
 		$name = 'background_color' === $setting ? 'background' : $setting;
 
-		return strpos( et_()->array_get( $attrs, $this->get_sticky_enabled_field( $name ) ), 'on' ) === 0;
+		$field = $this->get_sticky_enabled_field( $name );
+
+		$value = ! empty( $attrs[ $field ] ) ? $attrs[ $field ] : '';
+
+		return ! empty( $value ) && strpos( $value, 'on' ) === 0;
 	}
 
 	/**
@@ -115,9 +119,8 @@ class ET_Builder_Module_Sticky_Options {
 	 * @return bool
 	 */
 	public function is_inside_sticky_module() {
-		global $is_inside_sticky_module;
-
-		return $is_inside_sticky_module;
+		global $is_parent_sticky_module, $is_inside_sticky_module;
+		return ! $is_parent_sticky_module && $is_inside_sticky_module;
 	}
 
 	/**
@@ -313,7 +316,7 @@ class ET_Builder_Module_Sticky_Options {
 
 		foreach ( $fields as $name => $options ) {
 			// Get attribute value of current incompatible field from attributes.
-			$attr = et_()->array_get( $attrs, $name, false );
+			$attr = ! empty( $attrs[ $name ] ) ? $attrs[ $name ] : false;
 
 			// If the value exist on current incompatible field's options, stop loop and return true.
 			if ( in_array( $attr, $options, true ) ) {

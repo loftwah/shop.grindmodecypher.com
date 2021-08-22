@@ -1,6 +1,6 @@
 <?php
 
-class ET_Builder_Module_CTA extends ET_Builder_Module {
+class ET_Builder_Module_Cta extends ET_Builder_Module {
 	function init() {
 		$this->name       = esc_html__( 'Call To Action', 'et_builder' );
 		$this->plural     = esc_html__( 'Call To Actions', 'et_builder' );
@@ -357,4 +357,6 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_CTA();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Cta();
+}

@@ -276,7 +276,7 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 		$output = sprintf(
 			'<ul%3$s class="%2$s"%4$s>
 				%1$s
-			</ul> <!-- .et_pb_counters -->',
+			</ul>',
 			$this->content,
 			$this->module_classname( $render_slug ),
 			$this->module_id(),
@@ -287,4 +287,6 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Bar_Counters();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Bar_Counters();
+}

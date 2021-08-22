@@ -500,8 +500,6 @@ class ET_Builder_Module_Filterable_Portfolio extends ET_Builder_Module_Type_Post
 		$hover_icon_sticky  = $sticky->get_value( 'hover_icon', $this->props );
 		$header_level       = $this->props['title_level'];
 
-		wp_enqueue_script( 'hashchange' );
-
 		$this->generate_styles(
 			array(
 				'hover'          => false,
@@ -639,7 +637,7 @@ class ET_Builder_Module_Filterable_Portfolio extends ET_Builder_Module_Type_Post
 						true
 					);
 				?>
-				</div><!-- .et_pb_portfolio_item -->
+				</div>
 				<?php
 				ET_Post_Stack::pop();
 			}
@@ -745,13 +743,13 @@ class ET_Builder_Module_Filterable_Portfolio extends ET_Builder_Module_Type_Post
 			'<div%4$s class="%1$s" data-posts-number="%5$d"%8$s%11$s>
 				%10$s
 				%9$s
-				<div class="et_pb_portfolio_filters clearfix">%2$s</div><!-- .et_pb_portfolio_filters -->
+				<div class="et_pb_portfolio_filters clearfix">%2$s</div>
 
 				<div class="et_pb_portfolio_items_wrapper %6$s"%12$s>
-					<div class="et_pb_portfolio_items">%3$s</div><!-- .et_pb_portfolio_items -->
+					<div class="et_pb_portfolio_items">%3$s</div>
 				</div>
 				%7$s
-			</div> <!-- .et_pb_filterable_portfolio -->',
+			</div>',
 			$this->module_classname( $render_slug ),
 			$category_filters,
 			$posts,
@@ -770,4 +768,6 @@ class ET_Builder_Module_Filterable_Portfolio extends ET_Builder_Module_Type_Post
 	}
 }
 
-new ET_Builder_Module_Filterable_Portfolio();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Filterable_Portfolio();
+}

@@ -203,11 +203,10 @@ class DiviExtension {
 		 *
 		 * @param string
 		 */
-		$builder_modules_script_handle = apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' );
 
 		$this->_bundle_dependencies = array(
 			'builder'  => array( 'react-dom', "{$this->name}-frontend-bundle" ),
-			'frontend' => array( 'jquery', $builder_modules_script_handle ),
+			'frontend' => array( 'jquery', et_get_combined_script_handle() ),
 		);
 	}
 
@@ -232,13 +231,23 @@ class DiviExtension {
 
 	/**
 	 * Loads custom modules when the builder is ready.
-	 * {@see 'et_builder_modules_loaded'}
 	 *
 	 * @since 3.1
+	 * @deprecated ?? - Use {@see 'hook_et_builder_ready'} instead.
 	 */
 	public function hook_et_builder_modules_loaded() {
-		if ( file_exists( "{$this->plugin_dir}loader.php" ) ) {
-			require_once "{$this->plugin_dir}loader.php";
+		$this->hook_et_builder_ready();
+	}
+
+	/**
+	 * Loads custom modules when the builder is ready.
+	 * {@see 'et_builder_ready'}
+	 *
+	 * @since 4.10.0
+	 */
+	public function hook_et_builder_ready() {
+		if ( file_exists( trailingslashit( $this->plugin_dir ) . 'loader.php' ) ) {
+			require_once trailingslashit( $this->plugin_dir ) . 'loader.php';
 		}
 	}
 
@@ -257,10 +266,10 @@ class DiviExtension {
 		load_plugin_textdomain( $this->gettext_domain, false, basename( $this->plugin_dir ) . '/languages' );
 
 		// Register callbacks.
-		register_activation_hook( "{$this->plugin_dir}/{$this->name}.php", array( $this, 'wp_hook_activate' ) );
-		register_deactivation_hook( "{$this->plugin_dir}/{$this->name}.php", array( $this, 'wp_hook_deactivate' ) );
+		register_activation_hook( trailingslashit( $this->plugin_dir ) . $this->name . '.php', array( $this, 'wp_hook_activate' ) );
+		register_deactivation_hook( trailingslashit( $this->plugin_dir ) . $this->name . '.php', array( $this, 'wp_hook_deactivate' ) );
 
-		add_action( 'et_builder_modules_loaded', array( $this, 'hook_et_builder_modules_loaded' ) );
+		add_action( 'et_builder_ready', array( $this, 'hook_et_builder_ready' ), 9 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_hook_enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_hook_enqueue_scripts' ) );
 	}

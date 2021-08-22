@@ -40,7 +40,7 @@ if ( ! is_page_template( 'page-template-blank.php' ) ) : ?>
 							) );
 						?>
 					</div>
-				</div> <!-- #et-footer-nav -->
+				</div>
 
 			<?php endif; ?>
 
@@ -55,14 +55,14 @@ if ( ! is_page_template( 'page-template-blank.php' ) ) : ?>
 					echo et_core_fix_unclosed_html_tags( et_core_esc_previously( et_get_footer_credits() ) );
 					// phpcs:enable
 				?>
-					</div>	<!-- .container -->
+					</div>
 				</div>
-			</footer> <!-- #main-footer -->
-		</div> <!-- #et-main-area -->
+			</footer>
+		</div>
 
 <?php endif; // ! is_page_template( 'page-template-blank.php' ) ?>
 
-	</div> <!-- #page-container -->
+	</div>
 
 	<?php wp_footer(); ?>
 </body>

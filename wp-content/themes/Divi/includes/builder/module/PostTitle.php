@@ -472,7 +472,6 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 			$post_id = 0;
 		}
 
-		$this->process_additional_options( $render_slug );
 
 		$output                    = '';
 		$featured_image_output     = '';
@@ -786,4 +785,6 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Post_Title();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Post_Title();
+}

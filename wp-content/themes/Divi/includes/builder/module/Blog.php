@@ -959,7 +959,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 										</a>
 									<?php
 									if ( 'on' !== $args['fullwidth'] ) {
-										echo '</div> <!-- .et_pb_image_container -->';
+										echo '</div>';
 									}
 								endif;
 						}
@@ -1089,7 +1089,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			}
 
 			if ( 'on' === $args['show_pagination'] ) {
-				// echo '</div> <!-- .et_pb_posts -->'; // @todo this causes closing tag issue
 
 				$container_is_closed = true;
 
@@ -1256,12 +1255,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		// some themes do not include these styles/scripts so we need to enqueue them in this module to support audio post format
 		wp_enqueue_style( 'wp-mediaelement' );
 		wp_enqueue_script( 'wp-mediaelement' );
-
-		// include easyPieChart which is required for loading Blog module content via ajax correctly
-		wp_enqueue_script( 'easypiechart' );
-
-		// include ET Shortcode scripts
-		wp_enqueue_script( 'et-shortcodes-js' );
 
 		// remove all filters from WP audio shortcode to make sure current theme doesn't add any elements into audio module
 		remove_all_filters( 'wp_audio_shortcode_library' );
@@ -1561,7 +1554,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 						}
 
 						if ( 'on' !== $fullwidth ) {
-							echo '</div> <!-- .et_pb_image_container -->';
+							echo '</div>';
 						}
 					endif;
 				}
@@ -1635,14 +1628,14 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					?>
 			<?php } // 'off' === $fullwidth || ! in_array( $post_format, array( 'link', 'audio', 'quote', 'gallery' ?>
 
-			</article> <!-- .et_pb_post -->
+			</article>
 				<?php
 				ET_Post_Stack::pop();
 			} // endwhile
 			ET_Post_Stack::reset();
 
 			if ( 'off' === $fullwidth ) {
-				echo '</div><!-- .et_pb_salvattore_content -->';
+				echo '</div>';
 			}
 
 			if ( $multi_view->has_value( 'show_pagination', 'on' ) ) {
@@ -1658,7 +1651,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					true
 				);
 
-				echo '</div> <!-- .et_pb_posts -->';
+				echo '</div>';
 
 				$container_is_closed = true;
 			}
@@ -1751,7 +1744,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				</div>',
 				esc_attr( implode( ' ', $inner_wrap_classname ) ),
 				$posts,
-				( ! $container_is_closed ? '</div> <!-- .et_pb_posts -->' : '' ),
+				( ! $container_is_closed ? '</div>' : '' ),
 				$this->module_id(),
 				$this->module_classname( $render_slug ), // #5
 				$video_background,
@@ -1787,7 +1780,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				%3$s %7$s',
 				$this->module_classname( $render_slug ),
 				$posts,
-				( ! $container_is_closed ? '</div> <!-- .et_pb_posts -->' : '' ),
+				( ! $container_is_closed ? '</div>' : '' ),
 				$this->module_id(),
 				$video_background, // #5
 				$parallax_image_background,
@@ -1958,4 +1951,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 	}
 }
 
-new ET_Builder_Module_Blog();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Blog();
+}

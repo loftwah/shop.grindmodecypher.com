@@ -74,7 +74,7 @@ if ($bannerPath[$i] !== '') { ?>
 	<a href="<?php echo esc_url( $bannerUrl[$i] ); ?>" <?php if ($new_window) echo('target="_blank"') ?>><img src="<?php if ( $use_relpath ) echo esc_url( home_url() ); else echo esc_attr( $bannerPath[$i] ); ?><?php if ( $use_relpath ) echo ("/" . esc_attr( $bannerPath[$i] ) ); ?>" alt="<?php echo esc_attr( $bannerAlt[$i] ); ?>" title="<?php echo esc_attr( $bannerTitle[$i] ); ?>" /></a>
 <?php }; $i++;
 endwhile; ?>
-</div> <!-- end adwrap -->
+</div>
 <?php
 		echo et_core_intentionally_unescaped( $after_widget, 'html' );
 	}

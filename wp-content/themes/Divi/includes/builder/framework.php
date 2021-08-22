@@ -96,6 +96,28 @@ function et_esc_html_once( $text, $value = '' ) {
 	return $escaped;
 }
 
+/**
+ * Checks to see if Critical CSS is enabled.
+ *
+ * @since 4.10.0
+ *
+ * @return string.
+ */
+function et_builder_is_critical_enabled() {
+	global $shortname;
+
+	$value = false;
+
+	if ( et_is_builder_plugin_active() ) {
+		$options = get_option( 'et_pb_builder_options', array() );
+		$value   = isset( $options['performance_main_critical_css'] ) ? $options['performance_main_critical_css'] : 'on';
+	} else {
+		$value = et_get_option( $shortname . '_critical_css', 'on' );
+	}
+
+	return 'on' === $value;
+}
+
 require_once ET_BUILDER_DIR . 'compat/early.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/blocks/Layout.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/utils/Conversion.php';
@@ -106,6 +128,13 @@ require_once ET_BUILDER_DIR . 'post/PostStack.php';
 require_once ET_BUILDER_DIR . 'feature/ClassicEditor.php';
 require_once ET_BUILDER_DIR . 'feature/AjaxCache.php';
 require_once ET_BUILDER_DIR . 'feature/post-content.php';
+
+if ( et_builder_is_critical_enabled() ) {
+	require_once ET_BUILDER_DIR . 'feature/CriticalCSS.php';
+}
+
+require_once ET_BUILDER_DIR . 'feature/dynamic-assets/dynamic-assets.php';
+require_once ET_BUILDER_DIR . 'feature/dynamic-assets/class-dynamic-assets.php';
 require_once ET_BUILDER_DIR . 'feature/dynamic-content.php';
 require_once ET_BUILDER_DIR . 'feature/search-posts.php';
 require_once ET_BUILDER_DIR . 'feature/ErrorReport.php';
@@ -120,6 +149,22 @@ require_once ET_BUILDER_DIR . 'feature/BlockTemplates.php';
 // Conditional Includes.
 if ( et_is_woocommerce_plugin_active() ) {
 	require_once ET_BUILDER_DIR . 'feature/woocommerce-modules.php';
+}
+
+global $shortname;
+
+if (
+	apply_filters( 'et_builder_enable_jquery_body', true ) &&
+	! (
+		is_admin() ||
+		wp_doing_ajax() ||
+		et_is_builder_plugin_active() ||
+		is_customize_preview() ||
+		is_et_pb_preview()
+	) &&
+	'on' === et_get_option( $shortname . '_enable_jquery_body', 'on' )
+) {
+	require_once ET_BUILDER_DIR . 'feature/JQueryBody.php';
 }
 
 if ( wp_doing_ajax() && ! is_customize_preview() ) {
@@ -265,15 +310,33 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 	// phpcs:enable
 }
 
-function et_builder_load_global_functions_script() {
-	wp_enqueue_script( 'et-builder-modules-global-functions-script', ET_BUILDER_URI . '/frontend-builder/build/frontend-builder-global-functions.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
+/**
+ * Get product script handle for the main script bundle.
+ *
+ * @since 4.10.0
+ */
+function et_get_combined_script_handle() {
+	global $shortname;
 
-	// These are variable that is used on frontend's script utils module. The utils is used by
-	// `et-builder-modules-global-functions-script` handle which is loaded earlier than other script
-	// when minify js option is disabled hence being defined here. If minify JS option is enabled,
-	// `et_builder_dequeue_minified_scripts()` will assign this to the minified bundle's handle.
+	if ( 'divi' === $shortname ) {
+		$combined_script_handle = 'divi-custom-script';
+	} elseif ( 'extra' === $shortname ) {
+		$combined_script_handle = 'extra-scripts';
+	} else {
+		$combined_script_handle = 'divi-builder-custom-script';
+	}
+
+	return $combined_script_handle;
+}
+/**
+ * Localizes the main front end bundle and adds variables
+ * for et-builder-modules-global-functions-script.
+ *
+ * @since 4.10.0
+ */
+function et_builder_load_global_functions_script() {
 	wp_localize_script(
-		'et-builder-modules-global-functions-script',
+		et_get_combined_script_handle(),
 		'et_builder_utils_params',
 		array(
 			'condition'              => array(
@@ -287,7 +350,7 @@ function et_builder_load_global_functions_script() {
 		)
 	);
 }
-add_action( 'wp_enqueue_scripts', 'et_builder_load_global_functions_script', 7 );
+add_action( 'wp_enqueue_scripts', 'et_builder_load_global_functions_script', 11 );
 
 function et_builder_load_modules_styles() {
 	$current_page_id = apply_filters( 'et_is_ab_testing_active_post_id', get_the_ID() );
@@ -301,24 +364,15 @@ function et_builder_load_modules_styles() {
 	);
 	$google_maps_api_url      = add_query_arg( $google_maps_api_url_args, is_ssl() ? 'https://maps.googleapis.com/maps/api/js' : 'http://maps.googleapis.com/maps/api/js' );
 
+	wp_register_script( 'salvattore', ET_BUILDER_URI . '/feature/dynamic-assets/assets/js/salvattore.js', array(), ET_BUILDER_VERSION, true );
 	wp_register_script( 'google-maps-api', esc_url_raw( $google_maps_api_url ), array(), ET_BUILDER_VERSION, true );
-	wp_register_script( 'hashchange', ET_BUILDER_URI . '/scripts/ext/jquery.hashchange.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
-	wp_register_script( 'salvattore', ET_BUILDER_URI . '/scripts/ext/salvattore.min.js', array(), ET_BUILDER_VERSION, true );
-	wp_register_script( 'easypiechart', ET_BUILDER_URI . '/scripts/ext/jquery.easypiechart.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
-
-	wp_enqueue_script( 'divi-fitvids', ET_BUILDER_URI . '/scripts/ext/jquery.fitvids.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
-	wp_enqueue_script( 'waypoints', ET_BUILDER_URI . '/scripts/ext/waypoints.min.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
-	wp_enqueue_script( 'magnific-popup', ET_BUILDER_URI . '/scripts/ext/jquery.magnific-popup.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
-	wp_enqueue_script( 'et-jquery-touch-mobile', ET_BUILDER_URI . '/scripts/ext/jquery.mobile.custom.min.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
-	wp_enqueue_script( 'et-builder-modules-script', ET_BUILDER_URI . '/frontend-builder/build/frontend-builder-scripts.js', apply_filters( 'et_pb_frontend_builder_scripts_dependencies', array( 'jquery', 'et-jquery-touch-mobile' ) ), ET_BUILDER_VERSION, true );
-	wp_enqueue_style( 'magnific-popup', ET_BUILDER_URI . '/styles/magnific_popup.css', array(), ET_BUILDER_VERSION );
 
 	$frontend_scripts_data = array(
 		'builderCssContainerPrefix' => ET_BUILDER_CSS_CONTAINER_PREFIX,
 		'builderCssLayoutPrefix'    => ET_BUILDER_CSS_LAYOUT_PREFIX,
 	);
 
-	wp_localize_script( 'et-builder-modules-script', 'et_frontend_scripts', $frontend_scripts_data );
+	wp_localize_script( et_get_combined_script_handle(), 'et_frontend_scripts', $frontend_scripts_data );
 
 	// Load modules wrapper on CPT.
 	// Use get_the_ID() explicitly so we decide based on the first post of an archive page.
@@ -336,24 +390,9 @@ function et_builder_load_modules_styles() {
 		wp_register_script( 'fittext', ET_BUILDER_URI . '/scripts/ext/jquery.fittext.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
 	}
 
-	/**
-	 * Builder script handle name
-	 *
-	 * @since 3.??
-	 *
-	 * @param string
-	 */
-	$builder_modules_script_handle = apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' );
-
-	// Load main styles CSS file only if the Builder plugin is active
-	if ( et_is_builder_plugin_active() ) {
-		$style_suffix = et_load_unminified_styles() ? '' : '.unified';
-		wp_enqueue_style( 'et-builder-modules-style', ET_BUILDER_URI . '/styles/frontend-builder-plugin-style' . $style_suffix . '.css', array(), ET_BUILDER_VERSION );
-	}
-
 	// Load visible.min.js only if AB testing active on current page OR VB (because post settings is synced between VB and BB)
 	if ( $is_ab_testing || $is_fb_enabled ) {
-		wp_enqueue_script( 'et-jquery-visible-viewport', ET_BUILDER_URI . '/scripts/ext/jquery.visible.min.js', array( 'jquery', $builder_modules_script_handle ), ET_BUILDER_VERSION, true );
+		wp_enqueue_script( 'et-jquery-visible-viewport', ET_BUILDER_URI . '/scripts/ext/jquery.visible.min.js', array( 'jquery', et_get_combined_script_handle() ), ET_BUILDER_VERSION, true );
 	}
 
 	$pb_custom_data = array(
@@ -385,7 +424,7 @@ function et_builder_load_modules_styles() {
 		'tinymce_uri'            => defined( 'ET_FB_ASSETS_URI' ) ? ET_FB_ASSETS_URI . '/vendors' : '',
 	);
 
-	wp_localize_script( $builder_modules_script_handle, 'et_pb_custom', $pb_custom_data );
+	wp_localize_script( et_get_combined_script_handle(), 'et_pb_custom', $pb_custom_data );
 
 	/**
 	 * Only load this during builder preview screen session
@@ -416,6 +455,7 @@ function et_builder_load_modules_styles() {
 		}
 
 		wp_enqueue_style( 'et-builder-preview-style', ET_BUILDER_URI . '/styles/preview.css', array(), ET_BUILDER_VERSION );
+
 		wp_enqueue_script( 'et-builder-preview-script', ET_BUILDER_URI . '/frontend-builder/build/frontend-builder-preview.js', array( 'jquery' ), ET_BUILDER_VERSION, true );
 
 		$preview_params_data = array(
@@ -516,31 +556,17 @@ function et_builder_handle_link_options_data( $element_data = false ) {
 }
 
 /**
- * Get list of concatenated & minified script and their possible alternative name
+ * Get list of combined scripts and their possible alternative names.
  *
  * @return array
  */
 function et_builder_get_minified_scripts() {
-	$minified_scripts = array(
-		'et-shortcodes-js',
-		'divi-fitvids',
-		'fitvids', // possible alternative name
-		'jquery-fitvids', // possible alternative name
+	$static_scripts = array(
 		'waypoints',
-		'jquery-waypoints', // possible alternative name
-		'magnific-popup',
-		'jquery-magnific-popup', // possible alternative name
-		'hashchange',
-		'jquery-hashchange', // possible alternative name
-		'salvattore',
-		'easypiechart',
-		'jquery-easypiechart', // possible alternative name
-		'et-builder-modules-global-functions-script',
-		'et-jquery-touch-mobile',
-		'et-builder-modules-script',
+		'jquery-waypoints',
 	);
 
-	return apply_filters( 'et_builder_get_minified_scripts', $minified_scripts );
+	return apply_filters( 'et_builder_get_minified_scripts', $static_scripts );
 }
 
 /**
@@ -550,10 +576,7 @@ function et_builder_get_minified_scripts() {
  */
 function et_builder_get_minified_styles() {
 	$minified_styles = array(
-		'et-shortcodes-css',
-		'et-shortcodes-responsive-css',
 		'et-animations',
-		'magnific-popup',
 	);
 
 	return apply_filters( 'et_builder_get_minified_styles', $minified_styles );
@@ -567,8 +590,7 @@ function et_builder_get_minified_styles() {
  * @return void
  */
 function et_builder_dequeue_minified_scripts() {
-	if ( ! et_load_unminified_scripts() && ! is_admin() ) {
-
+	if ( ! is_admin() ) {
 		/**
 		 * Builder script handle name
 		 *
@@ -576,17 +598,17 @@ function et_builder_dequeue_minified_scripts() {
 		 *
 		 * @param string
 		 */
-		$builder_script_handle = apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' );
+		$builder_script_handle = et_get_combined_script_handle();
 
 		foreach ( et_builder_get_minified_scripts() as $script ) {
-			// Get script's localized data before the script is dequeued
+			// Get script's localized data before the script is dequeued.
 			$script_data = wp_scripts()->get_data( $script, 'data' );
 
-			// If to-be dequeued script has localized data, get builder script's data and concatenated both to ensure compatibility
-			// Concatenating is needed because script's localize data is saved as string (encoded array concatenated into variable name)
+			// If to-be dequeued script has localized data, get builder script's data and concatenated both to ensure compatibility.
+			// Concatenating is needed because script's localize data is saved as string (encoded array concatenated into variable name).
 			if ( $script_data && '' !== trim( $script_data ) ) {
 
-				// If builder script handle localized data returns false/empty, $script_data still need to be added
+				// If builder script handle localized data returns false/empty, $script_data still need to be added.
 				$concatenated_scripts_data = implode(
 					' ',
 					array_filter(
@@ -597,16 +619,16 @@ function et_builder_dequeue_minified_scripts() {
 					)
 				);
 
-				// Add concatenated localized data to builder script handle
+				// Add concatenated localized data to builder script handle.
 				wp_scripts()->add_data( $builder_script_handle, 'data', $concatenated_scripts_data );
 			}
 
-			// If dequeued script has inline script, get it then re-add it to builder script handle using appropriate position
+			// If dequeued script has inline script, get it then re-add it to builder script handle using appropriate position.
 			$inline_script_positions = array( 'before', 'after' );
 			foreach ( $inline_script_positions as $inline_script_position ) {
 				$inline_script = wp_scripts()->get_data( $script, $inline_script_position );
 
-				// Inline script is saved as array. add_inline_script() method will handle it appending process
+				// Inline script is saved as array. add_inline_script() method will handle it appending process.
 				if ( is_array( $inline_script ) && ! empty( $inline_script ) ) {
 					wp_scripts()->add_inline_script( $builder_script_handle, implode( ' ', $inline_script ), $inline_script_position );
 				}
@@ -622,16 +644,16 @@ add_action( 'wp_print_scripts', 'et_builder_dequeue_minified_scripts', 99999999 
 add_action( 'wp_print_footer_scripts', 'et_builder_dequeue_minified_scripts', 9 ); // <footer>
 
 function et_builder_dequeue_minifieds_styles() {
-	if ( ! et_load_unminified_styles() && ! is_admin() ) {
-		// Get builder minified + combined style handle
+	if ( ! is_admin() ) {
+		// Get builder minified + combined style handle.
 		$builder_optimized_style_name = apply_filters( 'et_builder_optimized_style_handle', '' );
 
 		foreach ( et_builder_get_minified_styles() as $style ) {
-			// If dequeued style has inline style, get it then re-add it to minified + combiled style handle
-			// Inline style only has 'after' position
+			// If dequeued style has inline style, get it then re-add it to minified + combiled style handle.
+			// Inline style only has 'after' position.
 			$inline_style = wp_styles()->get_data( $style, 'after' );
 
-			// Inline style is saved as array. add_inline_style() method will handle it appending process
+			// Inline style is saved as array. add_inline_style() method will handle it appending process.
 			if ( is_array( $inline_style ) && ! empty( $inline_style ) ) {
 				wp_styles()->add_inline_style( $builder_optimized_style_name, implode( ' ', $inline_style ), 'after' );
 			}
@@ -639,19 +661,6 @@ function et_builder_dequeue_minifieds_styles() {
 			wp_dequeue_style( $style );
 			wp_deregister_style( $style );
 			wp_register_style( $style, '', array(), ET_BUILDER_VERSION );
-		}
-	} else {
-		// Child theme might manually enqueues parent themes' style.css. When combine + minify CSS file is enabled, this isn't an issue.
-		// However, when combine + minify CSS is disabled, child theme should load style.dev.css (source) instead of style.css (minified).
-		// Child theme might not considering this, which causes minified file + other source files are printed. To fix it, deregister any
-		// style handle that contains parent theme's style.css URL, then re-queue new one with the same name handle + URL to parent theme's style.dev.css
-		// This should be done in theme only. Divi-Builder plugin doesn't need this.
-		if ( ! et_is_builder_plugin_active() && is_child_theme() ) {
-			$template_directory_uri = preg_quote( get_template_directory_uri(), '/' );
-			$optimized_style_src    = '/^(' . $template_directory_uri . '\/style)(-cpt)?(\.css)$/';
-			$unoptimized_style_src  = '$1$2.dev$3';
-
-			et_core_replace_enqueued_style( $optimized_style_src, $unoptimized_style_src, true );
 		}
 	}
 }
@@ -726,16 +735,6 @@ function et_builder_body_classes( $classes ) {
 		$classes[] = 'et-pb-preview';
 	}
 
-	// Minified JS identifier class name
-	if ( ! et_load_unminified_scripts() ) {
-		$classes[] = 'et_minified_js';
-	}
-
-	// Minified CSS identifier class name
-	if ( ! et_load_unminified_styles() ) {
-		$classes[] = 'et_minified_css';
-	}
-
 	$post_id   = et_core_page_resource_get_the_ID();
 	$post_type = get_post_type( $post_id );
 
@@ -753,13 +752,46 @@ function et_builder_body_classes( $classes ) {
 add_filter( 'body_class', 'et_builder_body_classes' );
 
 if ( ! function_exists( 'et_builder_add_main_elements' ) ) :
+	/**
+	 * Add Main Elements.
+	 *
+	 * @since 4.10.0
+	 * @access public
+	 * @return void
+	 */
 	function et_builder_add_main_elements() {
 		if ( ET_BUILDER_CACHE_MODULES ) {
 			ET_Builder_Element::init_cache();
 		}
+
+		// init this AFTER def cache has been init above.
+		et_builder_init_shortcode_manager();
+
 		require_once ET_BUILDER_DIR . 'main-structure-elements.php';
-		require_once ET_BUILDER_DIR . 'main-modules.php';
+
+		require_once ET_BUILDER_DIR . 'class-et-builder-module-use-detection.php';
+
+		/**
+		 * Fires after the builder's structural element classes are loaded.
+		 *
+		 * @since 4.10.0
+		 */
 		do_action( 'et_builder_ready' );
+	}
+endif;
+
+if ( ! function_exists( 'et_builder_init_shortcode_manager' ) ) :
+	/**
+	 * Initialize shortcode manager.
+	 *
+	 * @since 4.10.0
+	 * @access public
+	 * @return void
+	 */
+	function et_builder_init_shortcode_manager() {
+		$manager = new ET_Builder_Module_Shortcode_Manager();
+		$manager->init();
+		do_action( 'et_builder_shortcode_manager_init' );
 	}
 endif;
 
@@ -793,8 +825,18 @@ if ( ! function_exists( 'et_builder_load_framework' ) ) :
 			require_once ET_BUILDER_DIR . 'class-et-builder-element.php';
 			require_once ET_BUILDER_DIR . 'class-et-builder-plugin-compat-base.php';
 			require_once ET_BUILDER_DIR . 'class-et-builder-plugin-compat-loader.php';
+			require_once ET_BUILDER_DIR . 'class-et-builder-theme-compat-base.php';
+			require_once ET_BUILDER_DIR . 'class-et-builder-theme-compat-handler.php';
 			require_once ET_BUILDER_DIR . 'ab-testing.php';
 			require_once ET_BUILDER_DIR . 'class-et-builder-settings.php';
+
+			require_once ET_BUILDER_DIR . 'class-et-builder-post-feature-base.php';
+			require_once ET_BUILDER_DIR . 'class-et-builder-global-feature-base.php';
+			require_once ET_BUILDER_DIR . 'class-et-builder-module-features.php';
+			require_once ET_BUILDER_DIR . 'class-et-builder-google-fonts-feature.php';
+			require_once ET_BUILDER_DIR . 'class-et-builder-dynamic-assets-feature.php';
+
+			require_once ET_BUILDER_DIR . 'class-et-builder-module-shortcode-manager.php';
 
 			$builder_settings_loaded = true;
 

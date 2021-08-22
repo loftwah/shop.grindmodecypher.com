@@ -622,8 +622,8 @@ See LICENSE.md for the full GPLv2 license.
 Magnific Popup
 --------------
 
-includes/builder/scripts/ext/jquery.magnific-popup.js
-inculdes/builder/styles/magnific_popup.css
+includes/builder/feature/dynamic-assets/assets/js/jquery_magnific-popup.js
+inculdes/builder/feature/dynamic-assets/assets/css/magnific_popup.css
 
 ```text
 The MIT License (MIT)

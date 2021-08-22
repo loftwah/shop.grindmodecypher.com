@@ -836,6 +836,51 @@ function et_get_theme_version() {
 }
 endif;
 
+if ( ! function_exists( 'et_get_child_theme_version' ) ) :
+	/**
+	 * Get the current version of the active child theme.
+	 *
+	 * @since 4.10.0
+	 */
+	function et_get_child_theme_version() {
+		$theme_info    = wp_get_theme();
+		$theme_info    = wp_get_theme( $theme_info->child_theme );
+		$theme_version = $theme_info->display( 'Version' );
+
+		return $theme_version;
+	}
+endif;
+
+if ( ! function_exists( 'et_requeue_child_theme_styles' ) ) :
+	/**
+	 * Dequeue child theme css files and re-enqueue them below the theme stylesheet
+	 * and dynamic css files to preserve priority.
+	 *
+	 * @since 4.10.0
+	 */
+	function et_requeue_child_theme_styles() {
+		if ( is_child_theme() ) {
+			global $shortname;
+
+			$theme_version          = et_get_child_theme_version();
+			$template_directory_uri = preg_quote( get_stylesheet_directory_uri(), '/' );
+			$styles                 = wp_styles();
+			$inline_style_suffix    = et_core_is_inline_stylesheet_enabled() && et_use_dynamic_css() ? '-inline' : '';
+			$style_dep              = array( $shortname . '-style-parent' . $inline_style_suffix );
+
+			if ( empty( $styles->registered ) ) {
+				return;
+			}
+
+			foreach ( $styles->registered as $handle => $style ) {
+				if ( preg_match( '/' . $template_directory_uri . '.*/', $style->src ) ) {
+					et_core_replace_enqueued_style( $style->src, '', $theme_version, '', $style_dep, false );
+				}
+			}
+		}
+	}
+endif;
+
 if ( ! function_exists( 'et_new_core_setup') ):
 function et_new_core_setup() {
 	$has_php_52x = -1 === version_compare( PHP_VERSION, '5.3' );
@@ -894,42 +939,81 @@ function et_core_get_version_from_filesystem( $core_directory ) {
 endif;
 
 if ( ! function_exists( 'et_core_replace_enqueued_style' ) ):
-/**
- * Replace a style's src if it is enqueued.
- *
- * @since 3.10
- *
- * @param string $old_src
- * @param string $new_src
- * @param boolean $regex Use regex to match and replace the style src.
- *
- * @return void
- */
-function et_core_replace_enqueued_style( $old_src, $new_src, $regex = false ) {
-	$styles = wp_styles();
+	/**
+	 * Replace a style's src if it is enqueued.
+	 *
+	 * @since 3.10
+	 *
+	 * @param string  $old_src    Current src of css file.
+	 * @param string  $new_src    New css file src to replace old src.
+	 * @param string  $new_ver    New version for .css file.
+	 * @param string  $new_handle New handle for .css file.
+	 * @param string  $new_deps   New deps for .css file.
+	 * @param boolean $regex      Use regex to match and replace the style src.
+	 *
+	 * @return void
+	 */
+	function et_core_replace_enqueued_style( $old_src, $new_src, $new_ver, $new_handle, $new_deps, $regex = false ) {
+		$styles = wp_styles();
 
-	if ( empty( $styles->registered ) ) {
-		return;
-	}
-
-	foreach ( $styles->registered as $style_handle => $style ) {
-		$match = $regex ? preg_match( $old_src, $style->src ) : $old_src === $style->src;
-		if ( ! $match ) {
-			continue;
+		if ( empty( $styles->registered ) ) {
+			return;
 		}
 
-		$style_src   = $regex ? preg_replace( $old_src, $new_src, $style->src ) : $new_src;
-		$style_deps  = isset( $style->deps ) ? $style->deps : array();
-		$style_ver   = isset( $style->ver ) ? $style->ver : false;
-		$style_media = isset( $style->args ) ? $style->args : 'all';
+		foreach ( $styles->registered as $handle => $style ) {
+			$match = $regex ? preg_match( $old_src, $style->src ) : $old_src === $style->src;
 
-		// Deregister first, so the handle can be re-enqueued.
-		wp_deregister_style( $style_handle );
+			if ( ! $match ) {
+				continue;
+			}
 
-		// Enqueue the same handle with the new src.
-		wp_enqueue_style( $style_handle, $style_src, $style_deps, $style_ver, $style_media );
+			$old_ver       = isset( $style->ver ) ? $style->ver : false;
+			$old_handle    = $handle;
+			$old_deps      = isset( $style->deps ) ? $style->deps : array();
+			$style_handle  = $new_handle ? $new_handle : $old_handle;
+			$style_src     = $regex ? preg_replace( $old_src, $new_src, $style->src ) : $new_src;
+			$style_src     = $new_src ? $style_src : $old_src;
+			$style_deps    = $new_deps ? $new_deps : $old_deps;
+			$style_ver     = $new_ver ? $new_ver : $old_ver;
+			$style_media   = isset( $style->args ) ? $style->args : 'all';
+			$inline_styles = $styles->get_data( $handle, 'after' );
+
+			// Deregister first, so the handle can be re-enqueued.
+			wp_dequeue_style( $old_handle );
+			wp_deregister_style( $old_handle );
+
+			// Enqueue the same handle with the new src.
+			wp_enqueue_style( $style_handle, $style_src, $style_deps, $style_ver, $style_media );
+
+			if ( ! empty( $inline_styles ) ) {
+				wp_add_inline_style( $style_handle, implode( "\n", $inline_styles ) );
+			}
+		}
 	}
-}
+endif;
+
+if ( ! function_exists( 'et_core_is_inline_stylesheet_enabled' ) ) :
+	/**
+	 * Check to see if Inline Stylesheet is enabled.
+	 *
+	 * @return bool
+	 * @since 4.10.2
+	 */
+	function et_core_is_inline_stylesheet_enabled() {
+		global $shortname;
+
+		if ( defined( 'ET_BUILDER_PLUGIN_ACTIVE' ) ) {
+			$options           = get_option( 'et_pb_builder_options', array() );
+			$inline_stylesheet = isset( $options['performance_main_inline_stylesheet'] ) ? $options['performance_main_inline_stylesheet'] : 'on';
+		} else {
+			// Get option value. If Extra, defaults to off.
+			$inline_stylesheet = et_get_option( $shortname . '_inline_stylesheet', 'extra' === $shortname ? 'off' : 'on' );
+		}
+
+		$enable_inline_stylesheet = 'on' === $inline_stylesheet ? true : false;
+
+		return $enable_inline_stylesheet;
+	}
 endif;
 
 if ( ! function_exists( 'et_core_is_safe_mode_active' ) ):
@@ -1877,24 +1961,137 @@ endif;
 // Action for WP Cron: Disable Hosting Card status via ET API
 add_action( 'et_maybe_update_hosting_card_status_cron', 'et_maybe_update_hosting_card_status' );
 
-
-if ( ! function_exists( 'et_preload_fonts' ) ) :
+if ( ! function_exists( 'et_disable_emojis' ) ) :
 	/**
-	 * Preload fonts to speedup the site.
+	 * Disable WordPress Emojis
+	 * Copyright Ryan Hellyer https://geek.hellyer.kiwi/
+	 * License: GPL2
+	 *
+	 * @since 4.10.0
+	 *
+	 * Removes WordPress emoji scripts and styles.
 	 */
-	function et_preload_fonts() {
-		$link_template = '<link rel="preload" href="%s" as="font" crossorigin="anonymous">';
+	function et_disable_emojis() {
+		global $shortname;
 
-		$allowed_tags = array(
-			'link' => array(
-				'rel'         => array(),
-				'href'        => array(),
-				'as'          => array(),
-				'crossorigin' => array(),
-			),
-		);
-
-		echo wp_kses( sprintf( $link_template, esc_url( ET_CORE_URL . 'admin/fonts/modules.ttf' ) ), $allowed_tags );
+		if ( 'on' === et_get_option( $shortname . '_disable_emojis', 'on' ) ) {
+			remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+			remove_action( 'wp_print_styles', 'print_emoji_styles' );
+			remove_action( 'admin_print_styles', 'print_emoji_styles' );
+			remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
+			remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+			remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+			add_filter( 'tiny_mce_plugins', 'et_disable_emojis_tinymce' );
+			add_filter( 'wp_resource_hints', 'et_disable_emojis_dns_prefetch', 10, 2 );
+		}
 	}
-	add_action( 'wp_head', 'et_preload_fonts' );
+endif;
+
+if ( ! function_exists( 'et_disable_emojis_tinymce' ) ) :
+	/**
+	 * Disables tinymce emojis.
+	 * Copyright Ryan Hellyer https://geek.hellyer.kiwi/
+	 * License: GPL2
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param array $plugins of plugins.
+	 * @return array plugins.
+	 */
+	function et_disable_emojis_tinymce( $plugins ) {
+		if ( is_array( $plugins ) ) {
+			return array_diff( $plugins, array( 'wpemoji' ) );
+		}
+
+		return array();
+	}
+endif;
+
+if ( ! function_exists( 'et_disable_emojis_dns_prefetch' ) ) :
+	/**
+	 * Disables dns prefech meta tags.
+	 * Copyright Ryan Hellyer https://geek.hellyer.kiwi/
+	 * License: GPL2
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param array  $urls URLs to print for resource hints.
+	 * @param string $relation_type The relation type the URLs are printed for.
+	 * @return array plugins.
+	 */
+	function et_disable_emojis_dns_prefetch( $urls, $relation_type ) {
+		if ( 'dns-prefetch' === $relation_type ) {
+			$emoji_svg_url_bit = 'https://s.w.org/images/core/emoji/';
+			foreach ( $urls as $key => $url ) {
+				if ( strpos( $url, $emoji_svg_url_bit ) !== false ) {
+					unset( $urls[ $key ] );
+				}
+			}
+		}
+
+		return $urls;
+	}
+endif;
+
+if ( ! function_exists( 'et_dequeue_block_css' ) ) :
+	/**
+	 * If the option is enabled and the page is built with the Divi Builder,
+	 * dequeue the gutenberg block css file from the head.
+	 *
+	 * @since 4.10.0
+	 */
+	function et_dequeue_block_css() {
+		global $shortname;
+
+		$post_id                 = get_the_id();
+		$is_page_builder_used    = function_exists( 'et_pb_is_pagebuilder_used' ) ? et_pb_is_pagebuilder_used( $post_id ) : false;
+		$defer_block_css_enabled = ( 'on' === et_get_option( $shortname . '_defer_block_css', 'on' ) );
+
+		if ( $is_page_builder_used && $defer_block_css_enabled ) {
+			wp_dequeue_style( 'wp-block-library' );
+		}
+	}
+endif;
+
+if ( ! function_exists( 'et_enqueue_block_css' ) ) :
+	/**
+	 * If the option is enabled and the page is built with the Divi Builder,
+	 * enqueue the gutenberg block css file in the body.
+	 *
+	 * @since 4.10.0
+	 */
+	function et_enqueue_block_css() {
+		global $shortname;
+
+		$post_id                 = get_the_id();
+		$is_page_builder_used    = et_pb_is_pagebuilder_used( $post_id );
+		$defer_block_css_enabled = ( 'on' === et_get_option( $shortname . '_defer_block_css', 'on' ) );
+
+		if ( $is_page_builder_used && $defer_block_css_enabled ) {
+			// Defer the stylesheet.
+			add_filter( 'style_loader_tag', 'et_defer_gb_css', 10, 2 );
+			// Re-enqueue the deferred stylesheet.
+			wp_enqueue_style( 'wp-block-library' );
+		}
+	}
+endif;
+
+if ( ! function_exists( 'et_defer_gb_css' ) ) :
+	/**
+	 * Load GB stylesheet asynchronously by swapping the media attribute on load.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param string $html HTML to replace.
+	 * @param string $handle Stylesheet handle.
+	 * @return string $html replacement html.
+	 */
+	function et_defer_gb_css( $html, $handle ) {
+		if ( 'wp-block-library' === $handle ) {
+			return str_replace( "media='all'", "media='none' onload=\"media='all'\"", $html );
+		}
+
+		return $html;
+	}
 endif;

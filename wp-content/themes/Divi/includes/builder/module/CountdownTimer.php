@@ -294,4 +294,6 @@ class ET_Builder_Module_Countdown_Timer extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Countdown_Timer();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Countdown_Timer();
+}

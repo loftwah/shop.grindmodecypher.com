@@ -665,7 +665,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 				<p class="clearfix">
 					<span class="et_pb_contact_captcha_question">%1$s</span> = <input type="text" size="2" class="input et_pb_contact_captcha" data-first_digit="%3$s" data-second_digit="%4$s" value="" name="et_pb_contact_captcha_%2$s" data-required_mark="required" autocomplete="off">
 				</p>
-			</div><!-- .et_pb_contact_right -->',
+			</div>',
 			sprintf( '%1$s + %2$s', esc_html( $et_pb_first_digit ), esc_html( $et_pb_second_digit ) ),
 			esc_attr( $et_pb_contact_form_num ),
 			esc_attr( $et_pb_first_digit ),
@@ -695,7 +695,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 						</div>
 						%4$s
 					</form>
-				</div> <!-- .et_pb_contact -->',
+				</div>',
 				esc_url( $current_url ),
 				( 'on' === $captcha && 'off' === $use_spam_service ? $et_pb_captcha : '' ),
 				esc_html( $multi_view->get_value( 'submit_button_text' ) ),
@@ -736,7 +736,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 				%1$s
 				<div class="et-pb-contact-message">%2$s</div>
 				%3$s
-			</div> <!-- .et_pb_contact_form_container -->
+			</div>
 			',
 			$title,
 			$et_error_message,
@@ -795,4 +795,6 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 	}
 }
 
-new ET_Builder_Module_Contact_Form();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Contact_Form();
+}

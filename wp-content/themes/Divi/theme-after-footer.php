@@ -7,5 +7,5 @@
 
 ?>
 <?php if ( ! et_builder_is_product_tour_enabled() && ! is_page_template( 'page-template-blank.php' ) ) : ?>
-    </div> <!-- #et-main-area -->
+	</div>
 <?php endif; ?>

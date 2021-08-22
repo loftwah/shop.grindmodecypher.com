@@ -649,13 +649,13 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 				<div class="et_pb_pricing_heading">
 					%2$s
 					%3$s
-				</div> <!-- .et_pb_pricing_heading -->
+				</div>
 				<div class="et_pb_pricing_content_top">
 					<span class="et_pb_et_price">%6$s%7$s%8$s</span>
-				</div> <!-- .et_pb_pricing_content_top -->
+				</div>
 				<div class="et_pb_pricing_content">
 					%4$s
-				</div> <!-- .et_pb_pricing_content -->
+				</div>
 				%5$s
 			</div>',
 			$this->module_classname( $render_slug ),
@@ -720,4 +720,6 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Pricing_Tables_Item();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Pricing_Tables_Item();
+}

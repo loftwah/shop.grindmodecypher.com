@@ -1,6 +1,6 @@
 <?php
-
-if ( ! class_exists( 'ET_Core_VersionRollback' ) ):
+// phpcs:disable Generic.WhiteSpace.ScopeIndent -- our preference is to not indent the whole inner function in this scenario.
+if ( ! class_exists( 'ET_Core_VersionRollback' ) ) :
 /**
  * Handles version rollback.
  *
@@ -58,9 +58,9 @@ class ET_Core_VersionRollback {
 	 *
 	 * @since 3.10
 	 *
-	 * @param string $product_name
-	 * @param string $product_shortname
-	 * @param string $product_version
+	 * @param string $product_name Product name.
+	 * @param string $product_shortname Product shortname.
+	 * @param string $product_version Product version.
 	 */
 	public function __construct( $product_name, $product_shortname, $product_version ) {
 		$this->product_name = sanitize_text_field( $product_name );
@@ -622,8 +622,23 @@ class ET_Core_VersionRollback {
 			$latest_installed_version = $theme_version;
 		}
 
+		/**
+		 * Fires after new version number is updated.
+		 *
+		 * @since 4.10.0
+		 */
+		do_action( 'et_store_before_new_version_update' );
+
 		$this->_set_previous_installed_version( $previous_installed_version );
 		$this->_set_latest_installed_version( $latest_installed_version );
+
+		/**
+		 * Fires after new version number is updated.
+		 *
+		 * @since 4.10.0
+		 */
+		do_action( 'et_store_after_new_version_update' );
 	}
+
 }
 endif;

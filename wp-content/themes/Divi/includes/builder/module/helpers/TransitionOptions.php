@@ -7,13 +7,13 @@
  *
  * Class ET_Builder_Module_Transition_Options
  */
-class ET_Builder_Module_Transition_Options {
+class ET_Builder_Module_Helper_Transition_Options {
 
 	private static $instance;
 
 	public static function get() {
 		if ( empty( self::$instance ) ) {
-			return self::$instance = new ET_Builder_Module_Transition_Options();
+			self::$instance = new ET_Builder_Module_Helper_Transition_Options();
 		}
 
 		return self::$instance;

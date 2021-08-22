@@ -10,6 +10,10 @@
  * @since   3.29
  */
 
+if ( ! class_exists( 'ET_Builder_Module_Gallery' ) ) {
+	require_once ET_BUILDER_DIR_RESOLVED_PATH . '/module/Gallery.php';
+}
+
 /**
  * Class representing WooCommerce Gallery component.
  */

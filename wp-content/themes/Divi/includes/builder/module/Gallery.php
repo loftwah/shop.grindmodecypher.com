@@ -567,8 +567,6 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 			return '';
 		}
 
-		wp_enqueue_script( 'hashchange' );
-
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
 		$posts_number              = 0 === intval( $posts_number ) ? 4 : intval( $posts_number );
@@ -718,7 +716,7 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 			$output .= '</div>';
 		}
 
-		$output .= '</div><!-- .et_pb_gallery_items -->';
+		$output .= '</div>';
 
 		if ( 'on' !== $fullwidth && $multi_view->has_value( 'show_pagination', 'on' ) ) {
 			$pagination_classes = array( 'et_pb_gallery_pagination' );
@@ -739,10 +737,12 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 			);
 		}
 
-		$output .= '</div><!-- .et_pb_gallery -->';
+		$output .= '</div>';
 
 		return $output;
 	}
 }
 
-new ET_Builder_Module_Gallery();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Gallery();
+}

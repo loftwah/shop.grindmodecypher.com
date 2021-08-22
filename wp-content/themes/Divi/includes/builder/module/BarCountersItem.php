@@ -507,4 +507,6 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Bar_Counters_Item();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Bar_Counters_Item();
+}

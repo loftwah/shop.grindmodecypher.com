@@ -887,17 +887,18 @@ function et_builder_wc_is_non_product_post_type() {
 	return false;
 }
 
+
 /**
- * Load WooCommerce related scripts. This function basically redo what `WC_Frontend_Scripts::load_scripts()`
- * does without the `product` CPT limitation.
+ * Load WooCommerce related scripts. This function basically redo what
+ * `WC_Frontend_Scripts::load_scripts()` does without the `product` CPT limitation.
  *
- * @todo Once more WooCommerce Modules are added (checkout, account, etc), revisit this method and
- *       compare it against `WC_Frontend_Scripts::load_scripts()`. Some of the script queues are
- *       removed here because there is currently no WooCommerce module equivalent of them
+ * Once more WooCommerce Modules are added (checkout, account, etc), revisit this method and
+ * compare it against `WC_Frontend_Scripts::load_scripts()`. Some of the script queues are
+ * removed here because there is currently no WooCommerce module equivalent of them.
  *
  * @since 3.29
- *
  * @since 4.3.3 Loads WC scripts on Shop, Product Category & Product Tags archives.
+ * @since 4.9.11 Avoid invalid argument supplied for foreach() warning.
  */
 function et_builder_wc_load_scripts() {
 	global $post;
@@ -911,7 +912,7 @@ function et_builder_wc_load_scripts() {
 
 	// If current page is not non-`product` CPT which using builder, stop early.
 	if ( ( ! et_builder_wc_is_non_product_post_type()
-			|| ! class_exists( 'WC_Frontend_Scripts' ) )
+		|| ! class_exists( 'WC_Frontend_Scripts' ) )
 		&& function_exists( 'et_fb_enabled' )
 		&& ! et_core_is_fb_enabled()
 		&& ! $is_shop
@@ -954,6 +955,16 @@ function et_builder_wc_load_scripts() {
 	// Enqueue style.
 	$wc_styles = WC_Frontend_Scripts::get_styles();
 
+	/*
+	 * Since $wc_styles is passed in to `woocommerce_enqueue_styles` filter,
+	 * ensure that the value is array.
+	 *
+	 * @see https://github.com/elegantthemes/divi-builder/issues/1268
+	 */
+	if ( ! is_array( $wc_styles ) ) {
+		return;
+	}
+
 	foreach ( $wc_styles as $style_handle => $wc_style ) {
 		if ( ! isset( $wc_style['has_rtl'] ) ) {
 			$wc_style['has_rtl'] = false;
@@ -962,7 +973,6 @@ function et_builder_wc_load_scripts() {
 		wp_enqueue_style( $style_handle, $wc_style['src'], $wc_style['deps'], $wc_style['version'], $wc_style['media'], $wc_style['has_rtl'] );
 	}
 }
-
 /**
  * Add WooCommerce body class name on non `product` CPT builder page
  *
@@ -1312,6 +1322,20 @@ function et_builder_wc_init() {
 	add_filter( 'the_content', 'et_builder_avoid_nested_shortcode_parsing' );
 
 	add_filter( 'et_builder_wc_description', 'et_builder_wc_parse_description' );
+
+	/*
+	 * In the case of dynamic module framework's shortcode manager
+	 * we need to fire this hook on its own,
+	 */
+	if ( ! et_builder_should_load_all_module_data() ) {
+		add_action(
+			'et_builder_module_lazy_shortcodes_registered',
+			[
+				'ET_Builder_Module_Woocommerce_Cart_Notice',
+				'disable_default_notice',
+			]
+		);
+	}
 }
 
 et_builder_wc_init();

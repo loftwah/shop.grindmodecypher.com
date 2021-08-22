@@ -408,7 +408,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 						<input type="submit" value="%9$s" class="et_pb_searchsubmit">
 					</div>
 				</form>
-			</div> <!-- .et_pb_text -->',
+			</div>',
 			esc_url( home_url( '/' ) ),
 			$this->module_classname( $render_slug ),
 			$this->module_id(),
@@ -428,4 +428,6 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Search();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Search();
+}

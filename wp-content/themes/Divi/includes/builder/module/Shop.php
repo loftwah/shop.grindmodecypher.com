@@ -957,4 +957,6 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 	}
 }
 
-new ET_Builder_Module_Shop();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Shop();
+}

@@ -243,7 +243,7 @@ class ET_Builder_Module_Sidebar extends ET_Builder_Module {
 				%5$s
 				%4$s
 				%1$s
-			</div> <!-- .et_pb_widget_area -->',
+			</div>',
 			$widgets,
 			$this->module_classname( $render_slug ),
 			$this->module_id(),
@@ -256,4 +256,6 @@ class ET_Builder_Module_Sidebar extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Sidebar();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Sidebar();
+}

@@ -216,7 +216,7 @@ class ET_Builder_Module_Tabs_Item extends ET_Builder_Module {
 				%4$s
 				%3$s
 				%1$s
-			</div> <!-- .et_pb_tab -->',
+			</div>',
 			$content,
 			$this->module_classname( $render_slug ),
 			$video_background,
@@ -227,4 +227,6 @@ class ET_Builder_Module_Tabs_Item extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Tabs_Item();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Tabs_Item();
+}

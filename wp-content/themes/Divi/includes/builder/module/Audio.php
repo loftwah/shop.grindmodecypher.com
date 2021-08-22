@@ -525,4 +525,6 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Audio();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Audio();
+}

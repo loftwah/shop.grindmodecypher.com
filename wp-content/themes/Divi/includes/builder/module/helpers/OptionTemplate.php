@@ -222,7 +222,7 @@ class ET_Builder_Module_Helper_OptionTemplate {
 	 * @return array
 	 */
 	public function get_data( $template_id = '' ) {
-		return self::$_->array_get( $this->data, $template_id, array() );
+		return isset( $this->data[ $template_id ] ) ? $this->data[ $template_id ] : array();
 	}
 
 	/**
@@ -235,7 +235,7 @@ class ET_Builder_Module_Helper_OptionTemplate {
 	 * @return array
 	 */
 	public function get_template( $type = '' ) {
-		return self::$_->array_get( $this->templates, $type, array() );
+		return isset( $this->templates[ $type ] ) ? $this->templates[ $type ] : array();
 	}
 
 	/**
@@ -265,7 +265,15 @@ class ET_Builder_Module_Helper_OptionTemplate {
 	 * @return mixed
 	 */
 	public function get_cache( $name, $key ) {
-		return self::$_->array_get( $this->cache, "{$name}.{$key}", null );
+		if (
+			! empty( $this->cache )
+			&& ! empty( $this->cache[ $name ] )
+			&& ! empty( $this->cache[ $name ][ $key ] )
+		) {
+			return $this->cache[ $name ][ $key ];
+		}
+
+		return null;
 	}
 
 	/**
@@ -358,7 +366,7 @@ class ET_Builder_Module_Helper_OptionTemplate {
 		// If found, replace placeholder with correct value from data
 		if ( is_array( $placeholder ) && isset( $placeholder[0] ) ) {
 			// Get placeholder replacement
-			$replacement = self::$_->array_get( $data, "1.{$placeholder[0]}" );
+			$replacement = ! empty( $data[1] ) && ! empty( $data[1][ $placeholder[0] ] ) ? $data[1][ $placeholder[0] ] : '';
 
 			// Pass null as empty string; null as attribute affect builder differently.
 			// Attribute with empty string will be omitted later.
@@ -486,8 +494,8 @@ class ET_Builder_Module_Helper_OptionTemplate {
 			return $cache;
 		}
 
-		$template_type = self::$_->array_get( $template_data, '0', '' );
-		$prefix        = self::$_->array_get( $template_data, '1.prefix', '' );
+		$template_type = ! empty( $template_data[0] ) ? $template_data[0] : '';
+		$prefix        = ! empty( $template_data[1]['prefix'] ) && ! empty( $template_data[1]['prefix'] ) ? $template_data[1]['prefix'] : '';
 
 		// Certain advanced field (ie. Text Shadow) automatically adds underscore
 		$auto_add_prefix_underscore = isset( $template_data[0] ) && 'text_shadow' === $template_data[0] && '' === $prefix;
@@ -589,9 +597,9 @@ class ET_Builder_Module_Helper_OptionTemplate {
 			return $fields;
 		}
 
-		$template_type     = self::$_->array_get( $template_data, '0' );
-		$template_settings = self::$_->array_get( $template_data, '1', array() );
-		$prefix            = self::$_->array_get( $template_settings, 'prefix', '' );
+		$template_type     = ! empty( $template_data[0] ) ? $template_data[0] : '';
+		$template_settings = ! empty( $template_data[1] ) ? $template_data[1] : array();
+		$prefix            = ! empty( $template_settings['prefix'] ) ? $template_settings['prefix'] : '';
 
 		$parent_template_data = false;
 
@@ -601,7 +609,7 @@ class ET_Builder_Module_Helper_OptionTemplate {
 		// Thus get parent template's settings and use it
 		if ( $parent_template_id ) {
 			$parent_template_data     = $this->get_data( $parent_template_id );
-			$parent_template_settings = self::$_->array_get( $parent_template_data, '1', true );
+			$parent_template_settings = ! empty( $parent_template_data[1] ) ? $parent_template_data[1] : true;
 
 			$template_settings_inherits_from_parant = array();
 

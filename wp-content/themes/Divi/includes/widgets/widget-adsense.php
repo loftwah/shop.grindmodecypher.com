@@ -21,7 +21,7 @@
 		<div style="overflow: hidden;">
 			<?php echo et_core_intentionally_unescaped( $adsenseCode, 'html' ); ?>
 			<div class="clearfix"></div>
-		</div> <!-- end adsense -->
+		</div>
 	<?php
 		echo et_core_intentionally_unescaped( $after_widget, 'html' );
 	}

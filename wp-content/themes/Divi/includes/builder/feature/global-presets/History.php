@@ -45,7 +45,16 @@ class ET_Builder_Global_Presets_History {
 	}
 
 	private function _register_hooks() {
-		add_action( 'et_builder_modules_loaded', array( $this, 'migrate_custom_defaults_history' ), 99 );
+		// If migration is needed, ensure that all modules get fully loaded.
+		// phpcs:disable PEAR.Functions.FunctionCallSignature -- Anonymous functions.
+		add_action( 'et_builder_framework_loaded', function() {
+			if ( ! ET_Builder_Global_Presets_Settings::are_custom_defaults_migrated() ) {
+				add_filter( 'et_builder_should_load_all_module_data', '__return_true' );
+			}
+		});
+		// phpcs:enable
+
+		add_action( 'et_builder_ready', array( $this, 'migrate_custom_defaults_history' ), 99 );
 	}
 
 	/**
@@ -138,6 +147,18 @@ class ET_Builder_Global_Presets_History {
 
 		et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, $history );
 		ET_Core_PageResource::remove_static_resources( 'all', 'all' );
+	}
+
+	/**
+	 * Get the active Global Presets settings history index
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return int History index.
+	 */
+	public function get_global_history_index() {
+		$history = $this->_get_global_presets_history();
+		return is_object( $history ) ? (int) $history->index : md5( wp_json_encode( $history ) );
 	}
 
 	/**

@@ -380,4 +380,6 @@ class ET_Builder_Module_Fullwidth_Image extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Fullwidth_Image();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Fullwidth_Image();
+}

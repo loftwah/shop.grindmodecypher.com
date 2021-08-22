@@ -628,8 +628,8 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 				%6$s
 				<div class="et_pb_portfolio_items clearfix" data-portfolio-columns="">
 					%2$s
-				</div><!-- .et_pb_portfolio_items -->
-			</div> <!-- .et_pb_fullwidth_portfolio -->',
+				</div>
+			</div>',
 			$this->module_classname( $render_slug ),
 			$posts,
 			$this->module_id(),
@@ -681,4 +681,6 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 	}
 }
 
-new ET_Builder_Module_Fullwidth_Portfolio();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Fullwidth_Portfolio();
+}

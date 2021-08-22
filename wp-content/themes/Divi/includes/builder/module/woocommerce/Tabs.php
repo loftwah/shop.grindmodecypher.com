@@ -10,6 +10,10 @@
  * @since   3.29
  */
 
+if ( ! class_exists( 'ET_Builder_Module_Tabs' ) ) {
+	require_once ET_BUILDER_DIR_RESOLVED_PATH . '/module/Tabs.php';
+}
+
 /**
  * Class representing WooCommerce Add to cart component.
  *
@@ -261,7 +265,7 @@ class ET_Builder_Module_Woocommerce_Tabs extends ET_Builder_Module_Tabs {
 				'<div class="et_pb_tab clearfix%2$s">
 					<div class="et_pb_tab_content">
 						%1$s
-					</div><!-- .et_pb_tab_content" -->
+					</div>
 				</div>',
 				$tab['content'],
 				1 === $index ? ' et_pb_active_content' : ''

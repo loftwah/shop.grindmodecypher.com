@@ -661,6 +661,50 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 			ET_Builder_Element::set_style( $function_name, $el_style );
 		}
 	}
+
+	/**
+	 * Determine if Position Options are used.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param array $attrs Module attributes/props.
+	 *
+	 * @return bool
+	 */
+	public function is_used( $attrs ) {
+		foreach ( $attrs as $attr => $value ) {
+			if ( ! $value ) {
+				continue;
+			}
+
+			$is_attr = false !== strpos( $attr, 'z_index' )
+				|| false !== strpos( $attr, 'positioning' )
+				|| false !== strpos( $attr, 'position_origin' )
+				|| 'vertical_offset' === $attr
+				|| 'horizontal_offset' === $attr;
+
+			// Ignore default value.
+			if ( 'positioning' === $attr && 'relative' === $value ) {
+				continue;
+			}
+
+			// Ignore default value.
+			if ( ( 'position_origin_a' === $attr || 'position_origin_f' === $attr || 'position_origin_r' === $attr ) && 'top_left' === $value ) {
+				continue;
+			}
+
+			// Ignore default value.
+			if ( 'z_index' === $attr && 'auto' === $value ) {
+				continue;
+			}
+
+			if ( $is_attr ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
 
 return new ET_Builder_Module_Field_Position();

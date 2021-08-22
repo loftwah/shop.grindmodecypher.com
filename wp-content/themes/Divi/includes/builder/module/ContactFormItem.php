@@ -402,7 +402,7 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 		$form_field_text_color      = $this->props['form_field_text_color'];
 		$checkbox_checked           = $this->props['checkbox_checked'];
 		$checkbox_options           = $this->props['checkbox_options'];
-		$booleancheckbox_options    = $this->props['booleancheckbox_options'];
+		$booleancheckbox_options    = isset( $this->props['booleancheckbox_options'] ) ? $this->props['booleancheckbox_options'] : false;
 		$radio_options              = $this->props['radio_options'];
 		$select_options             = $this->props['select_options'];
 		$min_length                 = $this->props['min_length'];
@@ -564,26 +564,29 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 			$condition_rows          = json_decode( $conditional_logic_rules );
 			$ruleset                 = array();
 
-			foreach ( $condition_rows as $condition_row ) {
-				$condition_value = isset( $condition_row->value ) ? $condition_row->value : '';
-				$condition_value = trim( $condition_value );
+			// Ensure the JSON has been decoded successfully without any errors.
+			if ( JSON_ERROR_NONE === json_last_error() ) {
+				foreach ( $condition_rows as $condition_row ) {
+					$condition_value = isset( $condition_row->value ) ? $condition_row->value : '';
+					$condition_value = trim( $condition_value );
 
-				$ruleset[] = array(
-					$condition_row->field,
-					$condition_row->condition,
-					$condition_value,
-				);
-			}
+					$ruleset[] = array(
+						$condition_row->field,
+						$condition_row->condition,
+						$condition_value,
+					);
+				}
 
-			if ( ! empty( $ruleset ) ) {
-				$json     = json_encode( $ruleset );
-				$relation = $conditional_logic_relation === 'off' ? 'any' : 'all';
+				if ( ! empty( $ruleset ) ) {
+					$json     = wp_json_encode( $ruleset );
+					$relation = 'off' === $conditional_logic_relation ? 'any' : 'all';
 
-				$conditional_logic_attr = sprintf(
-					' data-conditional-logic="%1$s" data-conditional-relation="%2$s"',
-					esc_attr( $json ),
-					$relation
-				);
+					$conditional_logic_attr = sprintf(
+						' data-conditional-logic="%1$s" data-conditional-relation="%2$s"',
+						esc_attr( $json ),
+						$relation
+					);
+				}
 			}
 		}
 
@@ -922,4 +925,6 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Contact_Form_Item();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Contact_Form_Item();
+}

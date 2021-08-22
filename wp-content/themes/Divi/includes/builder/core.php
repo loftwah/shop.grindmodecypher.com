@@ -112,7 +112,7 @@ if ( ! function_exists( 'et_builder_should_load_framework' ) ) :
 		}
 
 		$is_admin              = is_admin();
-		$required_admin_pages  = array( 'edit.php', 'post.php', 'post-new.php', 'admin.php', 'customize.php', 'edit-tags.php', 'admin-ajax.php', 'export.php', 'options-permalink.php', 'themes.php', 'revision.php' ); // list of admin pages where we need to load builder files.
+		$required_admin_pages  = array( 'edit.php', 'post.php', 'post-new.php', 'admin.php', 'customize.php', 'edit-tags.php', 'admin-ajax.php', 'export.php', 'options-permalink.php', 'themes.php', 'revision.php', 'widgets.php' ); // list of admin pages where we need to load builder files.
 		$specific_filter_pages = array( 'edit.php', 'post.php', 'post-new.php', 'admin.php', 'edit-tags.php' ); // list of admin pages where we need more specific filtering.
 		$post_id               = (int) et_()->array_get( $_GET, 'post', 0 );
 
@@ -3866,8 +3866,8 @@ if ( ! function_exists( 'et_builder_get_disabled_link_modal' ) ) :
 				<div class="et_pb_prompt_buttons">
 					<a href="#" class="et_pb_prompt_proceed">%3$s</a>
 				</div>
-			</div><!-- .et_pb_prompt_modal -->
-		</div><!-- .et_pb_modal_overlay -->',
+			</div>
+		</div>',
 			esc_html__( 'Link Disabled', 'et_builder' ),
 			esc_html__( 'During preview, link to different page is disabled', 'et_builder' ),
 			esc_html__( 'Close', 'et_builder' )
@@ -4946,7 +4946,7 @@ endif;
 
 if ( ! function_exists( 'et_builder_get_fonts' ) ) :
 	/**
-	 * Return websage and google font list.
+	 * Return websafe and google font list.
 	 *
 	 * @param array $settings {
 	 *  Font settings.
@@ -5091,25 +5091,40 @@ function et_builder_old_fonts_mapping() {
 
 if ( ! function_exists( 'et_builder_google_fonts_sync' ) ) :
 	/**
-	 * Sync google fonts. clear font cache every 12 hours.
+	 * Sync Google Fonts. Clear font cache every 24 hours.
 	 */
 	function et_builder_google_fonts_sync() {
 		$google_api_key = et_pb_get_google_api_key();
 
+		// Bail early if 'fonts_cache_status' transient is not expired.
+		if ( false !== get_transient( 'fonts_cache_status' ) ) {
+			return;
+		}
+
+		// Bail early if Google API Key is empty or Google Fonts is disabled.
 		if ( '' === $google_api_key || ! et_core_use_google_fonts() ) {
 			return;
 		}
 
+		// Set 'fonts_cache_status' transient to true, marking the font cache update attempt to avoid making the request more than once a day in case of an error.
+		set_transient( 'fonts_cache_status', true, 24 * HOUR_IN_SECONDS );
+
 		$google_fonts_api_url  = sprintf( 'https://www.googleapis.com/webfonts/v1/webfonts?key=%1$s', $google_api_key );
 		$google_fonts_response = wp_remote_get( esc_url_raw( $google_fonts_api_url ) );
 
-		$google_fonts = is_array( $google_fonts_response ) ? et_core_parse_google_fonts_json( wp_remote_retrieve_body( $google_fonts_response ) ) : array();
+		// Check if the response is an array and we have a valid 200 response, otherwise log an error.
+		if ( is_array( $google_fonts_response ) && 200 === $google_fonts_response['response']['code'] ) {
+			$google_fonts_json = wp_remote_retrieve_body( $google_fonts_response );
+			$google_fonts_json = et_core_parse_google_fonts_json( $google_fonts_json );
 
-		if ( ! empty( $google_fonts ) ) {
-			// save google fonts.
-			update_option( 'et_google_fonts_cache', $google_fonts );
-			// save google fonts cache status.
-			set_transient( 'fonts_cache_status', 'valid', 12 * HOUR_IN_SECONDS );
+			if ( ! empty( $google_fonts_json ) ) {
+				// Save Google Fonts Data, if it's not empty.
+				update_option( 'et_google_fonts_cache', $google_fonts_json );
+			}
+		} else {
+			et_debug( 'An unkown error has occured while trying to retrieve the fonts from the Google Fonts API. Please ensure your Google API Key is valid and active.' );
+
+			return;
 		}
 	}
 endif;
@@ -5124,12 +5139,10 @@ if ( ! function_exists( 'et_builder_get_google_fonts' ) ) :
 			return array();
 		}
 
-		// Update fonts cache daily.
-		if ( 'valid' !== get_transient( 'fonts_cache_status' ) ) {
-			et_builder_google_fonts_sync();
-		}
+		et_builder_google_fonts_sync();
 
 		$google_fonts_cache = get_option( 'et_google_fonts_cache', array() );
+		$google_fonts_cache = et_core_parse_google_fonts_json( $google_fonts_cache );
 
 		if ( ! empty( $google_fonts_cache ) ) {
 			// Use cache if it's not empty.
@@ -5913,6 +5926,8 @@ function et_prevent_duplicate_item( $string_list, $delimiter ) {
  * @since 4.6.2 Removes static $should_load to ensure it's filtered with latest value.
  *
  * @return bool
+ *
+ * @deprecated ??
  */
 function et_load_unminified_scripts() {
 	$is_script_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
@@ -5924,6 +5939,8 @@ function et_load_unminified_scripts() {
  * Determining whether unminified styles should be loaded or not
  *
  * @since 4.6.2 Removes static $should_load to ensure it's filtered with latest value.
+ *
+ * @deprecated ??
  */
 function et_load_unminified_styles() {
 	$is_script_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
@@ -6380,8 +6397,8 @@ function et_builder_get_layout_closing_wrapper() {
 
 	return sprintf(
 		'
-		</div><!-- .et_builder_inner_content -->
-	</%1$s><!-- .et-l -->
+		</div>
+	</%1$s>
 	',
 		esc_attr( $el )
 	);
@@ -6396,12 +6413,12 @@ function et_builder_get_layout_closing_wrapper() {
  */
 function et_builder_get_builder_content_closing_wrapper() {
 	$is_dbp                   = et_is_builder_plugin_active();
-	$dbp_compat_wrapper_close = $is_dbp ? '</div><!-- .et_builder_outer_content -->' : '';
+	$dbp_compat_wrapper_close = $is_dbp ? '</div>' : '';
 
 	return sprintf(
 		'
 			%1$s
-		</div><!-- #et-boc -->
+		</div>
 		',
 		et_core_intentionally_unescaped( $dbp_compat_wrapper_close, 'fixed_string' )
 	);
@@ -6779,20 +6796,12 @@ endif;
 
 if ( ! function_exists( 'et_fb_enqueue_open_sans' ) ) :
 	/**
-	 * Load Open snas fonts.
+	 * Load Open Sans font.
 	 *
 	 * @deprecated See {@see et_builder_enqueue_open_sans()}
 	 */
 	function et_fb_enqueue_open_sans() {
-		$protocol   = is_ssl() ? 'https' : 'http';
-		$query_args = array(
-			'family' => 'Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
-			'subset' => 'latin,latin-ext',
-		);
-
-		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Google Font Apis does not have versions.
-		wp_enqueue_style( 'et-fb-fonts', esc_url_raw( add_query_arg( $query_args, "{$protocol}://fonts.googleapis.com/css" ) ), array(), null );
-		// phpcs:enable
+		et_builder_enqueue_open_sans();
 	}
 endif;
 
@@ -7093,7 +7102,7 @@ function et_builder_widgets_init() {
 					'name'          => sanitize_text_field( $name ),
 					'id'            => sanitize_text_field( $id ),
 					'before_widget' => '<div id="%1$s" class="et_pb_widget %2$s">',
-					'after_widget'  => '</div> <!-- end .et_pb_widget -->',
+					'after_widget'  => '</div>',
 					'before_title'  => '<h4 class="widgettitle">',
 					'after_title'   => '</h4>',
 				)
@@ -7113,4 +7122,23 @@ if ( et_is_builder_plugin_active() ) {
 	add_action( 'init', 'et_builder_widgets_init', 20 );
 } else {
 	add_action( 'widgets_init', 'et_builder_widgets_init' );
+}
+
+/**
+ * For Dev Use
+ */
+function et_light_debug_backtrace() {
+	$debug_backtrace       = debug_backtrace();
+	$keys                  = [ 'file', 'line', 'function', 'class' ];
+	$light_debug_backtrace = [];
+
+	foreach ( $debug_backtrace as $key => $value ) {
+		foreach ( $keys as $_key ) {
+			if ( isset( $value[ $_key ] ) ) {
+				$light_debug_backtrace[ $key ][ $_key ] = $value[ $_key ];
+			}
+		}
+	}
+
+	return array_slice( $light_debug_backtrace, 1 );
 }

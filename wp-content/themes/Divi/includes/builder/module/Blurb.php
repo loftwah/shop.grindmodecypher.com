@@ -1045,8 +1045,8 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 						%3$s
 						%1$s
 					</div>
-				</div> <!-- .et_pb_blurb_content -->
-			</div> <!-- .et_pb_blurb -->',
+				</div>
+			</div>',
 			$content,
 			et_core_esc_previously( $image ),
 			et_core_esc_previously( $title ),
@@ -1106,4 +1106,6 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Blurb();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Blurb();
+}

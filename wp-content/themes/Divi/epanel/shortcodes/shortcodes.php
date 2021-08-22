@@ -8,19 +8,12 @@ if ( ! defined( 'ET_SHORTCODES_DIR' ) ) define( 'ET_SHORTCODES_DIR', get_templat
 add_action('wp_enqueue_scripts', 'et_shortcodes_css_and_js');
 function et_shortcodes_css_and_js(){
 	global $themename;
-	$shortcode_strings_handle = apply_filters( 'et_shortcodes_strings_handle', 'et-shortcodes-js' );
-
-	wp_register_script( 'et-shortcodes-js', ET_SHORTCODES_DIR . '/js/et_shortcodes_frontend.js', array('jquery'), ET_SHORTCODES_VERSION, false );
 
 	if ( ! defined( 'ET_BUILDER_THEME' ) ) {
-		// This is a legacy theme so we need to enqueue the shortcode styles.
+		// We only need to load legacy shortcode CSS and JS in legacy themes. In Divi and Extra, these files are loaded dynamically.
 		wp_enqueue_style( 'et-shortcodes-css', ET_SHORTCODES_DIR . '/css/shortcodes-legacy.css', array(), ET_SHORTCODES_VERSION, 'all' );
+		et_add_legacy_shortcode_js();
 	}
-
-	wp_localize_script( $shortcode_strings_handle, 'et_shortcodes_strings', array(
-		'previous' => esc_html__( 'Previous', $themename ),
-		'next'     => esc_html__( 'Next', $themename )
-	) );
 }
 
 function et_add_simple_buttons(){
@@ -227,6 +220,8 @@ function et_add_simple_buttons(){
 
 add_shortcode('digg', 'et_digg');
 function et_digg($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	$output = "<script type='text/javascript'>
 (function() {
 var s = document.createElement('SCRIPT'), s1 = document.getElementsByTagName('SCRIPT')[0];
@@ -236,7 +231,6 @@ s.src = 'http://widgets.digg.com/buttons.js';
 s1.parentNode.insertBefore(s, s1);
 })();
 </script>
-<!-- Medium Button -->
 <a class='DiggThisButton DiggMedium'></a>";
 
 	return $output;
@@ -244,18 +238,24 @@ s1.parentNode.insertBefore(s, s1);
 
 add_shortcode('stumble','et_stumble');
 function et_stumble($atts, $content = null){
+	do_action( 'et_do_legacy_shortcode' );
+
 	$output = "<script src='http://www.stumbleupon.com/hostedbadge.php?s=5' type='text/javascript'></script>"; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 	return $output;
 }
 
 add_shortcode('facebook','et_facebook');
 function et_facebook($atts, $content = null){
+	do_action( 'et_do_legacy_shortcode' );
+
 	$output = "<a name='fb_share' type='button_count' href='http://www.facebook.com/sharer.php'>Share</a><script src='http://static.ak.fbcdn.net/connect.php/js/FB.Share' type='text/javascript'></script>"; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 	return $output;
 }
 
 add_shortcode('twitter','et_twitter');
 function et_twitter($atts, $content = null){
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"name" => 'name'
 	), $atts, 'twitter'));
@@ -265,6 +265,8 @@ function et_twitter($atts, $content = null){
 
 add_shortcode('feedburner','et_feedburner');
 function et_feedburner($atts, $content = null){
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"name" => 'name'
 	), $atts, 'feedburner'));
@@ -276,6 +278,8 @@ function et_feedburner($atts, $content = null){
 
 add_shortcode('retweet','et_retweet');
 function et_retweet($atts, $content = null){
+	do_action( 'et_do_legacy_shortcode' );
+
 	global $themename;
 
 	$output = "<a href='http://twitter.com/share' class='twitter-share-button' data-count='vertical'>" . esc_html__( 'Tweet', $themename ) . "</a><script type='text/javascript' src='http://platform.twitter.com/widgets.js'></script>"; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
@@ -285,6 +289,8 @@ function et_retweet($atts, $content = null){
 
 add_shortcode('protected','et_protected');
 function et_protected($atts, $content = null){
+	do_action( 'et_do_legacy_shortcode' );
+
 	global $themename, $user_login;
 
 	if ( is_user_logged_in() ) {
@@ -302,8 +308,8 @@ function et_protected($atts, $content = null){
 							<input type='submit' name='submit' value='" . esc_html__('Login',$themename) . "' class='etlogin-button' />
 							<input type='hidden' name='redirect_to' value='" . esc_url( get_permalink() ) . "'>
 						</form>
-					</div> <!-- .et-protected-form -->
-				</div> <!-- .et-protected -->";
+					</div>
+				</div>";
 	}
 
 	return $output;
@@ -312,6 +318,8 @@ function et_protected($atts, $content = null){
 
 add_shortcode('box', 'et_box');
 function et_box($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 				"type" => 'shadow',
 				"id" => '',
@@ -332,6 +340,8 @@ function et_box($atts, $content = null) {
 
 add_shortcode('tooltip', 'et_tooltip');
 function et_tooltip($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	global $themename;
 
 	extract(shortcode_atts(array(
@@ -339,8 +349,6 @@ function et_tooltip($atts, $content = null) {
 				"id" => '',
 				"class" => ''
 			), $atts, 'tooltip'));
-
-	wp_enqueue_script( 'et-shortcodes-js' );
 
 	$content = et_content_helper($content);
 
@@ -354,6 +362,8 @@ function et_tooltip($atts, $content = null) {
 
 add_shortcode('learn_more', 'et_learnmore');
 function et_learnmore($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	global $themename;
 
 	extract(shortcode_atts(array(
@@ -362,8 +372,6 @@ function et_learnmore($atts, $content = null) {
 				"id" => '',
 				"class" => ''
 			), $atts, 'learn_more'));
-
-	wp_enqueue_script( 'et-shortcodes-js' );
 
 	$content = et_content_helper($content);
 
@@ -384,6 +392,8 @@ function et_learnmore($atts, $content = null) {
 
 add_shortcode('button', 'et_button');
 function et_button($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 				"link" => "#",
 				"color" => "blue",
@@ -418,6 +428,8 @@ function et_button($atts, $content = null) {
 
 add_shortcode('slide', 'et_slide');
 function et_slide($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"id" => '',
 		"class" => ''
@@ -437,6 +449,8 @@ function et_slide($atts, $content = null) {
 
 add_shortcode('tabs', 'et_tabs');
 function et_tabs($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 				"fx" => 'fade',
 				"auto" => 'no',
@@ -445,8 +459,6 @@ function et_tabs($atts, $content = null) {
 				"slidertype" => 'top tabs',
 				"class" => ''
 			), $atts, 'tabs'));
-
-	wp_enqueue_script( 'et-shortcodes-js' );
 
 	$auto = ( $auto === 'no' ) ? 'false' : 'true';
 
@@ -462,14 +474,14 @@ function et_tabs($atts, $content = null) {
 		$output = "
 			<div class='" . esc_attr( "et-tabs-container{$class}" ) ."'{$id}>
 				{$content}
-			</div> <!-- .et-tabs-container -->";
+			</div>";
 	} elseif ($slidertype === 'left tabs') {
 		$class .= ' et_slidertype_left_tabs clearfix';
 		$output = "
 			<div class='" . esc_attr( "tabs-left{$class}" ) . "'{$id}>
 				<div class='et_left_tabs_bg'></div>
 				{$content}
-			</div> <!-- .tabs-left -->";
+			</div>";
 	} elseif ($slidertype === 'simple') {
 		$class .= ' et_slidertype_simple';
 		$output = "
@@ -479,7 +491,7 @@ function et_tabs($atts, $content = null) {
 					{$content}
 				</div>
 			</div>
-		</div> <!-- .et-simple-slider -->
+		</div>
 		";
 	} elseif ($slidertype === 'images') {
 		$class .= ' et_slidertype_images';
@@ -490,7 +502,7 @@ function et_tabs($atts, $content = null) {
 					{$content}
 				</div>
 			</div>
-		</div> <!-- .et-image-slider -->
+		</div>
 		";
 	}
 
@@ -499,18 +511,22 @@ function et_tabs($atts, $content = null) {
 
 add_shortcode('tabcontainer', 'et_tabcontainer');
 function et_tabcontainer($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	$content = et_content_helper($content);
 
 	$output = "
 		<ul class='et-tabs-control'>
 			{$content}
-		</ul> <!-- .et-tabs-control -->";
+		</ul>";
 
 	return $output;
 }
 
 add_shortcode('imagetabcontainer', 'et_imagetabcontainer');
 function et_imagetabcontainer($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	global $themename;
 
 	extract(shortcode_atts(array(
@@ -532,15 +548,17 @@ function et_imagetabcontainer($atts, $content = null) {
 				<a class='left-arrow' href='#'>{$previous}</a>
 				{$content}
 				<a class='right-arrow' href='#'>{$next}</a>
-			</div> <!-- end #controllers -->
+			</div>
 			<div class='controllers-right'></div>
-		</div><!-- end #controllers-wrapper -->";
+		</div>";
 
 	return $output;
 }
 
 add_shortcode('imagetabtext', 'et_imagetabtext');
 function et_imagetabtext($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	$content = et_content_helper($content);
 
 	$output = "
@@ -553,6 +571,8 @@ function et_imagetabtext($atts, $content = null) {
 
 add_shortcode('tabtext', 'et_tabtext');
 function et_tabtext($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"id" => '',
 		"class" => ''
@@ -573,6 +593,8 @@ function et_tabtext($atts, $content = null) {
 
 add_shortcode('tabcontent', 'et_tabcontent');
 function et_tabcontent($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"id" => '',
 		"class" => ''
@@ -597,6 +619,8 @@ function et_tabcontent($atts, $content = null) {
 
 add_shortcode('tab', 'et_tab');
 function et_tab($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"id" => '',
 		"class" => ''
@@ -617,6 +641,8 @@ function et_tab($atts, $content = null) {
 
 add_shortcode('imagetab', 'et_imagetab');
 function et_imagetab($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"width"		=> '',
 		"height"	=> '',
@@ -641,6 +667,8 @@ function et_imagetab($atts, $content = null) {
 
 add_shortcode('author', 'et_author');
 function et_author($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		'id' => '',
 		'class' => '',
@@ -657,14 +685,16 @@ function et_author($atts, $content = null) {
 		<div{$id} class='author-shortcodes{$class}'>
 			<div class='author-inner'>
 				{$content}
-			</div> <!-- .author-inner -->
-		</div> <!-- .author-shortcodes -->";
+			</div>
+		</div>";
 
 	return $output;
 }
 
 add_shortcode('author_image', 'et_author_image');
 function et_author_image($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"timthumb" => 'on'
 	), $atts, 'author_image'));
@@ -677,40 +707,43 @@ function et_author_image($atts, $content = null) {
 		<div class='author-image'>
 			<img src='" . esc_attr( $src ) . "' alt='' />
 			<div class='author-overlay'></div>
-		</div> <!-- .author-image -->";
+		</div>";
 
 	return $output;
 }
 
 add_shortcode('author_info', 'et_author_info');
 function et_author_info($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
 
 	$content = et_content_helper($content);
 
 	$output = "
 		<div class='author-info'>
 			{$content}
-		</div> <!-- .author-info -->";
+		</div>";
 
 	return $output;
 }
 
 add_shortcode('pricing_table', 'et_pricing_table');
 function et_pricing_table($atts, $content = null) {
-	wp_enqueue_script( 'et-shortcodes-js' );
+	do_action( 'et_do_legacy_shortcode' );
 
 	$content = et_content_helper($content);
 
 	$output = "
 		<div class='et-pricing clearfix'>
 			{$content}
-		</div> <!-- end .et-pricing -->";
+		</div>";
 
 	return $output;
 }
 
 add_shortcode('custom_list', 'et_custom_list');
 function et_custom_list($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"type" => 'checkmark'
 	), $atts, 'custom_list'));
@@ -722,13 +755,15 @@ function et_custom_list($atts, $content = null) {
 	$output = "
 		<div class='et-custom-list{$type}'>
 			{$content}
-		</div> <!-- .et-custom-list -->";
+		</div>";
 
 	return $output;
 }
 
 add_shortcode('pricing', 'et_pricing');
 function et_pricing($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	global $themename;
 
 	extract(shortcode_atts(array(
@@ -755,28 +790,30 @@ function et_pricing($atts, $content = null) {
 				<div class='pricing-heading'>
 					<h2 class='pricing-title'>" . esc_html( $title ) . "</h2>
 					<p>" . esc_html( $desc ) . "</p>
-				</div> <!-- end .pricing-heading -->
+				</div>
 
 				<div class='pricing-content'>
 					<ul class='pricing'>
 						{$content}
 					</ul>
-				</div> <!-- end .pricing-content -->
+				</div>
 
 				<div class='pricing-content-bottom'>
 					<span class='et-price'><span class='dollar-sign'>" . esc_html( $currency ) . "</span>" . esc_html( $price_array[0] ) .
 						"<sup>" . esc_html( $price_array[1] ) . "</sup></span>
-				</div> <!-- end .pricing-content-bottom -->
+				</div>
 
 				<a href='" . esc_url( $url ) . "' class='icon-button'{$link_target}>" . esc_html( $moretext ) . "</a>
-			</div> <!-- end .pricing-table-wrap -->
-		</div> <!-- end .pricing-table -->";
+			</div>
+		</div>";
 
 	return $output;
 }
 
 add_shortcode('feature', 'et_pricing_feature');
 function et_pricing_feature($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"checkmark" => 'normal'
 	), $atts, 'feature'));
@@ -791,6 +828,8 @@ function et_pricing_feature($atts, $content = null) {
 
 add_shortcode('dropcap', 'et_dropcap');
 function et_dropcap($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		'style' => '',
 		'id' => '',
@@ -809,6 +848,8 @@ function et_dropcap($atts, $content = null) {
 
 add_shortcode('testimonial', 'et_testimonial');
 function et_testimonial($atts, $content = null) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		'style' => '',
 		'id' => '',
@@ -859,6 +900,8 @@ function et_testimonial($atts, $content = null) {
 
 add_shortcode('quote','et_quote');
 function et_quote( $atts, $content = null ) {
+	do_action( 'et_do_legacy_shortcode' );
+
 	if ( function_exists( 'bbpress' ) && function_exists( 'gdbbx_render_the_bbcode' ) ) {
 		// compat for gdbbpress tools plugin.
 		if ( isset( $atts['quote'] ) && ! empty( $atts['quote'] ) ) {
@@ -906,6 +949,8 @@ add_shortcode('two_third_last', 'et_columns');
 add_shortcode('three_fourth', 'et_columns');
 add_shortcode('three_fourth_last', 'et_columns');
 function et_columns($atts, $content = null, $name='') {
+	do_action( 'et_do_legacy_shortcode' );
+
 	extract(shortcode_atts(array(
 		"id" => '',
 		"class" => ''

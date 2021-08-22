@@ -490,8 +490,8 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				%6$s
 				%5$s
 				%1$s
-				<div class="et_pb_toggle_content clearfix"%7$s>%3$s</div> <!-- .et_pb_toggle_content -->
-			</div> <!-- .et_pb_toggle -->',
+				<div class="et_pb_toggle_content clearfix"%7$s>%3$s</div>
+			</div>',
 			$heading,
 			$this->module_classname( $render_slug ),
 			$this->content,
@@ -537,4 +537,6 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Toggle();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Toggle();
+}

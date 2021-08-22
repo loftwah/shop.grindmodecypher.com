@@ -755,9 +755,9 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 			'<div%3$s class="%1$s"%5$s>
 				<div class="et_pb_slides">
 					%2$s
-				</div> <!-- .et_pb_slides -->
+				</div>
 				%4$s
-			</div> <!-- .et_pb_slider -->
+			</div>
 			',
 			$this->module_classname( $render_slug ),
 			$content,
@@ -812,4 +812,6 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Fullwidth_Slider();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Fullwidth_Slider();
+}

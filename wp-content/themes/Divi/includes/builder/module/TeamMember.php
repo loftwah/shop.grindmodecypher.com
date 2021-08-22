@@ -538,8 +538,8 @@ class ET_Builder_Module_Team_Member extends ET_Builder_Module {
 					%6$s
 					%1$s
 					%7$s
-				</div> <!-- .et_pb_team_member_description -->
-			</div> <!-- .et_pb_team_member -->',
+				</div>
+			</div>',
 			$content,
 			et_core_esc_previously( $image ),
 			$this->module_id(),
@@ -616,4 +616,6 @@ class ET_Builder_Module_Team_Member extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Team_Member();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Team_Member();
+}

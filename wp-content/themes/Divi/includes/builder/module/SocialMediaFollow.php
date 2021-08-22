@@ -342,7 +342,7 @@ class ET_Builder_Module_Social_Media_Follow extends ET_Builder_Module {
 				%5$s
 				%4$s
 				%1$s
-			</ul> <!-- .et_pb_counters -->',
+			</ul>',
 			$this->content,
 			$this->module_classname( $render_slug ),
 			$this->module_id(),
@@ -356,4 +356,6 @@ class ET_Builder_Module_Social_Media_Follow extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Social_Media_Follow();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Social_Media_Follow();
+}

@@ -44,10 +44,6 @@ class ET_Builder_Module_Code extends ET_Builder_Module {
 				'name' => esc_html__( 'An introduction to the Code module', 'et_builder' ),
 			),
 		);
-
-		// wptexturize is often incorrectly parsed single and double quotes
-		// This disables wptexturize on this module
-		add_filter( 'no_texturize_shortcodes', array( $this, 'disable_wptexturize' ) );
 	}
 
 	function get_fields() {
@@ -100,7 +96,7 @@ class ET_Builder_Module_Code extends ET_Builder_Module {
 				%5$s
 				%4$s
 				%1$s
-			</div> <!-- .et_pb_code -->',
+			</div>',
 			$raw_content,
 			$this->module_id(),
 			$this->module_classname( $render_slug ),
@@ -147,4 +143,6 @@ class ET_Builder_Module_Code extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Code();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Code();
+}

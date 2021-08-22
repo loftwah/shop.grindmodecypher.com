@@ -1,6 +1,6 @@
 <?php
-
-if ( ! function_exists( 'et_core_init' ) ):
+// phpcs:disable Generic.WhiteSpace.ScopeIndent -- our preference is to not indent the whole inner function in this scenario.
+if ( ! function_exists( 'et_core_init' ) ) :
 /**
  * {@see 'plugins_loaded' (9999999) Must run after cache plugins have been loaded.}
  */
@@ -34,28 +34,31 @@ function et_core_init() {
 }
 endif;
 
-if ( ! function_exists( 'et_core_site_has_builder' ) ):
-	/**
-	 * Check is `et_core_site_has_builder` allowed.
-	 * We can clear cache managed by 3rd party plugins only
-	 * if Divi, Extra, or the Divi Builder plugin
-	 * is active when the core was called.
-	 *
-	 * @return boolean
-	 */
-	function et_core_site_has_builder() {
-		global $shortname;
-		$core_path                     = get_transient( 'et_core_path' );
-		$is_divi_builder_plugin_active = false;
-		if ( ! empty( $core_path ) && false !== strpos( $core_path, '/divi-builder/' ) && function_exists('is_plugin_active') ) {
-			$is_divi_builder_plugin_active = is_plugin_active( 'divi-builder/divi-builder.php' );
-		}
-		if( $is_divi_builder_plugin_active || in_array( $shortname, array( 'divi', 'extra' ) ) ) {
-			return true;
-		}
+if ( ! function_exists( 'et_core_site_has_builder' ) ) :
+/**
+ * Check is `et_core_site_has_builder` allowed.
+ * We can clear cache managed by 3rd party plugins only
+ * if Divi, Extra, or the Divi Builder plugin
+ * is active when the core was called.
+ *
+ * @return boolean
+ */
+function et_core_site_has_builder() {
+	global $shortname;
 
-		return false;
+	$core_path                     = get_transient( 'et_core_path' );
+	$is_divi_builder_plugin_active = false;
+
+	if ( ! empty( $core_path ) && false !== strpos( $core_path, '/divi-builder/' ) && function_exists('is_plugin_active') ) {
+		$is_divi_builder_plugin_active = is_plugin_active( 'divi-builder/divi-builder.php' );
 	}
+
+	if( $is_divi_builder_plugin_active || in_array( $shortname, array( 'divi', 'extra' ) ) ) {
+		return true;
+	}
+
+	return false;
+}
 endif;
 
 if ( ! function_exists( 'et_core_clear_wp_cache' ) ):
@@ -189,48 +192,48 @@ function et_core_clear_wp_cache( $post_id = '' ) {
 			wp_doing_ajax() ? ET_Core_LIB_BluehostCache::get_instance()->clear( $post_id ) : do_action( 'epc_purge' );
 		}
 
-			// Pressable.
-			if ( isset( $GLOBALS['batcache'] ) && is_object( $GLOBALS['batcache'] ) ) {
-				wp_cache_flush();
+		// Pressable.
+		if ( isset( $GLOBALS['batcache'] ) && is_object( $GLOBALS['batcache'] ) ) {
+			wp_cache_flush();
+		}
+
+		// Cloudways - Breeze.
+		if ( class_exists( 'Breeze_Admin' ) ) {
+			$breeze_admin = new Breeze_Admin();
+			$breeze_admin->breeze_clear_all_cache();
+		}
+
+		// Kinsta.
+		if ( class_exists( '\Kinsta\Cache' ) && isset( $GLOBALS['kinsta_cache'] ) && is_object( $GLOBALS['kinsta_cache'] ) ) {
+			global $kinsta_cache;
+
+			if ( isset( $kinsta_cache->kinsta_cache_purge ) && method_exists( $kinsta_cache->kinsta_cache_purge, 'purge_complete_caches' ) ) {
+				$kinsta_cache->kinsta_cache_purge->purge_complete_caches();
 			}
+		}
 
-			// Cloudways - Breeze.
-			if ( class_exists( 'Breeze_Admin' ) ) {
-				$breeze_admin = new Breeze_Admin();
-				$breeze_admin->breeze_clear_all_cache();
+		// GoDaddy.
+		if ( class_exists( '\WPaaS\Cache' ) ) {
+			if ( ! \WPaaS\Cache::has_ban() ) {
+				remove_action( 'shutdown', array( '\WPaaS\Cache', 'purge' ), PHP_INT_MAX );
+				add_action( 'shutdown', array( '\WPaaS\Cache', 'ban' ), PHP_INT_MAX );
 			}
+		}
 
-			// Kinsta.
-			if ( class_exists( '\Kinsta\Cache' ) && isset( $GLOBALS['kinsta_cache'] ) && is_object( $GLOBALS['kinsta_cache'] ) ) {
-				global $kinsta_cache;
-
-				if ( isset( $kinsta_cache->kinsta_cache_purge ) && method_exists( $kinsta_cache->kinsta_cache_purge, 'purge_complete_caches' ) ) {
-					$kinsta_cache->kinsta_cache_purge->purge_complete_caches();
-				}
-			}
-
-			// GoDaddy.
-			if ( class_exists( '\WPaaS\Cache' ) ) {
-				if ( ! \WPaaS\Cache::has_ban() ) {
-					remove_action( 'shutdown', array( '\WPaaS\Cache', 'purge' ), PHP_INT_MAX );
-					add_action( 'shutdown', array( '\WPaaS\Cache', 'ban' ), PHP_INT_MAX );
-				}
-			}
-
-		// Complimentary Performance Plugins
-		// Autoptimize
+		// Complimentary Performance Plugins.
+		// Autoptimize.
 		if ( is_callable( 'autoptimizeCache::clearall' ) ) {
 			autoptimizeCache::clearall();
 		}
 
-			// WP Optimize.
-			if ( class_exists( 'WP_Optimize' ) && defined( 'WPO_PLUGIN_MAIN_PATH' ) ) {
-				if ( '' !== $post_id && is_callable( 'WPO_Page_Cache::delete_single_post_cache' ) ) {
-					WPO_Page_Cache::delete_single_post_cache( $post_id );
-				} elseif ( is_callable( array( 'WP_Optimize', 'get_page_cache' ) ) && is_callable( array( WP_Optimize()->get_page_cache(), 'purge' ) ) ) {
-					WP_Optimize()->get_page_cache()->purge();
-				}
+		// WP Optimize.
+		if ( class_exists( 'WP_Optimize' ) && defined( 'WPO_PLUGIN_MAIN_PATH' ) ) {
+			if ( '' !== $post_id && is_callable( 'WPO_Page_Cache::delete_single_post_cache' ) ) {
+				WPO_Page_Cache::delete_single_post_cache( $post_id );
+			} elseif ( is_callable( array( 'WP_Optimize', 'get_page_cache' ) ) && is_callable( array( WP_Optimize()->get_page_cache(), 'purge' ) ) ) {
+				WP_Optimize()->get_page_cache()->purge();
 			}
+		}
 	} catch( Exception $err ) {
 		ET_Core_Logger::error( 'An exception occurred while attempting to clear site cache.' );
 	}
@@ -285,47 +288,6 @@ add_action( 'wp_ajax_et_core_page_resource_clear', 'et_core_page_resource_clear'
 endif;
 
 
-if ( ! function_exists( 'et_core_page_resource_fallback' ) ):
-/**
- * Handles page resource fallback requests.
- */
-function et_core_page_resource_fallback() {
-	// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
-	if ( ! isset( $_GET['et_core_page_resource'] ) ) {
-		return;
-	}
-
-	if ( is_admin() && ! is_customize_preview() ) {
-		return;
-	}
-
-	/** @see ET_Core_SupportCenter::toggle_safe_mode */
-	if ( et_core_is_safe_mode_active() ) {
-		return;
-	}
-
-	$resource_id = sanitize_text_field( $_GET['et_core_page_resource'] );
-	$pattern     = '/et-(\w+)-([\w-]+)-(global|\d+)-cached-inline-(?>styles|scripts)/';
-	$has_matches = preg_match( $pattern, $resource_id, $matches );
-
-	if ( $has_matches ) {
-		$resource = et_core_page_resource_get( $matches[1], $matches[2], $matches[3] );
-
-		if ( $resource->has_file() ) {
-			wp_redirect( $resource->URL );
-			die();
-		}
-	}
-
-	status_header( 404 );
-	nocache_headers();
-	die();
-	// phpcs:enable
-}
-add_action( 'init', 'et_core_page_resource_fallback', 0 );
-endif;
-
-
 if ( ! function_exists( 'et_core_page_resource_get' ) ):
 /**
  * Get a page resource instance.
@@ -352,41 +314,6 @@ function et_core_page_resource_get( $owner, $slug, $post_id = null, $priority = 
 endif;
 
 
-if ( ! function_exists( 'et_core_page_resource_maybe_output_fallback_script' ) ):
-function et_core_page_resource_maybe_output_fallback_script() {
-	if ( is_admin() && ! is_customize_preview() ) {
-		return;
-	}
-
-	if ( function_exists( 'et_get_option' ) && 'off' === et_get_option( 'et_pb_static_css_file', 'on' ) ) {
-		return;
-	}
-
-	/** @see ET_Core_SupportCenter::toggle_safe_mode */
-	if ( et_core_is_safe_mode_active() ) {
-		return;
-	}
-
-	$IS_SINGULAR = et_core_page_resource_is_singular();
-	$POST_ID     = $IS_SINGULAR ? et_core_page_resource_get_the_ID() : 'global';
-
-	if ( $IS_SINGULAR && 'off' === get_post_meta( $POST_ID, '_et_pb_static_css_file', true ) ) {
-		return;
-	}
-
-	$SITE_URL = get_site_url();
-	$SCRIPT   = et_()->WPFS()->get_contents( ET_CORE_PATH . 'admin/js/page-resource-fallback.min.js' );
-
-	printf( "<script>var et_site_url='%s';var et_post_id='%d';%s</script>",
-		et_core_esc_previously( $SITE_URL ),
-		et_core_esc_previously( $POST_ID ),
-		et_core_esc_previously( $SCRIPT )
-	);
-}
-add_action( 'wp_head', 'et_core_page_resource_maybe_output_fallback_script', 0 );
-endif;
-
-
 if ( ! function_exists( 'et_core_page_resource_get_the_ID' ) ):
 function et_core_page_resource_get_the_ID() {
 	static $post_id = null;
@@ -404,14 +331,6 @@ if ( ! function_exists( 'et_core_page_resource_is_singular' ) ):
 function et_core_page_resource_is_singular() {
 	return apply_filters( 'et_core_page_resource_is_singular', is_singular() );
 }
-endif;
-
-
-if ( ! function_exists( 'et_core_page_resource_register_fallback_query' ) ):
-function et_core_page_resource_register_fallback_query() {
-	add_rewrite_tag( '%et_core_page_resource%', '([\w\d-]+)' );
-}
-add_action( 'init', 'et_core_page_resource_register_fallback_query', 11 );
 endif;
 
 

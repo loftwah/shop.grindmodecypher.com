@@ -525,6 +525,29 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 			}
 		}
 	}
+
+	/**
+	 * Process Margin & Padding options and adds CSS rules.
+	 *
+	 * @since 4.10.0
+	 * @param array $attrs Module attributes.
+	 */
+	public function is_used( $attrs ) {
+		foreach ( $attrs as $attr => $value ) {
+			if ( ! $value ) {
+				continue;
+			}
+
+			$is_attr = false !== strpos( $attr, 'custom_margin' )
+				|| false !== strpos( $attr, 'custom_padding' );
+
+			if ( $is_attr ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
 
 return new ET_Builder_Module_Field_MarginPadding();

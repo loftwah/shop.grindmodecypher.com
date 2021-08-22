@@ -1,6 +1,6 @@
 <?php
-add_action( 'wp_enqueue_scripts', 'et_builder_enqueue_assets_head' );
-add_action( 'wp_enqueue_scripts', 'et_builder_enqueue_assets_main' );
+add_action( 'wp_enqueue_scripts', 'et_builder_enqueue_assets_head', 99999999 );
+add_action( 'wp_enqueue_scripts', 'et_builder_enqueue_assets_main', 99999999 );
 
 function et_fb_enqueue_google_maps_dependency( $dependencies ) {
 
@@ -139,7 +139,7 @@ function et_fb_app_only_bundle_deps( $deps = null ) {
 			'wp-hooks',
 
 			// If minified JS is served, minified JS script name is outputted instead
-			apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' ),
+			et_get_combined_script_handle(),
 		);
 		$_deps = array_diff( $deps, $top );
 	}
@@ -179,7 +179,7 @@ function et_fb_enqueue_assets() {
 	wp_register_script( 'chart', ET_BUILDER_URI . '/scripts/ext/chart.min.js', array(), ET_BUILDER_VERSION, true );
 
 	/** This filter is documented in includes/builder/framework.php */
-	$builder_modules_script_handle = apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' );
+	$builder_modules_script_handle = et_get_combined_script_handle();
 
 	$dependencies_list = array(
 		'jquery',
@@ -212,7 +212,7 @@ function et_fb_enqueue_assets() {
 
 	// Add dependency on et-shortcode-js only if Divi Theme is used or ET Shortcodes plugin activated
 	if ( ! et_is_builder_plugin_active() || et_is_shortcodes_plugin_active() ) {
-		$dependencies_list[] = 'et-shortcodes-js';
+		do_action( 'et_do_legacy_shortcode' );
 	}
 
 	$cached_assets_deps = array();
@@ -239,16 +239,6 @@ function et_fb_enqueue_assets() {
 	}
 
 	$fb_bundle_dependencies = apply_filters( 'et_fb_bundle_dependencies', $dependencies_list );
-
-	// Adding concatenated script as dependencies for script debugging
-	if ( et_load_unminified_scripts() ) {
-		array_push(
-			$fb_bundle_dependencies,
-			'easypiechart',
-			'salvattore',
-			'hashchange'
-		);
-	}
 
 	if ( et_pb_enqueue_google_maps_script() ) {
 		wp_enqueue_script(

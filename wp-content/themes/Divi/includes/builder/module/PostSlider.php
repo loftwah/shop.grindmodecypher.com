@@ -1327,15 +1327,15 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 									)
 								);
 							?>
-						</div> <!-- .et_pb_slide_description -->
+						</div>
 						<?php if ( $is_show_image && $has_post_thumbnail && 'bottom' === $image_placement ) { ?>
 							<div class="et_pb_slide_image"<?php echo et_core_esc_previously( $multi_view_attrs_show_image ); ?>>
 								<?php the_post_thumbnail(); ?>
 							</div>
 						<?php } ?>
 					</div>
-				</div> <!-- .et_pb_container -->
-			</div> <!-- .et_pb_slide -->
+				</div>
+			</div>
 				<?php
 				$post_index++;
 				ET_Post_Stack::pop();
@@ -1447,9 +1447,9 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 				%4$s
 				<div class="et_pb_slides">
 					%2$s
-				</div> <!-- .et_pb_slides -->
+				</div>
 				%6$s
-			</div> <!-- .et_pb_slider -->
+			</div>
 			',
 			$this->module_classname( $render_slug ),
 			$content,
@@ -1557,4 +1557,6 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 	}
 }
 
-new ET_Builder_Module_Post_Slider();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Post_Slider();
+}

@@ -1180,52 +1180,63 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		// pass section number for background color usage.
 		$divider->count = $this->render_count();
 
-		// Divider Placement.
-		foreach ( array( 'bottom', 'top' ) as $placement ) {
-			// Divider Responsive.
-			foreach ( array( 'desktop', 'tablet', 'phone' ) as $device ) {
-				// Ensure responsive settings for style is active on tablet and phone.
-				$is_desktop          = 'desktop' === $device;
-				$is_responsive_style = et_pb_responsive_options()->is_responsive_enabled( $this->props, "{$placement}_divider_style" );
+		// Check if animation is enabled.
+		$animation_enabled = $this->_features_manager->get(
+			'section_divider_enabled',
+			function() {
+				return $this->is_section_divider_enabled();
+			}
+		);
 
-				// Get all responsive values if it's exist and not empty.
-				$values = array();
-				if ( ! $is_desktop ) {
-					$values = et_pb_responsive_options()->get_any_responsive_values(
-						$this->props,
-						array(
-							"{$placement}_divider_color"  => '',
-							"{$placement}_divider_height" => '',
-							"{$placement}_divider_repeat" => '',
-							"{$placement}_divider_flip"   => '',
-							"{$placement}_divider_arrangement" => '',
-						),
-						false,
-						$device
-					);
-				}
+		if ( $animation_enabled ) {
+			// Divider Placement.
+			foreach ( array( 'bottom', 'top' ) as $placement ) {
+				// Divider Responsive.
+				foreach ( array( 'desktop', 'tablet', 'phone' ) as $device ) {
+					// Ensure responsive settings for style is active on tablet and phone.
+					$is_desktop          = 'desktop' === $device;
+					$is_responsive_style = et_pb_responsive_options()->is_responsive_enabled( $this->props, "{$placement}_divider_style" );
 
-				// Get Divider Style.
-				$divider_style = $is_desktop || ! empty( $values ) ? et_pb_responsive_options()->get_any_value( $this->props, "{$placement}_divider_style" ) : '';
-				if ( ! $is_desktop && $is_responsive_style ) {
-					$divider_style = et_pb_responsive_options()->get_any_value( $this->props, "{$placement}_divider_style", '', true, $device );
-				}
-
-				// Check if style is not default.
-				if ( '' !== $divider_style ) {
-					// get an svg for using in ::before.
-					$breakpoint = ! $is_desktop ? $device : '';
-					$divider->process_svg( $placement, $this->props, $breakpoint, $values );
-
-					// Get the placeholder for the bottom/top.
-					if ( 'bottom' === $placement && '' === $bottom ) {
-						$bottom = $divider->get_svg( 'bottom' );
-					} elseif ( 'top' === $placement && '' === $top ) {
-						$top = $divider->get_svg( 'top' );
+					// Get all responsive values if it's exist and not empty.
+					$values = array();
+					if ( ! $is_desktop ) {
+						$values = et_pb_responsive_options()->get_any_responsive_values(
+							$this->props,
+							array(
+								"{$placement}_divider_color"  => '',
+								"{$placement}_divider_height" => '',
+								"{$placement}_divider_repeat" => '',
+								"{$placement}_divider_flip"   => '',
+								"{$placement}_divider_arrangement" => '',
+							),
+							false,
+							$device
+						);
 					}
 
-					// add a corresponding class.
-					$this->add_classname( $divider->classes );
+					// Get Divider Style.
+					$divider_style = $is_desktop || ! empty( $values ) ? et_pb_responsive_options()->get_any_value( $this->props, "{$placement}_divider_style" ) : '';
+
+					if ( ! $is_desktop && $is_responsive_style ) {
+						$divider_style = et_pb_responsive_options()->get_any_value( $this->props, "{$placement}_divider_style", '', true, $device );
+					}
+
+					// Check if style is not default.
+					if ( '' !== $divider_style ) {
+						// get an svg for using in ::before.
+						$breakpoint = ! $is_desktop ? $device : '';
+						$divider->process_svg( $placement, $this->props, $breakpoint, $values );
+
+						// Get the placeholder for the bottom/top.
+						if ( 'bottom' === $placement && '' === $bottom ) {
+							$bottom = $divider->get_svg( 'bottom' );
+						} elseif ( 'top' === $placement && '' === $top ) {
+							$top = $divider->get_svg( 'top' );
+						}
+
+						// add a corresponding class.
+						$this->add_classname( $divider->classes );
+					}
 				}
 			}
 		}
@@ -1268,7 +1279,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					%1$s
 				%6$s
 				%10$s
-			</div> <!-- .et_pb_section -->',
+			</div>',
 			do_shortcode( et_pb_fix_shortcodes( $content ) ), // 1
 			$background_video, // 2
 			$module_classes, // 3
@@ -1276,7 +1287,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			( 'on' === $specialty ?
 				sprintf( '<div class="et_pb_row%1$s"%2$s>', $gutter_class, et_core_esc_previously( $gutter_hover_data ) )
 				: '' ), // 5
-			( 'on' === $specialty ? '</div> <!-- .et_pb_row -->' : '' ), // 6
+			( 'on' === $specialty ? '</div>' : '' ), // 6
 			$parallax_image, // 7
 			$this->get_module_data_attributes(), // 8
 			et_core_esc_previously( $top ), // 9
@@ -1295,6 +1306,25 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 		return $output;
 
+	}
+
+	/**
+	 * Process box shadow CSS styles of section.
+	 *
+	 * @since 4.10.0
+	 */
+	public function is_section_divider_enabled() {
+		// Divider Responsive.
+		foreach ( array( 'desktop', 'tablet', 'phone' ) as $device ) {
+			// Get Divider Style.
+			$divider_style_enabled = et_pb_responsive_options()->get_any_value( $this->props, 'top_divider_style', false )
+			|| et_pb_responsive_options()->get_any_value( $this->props, 'bottom_divider_style', false )
+			|| et_pb_responsive_options()->get_any_value( $this->props, 'top_divider_style', false, true, $device )
+			|| et_pb_responsive_options()->get_any_value( $this->props, 'bottom_divider_style', false, true, $device );
+
+			return $divider_style_enabled;
+		}
+		return false;
 	}
 
 	/**
@@ -1899,7 +1929,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				%1$s
 				%6$s
 				%5$s
-			</div> <!-- .%3$s -->',
+			</div>',
 			$inner_content,
 			$module_classes,
 			esc_html( $function_name ),
@@ -2370,7 +2400,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				%1$s
 				%5$s
 				%6$s
-			</div> <!-- .%3$s -->',
+			</div>',
 			$inner_content,
 			$module_classes,
 			esc_html( $function_name ),
@@ -3069,7 +3099,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				%5$s
 				%3$s
 				%2$s
-			</div> <!-- .et_pb_column -->',
+			</div>',
 			$module_classname,
 			$inner_content,
 			$parallax_image,

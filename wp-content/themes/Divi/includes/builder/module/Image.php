@@ -467,7 +467,7 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 		// Only if force fullwidth is not set.
 		if ( 'on' !== $force_fullwidth ) {
 			// Only height or max-height is set, no width set.
-			if ( 'auto' === $width && 'auto' !== $height || ! empty( $max_height ) ) {
+			if ( 'auto' === $width && 'auto' !== $height || 'none' !== $max_height ) {
 				$el_style = array(
 					'selector'    => '%%order_class%% .et_pb_image_wrap img',
 					'declaration' => 'width: auto;',
@@ -572,4 +572,6 @@ function _et_bb_module_image_add_src_label( $filed ) {
 
 add_filter( 'et_builder_module_fields_et_pb_image_field_src', '_et_bb_module_image_add_src_label' );
 
-new ET_Builder_Module_Image();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Image();
+}

@@ -715,7 +715,7 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 					endif;
 					?>
 
-				</div><!-- .et_pb_portfolio_item -->
+				</div>
 				<?php
 				ET_Post_Stack::pop();
 			}
@@ -843,7 +843,7 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 			%3$s',
 			$this->module_classname( $render_slug ),
 			$posts,
-			( ! $container_is_closed ? '</div> <!-- .et_pb_portfolio -->' : '' ),
+			( ! $container_is_closed ? '</div>' : '' ),
 			$this->module_id(),
 			$video_background, // #5
 			$parallax_image_background,
@@ -857,4 +857,6 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 	}
 }
 
-new ET_Builder_Module_Portfolio();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Portfolio();
+}
