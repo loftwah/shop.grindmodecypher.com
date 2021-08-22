@@ -1680,7 +1680,7 @@ function OrdersPanel({
     _fields: ['id', 'number', 'status', 'total_formatted', 'customer', 'products', 'customer_id', 'date_created_gmt']
   }), [orderStatuses]);
   const {
-    orders,
+    orders = [],
     isRequesting,
     isError
   } = Object(external_wp_data_["useSelect"])(select => {
