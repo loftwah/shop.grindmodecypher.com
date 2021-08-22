@@ -100,7 +100,7 @@ $footer_script=ishf_get_option_footer_script();
 					<li>Regular updates.</li>
 					<li>Well documented.</li>
 				</ul>
-    			<a href="https://geekcodelab.com/wordpress-plugins/insert-script-in-headers-and-footers-pro/ title="Upgrade to Premium" class="ishf_premium_btn" target="_blank">Upgrade to Premium</a>
+    			<a href="https://geekcodelab.com/wordpress-plugins/insert-script-in-headers-and-footers-pro/" title="Upgrade to Premium" class="ishf_premium_btn" target="_blank">Upgrade to Premium</a>
 			</div>
 		</div>
 	</div>

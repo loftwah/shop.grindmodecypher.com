@@ -8,7 +8,7 @@ Description: A plugin to insert script in headers and footers
 
 Author: Geek Code Lab
 
-Version: 1.4
+Version: 1.5
 
 Author URI: https://geekcodelab.com/
 
