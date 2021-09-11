@@ -29,7 +29,6 @@ use FacebookAds\Cursor;
 use FacebookAds\Http\RequestInterface;
 use FacebookAds\TypeChecker;
 use FacebookAds\Object\Fields\OracleTransactionFields;
-use FacebookAds\Object\Values\OracleTransactionTypeValues;
 
 /**
  * This class is auto-generated.
@@ -51,7 +50,6 @@ class OracleTransaction extends AbstractCrudObject {
 
   protected static function getReferencedEnums() {
     $ref_enums = array();
-    $ref_enums['Type'] = OracleTransactionTypeValues::getInstance()->getValues();
     return $ref_enums;
   }
 

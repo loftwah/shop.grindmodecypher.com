@@ -43,6 +43,7 @@ class CustomAudienceFields extends AbstractEnum {
   const DATA_SOURCE = 'data_source';
   const DATA_SOURCE_TYPES = 'data_source_types';
   const DATAFILE_CUSTOM_AUDIENCE_UPLOADING_STATUS = 'datafile_custom_audience_uploading_status';
+  const DELETE_TIME = 'delete_time';
   const DELIVERY_STATUS = 'delivery_status';
   const DESCRIPTION = 'description';
   const EXCLUDED_CUSTOM_AUDIENCES = 'excluded_custom_audiences';
@@ -72,8 +73,6 @@ class CustomAudienceFields extends AbstractEnum {
   const TIME_CONTENT_UPDATED = 'time_content_updated';
   const TIME_CREATED = 'time_created';
   const TIME_UPDATED = 'time_updated';
-  const ACCOUNTID = 'accountID';
-  const ADDITIONALMETADATA = 'additionalMetadata';
   const ALLOWED_DOMAINS = 'allowed_domains';
   const ASSOCIATED_AUDIENCE_ID = 'associated_audience_id';
   const CLAIM_OBJECTIVE = 'claim_objective';
@@ -81,27 +80,17 @@ class CustomAudienceFields extends AbstractEnum {
   const COUNTRIES = 'countries';
   const CREATION_PARAMS = 'creation_params';
   const DATASET_ID = 'dataset_id';
-  const DETAILS = 'details';
   const ENABLE_FETCH_OR_CREATE = 'enable_fetch_or_create';
   const EVENT_SOURCE_GROUP = 'event_source_group';
   const EVENT_SOURCES = 'event_sources';
   const EXCLUSIONS = 'exclusions';
-  const EXPECTEDSIZE = 'expectedSize';
-  const GENDER = 'gender';
   const INCLUSIONS = 'inclusions';
-  const ISPRIVATE = 'isPrivate';
-  const IS_HOUSEHOLD_EXCLUSION = 'is_household_exclusion';
   const LIST_OF_ACCOUNTS = 'list_of_accounts';
-  const MAXAGE = 'maxAge';
-  const MINAGE = 'minAge';
   const ORIGIN_AUDIENCE_ID = 'origin_audience_id';
   const PARENT_AUDIENCE_ID = 'parent_audience_id';
-  const PARTNERID = 'partnerID';
   const PARTNER_REFERENCE_KEY = 'partner_reference_key';
   const PREFILL = 'prefill';
   const PRODUCT_SET_ID = 'product_set_id';
-  const SOURCE = 'source';
-  const TAGS = 'tags';
   const VIDEO_GROUP_IDS = 'video_group_ids';
 
   public function getFieldTypes() {
@@ -112,6 +101,7 @@ class CustomAudienceFields extends AbstractEnum {
       'data_source' => 'CustomAudienceDataSource',
       'data_source_types' => 'string',
       'datafile_custom_audience_uploading_status' => 'string',
+      'delete_time' => 'int',
       'delivery_status' => 'CustomAudienceStatus',
       'description' => 'string',
       'excluded_custom_audiences' => 'list<CustomAudience>',
@@ -141,8 +131,6 @@ class CustomAudienceFields extends AbstractEnum {
       'time_content_updated' => 'unsigned int',
       'time_created' => 'unsigned int',
       'time_updated' => 'unsigned int',
-      'accountID' => 'string',
-      'additionalMetadata' => 'string',
       'allowed_domains' => 'list<string>',
       'associated_audience_id' => 'unsigned int',
       'claim_objective' => 'ClaimObjective',
@@ -150,27 +138,17 @@ class CustomAudienceFields extends AbstractEnum {
       'countries' => 'string',
       'creation_params' => 'map',
       'dataset_id' => 'string',
-      'details' => 'string',
       'enable_fetch_or_create' => 'bool',
       'event_source_group' => 'string',
       'event_sources' => 'list<map>',
       'exclusions' => 'list<Object>',
-      'expectedSize' => 'unsigned int',
-      'gender' => 'string',
       'inclusions' => 'list<Object>',
-      'isPrivate' => 'bool',
-      'is_household_exclusion' => 'bool',
       'list_of_accounts' => 'list<unsigned int>',
-      'maxAge' => 'unsigned int',
-      'minAge' => 'unsigned int',
       'origin_audience_id' => 'string',
       'parent_audience_id' => 'unsigned int',
-      'partnerID' => 'string',
       'partner_reference_key' => 'string',
       'prefill' => 'bool',
       'product_set_id' => 'string',
-      'source' => 'string',
-      'tags' => 'list<string>',
       'video_group_ids' => 'list<string>',
     );
   }

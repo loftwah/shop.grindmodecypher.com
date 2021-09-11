@@ -917,7 +917,6 @@ class Group extends AbstractCrudObject {
     $this->assureId();
 
     $param_types = array(
-      'archive' => 'bool',
       'cover' => 'string',
       'cover_url' => 'string',
       'description' => 'string',

@@ -31,6 +31,10 @@ use FacebookAds\TypeChecker;
 use FacebookAds\Object\Fields\ProductCatalogFields;
 use FacebookAds\Object\Values\AutomotiveModelBodyStyleValues;
 use FacebookAds\Object\Values\ProductCatalogCategoryCategorizationCriteriaValues;
+use FacebookAds\Object\Values\ProductCatalogDiagnosticGroupAffectedChannelsValues;
+use FacebookAds\Object\Values\ProductCatalogDiagnosticGroupAffectedFeaturesValues;
+use FacebookAds\Object\Values\ProductCatalogDiagnosticGroupSeveritiesValues;
+use FacebookAds\Object\Values\ProductCatalogDiagnosticGroupTypesValues;
 use FacebookAds\Object\Values\ProductCatalogItemSubTypeValues;
 use FacebookAds\Object\Values\ProductCatalogPermittedRolesValues;
 use FacebookAds\Object\Values\ProductCatalogPermittedTasksValues;
@@ -48,6 +52,7 @@ use FacebookAds\Object\Values\ProductItemAvailabilityValues;
 use FacebookAds\Object\Values\ProductItemCommerceTaxCategoryValues;
 use FacebookAds\Object\Values\ProductItemConditionValues;
 use FacebookAds\Object\Values\ProductItemGenderValues;
+use FacebookAds\Object\Values\ProductItemMarkedForProductLaunchValues;
 use FacebookAds\Object\Values\ProductItemVisibilityValues;
 use FacebookAds\Object\Values\VehicleAvailabilityValues;
 use FacebookAds\Object\Values\VehicleBodyStyleValues;
@@ -245,6 +250,29 @@ class ProductCatalog extends AbstractCrudObject {
     return $pending ? $request : $request->execute();
   }
 
+  public function getAutoMarkets(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+    );
+    $enums = array(
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_GET,
+      '/auto_markets',
+      new AbstractCrudObject(),
+      'EDGE',
+      array(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
+
   public function getAutomotiveModels(array $fields = array(), array $params = array(), $pending = false) {
     $this->assureId();
 
@@ -298,6 +326,29 @@ class ProductCatalog extends AbstractCrudObject {
       new AutomotiveModel(),
       'EDGE',
       AutomotiveModel::getFieldsEnum()->getValues(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
+
+  public function getAutos(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+    );
+    $enums = array(
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_GET,
+      '/autos',
+      new AbstractCrudObject(),
+      'EDGE',
+      array(),
       new TypeChecker($param_types, $enums)
     );
     $request->addParams($params);
@@ -454,6 +505,37 @@ class ProductCatalog extends AbstractCrudObject {
     return $pending ? $request : $request->execute();
   }
 
+  public function getDiagnostics(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+      'affected_channels' => 'list<affected_channels_enum>',
+      'affected_features' => 'list<affected_features_enum>',
+      'severities' => 'list<severities_enum>',
+      'types' => 'list<types_enum>',
+    );
+    $enums = array(
+      'affected_channels_enum' => ProductCatalogDiagnosticGroupAffectedChannelsValues::getInstance()->getValues(),
+      'affected_features_enum' => ProductCatalogDiagnosticGroupAffectedFeaturesValues::getInstance()->getValues(),
+      'severities_enum' => ProductCatalogDiagnosticGroupSeveritiesValues::getInstance()->getValues(),
+      'types_enum' => ProductCatalogDiagnosticGroupTypesValues::getInstance()->getValues(),
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_GET,
+      '/diagnostics',
+      new ProductCatalogDiagnosticGroup(),
+      'EDGE',
+      ProductCatalogDiagnosticGroup::getFieldsEnum()->getValues(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
+
   public function getEventStats(array $fields = array(), array $params = array(), $pending = false) {
     $this->assureId();
 
@@ -483,7 +565,7 @@ class ProductCatalog extends AbstractCrudObject {
     $this->assureId();
 
     $param_types = array(
-      'external_event_sources' => 'list<string>',
+      'external_event_sources' => 'Object',
     );
     $enums = array(
     );
@@ -530,7 +612,7 @@ class ProductCatalog extends AbstractCrudObject {
     $this->assureId();
 
     $param_types = array(
-      'external_event_sources' => 'list<string>',
+      'external_event_sources' => 'Object',
     );
     $enums = array(
     );
@@ -774,6 +856,57 @@ class ProductCatalog extends AbstractCrudObject {
       new ProductCatalog(),
       'EDGE',
       ProductCatalog::getFieldsEnum()->getValues(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
+
+  public function createLocalizedItemsBatch(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+      'allow_upsert' => 'bool',
+      'item_type' => 'string',
+      'requests' => 'map',
+    );
+    $enums = array(
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_POST,
+      '/localized_items_batch',
+      new ProductCatalog(),
+      'EDGE',
+      ProductCatalog::getFieldsEnum()->getValues(),
+      new TypeChecker($param_types, $enums)
+    );
+    $request->addParams($params);
+    $request->addFields($fields);
+    return $pending ? $request : $request->execute();
+  }
+
+  public function getMediaTitles(array $fields = array(), array $params = array(), $pending = false) {
+    $this->assureId();
+
+    $param_types = array(
+      'bulk_pagination' => 'bool',
+      'filter' => 'Object',
+    );
+    $enums = array(
+    );
+
+    $request = new ApiRequest(
+      $this->api,
+      $this->data['id'],
+      RequestInterface::METHOD_GET,
+      '/media_titles',
+      new AbstractCrudObject(),
+      'EDGE',
+      array(),
       new TypeChecker($param_types, $enums)
     );
     $request->addParams($params);
@@ -1100,6 +1233,7 @@ class ProductCatalog extends AbstractCrudObject {
       'iphone_url' => 'string',
       'launch_date' => 'string',
       'manufacturer_part_number' => 'string',
+      'marked_for_product_launch' => 'marked_for_product_launch_enum',
       'material' => 'string',
       'mobile_link' => 'string',
       'name' => 'string',
@@ -1110,6 +1244,7 @@ class ProductCatalog extends AbstractCrudObject {
       'pattern' => 'string',
       'price' => 'unsigned int',
       'product_type' => 'string',
+      'quantity_to_sell_on_facebook' => 'unsigned int',
       'retailer_id' => 'string',
       'retailer_product_group_id' => 'string',
       'return_policy_days' => 'unsigned int',
@@ -1130,6 +1265,7 @@ class ProductCatalog extends AbstractCrudObject {
       'commerce_tax_category_enum' => ProductItemCommerceTaxCategoryValues::getInstance()->getValues(),
       'condition_enum' => ProductItemConditionValues::getInstance()->getValues(),
       'gender_enum' => ProductItemGenderValues::getInstance()->getValues(),
+      'marked_for_product_launch_enum' => ProductItemMarkedForProductLaunchValues::getInstance()->getValues(),
       'visibility_enum' => ProductItemVisibilityValues::getInstance()->getValues(),
     );
 
@@ -1263,6 +1399,7 @@ class ProductCatalog extends AbstractCrudObject {
     $this->assureId();
 
     $param_types = array(
+      'allow_delete_catalog_with_live_product_set' => 'bool',
     );
     $enums = array(
     );
@@ -1290,9 +1427,12 @@ class ProductCatalog extends AbstractCrudObject {
     );
     $enums = array(
       'segment_use_cases_enum' => array(
+        'AFFILIATE_SELLER_STOREFRONT',
+        'AFFILIATE_TAGGED_ONLY',
         'COLLAB_ADS',
         'COLLAB_ADS_FOR_MARKETPLACE_PARTNER',
         'COLLAB_ADS_SEGMENT_WITHOUT_SEGMENT_SYNCING',
+        'CREATORS_AS_SELLERS',
         'IG_SHOPPING',
         'IG_SHOPPING_SUGGESTED_PRODUCTS',
         'MARKETPLACE_SHOPS',
@@ -1325,6 +1465,7 @@ class ProductCatalog extends AbstractCrudObject {
       'fallback_image_url' => 'string',
       'flight_catalog_settings' => 'map',
       'name' => 'string',
+      'partner_integration' => 'map',
       'store_catalog_settings' => 'map',
     );
     $enums = array(
