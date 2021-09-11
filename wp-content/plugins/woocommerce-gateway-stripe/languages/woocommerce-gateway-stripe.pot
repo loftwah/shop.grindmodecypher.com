@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the WooCommerce Stripe Gateway package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Stripe Gateway 5.4.0\n"
+"Project-Id-Version: WooCommerce Stripe Gateway 5.4.1\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/woocommerce-gateway-stripe\n"
-"POT-Creation-Date: 2021-08-18 18:54:29+00:00\n"
+"POT-Creation-Date: 2021-09-01 22:21:55+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -37,25 +37,25 @@ msgstr ""
 msgid "Sorry, the minimum allowed order total is %1$s to use this payment method."
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:350
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:348
 #. translators: 1) blog name 2) order number
 msgid "%1$s - Order %2$s"
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:391
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:389
 msgid "customer_name"
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:392
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:390
 msgid "customer_email"
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:455
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:453
 #. translators: transaction id
 msgid "Stripe charge awaiting payment: %s."
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:462
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:460
 #: includes/class-wc-stripe-order-handler.php:296
 #: includes/class-wc-stripe-webhook-handler.php:414
 #: includes/class-wc-stripe-webhook-handler.php:464
@@ -63,13 +63,13 @@ msgstr ""
 msgid "Stripe charge complete (Charge ID: %s)"
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:467
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:465
 #: includes/class-wc-gateway-stripe.php:515
 #: includes/compat/class-wc-stripe-sepa-subs-compat.php:187
 msgid "Payment processing failed. Please retry."
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:479
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:477
 #. translators: transaction id
 msgid ""
 "Stripe charge authorized (Charge ID: %s). Process order to take payment, or "
@@ -77,33 +77,33 @@ msgid ""
 "part or in full will release the authorization and cancel the payment."
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:660
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:658
 msgid "Invalid payment method. Please input a new card number."
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:925
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:923
 #. translators: %1$s is a stripe error message
 msgid "There was a problem initiating a refund: %1$s"
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:939
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:937
 #. translators: amount (including currency symbol)
 msgid "Pre-Authorization for %s voided."
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:944
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:942
 msgid ""
 "The authorization was voided and the order cancelled. Click okay to "
 "continue, then refresh the page."
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:958
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:956
 #. translators: 1) amount (including currency symbol) 2) transaction id 3)
 #. refund message
 msgid "Refunded %1$s - Refund ID: %2$s - Reason: %3$s"
 msgstr ""
 
-#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:976
+#: includes/abstracts/abstract-wc-stripe-payment-gateway.php:974
 msgid "There was a problem adding the payment method."
 msgstr ""
 
