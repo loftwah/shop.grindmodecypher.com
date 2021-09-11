@@ -11,7 +11,7 @@
     margin: 0;
 }
 
-.wdgk_donation_content a.button.wdgk_add_donation {
+a.button.wdgk_add_donation {
     width: auto;
     height: auto;
     border: 0;
@@ -20,10 +20,12 @@
     cursor: pointer;
     line-height: 1;
     padding: .600em 1em;
-    margin: 4px 4px 4px 0px;
-    margin-top: 20px;
+    margin: 4px 4px 4px 0px;   
     display: inline-block;
    
+}
+.wdgk_donation_content a.button.wdgk_add_donation{
+    margin-top: 20px;
 }
 .wdgk_error_front {
     color: red;
@@ -42,12 +44,12 @@
     display: table;
 }
 
-.wdgk_donation_content .wdpgk_display_option {
+.wdgk_donation_content .wdgk_display_option {
     display: flex;
     position: relative;
 }
 
-.wdgk_donation_content .wdpgk_display_option select {
+.wdgk_donation_content .wdgk_display_option select {
     flex: 1;
     padding: 0px 20px;
     outline: none !important;
@@ -66,7 +68,7 @@
     outline: none !important;
 }
 
-.wdgk_donation_content .wdpgk_display_option span {
+.wdgk_donation_content .wdgk_display_option span {
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -78,4 +80,8 @@
 .wdgk_donation_content {
     margin: 10px 2px;
     max-width: 400px;
+}
+
+.wdgk_donation_content h3{
+    padding-bottom: 15px;
 }

@@ -4,8 +4,8 @@ Donate link: https://paypal.me/rvadhel
 Tags: WooCommerce Donation, WooCommerce Donation Campaign, WooCommerce Cart Page Donation, Woocommerce Checkout Page Donation, Woocommerce Donation on Pages,covid19,
 Requires PHP: 5.2.4
 Requires at least: 3.0.1
-Tested up to: 5.7.2
-Stable tag: 1.8
+Tested up to: 5.8
+Stable tag: 2.1
 
 This Plugin provide you options to accept donations in woocommerce with amount specified by the end user, so they can donate any amount they wish to donate.
 
@@ -45,6 +45,7 @@ Also works with WordPress Multisite installs (each blog from the network has itâ
 * Manually have option to set Description field donation form
 * Manually have option to set donation form on other pages with shortcode
 * Manually enable disable option to display donation form on cart and checkout
+* Dynamic Label Options.
 
 
 **Pro Plugin Features** 
@@ -57,21 +58,28 @@ Also works with WordPress Multisite installs (each blog from the network has itâ
 	<li>Download CSV file in donation order table.</li>
 	<li>Configurable screen position for donation form in cart page.</li>
 	<li>Configurable screen position for donation form in checkout page.</li>
+	<li>Fundraising donation campaigns.</li>
 </ul>
+== GET PRO PLUGIN ==
+<a href="https://geekcodelab.com/wordpress-plugins/woo-donation-pro/" target="_blank"> BUY NOW </a> 
 
-== GET PRO PLUGIN <a href="https://geekcodelab.com/wordpress-plugins/woo-donation-pro/" target="_blank"> BUY NOW </a> ==
+== Pro Version Preview ==
+[youtube https://youtu.be/eMXXSn4TMJ0]
 
 == You can use shortcodes ==
 
 <code>
-[wdgk_donation]</code>
+[wdgk_donation]
 
 == Here is Template code ==
 
-<code><?php echo do_shortcode('[wdgk_donation]'); ?></code>
+<?php echo do_shortcode('[wdgk_donation]'); ?></code>
 
-**Preview**
+**Free Version Preview**
 [youtube https://youtu.be/S4U2twhQgpg]
+
+<h4>Like the plugin?</h4>
+<p><a href="https://wordpress.org/support/plugin/woo-donations/reviews/#new-post">Please Vote</a>, Your votes really make a difference! Thanks.</p>
 
 == Installation ==
 
@@ -93,11 +101,21 @@ After Plugin Active go to WooCommerce-> Donation.
 4. Cart page -> donation option
 5. Checkout page -> donation option
 7. Order confirm page 
-8. Woo Donation pro functionality
+8. Label Options
+9. Woo Donation pro functionality
 
 
 
 == Changelog ==
+= 2.1=
+Fixed bug
+
+= 2.0=
+Added Label option for donation form
+
+= 1.9=
+Added Label option for donation form
+
 = 1.8=
 
 Added Support and pro link, changed browser cookie name.

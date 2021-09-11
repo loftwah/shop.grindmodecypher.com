@@ -133,3 +133,7 @@ span.dashicons.dashicons-yes-alt.wdgk_right_icon {
     top: 3px;
     margin-left: 1px;
 }
+
+input.wdgk_input,textarea.wdgk_input {
+    width: 200px;
+}
