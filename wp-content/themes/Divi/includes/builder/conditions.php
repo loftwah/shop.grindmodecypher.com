@@ -159,3 +159,56 @@ if ( ! function_exists( 'et_builder_dynamic_module_framework' ) ) :
 		return $et_dynamic_module_framework;
 	}
 endif;
+
+if ( ! function_exists( 'et_builder_is_mod_pagespeed_enabled' ) ) :
+	/**
+	 * Determine whether Mod PageSpeed is enabled.
+	 *
+	 * @return bool
+	 */
+	function et_builder_is_mod_pagespeed_enabled() {
+		static $enabled;
+
+		if ( isset( $enabled ) ) {
+			// Use the cached value.
+			return $enabled;
+		}
+
+		$key     = 'et_check_mod_pagespeed';
+		$version = get_transient( $key );
+
+		if ( false === $version ) {
+			// Mod PageSpeed is an output filter, hence it can't be detected from within the request.
+			// To figure out whether it is active or not:
+			// 1. Use `wp_remote_get` to make another request.
+			// 2. Retrieve PageSpeed version from response headers (if set).
+			// 3. Save the value in a transient for 24h.
+			// The `et_check_mod_pagespeed` url parameter is also added to the request so
+			// we can exit early (content is irrelevant, only headers matter).
+			$args = [
+				$key => 'on',
+			];
+
+			// phpcs:disable WordPress.Security.NonceVerification -- Only checking arg is set.
+			if ( isset( $_REQUEST['PageSpeed'] ) ) {
+				// This isn't really needed but it's harmless and makes testing a lot easier.
+				$args['PageSpeed'] = sanitize_text_field( $_REQUEST['PageSpeed'] );
+			}
+			// phpcs:enable
+
+			$request = wp_remote_get( add_query_arg( $args, get_home_url() ) );
+			// Apache header.
+			$version = wp_remote_retrieve_header( $request, 'x-mod-pagespeed' );
+			if ( empty( $version ) ) {
+				// Nginx header.
+				$version = wp_remote_retrieve_header( $request, 'x-page-speed' );
+			}
+
+			set_transient( $key, $version, DAY_IN_SECONDS );
+		}
+
+		// Cache the value.
+		$enabled = ! empty( $version );
+		return $enabled;
+	}
+endif;

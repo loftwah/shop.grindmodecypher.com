@@ -1,3 +1,160 @@
+version 4.10.8 ( updated 09-20-2021 )
+- Fixed blog module media post type does not load any content.
+- Fixed mobile menu does not showing when section or row settings has border radius.
+- Enabled waypoint transitions effect for responsive images switch on hover and window resize event.
+- Fixed some font icons were not rendered properly on the frontend.
+- Fixed image upload control icons being visible still even after image upload modal was closed.
+- Fixed Dynamic CSS files not be enqueued when the Divi Theme name was changed in the style.css file.
+- Fixed an issue with the Blurb module where the wrong display set was set when the image/icon position was set to top.
+- Introduced et_builder_disable_jquery_body that can be used (as an HTML comment, ID, class, etc.) along with the script in cases where the script conflicts with Enqueue jQuery Compatibility Script.
+- Fixed incompatibility issues related to Defer jQuery optimization and some WP Plugins.
+- Fixed JS errors when using slick.js with Defer jQuery options enabled.
+- Fixed gutter and grid styles issues on late detection.
+- Fixed Gallery Image placeholder not shown in TB mode.
+- Fixed dynamic CSS styles not working correctly when previewing a page.
+- Fixed gutter width 1 margin styles not working correctly on custom taxonomies when viewing on tablet or below.
+- Fixed some default preset attributes not working properly.
+- Fixed Dynamic Assets not working correctly when the Divi Builder Plugin was used with a parent Theme and Child Theme.
+- Fixed a bug that caused Google Fonts to not be retrieved from the fonts cache.
+- Fixed blog module media post type image not displaying.
+- Introduced a new 'et_core_static_file_created' action hook that fires when a page resource (css/js) is created.
+- Fixed Export of the layouts with Global Colors from the Library.
+- Fixed product category CSS not being cleared correctly when saving a Theme Builder layout.
+- Fixed an issue with the Theme Customizer footer widget heading styles not applying on the new widget blocks.
+	* core/components/PageResource.php
+	* core/components/Portability.php
+	* epanel/custom_functions.php
+	* functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/compat/scripts.php
+	* includes/builder/core.php
+	* includes/builder/feature/CriticalCSS.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/Blog.php
+	* includes/builder/module/woocommerce/Gallery.php
+	* includes/builder/plugin-compat/kvcore-idx.php
+	* includes/builder/plugin-compat/nex-forms-express-wp-form-builder.php
+	* includes/builder/plugin-compat/woo-paypalplus.php
+	* includes/builder/plugin-compat/wp3d-models.php
+	* includes/builder/scripts/frontend/global-functions.js
+	* includes/builder/scripts/frontend/scripts.js
+	* js/src/theme-customizer.js
+
+version 4.10.7 ( updated 09-09-2021 )
+- Fixed local library update in Visual Builder after saving Global Module.
+- Fixed Global Colors rendering for child modules in Visual Builder.
+- Fixed bug with the Text Align option for tablets and phones in Menu Module.
+- Fixed image border styles inside the post content module not applying correctly.
+- Fixed a bug introduced in Chrome 93 that affected flip animations with all directions but center.
+- Fixed an issue with the Fullwidth Portfolio module where the image border styles didn't work correctly due to missing default style for borders.
+- Fixed missing styles when using Mod PageSpeed.
+- Fixed issue with styles from theme builder layouts not taking affect in certain cases.
+	* includes/builder/class-et-builder-post-feature-base.php
+	* includes/builder/conditions.php
+	* includes/builder/core.php
+	* includes/builder/feature/CriticalCSS.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/field/Border.php
+	* includes/builder/module/type/PostContent.php
+	* includes/builder/plugin-compat/final-tiles-grid-gallery-lite.php
+	* includes/builder/plugin-compat/gravityformssignature.php
+	* includes/builder/plugin-compat/m-chart.php
+	* includes/builder/plugin-compat/modern-events-calendar-lite.php
+
+version 4.10.6 ( updated 09-02-2021 )
+- Fixed the logic to check if a module is inside of a sticky module.
+- Fixed Dynamic CSS and Style.css no being wrapped correctly on custom post type archive pages.
+- Fixed a case where Critical CSS could end being printed in the wrong position.
+- Reduced feature manger post meta cache footprint.
+- Fixed a bug where the Email Optin module subscribe loader couldn't be loaded due to the wrong path being set.
+- Fixed Padding and Margin values from presets applying issues in some cases.
+- Fixed Shop module default sorting selection in Order menu.
+- Fixed white header background color being applied to the Extra header when Dynamic CSS was enabled.
+- Fixed broken gallery widget styles when using Dynamic CSS.
+- Fixed compatiblity issue with Image Photo Gallery Final Tiles Grid Plugin.
+- Fixed broken WooCommerce gallery module styles when the module layout was set to grid mode.
+- Fixed missing icon padding in the menu module.
+- Fixed incompatibilty with Modern Events Calendar Lite Plugin.
+- Fixed incompatibility with M Chart Plugin.
+- Fixed an issue with the Woo Gallery module where the Magnific Popup styles were not included on custom post types.
+- Fixed the margin value of the last module in a column when the parent row uses a custom gutter width.
+- Fixed SVGs not being the right size on the front-end when used in Image or Blurb module.
+- Fixed an issue with Gravity Forms Signature Add-On.
+- Fixed broken Theme Builder styles on custom post type taxonomies due to cached CSS that wasn't being cleared correctly.
+	* core/components/PageResource.php
+	* functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-post-feature-base.php
+	* includes/builder/compat/scripts.php
+	* includes/builder/core.php
+	* includes/builder/feature/JQueryBody.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/Shop.php
+	* includes/builder/module/field/Overflow.php
+	* includes/builder/module/helpers/StickyOptions.php
+	* includes/builder/plugin-compat/final-tiles-grid-gallery-lite.php
+	* includes/builder/plugin-compat/gravityformssignature.php
+	* includes/builder/plugin-compat/jucra-acf-google-maps-for-divi.php
+	* includes/builder/plugin-compat/m-chart.php
+	* includes/builder/plugin-compat/modern-events-calendar-lite.php
+	* includes/builder/plugin-compat/the-events-calendar.php
+	* includes/functions/dynamic-assets.php
+
+version 4.10.5 ( updated 08-27-2021 )
+- Fixed issue with "Use Theme Styles" option in GB editor Preference settings not disabling styles in editor.
+- Fixed scroll to section anchor position when css positioning is fixed for multiple sections.
+- Addressed Defer jQuery optimization breaking some Plugins and online services.
+- Fixed broken icon font when et-pb-icon class was used in custom HTML post content.
+- Fixed some cases where the wrong Gutter styles would be applied.
+- Fixed a bug that could cause Custom Page CSS to have higher priority than Builder CSS.
+- Fixed broken gutter widths on pages that had invalid gutter width values of "0" stored in the shortcode.
+- Fixed Search, Calendar, and Tag Cloud block based widget style issues.
+- Addressed incompatibility issue with OptimizePress plugin and jQuery optimizations.
+- Fixed a PHP warning that may occur in some cases where Global Presets is an array instead of an object.
+- Fixed a PHP notice that may occur when exporting layouts.
+- Fixed header not being full-width when set to position: fixed.
+- Fixed Search, Calendar, and Tag Cloud block based widget style issues.
+- Fixed unwanted comment list bullet points on posts using a theme builder body template.
+- Dequeued the main stylesheet instead of just deregistering it.
+	* core/components/Portability.php
+	* functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/compat/early.php
+	* includes/builder/compat/scripts.php
+	* includes/builder/feature/JQueryBody.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/feature/gutenberg/EditorTypography.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/plugin-compat/jucra-acf-google-maps-for-divi.php
+	* includes/builder/plugin-compat/the-events-calendar.php
+	* includes/builder/scripts/frontend/global-functions.js
+	* includes/functions/dynamic-assets.php
+
+version 4.10.4 ( updated 08-23-2021 )
+- Fixed incorrect video slider height.
+- Fixed broken WooCommerce gallery shortcode lightbox styles.
+- Fixed inner rows in specialty sections not inheriting parent gutter width value.
+- Fixed broken blog module grid columns in the Divi Builder plugin.
+- Fixed "Defer jQuery And jQuery Migrate" feature sometimes breaking Integration Code.
+- Fixed broken Divi Theme Header and Divi Theme Footer RTL styles.
+	* includes/builder/compat/early.php
+	* includes/builder/feature/JQueryBody.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/functions/dynamic-assets.php
+
 version 4.10.3 ( updated 08-20-2021 )
 - Fixed broken search and cart icon styles in the fullwidth menu module.
 - Fixed conflict with Absolutely Glamorous Custom Admin plugin.

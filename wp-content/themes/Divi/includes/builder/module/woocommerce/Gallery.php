@@ -177,9 +177,42 @@ class ET_Builder_Module_Woocommerce_Gallery extends ET_Builder_Module_Gallery {
 	}
 
 	/**
+	 * Gets Placeholder ID as Gallery IDs when in TB mode.
+	 *
+	 * @see   https://github.com/elegantthemes/Divi/issues/18768
+	 *
+	 * @since ??
+	 *
+	 * @param array $conditional_tags Conditional Tags.
+	 *
+	 * @return array Array containing placeholder Id when in TB mode. Empty array otherwise.
+	 */
+	public static function get_gallery_ids( $conditional_tags ) {
+		if ( ! is_array( $conditional_tags ) ) {
+			return array();
+		}
+
+		$is_tb = et_()->array_get( $conditional_tags, 'is_tb', false );
+
+		if ( ! $is_tb || ! function_exists( 'wc_placeholder_img_src' ) ) {
+			return array();
+		}
+
+		$placeholder_src = wc_placeholder_img_src( 'full' );
+		$placeholder_id  = attachment_url_to_postid( $placeholder_src );
+
+		if ( 0 === absint( $placeholder_id ) ) {
+			return array();
+		}
+
+		return array( $placeholder_id );
+	}
+
+	/**
 	 * Computed callback's callback method which adjusted arguments passed to original computed
 	 * callback's callback so the result is suitable for Woo Gallery module
 	 *
+	 * @since ?? Load Placeholder Image when in TB mode.
 	 * @since 3.29
 	 *
 	 * @param array $args             Arguments from Computed Prop AJAX call.
@@ -203,6 +236,11 @@ class ET_Builder_Module_Woocommerce_Gallery extends ET_Builder_Module_Gallery {
 		if ( $product ) {
 			$featured_image_id = intval( $product->get_image_id() );
 			$attachment_ids    = $product->get_gallery_image_ids();
+		}
+
+		// Load placeholder Image when in TB.
+		if ( is_array( $attachment_ids ) && empty( $attachment_ids ) ) {
+			$attachment_ids = self::get_gallery_ids( $conditional_tags );
 		}
 
 		// Modify `gallery_ids` value.

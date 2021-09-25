@@ -45,6 +45,20 @@ class ET_Builder_Plugin_Compat_The_Events_Calendar extends ET_Builder_Plugin_Com
 		add_action( 'wp', array( $this, 'register_spoofed_post_fix' ) );
 		add_action( 'loop_start', array( $this, 'maybe_disable_post_spoofing' ), 1001 );
 		add_filter( 'wp_insert_post_empty_content', array( $this, 'maybe_allow_save_empty_content' ), 10, 2 );
+		add_filter( 'et_builder_enable_jquery_body', array( $this, 'maybe_disable_jquery_body' ) );
+	}
+
+	/**
+	 * Disable JQuery Body feature when showing calendar.
+	 *
+	 * @since 4.10.5
+	 *
+	 * @param bool $enabled Whether the feature should be enabled or not.
+	 *
+	 * @return bool
+	 */
+	public function maybe_disable_jquery_body( $enabled ) {
+		return is_post_type_archive( 'tribe_events' ) ? false : $enabled;
 	}
 
 	/**

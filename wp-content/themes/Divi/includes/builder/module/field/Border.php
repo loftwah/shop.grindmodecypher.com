@@ -455,8 +455,19 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 
 		$important = '';
 
-		if ( isset( $advanced_fields['border']['css']['important'] ) ) {
-			if ( 'plugin_only' === $advanced_fields['border']['css']['important'] ) {
+		// Backward compatibility. Use `border` settings as default if exists.
+		$legacy_border = self::$_->array_get( $advanced_fields, 'border', array() );
+
+		$borders_fields = self::$_->array_get(
+			$advanced_fields,
+			'borders',
+			array(
+				'default' => $legacy_border,
+			)
+		);
+
+		if ( isset( $borders_fields['css']['important'] ) ) {
+			if ( 'plugin_only' === $borders_fields['css']['important'] ) {
 				$important = et_builder_has_limitation( 'force_use_global_important' ) ? '!important' : '';
 			} else {
 				$important = '!important';

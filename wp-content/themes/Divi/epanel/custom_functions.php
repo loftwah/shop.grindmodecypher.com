@@ -522,7 +522,7 @@ if ( ! function_exists( 'get_thumbnail' ) ) {
 
 		$new_method = true;
 
-		if ( has_post_thumbnail( $post->ID ) ) {
+		if ( has_post_thumbnail( $post->ID ) || 'attachment' === $post->post_type ) {
 			$thumb_array['use_timthumb'] = false;
 
 			$et_fullpath = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );

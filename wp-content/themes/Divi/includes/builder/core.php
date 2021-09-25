@@ -753,6 +753,27 @@ function et_builder_is_post_type_public( $post_type ) {
 }
 
 /**
+ * Check whether the styles for the current request should be wrapped.
+ * We wrap styles on non-native custom post types and custom post archives.
+ *
+ * @since 4.10.6
+ *
+ * @return boolean
+ */
+function et_builder_should_wrap_styles() {
+	static $should_wrap = null;
+
+	if ( null === $should_wrap ) {
+		$post_id = get_the_ID();
+
+		// Warp on custom post type archives and on non-native custom post types when the builder is used.
+		$should_wrap = et_builder_is_custom_post_type_archive() || ( et_builder_post_is_of_custom_post_type( $post_id ) && et_pb_is_pagebuilder_used( $post_id ) );
+	}
+
+	return $should_wrap;
+}
+
+/**
  * Determine whether post is of post_type layout or not.
  *
  * @param integer $post_id the post id to be checked.
@@ -5142,7 +5163,6 @@ if ( ! function_exists( 'et_builder_get_google_fonts' ) ) :
 		et_builder_google_fonts_sync();
 
 		$google_fonts_cache = get_option( 'et_google_fonts_cache', array() );
-		$google_fonts_cache = et_core_parse_google_fonts_json( $google_fonts_cache );
 
 		if ( ! empty( $google_fonts_cache ) ) {
 			// Use cache if it's not empty.

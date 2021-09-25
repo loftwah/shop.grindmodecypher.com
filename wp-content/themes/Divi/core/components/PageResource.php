@@ -545,6 +545,15 @@ class ET_Core_PageResource {
 					} else {
 						// Remove the temporary directory
 						self::$wpfs->delete( $resource->temp_dir, true );
+
+						/**
+						 * Fires when the static resource file is created.
+						 *
+						 * @since ??
+						 *
+						 * @param object $resource The resource object.
+						 */
+						do_action( 'et_core_static_file_created', $resource );
 					}
 				} elseif ( file_exists( $resource->temp_dir ) ) {
 					// The static resource file is currently being created by another request
@@ -911,12 +920,17 @@ class ET_Core_PageResource {
 			(array) glob( "{$cache_dir}/et-{$_owner}-*" ),
 			// Remove CSS files for individual posts or all posts if $post_id set to 'all'.
 			(array) glob( "{$cache_dir}/{$_post_id}/et-{$_owner}-{$_slug}*" ),
+			// Remove CSS files that contain theme builder template CSS.
+			// Multiple directories need to be searched through since * doesn't match / in the glob pattern.
 			(array) glob( "{$cache_dir}/*/et-{$_owner}-{$_slug}-*tb-{$_post_id}*" ),
+			(array) glob( "{$cache_dir}/*/*/et-{$_owner}-{$_slug}-*tb-{$_post_id}*" ),
+			(array) glob( "{$cache_dir}/*/*/*/et-{$_owner}-{$_slug}-*tb-{$_post_id}*" ),
 			(array) glob( "{$cache_dir}/*/et-{$_owner}-{$_slug}-*tb-for-{$_post_id}*" ),
+			(array) glob( "{$cache_dir}/*/*/et-{$_owner}-{$_slug}-*tb-for-{$_post_id}*" ),
+			(array) glob( "{$cache_dir}/*/*/*/et-{$_owner}-{$_slug}-*tb-for-{$_post_id}*" ),
 			// Remove Dynamic CSS files for categories, tags, authors, archives, homepage post feed and search results.
-			(array) glob( "{$cache_dir}/category/*/et-{$_owner}-dynamic*" ),
+			(array) glob( "{$cache_dir}/taxonomy/*/*/et-{$_owner}-dynamic*" ),
 			(array) glob( "{$cache_dir}/author/*/et-{$_owner}-dynamic*" ),
-			(array) glob( "{$cache_dir}/post_tag/et-{$_owner}-dynamic*" ),
 			(array) glob( "{$cache_dir}/archive/et-{$_owner}-dynamic*" ),
 			(array) glob( "{$cache_dir}/search/et-{$_owner}-dynamic*" ),
 			(array) glob( "{$cache_dir}/notfound/et-{$_owner}-dynamic*" ),

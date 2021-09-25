@@ -46,17 +46,25 @@ class ET_Builder_JQuery_Body {
 
 	/**
 	 * Get post content from Theme Builder templates.
-	 * Combine it with the post content from the current post.
+	 * Combine it with the post content from the current post and integration code.
 	 *
 	 * @return string
 	 * @since 4.10.0
 	 */
 	public function get_all_content() {
-		global $post;
+		static $all_content;
+
+		// Cache the value.
+		if ( ! empty( $all_content ) ) {
+			return $all_content;
+		}
+
+		global $post, $shortname;
 
 		$all_content = empty( $post ) ? '' : $post->post_content;
 		$tb_layouts  = et_theme_builder_get_template_layouts();
 
+		// Add TB templates content.
 		if ( ! empty( $tb_layouts ) ) {
 			$post_types = [
 				ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE,
@@ -71,6 +79,18 @@ class ET_Builder_JQuery_Body {
 					$all_content .= $template->post_content;
 				}
 			}
+		}
+
+		$integrations = [
+			'head',
+			'body',
+			'single_top',
+			'single_bottom',
+		];
+
+		// Add Integration code.
+		foreach ( $integrations as $integration ) {
+			$all_content .= et_get_option( $shortname . '_integration_' . $integration );
 		}
 
 		return $all_content;
@@ -309,6 +329,19 @@ class ET_Builder_JQuery_Body {
 		global $shortname;
 
 		if ( null === self::$_should_move_jquery ) {
+			/**
+			 * Filters whether JQuery Body feature is enabled or not.
+			 *
+			 * @since 4.10.5
+			 *
+			 * @param bool $enabled JQuery Body enabled value.
+			 * @param string $content TB/Post Content.
+			 */
+			if ( false === apply_filters( 'et_builder_enable_jquery_body', true, $this->get_all_content() ) ) {
+				// Bail out if disabled by filter.
+				self::$_should_move_jquery = false;
+				return false;
+			}
 			self::$_should_move_jquery = ! ( is_admin() || wp_doing_ajax() || et_is_builder_plugin_active() || is_customize_preview() || is_et_pb_preview() || 'wp-login.php' === $GLOBALS['pagenow'] || et_fb_is_enabled() ) && 'on' === et_get_option( $shortname . '_enable_jquery_body', 'on' );
 		}
 

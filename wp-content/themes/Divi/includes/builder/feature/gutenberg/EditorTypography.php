@@ -47,34 +47,6 @@ class ET_GB_Editor_Typography {
 	private $_post_title_shortcode;
 
 	/**
-	 * CSS selector to target text content inside GB editor
-	 *
-	 * @var string
-	 */
-	private $_body_selector;
-
-	/**
-	 * CSS selector to target post title inside GB editor
-	 *
-	 * @var string
-	 */
-	private $_heading_selector;
-
-	/**
-	 * List of HTML element used in post content.
-	 *
-	 * @var array
-	 */
-	public static $body_selectors;
-
-	/**
-	 * List of HTML heading levels.
-	 *
-	 * @var array
-	 */
-	public static $heading_selectors;
-
-	/**
 	 * Constructor.
 	 *
 	 * ET_GB_Editor_Typography constructor.
@@ -107,42 +79,43 @@ class ET_GB_Editor_Typography {
 	 */
 	public function register_hooks() {
 		add_action( 'admin_footer', array( $this, 'enqueue_block_typography_styles' ) );
+		add_filter( 'block_editor_settings_all', array( $this, 'block_editor_settings_all' ), 10, 2 );
 	}
 
 	/**
-	 * Initialize the class.
+	 * Filter editor styles pass to the GB editor.
+	 *
+	 * @param array                   $editor_settings editor settings.
+	 * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
+	 *
+	 * @return mixed
 	 */
-	private function _initialize() {
-		global $post;
+	public function block_editor_settings_all( $editor_settings, $block_editor_context ) {
 
-		// Bail early if no post found.
-		if ( empty( $post ) ) {
-			return;
+		$styles  = $this->get_body_styles();
+		$styles .= $this->get_title_styles();
+
+		$post = $block_editor_context->post;
+		if ( $post ) {
+			$tb_layouts = et_theme_builder_get_template_layouts( ET_Theme_Builder_Request::from_post( $post->ID ) );
+
+			if ( isset( $tb_layouts[ ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE ] ) ) {
+				$body_layout             = $tb_layouts[ ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE ];
+				$body_layout_id          = et_()->array_get( $body_layout, 'id' );
+				$this->_body_layout_post = get_post( $body_layout_id );
+
+				$this->_initialize_shortcode( '_post_content_shortcode', et_theme_builder_get_post_content_modules() );
+				$this->_initialize_shortcode( '_post_title_shortcode', array( 'et_pb_post_title' ) );
+				$styles .= $this->get_tb_styles();
+			}
 		}
 
-		self::$body_selectors  = array( 'p', 'ol', 'ul', 'dl', 'dt' );
-		$this->_body_selector  = self::_generate_selectors( self::$body_selectors, '.editor-styles-wrapper .wp-block .wp-block-freeform ' );
-		$this->_body_selector .= ',' . self::_generate_selectors( self::$body_selectors, '.block-editor-block-list__layout ', '.wp-block' );
+		$editor_settings['styles'][] = array(
+			'css'            => $styles,
+			'__unstableType' => 'theme',
+		);
 
-		self::$heading_selectors  = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
-		$this->_heading_selector  = self::_generate_selectors( self::$heading_selectors, '.editor-styles-wrapper .wp-block .wp-block-freeform ' );
-		$this->_heading_selector .= ',' . self::_generate_selectors( self::$heading_selectors, '.editor-styles-wrapper ', '.rich-text' );
-		$this->_heading_selector .= ',.edit-post-visual-editor__post-title-wrapper .editor-post-title__block .editor-post-title__input';
-
-		$tb_layouts = et_theme_builder_get_template_layouts( ET_Theme_Builder_Request::from_post( $post->ID ) );
-
-		// Bail if body layouts is not set current post.
-		if ( ! isset( $tb_layouts[ ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE ] ) ) {
-			return;
-		}
-
-		$body_layout             = $tb_layouts[ ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE ];
-		$body_layout_id          = et_()->array_get( $body_layout, 'id' );
-		$this->_body_layout_post = get_post( $body_layout_id );
-
-		$this->_initialize_shortcode( '_post_content_shortcode', et_theme_builder_get_post_content_modules() );
-		$this->_initialize_shortcode( '_post_title_shortcode', array( 'et_pb_post_title' ) );
-
+		return $editor_settings;
 	}
 
 	/**
@@ -178,24 +151,10 @@ class ET_GB_Editor_Typography {
 	 */
 	public function enqueue_block_typography_styles() {
 
-		if ( ! ( method_exists( get_current_screen(), 'is_block_editor' ) && get_current_screen()->is_block_editor() ) ) {
+		if ( ! get_current_screen()->is_block_editor() ) {
 			return;
 		}
 
-		$this->_initialize();
-
-		$styles = '';
-
-		$styles .= $this->get_body_styles();
-		$styles .= $this->get_title_styles();
-		$styles .= $this->get_tb_styles();
-
-		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Inline style.
-		wp_register_style( 'divi-block-editor-styles', false );
-		wp_enqueue_style( 'divi-block-editor-styles' );
-		wp_add_inline_style( 'divi-block-editor-styles', $styles );
-
-		// Enqueue google fonts.
 		et_builder_print_font();
 	}
 
@@ -255,7 +214,7 @@ class ET_GB_Editor_Typography {
 		}
 
 		if ( ! empty( $body_styles ) ) {
-			$body_styles = sprintf( '%1$s { %2$s }', $this->_body_selector, $body_styles );
+			$body_styles = sprintf( 'body { %1$s }', $body_styles );
 		}
 
 		$link_color = esc_html( et_get_option( 'link_color' ) );
@@ -265,7 +224,7 @@ class ET_GB_Editor_Typography {
 				array(
 					'style'    => 'color',
 					'value'    => $link_color,
-					'selector' => '.block-editor-block-list__layout .wp-block a, .editor-styles-wrapper .wp-block .wp-block-freeform a',
+					'selector' => 'a',
 				)
 			);
 		}
@@ -339,104 +298,30 @@ class ET_GB_Editor_Typography {
 			// Convert string into array.
 			$styles_array = explode( '|', $body_header_style );
 
-			if ( in_array( 'bold', $styles_array, true ) ) {
-				$title_styles .= et_builder_generate_css_style(
-					array(
-						'style' => 'font-weight',
-						'value' => 'bold',
-					)
-				);
-			}
+			$font_properties_value_map = array(
+				'font-weight'     => 'bold',
+				'font-style'      => 'italic',
+				'text-transform'  => 'uppercase',
+				'text-decoration' => 'underline',
+			);
 
-			if ( in_array( 'italic', $styles_array, true ) ) {
-				$title_styles .= et_builder_generate_css_style(
-					array(
-						'style' => 'font-style',
-						'value' => 'italic',
-					)
-				);
-			}
-
-			if ( in_array( 'uppercase', $styles_array, true ) ) {
-				$title_styles .= et_builder_generate_css_style(
-					array(
-						'style' => 'text-transform',
-						'value' => 'uppercase',
-					)
-				);
-			}
-
-			if ( in_array( 'underline', $styles_array, true ) ) {
-				$title_styles .= et_builder_generate_css_style(
-					array(
-						'style' => 'text-decoration',
-						'value' => 'underline',
-					)
-				);
+			foreach ( $font_properties_value_map as $css_property => $value ) {
+				if ( in_array( $value, $styles_array, true ) ) {
+					$title_styles .= et_builder_generate_css_style(
+						array(
+							'style' => $css_property,
+							'value' => $value,
+						)
+					);
+				}
 			}
 		}
-
-		$body_header_size = esc_html( et_get_option( 'body_header_size' ) );
 
 		if ( ! empty( $title_styles ) ) {
-			$title_styles = sprintf( '%1$s { %2$s }', $this->_heading_selector, $title_styles );
+			$title_styles = sprintf( 'h1,h2,h3,h4,h5,h6,.editor-post-title__block .editor-post-title__input { %1$s }', $title_styles );
 		}
 
-		if ( ! empty( $body_header_size ) ) {
-			$title_styles .= ',' . et_builder_generate_css(
-				array(
-					'style'    => 'font-size',
-					'value'    => $body_header_size,
-					'suffix'   => 'px',
-					'selector' => '.editor-styles-wrapper .wp-block .wp-block-freeform h1',
-				)
-			);
-
-			$title_styles .= ',' . et_builder_generate_css(
-				array(
-					'style'    => 'font-size',
-					'value'    => intval( $body_header_size * .86 ),
-					'suffix'   => 'px',
-					'selector' => '.editor-styles-wrapper .wp-block .wp-block-freeform h2',
-				)
-			);
-
-			$title_styles .= ',' . et_builder_generate_css(
-				array(
-					'style'    => 'font-size',
-					'value'    => intval( $body_header_size * .73 ),
-					'suffix'   => 'px',
-					'selector' => '.editor-styles-wrapper .wp-block .wp-block-freeform h3',
-				)
-			);
-
-			$title_styles .= ',' . et_builder_generate_css(
-				array(
-					'style'    => 'font-size',
-					'value'    => intval( $body_header_size * .6 ),
-					'suffix'   => 'px',
-					'selector' => '.editor-styles-wrapper .wp-block .wp-block-freeform h4',
-				)
-			);
-
-			$title_styles .= ',' . et_builder_generate_css(
-				array(
-					'style'    => 'font-size',
-					'value'    => intval( $body_header_size * .53 ),
-					'suffix'   => 'px',
-					'selector' => '.editor-styles-wrapper .wp-block .wp-block-freeform h5',
-				)
-			);
-
-			$title_styles .= ',' . et_builder_generate_css(
-				array(
-					'style'    => 'font-size',
-					'value'    => intval( $body_header_size * .47 ),
-					'suffix'   => 'px',
-					'selector' => '.editor-styles-wrapper .wp-block .wp-block-freeform h6',
-				)
-			);
-		}
+		$title_styles .= $this->get_heading_levels_font_size_style();
 
 		return $title_styles;
 	}
@@ -496,22 +381,24 @@ class ET_GB_Editor_Typography {
 				}
 			}
 
-			$tb_style = $this->_body_selector . ' {' . $post_content_style . '}' . $tb_style;
+			$tb_style = 'body {' . $post_content_style . '}' . $tb_style;
 		}
 
-		foreach ( self::$heading_selectors as $heading_selector ) {
-			$tb_style = str_replace( ".et_pb_post_content_0 $heading_selector ", ".editor-styles-wrapper .wp-block .wp-block-freeform $heading_selector ,.editor-styles-wrapper $heading_selector.rich-text ", $tb_style );
+		foreach ( array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ) as $heading_selector ) {
+			$tb_style = str_replace( ".et_pb_post_content_0 $heading_selector ", $heading_selector, $tb_style );
 		}
 
-		$tb_style = str_replace( '.et_pb_post_content_0 a ', '.editor-styles-wrapper .wp-block .wp-block-freeform a,.block-editor-block-list__layout .wp-block a ', $tb_style );
-		$tb_style = str_replace( array( '.et_pb_post_content_0 ul li ', '.et_pb_post_content_0.et_pb_post_content ul li' ), '.editor-styles-wrapper .wp-block .wp-block-freeform ul li,.block-editor-block-list__layout ul li ', $tb_style );
-		$tb_style = str_replace( array( '.et_pb_post_content_0 ol li ', '.et_pb_post_content_0.et_pb_post_content ol li' ), '.editor-styles-wrapper .wp-block .wp-block-freeform ol li,.block-editor-block-list__layout ol li ', $tb_style );
-		$tb_style = str_replace( array( 'et_pb_post_content_0 ul ', '.et_pb_post_content_0.et_pb_post_content ul ' ), '.editor-styles-wrapper .wp-block .wp-block-freeform ul.wp-block,.block-editor-block-list__layout ul.wp-block ', $tb_style );
-		$tb_style = str_replace( array( '.et_pb_post_content_0 ol ', '.et_pb_post_content_0.et_pb_post_content ol ' ), '.editor-styles-wrapper .wp-block .wp-block-freeform ol.wp-block,.block-editor-block-list__layout ol.wp-block ', $tb_style );
-		$tb_style = str_replace( array( '.et_pb_post_content_0 blockquote ', '.et_pb_post_content_0.et_pb_post_content blockquote' ), '.editor-styles-wrapper .wp-block .wp-block-freeform ol,.block-editor-block-list__layout blockquote ', $tb_style );
+		foreach ( array( 'a', 'ul', 'ol', 'ul li', 'ol li', 'blockquote' ) as $selector ) {
+			$search = array(
+				".et_pb_post_content_0 $selector ",
+				".et_pb_post_content_0.et_pb_post_content $selector",
+			);
+
+			$tb_style = str_replace( $search, $selector, $tb_style );
+		}
 
 		// Replace the post title style selectors with editor's post title selector.
-		$tb_style = str_replace( array( '.et_pb_post_title_0 .entry-title', '.et_pb_post_title_0 .et_pb_title_container h1.entry-title, .et_pb_post_title_0 .et_pb_title_container h2.entry-title, .et_pb_post_title_0 .et_pb_title_container h3.entry-title, .et_pb_post_title_0 .et_pb_title_container h4.entry-title, .et_pb_post_title_0 .et_pb_title_container h5.entry-title, .et_pb_post_title_0 .et_pb_title_container h6.entry-title' ), '.edit-post-visual-editor__post-title-wrapper .editor-post-title__block .editor-post-title__input', $tb_style );
+		$tb_style = str_replace( array( '.et_pb_post_title_0 .entry-title', '.et_pb_post_title_0 .et_pb_title_container h1.entry-title, .et_pb_post_title_0 .et_pb_title_container h2.entry-title, .et_pb_post_title_0 .et_pb_title_container h3.entry-title, .et_pb_post_title_0 .et_pb_title_container h4.entry-title, .et_pb_post_title_0 .et_pb_title_container h5.entry-title, .et_pb_post_title_0 .et_pb_title_container h6.entry-title' ), '.wp-block.editor-post-title__block .editor-post-title__input', $tb_style );
 
 		// Enqueue fonts.
 		$fonts_regex = '/font-family:\s+[\'"]([a-zA-Z0-9\s]+)[\'"]/';
@@ -526,22 +413,41 @@ class ET_GB_Editor_Typography {
 	}
 
 	/**
-	 * Generate css selectors from prefixes and suffixes.
-	 *
-	 * @param array  $selectors Selectors list.
-	 * @param string $prefix Selector prefix.
-	 * @param string $suffix  Selector suffix.
+	 * Generate the heading levels font size from the Header Size customizer setting and return style.
 	 *
 	 * @return string
 	 */
-	private static function _generate_selectors( $selectors, $prefix, $suffix = '' ) {
-		$prepared_selectors = '';
+	public function get_heading_levels_font_size_style() {
 
-		foreach ( (array) $selectors as $selector ) {
-			$prepared_selectors .= $prefix . $selector . $suffix . ',';
+		$body_header_size = esc_html( et_get_option( 'body_header_size' ) );
+
+		$title_styles = '';
+
+		if ( empty( $body_header_size ) ) {
+			return $title_styles;
 		}
 
-		return rtrim( $prepared_selectors, ',' );
+		$font_sizes = array(
+			'h1,.editor-post-title__block .editor-post-title__input' => $body_header_size,
+			'h2' => $body_header_size * .86,
+			'h3' => $body_header_size * .73,
+			'h4' => $body_header_size * .60,
+			'h5' => $body_header_size * .53,
+			'h6' => $body_header_size * .47,
+		);
+
+		foreach ( $font_sizes as $selector => $font_size ) {
+			$title_styles .= ',' . et_builder_generate_css(
+				array(
+					'style'    => 'font-size',
+					'value'    => intval( $font_size ),
+					'suffix'   => 'px',
+					'selector' => $selector,
+				)
+			);
+		}
+
+		return $title_styles;
 	}
 
 }

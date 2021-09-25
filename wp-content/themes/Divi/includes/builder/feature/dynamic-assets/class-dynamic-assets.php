@@ -106,7 +106,7 @@ class ET_Dynamic_Assets {
 	private $_owners = array(
 		'divi',
 		'extra',
-		'builder',
+		'divi-builder',
 	);
 
 	/**
@@ -420,6 +420,7 @@ class ET_Dynamic_Assets {
 		}
 
 		global $post;
+		global $shortname;
 
 		if ( $this->is_taxonomy() ) {
 			$this->_object_id = intval( get_queried_object()->term_id );
@@ -436,6 +437,14 @@ class ET_Dynamic_Assets {
 			return;
 		}
 
+		if ( 'divi' === $shortname ) {
+			$this->_owner = 'divi';
+		} elseif ( 'extra' === $shortname ) {
+			$this->_owner = 'extra';
+		} elseif ( et_is_builder_plugin_active() ) {
+			$this->_owner = 'divi-builder';
+		}
+
 		$this->_post_id           = ! empty( $post ) ? intval( $post->ID ) : -1;
 		$this->_tb_template_ids   = $this->get_theme_builder_template_ids();
 		$this->_post_content      = ! empty( $post ) ? $post->post_content : '';
@@ -443,7 +452,7 @@ class ET_Dynamic_Assets {
 		$this->_cache_dir_path    = et_core_cache_dir()->path;
 		$this->_cache_dir_url     = et_core_cache_dir()->url;
 		$this->_product_dir       = et_is_builder_plugin_active() ? ET_BUILDER_PLUGIN_URI : get_template_directory_uri();
-		$this->_cpt_suffix        = et_builder_post_is_of_custom_post_type( $this->_post_id ) && et_pb_is_pagebuilder_used( $this->_post_id ) && ! et_is_builder_plugin_active() ? '_cpt' : '';
+		$this->_cpt_suffix        = et_builder_should_wrap_styles() && ! et_is_builder_plugin_active() ? '_cpt' : '';
 		$this->is_rtl             = is_rtl();
 		$this->_rtl_suffix        = $this->is_rtl ? '_rtl' : '';
 		$this->_page_builder_used = is_singular() ? et_pb_is_pagebuilder_used( $this->_post_id ) : false;
@@ -503,7 +512,7 @@ class ET_Dynamic_Assets {
 		if ( $this->is_taxonomy() ) {
 			$queried     = get_queried_object();
 			$taxonomy    = sanitize_key( $queried->taxonomy );
-			$folder_name = "{$taxonomy}/" . $this->_object_id;
+			$folder_name = "taxonomy/{$taxonomy}/" . $this->_object_id;
 		} elseif ( is_search() ) {
 			$folder_name = 'search';
 		} elseif ( is_author() ) {
@@ -557,12 +566,6 @@ class ET_Dynamic_Assets {
 		if ( is_null( self::$_is_cachable_request ) ) {
 			self::$_is_cachable_request = true;
 
-			// Bail if the request is invalid.
-			if ( ! self::_is_valid_request() ) {
-				self::$_is_cachable_request = false;
-				return self::$_is_cachable_request;
-			}
-
 			// Bail if this is not a front-end page request.
 			if ( ! et_should_generate_dynamic_assets() ) {
 				self::$_is_cachable_request = false;
@@ -613,16 +616,9 @@ class ET_Dynamic_Assets {
 	public function get_style_css_handle() {
 		global $shortname;
 
-		$child_theme_suffix  = is_child_theme() ? '-parent' : '';
+		$child_theme_suffix  = is_child_theme() && ! et_is_builder_plugin_active() ? '-parent' : '';
 		$inline_style_suffix = et_core_is_inline_stylesheet_enabled() ? '-inline' : '';
-
-		if ( 'divi' === $shortname ) {
-			$product_prefix = 'divi-style';
-		} elseif ( 'extra' === $shortname ) {
-			$product_prefix = 'extra-style';
-		} else {
-			$product_prefix = 'divi-builder-style';
-		}
+		$product_prefix      = $this->_owner . '-style';
 
 		$handle = 'divi-builder-style' === $product_prefix . $inline_style_suffix ? $product_prefix : $product_prefix . $child_theme_suffix . $inline_style_suffix;
 
@@ -648,7 +644,6 @@ class ET_Dynamic_Assets {
 		$base_path = et_core_cache_dir()->path;
 
 		foreach ( $dynamic_assets as $dynamic_asset ) {
-			global $shortname;
 
 			// Ignore empty files.
 			$abs_file = str_replace( $base_url, $base_path, $dynamic_asset );
@@ -670,16 +665,8 @@ class ET_Dynamic_Assets {
 			$is_css      = 'css' === $type;
 			$late_slug   = true === $is_late ? '-late' : '';
 
-			if ( 'divi' === $shortname ) {
-				$style_prefix = 'divi';
-			} elseif ( 'extra' === $shortname ) {
-				$style_prefix = 'extra';
-			} else {
-				$style_prefix = 'divi-builder';
-			}
-
 			$deps   = array( $this->get_style_css_handle() );
-			$handle = $style_prefix . '-dynamic' . $late_slug;
+			$handle = $this->_owner . '-dynamic' . $late_slug;
 
 			if ( wp_style_is( $handle ) ) {
 				continue;
@@ -701,23 +688,7 @@ class ET_Dynamic_Assets {
 			}
 		}
 
-		$css_handle = '';
-
-		// enqueue head styles.
-		foreach ( $head as $handle => $asset ) {
-			$is_css           = 'css' === $asset->type;
-			$enqueue_function = $is_css ? 'wp_enqueue_style' : 'wp_enqueue_script';
-			$css_handle       = $is_css ? $handle : $css_handle;
-
-			$enqueue_function(
-				$handle,
-				$asset->src,
-				$asset->deps,
-				$version,
-				$asset->in_footer
-			);
-		}
-
+		// Enqueue inline styles.
 		if ( ! empty( $body ) ) {
 			$this->_enqueued_assets = (object) [
 				'head' => $head,
@@ -728,21 +699,38 @@ class ET_Dynamic_Assets {
 			$path      = $cache_dir->path;
 			$url       = $cache_dir->url;
 			$styles    = '';
+			$handle    = '';
 
 			foreach ( $this->_enqueued_assets->body as $handle => $asset ) {
 				$file    = str_replace( $url, $path, $asset->src );
 				$styles .= et_()->WPFS()->get_contents( $file );
 			}
 
-			if ( empty( $css_handle ) ) {
-				// If no Dynamic CSS file was enqued, append the critical CSS to the last enqueued stylesheet.
-				global $wp_styles;
-				$css_handle = end( $wp_styles->queue );
-			}
+			$handle .= '-critical';
 
-			wp_add_inline_style( $css_handle, $styles );
+			// Create empty style which will enqueue no external file but still allow us
+			// to add inline content to it.
+			wp_register_style( $handle, false, array( $this->get_style_css_handle() ), $version );
+			wp_enqueue_style( $handle );
+			wp_add_inline_style( $handle, $styles );
+
 			add_filter( 'style_loader_tag', [ $this, 'defer_head_style' ], 10, 4 );
 		}
+
+		// Enqueue styles.
+		foreach ( $head as $handle => $asset ) {
+			$is_css           = 'css' === $asset->type;
+			$enqueue_function = $is_css ? 'wp_enqueue_style' : 'wp_enqueue_script';
+
+			$enqueue_function(
+				$handle,
+				$asset->src,
+				$asset->deps,
+				$version,
+				$asset->in_footer
+			);
+		}
+
 	}
 
 	/**
@@ -763,8 +751,12 @@ class ET_Dynamic_Assets {
 			return $tag;
 		}
 
+		// Use 'prefetch' when Mod PageSpeed is detected because it removes 'preload' links.
+		$rel = et_builder_is_mod_pagespeed_enabled() ? 'prefetch' : 'preload';
+
 		return sprintf(
-			"<link rel='preload' id='%s-css' href='%s' as='style' media='%s' onload=\"%s\" />\n",
+			"<link rel='%s' id='%s-css' href='%s' as='style' media='%s' onload=\"%s\" />\n",
+			$rel,
 			$handle,
 			$href,
 			$media,
@@ -897,9 +889,8 @@ class ET_Dynamic_Assets {
 			return;
 		}
 
-		$_owner              = 'all' === $this->_owner ? '*' : $this->_owner;
 		$late_assets         = array();
-		$late_files          = (array) glob( "{$this->_cache_dir_path}/{$this->_folder_name}/et-{$_owner}-dynamic*late*" );
+		$late_files          = (array) glob( "{$this->_cache_dir_path}/{$this->_folder_name}/et-{$this->_owner}-dynamic*late*" );
 		$style_handle        = $this->get_style_css_handle();
 		$inline_style_suffix = et_core_is_inline_stylesheet_enabled() ? '-inline' : '';
 
@@ -1120,7 +1111,7 @@ class ET_Dynamic_Assets {
 
 		$use_social_icons = $this->check_for_dependency( $social_icons_deps, $this->_processed_shortcodes );
 
-		if ( 'on' !== $dynamic_icons || $this->check_if_attribute_exits( 'icon', $this->_all_content ) ) {
+		if ( 'on' !== $dynamic_icons || $this->check_if_attribute_exits( 'icon', $this->_all_content ) || $this->check_if_class_exits( 'et-pb-icon', $this->_all_content ) ) {
 			$use_all_icons = true;
 		}
 
@@ -1170,18 +1161,25 @@ class ET_Dynamic_Assets {
 		preg_match_all( '/gutter_width="\w+"/', $this->_all_content, $matches );
 		preg_match_all( '/specialty="\w+"/', $this->_all_content, $specialty_values );
 
-		$page_custom_gutter = is_singular() ? intval( get_post_meta( $this->_post_id, '_et_pb_gutter_width', true ) ) : array();
-		$customizer_gutter  = intval( et_get_option( 'gutter_width', '3' ) );
-		$default_gutters    = array_merge( (array) $page_custom_gutter, (array) $customizer_gutter );
-		$no_of_gutters      = substr_count( $this->_all_content, 'use_custom_gutter' );
-		$preset_gutter_val  = ! empty( $this->_presets_attributes['use_custom_gutter'] ) && 'on' === $this->_presets_attributes['use_custom_gutter'] ?
-								(array) $this->_presets_attributes['gutter_width'] : array();
-		$specialty_used     = et_check_if_particular_value_is_on( $specialty_values[0] );
+		$page_custom_gutter = is_singular() ? [ intval( get_post_meta( $this->_post_id, '_et_pb_gutter_width', true ) ) ] : [];
+
+		// Add custom gutters in TB templates.
+		if ( ! empty( $this->_tb_template_ids ) ) {
+			foreach ( $this->_tb_template_ids as $template_id ) {
+				$page_custom_gutter[] = intval( get_post_meta( $template_id, '_et_pb_gutter_width', true ) );
+			}
+		}
+
+		$customizer_gutter = intval( et_get_option( 'gutter_width', '3' ) );
+		$default_gutters   = array_merge( (array) $page_custom_gutter, (array) $customizer_gutter );
+		$no_of_gutters     = substr_count( $this->_all_content, 'use_custom_gutter' );
+		$preset_gutter_val = ! empty( $this->_presets_attributes['use_custom_gutter'] ) && 'on' === $this->_presets_attributes['use_custom_gutter'] ?
+			(array) $this->_presets_attributes['gutter_width'] : array();
+		$specialty_used    = et_check_if_particular_value_is_on( $specialty_values[0] );
 
 		if ( $no_of_gutters > count( $matches[0] ) && ! in_array( 'gutter_width="3"', $matches[0], true ) ) {
 			array_push( $matches[0], 'gutter_width="3"' );
 		}
-
 		// Here we are combining the custom gutters in the page with Default gutters and then keeping only the unique gutters.
 		$gutter_widths = $this->get_unique_array_values( et_get_content_gutter_widths( $matches[0] ), $default_gutters, $preset_gutter_val );
 		$gutter_length = count( $gutter_widths );
@@ -1191,6 +1189,7 @@ class ET_Dynamic_Assets {
 			'et_pb_fullwidth_portfolio',
 			'et_pb_portfolio',
 			'et_pb_gallery',
+			'et_pb_wc_gallery',
 			'et_pb_blog',
 			'et_pb_sidebar',
 			'et_pb_shop',
@@ -1278,13 +1277,14 @@ class ET_Dynamic_Assets {
 		}
 
 		$gutter_length = count( $this->_late_custom_gutters );
-		$gutter_widths = $this->get_unique_array_values( et_get_content_gutter_widths( $this->_late_gutter_width ) );
+		$gutter_widths = $this->get_unique_array_values( $this->_late_gutter_width );
 
 		$grid_items_deps = array(
 			'et_pb_filterable_portfolio',
 			'et_pb_fullwidth_portfolio',
 			'et_pb_portfolio',
 			'et_pb_gallery',
+			'et_pb_wc_gallery',
 			'et_pb_blog',
 			'et_pb_sidebar',
 			'et_pb_shop',
@@ -1345,10 +1345,13 @@ class ET_Dynamic_Assets {
 		$assets_list      = array();
 
 		// Put default gutter `3` at beginning, otherwise it would mess up the layout.
-		if ( in_array( '3', $temp_widths, true ) ) {
-			$gutter_widths = array_diff( $temp_widths, [ '3' ] );
-			array_unshift( $gutter_widths, '3' );
+		if ( in_array( 3, $temp_widths, true ) ) {
+			$gutter_widths = array_diff( $temp_widths, [ 3 ] );
+			array_unshift( $gutter_widths, 3 );
 		}
+
+		// Replace legacy gutter width values of 0 with 1.
+		$gutter_widths = str_replace( 0, 1, $gutter_widths );
 
 		for ( $i = 0; $i < $gutter_length; $i++ ) {
 			$assets_list[ 'et_divi_gutters' . $gutter_widths[ $i ] ] = array(
@@ -1581,8 +1584,8 @@ class ET_Dynamic_Assets {
 			),
 			'et_pb_menu'                  => array(
 				'css' => array(
-					"{$assets_prefix}/css/menu{$this->_cpt_suffix}.css",
 					"{$assets_prefix}/css/menus{$this->_cpt_suffix}.css",
+					"{$assets_prefix}/css/menu{$this->_cpt_suffix}.css",
 					"{$assets_prefix}/css/header_animations.css",
 					"{$assets_prefix}/css/header_shared{$this->_cpt_suffix}.css",
 				),
@@ -1710,6 +1713,8 @@ class ET_Dynamic_Assets {
 				'css' => array(
 					"{$assets_prefix}/css/gallery{$this->_cpt_suffix}.css",
 					"{$assets_prefix}/css/overlay{$this->_cpt_suffix}.css",
+					"{$assets_prefix}/css/grid_items{$this->_cpt_suffix}.css",
+					"{$assets_prefix}/css/magnific_popup.css",
 					"{$assets_prefix}/css/slider_base{$this->_cpt_suffix}.css",
 					"{$assets_prefix}/css/slider_controls{$this->_cpt_suffix}.css",
 				),
@@ -1922,37 +1927,6 @@ class ET_Dynamic_Assets {
 		}
 
 		return $all_content;
-	}
-
-	/**
-	 * Check if current request is valid.
-	 *
-	 * @return bool
-	 * @since 4.10.0
-	 */
-	protected function _is_valid_request() {
-		$is_valid          = false;
-		$active_theme      = wp_get_theme()->get( 'Name' );
-		$is_builder_active = et_is_builder_plugin_active();
-
-		$parent_theme = wp_get_theme( get_template() )->get( 'Name' );
-
-		if ( $is_builder_active
-			|| in_array( strtolower( $active_theme ), $this->_owners, true )
-			|| in_array( strtolower( $parent_theme ), $this->_owners, true ) ) {
-
-			if ( $is_builder_active ) {
-				$this->_owner = 'builder';
-			} elseif ( $parent_theme ) {
-				$this->_owner = strtolower( $parent_theme );
-			} else {
-				$this->_owner = strtolower( $active_theme );
-			}
-
-			$is_valid = true;
-		}
-
-		return $is_valid;
 	}
 
 	/**
@@ -2196,11 +2170,12 @@ class ET_Dynamic_Assets {
 				'et_pb_blog',
 				'et_pb_slider',
 				'et_pb_video',
+				'et_pb_video_slider',
 				'et_pb_slide_video',
-				'et_pb_menu',
-				'et_pb_fullwidth_menu',
 				'et_pb_code',
 				'et_pb_fullwidth_code',
+				'et_pb_portfolio',
+				'et_pb_filterable_portfolio',
 			);
 
 			$this->_enqueue_fitvids = $this->check_for_dependency( $fitvids_deps, $current_shortcodes );
@@ -2372,17 +2347,18 @@ class ET_Dynamic_Assets {
 	 * @since 4.10.0
 	 */
 	public function get_preset_attributes( $content ) {
-		preg_match_all( '/_module_preset="[a-z0-9][a-z0-9-]*[a-z0-9]"/', $content, $presets );
-
-		$presets_ids         = et_get_non_default_preset_ids( $presets[0] );
 		$all_builder_presets = et_get_option( 'builder_global_presets', (object) array(), '', true );
 		$presets_attributes  = array();
 
 		foreach ( $all_builder_presets as $module => $module_presets ) {
+			$module_presets = is_array( $module_presets ) ? (object) $module_presets : $module_presets;
+
+			if ( ! is_object( $module_presets ) ) {
+				continue;
+			}
+
 			foreach ( $module_presets->presets as $key => $value ) {
-				if ( in_array( $key, $presets_ids, true ) ) {
-					$presets_attributes = array_merge( $presets_attributes, (array) $value->settings );
-				}
+				$presets_attributes = array_merge( $presets_attributes, (array) $value->settings );
 			}
 		}
 
@@ -2405,6 +2381,18 @@ class ET_Dynamic_Assets {
 		}
 
 		return preg_match( '/' . $attribute . '=".+"/', $content ) || in_array( $attribute, $preset_attributes, true );
+	}
+
+	/**
+	 * Check class exists in post content.
+	 *
+	 * @param string $class   class to check.
+	 * @param string $content to search for class in.
+	 *
+	 * @since 4.10.5
+	 */
+	public function check_if_class_exits( $class, $content ) {
+		return preg_match( '/class=".*' . preg_quote( $class, '/' ) . '/', $content );
 	}
 
 	/**

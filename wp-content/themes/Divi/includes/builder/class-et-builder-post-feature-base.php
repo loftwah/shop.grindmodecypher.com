@@ -16,7 +16,7 @@ class ET_Builder_Post_Feature_Base {
 
 
 	// Only save cache if time (milliseconds) to generate it is above this threshold.
-	const CACHE_SAVE_THRESHOLD = 10;
+	const CACHE_SAVE_THRESHOLD = 15;
 	const CACHE_META_KEY       = '_et_builder_module_feature_cache';
 
 	/**
@@ -58,6 +58,14 @@ class ET_Builder_Post_Feature_Base {
 	 * @var null|bool
 	 */
 	protected static $_enabled = null;
+
+	/**
+	 * Whether this page load is loading the cache or using existing cache.
+	 *
+	 * @access protected
+	 * @var bool
+	 */
+	protected $_cache_loading = false;
 
 	/**
 	 * `ET_Builder_Post_Feature_Base` instance.
@@ -155,13 +163,20 @@ class ET_Builder_Post_Feature_Base {
 	public function cache_prime() {
 		if ( empty( $this->_primed ) ) {
 
-			$meta = self::load_cache( $this->_post_id );
+			$meta          = self::load_cache( $this->_post_id );
+			$current_index = (string) self::_get_cache_index();
+			$stored_index  = null;
 
 			if ( isset( $meta[1] ) ) {
 				list( $stored_index, $cache ) = $meta;
-				$current_index                = (string) self::_get_cache_index();
 				$this->_cache                 = ( $current_index === $stored_index ) ? $cache : [];
 			}
+
+			do_action( 'et_builder_post_feature_cache_primed', $this->_cache, $this->_post_id, $current_index, $stored_index );
+
+			// determine if were loading cache,
+			// or using previous cache values.
+			$this->_cache_loading = empty( $this->_cache );
 
 			$this->_primed = true;
 		}
@@ -177,9 +192,14 @@ class ET_Builder_Post_Feature_Base {
 			return;
 		}
 
+		$cache_index        = self::_get_cache_index();
+		$is_above_threshold = $this->_cache_set_time >= self::CACHE_SAVE_THRESHOLD;
+
+		do_action( 'et_builder_post_feature_cache_save', $this->_cache, $this->_post_id, $this->_cache_set_time, $is_above_threshold, $cache_index );
+
 		// Only save cache if time to generate it is above a certain threshold.
-		if ( $this->_cache_set_time >= self::CACHE_SAVE_THRESHOLD ) {
-			$cache = array( self::_get_cache_index(), $this->_cache );
+		if ( $is_above_threshold ) {
+			$cache = array( $cache_index, $this->_cache );
 			update_post_meta( $this->_post_id, static::CACHE_META_KEY, $cache );
 		}
 	}
@@ -194,10 +214,20 @@ class ET_Builder_Post_Feature_Base {
 	protected static function _get_cache_index_items() {
 		global $wp_version;
 
+		$dynamic_assets = ET_Dynamic_Assets::init();
+		$tb_ids = $dynamic_assets->get_theme_builder_template_ids();
+
+		$tb_data = [];
+		foreach ( $tb_ids as $tb_id ) {
+			$tb_post = get_post( $tb_id );
+			$tb_data[ $tb_id ] = $tb_post->post_modified_gmt;
+		}
+
 		return array(
 			'gph'  => ET_Builder_Global_Presets_History::instance()->get_global_history_index(),
 			'divi' => et_get_theme_version(),
 			'wp'   => $wp_version,
+			'tb'   => $tb_data,
 		);
 	}
 
@@ -234,7 +264,10 @@ class ET_Builder_Post_Feature_Base {
 	 * @param float  $elapsed How much time it took to generate the value.
 	 */
 	public function cache_set( $key, $value, $group = 'default', $elapsed = 0 ) {
-		$this->_cache[ $group ][ $key ] = $value;
+		// Only save truthy values into cache.
+		if ( $value ) {
+			$this->_cache[ $group ][ $key ] = $value;
+		}
 		$this->_cache_set_time         += $elapsed * 1000;
 	}
 
@@ -258,11 +291,19 @@ class ET_Builder_Post_Feature_Base {
 		$result = $this->cache_get( $key, $group );
 
 		if ( is_null( $result ) ) {
-			// Set cache for next time.
-			$before  = microtime( true );
-			$result  = $cb();
-			$elapsed = microtime( true ) - $before;
-			$this->cache_set( $key, $result, $group, $elapsed );
+			if ( $this->_cache_loading ) {
+				// Set cache for next time.
+				$before  = microtime( true );
+				$result  = $cb();
+				$elapsed = microtime( true ) - $before;
+
+				$this->cache_set( $key, $result, $group, $elapsed );
+			} else {
+				// No entry found in a previsouly loaded cache,
+				// means the answer was falsey last time $cb() was checked,
+				// as falsey values arent stored in cache.
+				$result = false;
+			}
 		}
 
 		return $result;

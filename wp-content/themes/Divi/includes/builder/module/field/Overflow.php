@@ -24,12 +24,9 @@ class ET_Builder_Module_Field_Overflow extends ET_Builder_Module_Field_Base {
 	}
 
 	protected function get_field( $axis, $args ) {
-		static $cache;
+		static $i18n;
 
-		if ( $cache ) {
-			$i18n = $cache;
-		} else {
-			// phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
+		if ( ! $i18n ) {
 			$i18n = array(
 				'default'     => __( 'Default', 'et_builder' ),
 				'visible'     => __( 'Visible', 'et_builder' ),
@@ -40,12 +37,6 @@ class ET_Builder_Module_Field_Overflow extends ET_Builder_Module_Field_Base {
 				'horizontal'  => __( 'Horizontal Overflow', 'et_builder' ),
 				'vertical'    => __( 'Vertical Overflow', 'et_builder' ),
 			);
-			// phpcs:enable
-
-			// Don't cache translations too early or else we'd be unable to replace them in definitions.
-			if ( did_action( 'et_builder_structure_elements_load' ) ) {
-				$cache = $i18n;
-			}
 		}
 
 		$overflow         = et_pb_overflow();

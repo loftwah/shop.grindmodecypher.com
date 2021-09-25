@@ -163,7 +163,7 @@ function et_divi_get_global_assets_list( $global_list ) {
 		);
 	}
 
-	if ( ( is_single() || is_page() || is_home() ) && comments_open( $post_id ) && ! $has_tb_body ) {
+	if ( ( is_single() || is_page() || is_home() ) && comments_open( $post_id ) ) {
 		$assets_list['et_divi_comments'] = array(
 			'css' => array(
 				"{$assets_prefix}/comments.css",
@@ -178,21 +178,30 @@ function et_divi_get_global_assets_list( $global_list ) {
 		);
 	}
 
-	if ( is_active_widget( false, false, 'calendar', true ) ) {
+	if ( is_active_widget( false, false, 'calendar', true ) || et_is_active_block_widget( 'core/calendar' ) ) {
 		$assets_list['et_divi_widget_calendar'] = array(
 			'css' => "{$assets_prefix}/widget_calendar.css",
 		);
 	}
 
-	if ( is_active_widget( false, false, 'search', true ) ) {
+	if ( is_active_widget( false, false, 'search', true ) || et_is_active_block_widget( 'core/search' ) ) {
 		$assets_list['et_divi_widget_search'] = array(
 			'css' => "{$assets_prefix}/widget_search.css",
 		);
 	}
 
-	if ( is_active_widget( false, false, 'tag_cloud', true ) ) {
+	if ( is_active_widget( false, false, 'tag_cloud', true ) || et_is_active_block_widget( 'core/tag_cloud' ) ) {
 		$assets_list['et_divi_widget_tag_cloud'] = array(
 			'css' => "{$assets_prefix}/widget_tag_cloud.css",
+		);
+	}
+
+	if ( is_active_widget( false, false, 'media_gallery', true ) || et_is_active_block_widget( 'core/gallery' ) ) {
+		$assets_list['et_divi_widget_gallery'] = array(
+			'css' => array(
+				"{$shared_assets_prefix}/css/wp_gallery.css",
+				"{$shared_assets_prefix}/css/magnific_popup.css",
+			),
 		);
 	}
 
@@ -226,6 +235,12 @@ function et_divi_get_global_assets_list( $global_list ) {
 	if ( ! is_customize_preview() && 'none' !== $color_scheme ) {
 		$assets_list['et_color_scheme'] = array(
 			'css' => "{$assets_prefix}/color_scheme_{$color_scheme}.css",
+		);
+	}
+
+	if ( is_rtl() ) {
+		$assets_list['et_divi_rtl'] = array(
+			'css' => "{$assets_prefix}/rtl.css",
 		);
 	}
 

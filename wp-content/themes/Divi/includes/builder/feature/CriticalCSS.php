@@ -171,6 +171,11 @@ class ET_Builder_Critical_CSS {
 
 		add_filter( 'et_core_page_resource_force_write', [ $this, 'force_resource_write' ], 10, 2 );
 		add_filter( 'et_core_page_resource_tag', [ $this, 'builder_style_tag' ], 10, 5 );
+		if ( et_builder_is_mod_pagespeed_enabled() ) {
+			// PageSpeed filters out `preload` links so we gotta use `prefetch` but
+			// Safari doesn't support the latter....
+			add_action( 'wp_body_open', [ $this, 'add_safari_prefetch_workaround' ], 1 );
+		}
 
 		return $styles;
 	}
@@ -201,9 +206,11 @@ class ET_Builder_Critical_CSS {
 				if ( 0 === et_()->WPFS()->size( $deferred->path ) ) {
 					return '';
 				}
+				// Use 'prefetch' when Mod PageSpeed is detected because it removes 'preload' links.
+				$rel = et_builder_is_mod_pagespeed_enabled() ? 'prefetch' : 'preload';
 				// Defer the stylesheet.
-				$template = '<link rel="preload" as="style" id="%1$s" href="%2$s" onload="this.onload=null;this.rel=\'stylesheet\';%3$s" />';
-				return sprintf( $template, $slug, $scheme, $onload );
+				$template = '<link rel="%4$s" as="style" id="%1$s" href="%2$s" onload="this.onload=null;this.rel=\'stylesheet\';%3$s" />';
+				return sprintf( $template, $slug, $scheme, $onload, $rel );
 			case $inlined->slug:
 				// Inline the stylesheet.
 				$template = "<style id=\"et-critical-inline-css\">%1\$s</style>\n";
@@ -213,6 +220,36 @@ class ET_Builder_Critical_CSS {
 		// phpcs:enable
 
 		return $tag;
+	}
+
+	/**
+	 * Safari doesn't support `prefetch`......
+	 *
+	 * @since 4.10.7
+	 *
+	 * @return void
+	 */
+	public function add_safari_prefetch_workaround() {
+		// .... so we turn it into `preload` using JS.
+		?>
+		<script type="application/javascript">
+			(function() {
+				var relList = document.createElement('link').relList;
+				if (!!(relList && relList.supports && relList.supports('prefetch'))) {
+					// Browser supports `prefetch`, no workaround needed.
+					return;
+				}
+
+				var links = document.getElementsByTagName('link');
+				for (var i = 0; i < links.length; i++) {
+					var link = links[i];
+					if ('prefetch' === link.rel) {
+						link.rel = 'preload';
+					}
+				}
+			})();
+		</script>
+		<?php
 	}
 
 	/**

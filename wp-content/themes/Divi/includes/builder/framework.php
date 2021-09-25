@@ -28,6 +28,14 @@ if ( ! defined( 'ET_BUILDER_PLACEHOLDER_PORTRAIT_IMAGE_DATA' ) ) {
 	define( 'ET_BUILDER_PLACEHOLDER_PORTRAIT_IMAGE_DATA', 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDUwMCA1MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxwYXRoIGZpbGw9IiNFQkVCRUIiIGQ9Ik0wIDBoNTAwdjUwMEgweiIvPgogICAgICAgIDxyZWN0IGZpbGwtb3BhY2l0eT0iLjEiIGZpbGw9IiMwMDAiIHg9IjY4IiB5PSIzMDUiIHdpZHRoPSIzNjQiIGhlaWdodD0iNTY4IiByeD0iMTgyIi8+CiAgICAgICAgPGNpcmNsZSBmaWxsLW9wYWNpdHk9Ii4xIiBmaWxsPSIjMDAwIiBjeD0iMjQ5IiBjeT0iMTcyIiByPSIxMDAiLz4KICAgIDwvZz4KPC9zdmc+Cg==' );
 }
 
+// phpcs:ignore WordPress.Security.NonceVerification -- Only checking arg is set.
+if ( isset( $_REQUEST['et_check_mod_pagespeed'] ) ) {
+	// This is an internal request used to check response headers, hence we exit early.
+	// Must still output some html or else Mod Pagepeed won't add any header.
+	echo '<html><head/></html>';
+	die();
+}
+
 // Detect Codeception and load additional code required by tests.
 if ( class_exists( 'Codeception\TestCase\WPTestCase' ) ) {
 	foreach ( glob( ET_BUILDER_DIR . 'tests/codeception/wpunit/*.php' ) as $test_file ) {
@@ -119,6 +127,7 @@ function et_builder_is_critical_enabled() {
 }
 
 require_once ET_BUILDER_DIR . 'compat/early.php';
+require_once ET_BUILDER_DIR . 'compat/scripts.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/blocks/Layout.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/utils/Conversion.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/EditorTypography.php';
@@ -1010,7 +1019,8 @@ function et_builder_load_frontend_builder() {
 
 	$et_current_memory_limit = et_core_get_memory_limit();
 
-	if ( $et_current_memory_limit < 256 ) {
+	// Set memory limit when there is a limit set, and that is less than 256M.
+	if ( $et_current_memory_limit && $et_current_memory_limit < 256 ) {
 		@ini_set( 'memory_limit', '256M' );
 	}
 

@@ -17,7 +17,7 @@ if ( function_exists( 'ud_get_stateless_media' ) ) {
 /**
  * Disable JQuery Body Feature.
  *
- * @since ??
+ * @since 4.10.3
  *
  * @return void
  */
@@ -72,4 +72,10 @@ if ( defined( 'AUTOPTIMIZE_PLUGIN_VERSION' ) ) {
 			break;
 		}
 	}
+}
+
+if ( defined( 'OP3_VERSION' ) ) {
+	// Disable JQuery Body when some OptimizePress is active
+	// because the two aren't compatible.
+	et_builder_disable_jquery_body();
 }

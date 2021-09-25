@@ -2267,7 +2267,7 @@ const OptionalExpansionWrapper = ({
   expanded
 }) => {
   if (!expandable) {
-    return Object(external_wp_element_["createElement"])(external_wp_element_["Fragment"], null, children);
+    return expanded ? Object(external_wp_element_["createElement"])(external_wp_element_["Fragment"], null, children) : null;
   }
 
   return Object(external_wp_element_["createElement"])(VerticalCSSTransition, {

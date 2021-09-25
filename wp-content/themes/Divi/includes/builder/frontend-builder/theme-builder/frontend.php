@@ -354,7 +354,7 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 
 		if ( empty( $critical ) ) {
 			// No critical styles defined, just enqueue everything as usual.
-			$styles .= $custom;
+			$styles = $custom . $styles;
 			if ( ! empty( $styles ) ) {
 				if ( isset( $deferred_styles_manager ) ) {
 					$deferred_styles_manager->set_data( $styles, 40 );
@@ -364,7 +364,7 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 			}
 		} else {
 			// Add page css to the critical section.
-			$critical .= $custom;
+			$critical = $custom . $critical;
 			$advanced_styles_manager->set_data( $critical, 40 );
 			if ( ! empty( $styles ) ) {
 				// Defer everything else.

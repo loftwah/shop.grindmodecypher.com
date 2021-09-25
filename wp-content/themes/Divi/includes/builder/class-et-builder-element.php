@@ -1559,7 +1559,7 @@ class ET_Builder_Element {
 
 		if ( empty( $critical ) ) {
 			// No critical styles defined, just enqueue everything as usual.
-			$styles .= $custom;
+			$styles = $custom . $styles;
 			if ( ! empty( $styles ) ) {
 				if ( isset( self::$deferred_styles_manager ) ) {
 					self::$deferred_styles_manager->set_data( $styles, 40 );
@@ -1569,7 +1569,7 @@ class ET_Builder_Element {
 			}
 		} else {
 			// Add page css to the critical section.
-			$critical .= $custom;
+			$critical = $custom . $critical;
 			self::$advanced_styles_manager->set_data( $critical, 40 );
 			if ( ! empty( $styles ) ) {
 				// Defer everything else.
@@ -2082,15 +2082,22 @@ class ET_Builder_Element {
 			// decode HTML entities and remove trailing and leading quote if needed.
 			$processed_attr_value = $need_html_entities_decode ? trim( htmlspecialchars_decode( $attribute_value, ENT_QUOTES ), '"' ) : $attribute_value;
 
+			$field_type = empty( $this->fields_unprocessed[ $attribute_key ]['type'] ) ? '' : $this->fields_unprocessed[ $attribute_key ]['type'];
+
 			// the icon shortcodes are fine.
-			if ( isset( $font_icon_options_as_keys[ $attribute_key ] ) ) {
+			if ( isset( $font_icon_options_as_keys[ $attribute_key ] ) || 'select_icon' === $field_type ) {
 				$shortcode_attributes[ $attribute_key ] = $processed_attr_value;
 				// icon attributes must not be str_replaced.
+
+				// Add responsive and hover types attributes on the font icon options list. Just
+				// assign empty string value because we just need the key.
+				$font_icon_options_as_keys[ "{$attribute_key}_tablet" ] = '';
+				$font_icon_options_as_keys[ "{$attribute_key}_phone" ]  = '';
+				$font_icon_options_as_keys[ "{$attribute_key}__hover" ] = '';
 				continue;
 			}
 
 			// Set empty TinyMCE content '&lt;br /&gt;<br />' as empty string.
-			$field_type = empty( $this->fields_unprocessed[ $attribute_key ]['type'] ) ? '' : $this->fields_unprocessed[ $attribute_key ]['type'];
 			if ( 'tiny_mce' === $field_type && 'ltbrgtbr' === preg_replace( '/[^a-z]/', '', $processed_attr_value ) ) {
 				$processed_attr_value = '';
 			}
@@ -2945,7 +2952,8 @@ class ET_Builder_Element {
 
 		// Check if animation is enabled.
 		$animation_enabled = $this->_features_manager->get(
-			'has_animation_enableds',
+			// Has animation enabled.
+			'anim',
 			function() use ( $animation_style, $animation_direction ) {
 				return ! empty( $animation_style ) || ! empty( $animation_direction );
 			}
@@ -3105,7 +3113,8 @@ class ET_Builder_Element {
 		}
 
 		$has_hover_enabled = $this->_features_manager->get(
-			'has_hover_enabled',
+			// Has hover enabled.
+			'hov',
 			function() {
 				return et_has_hover_enabled( $this->props );
 			}
@@ -3118,7 +3127,8 @@ class ET_Builder_Element {
 
 		// Add sticky element module classname to determine nested sticky module.
 		$needs_sticky_class = $this->_features_manager->get(
-			'needs_sticky_class',
+			// Needs sticky class.
+			'sti',
 			function() use ( $et_fb_processing_shortcode_object, $render_slug ) {
 				return ! $et_fb_processing_shortcode_object && et_()->array_get( self::$sticky_elements, self::get_module_order_class( $render_slug ), false );
 			}
@@ -3314,7 +3324,8 @@ class ET_Builder_Element {
 		$module_preset_settings = self::$global_presets_manager->get_module_presets_settings( $module_slug, $this->props );
 
 		$global_default_fields = $this->_features_manager->get(
-			'global_default_fields',
+			// Global default fields.
+			'glde',
 			function() use ( $fields, $slug, $must_print_fields ) {
 
 				$global_default_fields = [];
@@ -3333,6 +3344,9 @@ class ET_Builder_Element {
 				return $global_default_fields;
 			}
 		);
+
+		// make sure its at least an array if feature manager had returned false.
+		$global_default_fields = $global_default_fields ?: []; // phpcs:ignore WordPress.PHP.DisallowShortTernary.Found -- It's PHP 5.3+ compat, so it's fine to use.
 
 		foreach ( $global_default_fields as $field_key => $global_setting_value ) {
 			$attr_value = ! empty( $this->props[ $field_key ] ) ? $this->props[ $field_key ] : '';
@@ -4011,6 +4025,16 @@ class ET_Builder_Element {
 					// Unset the background color attrs if it was default based on selected network.
 					unset( $attrs['background_color'] );
 				}
+			}
+
+			// Unset the custom_margin that only has | as the value.
+			if ( ! empty( $attrs['custom_margin'] ) && '' === str_replace( '|', '', $attrs['custom_margin'] ) ) {
+				unset( $attrs['custom_margin'] );
+			}
+
+			// Unset the custom_padding that only has | as the value.
+			if ( ! empty( $attrs['custom_padding'] ) && '' === str_replace( '|', '', $attrs['custom_padding'] ) ) {
+				unset( $attrs['custom_padding'] );
 			}
 
 			return array_merge( $module_preset_settings, $attrs );
@@ -8418,22 +8442,13 @@ class ET_Builder_Element {
 	 * @since 4.6.0 Add sticky style support
 	 */
 	public function setup_hover_transitions( $function_name ) {
-
-		// This is an array.
-		// Cache this since it is a heavy function.
-		$transitions_map = $this->_features_manager->get(
-			'transition_fields_css_props',
-			function() {
-				return $this->get_transition_fields_css_props();
-			}
-		);
-
-		$selectors     = array();
-		$transitions   = array();
-		$hover         = et_pb_hover_options();
-		$hover_suffix  = $hover->get_suffix();
-		$sticky        = et_pb_sticky_options();
-		$sticky_suffix = $sticky->get_suffix();
+		$transitions_map = $this->get_transition_fields_css_props();
+		$selectors       = array();
+		$transitions     = array();
+		$hover           = et_pb_hover_options();
+		$hover_suffix    = $hover->get_suffix();
+		$sticky          = et_pb_sticky_options();
+		$sticky_suffix   = $sticky->get_suffix();
 
 		// we need to loop transitions array so cases of prefixed prop names can also be caught.
 		foreach ( $transitions_map as $prop_name => $css_props ) {
@@ -8479,19 +8494,7 @@ class ET_Builder_Element {
 	 * @since 4.6.0 add sticky style support
 	 */
 	public function process_hover_transitions( $function_name ) {
-		/**
-		 * Translation data.
-		 *
-		 * @var array $transitions_data Array of transitions and selectors (not bool "is enabled").
-		 */
-		$transitions_data = $this->_features_manager->get(
-			'hover_transitions',
-			function() use ( $function_name ) {
-				return $this->setup_hover_transitions( $function_name );
-			}
-		);
-
-		list( $transitions, $selectors ) = $transitions_data;
+		list( $transitions, $selectors ) = $this->setup_hover_transitions( $function_name );
 
 		// don't apply transitions if none are needed.
 		if ( empty( $transitions ) ) {
@@ -12819,7 +12822,8 @@ class ET_Builder_Element {
 		$slugs = array_merge( $slugs, $mobile_options_last_edited_slugs );
 
 		$is_enabled = $this->_features_manager->get(
-			'is_custom_font_options_enabled',
+			// Is custom font options enabled.
+			'foop',
 			function() use ( $slugs ) {
 				return $this->font_options_are_used( $slugs );
 			}
@@ -13877,7 +13881,9 @@ class ET_Builder_Element {
 			$is_background_image_disabled          = false;
 
 			$is_enabled = $this->_features_manager->get(
-				'background_responsive_' . $device . '_is_enabled',
+				// Is background responsive enabled for $device.
+				// keys: bared, baret, barep.
+				'bare' . $device[0],
 				function() use ( $responsive ) {
 					return $responsive->is_responsive_enabled( $this->props, 'background' );
 				}
@@ -14136,7 +14142,8 @@ class ET_Builder_Element {
 		}
 
 		$is_enabled = $this->_features_manager->get(
-			'background_hover_is_enabled',
+			// Is background hover enabled.
+			'baho',
 			function() use ( $hover ) {
 				return $hover->is_enabled( 'background', $this->props );
 			}
@@ -14385,7 +14392,8 @@ class ET_Builder_Element {
 		}
 
 		$is_enabled = $this->_features_manager->get(
-			'background_sticky_is_enabled',
+			// Background sticky is enabled.
+			'bast',
 			function() use ( $sticky ) {
 				return $sticky->is_enabled( 'background', $this->props );
 			}
@@ -14644,7 +14652,8 @@ class ET_Builder_Element {
 	 */
 	public function process_margin_padding_advanced_css( $function_name ) {
 		$is_enabled = $this->_features_manager->get(
-			'margin_padding_css_is_enabled',
+			// Margin padding css is enabled.
+			'mapac',
 			function() {
 				return $this->margin_padding->is_used( $this->props );
 			}
@@ -14666,7 +14675,8 @@ class ET_Builder_Element {
 	 */
 	public function process_text_shadow( $function_name ) {
 		$is_enabled = $this->_features_manager->get(
-			'text_shadow_is_enabled',
+			// Text shadow is enabled.
+			'tesh',
 			function() {
 				return $this->text_shadow->is_used( $this->props );
 			}
@@ -14741,7 +14751,8 @@ class ET_Builder_Element {
 		 */
 		$border_field = ET_Builder_Module_Fields_Factory::get( 'Border' );
 		$is_enabled   = $this->_features_manager->get(
-			'border_is_enabled',
+			// Border is enabled.
+			'bor',
 			function() use ( $border_field ) {
 				return $border_field->has_any_border_attrs( $this->props );
 			}
@@ -15000,7 +15011,8 @@ class ET_Builder_Element {
 		$position_locations = $this->get_position_locations();
 
 		$is_enabled = $this->_features_manager->get(
-			'transforms_is_enabled',
+			// Transforms is enabled.
+			'tra',
 			function() use ( $class, $position_locations ) {
 				return $class->is_used( $this->props, $position_locations );
 			}
@@ -15132,7 +15144,8 @@ class ET_Builder_Element {
 		$position_class->set_module( $this );
 
 		$is_enabled = $this->_features_manager->get(
-			'position_is_enabled',
+			// Position is enabled.
+			'pos',
 			function() use ( $position_class ) {
 				return $position_class->is_used( $this->props );
 			}
@@ -15230,7 +15243,8 @@ class ET_Builder_Element {
 		}
 
 		$is_enabled = $this->_features_manager->get(
-			'filters_are_enabled',
+			// Filters are enabled.
+			'fil',
 			function() {
 				return $this->are_filters_used();
 			}
@@ -15301,7 +15315,8 @@ class ET_Builder_Element {
 		}
 
 		$is_enabled = $this->_features_manager->get(
-			'max_width_is_enabled',
+			// Max width is enabled.
+			'mawi',
 			function() use ( $function_name ) {
 				return $this->max_width_is_used( $function_name );
 			}
@@ -15698,7 +15713,8 @@ class ET_Builder_Element {
 
 		// Check if animation is enabled.
 		$scroll_effects_enabled = $this->_features_manager->get(
-			'scroll_effects_enabled',
+			// Scroll effects enabled.
+			'scef',
 			function() use ( $options ) {
 				return $this->is_scroll_effects_enabled( $options );
 			}
@@ -15843,7 +15859,9 @@ class ET_Builder_Element {
 				$selector  = self::$_->array_get( $settings, "css.{$key}", $default_selector );
 
 				$responsive_is_enabled = $this->_features_manager->get(
-					"height_{$slug}_responsive_is_enabled",
+					// Is height responsive enabled for $slug.
+					// keys: hhere, hmire, hmare.
+					"h{$slug[0]}{$slug[1]}re",
 					function() use ( $responsive, $slug ) {
 						return $responsive->is_enabled( $slug, $this->props );
 					}
@@ -15873,7 +15891,9 @@ class ET_Builder_Element {
 				}
 
 				$hover_is_enabled = $this->_features_manager->get(
-					"height_{$slug}_hover_is_enabled",
+					// Is height hover enabled for $slug.
+					// keys: hheho, hmiho, hmaho.
+					"h{$slug[0]}{$slug[1]}ho",
 					function() use ( $hover, $slug ) {
 						return $hover->is_enabled( $slug, $this->props );
 					}
@@ -15895,7 +15915,9 @@ class ET_Builder_Element {
 				}
 
 				$sticky_is_enabled = $this->_features_manager->get(
-					"height_{$slug}_sticky_is_enabled",
+					// Is height sticky enabled for $slug.
+					// keys: hhest, hmist, hmast.
+					"h{$slug[0]}{$slug[1]}st",
 					function() use ( $sticky, $slug ) {
 						return $sticky->is_enabled( $slug, $this->props );
 					}
@@ -15941,7 +15963,6 @@ class ET_Builder_Element {
 		$overflow   = et_pb_overflow();
 		$hover      = et_pb_hover_options();
 		$sticky     = et_pb_sticky_options();
-		$responsive = et_pb_responsive_options();
 		$selector   = self::$_->array_get(
 			$this->advanced_fields,
 			'overflow.css.main',
@@ -15964,7 +15985,9 @@ class ET_Builder_Element {
 			et_pb_responsive_options()->generate_responsive_css( $overflow_values, $selector, $field, $function_name, '', 'overflow' );
 
 			$hover_is_enabled = $this->_features_manager->get(
-				"overflow_{$field}_hover_is_enabled",
+				// Is overflow hover enabled for {$field}.
+				// keys: oxho, oyho.
+				"{$field[0]}{$field[9]}ho",
 				function() use ( $hover, $field ) {
 					return $hover->is_enabled( $field, $this->props );
 				}
@@ -15983,7 +16006,9 @@ class ET_Builder_Element {
 			}
 
 			$sticky_is_enabled = $this->_features_manager->get(
-				"overflow_{$field}_sticky_is_enabled",
+				// Is overflow sticky enabled for {$field}.
+				// keys: oxst, oyst.
+				"{$field[0]}{$field[9]}st",
 				function() use ( $sticky, $field ) {
 					return $sticky->is_enabled( $field, $this->props );
 				}
@@ -16071,7 +16096,8 @@ class ET_Builder_Element {
 		}
 
 		$is_enabled = $this->_features_manager->get(
-			'custom_margin_padding_is_enabled',
+			// Custom margin padding is enabled.
+			'cuma',
 			function() {
 				return $this->custom_margin_is_used();
 			}
@@ -16452,7 +16478,8 @@ class ET_Builder_Element {
 		$has_wrapper = et_()->array_get( $this->wrapper_settings, 'order_class_wrapper', false );
 
 		$is_enabled = $this->_features_manager->get(
-			'is_button_visible',
+			// Is button visible.
+			'but',
 			function() use ( $function_name ) {
 
 				foreach ( $this->advanced_fields['button'] as $option_name => $option_settings ) {
@@ -17702,7 +17729,8 @@ class ET_Builder_Element {
 		}
 
 		$is_enabled = $this->_features_manager->get(
-			'box_shadow_is_enabled',
+			// Box shadow is enabled.
+			'bosh',
 			function() use ( $box_shadow, $advanced_fields ) {
 				if ( $box_shadow->is_used( $this->props ) ) {
 					return true;

@@ -812,7 +812,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 
 		$query_args = array(
 			'posts_per_page' => intval( $args['posts_number'] ),
-			'post_status'    => array( 'publish', 'private' ),
+			'post_status'    => array( 'publish', 'private', 'inherit' ),
 			'perm'           => 'readable',
 			'post_type'      => $args['post_type'],
 		);
@@ -1321,7 +1321,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 
 		$args = array(
 			'posts_per_page' => (int) $posts_number,
-			'post_status'    => array( 'publish', 'private' ),
+			'post_status'    => array( 'publish', 'private', 'inherit' ),
 			'perm'           => 'readable',
 			'post_type'      => $post_type,
 		);

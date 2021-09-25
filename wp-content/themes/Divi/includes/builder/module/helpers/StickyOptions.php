@@ -119,8 +119,9 @@ class ET_Builder_Module_Helper_Sticky_Options {
 	 * @return bool
 	 */
 	public function is_inside_sticky_module() {
-		global $is_parent_sticky_module, $is_inside_sticky_module;
-		return ! $is_parent_sticky_module && $is_inside_sticky_module;
+		global $is_inside_sticky_module;
+
+		return $is_inside_sticky_module;
 	}
 
 	/**
