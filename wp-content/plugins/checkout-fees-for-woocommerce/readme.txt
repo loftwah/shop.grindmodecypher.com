@@ -3,7 +3,7 @@ Contributors: tychesoftwares
 Donate link: https://www.paypal.me/TycheSoftwares
 Tags: woocommerce, payment, gateway, fee, discount
 Requires at least: 4.4
-Tested up to: 5.7
+Tested up to: 5.8
 Stable tag: trunk
 Requires PHP: 5.6
 License: GNU General Public License v3.0
@@ -98,6 +98,12 @@ Plugin requires **minimum setup**: after enabling the fee/discount for selected 
 3. Go to "WooCommerce > Settings > Payment Gateway Based Fees and Discounts".
 
 == Changelog ==
+
+= 2.6.4 - 28/09/2021 =
+* Fix - Zero priced products were showing the discount in the payment gateway info table on the product page. This is fixed now.
+* Fix - When the order is created manually without any products in it and only WooCommerce fees are added at that time fees were not getting added. This is fixed now.
+* Fix - Style and Script were loading all around admin side and not only on the particular page. This is fixed now.
+* Fix - When taxes were enabled on the payment gateway fees, fatal error was coming on the pay for order page. This is fixed now.
 
 = 2.6.3 - 12/05/2021 =
 * Enhancement - Now the discount/fees will be added or removed on the "Pay for order" endpoint also.

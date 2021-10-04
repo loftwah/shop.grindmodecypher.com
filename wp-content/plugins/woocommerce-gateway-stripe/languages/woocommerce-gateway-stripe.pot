@@ -3,49 +3,114 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
 
-#: client/blocks/credit-card/index.js:42
-msgid "Credit / Debit Card"
+#: client/components/section-status/index.js:11
+msgid "Enabled"
 msgstr ""
 
-#: client/blocks/credit-card/index.js:58
-msgid "Stripe Credit Card payment method"
+#: client/components/section-status/index.js:20
+msgid "Disabled"
 msgstr ""
 
-#: client/blocks/payment-request/custom-button.js:15
-msgid "Buy now"
+#: client/data/settings/actions.js:47
+msgid "Settings saved."
 msgstr ""
 
-#: client/settings/payment-request-section/index.js:109
-msgid "Show express checkouts on"
+#: client/data/settings/actions.js:52
+msgid "Error saving settings."
 msgstr ""
 
-#: client/settings/payment-request-section/index.js:127
-msgid "Checkout"
-msgstr ""
-
-#: client/settings/payment-request-section/index.js:145
-msgid "Product page"
-msgstr ""
-
-#: client/settings/payment-request-section/index.js:159
-msgid "Cart"
-msgstr ""
-
-#: client/settings/payment-request-section/index.js:171
-msgid "Customize appearance"
-msgstr ""
-
-#: client/settings/payment-request-section/index.js:68
-msgid "Enable express checkouts"
-msgstr ""
-
-#: client/settings/payment-request-section/index.js:74
+#: client/entrypoints/payment-gateways/disable-confirmation-modal.js:21
 msgid ""
-"By enabling this feature, you agree to {{stripeLink}}Stripe{{/stripeLink}}, "
-"{{appleLink}}Apple{{/appleLink}}, and {{googleLink}}Google{{/googleLink}}'s "
-"terms of use."
+"Are you sure you want to disable Stripe? Without it, your customers will no "
+"longer be able to pay using the express checkouts."
 msgstr ""
 
-#: client/settings/save-settings-section/index.js:25
-msgid "Save changes"
+#: client/entrypoints/payment-gateways/disable-confirmation-modal.js:25
+msgid ""
+"Are you sure you want to disable Stripe? Without it, your customers will no "
+"longer be able to pay using the payment methods below as well as express "
+"checkouts."
+msgstr ""
+
+#: client/entrypoints/payment-gateways/disable-confirmation-modal.js:34
+msgid "Disable Stripe"
+msgstr ""
+
+#: client/entrypoints/payment-gateways/disable-confirmation-modal.js:57
+msgid "Payment methods that need Stripe:"
+msgstr ""
+
+#: client/settings/connect-stripe-account/index.js:103
+msgid "Enter account keys (advanced)"
+msgstr ""
+
+#: client/settings/connect-stripe-account/index.js:58
+msgid "Get started with Stripe"
+msgstr ""
+
+#: client/settings/connect-stripe-account/index.js:64
+msgid ""
+"Connect or create a Stripe account to accept payments directly onsite, "
+"including Payment Request buttons (such as Apple Pay and Google Pay), "
+"iDeal, SEPA, Sofort, and more international payment methods."
+msgstr ""
+
+#: client/settings/connect-stripe-account/index.js:71
+msgid ""
+"By clicking \"Create or connect an account\", you agree to the "
+"{{tosLink}}Terms of service.{{/tosLink}}"
+msgstr ""
+
+#: client/settings/connect-stripe-account/index.js:93
+msgid "Create or connect an account"
+msgstr ""
+
+#: client/settings/customization-options-notice/index.js:54
+msgid ""
+"{{strong}}Where are the customization options?{{/strong}} In the new "
+"checkout experience, payment method details are automatically displayed in "
+"your customers’ languages so you don’t have to worry about writing them "
+"manually."
+msgstr ""
+
+#: client/settings/general-settings-section/section-heading.js:46
+msgid "Payment methods"
+msgstr ""
+
+#: client/settings/general-settings-section/section-heading.js:49
+msgid "Early access"
+msgstr ""
+
+#: client/settings/general-settings-section/section-heading.js:59
+msgid "Disable the new Payment Experience"
+msgstr ""
+
+#: client/settings/general-settings-section/section-heading.js:65
+msgid "Disable"
+msgstr ""
+
+#: client/settings/payment-methods/index.js:27
+msgid "Payments accepted on checkout"
+msgstr ""
+
+#: client/settings/payment-methods/index.js:35
+msgid ""
+"Select payments available to customers at checkout. Based on their device "
+"type, location, and purchase history, your customers will only see the most "
+"relevant payment methods."
+msgstr ""
+
+#: client/settings/payment-methods/index.js:49
+msgid "Express checkouts"
+msgstr ""
+
+#: client/settings/payment-methods/index.js:59
+msgid ""
+"Let your customers use their favorite express payment methods and digital "
+"wallets for faster, more secure checkouts across different parts of your "
+"store."
+msgstr ""
+
+#: client/settings/payment-methods/index.js:65
+msgid "Learn more"
 msgstr ""

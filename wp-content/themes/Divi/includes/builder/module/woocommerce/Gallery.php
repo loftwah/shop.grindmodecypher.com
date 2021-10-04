@@ -181,7 +181,7 @@ class ET_Builder_Module_Woocommerce_Gallery extends ET_Builder_Module_Gallery {
 	 *
 	 * @see   https://github.com/elegantthemes/Divi/issues/18768
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 *
 	 * @param array $conditional_tags Conditional Tags.
 	 *
@@ -212,7 +212,7 @@ class ET_Builder_Module_Woocommerce_Gallery extends ET_Builder_Module_Gallery {
 	 * Computed callback's callback method which adjusted arguments passed to original computed
 	 * callback's callback so the result is suitable for Woo Gallery module
 	 *
-	 * @since ?? Load Placeholder Image when in TB mode.
+	 * @since 4.10.8 Load Placeholder Image when in TB mode.
 	 * @since 3.29
 	 *
 	 * @param array $args             Arguments from Computed Prop AJAX call.

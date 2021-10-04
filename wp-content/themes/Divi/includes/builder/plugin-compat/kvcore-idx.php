@@ -4,7 +4,7 @@
  *
  * @package Divi
  * @subpackage Builder
- * @since ??
+ * @since 4.10.8
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Compatibility for kvCORE.
  *
- * @since ??
+ * @since 4.10.8
  *
  * @link https://wordpress.org/plugins/kvcore-idx/
  */
@@ -23,7 +23,7 @@ class ET_Builder_Plugin_Compat_KvCORE extends ET_Builder_Plugin_Compat_Base {
 	/**
 	 * Constructor.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 */
 	public function __construct() {
 		$this->plugin_id = 'kvcore-idx/kvcore-idx.php';
@@ -33,7 +33,7 @@ class ET_Builder_Plugin_Compat_KvCORE extends ET_Builder_Plugin_Compat_Base {
 	/**
 	 * Hook methods to WordPress.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 *
 	 * @return void
 	 */

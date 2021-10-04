@@ -157,7 +157,8 @@ function et_divi_get_global_assets_list( $global_list ) {
 		);
 	}
 
-	if ( ( is_active_sidebar( 'sidebar-1' ) && ! is_singular() && ! $has_tb_body ) || ( is_active_sidebar( 'sidebar-1' ) && is_singular() && ! $is_blank_page_tpl && ! $has_tb_body && ! in_array( $page_layout, array( 'et_full_width_page', 'et_no_sidebar' ), true ) ) ) {
+	if ( ( is_active_sidebar( 'sidebar-1' ) && ! is_singular() && ! $has_tb_body ) 
+		|| ( is_active_sidebar( 'sidebar-1' ) && is_singular() && ! $has_tb_body && ! in_array( $page_layout, array( 'et_full_width_page', 'et_no_sidebar' ), true ) ) ) {
 		$assets_list['et_divi_sidebar'] = array(
 			'css' => "{$assets_prefix}/sidebar.css",
 		);

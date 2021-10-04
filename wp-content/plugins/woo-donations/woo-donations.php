@@ -3,7 +3,7 @@
 Plugin Name: Woo Donations
 Description: A plugin to add donation for campaign
 Author: Geek Code Lab
-Version: 2.1
+Version: 2.3
 WC tested up to: 5.6.0
 Author URI: https://geekcodelab.com/
 Text Domain : woo-donations
@@ -48,12 +48,16 @@ function wdgk_plugin_active_woocommerce_donation()
 	$options 			= array();
 	$setting 			= get_option('wdgk_donation_settings');
 
+	if(isset($setting) && !empty($setting)) 	$options 			= $setting;
+	
+	// unset($options['Noteplaceholder']);
+
 	if(!isset($setting['Text']))  			$options['Text'] 			= $btntext;
 	if(!isset($setting['TextColor']))  		$options['TextColor'] 		= $textcolor;
 	if(!isset($setting['Color']))  			$options['Color'] 			= $btncolor;
-	if(!isset($options['Formtitle'])) 		$options['Formtitle'] 		= $form_title;
-	if(!isset($options['AmtPlaceholder'])) 	$options['AmtPlaceholder'] 	= $amount_placeholder;
-	if(!isset($options['Noteplaceholder']))	$options['Noteplaceholder'] = $note_placeholder;
+	if(!isset($setting['Formtitle'])) 		$options['Formtitle'] 		= $form_title;
+	if(!isset($setting['AmtPlaceholder'])) 	$options['AmtPlaceholder'] 	= $amount_placeholder;
+	if(!isset($setting['Noteplaceholder']))	$options['Noteplaceholder'] = $note_placeholder;
 
 
 	if (!isset($setting['Product'])) {

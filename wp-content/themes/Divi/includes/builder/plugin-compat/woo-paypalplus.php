@@ -4,7 +4,7 @@
  *
  * @package Divi
  * @subpackage Builder
- * @since ??
+ * @since 4.10.8
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Compatibility for PayPal Plus for WooCommerce.
  *
- * @since ??
+ * @since 4.10.8
  *
  * @link https://wordpress.org/plugins/woo-paypalplus/
  */
@@ -23,7 +23,7 @@ class ET_Builder_Plugin_Compat_Woo_PayPal_Plus extends ET_Builder_Plugin_Compat_
 	/**
 	 * Constructor.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 */
 	public function __construct() {
 		$this->plugin_id = 'woo-paypalplus/paypalplus-woocommerce.php';
@@ -33,7 +33,7 @@ class ET_Builder_Plugin_Compat_Woo_PayPal_Plus extends ET_Builder_Plugin_Compat_
 	/**
 	 * Hook methods to WordPress.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 *
 	 * @return void
 	 */
@@ -49,7 +49,7 @@ class ET_Builder_Plugin_Compat_Woo_PayPal_Plus extends ET_Builder_Plugin_Compat_
 	/**
 	 * Maybe Disable JQuery Body feature.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 *
 	 * @param bool   $enabled Whether the feature should be enabled or not.
 	 * @param string $content TB/Post content.

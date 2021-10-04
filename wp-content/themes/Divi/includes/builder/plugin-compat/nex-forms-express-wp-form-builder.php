@@ -4,7 +4,7 @@
  *
  * @package Divi
  * @subpackage Builder
- * @since ??
+ * @since 4.10.8
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Compatibility for NEX-Forms.
  *
- * @since ??
+ * @since 4.10.8
  *
  * @link https://wordpress.org/plugins/nex-forms-express-wp-form-builder/
  */
@@ -23,7 +23,7 @@ class ET_Builder_Plugin_Compat_NEX_Forms extends ET_Builder_Plugin_Compat_Base {
 	/**
 	 * Constructor.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 */
 	public function __construct() {
 		$this->plugin_id = 'nex-forms-express-wp-form-builder/main.php';
@@ -33,7 +33,7 @@ class ET_Builder_Plugin_Compat_NEX_Forms extends ET_Builder_Plugin_Compat_Base {
 	/**
 	 * Hook methods to WordPress.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 *
 	 * @return void
 	 */
@@ -49,7 +49,7 @@ class ET_Builder_Plugin_Compat_NEX_Forms extends ET_Builder_Plugin_Compat_Base {
 	/**
 	 * Maybe Disable JQuery Body feature.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 *
 	 * @param bool   $enabled Whether the feature should be enabled or not.
 	 * @param string $content TB/Post content.

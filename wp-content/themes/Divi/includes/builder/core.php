@@ -2497,6 +2497,13 @@ function et_fb_get_nonces() {
 		'retrieveGlobalPresetsHistory'    => wp_create_nonce( 'et_builder_retrieve_global_presets_history' ),
 		'migrateModuleCustomizerPhaseTwo' => wp_create_nonce( 'et_builder_migrate_module_customizer_phase_two' ),
 		'getWoocommerceTabs'              => wp_create_nonce( 'et_builder_get_woocommerce_tabs' ),
+		'getPostTypes'                    => wp_create_nonce( 'et_builder_ajax_get_post_types' ),
+		'getAuthors'                      => wp_create_nonce( 'et_builder_ajax_get_authors' ),
+		'getUserRoles'                    => wp_create_nonce( 'et_builder_ajax_get_user_roles' ),
+		'getCategories'                   => wp_create_nonce( 'et_builder_ajax_get_categories' ),
+		'getTags'                         => wp_create_nonce( 'et_builder_ajax_get_tags' ),
+		'searchProducts'                  => wp_create_nonce( 'et_builder_ajax_search_products' ),
+		'getDisplayConditionsStatus'      => wp_create_nonce( 'et_builder_ajax_get_display_conditions_status' ),
 		'globalColorsSave'                => wp_create_nonce( 'et_builder_global_colors_save' ),
 		'defaultColorsUpdate'             => wp_create_nonce( 'et_builder_default_colors_update' ),
 	);
@@ -5163,6 +5170,7 @@ if ( ! function_exists( 'et_builder_get_google_fonts' ) ) :
 		et_builder_google_fonts_sync();
 
 		$google_fonts_cache = get_option( 'et_google_fonts_cache', array() );
+		$google_fonts_cache = is_array( $google_fonts_cache ) ? $google_fonts_cache : et_core_parse_google_fonts_json( $google_fonts_cache );
 
 		if ( ! empty( $google_fonts_cache ) ) {
 			// Use cache if it's not empty.

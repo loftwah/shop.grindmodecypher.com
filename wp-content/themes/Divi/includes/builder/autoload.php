@@ -109,6 +109,8 @@ function _et_pb_autoload( $class ) {
 		require_once 'class-et-builder-google-fonts-feature.php';
 	} elseif ( 'ET_Builder_Dynamic_Assets_Feature' === $class ) {
 		require_once 'class-et-builder-dynamic-assets-feature.php';
+	} elseif ( 'ET_Builder_Module_Field_DisplayConditions' === $class ) {
+		require_once 'module/field/DisplayConditions.php';
 	} elseif ( strpos( $class, 'ET_Builder_Module_Helper_Motion_' ) !== false ) {
 		_et_pb_autoload_helpers_motion( str_replace( 'ET_Builder_Module_Helper_Motion_', '', $class ) );
 	} elseif ( strpos( $class, 'ET_Builder_Module_Helper_' ) !== false ) {

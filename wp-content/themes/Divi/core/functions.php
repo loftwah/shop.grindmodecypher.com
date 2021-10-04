@@ -567,6 +567,7 @@ if ( ! function_exists( 'et_core_register_admin_assets' ) ) :
 			'etCore',
 			array(
 				'ajaxurl' => is_ssl() ? admin_url( 'admin-ajax.php' ) : admin_url( 'admin-ajax.php', 'http' ),
+				'wp_version' => get_bloginfo( 'version' ),
 				'text'    => array(
 					'modalTempContentCheck' => esc_html__( 'Got it, thanks!', 'et_core' ),
 				),

@@ -82,7 +82,7 @@ class ET_Builder_Module_Shortcode_Manager {
 	 * @return void
 	 */
 	public function register_modules() {
-		$modules            = [
+		$modules = [
 			'et_pb_accordion'                   => [
 				'classname' => 'ET_Builder_Module_Accordion',
 			],
@@ -233,7 +233,22 @@ class ET_Builder_Module_Shortcode_Manager {
 				'classname' => 'ET_Builder_Module_Video_Slider_Item',
 			],
 		];
-		$this->_modules_map = array_merge( $this->_modules_map, $modules );
+
+		/**
+		 * Filters built-in Divi Builder module class names.
+		 *
+		 * 3rd-party plugins can use this filter to override Divi Builder modules.
+		 *
+		 * NOTE: Overriding built-in modules is not ideal and should only be used as a temporary solution.
+		 * The recommended approach for achieving this is using the official API:
+		 * https://www.elegantthemes.com/documentation/developers/divi-module/how-to-create-a-divi-builder-module/
+		 *
+		 * @since 4.11.0
+		 *
+		 * @param array $additional_modules Additional modules.
+		 */
+		$additional_modules = apply_filters( 'et_module_classes', [] );
+		$this->_modules_map = array_merge( $this->_modules_map, $modules, $additional_modules );
 	}
 
 	/**
@@ -244,7 +259,7 @@ class ET_Builder_Module_Shortcode_Manager {
 	 * @return void
 	 */
 	public function register_fullwidth_modules() {
-		$modules            = [
+		$modules = [
 			'et_pb_fullwidth_code'         => [
 				'classname' => 'ET_Builder_Module_Fullwidth_Code',
 			],
@@ -276,7 +291,22 @@ class ET_Builder_Module_Shortcode_Manager {
 				'classname' => 'ET_Builder_Module_Fullwidth_Slider',
 			],
 		];
-		$this->_modules_map = array_merge( $this->_modules_map, $modules );
+
+		/**
+		 * Filters built-in Divi Builder module class names.
+		 *
+		 * 3rd-party plugins can use this filter to override Divi Builder modules.
+		 *
+		 * NOTE: Overriding built-in modules is not ideal and should only be used as a temporary solution.
+		 * The recommended approach for achieving this is using the official API:
+		 * https://www.elegantthemes.com/documentation/developers/divi-module/how-to-create-a-divi-builder-module/
+		 *
+		 * @since 4.11.0
+		 *
+		 * @param array $additional_modules Additional modules.
+		 */
+		$additional_modules = apply_filters( 'et_fullwidth_module_classes', [] );
+		$this->_modules_map = array_merge( $this->_modules_map, $modules, $additional_modules );
 	}
 
 	/**
@@ -302,7 +332,21 @@ class ET_Builder_Module_Shortcode_Manager {
 			],
 		];
 
-		$this->_structural_modules_map = $modules;
+		/**
+		 * Filters built-in Divi Builder module class names.
+		 *
+		 * 3rd-party plugins can use this filter to override Divi Builder modules.
+		 *
+		 * NOTE: Overriding built-in modules is not ideal and should only be used as a temporary solution.
+		 * The recommended approach for achieving this is using the official API:
+		 * https://www.elegantthemes.com/documentation/developers/divi-module/how-to-create-a-divi-builder-module/
+		 *
+		 * @since 4.11.0
+		 *
+		 * @param array $additional_modules Additional modules.
+		 */
+		$additional_modules            = apply_filters( 'et_structural_module_classes', [] );
+		$this->_structural_modules_map = array_merge( $modules, $additional_modules );
 	}
 
 	/**
@@ -318,7 +362,7 @@ class ET_Builder_Module_Shortcode_Manager {
 			return;
 		}
 
-		$woo_modules        = [
+		$woo_modules = [
 			'et_pb_wc_add_to_cart'      => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Add_To_Cart',
 			],
@@ -369,8 +413,22 @@ class ET_Builder_Module_Shortcode_Manager {
 			],
 		];
 
+		/**
+		 * Filters built-in Divi Builder module class names.
+		 *
+		 * 3rd-party plugins can use this filter to override Divi Builder modules.
+		 *
+		 * NOTE: Overriding built-in modules is not ideal and should only be used as a temporary solution.
+		 * The recommended approach for achieving this is using the official API:
+		 * https://www.elegantthemes.com/documentation/developers/divi-module/how-to-create-a-divi-builder-module/
+		 *
+		 * @since 4.11.0
+		 *
+		 * @param array $additional_modules Additional modules.
+		 */
+		$additional_modules     = apply_filters( 'et_woo_module_classes', [] );
 		$this->_woo_modules_map = $woo_modules;
-		$this->_modules_map     = array_merge( $this->_modules_map, $woo_modules );
+		$this->_modules_map     = array_merge( $this->_modules_map, $woo_modules, $additional_modules );
 	}
 
 	/**

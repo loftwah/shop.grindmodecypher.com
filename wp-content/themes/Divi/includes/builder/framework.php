@@ -134,6 +134,16 @@ require_once ET_BUILDER_DIR . 'feature/gutenberg/EditorTypography.php';
 require_once ET_BUILDER_DIR . 'core.php';
 require_once ET_BUILDER_DIR . 'conditions.php';
 require_once ET_BUILDER_DIR . 'post/PostStack.php';
+
+if ( ! (
+	is_admin() ||
+	wp_doing_ajax() ||
+	is_customize_preview() ||
+	is_et_pb_preview()
+) ) {
+	require_once ET_BUILDER_DIR . 'feature/DoNotCachePage.php';
+}
+
 require_once ET_BUILDER_DIR . 'feature/ClassicEditor.php';
 require_once ET_BUILDER_DIR . 'feature/AjaxCache.php';
 require_once ET_BUILDER_DIR . 'feature/post-content.php';
@@ -142,6 +152,7 @@ if ( et_builder_is_critical_enabled() ) {
 	require_once ET_BUILDER_DIR . 'feature/CriticalCSS.php';
 }
 
+require_once ET_BUILDER_DIR . 'feature/content-retriever/ContentRetriever.php';
 require_once ET_BUILDER_DIR . 'feature/dynamic-assets/dynamic-assets.php';
 require_once ET_BUILDER_DIR . 'feature/dynamic-assets/class-dynamic-assets.php';
 require_once ET_BUILDER_DIR . 'feature/dynamic-content.php';
@@ -153,6 +164,8 @@ require_once ET_BUILDER_DIR . 'frontend-builder/theme-builder/theme-builder.php'
 require_once ET_BUILDER_DIR . 'feature/global-presets/Settings.php';
 require_once ET_BUILDER_DIR . 'feature/global-presets/History.php';
 require_once ET_BUILDER_DIR . 'feature/window.php';
+require_once ET_BUILDER_DIR . 'feature/ajax-data/AjaxData.php';
+require_once ET_BUILDER_DIR . 'feature/display-conditions/DisplayConditions.php';
 require_once ET_BUILDER_DIR . 'feature/BlockTemplates.php';
 
 // Conditional Includes.

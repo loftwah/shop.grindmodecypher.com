@@ -226,7 +226,7 @@ class ET_Builder_Global_Presets_Settings {
 			$result = (array) $this->_settings->{$module_slug}->presets->{$real_preset_id}->settings;
 		}
 
-		$result = $this->maybe_set_global_colors( $result );
+		$result = self::maybe_set_global_colors( $result );
 
 		return $result;
 	}
@@ -240,7 +240,7 @@ class ET_Builder_Global_Presets_Settings {
 	 *
 	 * @return array
 	 */
-	public function maybe_set_global_colors( $attrs ) {
+	public static function maybe_set_global_colors( $attrs ) {
 		if ( empty( $attrs['global_colors_info'] ) ) {
 			return $attrs;
 		}

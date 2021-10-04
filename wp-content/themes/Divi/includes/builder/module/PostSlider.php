@@ -767,6 +767,22 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module_Type_PostBased {
 			$query_args['cat'] = $args['include_categories'];
 		}
 
+		// WP_Query doesn't return sticky posts when it performed via Ajax.
+		// This happens because `is_home` is false in this case, but on FE it's true if no category set for the query.
+		// Set `is_home` = true to emulate the FE behavior with sticky posts in VB.
+		if ( empty( $query_args['cat'] ) ) {
+			add_action(
+				'pre_get_posts',
+				function( $query ) {
+					if ( true === $query->get( 'et_is_home' ) ) {
+						$query->is_home = true;
+					}
+				}
+			);
+
+			$query_args['et_is_home'] = true;
+		}
+
 		if ( 'date_desc' !== $args['orderby'] ) {
 			switch ( $args['orderby'] ) {
 				case 'date_asc':

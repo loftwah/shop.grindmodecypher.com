@@ -257,6 +257,9 @@ class ET_Core_API_Email_Fields {
 				),
 				'description'     => esc_html__( 'Define whether the field should be required or optional', 'et_core' ),
 				'toggle_slug'     => 'field_options',
+				'show_if_not'     => array(
+					'email_provider' => 'getresponse',
+				),
 			),
 			'hidden'           => array(
 				'label'           => esc_html__( 'Hidden Field', 'et_core' ),

@@ -4,7 +4,7 @@
  *
  * @package Divi
  * @subpackage Builder
- * @since ??
+ * @since 4.10.8
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Compatibility for WP3D Models.
  *
- * @since ??
+ * @since 4.10.8
  *
  * @link https://wp3dmodels.com/
  */
@@ -23,7 +23,7 @@ class ET_Builder_Plugin_Compat_WP3D_Models extends ET_Builder_Plugin_Compat_Base
 	/**
 	 * Constructor.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 */
 	public function __construct() {
 		$this->init_hooks();
@@ -32,7 +32,7 @@ class ET_Builder_Plugin_Compat_WP3D_Models extends ET_Builder_Plugin_Compat_Base
 	/**
 	 * Hook methods to WordPress.
 	 *
-	 * @since ??
+	 * @since 4.10.8
 	 *
 	 * @return void
 	 */

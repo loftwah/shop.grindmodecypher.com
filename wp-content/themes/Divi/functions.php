@@ -8681,49 +8681,55 @@ add_action( 'et_save_post', 'et_divi_save_post', 1 );
 if ( ! function_exists( 'et_divi_footer_active_sidebars' ) ):
 	function et_divi_footer_active_sidebars() {
 		$et_active_sidebar = array( 2, 3, 4, 5, 6, 7 );
-		if ( ! is_customize_preview() ) {
-			if ( ! is_active_sidebar( 2 )
-				 && ! is_active_sidebar( 3 )
-				 && ! is_active_sidebar( 4 )
-				 && ! is_active_sidebar( 5 )
-				 && ! is_active_sidebar( 6 )
-				 && ! is_active_sidebar( 7 ) ) {
-				return false;
-			}
-			$footer_columns = et_get_option( 'footer_columns', '4' );
-			switch ( $footer_columns ) {
-				case '1':
-				case '2':
-				case '3':
-				case '4':
-				case '5':
-				case '6':
-					$et_active_sidebar = array();
-					for ( $i = 1; $i <= $footer_columns; $i++ ) {
-						array_push( $et_active_sidebar, ( $i + 1 ) );
-					}
-					break;
-				case '_1_4__3_4':
-				case '_3_4__1_4':
-				case '_1_3__2_3':
-				case '_2_3__1_3':
-				case '_3_5__2_5':
-				case '_2_5__3_5':
-					$et_active_sidebar = array( 2, 3 );
-					break;
-				case '_1_4__1_2':
-				case '_1_2__1_4':
-				case '_1_5__3_5':
-				case '_3_5__1_5':
-				case '_1_4_1_2_1_4':
-				case '_1_5_3_5_1_5':
-					$et_active_sidebar = array( 2, 3, 4 );
-					break;
-				case '_1_2__1_6':
-				case '_1_6__1_2':
-					$et_active_sidebar = array( 2, 3, 4, 5 );
-					break;
-			}
+
+		if ( ! is_active_sidebar( 2 )
+				&& ! is_active_sidebar( 3 )
+				&& ! is_active_sidebar( 4 )
+				&& ! is_active_sidebar( 5 )
+				&& ! is_active_sidebar( 6 )
+				&& ! is_active_sidebar( 7 ) ) {
+			return false;
+		}
+
+		$footer_columns = et_get_option( 'footer_columns', '4' );
+
+		switch ( $footer_columns ) {
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+				$et_active_sidebar = array();
+
+				for ( $i = 1; $i <= $footer_columns; $i++ ) {
+					array_push( $et_active_sidebar, ( $i + 1 ) );
+				}
+
+				break;
+			case '_1_4__3_4':
+			case '_3_4__1_4':
+			case '_1_3__2_3':
+			case '_2_3__1_3':
+			case '_3_5__2_5':
+			case '_2_5__3_5':
+				$et_active_sidebar = array( 2, 3 );
+
+				break;
+			case '_1_4__1_2':
+			case '_1_2__1_4':
+			case '_1_5__3_5':
+			case '_3_5__1_5':
+			case '_1_4_1_2_1_4':
+			case '_1_5_3_5_1_5':
+				$et_active_sidebar = array( 2, 3, 4 );
+
+				break;
+			case '_1_2__1_6':
+			case '_1_6__1_2':
+				$et_active_sidebar = array( 2, 3, 4, 5 );
+
+				break;
 		}
 
 		return $et_active_sidebar;

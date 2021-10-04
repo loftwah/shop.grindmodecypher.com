@@ -549,7 +549,7 @@ class ET_Core_PageResource {
 						/**
 						 * Fires when the static resource file is created.
 						 *
-						 * @since ??
+						 * @since 4.10.8
 						 *
 						 * @param object $resource The resource object.
 						 */

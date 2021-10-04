@@ -475,6 +475,14 @@ class ET_Builder_Module_Field_Position extends ET_Builder_Module_Field_Base {
 				$default_value  = $this->get_default( $props, 'positioning', $position_default, $type );
 				$important      = in_array( $value, array( 'fixed', 'absolute' ) ) || ( 'desktop' != $type ) ? ' !important' : $position_important;
 				$position_value = $value;
+				$is_parallax_on = 'on' === $this->get_value( $props, 'parallax' ) ? true : false;
+
+				// When parallax is enabled on the element and the position value
+				// is set to none skip because it should always be relative.
+				if ( $is_parallax_on && 'none' === $value ) {
+					continue;
+				}
+
 				if ( 'none' === $value ) {
 					// none is interpreted as static in FE.
 					$position_value            = 'static';

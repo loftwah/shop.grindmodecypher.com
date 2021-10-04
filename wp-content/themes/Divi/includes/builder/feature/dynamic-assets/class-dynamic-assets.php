@@ -1243,14 +1243,34 @@ class ET_Dynamic_Assets {
 			);
 		}
 
+		// Collect and pass all needed assets arguments.
+		$assets_args = array(
+			'assets_prefix'       => $assets_prefix,
+			'dynamic_icons'       => $dynamic_icons,
+			'cpt_suffix'          => $this->_cpt_suffix,
+			'use_all_icons'       => $use_all_icons,
+			'show_in_lightbox'    => $show_in_lightbox,
+			'has_animation_style' => $has_animation_style,
+			'sticky_used'         => $sticky_used,
+			// Gutter/grid items processed info.
+			'gutter_widths'       => $gutter_widths,
+			'gutter_length'       => $gutter_length,
+			'specialty_used'      => $specialty_used,
+			'grid_items_used'     => $grid_items_used,
+		);
+
 		/**
 		 * Use this filter to add additional assets to the global asset list.
 		 *
-		 * @param array $asset_list Current global assets on the list.
+		 * @param array             $assets_list Current global assets on the list.
+		 * @param array             $assets_args Additional assets arguments.
+		 * @param ET_Dynamic_Assets $this        Instance of ET_Dynamic_Assets class.
 		 *
 		 * @since 4.10.0
+		 * @since 4.11.0 Pass new parameters $assets_args and $this. 3rd-party plugins can
+		 *               use it to call some private functions (i.e. gutter assets).
 		 */
-		$assets_list = apply_filters( 'et_global_assets_list', $assets_list );
+		$assets_list = apply_filters( 'et_global_assets_list', $assets_list, $assets_args, $this );
 
 		return $assets_list;
 	}
@@ -1314,14 +1334,34 @@ class ET_Dynamic_Assets {
 			);
 		}
 
+		// Collect and pass all needed assets arguments.
+		$assets_args = array(
+			'assets_prefix'       => $assets_prefix,
+			'dynamic_icons'       => et_use_dynamic_icons(),
+			'cpt_suffix'          => $this->_cpt_suffix,
+			'use_all_icons'       => $this->_late_custom_icon,
+			'show_in_lightbox'    => $this->_late_show_in_lightbox,
+			'has_animation_style' => $this->_late_animation_style,
+			'sticky_used'         => $this->_late_use_sticky,
+			// Gutter/grid items processed info.
+			'gutter_widths'       => $gutter_widths,
+			'gutter_length'       => $gutter_length,
+			'specialty_used'      => $this->_late_use_specialty,
+			'grid_items_used'     => $grid_items_used,
+		);
+
 		/**
 		 * Use this filter to add additional assets to the late global asset list.
 		 *
-		 * @param array $asset_list Current late global assets on the list.
+		 * @param array             $assets_list Current late global assets on the list.
+		 * @param array             $assets_args Additional assets arguments.
+		 * @param ET_Dynamic_Assets $this        Instance of ET_Dynamic_Assets class.
 		 *
-		 * @since 4.10.2
+		 * @since 4.10.0
+		 * @since 4.11.0 Pass new parameters $assets_args and $this. 3rd-party plugins can
+		 *               use it to call some private functions (i.e. gutter assets).
 		 */
-		$assets_list = apply_filters( 'et_late_global_assets_list', $assets_list );
+		$assets_list = apply_filters( 'et_late_global_assets_list', $assets_list, $assets_args, $this );
 
 		return $assets_list;
 	}
