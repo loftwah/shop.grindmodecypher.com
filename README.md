@@ -4,4 +4,4 @@
 
 This is the repository for shop.grindmodecypher.com. A website I have built, and maintain for the music group I am in called Grind Mode Cypher.
 
-<iframe width="1280" height="720" src="https://www.youtube.com/embed/q8vUTOXhCdw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![Grind Mode Cypher Shop](https://img.youtube.com/vi/q8vUTOXhCdw/0.jpg)](https://www.youtube.com/watch?v=q8vUTOXhCdw)
