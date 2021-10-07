@@ -5,7 +5,7 @@ Tags: WooCommerce Donation, WooCommerce Donation Campaign, WooCommerce Cart Page
 Requires PHP: 5.2.4
 Requires at least: 3.0.1
 Tested up to: 5.8
-Stable tag: 2.3
+Stable tag: 2.4
 
 This Plugin provide you options to accept donations in woocommerce with amount specified by the end user, so they can donate any amount they wish to donate.
 
@@ -51,7 +51,7 @@ Also works with WordPress Multisite installs (each blog from the network has itâ
 **Pro Plugin Features** 
 
 <ul>
-	<li>Display predefined donation amount options.</li>
+	<li>Display predefined and custom price donation amount options.</li>
 	<li>Display donation request popup.</li>
 	<li>Add the donation widget on the websiteâ€™s sidebar or footer.</li>
 	<li>Show donation order listing.</li>
@@ -59,12 +59,31 @@ Also works with WordPress Multisite installs (each blog from the network has itâ
 	<li>Configurable screen position for donation form in cart page.</li>
 	<li>Configurable screen position for donation form in checkout page.</li>
 	<li>Fundraising donation campaigns.</li>
+	<li>Auto create woo donation page.</li>
+	<li>Admin can set sticky donation button on the websiteâ€™s.</li>
+	<li>Donation button shortcode for set in entire site.</li>
+	<li>Allow Email template for send mail to donor.</li>		
+	<li>Option to change any title, label, placeholder, button text etc.</li>			
+	<li>Timely <a href="https://geekcodelab.com/contact/" target="_blank">support</a> 24/7.</li>	
+	<li>Regular updates.</li>		
+	<li>Well documented.</li>	
 </ul>
 == GET PRO PLUGIN ==
 <a href="https://geekcodelab.com/wordpress-plugins/woo-donation-pro/" target="_blank"> BUY NOW </a> 
 
 == Pro Version Preview ==
-[youtube https://youtu.be/eMXXSn4TMJ0]
+[youtube https://www.youtube.com/watch?v=P8Y8NUAHQuI&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=1]
+<ol>
+	<li><strong>General Setting </strong>(Pro only) <a href="https://www.youtube.com/watch?v=P8Y8NUAHQuI&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=1" target="_blank">See Video</a></li>
+	<li><strong>Predefine Price </strong> (Pro only) <a href="https://www.youtube.com/watch?v=VNj-14iTK54&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=2" target="_blank">See Video</a></li>
+	<li><strong>Manage Campaign </strong> (Pro only) <a href="https://www.youtube.com/watch?v=Q1Mcjq6IcX4&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=3" target="_blank">See Video</a></li>
+	<li><strong>Label Setting </strong> (Pro only) <a href="https://www.youtube.com/watch?v=th8T-wBqEdY&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=4" target="_blank">See Video</a></li>
+	<li><strong>Popup Setting </strong> (Pro only) <a href="https://www.youtube.com/watch?v=TBPopL0Z6_s&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=5" target="_blank">See Video</a></li>
+	<li><strong>Sticky Button </strong> (Pro only) <a href="https://www.youtube.com/watch?v=WzsCD_5KOuA&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=6" target="_blank">See Video</a></li>
+	<li><strong>Email Setting </strong> (Pro only) <a href="https://www.youtube.com/watch?v=SaIwxYe0aMY&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=7" target="_blank">See Video</a></li>
+	<li><strong>Shortcode &  widgets </strong> (Pro only) <a href="https://www.youtube.com/watch?v=6qoxhOmtNlo&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=8" target="_blank">See Video</a></li>
+</ol>
+
 
 == You can use shortcodes ==
 
@@ -107,6 +126,10 @@ After Plugin Active go to WooCommerce-> Donation.
 
 
 == Changelog ==
+
+= 2.4=
+Update Pro plugin features list
+
 = 2.3=
 Fixed bug
 

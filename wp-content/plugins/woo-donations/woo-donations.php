@@ -3,7 +3,7 @@
 Plugin Name: Woo Donations
 Description: A plugin to add donation for campaign
 Author: Geek Code Lab
-Version: 2.3
+Version: 2.4
 WC tested up to: 5.6.0
 Author URI: https://geekcodelab.com/
 Text Domain : woo-donations

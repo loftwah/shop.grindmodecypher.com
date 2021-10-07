@@ -292,6 +292,15 @@ $options= wdgk_get_wc_donation_setting();
 				<li><?php _e('Display donation request popup.','woo-donations'); ?></li>
 				<li><?php _e('Show donation order listing.','woo-donations'); ?></li>
 				<li><?php _e('Download CSV file in donation order table.','woo-donations'); ?></li>
+				<li><?php _e('Auto create woo donation page.','woo-donations'); ?></li>
+				<li><?php _e('Admin can set sticky donation button on the website’s.','woo-donations'); ?></li>
+				<li><?php _e('Donation button shortcode for set in entire site.','woo-donations'); ?></li>
+				<li><?php _e('Allow Email template for send mail to donor','woo-donations'); ?></li>		
+				<li><?php _e('Option to change any title, label, placeholder, button text etc.','woo-donations'); ?></li>			
+				<li><?php _e('Timely <a href="https://geekcodelab.com/contact/" target="_blank">support</a> 24/7.','woo-donations'); ?></li>	
+				<li><?php _e('Regular updates.','woo-donations'); ?></li>		
+				<li><?php _e('Well documented.','woo-donations'); ?></li>	
+
 			</ul>
 			<a href="https://geekcodelab.com/wordpress-plugins/woo-donation-pro/" title="Upgrade to Premium" class="wdgk_premium_btn" target="_blank"><?php _e('Upgrade to Premium','woo-donations'); ?></a>
 		</div>
