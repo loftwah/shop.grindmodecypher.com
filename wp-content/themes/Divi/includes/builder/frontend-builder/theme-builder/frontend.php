@@ -346,7 +346,7 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 	 */
 	$is_critical_enabled = apply_filters( 'et_builder_critical_css_enabled', false );
 
-	if ( ET_Builder_Element::$forced_inline_styles || ! $advanced_styles_manager->has_file() ) {
+	if ( ET_Builder_Element::$forced_inline_styles || ! $advanced_styles_manager->has_file() || $advanced_styles_manager->forced_inline ) {
 		$custom = et_pb_get_page_custom_css( $layout->ID );
 
 		$critical = $is_critical_enabled ? ET_Builder_Element::get_style( false, $layout->ID, true ) . ET_Builder_Element::get_style( true, $layout->ID, true ) : [];

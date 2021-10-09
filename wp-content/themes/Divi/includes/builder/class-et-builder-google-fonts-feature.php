@@ -29,12 +29,15 @@ class ET_Builder_Google_Fonts_Feature extends ET_Builder_Global_Feature_Base {
 	 * @since 4.10.0
 	 */
 	public function __construct() {
+		// need to set this filter up front, bc as soon as the parent __construct
+		// is called then it will prime the cache so it needs
+		// this cache index filter to be setup right away.
+		add_filter( 'et_global_feature_cache_index_items', [ 'ET_Builder_Google_Fonts_Feature', 'cache_index_items' ], 10, 2 );
+
 		parent::__construct();
 
 		if ( self::enabled() ) {
 			self::setup_transient();
-
-			add_filter( 'et_global_feature_cache_index_items', [ 'ET_Builder_Google_Fonts_Feature', 'cache_index_items' ], 10, 2 );
 		}
 	}
 

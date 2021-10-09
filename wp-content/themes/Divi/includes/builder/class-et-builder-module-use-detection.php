@@ -104,6 +104,7 @@ class ET_Builder_Module_Use_Detection {
 				'button_icon',
 				'hover_icon',
 				'scroll_down_icon',
+				'social_network',
 				'show_in_lightbox',
 				'fullwidth',
 				'scroll_vertical_motion_enable',

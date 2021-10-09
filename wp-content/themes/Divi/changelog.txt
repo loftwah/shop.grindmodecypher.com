@@ -1,3 +1,20 @@
+version 4.11.2 ( updated 10-07-2021 )
+- Fixed incorrect parent module attributes assigned on some 3rd-party modules.
+- Fixed an issue with WooCommerce rating where the stars were duplicated in the comment form in Firefox.
+- Fixed issue with Google Fonts performance improvement not utilizing its internal cache as intended and resulting in extra HTTP calls on each page load.
+- Fixed Theme Builder styles missing in password protected pages.
+- Fixed Fullwidth Slider Module's swipe to change slides on mobile not working.
+- Fixed Social Media Follow Module's icons not showing up when used in a Post Slider Module when Dynamic Icons is enabled.
+- Fixed incompatibility between Defer jQuery feature and some third party scripts.
+- Fixed an issue where scrolling didn't work in Theme Builder Wireframe View when Smooth Scroll was enabled.
+	* includes/builder/compat/scripts.php
+	* includes/builder/class-et-builder-module-use-detection.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/class-et-builder-google-fonts-feature.php
+	* includes/builder/frontend-builder/bundle.js
+	* js/src/smoothscroll.js
+
 version 4.11.1 ( updated 10-01-2021 )
 - Fixed Blog, Post Slider and Fullwidth Post Slider modules preview with the sticky posts in Visual Builder.
 - Fixed a bug where the Builder would not render responsive view settings for Custom CSS fields if those fields did not also have a primary/desktop value.
