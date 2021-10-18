@@ -25,6 +25,11 @@ trait AuthorCondition {
 	 * @return boolean Condition output.
 	 */
 	protected function _process_author_condition( $condition_settings ) {
+		// Only check for Posts.
+		if ( ! is_singular() ) {
+			return false;
+		}
+
 		$display_rule           = isset( $condition_settings['authorDisplay'] ) ? $condition_settings['authorDisplay'] : '';
 		$authors_raw            = isset( $condition_settings['authors'] ) ? $condition_settings['authors'] : [];
 		$authors_ids            = array_map(

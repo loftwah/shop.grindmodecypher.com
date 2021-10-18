@@ -206,10 +206,31 @@ class ET_Builder_Critical_CSS {
 				if ( 0 === et_()->WPFS()->size( $deferred->path ) ) {
 					return '';
 				}
+
 				// Use 'prefetch' when Mod PageSpeed is detected because it removes 'preload' links.
 				$rel = et_builder_is_mod_pagespeed_enabled() ? 'prefetch' : 'preload';
+
+				/**
+				 * Filter deferred styles rel attribute.
+				 *
+				 * Mod PageSpeed removes 'preload' links and we attempt to fix that by trying to detect if
+				 * the 'x-mod-pagespeed' (Apache) or 'x-page-speed' (Nginx) header is present and if it is,
+				 * replace 'preload' with 'prefetch'. However, in some cases, like when the request goes through
+				 * a CDN first, we are unable to detect the header. This hook can be used to change the 'rel'
+				 * attribute to use 'prefetch' when our et_builder_is_mod_pagespeed_enabled() function fails
+				 * to detect Mod PageSpeed.
+				 *
+				 * With that out of the way, the only reason I wrote this detailed description is to make Fabio proud.
+				 *
+				 * @since ??
+				 *
+				 * @param string $rel
+				 */
+				$rel = apply_filters( 'et_deferred_styles_rel', $rel );
+
 				// Defer the stylesheet.
 				$template = '<link rel="%4$s" as="style" id="%1$s" href="%2$s" onload="this.onload=null;this.rel=\'stylesheet\';%3$s" />';
+
 				return sprintf( $template, $slug, $scheme, $onload, $rel );
 			case $inlined->slug:
 				// Inline the stylesheet.

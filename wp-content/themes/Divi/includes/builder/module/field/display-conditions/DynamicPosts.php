@@ -25,6 +25,11 @@ trait DynamicPostsCondition {
 	 * @return boolean Condition output.
 	 */
 	protected function _process_dynamic_posts_condition( $condition_settings ) {
+		// Only check for Posts.
+		if ( ! is_singular() ) {
+			return false;
+		}
+
 		$display_rule      = isset( $condition_settings['dynamicPostsDisplay'] ) ? $condition_settings['dynamicPostsDisplay'] : '';
 		$dynamic_posts_raw = isset( $condition_settings['dynamicPosts'] ) ? $condition_settings['dynamicPosts'] : [];
 		$dynamic_posts_ids = array_map(

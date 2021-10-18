@@ -3,8 +3,8 @@ Contributors: sudar
 Tags: email, log, log email, resend email, multisite  
 Requires PHP: 5.6  
 Requires at least: 4.0  
-Tested up to: 5.7  
-Stable tag: 2.4.5  
+Tested up to: 5.8  
+Stable tag: 2.4.7  
 
 Log and view all outgoing emails from WordPress. Very useful if you have to debug email related problems or have to store sent emails for auditing.
 
@@ -132,6 +132,13 @@ Meanwhile, I have added a hack to handle this condition in v1.7.3 of my plugin. 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
 == Changelog ==
+
+= v2.4.7 – (2021-10-13) =
+- Fix: Fix the typo that was introduced in v2.4.6
+
+= v2.4.6 – (2021-10-13) =
+- Fix: Enhance how order and order by works.
+- Tweak: Tested upto WordPress 5.8
 
 = v2.4.5 – (2021-04-13) =
 - Fix: Don't override WordPress plugin update in base plugin.
@@ -357,6 +364,9 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 - Initial Release
 
 == Upgrade Notice ==
+
+= 2.4.6 =
+Tested upto WordPress 5.8
 
 = 2.4.5 =
 Improved admin performance and reduced network calls.

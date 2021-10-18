@@ -1,3 +1,33 @@
+version 4.11.3 ( updated 10-15-2021 )
+- Fixed a bug that could break the last published Post Header styles.
+- Fixed Magnific Popup not working with gallery shortcode in child themes in certain cases.
+- Fixed a bug with text alignment not working in the Blog module's grid layout.
+- Fixed missing icon styles and missing popup styles on custom post types when Dynamic CSS was disabled.
+- Fixed an incompatibility issue related to Defer jQuery optimization and some Mailchimp scripts.
+- Fixed issue with gutter styles when 3rd party plugins inject Divi shortcodes.
+- Fixed "Author", "Dynamic Posts", "Post Type" and "Search Results" Display Conditions so they would only run on related queries.
+- Fixed issue that caused slowness or crashing of the visual builder on very large layouts.
+- Added a new 'et_deferred_styles_rel' hook to allow changing the rel attribute for deferred styles.
+- Fixed a bug with fold and flip animations that was introduced in Firefox 93 due to a change in how the perspective function works.
+- Fixed cache not being removed when theme builder templates are being reset.
+- Fixed issue with auto blogging plugins not rendering styles for theme builder layouts.
+- Fixed "Author", "Dynamic Posts", "Post Type" and "Search Results" Display Conditions so they would only run on related queries.
+- Fixed styles are not being applied on the FE after updating a layout/ global module.
+- Fixed missing cloud tag widget styles.
+- Fixed sidebar separator being in the wrong place on regular pages if all widgets are removed.
+	* core/components/PageResource.php
+	* includes/builder/class-et-builder-module-use-detection.php
+	* includes/builder/compat/scripts.php
+	* includes/builder/feature/CriticalCSS.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/api.php
+	* includes/builder/module/field/display-conditions/Author.php
+	* includes/builder/module/field/display-conditions/DynamicPosts.php
+	* includes/builder/module/field/display-conditions/PostType.php
+	* includes/builder/module/field/display-conditions/SearchResults.php
+	* includes/functions/dynamic-assets.php
+
 version 4.11.2 ( updated 10-07-2021 )
 - Fixed incorrect parent module attributes assigned on some 3rd-party modules.
 - Fixed an issue with WooCommerce rating where the stars were duplicated in the comment form in Firefox.

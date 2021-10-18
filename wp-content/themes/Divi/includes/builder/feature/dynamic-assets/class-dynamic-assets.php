@@ -215,6 +215,13 @@ class ET_Dynamic_Assets {
 	private $_late_custom_gutters = array();
 
 	/**
+	 * Default Gutter widths found during early detection.
+	 *
+	 * @var array
+	 */
+	private $_default_gutters = array();
+
+	/**
 	 * Gutter widths found during late detection.
 	 *
 	 * @var array
@@ -605,6 +612,11 @@ class ET_Dynamic_Assets {
 			return false;
 		}
 
+		// Bail if feed since CSS isn't needed for RSS/Atom.
+		if ( is_feed() ) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -753,6 +765,9 @@ class ET_Dynamic_Assets {
 
 		// Use 'prefetch' when Mod PageSpeed is detected because it removes 'preload' links.
 		$rel = et_builder_is_mod_pagespeed_enabled() ? 'prefetch' : 'preload';
+
+		/* This filter is documented in /includes/builder/feature/CriticalCSS.php */
+		$rel = apply_filters( 'et_deferred_styles_rel', $rel );
 
 		return sprintf(
 			"<link rel='%s' id='%s-css' href='%s' as='style' media='%s' onload=\"%s\" />\n",
@@ -1157,9 +1172,12 @@ class ET_Dynamic_Assets {
 			);
 		}
 
+		// Check for specialty sections.
+		preg_match_all( '/specialty="\w+"/', $this->_all_content, $specialty_values );
+		$specialty_used = et_check_if_particular_value_is_on( $specialty_values[0] );
+
 		// Check for custom gutter widths.
 		preg_match_all( '/gutter_width="\w+"/', $this->_all_content, $matches );
-		preg_match_all( '/specialty="\w+"/', $this->_all_content, $specialty_values );
 
 		$page_custom_gutter = is_singular() ? [ intval( get_post_meta( $this->_post_id, '_et_pb_gutter_width', true ) ) ] : [];
 
@@ -1170,18 +1188,17 @@ class ET_Dynamic_Assets {
 			}
 		}
 
-		$customizer_gutter = intval( et_get_option( 'gutter_width', '3' ) );
-		$default_gutters   = array_merge( (array) $page_custom_gutter, (array) $customizer_gutter );
-		$no_of_gutters     = substr_count( $this->_all_content, 'use_custom_gutter' );
-		$preset_gutter_val = ! empty( $this->_presets_attributes['use_custom_gutter'] ) && 'on' === $this->_presets_attributes['use_custom_gutter'] ?
+		$customizer_gutter      = intval( et_get_option( 'gutter_width', '3' ) );
+		$this->_default_gutters = array_merge( (array) $page_custom_gutter, (array) $customizer_gutter );
+		$no_of_gutters          = substr_count( $this->_all_content, 'use_custom_gutter' );
+		$preset_gutter_val      = ! empty( $this->_presets_attributes['use_custom_gutter'] ) && 'on' === $this->_presets_attributes['use_custom_gutter'] ?
 			(array) $this->_presets_attributes['gutter_width'] : array();
-		$specialty_used    = et_check_if_particular_value_is_on( $specialty_values[0] );
 
 		if ( $no_of_gutters > count( $matches[0] ) && ! in_array( 'gutter_width="3"', $matches[0], true ) ) {
 			array_push( $matches[0], 'gutter_width="3"' );
 		}
 		// Here we are combining the custom gutters in the page with Default gutters and then keeping only the unique gutters.
-		$gutter_widths = $this->get_unique_array_values( et_get_content_gutter_widths( $matches[0] ), $default_gutters, $preset_gutter_val );
+		$gutter_widths = $this->get_unique_array_values( et_get_content_gutter_widths( $matches[0] ), $this->_default_gutters, $preset_gutter_val );
 		$gutter_length = count( $gutter_widths );
 
 		$grid_items_deps = array(
@@ -1297,7 +1314,7 @@ class ET_Dynamic_Assets {
 		}
 
 		$gutter_length = count( $this->_late_custom_gutters );
-		$gutter_widths = $this->get_unique_array_values( $this->_late_gutter_width );
+		$gutter_widths = $this->get_unique_array_values( $this->_late_gutter_width, $this->_default_gutters );
 
 		$grid_items_deps = array(
 			'et_pb_filterable_portfolio',
@@ -2039,7 +2056,7 @@ class ET_Dynamic_Assets {
 
 			switch ( $attribute ) {
 				case 'gutter_width':
-					$this->_late_gutter_width = ! empty( $value ) ? $value : (array) 3;
+					$this->_late_gutter_width = ! empty( $value ) ? array_map( 'intval', $value ) : array();
 					break;
 
 				case 'animation_style':

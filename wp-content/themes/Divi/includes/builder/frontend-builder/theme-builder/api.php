@@ -292,6 +292,8 @@ function et_theme_builder_api_reset() {
 
 	if ( $live_id > 0 ) {
 		wp_trash_post( $live_id );
+		// Reset cache when theme builder is reset.
+		ET_Core_PageResource::remove_static_resources( 'all', 'all', true );
 	}
 
 	et_theme_builder_trash_draft_and_unused_posts();

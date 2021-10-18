@@ -3,8 +3,8 @@
 Plugin Name: Woo Donations
 Description: A plugin to add donation for campaign
 Author: Geek Code Lab
-Version: 2.4
-WC tested up to: 5.6.0
+Version: 2.5
+WC tested up to: 5.8.0
 Author URI: https://geekcodelab.com/
 Text Domain : woo-donations
 */
@@ -19,7 +19,7 @@ if (!defined("wdgk_PLUGIN_URL"))
 
 	define("wdgk_PLUGIN_URL", plugins_url() . '/' . basename(dirname(__FILE__)));
 
-define("wdgk_BUILD", '1.0');
+define("wdgk_BUILD", '2.5');
 
 
 require_once(wdgk_PLUGIN_DIR_PATH . 'functions.php');
@@ -83,16 +83,16 @@ function wdgk_plugin_active_woocommerce_donation()
 add_action('wp_enqueue_scripts', 'wdgk_include_front_script');
 function wdgk_include_front_script()
 {
-	wp_enqueue_style("wdgk_front_style", wdgk_PLUGIN_URL . "/assets/css/wdgk_front_style.css", '');
+	wp_enqueue_style("wdgk_front_style", wdgk_PLUGIN_URL . "/assets/css/wdgk_front_style.css", '',wdgk_BUILD);
 	
-	wp_enqueue_script('wdgk_donation_script', wdgk_PLUGIN_URL.'/assets/js/wdgk_front_script.js', array('jquery'));
+	wp_enqueue_script('wdgk_donation_script', wdgk_PLUGIN_URL.'/assets/js/wdgk_front_script.js', array('jquery'),wdgk_BUILD);
 }
 function wdgk_admin_style()
 {
 
 	if (is_admin()) {
 		$css = wdgk_PLUGIN_URL . '/assets/css/wdgk_admin_style.css';
-		wp_enqueue_style('wdgk_admin_style', $css, '');
+		wp_enqueue_style('wdgk_admin_style', $css, '',wdgk_BUILD);
 		wp_enqueue_style('wp-color-picker');
 		wp_enqueue_script('wp-color-picker');
 	}

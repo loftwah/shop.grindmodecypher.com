@@ -26,6 +26,7 @@ add_filter( 'et_builder_enable_jquery_body', function( $enabled, $content = '' )
 		'slick.js',
 		'webforms/bbox-min.js',
 		'www.cognitoforms.com',
+		'mailchimp.com',
 		'mindbodyonline.com/javascripts',
 		'static.smartrecruiters.com/job-widget/',
 		'default.salsalabs.org/api/widget/',

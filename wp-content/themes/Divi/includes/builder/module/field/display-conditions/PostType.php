@@ -25,6 +25,11 @@ trait PostTypeCondition {
 	 * @return boolean Condition output.
 	 */
 	protected function _process_post_type_condition( $condition_settings ) {
+		// Only check for Posts.
+		if ( ! is_singular() ) {
+			return false;
+		}
+
 		$display_rule       = isset( $condition_settings['postTypeDisplay'] ) ? $condition_settings['postTypeDisplay'] : '';
 		$post_types_raw     = isset( $condition_settings['postTypes'] ) ? $condition_settings['postTypes'] : [];
 		$post_types_values  = array_map(

@@ -667,7 +667,7 @@ class ET_Core_PageResource {
 		// Output Location: head-late, right AFTER the theme and wp's custom css.
 		add_action( 'wp_head', array( $class, 'head_late_output_cb' ), 103 );
 
-		// Output Location: footer
+		// Output Location: footer.
 		add_action( 'wp_footer', array( $class, 'footer_output_cb' ), 20 );
 
 		// Always delete cached resources for a post upon saving.
@@ -676,8 +676,13 @@ class ET_Core_PageResource {
 		// Always delete cached resources for theme customizer upon saving.
 		add_action( 'customize_save_after', array( $class, 'customize_save_after_cb' ) );
 
-		// Always delete dynamic css when saving widgets.
+		/*
+		 * Always delete dynamic css when saving widgets.
+		 * `widget_update_callback` fires on save for any of the present widgets,
+		 * `delete_widget` fires on save for any deleted widget.
+		 */
 		add_filter( 'widget_update_callback', array( $class, 'widget_update_callback_cb' ) );
+		add_filter( 'delete_widget', array( $class, 'widget_update_callback_cb' ) );
 	}
 
 	/**
@@ -853,12 +858,33 @@ class ET_Core_PageResource {
 	 * @param bool    $update
 	 */
 	public static function save_post_cb( $post_id, $post, $update ) {
-		if ( ! $update || ! function_exists( 'et_builder_enabled_for_post' ) ) {
-			return;
-		}
+		// In Dynamic CSS, we parse the layout content for generating styles and store it under the `object_id`, so clearing
+		// only the layout assets won't update the page style if we made any changes to the layout/global modules etc.
+		// Hence, we need to clear all static resources when we update a layout.
+		// Also, we should only clear the cache if the layout being saved is a global module/row/section.
+		$remove_resource = false;
 
-		if ( ! et_builder_enabled_for_post( $post_id ) ) {
-			return;
+		if ( 'et_pb_layout' === $post->post_type ) {
+			$taxonomies = get_taxonomies( [ 'object_type' => [ 'et_pb_layout' ] ] );
+			foreach ( $taxonomies as $taxonomy ) {
+				$tax_to_clear   = array( 'scope', 'layout_type' );
+				$types_to_clear = array( 'module', 'row', 'section' );
+
+				if ( ! in_array( $taxonomy, $tax_to_clear, true ) ) {
+					continue;
+				}
+
+				$scope_terms  = wp_list_pluck( get_the_terms( $post_id, 'scope' ), 'slug' );
+				$layout_terms = wp_list_pluck( get_the_terms( $post_id, 'layout_type' ), 'slug' );
+
+				$is_global         = ! empty( $scope_terms ) && in_array( 'global', $scope_terms, true );
+				$clearable_modules = array_intersect( $types_to_clear, $layout_terms );
+				$remove_resource   = $is_global && ! empty( $clearable_modules );
+			}
+
+			if ( $remove_resource ) {
+				$post_id = 'all';
+			}
 		}
 
 		self::remove_static_resources( $post_id, 'all' );

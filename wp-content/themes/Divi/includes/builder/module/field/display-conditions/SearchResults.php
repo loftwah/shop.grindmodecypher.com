@@ -25,9 +25,11 @@ trait SearchResultsCondition {
 	 * @return boolean Condition output.
 	 */
 	protected function _process_search_results_condition( $condition_settings ) {
-		if ( ! class_exists( 'WooCommerce' ) ) {
+		// Only check for Search.
+		if ( ! is_search() ) {
 			return false;
 		}
+
 		$display_rule                = isset( $condition_settings['searchResultsDisplay'] ) ? $condition_settings['searchResultsDisplay'] : 'is';
 		$specific_search_queries_raw = isset( $condition_settings['specificSearchQueries'] ) ? $condition_settings['specificSearchQueries'] : '';
 		$excluded_search_queries_raw = isset( $condition_settings['excludedSearchQueries'] ) ? $condition_settings['excludedSearchQueries'] : '';

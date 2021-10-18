@@ -157,8 +157,16 @@ function et_divi_get_global_assets_list( $global_list ) {
 		);
 	}
 
-	if ( ( is_active_sidebar( 'sidebar-1' ) && ! is_singular() && ! $has_tb_body ) 
-		|| ( is_active_sidebar( 'sidebar-1' ) && is_singular() && ! $has_tb_body && ! in_array( $page_layout, array( 'et_full_width_page', 'et_no_sidebar' ), true ) ) ) {
+	if
+	(	// Sidebar exists on the homepage blog feed.
+		( is_home() ) || 
+		// Sidebar exists on all non-singular pages, such as categories, except when using a theme builder template.
+		( ! is_singular() && ! $has_tb_body ) || 
+		// Sidebar exists on posts, except when using a theme builder body template or a page template that doesn't include a sidebar.
+		( is_single() && ! $has_tb_body && ! in_array( $page_layout, array( 'et_full_width_page', 'et_no_sidebar' ), true ) ) ||
+		// Sidebar is used on pages when the builder is disabled.
+	 	( ( is_page() || is_front_page() ) && ! $has_tb_body && ! $is_page_builder_used && ! in_array( $page_layout, array( 'et_full_width_page', 'et_no_sidebar' ), true ) )
+	) {
 		$assets_list['et_divi_sidebar'] = array(
 			'css' => "{$assets_prefix}/sidebar.css",
 		);
@@ -191,7 +199,7 @@ function et_divi_get_global_assets_list( $global_list ) {
 		);
 	}
 
-	if ( is_active_widget( false, false, 'tag_cloud', true ) || et_is_active_block_widget( 'core/tag_cloud' ) ) {
+	if ( is_active_widget( false, false, 'tag_cloud', true ) || et_is_active_block_widget( 'core/tag-cloud' ) ) {
 		$assets_list['et_divi_widget_tag_cloud'] = array(
 			'css' => "{$assets_prefix}/widget_tag_cloud.css",
 		);
