@@ -40,7 +40,7 @@ function et_fb_enabled() {
 		return false;
 	}
 
-	if ( ! is_admin() && ! is_single() && ! is_page() && ! et_builder_used_in_wc_shop() && ! isset( $_GET['is_new_page'] ) ) {
+	if ( ! is_admin() && ! is_single() && ! is_page() && ! et_builder_used_in_wc_shop() && ! isset( $_GET['is_new_page'] ) && ( ! et_fb_is_theme_builder_used_on_page() || ! et_pb_is_allowed( 'theme_builder' ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- used inside isset()
 		return false;
 	}
 

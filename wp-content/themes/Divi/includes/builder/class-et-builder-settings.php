@@ -700,7 +700,7 @@ class ET_Builder_Settings {
 
 		$post   = get_post( $post_id );
 		$values = array(
-			'et_pb_enable_ab_testing'                 => et_is_ab_testing_active() ? 'on' : 'off',
+			'et_pb_enable_ab_testing'                 => et_is_ab_testing_active( $post_id ) ? 'on' : 'off',
 			'et_pb_ab_bounce_rate_limit'              => $et_pb_ab_bounce_rate_limit,
 			'et_pb_ab_stats_refresh_interval'         => et_pb_ab_get_refresh_interval( $post_id ),
 			'et_pb_ab_subjects'                       => et_pb_ab_get_subjects( $post_id ),
@@ -1180,7 +1180,7 @@ class ET_Builder_Settings {
 	/**
 	 * Returns the localized title of the builder page settings modal.
 	 *
-	 * @return string
+	 * @return Array
 	 */
 	public static function get_title() {
 		global $post;
@@ -1196,7 +1196,27 @@ class ET_Builder_Settings {
 		 *
 		 * @param string $title
 		 */
-		return apply_filters( 'et_builder_page_settings_modal_title', sprintf( $settings, $post_type_obj->labels->singular_name ) );
+		$default_title = apply_filters( 'et_builder_page_settings_modal_title', sprintf( $settings, $post_type_obj->labels->singular_name ) );
+
+		$titles = array(
+			'post_content' => $default_title,
+		);
+
+		// Add titles for Theme Builder Layouts, so they can be used by Visual Theme Builder Editor.
+		$theme_builder_layouts = et_theme_builder_get_template_layouts();
+
+		// Unset main template from Theme Builder layouts to avoid PHP Notices.
+		if ( isset( $theme_builder_layouts['et_template'] ) ) {
+			unset( $theme_builder_layouts['et_template'] );
+		}
+
+		foreach ( $theme_builder_layouts as $key => $theme_builder_layout ) {
+			$template_obj = get_post_type_object( $key );
+			$title        = apply_filters( 'et_builder_page_settings_modal_title', sprintf( $settings, $template_obj->labels->singular_name ) );
+			$titles       = array_merge( $titles, array( $key => $title ) );
+		}
+
+		return $titles;
 	}
 
 	/**
@@ -1246,6 +1266,48 @@ class ET_Builder_Settings {
 		 * }
 		 */
 		return apply_filters( 'et_builder_page_settings_modal_toggles', $toggles );
+	}
+
+	/**
+	 * Returns the values of builder settings for each Theme Builder Area combined.
+	 *
+	 * @param string     $scope   Get values for scope (page|builder|all). Default 'page'.
+	 * @param string|int $post_id Optional. If not provided, {@link get_the_ID()} will be used.
+	 * @param bool       $exclude_defaults Optional. Whether to exclude default value.
+	 *
+	 * @return array {
+	 *     Settings Values
+	 *
+	 *     @type mixed $setting_key The value for the setting.
+	 *     ...
+	 * }
+	 */
+	public static function get_settings_values( $scope = 'page', $post_id = null, $exclude_defaults = false ) {
+		$results                 = array();
+		$post_id                 = $post_id ? $post_id : get_the_ID();
+		$results['post_content'] = self::get_values( $scope, $post_id, $exclude_defaults );
+
+		// In Theme Builder we can return results without TB Layouts.
+		if ( et_builder_tb_enabled() ) {
+			return $results;
+		}
+
+		$theme_builder_layouts = et_theme_builder_get_template_layouts();
+
+		// Unset main template from Theme Builder layouts to avoid PHP Notices.
+		if ( isset( $theme_builder_layouts['et_template'] ) ) {
+			unset( $theme_builder_layouts['et_template'] );
+		}
+
+		// Check if any active Theme Builder Area is used and add settings.
+		foreach ( $theme_builder_layouts as $key => $theme_builder_layout ) {
+			if ( is_array( $theme_builder_layout ) && 0 !== $theme_builder_layout['id'] && $theme_builder_layout['enabled'] && $theme_builder_layout['override'] ) {
+				$page_settings_values = self::get_values( $scope, $theme_builder_layout['id'], $exclude_defaults );
+				$results[ $key ]      = $page_settings_values;
+			}
+		}
+
+		return $results;
 	}
 
 	/**

@@ -22,7 +22,7 @@ class ET_Core_API_Email_SendinBlue extends ET_Core_API_Email_Provider {
 	/**
 	 * @inheritDoc
 	 */
-	public $LISTS_URL = 'https://api.sendinblue.com/v3/contacts/lists'; // @phpcs:ignore ET.Sniffs.ValidVariableName.PropertyNotSnakeCase -- Keep the variable name.
+	public $LISTS_URL = 'https://api.sendinblue.com/v3/contacts/lists/'; // @phpcs:ignore ET.Sniffs.ValidVariableName.PropertyNotSnakeCase -- Keep the variable name.
 
 	/**
 	 * The URL to which new subscribers can be posted.
@@ -173,13 +173,19 @@ class ET_Core_API_Email_SendinBlue extends ET_Core_API_Email_Provider {
 			);
 		} else {
 			$this->response_data_key = 'lists';
-			$params                  = array(
-				'limit'  => 50,
-				'offset' => 0,
-			);
 		}
 
-		$this->prepare_request( $this->LISTS_URL, 'GET', false, $params );
+		/**
+		 * The maximum number of subscriber lists to request from Sendinblue's API.
+		 *
+		 * @since 4.11.4
+		 *
+		 * @param int $max_lists
+		 */
+		$max_lists = (int) apply_filters( 'et_core_api_email_sendinblue_max_lists', 50 );
+		$url       = "{$this->LISTS_URL}?limit={$max_lists}&offset=0&sort=desc";
+
+		$this->prepare_request( $url, 'GET', false, $params );
 
 		$this->request->data_format = 'body';
 

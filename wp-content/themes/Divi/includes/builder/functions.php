@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.11.3' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.12.0' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -1580,7 +1580,23 @@ function et_pb_process_computed_property() {
 	$conditional_tags = $utils->sanitize_text_fields( $conditional_tags );
 	$current_page     = $utils->sanitize_text_fields( $current_page );
 
-	if ( empty( $current_page['id'] ) || ! current_user_can( 'edit_post', $current_page['id'] ) ) {
+	$module_slug  = isset( $_POST['module_type'] ) ? sanitize_text_field( $_POST['module_type'] ) : '';
+	$request_type = isset( $_POST['request_type'] ) ? sanitize_text_field( $_POST['request_type'] ) : '';
+
+	if ( in_array( $request_type, array( '404', 'archive', 'home' ), true ) ) {
+		// On non-singular page, we do not have $current_page id, so we will check if user has theme_builder capability.
+		if ( ! et_pb_is_allowed( 'theme_builder' ) ) {
+			die( -1 );
+		}
+	} else {
+		// For other pages, we will check if user can edit specific post.
+		if ( ! current_user_can( 'edit_post', $current_page['id'] ) ) {
+			die( -1 );
+		}
+	}
+
+	// Check if there is page id.
+	if ( empty( $current_page['id'] ) && '404' !== $request_type ) {
 		die( -1 );
 	}
 
@@ -1599,8 +1615,6 @@ function et_pb_process_computed_property() {
 		$depends_on[ sanitize_text_field( $key ) ] = $sanitized_value;
 
 	}
-	$module_slug       = isset( $_POST['module_type'] ) ? sanitize_text_field( $_POST['module_type'] ) : '';
-	$post_type         = isset( $_POST['post_type'] ) ? sanitize_text_field( $_POST['post_type'] ) : '';
 
 	// Since VB performance, it is introduced single ajax request for several property
 	// in that case, computed_property posted data can be as an array
@@ -1610,7 +1624,7 @@ function et_pb_process_computed_property() {
 	$computed_property = is_array( $computed_property ) ? array_map( 'sanitize_text_field', $computed_property ) : sanitize_text_field( $computed_property );
 
 	// get all fields for module.
-	$fields = ET_Builder_Element::get_module_fields( $post_type, $module_slug );
+	$fields = ET_Builder_Element::get_module_fields( $request_type, $module_slug );
 
 	// make sure only valid fields are being passed through.
 	$depends_on = array_intersect_key( $depends_on, $fields );
@@ -1655,14 +1669,17 @@ add_action( 'wp_ajax_et_pb_process_computed_property', 'et_pb_process_computed_p
 /**
  * Process shortcode json.
  *
+ * @since 4.11.4 Added $inject_responsive_hover param.
+ *
  * @param array  $object Shortcodes object.
  * @param array  $options Options.
  * @param string $library_item_type Library item type.
  * @param bool   $escape_content_slashes Whether escape content slashes.
+ * @param bool   $inject_responsive_hover Flag to inject missing responsive and hover mode attributes.
  *
  * @return string
  */
-function et_fb_process_to_shortcode( $object, $options = array(), $library_item_type = '', $escape_content_slashes = true ) {
+function et_fb_process_to_shortcode( $object, $options = array(), $library_item_type = '', $escape_content_slashes = true, $inject_responsive_hover = false ) {
 	$output  = '';
 	$_object = array();
 
@@ -1744,6 +1761,59 @@ function et_fb_process_to_shortcode( $object, $options = array(), $library_item_
 			$module_type           = $global_presets_manager->maybe_convert_module_type( $type, $item['attrs'] );
 			$module_global_presets = $global_presets_manager->get_module_presets_settings( $module_type, $item['attrs'] );
 			$item['attrs']         = array_merge( $module_global_presets, $item['attrs'] );
+		}
+
+		// Inject responsive/hover attribute value to inherit from desktop
+		// when the responsive/hover setting is "on" but the responsive/hover attribute is not exist.
+		// This can happen when responsive/hover mode values reset in the builder.
+		if ( $inject_responsive_hover ) {
+			foreach ( $item['attrs'] as $attribute => $value ) {
+				// Inject responsive mode attribute value.
+				if ( '_last_edited' === substr( $attribute, -12 ) && 0 === strpos( $value, 'on' ) ) {
+					$attr_key_base   = str_replace( '_last_edited', '', $attribute );
+					$attr_key_tablet = $attr_key_base . '_tablet';
+					$attr_key_phone  = $attr_key_base . '_phone';
+					$attr_is_content = 'content' === $attr_key_base && isset( $item['content'] ) && is_string( $item['content'] );
+
+					// Inject tablet mode attribute value.
+					if ( ! isset( $item['attrs'][ $attr_key_tablet ] ) ) {
+						if ( $attr_is_content ) {
+							$item['attrs'][ $attr_key_tablet ] = $item['content'];
+						} elseif ( isset( $item['attrs'][ $attr_key_base ] ) ) {
+							$item['attrs'][ $attr_key_tablet ] = $item['attrs'][ $attr_key_base ];
+						}
+					}
+
+					// Inject phone mode attribute value.
+					if ( ! isset( $item['attrs'][ $attr_key_phone ] ) ) {
+						if ( isset( $item['attrs'][ $attr_key_tablet ] ) ) {
+							$item['attrs'][ $attr_key_phone ] = $item['attrs'][ $attr_key_tablet ];
+						} else {
+							if ( $attr_is_content ) {
+								$item['attrs'][ $attr_key_phone ] = $content;
+							} elseif ( isset( $values[ $attr_key_base ] ) ) {
+								$item['attrs'][ $attr_key_phone ] = $values[ $attr_key_base ];
+							}
+						}
+					}
+				}
+
+				// Inject hover mode attribute value.
+				if ( '__hover_enabled' === substr( $attribute, -15 ) && 0 === strpos( $value, 'on' ) ) {
+					$attr_key_base  = str_replace( '__hover_enabled', '', $attribute );
+					$attr_key_hover = $attr_key_base . '__hover';
+
+					if ( ! isset( $item['attrs'][ $attr_key_hover ] ) ) {
+						$attr_is_content = 'content' === $attr_key_base && isset( $item['content'] ) && is_string( $item['content'] );
+
+						if ( $attr_is_content ) {
+							$item['attrs'][ $attr_key_hover ] = $item['content'];
+						} elseif ( isset( $item['attrs'][ $attr_key_base ] ) ) {
+							$item['attrs'][ $attr_key_hover ] = $item['attrs'][ $attr_key_base ];
+						}
+					}
+				}
+			}
 		}
 
 		foreach ( $item['attrs'] as $attribute => $value ) {
@@ -1854,7 +1924,7 @@ function et_fb_process_to_shortcode( $object, $options = array(), $library_item_
 				// insert empty row if saving empty Regular section to make it work correctly in BB.
 				$output .= '[et_pb_row admin_label="Row"][/et_pb_row]';
 			} elseif ( isset( $item['content'] ) && is_array( $item['content'] ) ) {
-				$output .= et_fb_process_to_shortcode( $item['content'], $options, '', $escape_content_slashes );
+				$output .= et_fb_process_to_shortcode( $item['content'], $options, '', $escape_content_slashes, $inject_responsive_hover );
 			} else {
 				if ( ! empty( $content ) ) {
 					if ( et_is_builder_plugin_active() && in_array( $type, ET_Builder_Element::get_has_content_modules(), true ) ) {
@@ -1952,7 +2022,7 @@ add_action( 'wp_ajax_et_fb_ajax_render_shortcode', 'et_fb_ajax_render_shortcode'
  * @return bool
  */
 function et_fb_current_user_can_save( $post_id, $status = '' ) {
-	if ( is_page( $post_id ) ) {
+	if ( 'page' === get_post_type( $post_id ) ) {
 		if ( ! current_user_can( 'edit_pages' ) ) {
 			return false;
 		}
@@ -1984,6 +2054,11 @@ function et_fb_current_user_can_save( $post_id, $status = '' ) {
 		if ( ! current_user_can( 'edit_others_posts' ) && ! current_user_can( 'edit_post', $post_id ) ) {
 			return false;
 		}
+	}
+
+	// If this is a theme builder layout post type, check divi roles for that capability.
+	if ( in_array( get_post_type( $post_id ), et_theme_builder_get_layout_post_types(), true ) && ! et_pb_is_allowed( 'theme_builder' ) ) {
+		return false;
 	}
 
 	return true;
@@ -2042,6 +2117,9 @@ function et_fb_ajax_save() {
 	$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 	$options = isset( $_POST['options'] ) ? $_POST['options'] : array(); // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput -- $_POST['options'] is an array, it's value sanitization is done  at the time of accessing value.
 
+	$is_theme_builder_layout = in_array( get_post_type( $post_id ), et_theme_builder_get_layout_post_types(), true );
+
+	// For post content check if user can save post.
 	if ( ! et_fb_current_user_can_save( $post_id, $utils->array_get_sanitized( $options, 'status' ) ) ) {
 		wp_send_json_error();
 	}
@@ -2071,7 +2149,20 @@ function et_fb_ajax_save() {
 			update_post_meta( $post_id, '_et_pb_built_for_post_type', 'page' );
 		}
 
-		$post_content = et_fb_process_to_shortcode( $shortcode_data, $options, $layout_type );
+		// If Default Editor is used for Post Content, and Post Content is not edited,
+		// handleAjaxSave will pass return_to_default_editor,
+		// and in that case we need reactivate the default editor for the post.
+		// phpcs:ignore ET.Sniffs.ValidatedSanitizedInput.InputNotSanitized -- input is inside isset() function so its value is not used
+		if ( isset( $_POST['return_to_default_editor'] ) && rest_sanitize_boolean( $_POST['return_to_default_editor'] ) ) {
+			update_post_meta( $post_id, '_et_pb_use_builder', 'off' );
+			update_post_meta( $post_id, '_et_pb_show_page_creation', 'on' );
+
+			// Get old content and if we should return to the Default Editor.
+			$post_content = get_post_meta( $post_id, '_et_pb_old_content', true );
+		} else {
+			update_post_meta( $post_id, '_et_pb_use_builder', 'on' );
+			$post_content = et_fb_process_to_shortcode( $shortcode_data, $options, $layout_type, true, true );
+		}
 
 		// Store a copy of the sanitized post content in case wpkses alters it since that
 		// would cause our check at the end of this function to fail.
@@ -2140,7 +2231,7 @@ function et_fb_ajax_save() {
 		et_builder_update_settings( $_POST['settings'], $post_id ); // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput -- $_POST['settings'] is an array, it's value sanitization is done inside function at the time of accessing value.
 	}
 
-	if ( isset( $_POST['preferences'] ) && is_array( $_POST['preferences'] ) ) {
+	if ( isset( $_POST['preferences'] ) && is_array( $_POST['preferences'] ) && ! $is_theme_builder_layout ) {
 		$app_preferences = et_fb_app_preferences_settings();
 
 		// phpcs:ignore ET.Sniffs.ValidatedSanitizedInput -- $_POST['et_builder_mode'] value used in the comparision.
@@ -5430,7 +5521,12 @@ if ( ! function_exists( 'et_pb_load_global_module' ) ) {
 			$query = new WP_Query(
 				array(
 					'p'         => (int) $global_id,
-					'post_type' => ET_BUILDER_LAYOUT_POST_TYPE,
+					'post_type' => array(
+						ET_BUILDER_LAYOUT_POST_TYPE,
+						ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE,
+						ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE,
+						ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE,
+					),
 				)
 			);
 
@@ -9997,6 +10093,26 @@ function et_pb_get_post_categories( $post_id, $default = array() ) {
 }
 
 /**
+ * Generates "Use Visual Builder" button url
+ *
+ * @return string
+ */
+function et_fb_get_page_url() {
+	global $wp;
+
+	$post_id         = get_the_ID();
+	$is_divi_library = 'et_pb_layout' === get_post_type( $post_id );
+
+	if ( $is_divi_library ) {
+		return get_edit_post_link( $post_id );
+	} elseif ( is_singular() ) {
+		return get_permalink( $post_id );
+	}
+
+	return add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
+}
+
+/**
  * Add "Use Visual Builder" link to WP-Admin bar
  *
  * @return void
@@ -10005,7 +10121,9 @@ function et_fb_add_admin_bar_link() {
 	$is_not_builder_enabled_single = ! is_singular() || ! et_builder_fb_enabled_for_post( get_the_ID() );
 	$is_not_in_wc_shop             = ! et_builder_used_in_wc_shop();
 	$not_allowed_fb_access         = ! et_pb_is_allowed( 'use_visual_builder' );
-	if ( $not_allowed_fb_access || ( $is_not_builder_enabled_single && $is_not_in_wc_shop ) ) {
+	$is_not_theme_builder_used     = ! et_fb_is_theme_builder_used_on_page() || ! et_pb_is_allowed( 'theme_builder' );
+
+	if ( $not_allowed_fb_access || ( $is_not_builder_enabled_single && $is_not_in_wc_shop && $is_not_theme_builder_used ) ) {
 		return;
 	}
 
@@ -10018,12 +10136,10 @@ function et_fb_add_admin_bar_link() {
 		$post_id = $wp_the_query->get_queried_object()->ID;
 	}
 
-	$is_divi_library = 'et_pb_layout' === get_post_type( $post_id );
-
-	$page_url = $is_divi_library ? get_edit_post_link( $post_id ) : get_permalink( $post_id );
+	$page_url = et_fb_get_page_url();
 
 	// Don't add the link, if Frontend Builder has been loaded already.
-	if ( et_fb_is_enabled() ) {
+	if ( et_fb_is_enabled() || et_fb_is_enabled_on_any_template() ) {
 		$wp_admin_bar->add_menu(
 			array(
 				'id'    => 'et-disable-visual-builder',
@@ -10037,11 +10153,13 @@ function et_fb_add_admin_bar_link() {
 
 	$current_object = $wp_the_query->get_queried_object();
 
-	if ( ! current_user_can( 'edit_post', $current_object->ID ) || ! et_pb_is_allowed( 'divi_builder_control' ) ) {
+	$user_is_allowed_to_edit = isset( $current_object->ID ) ? current_user_can( 'edit_post', $current_object->ID ) : ( et_fb_is_theme_builder_used_on_page() && et_pb_is_allowed( 'theme_builder' ) );
+
+	if ( ! $user_is_allowed_to_edit || ! et_pb_is_allowed( 'divi_builder_control' ) ) {
 		return;
 	}
 
-	$use_visual_builder_url = et_pb_is_pagebuilder_used( $post_id ) ?
+	$use_visual_builder_url = et_pb_is_pagebuilder_used( $post_id ) || ( et_fb_is_theme_builder_used_on_page() && ! is_singular() ) ?
 		et_fb_get_builder_url( $page_url ) :
 		add_query_arg(
 			array(
@@ -10342,8 +10460,24 @@ function et_fb_get_builder_shortcode_object( $post_type, $post_id, $layout_type 
 	add_filter( 'et_builder_module_force_render', '__return_true' );
 
 	$post_data               = get_post( $post_id );
-	$post_data_post_modified = gmdate( 'U', strtotime( $post_data->post_modified ) );
-	$post_content            = $post_data->post_content;
+	$post_data_post_modified = is_object( $post_data ) ? gmdate( 'U', strtotime( $post_data->post_modified ) ) : 0;
+	$post_content            = is_object( $post_data ) ? $post_data->post_content : '';
+	$is_theme_builder        = et_builder_tb_enabled();
+	$is_backend_builder      = et_builder_bfb_enabled();
+	$theme_builder_layouts   = et_theme_builder_get_template_layouts();
+
+	// Unset main template from Theme Builder layouts to avoid PHP Notices.
+	if ( isset( $theme_builder_layouts['et_template'] ) ) {
+		unset( $theme_builder_layouts['et_template'] );
+	}
+
+	// Get the content for all theme builder posts.
+	foreach ( $theme_builder_layouts as $key => $theme_builder_layout ) {
+		if ( 0 !== $theme_builder_layout['id'] && $theme_builder_layout['enabled'] && $theme_builder_layout['override'] ) {
+			$post_data                                     = get_post( $theme_builder_layout['id'] );
+			$theme_builder_layouts[ $key ]['post_content'] = $post_data->post_content;
+		}
+	}
 
 	// if autosave exists here, return it with the real content, autosave.js and getServerSavedPostData() will look for it.
 	$current_user_id = get_current_user_id();
@@ -10398,7 +10532,64 @@ function et_fb_get_builder_shortcode_object( $post_type, $post_id, $layout_type 
 	 */
 	$post_content = apply_filters( 'et_fb_load_raw_post_content', $post_content, $post_id );
 
-	$fields_data['shortcode_object'] = et_fb_process_shortcode( $post_content );
+	$fields_data['shortcode_object'] = array();
+
+	// Process main post content fields data.
+	$post_fields_data = et_fb_process_shortcode( $post_content );
+
+	$fields_data['shortcode_object'] = array();
+
+	// In Visual Builder get All Theme Builder Areas.
+	if ( et_pb_is_allowed( 'theme_builder' ) && ! $is_theme_builder && ! $is_backend_builder && ! empty( $theme_builder_layouts ) ) {
+		// Process Theme Builder Header area fields data.
+		if ( isset( $theme_builder_layouts['et_header_layout']['post_content'] ) ) {
+			$theme_builder_header    = apply_filters( 'et_fb_load_raw_post_content', $theme_builder_layouts['et_header_layout']['post_content'], $theme_builder_layouts['et_header_layout']['id'] );
+			$tb_header_fields_data   = et_fb_process_shortcode( $theme_builder_header, '', '', '', '', 'et_header_layout' );
+			$processed_fields_data[] = $tb_header_fields_data;
+		}
+
+		// Process Theme Builder Body area.
+		if ( isset( $theme_builder_layouts['et_body_layout']['post_content'] ) ) {
+			$theme_builder_body                  = apply_filters( 'et_fb_load_raw_post_content', $theme_builder_layouts['et_body_layout']['post_content'], $theme_builder_layouts['et_body_layout']['id'] );
+			$tb_body_fields_data                 = et_fb_process_shortcode( $theme_builder_body, '', '', '', '', 'et_body_layout' );
+			$theme_builder_post_content_selector = et_fb_generate_post_content_module_selector( $tb_body_fields_data, 'theme_builder_content' );
+
+			if ( $theme_builder_post_content_selector && ! is_home() && ! is_archive() && ! is_404() ) {
+				// If Theme Builder Body contains Post Content Module, replace it with real post content.
+				$post_content_fields_data = et_fb_process_shortcode( $post_content, '', '', '', '', 'post_content' );
+				$processed_fields_data[]  = et_fb_generate_tb_body_area_with_post_content( $tb_body_fields_data, $theme_builder_post_content_selector, $post_content_fields_data );
+			} else {
+				// if not, just add Theme Builder Body area content.
+				$processed_fields_data[] = $tb_body_fields_data;
+
+				// Add Post content too, so it can be loaded when post content module is added.
+				if ( ! is_home() && ! is_archive() && ! is_404() ) {
+					$initial_post_content_fields_data = et_fb_process_shortcode( $post_content, '', '', '', '', 'initial_post_content' );
+					$processed_fields_data[]          = $initial_post_content_fields_data;
+				}
+			}
+		} elseif ( ! is_home() && et_pb_is_pagebuilder_used( $post_id ) ) {
+			// If there is no Theme Builder Body, load post content.
+			$processed_fields_data[] = $post_fields_data;
+		}
+
+		// Process Theme Builder Header area fields data.
+		if ( isset( $theme_builder_layouts['et_footer_layout']['post_content'] ) ) {
+			$theme_builder_footer    = apply_filters( 'et_fb_load_raw_post_content', $theme_builder_layouts['et_footer_layout']['post_content'], $theme_builder_layouts['et_footer_layout']['id'] );
+			$tb_footer_fields_data   = et_fb_process_shortcode( $theme_builder_footer, '', '', '', '', 'et_footer_layout' );
+			$processed_fields_data[] = $tb_footer_fields_data;
+		}
+
+		// Build the shortcode_object from Theme Builder Areas.
+		foreach ( $processed_fields_data as $processed_field_data ) {
+			if ( is_array( $processed_field_data ) ) {
+				$fields_data['shortcode_object'] = array_merge( $fields_data['shortcode_object'], $processed_field_data );
+			}
+		}
+	} else {
+		// In Theme Builder and Backend Builder show only main post.
+		$fields_data['shortcode_object'] = $post_fields_data;
+	}
 
 	remove_filter( 'et_builder_module_force_render', '__return_true' );
 
@@ -10407,6 +10598,105 @@ function et_fb_get_builder_shortcode_object( $post_type, $post_id, $layout_type 
 	setup_postdata( $post );
 
 	return $fields_data;
+}
+
+/**
+ * This function searches the multidimensional array of post content fields for post content module
+ * and generates array of keys that are used to select post content module.
+ *
+ * @param array  $array Array of post fields data.
+ * @param string $element_type Type of an element that is analyzes at the moment.
+ *
+ * @return array
+ */
+function et_fb_generate_post_content_module_selector( array $array, $element_type ) {
+	global $current_section;
+	global $current_row;
+	global $current_column;
+	global $current_module;
+	global $post_content_module_selector;
+
+	if ( 'theme_builder_content' === $element_type ) {
+		// Loop through Theme Builder Area sections.
+		foreach ( $array as $key => $value ) {
+			if ( isset( $array[ $key ]['content'] ) && is_array( $array[ $key ]['content'] ) ) {
+				$current_section = $key;
+				et_fb_generate_post_content_module_selector( $array[ $key ]['content'], $array[ $key ]['type'] );
+			}
+		}
+	} elseif ( 'et_pb_section' === $element_type ) {
+		// Loop through rows.
+		foreach ( $array as $key => $value ) {
+			if ( 'et_pb_fullwidth_post_content' === $array[ $key ]['type'] ) {
+				et_fb_generate_post_content_module_selector( $array, 'et_pb_column' );
+			} elseif ( isset( $array[ $key ]['content'] ) && is_array( $array[ $key ]['content'] ) ) {
+				$current_row = $key;
+				et_fb_generate_post_content_module_selector( $array[ $key ]['content'], $array[ $key ]['type'] );
+			}
+		}
+	} elseif ( 'et_pb_row' === $element_type ) {
+		// Loop through columns.
+		foreach ( $array as $key => $value ) {
+			if ( isset( $array[ $key ]['content'] ) && is_array( $array[ $key ]['content'] ) ) {
+				$current_column = $key;
+				et_fb_generate_post_content_module_selector( $array[ $key ]['content'], $array[ $key ]['type'] );
+			}
+		}
+	} elseif ( 'et_pb_column' === $element_type ) {
+		// Loop through modules.
+		foreach ( $array as $key => $value ) {
+			if ( 'et_pb_post_content' === $array[ $key ]['type'] ) {
+				// If Post Content Module is Found build the selector from current Section, Row, and Column.
+				$current_module               = $key;
+				$post_content_module_selector = array(
+					'section' => $current_section,
+					'row'     => $current_row,
+					'column'  => $current_column,
+					'module'  => $current_module,
+				);
+			} elseif ( 'et_pb_fullwidth_post_content' === $array[ $key ]['type'] ) {
+				// If Post Content Module is FullWidth create selector with section and module id.
+				$current_module               = $key;
+				$post_content_module_selector = array(
+					'section'          => $current_section,
+					'fullwidth_module' => $current_module,
+				);
+			}
+		}
+	}
+
+	return $post_content_module_selector;
+}
+
+/**
+ * This function is used to generate the Theme Builder Body area that has Post
+ * Content module inside. It replaces Post Content module with sections of a
+ * post that is being currently edited.
+ *
+ * @param array $theme_builder_body_fields Theme Builder Body area fields data.
+ * @param array $selector Array of keys for selecting Post Content Module.
+ * @param array $post_content_fields Post Content fields data that should
+ *     replace the Post Content Module.
+ *
+ * @return array
+ */
+function et_fb_generate_tb_body_area_with_post_content( $theme_builder_body_fields, $selector, $post_content_fields ) {
+	$is_full_width = isset( $selector['fullwidth_module'] );
+
+	if ( $is_full_width ) {
+		$original_post_content_module = $theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['fullwidth_module'] ];
+
+		$theme_builder_body_fields[ $selector['section'] ]['attrs']['post_content_module_attrs']                  = $original_post_content_module['attrs'];
+		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['fullwidth_module'] ]['content'] = $post_content_fields;
+		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['fullwidth_module'] ]['content'] = $post_content_fields;
+	} else {
+		$original_post_content_module = $theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['row'] ]['content'][ $selector['column'] ]['content'][ $selector['module'] ];
+
+		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['row'] ]['content'][ $selector['column'] ]['attrs']['post_content_module_attrs']        = $original_post_content_module['attrs'];
+		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['row'] ]['content'][ $selector['column'] ]['content'][ $selector['module'] ]['content'] = $post_content_fields;
+	}
+
+	return $theme_builder_body_fields;
 }
 
 /**
@@ -10681,7 +10971,7 @@ function et_fb_get_product_tour_text( $post_id ) {
  *
  * @return mixed
  */
-function et_fb_process_shortcode( $content, $parent_address = '', $global_parent = '', $global_parent_type = '', $parent_type = '' ) {
+function et_fb_process_shortcode( $content, $parent_address = '', $global_parent = '', $global_parent_type = '', $parent_type = '', $theme_builder_area = '' ) {
 	global $shortcode_tags, $fb_processing_counter;
 
 	if ( false === strpos( $content, '[' ) ) {
@@ -10770,7 +11060,7 @@ function et_fb_process_shortcode( $content, $parent_address = '', $global_parent
 
 		if ( isset( $match[5] ) ) {
 			// phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- `call_user_func` calls the registered shortcode callback.
-			$output = call_user_func( $shortcode_tags[ $tag ], $attr, $match[5], $tag, $parent_address, $global_parent, $global_parent_type, $parent_type );
+			$output = call_user_func( $shortcode_tags[ $tag ], $attr, $match[5], $tag, $parent_address, $global_parent, $global_parent_type, $parent_type, $theme_builder_area );
 		} else {
 			// self-closing tag.
 			// phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- `call_user_func` calls the registered shortcode callback.

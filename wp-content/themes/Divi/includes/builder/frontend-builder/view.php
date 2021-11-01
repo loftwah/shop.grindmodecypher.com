@@ -13,7 +13,9 @@ function et_fb_app_boot( $content ) {
 	$main_query_post      = ET_Post_Stack::get_main_post();
 	$main_query_post_type = $main_query_post ? $main_query_post->post_type : '';
 
-	if ( ET_Builder_Element::is_theme_builder_layout() && ! et_theme_builder_is_layout_post_type( $main_query_post_type ) ) {
+	if ( ET_Builder_Element::is_theme_builder_layout()
+		&& ! et_theme_builder_is_layout_post_type( $main_query_post_type )
+		&& is_singular() ) {
 		// Prevent boot if we are rendering a TB layout and not the real WP Query post.
 		return $content;
 	}

@@ -147,6 +147,16 @@ class ET_Builder_Do_Not_Cache_Page {
 			return;
 		}
 
+		$is_visual_builder     = isset( $_GET['et_fb'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is not used
+		$is_theme_builder_used = et_fb_is_theme_builder_used_on_page() && et_pb_is_allowed( 'theme_builder' );
+
+		// Disable for visual builder if page uses Theme Builder.
+		// Since we implemented Visual Theme Builder editor, styles using the builder now,
+		// and we do not need frontend cached CSS, since it can create conflicts.
+		if ( $is_visual_builder && $is_theme_builder_used ) {
+			return;
+		}
+
 		$unified = ! $forced_inline && ! $forced_in_footer;
 		$owner   = $unified ? 'core' : 'builder';
 		$slug    = $unified ? 'unified' : 'module-design';

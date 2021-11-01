@@ -1,3 +1,53 @@
+version 4.12 ( updated 10-28-2021 )
+- Introduced Full Site Front-End Editing for Divi, allowing you to easily jump into your custom headers, footers and post templates while browsing your website and edit them in the Visual Builder.
+- Security Update: Fixed an incompatibility with User Role Editor plugins, specifically with the removal of the "edit page" capability. The Divi Builder attempted to check for "edit page" capability on save, but instead checked for "edit post" capability due to a bug in its post type check. As a result, if you used a Role Editor Plugin to remove the "edit page" capability from the Editor role (or another role with both "edit post" and "edit page" capabilities), but did not remove the "edit post" capability for that same role, the Editor would still be able to edit pages using a custom request.
+- Fixed Post Slider and Fullwidth Post Slider Modules' swipe to change slides on mobile not working.
+- Fixed shortcode tracking.
+- Fixed compatibility w/ Yith WooCommerce Badge Management plugin.
+- Fixed image toggle issue for the variable product in Woo Images module.
+- Fixed issue with sort by latest in Shop module.
+- Fixed Display Condition's Post Category and Category Page conditions to exclude "Product Tag" taxonomy from their list.
+- Fixed a compatibility issue with 3rd Party module Divi Filterable Blog Module.
+- Fixed WP Rocket compatibility affecting certain modules' animations.
+- Fixed laggy issue in Visual builder.
+- Fixed responsive and hover mode value not inheriting desktop mode value after value reset.
+- Fixed hover background image transitions not working.
+- Fixed an issue with Responsive Views where a left- or right-snapped Settings modal could cause an incomplete View Mode transition.
+- Fixed Author, Post Type and Dynamic Posts display conditions so it would work with WooCommerce shop page.
+- Fixed Sendinblue V3 api not fetching all the lists.
+- Fixed search form HTML showing on the front end when disabled from the customizer.
+- Fixed an issue where the footer widgets were hidden in the Theme Customizer with certain column layout variations.
+	* core/components/PageResource.php
+	* core/components/api/email/SendinBlue.php
+	* et-pagebuilder/et-pagebuilder.php
+	* header.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-settings.php
+	* includes/builder/core.php
+	* includes/builder/feature/CriticalCSS.php
+	* includes/builder/feature/DoNotCachePage.php
+	* includes/builder/feature/ajax-data/AjaxData.php
+	* includes/builder/feature/dynamic-assets/assets/js/salvattore.js
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/init.php
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/frontend-builder/view.php
+	* includes/builder/functions.php
+	* includes/builder/module/Shop.php
+	* includes/builder/module/field/display-conditions/Author.php
+	* includes/builder/module/field/display-conditions/DynamicPosts.php
+	* includes/builder/module/field/display-conditions/PostType.php
+	* includes/builder/module/helpers/HoverOptions.php
+	* includes/builder/module/woocommerce/Images.php
+	* includes/builder/plugin-compat/divi-filterable-blog-module.php
+	* includes/builder/scripts/frontend/scripts-dynamic.js
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/src/builder.js
+	* theme-header.php
+
 version 4.11.3 ( updated 10-15-2021 )
 - Fixed a bug that could break the last published Post Header styles.
 - Fixed Magnific Popup not working with gallery shortcode in child themes in certain cases.

@@ -4692,7 +4692,8 @@ if ( ! function_exists( 'et_fb_is_enabled' ) ) :
 			return $check;
 		}
 
-		if ( ! $post_id ) {
+		// phpcs:ignore WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
+		if ( empty( $_GET['et_fb'] ) ) {
 			return false;
 		}
 
@@ -4702,10 +4703,6 @@ if ( ! function_exists( 'et_fb_is_enabled' ) ) :
 
 		$cache[ $post_id ] = false;
 
-		if ( ! is_singular() ) {
-			return false;
-		}
-
 		if ( is_admin() ) {
 			return false;
 		}
@@ -4714,16 +4711,19 @@ if ( ! function_exists( 'et_fb_is_enabled' ) ) :
 			return false;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
-		if ( empty( $_GET['et_fb'] ) ) {
-			return false;
-		}
-
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			return false;
 		}
 
-		if ( ! et_pb_is_pagebuilder_used( $post_id ) ) {
+		if ( ! et_pb_is_pagebuilder_used( $post_id ) && ! et_fb_is_theme_builder_used_on_page() ) {
+			return false;
+		}
+
+		if ( is_singular() && ! current_user_can( 'edit_post', $post_id ) ) {
+			return false;
+		}
+
+		if ( ! is_singular() && ! et_pb_is_allowed( 'theme_builder' ) ) {
 			return false;
 		}
 
@@ -4734,6 +4734,60 @@ if ( ! function_exists( 'et_fb_is_enabled' ) ) :
 		$cache[ $post_id ] = true;
 
 		return true;
+	}
+endif;
+
+if ( ! function_exists( 'et_fb_is_enabled_on_any_template' ) ) :
+	/**
+	 * Determine fb enabled status of a post / page or any theme builder layout used in the page.
+	 *
+	 * @internal NOTE: Don't use this from outside builder code! {@see et_core_is_fb_enabled()}.
+	 *
+	 * @return bool
+	 */
+	function et_fb_is_enabled_on_any_template() {
+		$theme_builder_layouts = et_theme_builder_get_template_layouts();
+
+		// Unset main template from Theme Builder layouts to avoid PHP Notices.
+		if ( isset( $theme_builder_layouts['et_template'] ) ) {
+			unset( $theme_builder_layouts['et_template'] );
+		}
+
+		// Check if Builder is enabled on any Theme Builder Layout used.
+		foreach ( $theme_builder_layouts as $key => $theme_builder_layout ) {
+			if ( $theme_builder_layout['enabled'] && $theme_builder_layout['override'] ) {
+				if ( et_fb_is_enabled( $theme_builder_layout['id'] ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+endif;
+
+if ( ! function_exists( 'et_fb_is_theme_builder_used_on_page' ) ) :
+	/**
+	 * Check if Theme Builder is Used on the page.
+	 *
+	 * @return bool
+	 */
+	function et_fb_is_theme_builder_used_on_page() {
+		$theme_builder_layouts = et_theme_builder_get_template_layouts();
+
+		// Unset main template from Theme Builder layouts to avoid PHP Notices.
+		if ( isset( $theme_builder_layouts['et_template'] ) ) {
+			unset( $theme_builder_layouts['et_template'] );
+		}
+
+		// If any template is used and enabled return true.
+		foreach ( $theme_builder_layouts as $theme_builder_layout ) {
+			if ( $theme_builder_layout['enabled'] && $theme_builder_layout['override'] ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 endif;
 

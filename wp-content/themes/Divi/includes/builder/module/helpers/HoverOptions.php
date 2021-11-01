@@ -66,7 +66,7 @@ class ET_Builder_Module_Helper_Hover_Options {
 	 * @return bool
 	 */
 	public function is_enabled( $setting, $attrs ) {
-		$name = $setting === 'background_color' ? 'background' : $setting;
+		$name = in_array( $setting, [ 'background_color', 'background_image' ], true ) ? 'background' : $setting;
 
 		$field = $this->get_hover_enabled_field( $name );
 

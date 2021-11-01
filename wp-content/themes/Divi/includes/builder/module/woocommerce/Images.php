@@ -223,6 +223,7 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 	/**
 	 * Get images output
 	 *
+	 * @since ?? Set $defaults['overwrite'] to array( 'product', 'post' )
 	 * @since 3.29
 	 *
 	 * @param array $args Additional args.
@@ -230,6 +231,28 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 	 * @return string
 	 */
 	public static function get_images( $args = array() ) {
+		/*
+		 * YITH Badge Management plugin executes only when
+		 * did_action( 'woocommerce_product_thumbnails' ) returns FALSE.
+		 *
+		 * The above wouldn't be the case when multiple Woo Images modules
+		 * are placed on the same page.
+		 * Hence the workaround is to reset the 'woocommerce_product_thumbnails' action.
+		 *
+		 * @link https://github.com/elegantthemes/Divi/issues/18530
+		 */
+		global $wp_actions;
+
+		$tag   = 'woocommerce_product_thumbnails';
+		$reset = false;
+		$value = 0;
+
+		if ( isset( $wp_actions[ $tag ] ) ) {
+			$value = $wp_actions[ $tag ];
+			$reset = true;
+			unset( $wp_actions[ $tag ] );
+		}
+
 		$defaults = array(
 			'product'              => 'current',
 			'show_product_image'   => 'on',
@@ -240,8 +263,21 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 
 		$images = et_builder_wc_render_module_template(
 			'woocommerce_show_product_images',
-			$args
+			$args,
+			array( 'product', 'post' )
 		);
+
+		/*
+		 * Reset changes made for YITH Badge Management plugin.
+		 *
+		 * That way we won't bleed creating new issues.
+		 *
+		 * @link https://github.com/elegantthemes/Divi/issues/18530
+		 */
+		if ( $reset && ! isset( $wp_actions[ $tag ] ) ) {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Fix compatibility.
+			$wp_actions[ $tag ] = $value;
+		}
 
 		return $images;
 	}
@@ -261,6 +297,7 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 		$sale_badge_color_hover  = $this->get_hover_value( 'sale_badge_color' );
 		$sale_badge_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'sale_badge_color' );
 		$force_fullwidth         = et_()->array_get( $this->props, 'force_fullwidth', 'off' );
+		$show_product_image      = et_()->array_get( $this->props, 'show_product_image', 'off' );
 
 		// Sale Badge Color.
 		$this->generate_styles(
@@ -281,6 +318,17 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 				array(
 					'selector'    => '%%order_class%% .woocommerce-product-gallery__image img',
 					'declaration' => 'width: 100%;',
+				)
+			);
+		}
+
+		// Toggle featured image.
+		if ( 'off' === $show_product_image ) {
+			ET_Builder_Element::set_style(
+				$render_slug,
+				array(
+					'selector'    => '%%order_class%% .woocommerce-product-gallery__image--placeholder img[src*="woocommerce-placeholder"]',
+					'declaration' => 'visibility: hidden;',
 				)
 			);
 		}

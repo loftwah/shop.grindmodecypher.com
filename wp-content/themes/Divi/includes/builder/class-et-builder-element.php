@@ -2646,7 +2646,7 @@ class ET_Builder_Element {
 	 *
 	 * @return string The module's HTML output.
 	 */
-	public function _render( $attrs, $content, $render_slug, $parent_address = '', $global_parent = '', $global_parent_type = '', $parent_type = '' ) {
+	public function _render( $attrs, $content, $render_slug, $parent_address = '', $global_parent = '', $global_parent_type = '', $parent_type = '', $theme_builder_area = '' ) {
 		global $et_fb_processing_shortcode_object, $et_pb_current_parent_type, $et_pb_parent_section_type, $is_parent_sticky_module, $is_inside_sticky_module;
 
 		if ( $this->is_rendering ) {
@@ -3238,7 +3238,7 @@ class ET_Builder_Element {
 		}
 
 		// Render the module as we normally would.
-		$output = $this->{$render_method}( $attrs, $content, $render_slug, $parent_address, $global_parent, $global_parent_type, $parent_type );
+		$output = $this->{$render_method}( $attrs, $content, $render_slug, $parent_address, $global_parent, $global_parent_type, $parent_type, $theme_builder_area );
 
 		/**
 		 * Check if we're rendering on frontend, Then decide whether to keep the output or erase it.
@@ -3558,7 +3558,7 @@ class ET_Builder_Element {
 	 * @since 3.1 Renamed from `_shortcode_passthru_callback()` to `render_as_builder_data()`
 	 * @since 3.0.0
 	 */
-	public function render_as_builder_data( $atts, $content, $render_slug, $parent_address = '', $global_parent = '', $global_parent_type = '', $parent_type = '' ) {
+	public function render_as_builder_data( $atts, $content, $render_slug, $parent_address = '', $global_parent = '', $global_parent_type = '', $parent_type = '', $theme_builder_area = '' ) {
 		global $post;
 
 		// this is called during pageload, but we want to ignore that round, as this data will be built and returned on separate ajax request instead.
@@ -3820,6 +3820,11 @@ class ET_Builder_Element {
 		// set the global parent if exists.
 		if ( ( ! isset( $attrs['global_module'] ) || '' === $attrs['global_module'] ) && '' !== $global_parent ) {
 			$attrs['global_parent'] = $global_parent;
+		}
+
+		// add theme_builder_area parameter to attributes, so we know to strip this section when saving the post.
+		if ( isset( $theme_builder_area ) && '' !== $theme_builder_area ) {
+			$attrs['theme_builder_area'] = $theme_builder_area;
 		}
 
 		if ( isset( $this->is_structure_element ) && $this->is_structure_element ) {
@@ -8532,8 +8537,13 @@ class ET_Builder_Element {
 
 			// background is a special case because it also contains the "background_color" property.
 			if ( 'background' === $prop_name ) {
-				// we can continue if hover background color is not set because it is the only animatable property.
-				if ( ! $hover->get_value( 'background_color', $this->props ) && ! $sticky->get_value( 'background_color', $this->props ) ) {
+				// we can continue if hover background color or background image is not set.
+				if (
+					! $hover->get_value( 'background_color', $this->props )
+					&& ! $hover->get_value( 'background_image', $this->props )
+					&& ! $sticky->get_value( 'background_color', $this->props )
+					&& ! $sticky->get_value( 'background_image', $this->props )
+				) {
 					continue;
 				}
 			} elseif ( empty( $this->props[ $prop_name_hover ] ) && empty( $this->props[ $prop_name_sticky ] ) ) {

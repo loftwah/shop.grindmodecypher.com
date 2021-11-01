@@ -38,7 +38,9 @@ trait AuthorCondition {
 			},
 			$authors_raw
 		);
-		$current_post_author_id = get_post_field( 'post_author', get_queried_object_id() );
+		$is_on_shop_page        = class_exists( 'WooCommerce' ) && is_shop();
+		$queried_object_id      = $is_on_shop_page ? wc_get_page_id( 'shop' ) : get_queried_object_id();
+		$current_post_author_id = get_post_field( 'post_author', (int) $queried_object_id );
 
 		$should_display = array_intersect( $authors_ids, (array) $current_post_author_id ) ? true : false;
 

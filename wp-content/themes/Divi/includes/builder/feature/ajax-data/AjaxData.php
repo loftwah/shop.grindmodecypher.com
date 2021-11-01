@@ -144,7 +144,7 @@ class ET_Builder_Ajax_Data {
 
 		$data                = [];
 		$search              = isset( $_GET['search'] ) ? sanitize_text_field( $_GET['search'] ) : '';
-		$excluded_taxonomies = [ 'post_tag', 'project_tag', 'nav_menu', 'link_category', 'post_format', 'layout_category', 'layout_pack', 'layout_type', 'scope', 'module_width' ];
+		$excluded_taxonomies = [ 'post_tag', 'project_tag', 'product_tag', 'nav_menu', 'link_category', 'post_format', 'layout_category', 'layout_pack', 'layout_type', 'scope', 'module_width' ];
 
 		/**
 		 * Filters excluded taxonomies for `et_builder_ajax_get_categories` ajax action.

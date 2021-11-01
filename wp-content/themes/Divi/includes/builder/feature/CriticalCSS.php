@@ -169,6 +169,13 @@ class ET_Builder_Critical_CSS {
 	public function enable_builder( $styles ) {
 		$this->_builder_styles = $styles;
 
+		// There are cases where external assets generation might be disabled at runtime,
+		// ensure Critical CSS and Dynamic Assets use the same logic to avoid side effects.
+		if ( ! et_should_generate_dynamic_assets() ) {
+			$this->disable();
+			return $styles;
+		}
+
 		add_filter( 'et_core_page_resource_force_write', [ $this, 'force_resource_write' ], 10, 2 );
 		add_filter( 'et_core_page_resource_tag', [ $this, 'builder_style_tag' ], 10, 5 );
 		if ( et_builder_is_mod_pagespeed_enabled() ) {
@@ -222,7 +229,7 @@ class ET_Builder_Critical_CSS {
 				 *
 				 * With that out of the way, the only reason I wrote this detailed description is to make Fabio proud.
 				 *
-				 * @since ??
+				 * @since 4.11.3
 				 *
 				 * @param string $rel
 				 */
@@ -648,6 +655,22 @@ class ET_Builder_Critical_CSS {
 		}
 
 		return $total;
+	}
+
+	/**
+	 * Disable Critical CSS.
+	 *
+	 * @since ??
+	 *
+	 * @return void
+	 */
+	public function disable() {
+		remove_filter( 'et_builder_critical_css_enabled', '__return_true' );
+		remove_filter( 'et_dynamic_assets_modules_atf', [ $this, 'dynamic_assets_modules_atf' ] );
+		remove_filter( 'pre_do_shortcode_tag', [ $this, 'check_section_start' ] );
+		remove_filter( 'do_shortcode_tag', [ $this, 'check_section_end' ] );
+		remove_filter( 'et_builder_module_style_manager', [ $this, 'enable_builder' ] );
+		remove_filter( 'et_global_assets_list', [ $this, 'maybe_defer_global_asset' ] );
 	}
 
 	/**

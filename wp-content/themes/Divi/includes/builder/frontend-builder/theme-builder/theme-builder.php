@@ -1253,9 +1253,10 @@ function et_theme_builder_get_template_layouts( $request = null, $cache = true, 
 		);
 	} else {
 		// We are currently displaying a template in the FE.
-		$templates = et_theme_builder_get_theme_builder_templates( true );
-		$settings  = et_theme_builder_get_flat_template_settings_options();
-		$template  = $request->get_template( $templates, $settings );
+		$templates   = et_theme_builder_get_theme_builder_templates( true );
+		$settings    = et_theme_builder_get_flat_template_settings_options();
+		$template    = $request->get_template( $templates, $settings );
+		$is_singular = is_singular();
 
 		if ( ! empty( $template ) ) {
 			$is_default      = $template['default'];
@@ -1267,7 +1268,7 @@ function et_theme_builder_get_template_layouts( $request = null, $cache = true, 
 			// it does not override any areas otherwise it will take over ALL site pages.
 			if ( ! $is_default || $override_header || $override_body || $override_footer ) {
 				$layouts = array(
-					ET_THEME_BUILDER_TEMPLATE_POST_TYPE    => $template['id'],
+					ET_THEME_BUILDER_TEMPLATE_POST_TYPE    => $is_singular ? $template['id'] : false,
 					ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE => $template['layouts']['header'],
 					ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE => $template['layouts']['body'],
 					ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE => $template['layouts']['footer'],
@@ -1284,6 +1285,13 @@ function et_theme_builder_get_template_layouts( $request = null, $cache = true, 
 	 * @param array $layouts
 	 */
 	$layouts = apply_filters( 'et_theme_builder_template_layouts', $layouts );
+
+	// Add AB Subjects array.
+	foreach ( $layouts as $key => $layout ) {
+		if ( is_array( $layout ) && $layout['override'] ) {
+			$layouts[ $key ]['et_pb_ab_subjects'] = et_pb_ab_get_subjects( $layout['id'] );
+		}
+	}
 
 	if ( $cache ) {
 		$store[ $cache_key ] = $layouts;
@@ -1334,57 +1342,6 @@ function et_theme_builder_layout_has_post_content( $layout ) {
 	}
 
 	return false;
-}
-
-/**
- * Get the failure modal html for a template that overrides the body but does not display
- * post content (e.g. Post Content module is missing or the body has been disabled).
- *
- * @param string  $template_name  Template name.
- * @param boolean $layout_enabled Layout enabled.
- *
- * @return string
- */
-function et_theme_builder_get_failure_notification_modal( $template_name, $layout_enabled ) {
-	$i18n        = require ET_BUILDER_DIR . 'frontend-builder/i18n/theme-builder.php';
-	$error       = $i18n['This post has been assigned a template using the Theme Builder, however, the template being used does not contain a Post Content module.'];
-	$description = $i18n['A Post Content module is required in order to add unique content within the Theme Builder template.'];
-
-	if ( ! $layout_enabled ) {
-		$error       = $i18n['Oops, it looks like the current Theme Builder Template body layout is disabled.'];
-		$description = $i18n['The body layout of a template should not be disabled if you wish to display and edit the content of individual posts using this layout.'];
-	}
-
-	$output = sprintf(
-		'<div class="et-core-modal-overlay et-theme-builder-no-post-content et-core-active">
-		<div class="et-core-modal">
-			<div class="et-core-modal-header">
-				<h3 class="et-core-modal-title">%1$s</h3>
-				<a href="#" class="et-core-modal-close" data-et-core-modal="close"></a>
-			</div>
-
-			<div class="et-core-modal-content">
-				<p>%2$s</p>
-				<p>%3$s</p>
-				<p>%4$s</p>
-			</div>
-
-			<div class="et_pb_prompt_buttons">
-				<br>
-				<span class="spinner"></span>
-				<a href="%6$s" class="et-core-modal-action">%5$s</a>
-			</div>
-		</div>
-	</div>',
-		esc_html__( 'Missing Post Content Module', 'et_builder' ),
-		esc_html__( $error, 'et_builder' ),
-		esc_html__( $description, 'et_builder' ),
-		esc_html( sprintf( __( 'Current template: %1$s', 'et_builder' ), $template_name ) ),
-		esc_html__( 'Edit Theme Builder', 'et_builder' ),
-		esc_url( admin_url( 'admin.php?page=et_theme_builder' ) )
-	);
-
-	return $output;
 }
 
 /**

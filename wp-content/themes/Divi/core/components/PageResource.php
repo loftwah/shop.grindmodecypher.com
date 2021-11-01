@@ -484,6 +484,11 @@ class ET_Core_PageResource {
 	protected static function _maybe_create_static_resources( $location ) {
 		self::$current_output_location = $location;
 
+		// Disable for footer inside builder if page uses Theme Builder Editor to avoid conflict with critical CSS.
+		if ( 'footer' === $location && et_fb_is_enabled() && et_fb_is_theme_builder_used_on_page() ) {
+			return false;
+		}
+
 		$sorted_resources = self::get_resources_by_output_location( $location );
 
 		foreach ( $sorted_resources as $priority => $resources ) {
@@ -858,35 +863,6 @@ class ET_Core_PageResource {
 	 * @param bool    $update
 	 */
 	public static function save_post_cb( $post_id, $post, $update ) {
-		// In Dynamic CSS, we parse the layout content for generating styles and store it under the `object_id`, so clearing
-		// only the layout assets won't update the page style if we made any changes to the layout/global modules etc.
-		// Hence, we need to clear all static resources when we update a layout.
-		// Also, we should only clear the cache if the layout being saved is a global module/row/section.
-		$remove_resource = false;
-
-		if ( 'et_pb_layout' === $post->post_type ) {
-			$taxonomies = get_taxonomies( [ 'object_type' => [ 'et_pb_layout' ] ] );
-			foreach ( $taxonomies as $taxonomy ) {
-				$tax_to_clear   = array( 'scope', 'layout_type' );
-				$types_to_clear = array( 'module', 'row', 'section' );
-
-				if ( ! in_array( $taxonomy, $tax_to_clear, true ) ) {
-					continue;
-				}
-
-				$scope_terms  = wp_list_pluck( get_the_terms( $post_id, 'scope' ), 'slug' );
-				$layout_terms = wp_list_pluck( get_the_terms( $post_id, 'layout_type' ), 'slug' );
-
-				$is_global         = ! empty( $scope_terms ) && in_array( 'global', $scope_terms, true );
-				$clearable_modules = array_intersect( $types_to_clear, $layout_terms );
-				$remove_resource   = $is_global && ! empty( $clearable_modules );
-			}
-
-			if ( $remove_resource ) {
-				$post_id = 'all';
-			}
-		}
-
 		self::remove_static_resources( $post_id, 'all' );
 	}
 

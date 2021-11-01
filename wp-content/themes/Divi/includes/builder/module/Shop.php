@@ -633,6 +633,10 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			$order   = false !== strpos( strtolower( $request_orderby_value ), 'desc' ) ? 'DESC' : 'ASC';
 		}
 
+		if ( 'date' === $request_orderby_value ) {
+			$order = 'DESC';
+		}
+
 		add_filter( 'woocommerce_default_catalog_orderby', array( $this, 'set_default_orderby' ) );
 
 		$shortcode = sprintf(

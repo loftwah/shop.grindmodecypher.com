@@ -2265,7 +2265,9 @@ class ET_Dynamic_Assets {
 			$jquery_mobile_deps = array(
 				'et_pb_portfolio',
 				'et_pb_slider',
+				'et_pb_post_slider',
 				'et_pb_fullwidth_slider',
+				'et_pb_fullwidth_post_slider',
 				'et_pb_video_slider',
 				'et_slide',
 				'et_tabs',

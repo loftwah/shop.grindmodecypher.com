@@ -38,7 +38,8 @@ trait DynamicPostsCondition {
 			},
 			$dynamic_posts_raw
 		);
-		$current_page_id   = get_queried_object_id();
+		$is_on_shop_page   = class_exists( 'WooCommerce' ) && is_shop();
+		$current_page_id   = $is_on_shop_page ? wc_get_page_id( 'shop' ) : get_queried_object_id();
 
 		$should_display = array_intersect( $dynamic_posts_ids, (array) $current_page_id ) ? true : false;
 
