@@ -660,7 +660,7 @@ class ET_Builder_Critical_CSS {
 	/**
 	 * Disable Critical CSS.
 	 *
-	 * @since ??
+	 * @since 4.12.0
 	 *
 	 * @return void
 	 */

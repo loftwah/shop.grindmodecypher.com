@@ -115,6 +115,91 @@ class ET_Builder_Module_Helper_Style_Processor {
 	}
 
 	/**
+	 * Prepare and set icon styles(CSS properties `font-family` and `content`)
+	 * for the specified $selector.
+	 *
+	 * @since ?
+	 *
+	 * @param string $icon_value   Extended Icon data.
+	 * @param string $render_slug  Module slug.
+	 * @param string $selector     CSS selector for icon container.
+	 * @param string $render_type  If that param equal `icon_font_family_and_content` then CSS propert `content` will be also set.
+	 * @param string $media_query  Media query name e.g max_width_767, max_width_980.
+	 * @param bool   $important    Is CSS decalration should containt `!important`.
+	 *
+	 * @return void.
+	 */
+	private static function _set_icon_styles( $icon_value, $render_slug, $selector, $render_type, $media_query, $important ) {
+		$css_decalration_and_values['font-family:%1$s;'] = et_pb_get_icon_font_family( $icon_value );
+		$css_decalration_and_values['font-weight:%1$s;'] = et_pb_get_icon_font_weight( $icon_value );
+
+		if ( 'icon_font_family_and_content' === $render_type ) {
+			$css_decalration_and_values['content:%1$s;'] = et_pb_get_extended_icon_value_for_css( $icon_value );
+		};
+
+		foreach ( $css_decalration_and_values as $declaration => $value ) {
+			ET_Builder_Element::set_style(
+				$render_slug,
+				array(
+					'selector'    => $selector,
+					'declaration' => sprintf(
+						$declaration,
+						$value . ( $important ? ' !important' : '' )
+					),
+					'media_query' => $media_query,
+				)
+			);
+		}
+
+	}
+
+	/**
+	 * Custom `generate_styles()` processor for extended icon's css style such as `font-family` or `content`.
+	 *
+	 * @since ?
+	 *
+	 * @param string       $selector     CSS Selector.
+	 * @param string|array $option_value Option value.
+	 * @param array        $args         Arguments.
+	 * @param string       $option_type  Option type (responsive|sticky|hover).
+	 *
+	 * @return void.
+	 */
+	public static function process_extended_icon( $selector, $option_value, $args, $option_type ) {
+		$is_important = ! empty( $args['important'] );
+		if ( ! empty( $args['utility_arg'] ) && in_array( $args['utility_arg'], array( 'icon_font_family_and_content', 'icon_font_family' ), true ) ) {
+			$type = $args['utility_arg'];
+		} else {
+			return;
+		}
+
+		if ( 'responsive' === $option_type ) {
+			foreach ( $option_value as $breakpoint => $icon_value ) {
+				if ( empty( $icon_value ) ) {
+					continue;
+				}
+
+				$media_query = 'general';
+				if ( 'tablet' === $breakpoint ) {
+					$media_query = ET_Builder_Element::get_media_query( 'max_width_980' );
+				} elseif ( 'phone' === $breakpoint ) {
+					$media_query = ET_Builder_Element::get_media_query( 'max_width_767' );
+				}
+
+				self::_set_icon_styles( $icon_value, $args['render_slug'], $selector, $type, $media_query, $is_important );
+
+			}
+		} elseif ( in_array( $option_type, array( 'sticky', 'hover' ), true ) ) {
+			$helper     = 'sticky' === $option_type ? et_pb_sticky_options() : et_pb_hover_options();
+			$is_enabled = $helper->is_enabled( $args['base_attr_name'], $args['attrs'] );
+
+			if ( $is_enabled && ! empty( $option_value ) ) {
+				self::_set_icon_styles( $option_value, $args['render_slug'], $selector, $type, 'general', $is_important );
+			}
+		}
+	}
+
+	/**
 	 * Custom `generate_styles()` processor for responsive, hover, and sticky styles of
 	 * `icon_font_size` attributes which sets css properties for social media follow's icon and
 	 * its dimension.

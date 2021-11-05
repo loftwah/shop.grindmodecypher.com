@@ -1,12 +1,46 @@
 <?php
+/**
+ * Main migartion class.
+ *
+ * @package Divi
+ * @subpackage Builder
+ * @since ?
+ */
 
-
+/**
+ * Depending on the case (field name) determines the necessary migration scripts and launches it.
+ *
+ * @since ?
+ */
 abstract class ET_Builder_Module_Settings_Migration {
 
+	/**
+	 * Used to exclude names in case of BB.
+	 *
+	 * @var array
+	 */
 	protected static $_bb_excluded_name_changes = array();
 
+	/**
+	 * Used for migrations where we want to separate the logic for
+	 * migrating post attributes and global migrating preset attributes.
+	 *
+	 * @var bool
+	 */
+	protected static $_maybe_global_presets_migration = false;
+
+	/**
+	 * Used to migrate field names.
+	 *
+	 * @var array
+	 */
 	public static $field_name_migrations = array();
 
+	/**
+	 * Array of hooks.
+	 *
+	 * @var array
+	 */
 	public static $hooks = array(
 		'the_content',
 		'admin_enqueue_scripts',
@@ -16,11 +50,38 @@ abstract class ET_Builder_Module_Settings_Migration {
 		'wp_ajax_et_fb_retrieve_builder_data',
 	);
 
+	/**
+	 * The last checked hook.
+	 *
+	 * @var string
+	 */
 	public static $last_hook_checked;
+	/**
+	 * Last hook check decision .
+	 *
+	 * @var string
+	 */
 	public static $last_hook_check_decision;
-	public static $max_version = '3.27.4';
 
-	public static $migrated   = array();
+	/**
+	 * The largest version of the migrations defined in the migrations array.
+	 *
+	 * @var string
+	 */
+	public static $max_version = '4.13.0';
+
+	/**
+	 * Array of already migrated data.
+	 *
+	 * @var array
+	 */
+	public static $migrated = array();
+
+	/**
+	 * Array of migrations in format( [ 'version' => 'name of migration script' ] ).
+	 *
+	 * @var array
+	 */
 	public static $migrations = array(
 		'3.0.48'  => 'BackgroundUI',
 		'3.0.72'  => 'Animation',
@@ -45,13 +106,42 @@ abstract class ET_Builder_Module_Settings_Migration {
 		'3.25'    => 'ColumnOptions',
 		'3.25.3'  => 'ShopOrderByDefault',
 		'3.27.4'  => 'TextAlignment',
+		'4.13.0'  => 'IconManager',
 	);
 
+	/**
+	 * Migrations by version.
+	 *
+	 * @var array
+	 */
 	public static $migrations_by_version = array();
 
+	/**
+	 * Fields.
+	 *
+	 * @var array
+	 */
 	public $fields;
+
+	/**
+	 * Modules.
+	 *
+	 * @var array
+	 */
 	public $modules;
+
+	/**
+	 * Version.
+	 *
+	 * @var string
+	 */
 	public $version;
+
+	/**
+	 * Add or not missing fields.
+	 *
+	 * @var bool
+	 */
 	public $add_missing_fields = false;
 
 	public function __construct() {
@@ -145,7 +235,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 		$class = 'ET_Builder_Module_Settings_Migration';
 
 		add_filter( 'et_pb_module_processed_fields', array( $class, 'maybe_override_processed_fields' ), 10, 2 );
-		add_filter( 'et_pb_module_shortcode_attributes', array( $class, 'maybe_override_shortcode_attributes' ), 10, 5 );
+		add_filter( 'et_pb_module_shortcode_attributes', array( $class, 'maybe_override_shortcode_attributes' ), 10, 6 );
 		add_filter( 'et_pb_module_content', array( $class, 'maybe_override_content' ), 10, 6 );
 	}
 
@@ -165,7 +255,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 		return $fields;
 	}
 
-	public static function maybe_override_shortcode_attributes( $attrs, $unprocessed_attrs, $module_slug, $module_address, $content = '' ) {
+	public static function maybe_override_shortcode_attributes( $attrs, $unprocessed_attrs, $module_slug, $module_address, $content = '', $maybe_global_presets_migration = false ) {
 		if ( empty( $attrs['_builder_version'] ) ) {
 			$attrs['_builder_version'] = '3.0.47';
 		}
@@ -178,7 +268,8 @@ abstract class ET_Builder_Module_Settings_Migration {
 			$unprocessed_attrs = array();
 		}
 
-		$migrations = self::get_migrations( $attrs['_builder_version'] );
+		self::$_maybe_global_presets_migration = $maybe_global_presets_migration;
+		$migrations                            = self::get_migrations( $attrs['_builder_version'] );
 
 		// Register address-based name module's field name change
 		if ( isset( self::$migrated['field_name_changes'] ) && isset( self::$migrated['field_name_changes'][ $module_slug ] ) ) {
@@ -196,7 +287,12 @@ abstract class ET_Builder_Module_Settings_Migration {
 				continue;
 			}
 
-			foreach ( $migration->fields as $field_name => $field_info ) {
+			// It needs for IconManager's wpunit tests when it is necessary to test the migration of module posts attributes
+			// and migration of global presets within the same test session
+			// ( because migration fields array is depending on self::$_maybe_global_presets_migration variable ).
+			$migration_fields = ( 'ET_Builder_Module_Settings_Migration_IconManager' === get_class( $migration ) ) ? $migration->get_fields() : $migration->fields;
+
+			foreach ( $migration_fields as $field_name => $field_info ) {
 				foreach ( $field_info['affected_fields'] as $affected_field => $affected_modules ) {
 
 					if ( ( ! $migration->add_missing_fields && ! isset( $attrs[ $affected_field ] ) ) || ! in_array( $module_slug, $affected_modules ) ) {

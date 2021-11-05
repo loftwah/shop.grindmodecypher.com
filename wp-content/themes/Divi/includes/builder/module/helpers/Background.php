@@ -220,6 +220,7 @@ class ET_Builder_Module_Helper_Background {
 	 *     @type bool   $use_background_image
 	 *     @type bool   $use_background_video
 	 *     @type bool   $use_background_color_reset
+	 *     @type bool   $use_background_image_parallax
 	 * }
 	 */
 	function get_background_style( $args = array() ) {
@@ -240,6 +241,7 @@ class ET_Builder_Module_Helper_Background {
 			'use_background_image'          => true,
 			'use_background_video'          => true,
 			'use_background_color_reset'    => true,
+			'use_background_image_parallax' => true,
 			'prop_name_aliases'             => array(),
 		);
 

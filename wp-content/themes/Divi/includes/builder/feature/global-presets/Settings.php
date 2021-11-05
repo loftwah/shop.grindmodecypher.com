@@ -11,7 +11,7 @@ class ET_Builder_Global_Presets_Settings {
 	const MODULE_INITIAL_PRESET_ID      = '_initial';
 
 	/**
-	 * @var array - The list of the product short names we allowing to do a Module Customizer settings migration rollback
+	 * @var array - The list of the product short names we allowing to do a Module Customizer settings migration rollback.
 	 */
 	public static $allowed_products = array(
 		'divi'  => '4.5',
@@ -115,9 +115,9 @@ class ET_Builder_Global_Presets_Settings {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param $module_slug - The module slug for which additional slugs are looked up
+	 * @param $module_slug - The module slug for which additional slugs are looked up.
 	 *
-	 * @return array       - The list of the additional slugs
+	 * @return array       - The list of the additional slugs.
 	 */
 	public function get_module_additional_slugs( $module_slug ) {
 		if ( ! empty( self::$_module_additional_slugs[ $module_slug ] ) ) {
@@ -212,8 +212,8 @@ class ET_Builder_Global_Presets_Settings {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param string $module_slug - The module slug
-	 * @param array  $attrs        - The module attributes
+	 * @param string $module_slug The module slug.
+	 * @param array  $attrs       The module attributes.
 	 *
 	 * @return array
 	 */
@@ -396,6 +396,34 @@ class ET_Builder_Global_Presets_Settings {
 	}
 
 	/**
+	 * Configuring and running migration of global presets via "et_pb_module_shortcode_attributes".
+	 *
+	 * @since ?
+	 *
+	 * @param object $preset Global preset object.
+	 * @param string $module_slug Module slug.
+	 *
+	 * @return void
+	 */
+	public static function migrate_settings_as_module_attributes( $preset, $module_slug ) {
+		$settings = (array) $preset->settings;
+
+		// Mimic preset settings as module attributes to re-use standard migration mechanism.
+		$settings['_builder_version'] = $preset->version;
+
+		// This flag will be used in migrations (see: ET_Builder_Module_Settings_Migration::_maybe_global_presets_migration ).
+		$maybe_global_presets_migration = true;
+
+		$migrated_settings = apply_filters( 'et_pb_module_shortcode_attributes', $settings, $settings, $module_slug, '0.0.0.0', '', $maybe_global_presets_migration );
+		if ( $settings['_builder_version'] !== $migrated_settings['_builder_version'] ) {
+			$migrated_version = $migrated_settings['_builder_version'];
+			unset( $migrated_settings['_builder_version'] );
+			$preset->version  = $migrated_version;
+			$preset->settings = (object) $migrated_settings;
+		}
+	}
+
+	/**
 	 * Handles theme version rollback.
 	 *
 	 * @since 4.5.0
@@ -421,8 +449,8 @@ class ET_Builder_Global_Presets_Settings {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param string $type - The module type (slug)
-	 * @param array  $attrs - The module attributes
+	 * @param string $type - The module type (slug).
+	 * @param array  $attrs - The module attributes.
 	 *
 	 * @return string      - The converted module type (slug)
 	 */
@@ -499,8 +527,11 @@ class ET_Builder_Global_Presets_Settings {
 	}
 
 	/**
-	 * Filters Global Presets setting to avoid non plain values like arrays or objects
+	 * Filters Global Presets setting to avoid non plain values like arrays or objects.
 	 *
+	 * Returns FALSE when the value is an Object or an array.
+	 *
+	 * @since ?? Included PHPDoc description.
 	 * @since 4.5.0
 	 *
 	 * @param $value - The Global Presets setting value

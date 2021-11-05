@@ -870,6 +870,22 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			)
 		);
 
+		// Overlay Icon Styles.
+		$this->generate_styles(
+			array(
+				'hover'          => false,
+				'utility_arg'    => 'icon_font_family',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'hover_icon',
+				'important'      => true,
+				'selector'       => '%%order_class%% .et_overlay:before',
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
+			)
+		);
+
 		if ( class_exists( 'ET_Builder_Module_Helper_Woocommerce_Modules' ) ) {
 			ET_Builder_Module_Helper_Woocommerce_Modules::add_star_rating_style(
 				$render_slug,

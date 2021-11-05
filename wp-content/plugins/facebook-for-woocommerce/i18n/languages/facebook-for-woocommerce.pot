@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the Facebook for WooCommerce package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Facebook for WooCommerce 2.6.5\n"
+"Project-Id-Version: Facebook for WooCommerce 2.6.7\n"
 "Report-Msgid-Bugs-To: "
 "https://woocommerce.com/my-account/marketplace-ticket-form/\n"
-"POT-Creation-Date: 2021-09-16 08:53:33+00:00\n"
+"POT-Creation-Date: 2021-11-04 07:48:36+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -61,45 +61,45 @@ msgstr ""
 msgid "Heads up! The Facebook menu is now located under the %1$sMarketing%2$s menu."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:457
+#: class-wc-facebookcommerce.php:467
 msgid "FB Product Sets"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:458
+#: class-wc-facebookcommerce.php:468
 msgid "FB Product Set"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:466
+#: class-wc-facebookcommerce.php:476
 #. translators: Edit item label
 msgid "Edit %s"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:468
+#: class-wc-facebookcommerce.php:478
 #. translators: Add new label
 msgid "Add new %s"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:471
+#: class-wc-facebookcommerce.php:481
 #. translators: No items found text
 msgid "No %s found."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:473
+#: class-wc-facebookcommerce.php:483
 #. translators: Search label
 msgid "Search %s."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:475
+#: class-wc-facebookcommerce.php:485
 #. translators: Text label
 msgid "Separate %s with commas"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:477
+#: class-wc-facebookcommerce.php:487
 #. translators: Text label
 msgid "Choose from the most used %s"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:593
+#: class-wc-facebookcommerce.php:603
 msgid "Cannot create the API instance because the access token is missing."
 msgstr ""
 
@@ -107,69 +107,49 @@ msgstr ""
 msgid "Facebook for WooCommerce"
 msgstr ""
 
-#: facebook-commerce.php:230
+#: facebook-commerce.php:236
 msgid "Facebook Commerce and Dynamic Ads (Pixel) Extension"
 msgstr ""
 
-#: facebook-commerce.php:642
-msgid "Facebook ID:"
-msgstr ""
-
-#: facebook-commerce.php:650
-msgid "Variant IDs:"
-msgstr ""
-
-#: facebook-commerce.php:668
-msgid "Reset Facebook metadata"
-msgstr ""
-
-#: facebook-commerce.php:673
-msgid "Delete product(s) on Facebook"
-msgstr ""
-
-#: facebook-commerce.php:681
-msgid "This product is not yet synced to Facebook."
-msgstr ""
-
-#: facebook-commerce.php:1508
+#: facebook-commerce.php:1415
 msgid "Nothing to update for product group for %1$s"
 msgstr ""
 
-#: facebook-commerce.php:1902
+#: facebook-commerce.php:1828
 #. translators: Placeholders %1$s - original error message from Facebook API
 msgid "There was an issue connecting to the Facebook API:  %1$s"
 msgstr ""
 
-#: facebook-commerce.php:2238
+#: facebook-commerce.php:2164
 msgid "Your connection has expired."
 msgstr ""
 
-#: facebook-commerce.php:2238
+#: facebook-commerce.php:2164
 msgid ""
 "Please click Manage connection > Advanced Options > Update Token to refresh "
 "your connection to Facebook."
 msgstr ""
 
-#: facebook-commerce.php:2245
+#: facebook-commerce.php:2171
 #. translators: Placeholders %s - error message
 msgid "There was an error trying to sync the products to Facebook. %s"
 msgstr ""
 
-#: facebook-commerce.php:2268 facebook-commerce.php:2441
+#: facebook-commerce.php:2194 facebook-commerce.php:2367
 msgid "Product sync is disabled."
 msgstr ""
 
-#: facebook-commerce.php:2275 facebook-commerce.php:2448
+#: facebook-commerce.php:2201 facebook-commerce.php:2374
 msgid "The plugin is not configured or the Catalog ID is missing."
 msgstr ""
 
-#: facebook-commerce.php:2298
+#: facebook-commerce.php:2224
 msgid ""
 "A product sync is in progress. Please wait until the sync finishes before "
 "starting a new one."
 msgstr ""
 
-#: facebook-commerce.php:2310 facebook-commerce.php:2462
+#: facebook-commerce.php:2236 facebook-commerce.php:2388
 msgid ""
 "We've detected that your Facebook Product Catalog is no longer valid. This "
 "may happen if it was deleted, but could also be a temporary error. If the "
@@ -177,33 +157,33 @@ msgid ""
 "and setup the plugin again."
 msgstr ""
 
-#: facebook-commerce.php:2486
+#: facebook-commerce.php:2412
 msgid "We couldn't create the feed or upload the product information."
 msgstr ""
 
-#: facebook-commerce.php:2954
+#: facebook-commerce.php:2880
 msgid "Hi! We're here to answer any questions you may have."
 msgstr ""
 
-#: facebook-commerce.php:3321
+#: facebook-commerce.php:3270
 msgid "Facebook for WooCommerce error:"
 msgstr ""
 
-#: facebook-commerce.php:3403
+#: facebook-commerce.php:3352
 msgid ""
 "There was an error trying to retrieve information about the Facebook page: "
 "%s"
 msgstr ""
 
-#: facebook-commerce.php:3454
+#: facebook-commerce.php:3403
 msgid "Get started with Messenger Customer Chat"
 msgstr ""
 
-#: facebook-commerce.php:3455
+#: facebook-commerce.php:3404
 msgid "Get started with Instagram Shopping"
 msgstr ""
 
-#: facebook-commerce.php:3690
+#: facebook-commerce.php:3639
 #. translators: Placeholders %1$s - original error message from Facebook API
 msgid "There was an issue connecting to the Facebook API: %s"
 msgstr ""
@@ -340,6 +320,30 @@ msgstr ""
 
 #: includes/Admin/Product_Sets.php:182
 msgid "Map FB Product Set to WC Product Categories"
+msgstr ""
+
+#: includes/Admin/Product_Sync_Meta_Box.php:37
+msgid "Facebook Product Sync"
+msgstr ""
+
+#: includes/Admin/Product_Sync_Meta_Box.php:78
+msgid "Facebook ID:"
+msgstr ""
+
+#: includes/Admin/Product_Sync_Meta_Box.php:89
+msgid "Variant IDs:"
+msgstr ""
+
+#: includes/Admin/Product_Sync_Meta_Box.php:121
+msgid "Reset Facebook metadata"
+msgstr ""
+
+#: includes/Admin/Product_Sync_Meta_Box.php:126
+msgid "Delete product(s) on Facebook"
+msgstr ""
+
+#: includes/Admin/Product_Sync_Meta_Box.php:138
+msgid "This product is not yet synced to Facebook."
 msgstr ""
 
 #: includes/Admin/Products.php:101
@@ -521,11 +525,25 @@ msgid "Enable debug mode"
 msgstr ""
 
 #: includes/Admin/Settings_Screens/Connection.php:330
-msgid "Log plugin events for debugging"
+msgid "Log plugin events for debugging."
 msgstr ""
 
 #: includes/Admin/Settings_Screens/Connection.php:331
 msgid "Only enable this if you are experiencing problems with the plugin."
+msgstr ""
+
+#: includes/Admin/Settings_Screens/Connection.php:337
+msgid "Experimental! Enable new style feed generation"
+msgstr ""
+
+#: includes/Admin/Settings_Screens/Connection.php:339
+msgid "Use new, memory improved, feed generation process."
+msgstr ""
+
+#: includes/Admin/Settings_Screens/Connection.php:340
+msgid ""
+"Experimental feature. Only enable this if you are experiencing problems "
+"with feed generation. This is an experimental feature in testing phase."
 msgstr ""
 
 #: includes/Admin/Settings_Screens/Messenger.php:122
@@ -990,36 +1008,60 @@ msgstr ""
 msgid "You do not have permission to finish App Store login."
 msgstr ""
 
-#: includes/ProductSync/ProductValidator.php:148
+#: includes/ProductSync/ProductValidator.php:185
 msgid "Product sync is globally disabled."
 msgstr ""
 
-#: includes/ProductSync/ProductValidator.php:161
+#: includes/ProductSync/ProductValidator.php:198
 msgid "Product is not published."
 msgstr ""
 
-#: includes/ProductSync/ProductValidator.php:172
+#: includes/ProductSync/ProductValidator.php:209
 msgid "Product must be in stock."
 msgstr ""
 
-#: includes/ProductSync/ProductValidator.php:187
+#: includes/ProductSync/ProductValidator.php:224
 msgid "Product is hidden from catalog and search."
 msgstr ""
 
-#: includes/ProductSync/ProductValidator.php:202
+#: includes/ProductSync/ProductValidator.php:239
 msgid "Product excluded because of categories."
 msgstr ""
 
-#: includes/ProductSync/ProductValidator.php:209
+#: includes/ProductSync/ProductValidator.php:246
 msgid "Product excluded because of tags."
 msgstr ""
 
-#: includes/ProductSync/ProductValidator.php:220
+#: includes/ProductSync/ProductValidator.php:257
 msgid "Sync disabled in product field."
 msgstr ""
 
-#: includes/ProductSync/ProductValidator.php:255
+#: includes/ProductSync/ProductValidator.php:292
 msgid "If product is not simple, variable or variation it must have a price."
+msgstr ""
+
+#: includes/ProductSync/ProductValidator.php:318
+msgid ""
+"Product description is all capital letters. Please change the description "
+"to sentence case in order to allow synchronization of your product."
+msgstr ""
+
+#: includes/ProductSync/ProductValidator.php:321
+msgid "Product description is too long. Maximum allowed length is 5000 characters."
+msgstr ""
+
+#: includes/ProductSync/ProductValidator.php:340
+msgid ""
+"Product title is all capital letters. Please change the title to sentence "
+"case in order to allow synchronization of your product."
+msgstr ""
+
+#: includes/ProductSync/ProductValidator.php:343
+msgid "Product title is too long. Maximum allowed length is 150 characters."
+msgstr ""
+
+#: includes/ProductSync/ProductValidator.php:367
+msgid "Too many attributes selected for product. Use 4 or less."
 msgstr ""
 
 #: includes/Products/Sync/Background.php:69
@@ -1052,19 +1094,19 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
-#: includes/fbproductfeed.php:470
+#: includes/fbproductfeed.php:278
 msgid "Could not create product catalog feed directory"
 msgstr ""
 
-#: includes/fbproductfeed.php:535
+#: includes/fbproductfeed.php:382
 msgid "Could not open the product catalog temporary feed file for writing"
 msgstr ""
 
-#: includes/fbproductfeed.php:542
+#: includes/fbproductfeed.php:389
 msgid "Could not open the product catalog feed file for writing"
 msgstr ""
 
-#: includes/fbproductfeed.php:585
+#: includes/fbproductfeed.php:453
 msgid "Could not rename the product catalog feed file"
 msgstr ""
 

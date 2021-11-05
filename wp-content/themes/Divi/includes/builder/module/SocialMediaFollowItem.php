@@ -130,62 +130,312 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 				'option_category'    => 'basic_option',
 				'class'              => 'et-pb-social-network',
 				'options'            => array(
-					''            => esc_html__( 'Select a Network', 'et_builder' ),
-					'facebook'    => array(
-						'value' => esc_html__( 'Facebook', 'et_builder' ),
-						'data'  => array( 'color' => '#3b5998' ),
+					''              => esc_html__( 'Select a Network', 'et_builder' ),
+					'amazon'        => array(
+						'value' => esc_html__( 'Amazon', 'et_builder' ),
+						'data'  => array(
+							'color' => '#ff9900',
+						),
 					),
-					'twitter'     => array(
-						'value' => esc_html__( 'Twitter', 'et_builder' ),
-						'data'  => array( 'color' => '#00aced' ),
+					'bandcamp'      => array(
+						'value' => esc_html__( 'Bandcamp', 'et_builder' ),
+						'data'  => array(
+							'color' => '#629aa9',
+						),
 					),
-					'google-plus' => array(
-						'value' => esc_html__( 'Google+', 'et_builder' ),
-						'data'  => array( 'color' => '#dd4b39' ),
+					'behance'       => array(
+						'value' => esc_html__( 'Behance', 'et_builder' ),
+						'data'  => array(
+							'color' => '#0057ff',
+						),
 					),
-					'pinterest'   => array(
-						'value' => esc_html__( 'Pinterest', 'et_builder' ),
-						'data'  => array( 'color' => '#cb2027' ),
+					'bitbucket'     => array(
+						'value' => esc_html__( 'BitBucket', 'et_builder' ),
+						'data'  => array(
+							'color' => '#205081',
+						),
 					),
-					'linkedin'    => array(
-						'value' => esc_html__( 'LinkedIn', 'et_builder' ),
-						'data'  => array( 'color' => '#007bb6' ),
+					'buffer'        => array(
+						'value' => esc_html__( 'Buffer', 'et_builder' ),
+						'data'  => array(
+							'color' => '#000000',
+						),
 					),
-					'tumblr'      => array(
-						'value' => esc_html__( 'tumblr', 'et_builder' ),
-						'data'  => array( 'color' => '#32506d' ),
+					'codepen'       => array(
+						'value' => esc_html__( 'CodePen', 'et_builder' ),
+						'data'  => array(
+							'color' => '#000000',
+						),
 					),
-					'instagram'   => array(
-						'value' => esc_html__( 'Instagram', 'et_builder' ),
-						'data'  => array( 'color' => '#ea2c59' ),
+					'deviantart'    => array(
+						'value' => esc_html__( 'DeviantArt', 'et_builder' ),
+						'data'  => array(
+							'color' => '#05cc47',
+						),
 					),
-					'skype'       => array(
-						'value' => esc_html__( 'skype', 'et_builder' ),
-						'data'  => array( 'color' => '#12A5F4' ),
-					),
-					'flikr'       => array(
-						'value' => esc_html__( 'Flickr', 'et_builder' ),
-						'data'  => array( 'color' => '#ff0084' ),
-					),
-					'myspace'     => array(
-						'value' => esc_html__( 'MySpace', 'et_builder' ),
-						'data'  => array( 'color' => '#3b5998' ),
-					),
-					'dribbble'    => array(
+					'dribbble'      => array(
 						'value' => esc_html__( 'dribbble', 'et_builder' ),
-						'data'  => array( 'color' => '#ea4c8d' ),
+						'data'  => array(
+							'color' => '#ea4c8d',
+						),
 					),
-					'youtube'     => array(
-						'value' => esc_html__( 'Youtube', 'et_builder' ),
-						'data'  => array( 'color' => '#a82400' ),
+					'facebook'      => array(
+						'value' => esc_html__( 'Facebook', 'et_builder' ),
+						'data'  => array(
+							'color' => '#3b5998',
+						),
 					),
-					'vimeo'       => array(
-						'value' => esc_html__( 'Vimeo', 'et_builder' ),
-						'data'  => array( 'color' => '#45bbff' ),
+					'flikr'         => array(
+						'value' => esc_html__( 'Flickr', 'et_builder' ),
+						'data'  => array(
+							'color' => '#ff0084',
+						),
 					),
-					'rss'         => array(
+					'flipboard'     => array(
+						'value' => esc_html__( 'FlipBoard', 'et_builder' ),
+						'data'  => array(
+							'color' => '#e12828',
+						),
+					),
+					'foursquare'    => array(
+						'value' => esc_html__( 'Foursquare', 'et_builder' ),
+						'data'  => array(
+							'color' => '#f94877',
+						),
+					),
+					'github'        => array(
+						'value' => esc_html__( 'GitHub', 'et_builder' ),
+						'data'  => array(
+							'color' => '#333333',
+						),
+					),
+					'goodreads'     => array(
+						'value' => esc_html__( 'Goodreads', 'et_builder' ),
+						'data'  => array(
+							'color' => '#553b08',
+						),
+					),
+					'google'        => array(
+						'value' => esc_html__( 'Google', 'et_builder' ),
+						'data'  => array(
+							'color' => '#4285f4',
+						),
+					),
+					'google-plus'   => array(
+						'value' => esc_html__( 'Google+', 'et_builder' ),
+						'data'  => array(
+							'color' => '#dd4b39',
+						),
+					),
+					'houzz'         => array(
+						'value' => esc_html__( 'Houzz', 'et_builder' ),
+						'data'  => array(
+							'color' => '#7ac142',
+						),
+					),
+					'instagram'     => array(
+						'value' => esc_html__( 'Instagram', 'et_builder' ),
+						'data'  => array(
+							'color' => '#ea2c59',
+						),
+					),
+					'itunes'        => array(
+						'value' => esc_html__( 'iTunes', 'et_builder' ),
+						'data'  => array(
+							'color' => '#fe7333',
+						),
+					),
+					'last_fm'       => array(
+						'value' => esc_html__( 'Last.fm', 'et_builder' ),
+						'data'  => array(
+							'color' => '#b90000',
+						),
+					),
+					'line'          => array(
+						'value' => esc_html__( 'Line', 'et_builder' ),
+						'data'  => array(
+							'color' => '#00c300',
+						),
+					),
+					'linkedin'      => array(
+						'value' => esc_html__( 'LinkedIn', 'et_builder' ),
+						'data'  => array(
+							'color' => '#007bb6',
+						),
+					),
+					'medium'        => array(
+						'value' => esc_html__( 'Medium', 'et_builder' ),
+						'data'  => array(
+							'color' => '#00ab6c',
+						),
+					),
+					'meetup'        => array(
+						'value' => esc_html__( 'Meetup', 'et_builder' ),
+						'data'  => array(
+							'color' => '#e0393e',
+						),
+					),
+					'myspace'       => array(
+						'value' => esc_html__( 'MySpace', 'et_builder' ),
+						'data'  => array(
+							'color' => '#3b5998',
+						),
+					),
+					'odnoklassniki' => array(
+						'value' => esc_html__( 'Odnoklassniki', 'et_builder' ),
+						'data'  => array(
+							'color' => '#ed812b',
+						),
+					),
+					'patreon'       => array(
+						'value' => esc_html__( 'Patreon', 'et_builder' ),
+						'data'  => array(
+							'color' => '#f96854',
+						),
+					),
+					'periscope'     => array(
+						'value' => esc_html__( 'Periscope', 'et_builder' ),
+						'data'  => array(
+							'color' => '#3aa4c6',
+						),
+					),
+					'pinterest'     => array(
+						'value' => esc_html__( 'Pinterest', 'et_builder' ),
+						'data'  => array(
+							'color' => '#cb2027',
+						),
+					),
+					'quora'         => array(
+						'value' => esc_html__( 'Quora', 'et_builder' ),
+						'data'  => array(
+							'color' => '#a82400',
+						),
+					),
+					'reddit'        => array(
+						'value' => esc_html__( 'Reddit', 'et_builder' ),
+						'data'  => array(
+							'color' => '#ff4500',
+						),
+					),
+					'researchgate'  => array(
+						'value' => esc_html__( 'ResearchGate', 'et_builder' ),
+						'data'  => array(
+							'color' => '#40ba9b',
+						),
+					),
+					'rss'           => array(
 						'value' => esc_html__( 'RSS', 'et_builder' ),
-						'data'  => array( 'color' => '#ff8a3c' ),
+						'data'  => array(
+							'color' => '#ff8a3c',
+						),
+					),
+					'skype'         => array(
+						'value' => esc_html__( 'skype', 'et_builder' ),
+						'data'  => array(
+							'color' => '#12A5F4',
+						),
+					),
+					'snapchat'      => array(
+						'value' => esc_html__( 'Snapchat', 'et_builder' ),
+						'data'  => array(
+							'color' => '#fffc00',
+						),
+					),
+					'soundcloud'    => array(
+						'value' => esc_html__( 'SoundCloud', 'et_builder' ),
+						'data'  => array(
+							'color' => '#ff8800',
+						),
+					),
+					'spotify'       => array(
+						'value' => esc_html__( 'Spotify', 'et_builder' ),
+						'data'  => array(
+							'color' => '#1db954',
+						),
+					),
+					'steam'         => array(
+						'value' => esc_html__( 'Steam', 'et_builder' ),
+						'data'  => array(
+							'color' => '#00adee',
+						),
+					),
+					'telegram'      => array(
+						'value' => esc_html__( 'Telegram', 'et_builder' ),
+						'data'  => array(
+							'color' => '#179cde',
+						),
+					),
+					'tiktok'        => array(
+						'value' => esc_html__( 'TikTok', 'et_builder' ),
+						'data'  => array(
+							'color' => '#fe2c55',
+						),
+					),
+					'tripadvisor'   => array(
+						'value' => esc_html__( 'TripAdvisor', 'et_builder' ),
+						'data'  => array(
+							'color' => '#00af87',
+						),
+					),
+					'tumblr'        => array(
+						'value' => esc_html__( 'tumblr', 'et_builder' ),
+						'data'  => array(
+							'color' => '#32506d',
+						),
+					),
+					'twitch'        => array(
+						'value' => esc_html__( 'Twitch', 'et_builder' ),
+						'data'  => array(
+							'color' => '#6441a5',
+						),
+					),
+					'twitter'       => array(
+						'value' => esc_html__( 'Twitter', 'et_builder' ),
+						'data'  => array(
+							'color' => '#00aced',
+						),
+					),
+					'vimeo'         => array(
+						'value' => esc_html__( 'Vimeo', 'et_builder' ),
+						'data'  => array(
+							'color' => '#45bbff',
+						),
+					),
+					'vk'            => array(
+						'value' => esc_html__( 'VK', 'et_builder' ),
+						'data'  => array(
+							'color' => '#45668e',
+						),
+					),
+					'weibo'         => array(
+						'value' => esc_html__( 'Weibo', 'et_builder' ),
+						'data'  => array(
+							'color' => '#eb7350',
+						),
+					),
+					'whatsapp'      => array(
+						'value' => esc_html__( 'WhatsApp', 'et_builder' ),
+						'data'  => array(
+							'color' => '#25D366',
+						),
+					),
+					'xing'          => array(
+						'value' => esc_html__( 'XING', 'et_builder' ),
+						'data'  => array(
+							'color' => '#026466',
+						),
+					),
+					'yelp'          => array(
+						'value' => esc_html__( 'Yelp', 'et_builder' ),
+						'data'  => array(
+							'color' => '#af0606',
+						),
+					),
+					'youtube'       => array(
+						'value' => esc_html__( 'Youtube', 'et_builder' ),
+						'data'  => array(
+							'color' => '#a82400',
+						),
 					),
 				),
 				'affects'            => array(
@@ -360,7 +610,6 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 		$is_skype              = false;
 		$network_name          = esc_attr( $this->get_network_name( trim( wp_strip_all_tags( $content ) ) ) );
 		$use_icon_font_size    = $this->props['use_icon_font_size'];
-		$icon_font_size_values = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
 
 		if ( 'skype' === $social_network ) {
 			$skype_url = sprintf(
@@ -438,7 +687,6 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 			);
 		}
 
-		$social_network             = ET_Builder_Element::add_module_order_class( $social_network, $render_slug );
 		$video_background           = $this->video_background();
 		$parallax_image_background  = $this->get_parallax_image_background();
 		$social_network_link_url    = ! $is_skype ? esc_url( $url ) : $skype_url;
@@ -457,6 +705,9 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 
 		if ( '' !== $social_network ) {
 			$this->add_classname( sprintf( ' et-social-%s', esc_attr( $social_network ) ) );
+			if ( ! empty( $this->props['social_network'] ) && in_array( $this->props['social_network'], et_pb_get_social_net_fa_icons(), true ) ) {
+				$this->add_classname( 'et-pb-social-fa-icon' );
+			}
 		}
 
 		// Remove automatically added classnames
@@ -496,8 +747,7 @@ class ET_Builder_Module_Social_Media_Follow_Item extends ET_Builder_Module {
 			);
 		}
 		$social_network_link_classes = implode( ' ', $social_network_link_classes );
-
-		$output = "<li
+		$output                      = "<li
             class='{$this->module_classname( $render_slug )}'><a
               href='{$social_network_link_url}'
               class='{$social_network_link_classes}'

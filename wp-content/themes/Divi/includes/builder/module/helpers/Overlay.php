@@ -21,19 +21,19 @@ class ET_Builder_Module_Helper_Overlay {
 		$attributes = array();
 
 		if ( ! empty( $args['icon'] ) ) {
-			$attributes['data-icon'] = esc_attr( et_pb_process_font_icon( $args['icon'] ) );
+			$attributes['data-icon'] = et_pb_extended_process_font_icon( $args['icon'] );
 		}
 
 		if ( ! empty( $args['icon_tablet'] ) ) {
-			$attributes['data-icon-tablet'] = esc_attr( et_pb_process_font_icon( $args['icon_tablet'] ) );
+			$attributes['data-icon-tablet'] = et_pb_extended_process_font_icon( $args['icon_tablet'] );
 		}
 
 		if ( ! empty( $args['icon_phone'] ) ) {
-			$attributes['data-icon-phone'] = esc_attr( et_pb_process_font_icon( $args['icon_phone'] ) );
+			$attributes['data-icon-phone'] = et_pb_extended_process_font_icon( $args['icon_phone'] );
 		}
 
 		if ( ! empty( $args['icon_sticky'] ) ) {
-			$attributes['data-icon-sticky'] = esc_attr( et_pb_process_font_icon( $args['icon_sticky'] ) );
+			$attributes['data-icon-sticky'] = et_pb_extended_process_font_icon( $args['icon_sticky'] );
 		}
 
 		return $attributes;

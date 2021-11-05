@@ -439,6 +439,22 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 					'icon_sticky' => $hover_icon_sticky,
 				)
 			);
+
+			// Overlay Icon Styles.
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'utility_arg'    => 'icon_font_family',
+					'render_slug'    => $render_slug,
+					'base_attr_name' => 'hover_icon',
+					'important'      => true,
+					'selector'       => '%%order_class%% .et_overlay:before',
+					'processor'      => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_extended_icon',
+					),
+				)
+			);
 		}
 
 		// Set display block for svg image to avoid disappearing svg image
@@ -459,9 +475,9 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 			: '';
 
 		$image_attrs = array(
-			'src'    => '{{src}}',
-			'alt'    => esc_attr( $alt ),
-			'title'  => esc_attr( $title_text ),
+			'src'   => '{{src}}',
+			'alt'   => esc_attr( $alt ),
+			'title' => esc_attr( $title_text ),
 		);
 
 		// Only if force fullwidth is not set.

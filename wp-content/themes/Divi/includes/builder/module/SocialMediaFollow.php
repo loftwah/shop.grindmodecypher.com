@@ -265,7 +265,6 @@ class ET_Builder_Module_Social_Media_Follow extends ET_Builder_Module {
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
 		$use_icon_font_size        = $this->props['use_icon_font_size'];
-		$icon_font_size_values     = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
 
 		// Icon Color.
 		$this->generate_styles(

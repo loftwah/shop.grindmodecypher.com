@@ -167,6 +167,7 @@ require_once ET_BUILDER_DIR . 'feature/window.php';
 require_once ET_BUILDER_DIR . 'feature/ajax-data/AjaxData.php';
 require_once ET_BUILDER_DIR . 'feature/display-conditions/DisplayConditions.php';
 require_once ET_BUILDER_DIR . 'feature/BlockTemplates.php';
+require_once ET_BUILDER_DIR . 'feature/icon-manager/ExtendedFontIcons.php';
 
 // Conditional Includes.
 if ( et_is_woocommerce_plugin_active() ) {
@@ -696,6 +697,10 @@ add_action( 'wp_print_styles', 'et_builder_dequeue_minifieds_styles', 99999999 )
 function et_is_ignore_waypoints() {
 	// WPBakery Visual Composer plugin conflicts with waypoints
 	if ( class_exists( 'Vc_Manager' ) ) {
+		return true;
+	}
+
+	if ( class_exists( 'PUM_Shortcode_Popup' ) ) {
 		return true;
 	}
 

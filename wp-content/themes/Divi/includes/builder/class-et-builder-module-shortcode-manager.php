@@ -232,6 +232,9 @@ class ET_Builder_Module_Shortcode_Manager {
 			'et_pb_video_slider_item'           => [
 				'classname' => 'ET_Builder_Module_Video_Slider_Item',
 			],
+			'et_pb_icon'                        => [
+				'classname' => 'ET_Builder_Module_Icon',
+			],
 		];
 
 		/**

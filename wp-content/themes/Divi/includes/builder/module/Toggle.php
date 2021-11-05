@@ -242,8 +242,9 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'mobile_options' => true,
 				'sticky'         => true,
 			),
+			// Closed icon styling.
 			'icon_color'                     => array(
-				'label'          => esc_html__( 'Icon Color', 'et_builder' ),
+				'label'          => esc_html__( 'Closed Icon Color', 'et_builder' ),
 				'description'    => esc_html__( 'Here you can define a custom color for the toggle icon.', 'et_builder' ),
 				'type'           => 'color-alpha',
 				'custom_color'   => true,
@@ -253,8 +254,19 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'mobile_options' => true,
 				'sticky'         => true,
 			),
+			'toggle_icon'                    => array(
+				'label'          => esc_html__( 'Closed Icon', 'et_builder' ),
+				'toggle_slug'    => 'icon',
+				'type'           => 'select_icon',
+				'class'          => array( 'et-pb-font-icon' ),
+				'description'    => esc_html__( 'Choose an icon to display with your blurb.', 'et_builder' ),
+				'mobile_options' => true,
+				'hover'          => 'tabs',
+				'sticky'         => true,
+				'tab_slug'       => 'advanced',
+			),
 			'use_icon_font_size'             => array(
-				'label'            => esc_html__( 'Use Custom Icon Size', 'et_builder' ),
+				'label'            => esc_html__( 'Use Custom Closed Icon Size', 'et_builder' ),
 				'description'      => esc_html__( 'If you would like to control the size of the icon, you must first enable this option.', 'et_builder' ),
 				'type'             => 'yes_no_button',
 				'options'          => array(
@@ -271,7 +283,68 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 				'option_category'  => 'font_option',
 			),
 			'icon_font_size'                 => array(
-				'label'            => esc_html__( 'Icon Font Size', 'et_builder' ),
+				'label'            => esc_html__( 'Closed Icon Font Size', 'et_builder' ),
+				'description'      => esc_html__( 'Control the size of the icon by increasing or decreasing the font size.', 'et_builder' ),
+				'type'             => 'range',
+				'option_category'  => 'font_option',
+				'tab_slug'         => 'advanced',
+				'toggle_slug'      => 'icon',
+				'default'          => '16px',
+				'default_unit'     => 'px',
+				'default_on_front' => '',
+				'range_settings'   => array(
+					'min'  => '1',
+					'max'  => '120',
+					'step' => '1',
+				),
+				'mobile_options'   => true,
+				'depends_show_if'  => 'on',
+				'responsive'       => true,
+				'sticky'           => true,
+				'hover'            => 'tabs',
+			),
+			// Open icon styling.
+			'open_icon_color'                => array(
+				'label'          => esc_html__( 'Open Icon Color', 'et_builder' ),
+				'description'    => esc_html__( 'Here you can define a custom color for the toggle icon.', 'et_builder' ),
+				'type'           => 'color-alpha',
+				'custom_color'   => true,
+				'tab_slug'       => 'advanced',
+				'toggle_slug'    => 'icon',
+				'hover'          => 'tabs',
+				'mobile_options' => true,
+				'sticky'         => true,
+			),
+			'open_toggle_icon'               => array(
+				'label'          => esc_html__( 'Open Icon', 'et_builder' ),
+				'toggle_slug'    => 'icon',
+				'type'           => 'select_icon',
+				'class'          => array( 'et-pb-font-icon' ),
+				'description'    => esc_html__( 'Choose an icon to display with your blurb.', 'et_builder' ),
+				'mobile_options' => true,
+				'hover'          => 'tabs',
+				'sticky'         => true,
+				'tab_slug'       => 'advanced',
+			),
+			'open_use_icon_font_size'        => array(
+				'label'            => esc_html__( 'Use Custom Open Icon Size', 'et_builder' ),
+				'description'      => esc_html__( 'If you would like to control the size of the icon, you must first enable this option.', 'et_builder' ),
+				'type'             => 'yes_no_button',
+				'options'          => array(
+					'off' => et_builder_i18n( 'No' ),
+					'on'  => et_builder_i18n( 'Yes' ),
+				),
+				'default_on_front' => 'off',
+				'affects'          => array(
+					'open_icon_font_size',
+				),
+				'depends_show_if'  => 'on',
+				'tab_slug'         => 'advanced',
+				'toggle_slug'      => 'icon',
+				'option_category'  => 'font_option',
+			),
+			'open_icon_font_size'            => array(
+				'label'            => esc_html__( 'Open Icon Font Size', 'et_builder' ),
 				'description'      => esc_html__( 'Control the size of the icon by increasing or decreasing the font size.', 'et_builder' ),
 				'type'             => 'range',
 				'option_category'  => 'font_option',
@@ -331,14 +404,11 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 	 * @return string
 	 */
 	public function render( $attrs, $content, $render_slug ) {
-		$multi_view                = et_pb_multi_view_options( $this );
-		$open                      = $this->props['open'];
-		$header_level              = $this->props['title_level'];
-		$use_icon_font_size        = $this->props['use_icon_font_size'];
-		$icon_font_size_values     = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
-		$icon_font_size_any_values = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size', '16px', true ); // 16px is default toggle icon size.
-		$icon_font_size_hover      = $this->get_hover_value( 'icon_font_size' );
-		$accordion_item_class      = 'et_pb_accordion_item' === $render_slug ? '.et_pb_accordion_item' : '';
+		$multi_view           = et_pb_multi_view_options( $this );
+		$open                 = $this->props['open'];
+		$header_level         = $this->props['title_level'];
+		$use_icon_font_size   = $this->props['use_icon_font_size'];
+		$accordion_item_class = 'et_pb_accordion_item' === $render_slug ? '.et_pb_accordion_item' : '';
 
 		// Open Toggle Background Color.
 		$this->generate_styles(
@@ -395,12 +465,12 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		);
 
 		// Icon Size.
-		if ( 'off' !== $use_icon_font_size ) {
+		if ( ! empty( $this->props['open_use_icon_font_size'] ) && 'off' !== $this->props['open_use_icon_font_size'] ) {
 			// Calculate icon font size and its right position.
 			$this->generate_styles(
 				array(
-					'base_attr_name'                  => 'icon_font_size',
-					'selector'                        => "{$accordion_item_class}%%order_class%% .et_pb_toggle_title:before",
+					'base_attr_name'                  => 'open_icon_font_size',
+					'selector'                        => "{$accordion_item_class}%%order_class%%.et_pb_toggle_open .et_pb_toggle_title:before",
 					'hover_pseudo_selector_location'  => 'suffix',
 					'sticky_pseudo_selector_location' => 'prefix',
 					'render_slug'                     => $render_slug,
@@ -420,11 +490,75 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 		// Icon Color.
 		$this->generate_styles(
 			array(
-				'base_attr_name' => 'icon_color',
-				'selector'       => "{$accordion_item_class}%%order_class%% .et_pb_toggle_title:before",
+				'base_attr_name' => 'open_icon_color',
+				'selector'       => "{$accordion_item_class}%%order_class%%.et_pb_toggle_open .et_pb_toggle_title:before",
 				'css_property'   => 'color',
 				'render_slug'    => $render_slug,
 				'type'           => 'color',
+			)
+		);
+
+		// Toggle Icon Styles.
+		$this->generate_styles(
+			array(
+				'utility_arg'    => 'icon_font_family_and_content',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'open_toggle_icon',
+				'important'      => true,
+				'selector'       => "{$accordion_item_class}%%order_class%%.et_pb_toggle_open .et_pb_toggle_title:before",
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
+			)
+		);
+
+		// Closed Icon Size.
+		if ( ! empty( $this->props['use_icon_font_size'] ) && 'off' !== $this->props['use_icon_font_size'] ) {
+			// Calculate icon font size and its right position.
+			$this->generate_styles(
+				array(
+					'base_attr_name'                  => 'icon_font_size',
+					'selector'                        => "{$accordion_item_class}%%order_class%%.et_pb_toggle_close .et_pb_toggle_title:before",
+					'hover_pseudo_selector_location'  => 'suffix',
+					'sticky_pseudo_selector_location' => 'prefix',
+					'render_slug'                     => $render_slug,
+					'type'                            => 'range',
+					'css_property'                    => 'font-size',
+
+					// processed attr value can't be directly assigned to single css property so
+					// custom processor is needed to render this attr.
+					'processor'                       => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_toggle_title_icon_font_size',
+					),
+				)
+			);
+		}
+
+		// Closed Icon Color.
+		$this->generate_styles(
+			array(
+				'base_attr_name' => 'icon_color',
+				'selector'       => "{$accordion_item_class}%%order_class%%.et_pb_toggle_close .et_pb_toggle_title:before",
+				'css_property'   => 'color',
+				'render_slug'    => $render_slug,
+				'type'           => 'color',
+			)
+		);
+
+		// Closed Toggle Icon Styles.
+		$this->generate_styles(
+			array(
+				'utility_arg'    => 'icon_font_family_and_content',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'toggle_icon',
+				'important'      => true,
+				'selector'       => "{$accordion_item_class}%%order_class%%.et_pb_toggle_close .et_pb_toggle_title:before",
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
 			)
 		);
 

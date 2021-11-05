@@ -1350,6 +1350,7 @@ class ET_Core_SupportCenter {
 	 */
 	protected function system_diagnostics_generate_report( $formatted = true, $format = 'plain' ) {
 		/** @var array Collection of system settings to run diagnostic checks on. */
+		global $wp_version;
 
 		global $shortname;
 
@@ -1394,6 +1395,18 @@ class ET_Core_SupportCenter {
 				'actual'         => (float) phpversion(),
 				'help_text'      => et_core_intentionally_unescaped( __( 'We recommend using the latest stable version of PHP. This will not only ensure compatibility with Divi, but it will also greatly speed up your website leading to less memory and CPU related issues.', 'et-core' ), 'html' ),
 				'learn_more'     => 'http://php.net/releases/',
+			),
+			array(
+				'name'           => esc_attr__( 'WordPress Version', 'et-core' ),
+				'environment'    => 'server',
+				'type'           => 'version',
+				'pass_minus_one' => false,
+				'pass_zero'      => false,
+				'minimum'        => null,
+				'recommended'    => '5.3 or higher',
+				'actual'         => $wp_version,
+				'help_text'      => et_core_intentionally_unescaped( __( 'We recommend using the latest stable version of WordPress. This will not only ensure compatibility with Divi, but it will also greatly speed up your website leading to less memory and CPU related issues.', 'et-core' ), 'html' ),
+				'learn_more'     => 'https://wordpress.org/download/releases/',
 			),
 			array(
 				'name'           => esc_attr__( 'PHP: memory_limit', 'et-core' ),

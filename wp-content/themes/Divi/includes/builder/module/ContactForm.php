@@ -527,8 +527,12 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 						'required_mark' => 'required' === self::$_->array_get( $value, 'required_mark', 'required' ) ? 'on' : 'off',
 					);
 
-					// check all the required fields, generate error message if required field is empty.
-					$field_value = isset( $_POST[ $value['field_id'] ] ) ? trim( sanitize_text_field( $_POST[ $value['field_id'] ] ) ) : '';
+					// Check all the required fields, generate error message if required field is empty.
+					// Use `sanitize_textarea_field` for message field content to preserve newlines.
+					$sanitize_callback = isset( $value['original_id'] ) && 'text' === $value['field_type'] ? 'sanitize_textarea_field' : 'sanitize_text_field';
+
+					// phpcs:ignore ET.Sniffs.ValidatedSanitizedInput.InputNotSanitized -- The $sanitize_callback will sanitize the field value.
+					$field_value = isset( $_POST[ $value['field_id'] ] ) ? trim( call_user_func( $sanitize_callback, $_POST[ $value['field_id'] ] ) ) : '';
 
 					if ( 'required' === $value['required_mark'] && empty( $field_value ) && ! is_numeric( $field_value ) ) {
 						$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Make sure you fill in all required fields.', 'et_builder' ) );
@@ -687,11 +691,11 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 				'
 				<div class="et_pb_contact">
 					<form class="et_pb_contact_form clearfix" method="post" action="%1$s">
-						%8$s
-						<input type="hidden" value="et_contact_proccess" name="et_pb_contactform_submit_%7$s"/>
+						%7$s
+						<input type="hidden" value="et_contact_proccess" name="et_pb_contactform_submit_%6$s"/>
 						<div class="et_contact_bottom_container">
 							%2$s
-							<button type="submit" name="et_builder_submit_button" class="et_pb_contact_submit et_pb_button%6$s"%5$s%9$s%10$s%11$s>%3$s</button>
+							<button type="submit" name="et_builder_submit_button" class="et_pb_contact_submit et_pb_button"%5$s%8$s%9$s%10$s>%3$s</button>
 						</div>
 						%4$s
 					</form>
@@ -704,12 +708,11 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 					' data-icon="%1$s"',
 					esc_attr( et_pb_process_font_icon( $custom_icon ) )
 				) : '', // #5
-				'' !== $custom_icon && 'on' === $button_custom ? ' et_pb_custom_button_icon' : '',
 				esc_attr( $et_pb_contact_form_num ),
 				$content,
 				'' !== $custom_icon_tablet && 'on' === $button_custom ? sprintf( ' data-icon-tablet="%1$s"', esc_attr( et_pb_process_font_icon( $custom_icon_tablet ) ) ) : '',
-				'' !== $custom_icon_phone && 'on' === $button_custom ? sprintf( ' data-icon-phone="%1$s"', esc_attr( et_pb_process_font_icon( $custom_icon_phone ) ) ) : '', // #10
-				$multi_view_data_attr
+				'' !== $custom_icon_phone && 'on' === $button_custom ? sprintf( ' data-icon-phone="%1$s"', esc_attr( et_pb_process_font_icon( $custom_icon_phone ) ) ) : '',
+				$multi_view_data_attr // #10
 			);
 		}
 

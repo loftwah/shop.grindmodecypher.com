@@ -863,6 +863,33 @@ class ET_Core_PageResource {
 	 * @param bool    $update
 	 */
 	public static function save_post_cb( $post_id, $post, $update ) {
+		// In Dynamic CSS, we parse the layout content for generating styles and store it under the `object_id`, so clearing
+		// only the layout assets won't update the page style if we made any changes to the layout/global modules etc.
+		// Hence, we need to clear all static resources when we update a layout.
+		// Also, we should only clear the cache if the layout being saved is a global module/row/section.
+		if ( 'et_pb_layout' === $post->post_type ) {
+			$taxonomies     = get_taxonomies( [ 'object_type' => [ 'et_pb_layout' ] ] );
+			$tax_to_clear   = array( 'scope', 'layout_type' );
+			$types_to_clear = array( 'module', 'row', 'section' );
+
+			$scope_terms  = get_the_terms( $post_id, 'scope' );
+			$layout_terms = get_the_terms( $post_id, 'layout_type' );
+
+			if ( ! empty( $scope_terms ) && ! empty( $layout_terms ) ) {
+				$scope_terms       = wp_list_pluck( $scope_terms, 'slug' );
+				$layout_terms      = wp_list_pluck( $layout_terms, 'slug' );
+				$is_global         = in_array( 'global', $scope_terms, true );
+				$clearable_modules = array_intersect( $types_to_clear, $layout_terms );
+				$remove_resource   = $is_global && ! empty( $clearable_modules );
+
+				foreach ( $taxonomies as $taxonomy ) {
+					if ( in_array( $taxonomy, $tax_to_clear, true ) && $remove_resource ) {
+						$post_id = 'all';
+						break;
+					}
+				}
+			}
+		}
 		self::remove_static_resources( $post_id, 'all' );
 	}
 

@@ -328,11 +328,24 @@ class ET_Builder_Module_Field_DisplayConditions extends ET_Builder_Module_Field_
 			if ( $condition['condition'] !== $processed_condition['condition'] ) {
 				continue;
 			}
+
+			// Exception! "Date Time" Condition can have multiple positive conditions.
+			$is_datetime                           = 'dateTime' === $condition['condition'];
+			$is_prev_cond_datetime_and_negative    = $is_datetime && 'isNotOnSpecificDate' === $processed_condition['conditionSettings']['dateTimeDisplay'];
+			$is_current_cond_datetime_and_negative = $is_datetime && 'isNotOnSpecificDate' === $condition['conditionSettings']['dateTimeDisplay'];
+			if ( $is_prev_cond_datetime_and_negative || $is_current_cond_datetime_and_negative ) {
+				$is_conflicted = true;
+				break;
+			} elseif ( $is_datetime ) {
+				$is_conflicted = false;
+				break;
+			}
+
 			/**
 			 * When operator is set to "OR/ANY" and we have more than one condition, all other conditions
 			 * will be set as conflicted, giving the priority to the latest condition in the list.
 			 */
-			if ( 'OR' === $operator && count( $processed_conditions ) > 0 ) {
+			if ( count( $processed_conditions ) > 0 ) {
 				$is_conflicted = true;
 				break;
 			}

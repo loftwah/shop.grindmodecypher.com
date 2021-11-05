@@ -601,6 +601,22 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 					'icon_sticky' => $hover_icon_sticky,
 				)
 			);
+
+			// Overlay Icon Styles.
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'utility_arg'    => 'icon_font_family',
+					'render_slug'    => $render_slug,
+					'base_attr_name' => 'hover_icon',
+					'important'      => true,
+					'selector'       => '%%order_class%% .et_overlay:before',
+					'processor'      => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_extended_icon',
+					),
+				)
+			);
 		}
 
 		ob_start();

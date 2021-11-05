@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.12.0' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.13.0' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -722,6 +722,12 @@ if ( ! function_exists( 'et_pb_process_font_icon' ) ) :
 	 * @return string $font_icon       Font Icon value
 	 */
 	function et_pb_process_font_icon( $font_icon, $symbols_function = 'default' ) {
+
+		// Do it if $font_icon is an extended icon.
+		if ( et_pb_maybe_extended_icon( $font_icon ) ) {
+			return et_pb_get_extended_font_icon_value( $font_icon );
+		}
+
 		// the exact font icon value is saved.
 		if ( 1 !== preg_match( '/^%%/', trim( $font_icon ) ) ) {
 			return $font_icon;

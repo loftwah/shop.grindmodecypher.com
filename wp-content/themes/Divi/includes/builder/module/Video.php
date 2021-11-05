@@ -160,6 +160,17 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 				'mobile_options' => true,
 				'sticky'         => true,
 			),
+			'font_icon'      => array(
+				'label'          => esc_html__( 'Icon', 'et_builder' ),
+				'toggle_slug'    => 'play_icon',
+				'type'           => 'select_icon',
+				'class'          => array( 'et-pb-font-icon' ),
+				'description'    => esc_html__( 'Choose an icon to display with your blurb.', 'et_builder' ),
+				'mobile_options' => true,
+				'hover'          => 'tabs',
+				'sticky'         => true,
+				'tab_slug'       => 'advanced',
+			),
 			'__video'                 => array(
 				'type'                => 'computed',
 				'computed_callback'   => array( 'ET_Builder_Module_Video', 'get_video' ),
@@ -357,6 +368,21 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 				'css_property'                    => 'color',
 				'render_slug'                     => $render_slug,
 				'type'                            => 'color',
+			)
+		);
+
+		// Play Icon Styles.
+		$this->generate_styles(
+			array(
+				'utility_arg'    => 'icon_font_family_and_content',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'font_icon',
+				'important'      => true,
+				'selector'       => '%%order_class%% .et_pb_video_overlay .et_pb_video_play:before',
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
 			)
 		);
 

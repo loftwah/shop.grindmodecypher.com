@@ -223,7 +223,7 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 	/**
 	 * Get images output
 	 *
-	 * @since ?? Set $defaults['overwrite'] to array( 'product', 'post' )
+	 * @since 4.12.0 Set $defaults['overwrite'] to array( 'product', 'post' )
 	 * @since 3.29
 	 *
 	 * @param array $args Additional args.

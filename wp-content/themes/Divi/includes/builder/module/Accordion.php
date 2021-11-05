@@ -12,6 +12,12 @@ class ET_Builder_Module_Accordion extends ET_Builder_Module {
 		$this->main_css_element = '%%order_class%%.et_pb_accordion';
 
 		$this->settings_modal_toggles = array(
+			'general'  => array(
+				'toggles' => array(
+					'main_content'  => et_builder_i18n( 'Text' ),
+					'extended_icon' => esc_html__( 'Toggle Icon', 'et_builder' ),
+				),
+			),
 			'advanced' => array(
 				'toggles' => array(
 					'icon'          => esc_html__( 'Icon', 'et_builder' ),
@@ -185,6 +191,17 @@ class ET_Builder_Module_Accordion extends ET_Builder_Module {
 				'mobile_options' => true,
 				'sticky'         => true,
 			),
+			'toggle_icon'                    => array(
+				'label'           => esc_html__( 'Icon', 'et_builder' ),
+				'toggle_slug'     => 'extended_icon',
+				'type'            => 'select_icon',
+				'option_category' => 'basic_option',
+				'class'           => array( 'et-pb-font-icon' ),
+				'description'     => esc_html__( 'Choose an icon to display with your blurb.', 'et_builder' ),
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
+				'sticky'          => true,
+			),
 			'icon_color'                     => array(
 				'label'          => esc_html__( 'Icon Color', 'et_builder' ),
 				'description'    => esc_html__( 'Here you can define a custom color for the toggle icon.', 'et_builder' ),
@@ -334,9 +351,7 @@ class ET_Builder_Module_Accordion extends ET_Builder_Module {
 		);
 
 		// Icon Size.
-		$use_icon_font_size        = $this->props['use_icon_font_size'];
-		$icon_font_size_values     = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
-		$icon_font_size_any_values = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size', '16px', true ); // 16px is default toggle icon size.
+		$use_icon_font_size = $this->props['use_icon_font_size'];
 
 		if ( 'off' !== $use_icon_font_size ) {
 			// Calculate icon font size and its right position.
@@ -376,6 +391,21 @@ class ET_Builder_Module_Accordion extends ET_Builder_Module {
 
 		// Module classnames.
 		$this->add_classname( $this->get_text_orientation_classname() );
+
+		// Toggle Icon Styles.
+		$this->generate_styles(
+			array(
+				'utility_arg'    => 'icon_font_family_and_content',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'toggle_icon',
+				'important'      => true,
+				'selector'       => '%%order_class%% .et_pb_toggle_title:before',
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
+			)
+		);
 
 		$output = sprintf(
 			'<div%3$s class="%2$s">

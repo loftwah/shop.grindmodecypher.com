@@ -123,6 +123,11 @@ class ET_Builder_Do_Not_Cache_Page {
 			return;
 		}
 
+		// Disable in the Visual Builder
+		if ( et_fb_is_enabled() ) {
+			return;
+		}
+
 		$post_id          = et_core_page_resource_get_the_ID();
 		$is_preview       = is_preview() || is_et_pb_preview();
 		$forced_in_footer = $post_id && et_builder_setting_is_on( 'et_pb_css_in_footer', $post_id );
@@ -144,16 +149,6 @@ class ET_Builder_Do_Not_Cache_Page {
 
 		// Bail if using inline styles, page content won't be changing between requests anyway.
 		if ( $forced_inline ) {
-			return;
-		}
-
-		$is_visual_builder     = isset( $_GET['et_fb'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is not used
-		$is_theme_builder_used = et_fb_is_theme_builder_used_on_page() && et_pb_is_allowed( 'theme_builder' );
-
-		// Disable for visual builder if page uses Theme Builder.
-		// Since we implemented Visual Theme Builder editor, styles using the builder now,
-		// and we do not need frontend cached CSS, since it can create conflicts.
-		if ( $is_visual_builder && $is_theme_builder_used ) {
 			return;
 		}
 

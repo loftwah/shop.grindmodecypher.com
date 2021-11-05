@@ -611,6 +611,22 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 			)
 		);
 
+		// Overlay Icon Styles.
+		$this->generate_styles(
+			array(
+				'hover'          => false,
+				'utility_arg'    => 'icon_font_family',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'hover_icon',
+				'important'      => true,
+				'selector'       => '%%order_class%% .et_overlay:before',
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
+			)
+		);
+
 		// Images: Add CSS Filters and Mix Blend Mode rules (if set).
 		if ( array_key_exists( 'image', $this->advanced_fields ) && array_key_exists( 'css', $this->advanced_fields['image'] ) ) {
 			$this->add_classname(

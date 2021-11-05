@@ -207,6 +207,13 @@ class ET_Builder_Ajax_Data {
 		 */
 		$included_taxonomies = apply_filters( 'et_builder_ajax_get_tags_included_taxonomies', $included_taxonomies );
 
+		$included_taxonomies = array_filter(
+			$included_taxonomies,
+			function( $taxonomy_slug ) {
+				return taxonomy_exists( $taxonomy_slug );
+			}
+		);
+
 		$tags = get_terms(
 			[
 				'taxonomy'   => $included_taxonomies,

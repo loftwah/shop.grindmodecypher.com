@@ -419,6 +419,19 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 		$field_focus_text_color_hover  = $this->get_hover_value( 'form_field_focus_text_color' );
 		$field_focus_text_color_values = et_pb_responsive_options()->get_property_values( $this->props, 'form_field_focus_text_color' );
 
+		if ( ! empty( $attrs['form_field_text_color'] ) ) {
+			$this->generate_styles(
+				array(
+					'type'           => 'color',
+					'render_slug'    => $render_slug,
+					'base_attr_name' => 'form_field_text_color',
+					'css_property'   => 'color',
+					'selector'       => '%%order_class%% .input + label, %%order_class%% .input + label i:before',
+					'important'      => true,
+				)
+			);
+		}
+
 		// set a field ID.
 		if ( '' === $field_id ) {
 			$field_id = sprintf( 'field_%d_%d', $et_pb_contact_form_num, $render_count );

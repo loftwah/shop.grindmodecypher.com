@@ -346,9 +346,17 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 
 	echo et_core_intentionally_unescaped( et_builder_render_layout( $post_content ), 'html' );
 
+	// Get dynamic content.
+	$has_dynamic_content = et_builder_get_dynamic_contents( get_the_content() );
+
 	// Handle style output.
 	if ( is_singular() && ! et_core_is_fb_enabled() ) {
 		$result = ET_Builder_Element::setup_advanced_styles_manager( ET_Post_Stack::get_main_post_id() );
+	} elseif ( is_tax() && ! empty( $has_dynamic_content ) ) {
+		// Set post id to 0 if its a taxonomy page.
+		// This is because of the dynamic content not working properly,
+		// With the theme builder cache.
+		$result = ET_Builder_Element::setup_advanced_styles_manager( 0 );
 	} else {
 		$result = ET_Builder_Element::setup_advanced_styles_manager( $layout->ID );
 	}

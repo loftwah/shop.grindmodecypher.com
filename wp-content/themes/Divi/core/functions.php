@@ -968,26 +968,27 @@ if ( ! function_exists( 'et_core_replace_enqueued_style' ) ):
 				continue;
 			}
 
-			$old_ver       = isset( $style->ver ) ? $style->ver : false;
-			$old_handle    = $handle;
-			$old_deps      = isset( $style->deps ) ? $style->deps : array();
-			$style_handle  = $new_handle ? $new_handle : $old_handle;
-			$style_src     = $regex ? preg_replace( $old_src, $new_src, $style->src ) : $new_src;
-			$style_src     = $new_src ? $style_src : $old_src;
-			$style_deps    = $new_deps ? $new_deps : $old_deps;
-			$style_ver     = $new_ver ? $new_ver : $old_ver;
-			$style_media   = isset( $style->args ) ? $style->args : 'all';
-			$inline_styles = $styles->get_data( $handle, 'after' );
+			$old_ver               = isset( $style->ver ) ? $style->ver : false;
+			$old_handle            = $handle;
+			$old_deps              = isset( $style->deps ) ? $style->deps : array();
+			$style_handle          = $new_handle ? $new_handle : $old_handle;
+			$style_src             = $regex ? preg_replace( $old_src, $new_src, $style->src ) : $new_src;
+			$style_src             = $new_src ? $style_src : $old_src;
+			$style_deps            = $new_deps ? $new_deps : $old_deps;
+			$style_ver             = $new_ver ? $new_ver : $old_ver;
+			$style_media           = isset( $style->args ) ? $style->args : 'all';
+			$inline_styles         = $styles->get_data( $handle, 'after' );
+			$style_handle_filtered = apply_filters( 'et_core_enqueued_style_handle', $style_handle );
 
 			// Deregister first, so the handle can be re-enqueued.
 			wp_dequeue_style( $old_handle );
 			wp_deregister_style( $old_handle );
 
 			// Enqueue the same handle with the new src.
-			wp_enqueue_style( $style_handle, $style_src, $style_deps, $style_ver, $style_media );
+			wp_enqueue_style( $style_handle_filtered, $style_src, $style_deps, $style_ver, $style_media );
 
 			if ( ! empty( $inline_styles ) ) {
-				wp_add_inline_style( $style_handle, implode( "\n", $inline_styles ) );
+				wp_add_inline_style( $style_handle_filtered, implode( "\n", $inline_styles ) );
 			}
 		}
 	}

@@ -3,6 +3,36 @@
 ## Requirements
 
 - PHP 7.0+
+- [Jetpack Autoloader](https://github.com/Automattic/jetpack-autoloader) - Required to ensure the latest version of the framework is used in case multiple plugins have it as a dependency
+
+
+## Versioning & breaking changes
+
+This package follows [Semver](https://semver.org/) for versioning.
+
+This framework may receive breaking changes at the moment while it is only used in the [Facebook for WooCommerce](https://github.com/woocommerce/facebook-for-woocommerce) plugin.
+However, once we use it in another plugin we will need to reject all breaking changes.
+
+## Installation
+
+The framework should be installed via [Composer](https://getcomposer.org/). 
+
+1. Add the following to your project's `composer.json` file:
+```json
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/woocommerce/action-scheduler-job-framework"
+    }
+  ],
+  "require": {
+    "woocommerce/action-scheduler-job-framework": "1.0.0"
+  }
+}
+```
+
+2. Then run `composer update`
 
 ## Chained Jobs
 

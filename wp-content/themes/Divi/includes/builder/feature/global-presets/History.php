@@ -265,6 +265,8 @@ class ET_Builder_Global_Presets_History {
 			);
 		}
 
+		$this->_apply_attribute_migrations( $history );
+
 		return $history;
 	}
 
@@ -309,6 +311,25 @@ class ET_Builder_Global_Presets_History {
 		$migrated_history->index = $history->index;
 
 		et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, $migrated_history );
+	}
+
+	/**
+	 * Fire migration via "ET_Builder_Global_Presets_Settings::migrate_settings_as_module_attributes".
+	 *
+	 * @since ?
+	 *
+	 * @param object $history History object.
+	 *
+	 * @return void
+	 */
+	protected function _apply_attribute_migrations( $history ) {
+		foreach ( $history->history as $record ) {
+			foreach ( $record->settings as $module => $preset_structure ) {
+				foreach ( $preset_structure->presets as $preset_id => $preset ) {
+					ET_Builder_Global_Presets_Settings::migrate_settings_as_module_attributes( $preset, $module );
+				}
+			}
+		}
 	}
 }
 
