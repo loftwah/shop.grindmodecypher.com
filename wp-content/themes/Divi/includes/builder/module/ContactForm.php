@@ -11,6 +11,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 		$this->vb_support      = 'on';
 		$this->child_slug      = 'et_pb_contact_field';
 		$this->child_item_text = esc_html__( 'Field', 'et_builder' );
+		$this->_use_unique_id  = true;
 
 		$this->main_css_element = '%%order_class%%.et_pb_contact_form_container';
 
@@ -660,6 +661,36 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 			$et_error_message = sprintf( '<p>%1$s</p>', et_core_esc_previously( $success_message ) );
 		}
 
+		// Contact form should always have the ID. Use saved ID or generate automatically.
+		$module_id = '' !== $this->module_id( false ) ? $this->module_id( false ) : 'et_pb_contact_form_' . $et_pb_contact_form_num;
+		$unique_id = self::$_->array_get( $this->props, '_unique_id' );
+
+		if ( $nonce_result ) {
+			// Additional info to be passed on the `et_pb_contact_form_submit` hook.
+			$contact_form_info = array(
+				'contact_form_id'        => $module_id,
+				'contact_form_number'    => $et_pb_contact_form_num,
+				'contact_form_unique_id' => $unique_id,
+				'module_slug'            => $render_slug,
+				'post_id'                => $this->get_the_ID(),
+			);
+
+			/**
+			 * Fires after contact form is submitted.
+			 *
+			 * Use $et_contact_error variable to check whether there is an error on the form
+			 * entry submit process or not.
+			 *
+			 * @since ??
+			 *
+			 * @param array $processed_fields_values Processed fields values.
+			 * @param array $et_contact_error        Whether there is an error on the form
+			 *                                       entry submit process or not.
+			 * @param array $contact_form_info       Additional contact form info.
+			 */
+			do_action( 'et_pb_contact_form_submit', $processed_fields_values, $et_contact_error, $contact_form_info );
+		}
+
 		$form        = '';
 		$current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
@@ -728,12 +759,9 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 		// Remove automatically added classname
 		$this->remove_classname( $render_slug );
 
-		// Contact form should always have the ID. Use saved ID or generate automatically
-		$module_id = '' !== $this->module_id( false ) ? $this->module_id( false ) : 'et_pb_contact_form_' . $et_pb_contact_form_num;
-
 		$output = sprintf(
 			'
-			<div id="%4$s" class="%5$s" data-form_unique_num="%6$s"%7$s>
+			<div id="%4$s" class="%5$s" data-form_unique_num="%6$s" data-form_unique_id="%10$s"%7$s>
 				%9$s
 				%8$s
 				%1$s
@@ -745,11 +773,12 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 			$et_error_message,
 			$form,
 			esc_attr( $module_id ),
-			$this->module_classname( $render_slug ),
+			$this->module_classname( $render_slug ), // #5
 			esc_attr( $et_pb_contact_form_num ),
 			'on' === $use_redirect && '' !== $redirect_url ? sprintf( ' data-redirect_url="%1$s"', esc_attr( $redirect_url ) ) : '',
 			$video_background,
-			$parallax_image_background
+			$parallax_image_background,
+			esc_attr( $unique_id ) // #10
 		);
 
 		return $output;

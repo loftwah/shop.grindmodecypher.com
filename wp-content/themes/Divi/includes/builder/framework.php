@@ -147,12 +147,12 @@ if ( ! (
 require_once ET_BUILDER_DIR . 'feature/ClassicEditor.php';
 require_once ET_BUILDER_DIR . 'feature/AjaxCache.php';
 require_once ET_BUILDER_DIR . 'feature/post-content.php';
+require_once ET_BUILDER_DIR . 'feature/content-retriever/ContentRetriever.php';
 
 if ( et_builder_is_critical_enabled() ) {
 	require_once ET_BUILDER_DIR . 'feature/CriticalCSS.php';
 }
 
-require_once ET_BUILDER_DIR . 'feature/content-retriever/ContentRetriever.php';
 require_once ET_BUILDER_DIR . 'feature/dynamic-assets/dynamic-assets.php';
 require_once ET_BUILDER_DIR . 'feature/dynamic-assets/class-dynamic-assets.php';
 require_once ET_BUILDER_DIR . 'feature/dynamic-content.php';

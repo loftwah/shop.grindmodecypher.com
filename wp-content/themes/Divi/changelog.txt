@@ -1,3 +1,29 @@
+version 4.13.1 ( updated 11-11-2021 )
+- Fixed front end .css files being enqueued inside the Visual Builder when editing category pages using the Theme Builder Editor.
+- Fixed issue with Post Content Module error inside the Specialty section.
+- Fixed visual builder laggy on Initial load.
+- Fixed error when double click on child module preview to open settings modal.
+- Fixed Divi Placeholder block is not rendered properly on edit post admin page.
+- Updated Display Conditions feature making it more robust and added specific hooks to disable/enable Display Conditions site-wide.
+- Refactored Dynamic Assets for improved technical maintainability.
+- Fixed error in the browser console when doing drag and drop modules.
+- Introduces new action hook after contact form entry is submitted.
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/feature/ajax-data/AjaxData.php
+	* includes/builder/feature/display-conditions/DisplayConditions.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/functions.php
+	* includes/builder/module/ContactForm.php
+	* includes/builder/module/field/DisplayConditions.php
+	* includes/builder/module/field/display-conditions/PageVisit.php
+	* includes/builder/module/settings/Migration.php
+	* includes/builder/module/settings/migration/ContactFormUniqueID.php
+	* includes/builder/plugin-compat/popup-maker.php
+
 version 4.13 ( updated 11-04-2021 )
 - Added hundreds of new icons to the Divi icon picker.
 - Added expanded icon picker for easier icon browsing.

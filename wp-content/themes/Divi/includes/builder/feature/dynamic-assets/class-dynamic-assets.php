@@ -50,14 +50,10 @@ class ET_Dynamic_Assets {
 	private $_object_id = null;
 
 	/**
-	 * Post content.
+	 * Entire page content, including TB Header, TB Body Layout, Post Content and TB Footer.
 	 *
-	 * @var null
-	 */
-	private $_post_content = null;
-
-	/**
-	 * All content.
+	 * Content is not passed through `the_content` filter, This means that `$_all_content` will include auto-embedded
+	 * videos or expanded shortcodes, the content is considered raw.
 	 *
 	 * @var null
 	 */
@@ -503,8 +499,8 @@ class ET_Dynamic_Assets {
 
 		$this->_post_id           = ! empty( $post ) ? intval( $post->ID ) : -1;
 		$this->_tb_template_ids   = $this->get_theme_builder_template_ids();
-		$this->_post_content      = ! empty( $post ) ? $post->post_content : '';
-		$this->_all_content       = $this->get_all_content();
+		$content_retriever        = \Feature\ContentRetriever\ET_Builder_Content_Retriever::init();
+		$this->_all_content       = $content_retriever->get_entire_page_content( $post );
 		$this->_cache_dir_path    = et_core_cache_dir()->path;
 		$this->_cache_dir_url     = et_core_cache_dir()->url;
 		$this->_product_dir       = et_is_builder_plugin_active() ? ET_BUILDER_PLUGIN_URI : get_template_directory_uri();
@@ -2057,61 +2053,6 @@ class ET_Dynamic_Assets {
 	}
 
 	/**
-	 * Get post content from Theme Builder templates.
-	 * Combine it with the post content from the current post.
-	 *
-	 * @return string
-	 * @since 4.10.0
-	 */
-	public function get_all_content() {
-		$all_content  = '';
-		$tb_layouts   = et_theme_builder_get_template_layouts();
-		$template_ids = [];
-
-		if ( ! empty( $tb_layouts ) ) {
-			if ( $tb_layouts[ ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE ]['override'] ) {
-				if ( ! empty( $tb_layouts[ ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE ]['enabled'] ) ) {
-					$template_ids[] = intval( $tb_layouts[ ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE ]['id'] );
-				}
-			}
-
-			if ( $tb_layouts[ ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE ]['override'] ) {
-				if ( ! empty( $tb_layouts[ ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE ]['enabled'] ) ) {
-					$template_ids[] = intval( $tb_layouts[ ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE ]['id'] );
-				}
-			}
-
-			$template_ids[] = 'content';
-
-			if ( $tb_layouts[ ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE ]['override'] ) {
-				if ( ! empty( $tb_layouts[ ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE ]['enabled'] ) ) {
-					$template_ids[] = intval( $tb_layouts[ ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE ]['id'] );
-				}
-			}
-		}
-
-		// Ensure post content is always present.
-		$template_ids = empty( $template_ids ) ? [ 'content' ] : $template_ids;
-
-		// $template_ids will be in the following order, (assuming each are present):
-		// header, body, footer.
-		// so, as we loop through them, were intentionally appending the
-		// post content so that it's appended right after the body layout,
-		// making the final order of the $all_content as follows:
-		// header, body, post content, footer.
-		foreach ( $template_ids as $key => $template_id ) {
-			if ( 'content' === $template_id ) {
-				$all_content .= $this->_post_content;
-			} else {
-				$template     = get_post( $template_id );
-				$all_content .= $template->post_content;
-			}
-		}
-
-		return $all_content;
-	}
-
-	/**
 	 * Merge multiple arrays and returns an array with unique values.
 	 *
 	 * @since 4.10.0
@@ -2136,7 +2077,7 @@ class ET_Dynamic_Assets {
 	 * @param array $array_1 First array.
 	 * @param array $array_2 Second array.
 	 *
-	 * @since ??
+	 * @since 4.13.0
 	 */
 	public function get_new_array_values( $array_1, $array_2 ) {
 		$new_array_values = array();

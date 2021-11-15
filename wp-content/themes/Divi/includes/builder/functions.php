@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.13.0' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.13.1' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -10618,7 +10618,9 @@ function et_fb_get_builder_shortcode_object( $post_type, $post_id, $layout_type 
 function et_fb_generate_post_content_module_selector( array $array, $element_type ) {
 	global $current_section;
 	global $current_row;
+	global $current_row_inner;
 	global $current_column;
+	global $current_column_inner;
 	global $current_module;
 	global $post_content_module_selector;
 
@@ -10648,13 +10650,36 @@ function et_fb_generate_post_content_module_selector( array $array, $element_typ
 				et_fb_generate_post_content_module_selector( $array[ $key ]['content'], $array[ $key ]['type'] );
 			}
 		}
-	} elseif ( 'et_pb_column' === $element_type ) {
+	} elseif ( 'et_pb_row_inner' === $element_type ) {
+		// Loop through columns.
+		foreach ( $array as $key => $value ) {
+			if ( isset( $array[ $key ]['content'] ) && is_array( $array[ $key ]['content'] ) ) {
+				$current_column_inner = $key;
+				et_fb_generate_post_content_module_selector( $array[ $key ]['content'], $array[ $key ]['type'] );
+			}
+		}
+	} elseif ( 'et_pb_column' === $element_type || 'et_pb_column_inner' === $element_type ) {
 		// Loop through modules.
 		foreach ( $array as $key => $value ) {
-			if ( 'et_pb_post_content' === $array[ $key ]['type'] ) {
+			if ( 'et_pb_row_inner' === $array[ $key ]['type'] ) {
+				foreach ( $array as $key => $value ) {
+					if ( isset( $array[ $key ]['content'] ) && is_array( $array[ $key ]['content'] ) ) {
+						$current_row_inner = $key;
+						et_fb_generate_post_content_module_selector( $array[ $key ]['content'], $array[ $key ]['type'] );
+					}
+				}
+			} elseif ( 'et_pb_post_content' === $array[ $key ]['type'] ) {
 				// If Post Content Module is Found build the selector from current Section, Row, and Column.
-				$current_module               = $key;
-				$post_content_module_selector = array(
+				$current_module  = $key;
+				$is_column_inner = 'et_pb_column_inner' === $array[ $key ]['parent_slug'];
+
+				$post_content_module_selector = $is_column_inner ? array(
+					'section'      => $current_section,
+					'row_inner'    => $current_row_inner,
+					'column'       => $current_row,
+					'column_inner' => $current_column_inner,
+					'module'       => $current_module,
+				) : array(
 					'section' => $current_section,
 					'row'     => $current_row,
 					'column'  => $current_column,
@@ -10664,8 +10689,8 @@ function et_fb_generate_post_content_module_selector( array $array, $element_typ
 				// If Post Content Module is FullWidth create selector with section and module id.
 				$current_module               = $key;
 				$post_content_module_selector = array(
-					'section'          => $current_section,
-					'fullwidth_module' => $current_module,
+					'section' => $current_section,
+					'module'  => $current_module,
 				);
 			}
 		}
@@ -10687,14 +10712,21 @@ function et_fb_generate_post_content_module_selector( array $array, $element_typ
  * @return array
  */
 function et_fb_generate_tb_body_area_with_post_content( $theme_builder_body_fields, $selector, $post_content_fields ) {
-	$is_full_width = isset( $selector['fullwidth_module'] );
+	if ( isset( $selector['row'] ) && null === $selector['row'] && null === $selector['column'] ) {
+		$original_post_content_module = $theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['module'] ];
 
-	if ( $is_full_width ) {
-		$original_post_content_module = $theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['fullwidth_module'] ];
+		$theme_builder_body_fields[ $selector['section'] ]['attrs']['post_content_module_attrs']        = $original_post_content_module['attrs'];
+		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['module'] ]['content'] = $post_content_fields;
+	} elseif ( null === $selector['column'] ) {
+		$original_post_content_module = $theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['row'] ]['content'][ $selector['module'] ];
 
-		$theme_builder_body_fields[ $selector['section'] ]['attrs']['post_content_module_attrs']                  = $original_post_content_module['attrs'];
-		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['fullwidth_module'] ]['content'] = $post_content_fields;
-		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['fullwidth_module'] ]['content'] = $post_content_fields;
+		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['row'] ]['attrs']['post_content_module_attrs']        = $original_post_content_module['attrs'];
+		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['row'] ]['content'][ $selector['module'] ]['content'] = $post_content_fields;
+	} elseif ( isset( $selector['row_inner'] ) ) {
+		$original_post_content_module = $theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['column'] ]['content'][ $selector['row_inner'] ]['content'][ $selector['column_inner'] ]['content'][ $selector['module'] ];
+
+		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['column'] ]['content'][ $selector['row_inner'] ]['content'][ $selector['column_inner'] ]['attrs']['post_content_module_attrs']        = $original_post_content_module['attrs'];
+		$theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['column'] ]['content'][ $selector['row_inner'] ]['content'][ $selector['column_inner'] ]['content'][ $selector['module'] ]['content'] = $post_content_fields;
 	} else {
 		$original_post_content_module = $theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['row'] ]['content'][ $selector['column'] ]['content'][ $selector['module'] ];
 

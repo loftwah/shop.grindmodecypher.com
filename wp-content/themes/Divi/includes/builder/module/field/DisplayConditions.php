@@ -157,11 +157,6 @@ class ET_Builder_Module_Field_DisplayConditions extends ET_Builder_Module_Field_
 	 * @return boolean Conditions final result.
 	 */
 	public function is_displayable( $display_conditions, $only_return_status = false ) {
-		// Bail out and just display the module if below WordPress 5.3.
-		if ( version_compare( get_bloginfo( 'version' ), '5.3', '<' ) ) {
-			return true;
-		}
-
 		// Bail out and just display the module if $display_conditions is not array.
 		if ( ! is_array( $display_conditions ) ) {
 			return true;

@@ -63,6 +63,21 @@ class ET_Builder_Ajax_Data {
 	public function et_builder_ajax_get_display_conditions_status() {
 		et_core_security_check( 'edit_posts', 'et_builder_ajax_get_display_conditions_status', 'nonce', '_POST' );
 
+		/**
+		 * Filters "Display Conditions" functionality to determine whether to enable or disable the functionality or not.
+		 *
+		 * Useful for disabling/enabling "Display Condition" feature site-wide.
+		 *
+		 * @since ??
+		 *
+		 * @param boolean True to enable the functionality, False to disable it.
+		 */
+		$is_display_conditions_enabled = apply_filters( 'et_is_display_conditions_functionality_enabled', true );
+
+		if ( ! $is_display_conditions_enabled ) {
+			wp_send_json_error();
+		}
+
 		// $_POST['conditions'] is a JSON so there is no effective way to sanitize it at this level.
 		// phpcs:ignore ET.Sniffs.ValidatedSanitizedInput  -- Conditions is not stored or displayed therefore XSS safe.
 		$conditions = isset( $_POST['conditions'] ) ? $_POST['conditions'] : '';

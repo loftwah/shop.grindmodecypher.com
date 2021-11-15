@@ -135,7 +135,7 @@ function et_theme_builder_frontend_enqueue_styles( $layouts ) {
 		return;
 	}
 
-	if ( ! is_singular() || et_core_is_fb_enabled() ) {
+	if ( ! is_singular() && ! et_core_is_fb_enabled() ) {
 		// Create styles managers so they can enqueue styles early enough.
 		// What styles are created and how they are enqueued:
 		// - In FE, singular post view:

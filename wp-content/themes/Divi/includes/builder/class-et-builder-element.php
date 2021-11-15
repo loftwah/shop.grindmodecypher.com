@@ -723,6 +723,17 @@ class ET_Builder_Element {
 	public static $all_module_slugs = array();
 
 	/**
+	 * Whether current module uses unique ID or not.
+	 *
+	 * The unique ID will be added once the module is added via Divi Builder.
+	 *
+	 * @since ??
+	 *
+	 * @var boolean
+	 */
+	protected $_use_unique_id = false;
+
+	/**
 	 * ET_Builder_Element constructor.
 	 */
 	public function __construct() {
@@ -1746,6 +1757,11 @@ class ET_Builder_Element {
 
 		// Add support for the style presets.
 		$fields_unprocessed['_module_preset'] = array( 'type' => 'skip' );
+
+		// Add support for unique ID. Initially added for Contact Form module.
+		if ( $this->_use_unique_id ) {
+			$fields_unprocessed['_unique_id'] = array( 'type' => 'skip' );
+		}
 
 		if ( function_exists( 'et_builder_definition_sort' ) ) {
 			et_builder_definition_sort( $fields_unprocessed );
@@ -3219,50 +3235,19 @@ class ET_Builder_Element {
 		$this->is_rendering = true;
 		$render_method      = $et_fb_processing_shortcode_object ? 'render_as_builder_data' : 'render';
 
-		/**
-		 * Process Display Conditions and decide whether to display a module or not.
-		 */
-		// Setup variables.
-		$is_displayable                        = true;
-		$is_display_conditions_set             = isset( $this->props['display_conditions'] ) && ! empty( $this->props['display_conditions'] );
-		$is_display_conditions_as_base64_empty = 'W10=' === $this->props['display_conditions'];
-		$has_display_conditions                = $is_display_conditions_set && ! $is_display_conditions_as_base64_empty;
-
-		// Check if display_conditions attribute is defined, Decode the data and check if it is displayable.
-		if ( $has_display_conditions ) {
-			$display_conditions_json = base64_decode( $this->props['display_conditions'] ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode  -- The returned data is an array and necessary validation checks are performed.
-		}
-		if ( $has_display_conditions && false !== $display_conditions_json ) {
-			$display_conditions = json_decode( $display_conditions_json, true );
-			$is_displayable     = ET_Builder_Module_Fields_Factory::get( 'DisplayConditions' )->is_displayable( $display_conditions );
-		}
-
 		// Render the module as we normally would.
 		$output = $this->{$render_method}( $attrs, $content, $render_slug, $parent_address, $global_parent, $global_parent_type, $parent_type, $theme_builder_area );
 
 		/**
-		 * Check if we're rendering on frontend, Then decide whether to keep the output or erase it.
+		 * Filters every rendered module output for processing "Display Conditions" option group.
 		 *
-		 * We do need to render the module first and then decide to keep it or not, This is because
-		 * we want the styles of the module (shortcode) and any nested modules inside it to get
-		 * registered so "Dynamic Assets" would include the styles of all modules used on the page.
-		 * Ref: https://github.com/elegantthemes/Divi/issues/24965
+		 * @since ??
+		 *
+		 * @param string             $output        HTML output of the rendered module.
+		 * @param string             $render_method The render method used to render the module.
+		 * @param ET_Builder_Element $this          The current instance of ET_Builder_Element.
 		 */
-		if ( 'render' === $render_method ) {
-			if ( wp_doing_ajax() && et_pb_is_pagebuilder_used( get_the_ID() ) ) {
-				// "Blog Module" in VB will be rendered like a normal frontend request not as builder data, Here we set the output
-				// so it will always be visible in VB ignoring Display Conditions Ref: https://github.com/elegantthemes/Divi/issues/23309.
-				$is_vb_ajax_nonce_valid = isset( $_POST['et_pb_process_computed_property_nonce'] ) && wp_verify_nonce( sanitize_text_field( $_POST['et_pb_process_computed_property_nonce'] ), 'et_pb_process_computed_property_nonce' );
-				$output                 = $is_vb_ajax_nonce_valid ? $output : '';
-			} elseif ( 'et_pb_post_content' === $this->slug && ! $is_displayable && et_core_is_fb_enabled() ) {
-				// When VB is loaded and "Post Content" Module is used in TB and it's not displayable, set the correct
-				// output so it'd be displayed in VB and TB respectively Ref: https://github.com/elegantthemes/Divi/issues/23479.
-				$output = $output;
-			} else {
-				// All other scenarios will fall here, Normal frontend request, AJAX frontend request, etc.
-				$output = ( $is_displayable ) ? $output : '';
-			}
-		}
+		$output = apply_filters( 'et_module_process_display_conditions', $output, $render_method, $this );
 
 		$this->is_rendering = false;
 
@@ -5516,6 +5501,20 @@ class ET_Builder_Element {
 	 * Add display conditions option fields.
 	 */
 	protected function _add_display_conditions_fields() {
+		/**
+		 * Filters "Display Conditions" option visibility to determine whether to add its field to the Visual Builder or not.
+		 *
+		 * Useful for displaying/hiding the option on the Visual Builder.
+		 *
+		 * @since ??
+		 *
+		 * @param boolean True to make the option visible on VB, False to make it hidden.
+		 */
+		$is_display_conditions_enabled = apply_filters( 'et_is_display_conditions_option_visible', true );
+		if ( ! $is_display_conditions_enabled ) {
+			return;
+		}
+
 		if ( is_array( et_()->array_get( $this->advanced_fields, 'display_conditions', array() ) ) ) {
 			$this->_additional_fields_options = array_merge(
 				$this->_additional_fields_options,
@@ -18378,6 +18377,7 @@ class ET_Builder_Element {
 					'label'              => esc_attr( $module->slug ),
 					'is_parent'          => 'child' === $module->type ? 'off' : 'on',
 					'is_official_module' => $module->_is_official_module,
+					'use_unique_id'      => $module->_use_unique_id,
 					'vb_support'         => isset( $module->vb_support ) ? $module->vb_support : 'off',
 				);
 

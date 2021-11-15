@@ -34,10 +34,13 @@ trait PageVisitCondition {
 			$pages_raw
 		);
 		$has_visited_specific_page = false;
+		$cookie                    = [];
 
 		if ( isset( $_COOKIE['divi_post_visit'] ) ) {
 			// phpcs:ignore ET.Sniffs.ValidatedSanitizedInput, WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode  -- Cookie is not stored or displayed therefore XSS safe, base64_decode returned data is an array and necessary validation checks are performed.
-			$cookie                    = json_decode( base64_decode( $_COOKIE['divi_post_visit'] ), true );
+			$cookie = json_decode( base64_decode( $_COOKIE['divi_post_visit'] ), true );
+		}
+		if ( $cookie && is_array( $cookie ) ) {
 			$col                       = array_column( $cookie, 'id' );
 			$has_visited_specific_page = array_intersect( $pages_ids, $col ) ? true : false;
 		}

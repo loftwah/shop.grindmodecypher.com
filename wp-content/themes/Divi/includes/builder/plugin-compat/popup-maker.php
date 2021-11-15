@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Compatibility for Popup Maker plugin.
  *
- * @since ??
+ * @since 4.13.0
  *
  * @link https://wordpress.org/plugins/popup-maker/
  */
@@ -22,7 +22,7 @@ class ET_Builder_Plugin_Compat_Popup_Maker extends ET_Builder_Plugin_Compat_Base
 	/**
 	 * Constructor.
 	 *
-	 * @since ??
+	 * @since 4.13.0
 	 */
 	public function __construct() {
 		$this->plugin_id = 'popup-maker/popup-maker.php';
@@ -32,7 +32,7 @@ class ET_Builder_Plugin_Compat_Popup_Maker extends ET_Builder_Plugin_Compat_Base
 	/**
 	 * Hook methods to WordPress.
 	 *
-	 * @since ??
+	 * @since 4.13.0
 	 *
 	 * @return void
 	 */
@@ -57,7 +57,7 @@ class ET_Builder_Plugin_Compat_Popup_Maker extends ET_Builder_Plugin_Compat_Base
 	/**
 	 * Return false if Popup Maker is active to disable dynamic assets feature.
 	 *
-	 * @since ??
+	 * @since 4.13.0
 	 *
 	 * @param bool $current_state Current state of the feature.
 	 *
@@ -76,7 +76,7 @@ class ET_Builder_Plugin_Compat_Popup_Maker extends ET_Builder_Plugin_Compat_Base
 	 * Update Divi Builder selector for Popup Maker plugin.
 	 * The purpose of this update is to make sure custom module styles applied to the content inside Popup Maker which placed outside the main page content and `#page-container` container
 	 *
-	 * @since ??
+	 * @since 4.13.0
 	 *
 	 * @param string $selector Selector to modify.
 	 *
@@ -102,7 +102,7 @@ class ET_Builder_Plugin_Compat_Popup_Maker extends ET_Builder_Plugin_Compat_Base
 	 * Update Divi Builder selector for Popup Maker plugin.
 	 * The purpose of this update is to make sure custom module styles applied to the content inside Popup Maker which placed outside the main page content and `#et-boc` container
 	 *
-	 * @since ??
+	 * @since 4.13.0
 	 *
 	 * @param string $selector Selector to modify.
 	 *
@@ -129,7 +129,7 @@ class ET_Builder_Plugin_Compat_Popup_Maker extends ET_Builder_Plugin_Compat_Base
 	 * The purpose of this update is to make sure Divi main style is loaded along with the CPT style
 	 * Otherwise Content inside Popup Maker plugin loses styles because it's placed outside the main page content and `#et-boc` container
 	 *
-	 * @since ??
+	 * @since 4.13.0
 	 *
 	 * @param string $handle Handle to modify.
 	 *

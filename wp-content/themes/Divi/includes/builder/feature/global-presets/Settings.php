@@ -531,7 +531,7 @@ class ET_Builder_Global_Presets_Settings {
 	 *
 	 * Returns FALSE when the value is an Object or an array.
 	 *
-	 * @since ?? Included PHPDoc description.
+	 * @since 4.13.0 Included PHPDoc description.
 	 * @since 4.5.0
 	 *
 	 * @param $value - The Global Presets setting value
