@@ -276,7 +276,16 @@ class ET_Builder_Ajax_Cache {
 			self::$_instance = new self();
 		}
 
-		return self::$_instance;
+		/**
+		 * Filters the cache class instance that for caches AJAX requests.
+		 *
+		 * @param ET_Builder_Ajax_Cache Cache Instance
+		 *
+		 * @see GlobalHistoryMigrationTest
+		 *
+		 * @since ??
+		 */
+		return apply_filters( 'et_builder_ajax_cache_instance', self::$_instance );
 	}
 
 }

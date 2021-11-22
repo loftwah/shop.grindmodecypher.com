@@ -62,15 +62,17 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 		if ( $template->is_enabled() && ! $template->has( 'border' ) ) {
 			$template_placeholders = $template->placeholders(
 				array(
-					'suffix'          => null,
-					'label_prefix'    => null,
-					'tab_slug'        => null,
-					'toggle_slug'     => null,
-					'color_type'      => null,
-					'depends_on'      => null,
-					'depends_show_if' => null,
-					'sub_toggle'      => null,
-					'defaults'        => array(
+					'suffix'              => null,
+					'label_prefix'        => null,
+					'tab_slug'            => null,
+					'toggle_slug'         => null,
+					'color_type'          => null,
+					'depends_on'          => null,
+					'depends_show_if_not' => null,
+					'depends_show_if'     => null,
+					'use_radius'          => null,
+					'sub_toggle'          => null,
+					'defaults'            => array(
 						'border_radii'  => null,
 						'border_styles' => array(
 							'width' => null,
@@ -98,16 +100,17 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 	public function get_fields( array $args = array(), $return_template_id = false ) {
 		$settings = shortcode_atts(
 			array(
-				'suffix'          => '',
-				'label_prefix'    => '',
-				'tab_slug'        => 'advanced',
-				'toggle_slug'     => 'border',
-				'color_type'      => 'color-alpha',
-				'depends_on'      => null,
-				'depends_show_if' => null,
-				'sub_toggle'      => null,
-				'use_radius'      => true,
-				'defaults'        => array(
+				'suffix'              => '',
+				'label_prefix'        => '',
+				'tab_slug'            => 'advanced',
+				'toggle_slug'         => 'border',
+				'color_type'          => 'color-alpha',
+				'depends_on'          => null,
+				'depends_show_if_not' => null,
+				'depends_show_if'     => null,
+				'sub_toggle'          => null,
+				'use_radius'          => true,
+				'defaults'            => array(
 					'border_radii'  => 'on||||',
 					'border_styles' => array(
 						'width' => '0px',
@@ -426,8 +429,9 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 		// Add options dependency
 		if ( ! is_null( $settings['depends_on'] ) ) {
 			foreach ( $additional_options as &$option ) {
-				$option['depends_on']      = $settings['depends_on'];
-				$option['depends_show_if'] = $settings['depends_show_if'];
+				$option['depends_on']          = $settings['depends_on'];
+				$option['depends_show_if']     = $settings['depends_show_if'];
+				$option['depends_show_if_not'] = $settings['depends_show_if_not'];
 			}
 		}
 

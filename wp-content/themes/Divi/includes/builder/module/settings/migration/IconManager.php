@@ -526,7 +526,7 @@ class ET_Builder_Module_Settings_Migration_IconManager extends ET_Builder_Module
 			return '';
 		}
 
-		return et_pb_process_font_icon( $this->_current_value ) . '||divi||' . et_pb_get_normal_font_weight_value();
+		return et_pb_build_extended_font_icon_value( $this->_current_value );
 	}
 
 	/**

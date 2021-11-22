@@ -24,7 +24,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		 *
 		 * Valid values are Product Ids, `current` and `latest`.
 		 *
-		 * @param string $maybe_product_id
+		 * @param string $maybe_product_id Product ID.
 		 *
 		 * @return bool
 		 */
@@ -259,6 +259,144 @@ if ( et_is_woocommerce_plugin_active() ) {
 							'__shop',
 						),
 						'toggle_slug'      => 'main_content',
+					);
+					break;
+				case 'offset_number':
+					$field = array(
+						'label'           => esc_html__( 'Product Offset Number', 'et_builder' ),
+						'type'            => 'text',
+						'option_category' => 'configuration',
+						'description'     => esc_html__( 'Choose how many products you would like to skip. These products will not be shown in the feed.', 'et_builder' ),
+						'toggle_slug'     => 'main_content',
+						'default'         => 0,
+					);
+					break;
+				case 'fields_width':
+					$field = array(
+						'label'           => esc_html__( 'Fields Width', 'et_builder' ),
+						'description'     => esc_html__( 'Set the width of the fields.', 'et_builder' ),
+						'type'            => 'select',
+						'option_category' => 'configuration',
+						'options'         => array(
+							'default'   => __( 'Default', 'et_builder' ),
+							'fullwidth' => __( 'Fullwidth', 'et_builder' ),
+							'2_column'  => __( '2 Column', 'et_builder' ),
+						),
+						'default'         => 'default',
+						'tab_slug'        => 'advanced',
+						'toggle_slug'     => 'layout',
+						'mobile_options'  => true,
+					);
+					break;
+				case 'collapse_table_gutters_borders':
+					$field = array(
+						'label'           => esc_html__( 'Collapse Table Gutters and Borders', 'et_builder' ),
+						'type'            => 'yes_no_button',
+						'option_category' => 'configuration',
+						'options'         => array(
+							'on'  => et_builder_i18n( 'Yes' ),
+							'off' => et_builder_i18n( 'No' ),
+						),
+						'description'     => esc_html__( 'Collapse Table Gutters and Borders.', 'et_builder' ),
+						'toggle_slug'     => 'table',
+						'tab_slug'        => 'advanced',
+						'default'         => 'off',
+						'mobile_options'  => true,
+					);
+					break;
+				case 'vertical_gutter_width':
+					$field = array(
+						'label'          => esc_html__( 'Vertical Gutters', 'et_builder' ),
+						'type'           => 'range',
+						'default_unit'   => 'px',
+						'allowed_units'  => array(
+							'em',
+							'rem',
+							'px',
+							'cm',
+							'mm',
+							'in',
+							'pt',
+							'pc',
+							'ex',
+							'vh',
+							'vw',
+						),
+						'range_settings' => array(
+							'min'       => 0,
+							'max'       => 50,
+							'step'      => 1,
+							'min_limit' => 0,
+						),
+						'default'        => '0px',
+						'mobile_options' => true,
+						'sticky'         => false,
+						'tab_slug'       => 'advanced',
+						'toggle_slug'    => 'table',
+						'show_if'        => array(
+							'collapse_table_gutters_borders' => 'off',
+						),
+					);
+					break;
+				case 'horizontal_gutter_width':
+					$field = array(
+						'label'          => esc_html__( 'Horizontal Gutters', 'et_builder' ),
+						'type'           => 'range',
+						'default_unit'   => 'px',
+						'allowed_units'  => array(
+							'em',
+							'rem',
+							'px',
+							'cm',
+							'mm',
+							'in',
+							'pt',
+							'pc',
+							'ex',
+							'vh',
+							'vw',
+						),
+						'range_settings' => array(
+							'min'       => 0,
+							'max'       => 50,
+							'step'      => 1,
+							'min_limit' => 0,
+						),
+						'default'        => '0px',
+						'mobile_options' => true,
+						'sticky'         => false,
+						'tab_slug'       => 'advanced',
+						'toggle_slug'    => 'table',
+						'show_if'        => array(
+							'collapse_table_gutters_borders' => 'off',
+						),
+					);
+					break;
+				case 'placeholder_color':
+					$field = array(
+						'label'          => esc_html__( 'Placeholder Color', 'et_builder' ),
+						'description'    => esc_html__( 'Pick a color to be used for the placeholder written inside input fields.', 'et_builder' ),
+						'type'           => 'color-alpha',
+						'custom_color'   => true,
+						'tab_slug'       => 'advanced',
+						'toggle_slug'    => 'form_field',
+						'hover'          => 'tabs',
+						'mobile_options' => true,
+						'sticky'         => false,
+					);
+					break;
+				case 'table_cell_alternating_background_color':
+					$field = array(
+						'label'          => esc_html__( 'Table Cell Alternating Background Color', 'et_builder' ),
+						'description'    => esc_html__( 'Pick a color to be used for the alternating table cells.', 'et_builder' ),
+						'type'           => 'color-alpha',
+						'custom_color'   => true,
+						'tab_slug'       => 'advanced',
+						'toggle_slug'    => 'table_cell',
+						'hover'          => 'tabs',
+						'mobile_options' => true,
+						'sticky'         => false,
+						'priority'       => 9,
 					);
 					break;
 				default:
@@ -958,6 +1096,418 @@ if ( et_is_woocommerce_plugin_active() ) {
 		public static function reset_display_type( $option_name, $display_type ) {
 			update_option( $option_name, $display_type );
 		}
+
+		/**
+		 * Stops Checkout Coupon form from rendering.
+		 *
+		 * @deprecated
+		 */
+		public static function detach_wc_before_checkout_form() {
+			remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
+		}
+
+		/**
+		 * Stops Checkout Coupon form from rendering.
+		 */
+		public static function detach_wc_checkout_coupon_form() {
+			remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
+		}
+
+		/**
+		 * Stops Login Coupon form from rendering.
+		 */
+		public static function detach_wc_checkout_login_form() {
+			remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_login_form', 10 );
+		}
+
+		/**
+		 * Enable `woocommerce_before_checkout_form` hook.
+		 *
+		 * @since ??
+		 */
+		public static function attach_wc_before_checkout_form() {
+			add_action(
+				'woocommerce_before_checkout_form',
+				'woocommerce_checkout_coupon_form',
+				10
+			);
+		}
+
+		/**
+		 * Enable `woocommerce_before_checkout_form` hook.
+		 *
+		 * @since ??
+		 */
+		public static function attach_wc_checkout_coupon_form() {
+			add_action(
+				'woocommerce_before_checkout_form',
+				'woocommerce_checkout_coupon_form',
+				10
+			);
+		}
+
+		/**
+		 * Enable `woocommerce_before_checkout_form` hook.
+		 *
+		 * @since ??
+		 */
+		public static function attach_wc_checkout_login_form() {
+			add_action(
+				'woocommerce_before_checkout_form',
+				'woocommerce_checkout_login_form',
+				10
+			);
+		}
+
+		/**
+		 * Remove `woocommerce_checkout_billing` hook.
+		 *
+		 * @since ??
+		 */
+		public static function detach_wc_checkout_billing() {
+			if ( ! function_exists( 'WC' ) ) {
+				return;
+			}
+
+			$class = get_class( WC() );
+			if ( ! method_exists( $class, 'checkout' ) ) {
+				return;
+			}
+
+			$checkout = WC()->checkout();
+			remove_action(
+				'woocommerce_checkout_billing',
+				array( $checkout, 'checkout_form_billing' )
+			);
+		}
+
+		/**
+		 * Enable `woocommerce_checkout_billing` hook.
+		 *
+		 * @since ??
+		 */
+		public static function attach_wc_checkout_billing() {
+			if ( ! function_exists( 'WC' ) ) {
+				return;
+			}
+
+			$class = get_class( WC() );
+			if ( ! method_exists( $class, 'checkout' ) ) {
+				return;
+			}
+
+			$checkout = WC()->checkout();
+			add_action( 'woocommerce_checkout_billing', array( $checkout, 'checkout_form_billing' ) );
+		}
+
+		/**
+		 * Remove `woocommerce_checkout_shipping` hook.
+		 *
+		 * @since ??
+		 */
+		public static function detach_wc_checkout_shipping() {
+			if ( ! function_exists( 'WC' ) ) {
+				return;
+			}
+
+			$class = get_class( WC() );
+			if ( ! method_exists( $class, 'checkout' ) ) {
+				return;
+			}
+
+			$checkout = WC()->checkout();
+			remove_action(
+				'woocommerce_checkout_shipping',
+				array( $checkout, 'checkout_form_shipping' )
+			);
+		}
+
+		/**
+		 * Enable `woocommerce_checkout_shipping` hook.
+		 *
+		 * @since ??
+		 */
+		public static function attach_wc_checkout_shipping() {
+			if ( ! function_exists( 'WC' ) ) {
+				return;
+			}
+
+			$class = get_class( WC() );
+			if ( ! method_exists( $class, 'checkout' ) ) {
+				return;
+			}
+
+			$checkout = WC()->checkout();
+			add_action(
+				'woocommerce_checkout_shipping',
+				array( $checkout, 'checkout_form_shipping' )
+			);
+		}
+
+		/**
+		 * Remove `woocommerce_checkout_order_review` hook.
+		 *
+		 * @since ??
+		 */
+		public static function detach_wc_checkout_payment() {
+			remove_action(
+				'woocommerce_checkout_order_review',
+				'woocommerce_checkout_payment',
+				20
+			);
+		}
+
+		/**
+		 * Enable `woocommerce_checkout_order_review` hook.
+		 *
+		 * @since ??
+		 */
+		public static function attach_wc_checkout_payment() {
+			add_action(
+				'woocommerce_checkout_order_review',
+				'woocommerce_checkout_payment',
+				20
+			);
+		}
+
+		/**
+		 * Stops Order review (Mini cart) and Checkout Payment from rendering.
+		 *
+		 * @used-by ET_Builder_Module_Woocommerce_Checkout_Billing::get_checkout_billing()
+		 * @used-by ET_Builder_Module_Woocommerce_Checkout_Additional_Info::get_additional_info()
+		 */
+		public static function detach_wc_checkout_order_review() {
+			remove_action(
+				'woocommerce_checkout_order_review',
+				'woocommerce_order_review',
+				10
+			);
+		}
+
+		/**
+		 * Enable `woocommerce_checkout_order_review` hook.
+		 *
+		 * @since ??
+		 */
+		public static function attach_wc_checkout_order_review() {
+			add_action( 'woocommerce_checkout_order_review', 'woocommerce_order_review', 10 );
+		}
+
+		/**
+		 * Remove `woocommerce_cart_collaterals` hook.
+		 *
+		 * @since ??
+		 */
+		public static function detach_wc_cart_totals() {
+			remove_action(
+				'woocommerce_cart_collaterals',
+				'woocommerce_cart_totals',
+				10
+			);
+		}
+
+		/**
+		 * Enable `woocommerce_cart_collaterals` hook.
+		 *
+		 * @since ??
+		 */
+		public static function attach_wc_cart_totals() {
+			add_action( 'woocommerce_cart_collaterals', 'woocommerce_cart_totals', 10 );
+		}
+
+		/**
+		 * Gets the required HTML data attributes based on the button name and slug.
+		 *
+		 * @param array  $module_props Module attributes.
+		 * @param string $btn_slug     Shortcode attribute name (i.e button_{device}).
+		 * @param string $btn_class    Class name of the button to target in JS.
+		 *
+		 * @return array
+		 */
+		public static function get_button_icon_attrs( $module_props, $btn_slug = 'button', $btn_class = 'button' ) {
+			$attrs = array();
+
+			// Get Icon values based on Device.
+			$custom_icon_values = et_pb_responsive_options()->get_property_values( $module_props, "{$btn_slug}_icon", '', true );
+			$custom_icon        = et_()->array_get( $custom_icon_values, 'desktop' );
+			$custom_icon_tablet = et_()->array_get( $custom_icon_values, 'tablet' );
+			$custom_icon_phone  = et_()->array_get( $custom_icon_values, 'phone' );
+
+			if ( empty( $btn_name ) ) {
+				$btn_name = 'button';
+			}
+
+			$icon_values = array(
+				"data-{$btn_name}-icon"        => $custom_icon,
+				"data-{$btn_name}-icon-tablet" => $custom_icon_tablet,
+				"data-{$btn_name}-icon-phone"  => $custom_icon_phone,
+			);
+
+			// Verify if Custom icon value exists at least in one of Desktop / Tablet / Phone.
+			$has_custom_icon = count( array_filter( $icon_values ) ) > 0;
+
+			if ( ! $has_custom_icon ) {
+				return $attrs;
+			}
+
+			$attrs['data-button-class'] = et_core_intentionally_unescaped( $btn_class, 'fixed_string' );
+
+			// Get the icon data-* attributes based on values set in DB.
+			foreach ( $icon_values as $attr_name => $attr_value ) {
+				if ( empty( $attr_value ) ) {
+					continue;
+				}
+
+				$attrs[ $attr_name ] = esc_attr( et_pb_process_font_icon( $attr_value ) );
+			}
+
+			return $attrs;
+		}
+
+		/**
+		 * Sets the Button's data-* attrs for the Icons to render.
+		 *
+		 * These attributes are set on the outer wrapper & will be set on the Button elements using JS.
+		 *
+		 * @param array $module_props Module attributes/properties.
+		 *
+		 * @return array
+		 */
+		public static function add_custom_icon_attrs( $module_props ) {
+			if ( ! is_array( $module_props ) || empty( $module_props ) ) {
+				return array();
+			}
+
+			$btn_attrs = self::get_button_icon_attrs( $module_props );
+
+			return $btn_attrs;
+		}
+
+		/**
+		 * Adds mock Products to Cart.
+		 *
+		 * Otherwise Checkout modules won't output content. The output is made visible only to VB.
+		 *
+		 * @param array $cart_contents Cart contents.
+		 *
+		 * @return array
+		 * @since ??
+		 */
+		public static function set_dummy_cart_contents( $cart_contents ) {
+			if ( ! is_array( $cart_contents ) ) {
+				return $cart_contents;
+			}
+
+			$cart_contents = array();
+			$fake_products = array(
+				999  => array(
+					'name'     => esc_html__( 'Product 1', 'et_builder' ),
+					'price'    => '12.00',
+					'quantity' => 3,
+				),
+				1000 => array(
+					'name'     => esc_html__( 'Product 2', 'et_builder' ),
+					'price'    => '75.00',
+					'quantity' => 1,
+				),
+				1001 => array(
+					'name'     => esc_html__( 'Product 3', 'et_builder' ),
+					'price'    => '38.00',
+					'quantity' => 2,
+				),
+			);
+
+			foreach ( $fake_products as $id => $details ) {
+				$product = new ET_Builder_Woocommerce_Product_Simple_Placeholder();
+				$product->set_name( $details['name'] );
+				$product->set_id( $id );
+				$product->set_price( $details['price'] );
+
+				$cart_item_key = WC()->cart->generate_cart_id( $product->get_id() );
+
+				$cart_contents[ $cart_item_key ] = array(
+					'key'          => $cart_item_key,
+					'product_id'   => $product->get_id(),
+					'variation_id' => 0,
+					'variation'    => array(),
+					'quantity'     => $details['quantity'],
+					'data'         => $product,
+					'data_hash'    => wc_get_cart_item_data_hash( $product ),
+				);
+			}
+
+			return $cart_contents;
+		}
+
+		/**
+		 * Get the product default.
+		 *
+		 * @return array
+		 */
+		public static function get_page_type_default() {
+			return array(
+				'filter',
+				'et_builder_get_woo_default_page_type',
+			);
+		}
+
+		/**
+		 * Get the Page Type default based on the Cart & Checkout pages.
+		 *
+		 * @since ??
+		 *
+		 * @return string
+		 */
+		public static function get_page_type_default_value() {
+			$is_cart_page     = function_exists( 'is_cart' ) && is_cart();
+			$is_checkout_page = function_exists( 'is_checkout' ) && is_checkout();
+
+			if ( $is_cart_page ) {
+				return 'cart';
+			} elseif ( $is_checkout_page ) {
+				return 'checkout';
+			} else {
+				return 'product';
+			}
+		}
+
+		/**
+		 * Gets the TB Post ID That Uses Body Template.
+		 *
+		 * @param int $post_id Post ID.
+		 *
+		 * @return mixed Template Post ID.
+		 */
+		public static function get_tb_template_id_by_current_page_id( $post_id ) {
+			if ( ! $post_id ) {
+				return;
+			}
+
+			$args        = array(
+				'post_type'  => 'et_template',
+				'meta_query' => array(
+					array(
+						'key'   => '_et_body_layout_id',
+						'value' => $post_id,
+					),
+				),
+			);
+			$query       = new WP_Query( $args );
+			$template_id = 0;
+
+			while ( $query->have_posts() ) {
+				the_post();
+
+				$template_id = get_the_ID();
+				if ( 0 !== $template_id ) {
+					break;
+				}
+			}
+
+			wp_reset_postdata();
+
+			return $template_id;
+		}
 	}
 
 	add_filter(
@@ -981,6 +1531,14 @@ if ( et_is_woocommerce_plugin_active() ) {
 		array(
 			'ET_Builder_Module_Helper_Woocommerce_Modules',
 			'get_woo_default_tabs_options',
+		)
+	);
+
+	add_filter(
+		'et_builder_get_woo_default_page_type',
+		array(
+			'ET_Builder_Module_Helper_Woocommerce_Modules',
+			'get_page_type_default_value',
 		)
 	);
 }

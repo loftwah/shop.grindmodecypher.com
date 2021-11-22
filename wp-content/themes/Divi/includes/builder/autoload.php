@@ -57,9 +57,11 @@ function _et_pb_autoload_types( $class ) {
  * @param string $class The class name.
  */
 function _et_pb_autoload_woo_modules( $class ) {
-	// For multipart classnames.
-	$class = str_replace( '_', '', $class );
-	require_once "module/woocommerce/{$class}.php";
+	if ( et_is_woocommerce_plugin_active() ) {
+		// For multipart classnames.
+		$class = str_replace( '_', '', $class );
+		require_once "module/woocommerce/{$class}.php";
+	}
 }
 
 /**
@@ -73,6 +75,14 @@ function _et_pb_autoload_modules( $class ) {
 
 	if ( file_exists( ET_BUILDER_DIR . "module/{$class}.php" ) ) {
 		require_once "module/{$class}.php";
+	} elseif ( 'Shop' === $class &&
+
+		/*
+		 * ET_Builder_Module_Shop class moved to "woocommerce/" directory
+		 * as part of WooCommerce Modules v2.
+		*/
+		file_exists( ET_BUILDER_DIR . "module/woocommerce/{$class}.php" ) ) {
+		require_once "module/woocommerce/${class}.php";
 	}
 }
 
@@ -111,6 +121,8 @@ function _et_pb_autoload( $class ) {
 		require_once 'class-et-builder-dynamic-assets-feature.php';
 	} elseif ( 'ET_Builder_Module_Field_DisplayConditions' === $class ) {
 		require_once 'module/field/DisplayConditions.php';
+	} elseif ( 'ET_Builder_Woocommerce_Product_Simple_Placeholder' === $class ) {
+		require_once 'feature/woocommerce/placeholder/WoocommerceProductSimplePlaceholder.php';
 	} elseif ( strpos( $class, 'ET_Builder_Module_Helper_Motion_' ) !== false ) {
 		_et_pb_autoload_helpers_motion( str_replace( 'ET_Builder_Module_Helper_Motion_', '', $class ) );
 	} elseif ( strpos( $class, 'ET_Builder_Module_Helper_' ) !== false ) {

@@ -153,8 +153,16 @@ function et_is_dynamic_front_end_request() {
 		if (
 			// Disable for WordPress admin requests.
 			! is_admin()
+			// Disable for non-front-end requests.
 			&& ! wp_doing_ajax()
 			&& ! wp_doing_cron()
+			&& ! wp_is_json_request()
+			&& ! ( defined( 'REST_REQUEST' ) && REST_REQUEST )
+			&& ! ( defined( 'WP_CLI' ) && WP_CLI )
+			&& ! ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST )
+			&& ! is_trackback()
+			&& ! is_feed()
+			&& ! get_query_var( 'sitemap' )
 			// Disable when in preview modes.
 			&& ! is_customize_preview()
 			&& ! is_et_pb_preview()

@@ -57,7 +57,7 @@ class ET_Builder_Display_Conditions {
 	 * the module (shortcode) and any nested modules inside it to get registered so "Dynamic Assets" would include the
 	 * styles of all modules used on the page. Ref: https://github.com/elegantthemes/Divi/issues/24965
 	 *
-	 * @since ??
+	 * @since 4.13.1
 	 *
 	 * @param string             $output           HTML output of the rendered module.
 	 * @param string             $render_method    The render method used to render the module, Typically it's either
@@ -73,7 +73,7 @@ class ET_Builder_Display_Conditions {
 		 *
 		 * Useful for disabling/enabling "Display Condition" feature site-wide.
 		 *
-		 * @since ??
+		 * @since 4.13.1
 		 *
 		 * @param boolean True to enable the functionality, False to disable it.
 		 */
@@ -122,7 +122,7 @@ class ET_Builder_Display_Conditions {
 	/**
 	 * Checks if WordPress version is sufficient for "Display Conditions" feature.
 	 *
-	 * @since ??
+	 * @since 4.13.1
 	 *
 	 * @param boolean $is_display_conditions_enabled True if "Display Conditions" functionality is enabled, False if it's disabled.
 	 *
@@ -156,7 +156,7 @@ class ET_Builder_Display_Conditions {
 		 *
 		 * Useful for disabling/enabling "Display Condition" feature site-wide.
 		 *
-		 * @since ??
+		 * @since 4.13.1
 		 *
 		 * @param boolean True to enable the functionality, False to disable it.
 		 */
@@ -279,7 +279,7 @@ class ET_Builder_Display_Conditions {
 		 *
 		 * Useful for disabling/enabling "Display Condition" feature site-wide.
 		 *
-		 * @since ??
+		 * @since 4.13.1
 		 *
 		 * @param boolean True to enable the functionality, False to disable it.
 		 */
@@ -340,7 +340,7 @@ class ET_Builder_Display_Conditions {
 		 *
 		 * Useful for disabling/enabling "Display Condition" feature site-wide.
 		 *
-		 * @since ??
+		 * @since 4.13.1
 		 *
 		 * @param boolean True to enable the functionality, False to disable it.
 		 */
@@ -396,7 +396,7 @@ class ET_Builder_Display_Conditions {
 		 *
 		 * Useful for disabling/enabling "Display Condition" feature site-wide.
 		 *
-		 * @since ??
+		 * @since 4.13.1
 		 *
 		 * @param boolean True to enable the functionality, False to disable it.
 		 */

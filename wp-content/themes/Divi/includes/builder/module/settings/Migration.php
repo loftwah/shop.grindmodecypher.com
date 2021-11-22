@@ -68,7 +68,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 	 *
 	 * @var string
 	 */
-	public static $max_version = '4.13.1';
+	public static $max_version = '4.14.0';
 
 	/**
 	 * Array of already migrated data.
@@ -108,6 +108,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 		'3.27.4'  => 'TextAlignment',
 		'4.13.0'  => 'IconManager',
 		'4.13.1'  => 'ContactFormUniqueID',
+		'4.14.0'  => 'WooTextOG',
 	);
 
 	/**

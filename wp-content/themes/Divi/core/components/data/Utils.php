@@ -1041,6 +1041,46 @@ class ET_Core_Data_Utils {
 			$buffer[15]
 		);
 	}
+
+	/**
+	 * Append/Prepend to comma separated selectors.
+	 *
+	 * Example:
+	 *
+	 * @see UtilsTest::testAppendPrependCommaSeparatedSelectors()
+	 *
+	 * @param string $css_selector      Comma separated CSS selectors.
+	 * @param string $value             Value to append/prepend.
+	 * @param string $prefix_suffix     Values can be `prefix` or `suffix`.
+	 * @param bool   $is_space_required Is space required? // phpcs:ignore Squiz.Commenting.FunctionComment.ParamCommentFullStop -- Respecting punctuation.
+	 *
+	 * @return string
+	 */
+	public function append_prepend_comma_separated_selectors(
+		$css_selector,
+		$value,
+		$prefix_suffix,
+		$is_space_required = true
+	) {
+		$css_selectors           = explode( ',', $css_selector );
+		$css_selectors_processed = array();
+		$is_prefix               = 'prefix' === $prefix_suffix;
+
+		foreach ( $css_selectors as $selector ) {
+			$selector = rtrim( ltrim( $selector ) );
+			if ( $is_prefix && $is_space_required ) {
+				$css_selectors_processed[] = sprintf( '%2$s %1$s', $selector, $value );
+			} elseif ( $is_prefix && ! $is_space_required ) {
+				$css_selectors_processed[] = sprintf( '%2$s%1$s', $selector, $value );
+			} elseif ( ! $is_prefix && $is_space_required ) {
+				$css_selectors_processed[] = sprintf( '%1$s %2$s', $selector, $value );
+			} elseif ( ! $is_prefix && ! $is_space_required ) {
+				$css_selectors_processed[] = sprintf( '%1$s%2$s', $selector, $value );
+			}
+		}
+
+		return implode( ',', $css_selectors_processed );
+	}
 }
 
 

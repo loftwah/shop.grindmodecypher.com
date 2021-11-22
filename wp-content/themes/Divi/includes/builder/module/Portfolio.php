@@ -351,7 +351,7 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 	 * @return mixed portfolio item data
 	 */
 	static function get_portfolio_item( $args = array(), $conditional_tags = array(), $current_page = array() ) {
-		global $et_fb_processing_shortcode_object, $post;
+		global $et_fb_processing_shortcode_object, $post, $paged, $__et_portfolio_module_paged;
 
 		$global_processing_original_value = $et_fb_processing_shortcode_object;
 
@@ -382,8 +382,13 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 			$et_paged = $is_front_page ? get_query_var( 'page' ) : get_query_var( 'paged' );
 		}
 
+		if ( $__et_portfolio_module_paged > 1 ) {
+			$et_paged      = $__et_portfolio_module_paged;
+			$paged         = $__et_portfolio_module_paged; //phpcs:ignore WordPress.Variables.GlobalVariables.OverrideProhibited -- Override with ajax pagination.
+			$args['paged'] = $__et_portfolio_module_paged;
+		}
+
 		if ( $is_front_page ) {
-			global $paged;
 			$paged = $et_paged; // phpcs:ignore WordPress.Variables.GlobalVariables.OverrideProhibited
 		}
 
@@ -764,7 +769,7 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 							'<div class="alignleft">
 								<a href="%1$s">%2$s</a>
 							</div>',
-							esc_url( $portfolio->posts_next['url'] ),
+							add_query_arg( 'et_portfolio', '', esc_url( $portfolio->posts_next['url'] ) ),
 							esc_html( $portfolio->posts_next['label'] )
 						);
 					}
@@ -774,7 +779,7 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 							'<div class="alignright">
 								<a href="%1$s">%2$s</a>
 							</div>',
-							esc_url( $portfolio->posts_prev['url'] ),
+							add_query_arg( 'et_portfolio', '', esc_url( $portfolio->posts_prev['url'] ) ),
 							esc_html( $portfolio->posts_prev['label'] )
 						);
 					}

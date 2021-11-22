@@ -10,6 +10,8 @@
  * @since   3.29
  */
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class representing WooCommerce Images component.
  */
@@ -18,9 +20,11 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 	 * Initialize.
 	 */
 	public function init() {
-		$this->name       = esc_html__( 'Woo Images', 'et_builder' );
-		$this->slug       = 'et_pb_wc_images';
-		$this->vb_support = 'on';
+		$this->name        = esc_html__( 'Woo Product Images', 'et_builder' );
+		$this->plural      = esc_html__( 'Woo Product Images', 'et_builder' );
+		$this->slug        = 'et_pb_wc_images';
+		$this->vb_support  = 'on';
+		$this->folder_name = 'et_pb_woo_modules';
 
 		$this->settings_modal_toggles = array(
 			'general'  => array(
@@ -32,14 +36,15 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 			'advanced' => array(
 				'toggles' => array(
 					'image' => et_builder_i18n( 'Image' ),
+					'sale_badge' => esc_html__( 'Sale Badge Text', 'et_builder' ),
 				),
 			),
 		);
 
 		$this->advanced_fields = array(
 			'borders'        => array(
-				'default' => array(),
-				'image'   => array(
+				'default'    => array(),
+				'image'      => array(
 					'css'          => array(
 						'main' => array(
 							'border_radii'  => '%%order_class%% div.images ol.flex-control-thumbs.flex-control-nav li, %%order_class%% .flex-viewport, %%order_class%% .woocommerce-product-gallery--without-images .woocommerce-product-gallery__wrapper, %%order_class%% .woocommerce-product-gallery > div:not(.flex-viewport) .woocommerce-product-gallery__image, %%order_class%% .woocommerce-product-gallery > .woocommerce-product-gallery__wrapper .woocommerce-product-gallery__image, %%order_class%% .woocommerce-product-gallery .woocommerce-product-gallery__wrapper .woocommerce-product-gallery__image',
@@ -50,16 +55,42 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 					'tab_slug'     => 'advanced',
 					'toggle_slug'  => 'image',
 				),
+				'sale_badge' => array(
+					'css'          => array(
+						'main'      => array(
+							'border_radii'  => '%%order_class%% span.onsale',
+							'border_styles' => '%%order_class%% span.onsale',
+						),
+						'important' => true,
+					),
+					'defaults'     => array(
+						'border_radii' => 'on|3px|3px|3px|3px',
+					),
+					'label_prefix' => esc_html__( 'Sale Badge', 'et_builder' ),
+					'tab_slug'     => 'advanced',
+					'toggle_slug'  => 'sale_badge',
+				),
 			),
 			'box_shadow'     => array(
-				'default' => array(),
-				'image'   => array(
+				'default'    => array(),
+				'image'      => array(
 					'label'           => esc_html__( 'Image Box Shadow', 'et_builder' ),
 					'option_category' => 'layout',
 					'tab_slug'        => 'advanced',
 					'toggle_slug'     => 'image',
 					'css'             => array(
 						'main'      => '%%order_class%% div.images ol.flex-control-thumbs.flex-control-nav li, %%order_class%% .flex-viewport, %%order_class%% .woocommerce-product-gallery--without-images .woocommerce-product-gallery__wrapper, %%order_class%% .woocommerce-product-gallery > div:not(.flex-viewport) .woocommerce-product-gallery__image, %%order_class%% .woocommerce-product-gallery > .woocommerce-product-gallery__wrapper .woocommerce-product-gallery__image',
+						'overlay'   => 'inset',
+						'important' => true,
+					),
+				),
+				'sale_badge' => array(
+					'label'           => esc_html__( 'Sale Badge Box Shadow', 'et_builder' ),
+					'option_category' => 'layout',
+					'tab_slug'        => 'advanced',
+					'toggle_slug'     => 'sale_badge',
+					'css'             => array(
+						'main'      => '%%order_class%% span.onsale',
 						'overlay'   => 'inset',
 						'important' => true,
 					),
@@ -93,6 +124,31 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 				),
 			),
 			'button'         => false,
+			'form_field'     => array(
+				'sale_badge' => array(
+					'label'                  => esc_html__( 'Sale Badge', 'et_builder' ),
+					'background_color'       => false,
+					'text_color'             => false,
+					'focus_background_color' => false,
+					'focus_text_color'       => false,
+					'font_field'             => false,
+					'margin_padding'         => array(
+						'css'            => array(
+							'main'      => '%%order_class%% ul.products li.product span.onsale',
+							'important' => array( 'custom_margin', 'custom_padding' ),
+						),
+						'custom_margin'  => array(
+							'default' => '0px|0px|0px|0px|false|false',
+						),
+						'custom_padding' => array(
+							'default' => '6px|18px|6px|18px|false|false',
+						),
+						'toggle_slug'    => 'sale_badge',
+					),
+					'border_styles'          => false,
+					'box_shadow'             => false,
+				),
+			),
 		);
 
 		$this->help_videos = array(

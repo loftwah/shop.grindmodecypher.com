@@ -10,6 +10,8 @@
  * @since   3.29
  */
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class representing WooCommerce Price component.
  */
@@ -18,12 +20,13 @@ class ET_Builder_Module_Woocommerce_Price extends ET_Builder_Module {
 	 * Initialize.
 	 */
 	public function init() {
-		$this->name   = esc_html__( 'Woo Price', 'et_builder' );
-		$this->plural = esc_html__( 'Woo Prices', 'et_builder' );
+		$this->name   = esc_html__( 'Woo Product Price', 'et_builder' );
+		$this->plural = esc_html__( 'Woo Product Price', 'et_builder' );
 
 		// Use `et_pb_wc_{module}` for all WooCommerce modules.
-		$this->slug       = 'et_pb_wc_price';
-		$this->vb_support = 'on';
+		$this->slug        = 'et_pb_wc_price';
+		$this->vb_support  = 'on';
+		$this->folder_name = 'et_pb_woo_modules';
 
 		$this->settings_modal_toggles = array(
 			'general'  => array(

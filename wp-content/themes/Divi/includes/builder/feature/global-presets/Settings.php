@@ -92,6 +92,7 @@ class ET_Builder_Global_Presets_Settings {
 		// phpcs:enable
 
 		add_action( 'et_builder_ready', array( $this, 'migrate_custom_defaults' ), 100 );
+		add_action( 'et_builder_ready', array( $this, 'apply_attribute_migrations' ), 101 );
 	}
 
 	/**
@@ -396,9 +397,22 @@ class ET_Builder_Global_Presets_Settings {
 	}
 
 	/**
+	 * Apply attribute migrations.
+	 *
+	 * @since ??
+	 */
+	public function apply_attribute_migrations() {
+		foreach ( $this->_settings as $module => $preset_structure ) {
+			foreach ( $preset_structure->presets as $preset_id => $preset ) {
+				self::migrate_settings_as_module_attributes( $preset, $module );
+			}
+		}
+	}
+
+	/**
 	 * Configuring and running migration of global presets via "et_pb_module_shortcode_attributes".
 	 *
-	 * @since ?
+	 * @since ??
 	 *
 	 * @param object $preset Global preset object.
 	 * @param string $module_slug Module slug.
@@ -444,15 +458,16 @@ class ET_Builder_Global_Presets_Settings {
 
 	/**
 	 * Converts module type (slug).
+	 *
 	 * Used to separate Global Presets settings for modules sharing the same slug but having different meaning
 	 * For example: Regular, Fullwidth and Specialty section types
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param string $type - The module type (slug).
-	 * @param array  $attrs - The module attributes.
+	 * @param string $type  The module type (slug).
+	 * @param array  $attrs The module attributes.
 	 *
-	 * @return string      - The converted module type (slug)
+	 * @return string      The converted module type (slug)
 	 */
 	public function maybe_convert_module_type( $type, $attrs ) {
 		if ( isset( self::$_module_types_conversion_map[ $type ] ) ) {

@@ -9,14 +9,14 @@
 /**
  * Migration process to fill in missing unique_id attribute on Contact Form module.
  *
- * @since ??
+ * @since 4.13.1
  */
 class ET_Builder_Module_Settings_Migration_ContactFormUniqueID extends ET_Builder_Module_Settings_Migration {
 
 	/**
 	 * Migration Version
 	 *
-	 * @since ??
+	 * @since 4.13.1
 	 *
 	 * @var string
 	 */
@@ -29,7 +29,7 @@ class ET_Builder_Module_Settings_Migration_ContactFormUniqueID extends ET_Builde
 	 * - key as new field
 	 * - value consists affected fields as old field and module location
 	 *
-	 * @since ??
+	 * @since 4.13.1
 	 *
 	 * @return array New and old fields need to be migrated.
 	 */
@@ -47,7 +47,7 @@ class ET_Builder_Module_Settings_Migration_ContactFormUniqueID extends ET_Builde
 	/**
 	 * Get all modules affected.
 	 *
-	 * @since ??
+	 * @since 4.13.1
 	 *
 	 * @return array
 	 */
@@ -58,7 +58,7 @@ class ET_Builder_Module_Settings_Migration_ContactFormUniqueID extends ET_Builde
 	/**
 	 * Run migrate process.
 	 *
-	 * @since ??
+	 * @since 4.13.1
 	 *
 	 * @param string $field_name       Field name.
 	 * @param string $current_value    Current value.

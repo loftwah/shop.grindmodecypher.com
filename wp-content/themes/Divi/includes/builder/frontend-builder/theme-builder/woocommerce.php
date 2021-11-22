@@ -131,7 +131,9 @@ function et_theme_builder_wc_set_global_objects( $conditional_tags = array() ) {
 	// Set current post ID as product's ID. `ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder`
 	// handles all placeholder related value but product ID need to be manually set to match current
 	// post's ID. This is especially needed when add-ons is used and accessing get_id() method.
-	$product->set_id( $post->ID );
+	if ( isset( $post->ID ) ) {
+		$product->set_id( $post->ID );
+	}
 
 	// Save modified global for later use
 	$tb_wc_post    = $post;

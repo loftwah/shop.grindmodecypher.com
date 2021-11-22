@@ -10,6 +10,8 @@
  * @since   3.29
  */
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class representing WooCommerce Description component.
  */
@@ -20,10 +22,11 @@ class ET_Builder_Module_Woocommerce_Description extends ET_Builder_Module {
 	 * @since 4.0.6 Updated `toggle_slug` to avoid empty Tabs in Text OG.
 	 */
 	public function init() {
-		$this->name       = esc_html__( 'Woo Description', 'et_builder' );
-		$this->plural     = esc_html__( 'Woo Descriptions', 'et_builder' );
-		$this->slug       = 'et_pb_wc_description';
-		$this->vb_support = 'on';
+		$this->name        = esc_html__( 'Woo Product Description', 'et_builder' );
+		$this->plural      = esc_html__( 'Woo Product Description', 'et_builder' );
+		$this->slug        = 'et_pb_wc_description';
+		$this->vb_support  = 'on';
+		$this->folder_name = 'et_pb_woo_modules';
 
 		$this->settings_modal_toggles = array(
 			'general'  => array(

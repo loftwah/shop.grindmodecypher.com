@@ -1,3 +1,95 @@
+version 4.14 ( updated 11-22-2021 )
+- Introduced 8 new Divi WooCommerce modules, including the ability to customize your WooCommerce cart and checkout pages.
+- An additional conversion of icons values created in previous Divi versions for 3p modules was added.
+- The algorithm for checking the presence of icons in the content for Dynamic Assets has been changed, now it searches for the values of icons in the content, regardless of which field they are in.
+- Fixed Display Conditions feature integration with Find & Replace feature so now they work together as expected.
+- Fixed bug with copying and pasting elements between different pages, and enabled copying and pasting elements from one Theme Builder area to another.
+- Fixed issue with double wrappers when page has only the Body Layout created in Theme Builder.
+- Added extra conversion for the case with the font_icon__hover option when the "Allowlist" mechanism is run.
+- Fixed broken icon fonts that occurred when a page's CSS cache was first generated using http, and then later served using https.
+- Added a fallback check that will regenerate Dynamic CSS when we identify that the cached CSS files are missing Theme Builder CSS for whatever reason.
+- Changed default transparent RGBA value to mitigate the issue with how color interpolation works in Safari browser.
+- Fixed pagination not working for Portfolio module when used in a Theme Builder template.
+- Fixed wrong height of Full-width slider image when placed immediately after transparent primary Menu.
+- Fixed an issue with Settings Options field visibility checks when field dependencies were removed.
+- Fixed an edge case in the Builder where Blurb Module would break on a specific combination of Image and Scroll Effects.
+- Fixed child theme's style version being ignored when it's enqueued.
+- Fixed the issue when reCaptcha was enabled in some cases even if it is not used anywhere on the site.
+	* composer.json
+	* core/admin/fonts/builder.eot
+	* core/admin/fonts/builder.ttf
+	* core/admin/fonts/builder.woff
+	* core/components/api/spam/ReCaptcha.php
+	* core/components/data/Utils.php
+	* core/functions.php
+	* includes/builder/autoload.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-module-shortcode-manager.php
+	* includes/builder/core.php
+	* includes/builder/feature/AjaxCache.php
+	* includes/builder/feature/ajax-data/AjaxData.php
+	* includes/builder/feature/display-conditions/DisplayConditions.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/feature/dynamic-content.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/feature/icon-manager/ExtendedFontIcons.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/feature/woocommerce/placeholder/WoocommerceProductSimplePlaceholder.php
+	* includes/builder/feature/woocommerce/templates/cart/cart-totals.php
+	* includes/builder/feature/woocommerce/templates/cart/cart.php
+	* includes/builder/feature/woocommerce/templates/cart/cross-sells.php
+	* includes/builder/feature/woocommerce/templates/checkout/form-login.php
+	* includes/builder/feature/woocommerce/templates/checkout/payment-method.php
+	* includes/builder/feature/woocommerce/templates/checkout/payment.php
+	* includes/builder/feature/woocommerce/templates/checkout/review-order.php
+	* includes/builder/feature/woocommerce/templates/global/form-login-fe.php
+	* includes/builder/feature/woocommerce/templates/global/form-login.php
+	* includes/builder/feature/woocommerce/templates/global/quantity-input.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/theme-builder/woocommerce.php
+	* includes/builder/functions.php
+	* includes/builder/module/Comments.php
+	* includes/builder/module/ContactForm.php
+	* includes/builder/module/Portfolio.php
+	* includes/builder/module/field/Border.php
+	* includes/builder/module/field/MarginPadding.php
+	* includes/builder/module/helpers/WoocommerceModules.php
+	* includes/builder/module/settings/Migration.php
+	* includes/builder/module/settings/migration/ContactFormUniqueID.php
+	* includes/builder/module/settings/migration/IconManager.php
+	* includes/builder/module/settings/migration/WooTextOG.php
+	* includes/builder/module/woocommerce/AddToCart.php
+	* includes/builder/module/woocommerce/AdditionalInfo.php
+	* includes/builder/module/woocommerce/Breadcrumb.php
+	* includes/builder/module/woocommerce/CartNotice.php
+	* includes/builder/module/woocommerce/CartProducts.php
+	* includes/builder/module/woocommerce/CartTotals.php
+	* includes/builder/module/woocommerce/CheckoutAdditionalInfo.php
+	* includes/builder/module/woocommerce/CheckoutBilling.php
+	* includes/builder/module/woocommerce/CheckoutOrderDetails.php
+	* includes/builder/module/woocommerce/CheckoutPaymentInfo.php
+	* includes/builder/module/woocommerce/CheckoutShipping.php
+	* includes/builder/module/woocommerce/CrossSells.php
+	* includes/builder/module/woocommerce/Description.php
+	* includes/builder/module/woocommerce/Gallery.php
+	* includes/builder/module/woocommerce/Images.php
+	* includes/builder/module/woocommerce/Meta.php
+	* includes/builder/module/woocommerce/Price.php
+	* includes/builder/module/woocommerce/Rating.php
+	* includes/builder/module/woocommerce/RelatedProducts.php
+	* includes/builder/module/woocommerce/Reviews.php
+	* includes/builder/module/woocommerce/Shop.php
+	* includes/builder/module/woocommerce/Stock.php
+	* includes/builder/module/woocommerce/Tabs.php
+	* includes/builder/module/woocommerce/Title.php
+	* includes/builder/module/woocommerce/Upsells.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/woocommerce-modules.js
+	* js/src/custom.js
+
 version 4.13.1 ( updated 11-11-2021 )
 - Fixed front end .css files being enqueued inside the Visual Builder when editing category pages using the Theme Builder Editor.
 - Fixed issue with Post Content Module error inside the Specialty section.

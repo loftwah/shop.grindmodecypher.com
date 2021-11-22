@@ -10,6 +10,8 @@
  * @since   3.29
  */
 
+defined( 'ABSPATH' ) || exit;
+
 if ( ! class_exists( 'ET_Builder_Module_Tabs' ) ) {
 	require_once ET_BUILDER_DIR_RESOLVED_PATH . '/module/Tabs.php';
 }
@@ -28,9 +30,10 @@ class ET_Builder_Module_Woocommerce_Tabs extends ET_Builder_Module_Tabs {
 		parent::init();
 
 		// Define WooCommerce Tabs module property; overwriting inherited property.
-		$this->name   = esc_html__( 'Woo Tabs', 'et_builder' );
-		$this->plural = esc_html__( 'Woo Tabs', 'et_builder' );
-		$this->slug   = 'et_pb_wc_tabs';
+		$this->name        = esc_html__( 'Woo Product Tabs', 'et_builder' );
+		$this->plural      = esc_html__( 'Woo Product Tabs', 'et_builder' );
+		$this->slug        = 'et_pb_wc_tabs';
+		$this->folder_name = 'et_pb_woo_modules';
 
 		/*
 		 * Set property for holding rendering data so the data rendering via

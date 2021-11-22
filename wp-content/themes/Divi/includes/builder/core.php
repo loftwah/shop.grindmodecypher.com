@@ -6539,7 +6539,7 @@ function et_builder_add_builder_content_wrapper( $content ) {
 	 *
 	 * @param bool $wrap
 	 */
-	$wrap = apply_filters( 'et_builder_add_outer_content_wrap', true );
+	$wrap = apply_filters( 'et_builder_add_outer_content_wrap', et_core_is_fb_enabled() );
 
 	if ( $wrap ) {
 		$content = et_builder_get_builder_content_opening_wrapper() . $content . et_builder_get_builder_content_closing_wrapper();
@@ -7116,11 +7116,12 @@ function et_builder_filter_main_query_paged_for_blog_module( $query ) {
 	 *
 	 * @var integer
 	 */
-	global $__et_blog_module_paged;
+	global $__et_blog_module_paged, $__et_portfolio_module_paged;
 
 	// phpcs:ignore WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
-	if ( isset( $_GET['et_blog'] ) && $query->is_main_query() ) {
-		$__et_blog_module_paged = $query->get( 'paged' );
+	if ( ( isset( $_GET['et_blog'] ) || isset( $_GET['et_portfolio'] ) ) && $query->is_main_query() ) {
+		$__et_blog_module_paged      = $query->get( 'paged' );
+		$__et_portfolio_module_paged = $query->get( 'paged' );
 		$query->set( 'paged', 0 );
 	}
 }

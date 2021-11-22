@@ -432,6 +432,13 @@ function et_fb_get_dynamic_backend_helpers() {
 		'registeredPostTypeOptions'    => et_get_registered_post_type_options(),
 	);
 
+	// `class_exists` check avoids https://github.com/elegantthemes/Divi/issues/23662 error.
+	if ( class_exists( 'ET_Builder_Module_Helper_Woocommerce_Modules' ) ) {
+		$helpers['wooCommerce'] = array(
+			'themeBuilderCheckoutTemplatePageId' => ET_Builder_Module_Helper_Woocommerce_Modules::get_tb_template_id_by_current_page_id( $post_id ),
+		);
+	}
+
 	$helpers['css'] = array(
 		'wrapperPrefix'   => ET_BUILDER_CSS_WRAPPER_PREFIX,
 		'containerPrefix' => ET_BUILDER_CSS_CONTAINER_PREFIX,
@@ -509,10 +516,6 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 		'video'    => 'https://www.youtube.com/watch?v=FkQuawiGWUw',
 	);
 
-	$woocommerce_modules_defaults = array(
-		'price' => '',
-	);
-
 	/**
 	 * App preferences
 	 */
@@ -523,6 +526,8 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 	 *
 	 * @var array $helpers
 	 */
+	// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned -- Invalid warning.
+	// phpcs:disable WordPress.Arrays.MultipleStatementAlignment.LongIndexSpaceBeforeDoubleArrow -- Invalid warning.
 	$helpers = array(
 		'blog_id'                          => get_current_blog_id(),
 		'diviLibraryUrl'                   => ET_BUILDER_DIVI_LIBRARY_URL,
@@ -611,7 +616,13 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 		'modules'                          => $fb_modules_array,
 		'modulesCount'                     => count( $fb_modules_array ),
 		'modulesWithChildren'              => ET_Builder_Element::get_slugs_with_children( $post_type ),
-		'modulesShowOnCancelDropClassname' => apply_filters( 'et_fb_modules_show_on_cancel_drop_classname', array( 'et_pb_gallery', 'et_pb_filterable_portfolio' ) ),
+		'modulesShowOnCancelDropClassname' => apply_filters(
+			'et_fb_modules_show_on_cancel_drop_classname',
+			array(
+				'et_pb_gallery',
+				'et_pb_filterable_portfolio',
+			)
+		),
 		'modulesFeaturedImageBackground'   => ET_Builder_Element::get_featured_image_background_modules( $post_type ),
 		'modulesRowOverlappingAddNew'      => $modules_row_overlapping_add_new,
 		'structureModules'                 => array(
@@ -677,8 +688,8 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 		'classNames'                       => array(
 			'hide_on_mobile_class' => 'et-hide-mobile',
 		),
-		'columnLayouts'                    => et_builder_get_columns(),
-		'searchFilterItems'                => array(
+		'columnLayouts'                => et_builder_get_columns(),
+		'searchFilterItems'            => array(
 			'show_only' => array(
 				'styles_modified'   => esc_html__( 'Modified Styles', 'et_builder' ),
 				'styles_responsive' => esc_html__( 'Responsive Styles/Content', 'et_builder' ),
@@ -701,7 +712,7 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 			'image',
 			'video',
 		),
-		'defaults'                         => array(
+		'defaults'                     => array(
 			'et_pb_accordion_item'              => array(
 				'title'   => $modules_defaults['title'],
 				'content' => $modules_defaults['body'],
@@ -832,11 +843,11 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 				'mix_blend_mode' => ET_Global_Settings::get_value( 'all_mix_blend_mode' ),
 			),
 		),
-		'saveModuleLibraryCategories'      => et_fb_prepare_library_cats(),
-		'emailNameFieldOnlyProviders'      => array_keys( ET_Builder_Module_Signup::providers()->names_by_slug( 'all', 'name_field_only' ) ),
-		'emailPredefinedCustomFields'      => ET_Core_API_Email_Providers::instance()->custom_fields_data(),
-		'emailCustomFieldProviders'        => array_keys( ET_Builder_Module_Signup::providers()->names_by_slug( 'all', 'custom_fields' ) ),
-		'columnSettingFields'              => array(
+		'saveModuleLibraryCategories'  => et_fb_prepare_library_cats(),
+		'emailNameFieldOnlyProviders'  => array_keys( ET_Builder_Module_Signup::providers()->names_by_slug( 'all', 'name_field_only' ) ),
+		'emailPredefinedCustomFields'  => ET_Core_API_Email_Providers::instance()->custom_fields_data(),
+		'emailCustomFieldProviders'    => array_keys( ET_Builder_Module_Signup::providers()->names_by_slug( 'all', 'custom_fields' ) ),
+		'columnSettingFields'          => array(
 			'general'  => array(
 				'bg_img_%s'                              => ET_Builder_Element::background_field_template(
 					'image',
@@ -1305,7 +1316,20 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 					'sub_toggle'      => 'column_%s',
 					'hover'           => 'tabs',
 					'sticky'          => true,
-					'allowed_units'   => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ex', 'vh', 'vw' ),
+					'allowed_units'   => array(
+						'%',
+						'em',
+						'rem',
+						'px',
+						'cm',
+						'mm',
+						'in',
+						'pt',
+						'pc',
+						'ex',
+						'vh',
+						'vw',
+					),
 				),
 			),
 			'css'      => array(
@@ -1361,15 +1385,49 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 
 			),
 		),
-		'knownShortcodeWrappers'           => et_fb_known_shortcode_wrappers(),
-		'acceptableCSSStringValues'        => et_builder_get_acceptable_css_string_values( 'all' ),
-		'customModuleCredits'              => ET_Builder_Element::get_custom_modules_credits( $post_type ),
-		'ignoreAdminBarClickIds'           => apply_filters( 'et_fb_ignore_adminbar_click_ids', array() ),
-		'stickyElements'                   => array(
+		'knownShortcodeWrappers'       => et_fb_known_shortcode_wrappers(),
+		'acceptableCSSStringValues'    => et_builder_get_acceptable_css_string_values( 'all' ),
+		'customModuleCredits'          => ET_Builder_Element::get_custom_modules_credits( $post_type ),
+		'ignoreAdminBarClickIds'       => apply_filters( 'et_fb_ignore_adminbar_click_ids', array() ),
+		'stickyElements'               => array(
 			'incompatibleFields'   => $sticky->get_incompatible_fields(),
 			'validStickyPositions' => $sticky->get_valid_sticky_positions(),
 		),
 	);
+	// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned
+	// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.LongIndexSpaceBeforeDoubleArrow
+
+	if ( function_exists( 'WC' ) ) {
+		$helpers['wooCommerce'] = array();
+
+		if ( function_exists( 'et_builder_wc_get_checkout_notice' ) ) {
+			$checkout_modules_notice = array(
+				'requiredCheckoutModulesNotice' => array(
+					'isBillingOnly'       => 'billing_only' === get_option( 'woocommerce_ship_to_destination' ),
+					'isBillingOnlyNotice' => et_builder_wc_get_checkout_notice( 'billing_only' ),
+					'notice'              => et_builder_wc_get_checkout_notice( 'shipping' ),
+				),
+			);
+
+			$helpers['wooCommerce'] = array_merge( $helpers['wooCommerce'], $checkout_modules_notice );
+		}
+
+		if ( function_exists( 'et_builder_wc_get_non_checkout_page_notice' ) ) {
+			$checkout_page_notice = array(
+				'nonCheckoutPageNotice' => et_builder_wc_get_non_checkout_page_notice(),
+			);
+
+			$helpers['wooCommerce'] = array_merge( $helpers['wooCommerce'], $checkout_page_notice );
+		}
+
+		$checkout_page_id = array(
+			'checkoutPageId' => function_exists( 'wc_get_page_id' )
+				? wc_get_page_id( 'checkout' )
+				: 0,
+		);
+
+		$helpers['wooCommerce'] = array_merge( $helpers['wooCommerce'], $checkout_page_id );
+	}
 
 	$modules_i10n    = ET_Builder_Element::get_modules_i10n( $post_type );
 	$additional_i10n = array(

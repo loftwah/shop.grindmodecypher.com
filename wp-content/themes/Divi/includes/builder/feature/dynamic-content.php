@@ -39,12 +39,34 @@ function et_builder_get_product_dynamic_content_fields() {
 			'type'  => 'text',
 		),
 		'product_reviews'                => array(
-			'label' => esc_html__( 'Product Reviews', 'et_builder' ),
-			'type'  => 'text',
+			'label'  => esc_html__( 'Product Reviews', 'et_builder' ),
+			'type'   => 'text',
+			'fields' => array(
+				'enable_title' => array(
+					'label'   => esc_html__( 'Enable Title', 'et_builder' ),
+					'type'    => 'yes_no_button',
+					'options' => array(
+						'on'  => et_builder_i18n( 'Yes' ),
+						'off' => et_builder_i18n( 'No' ),
+					),
+					'default' => 'on',
+				),
+			),
 		),
 		'product_additional_information' => array(
 			'label' => esc_html__( 'Product Additional Information', 'et_builder' ),
 			'type'  => 'text',
+			'fields' => array(
+				'enable_title' => array(
+					'label'   => esc_html__( 'Enable Title', 'et_builder' ),
+					'type'    => 'yes_no_button',
+					'options' => array(
+						'on'  => et_builder_i18n( 'Yes' ),
+						'off' => et_builder_i18n( 'No' ),
+					),
+					'default' => 'on',
+				),
+			),
 		),
 		'product_reviews_tab'            => array(
 			'label' => esc_html__( 'Product Reviews', 'et_builder' ),
@@ -1442,7 +1464,8 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 				esc_html__( 'There are no reviews yet.', 'et_builder' )
 			);
 
-			$no_reviews = is_array( $comments ) && count( $comments ) > 0 ? '' : $no_reviews_text;
+			$no_reviews    = is_array( $comments ) && count( $comments ) > 0 ? '' : $no_reviews_text;
+			$is_show_title = 'on' === $_->array_get( $settings, 'enable_title', 'on' );
 
 			if ( wp_doing_ajax() ) {
 				$page = get_query_var( 'cpage' );
@@ -1474,12 +1497,14 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 				);
 			}
 
+			$title = $is_show_title
+				? sprintf( '<h2 class="woocommerce-Reviews-title">%s</h2>', et_core_esc_previously( $reviews_title ) )
+				: '';
+
 			$content = sprintf(
 				'
 						<div id="reviews" class="woocommerce-Reviews">
-								<h2 class="woocommerce-Reviews-title">
-									%1$s
-								</h2>
+							%1$s
 							<div id="comments">
 								<ol class="commentlist">
 								%2$s
@@ -1494,11 +1519,11 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 							</div>
 						</div>
 						',
-				et_core_esc_previously( $reviews_title ),
-				et_core_esc_previously( $content ),
-				et_core_esc_previously( $reviews_comment_form ),
-				et_core_esc_previously( $no_reviews ),
-				et_core_esc_previously( $pagination )
+				/* 1$s */ et_core_esc_previously( $title ),
+				/* 2$s */ et_core_esc_previously( $content ),
+				/* 3$s */ et_core_esc_previously( $reviews_comment_form ),
+				/* 4$s */ et_core_esc_previously( $no_reviews ),
+				/* 5$s */ et_core_esc_previously( $pagination )
 			);
 			$wrapped = true;
 			break;
@@ -1509,12 +1534,14 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 			}
 
 			$dynamic_product = ET_Builder_Module_Helper_Woocommerce_Modules::get_product( $post_id );
+			$show_title      = $_->array_get( $settings, 'enable_title', 'on' );
 
 			if ( $dynamic_product ) {
 				$is_woo  = true;
 				$content = ET_Builder_Module_Woocommerce_Additional_Info::get_additional_info(
 					array(
-						'product' => $dynamic_product->get_id(),
+						'product'    => $dynamic_product->get_id(),
+						'show_title' => $show_title,
 					)
 				);
 			} else {

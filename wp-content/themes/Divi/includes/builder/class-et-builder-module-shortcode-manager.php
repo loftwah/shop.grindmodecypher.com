@@ -366,53 +366,77 @@ class ET_Builder_Module_Shortcode_Manager {
 		}
 
 		$woo_modules = [
-			'et_pb_wc_add_to_cart'      => [
+			'et_pb_wc_add_to_cart'              => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Add_To_Cart',
 			],
-			'et_pb_wc_additional_info'  => [
+			'et_pb_wc_additional_info'          => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Additional_Info',
 			],
-			'et_pb_wc_breadcrumb'       => [
+			'et_pb_wc_breadcrumb'               => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Breadcrumb',
 			],
-			'et_pb_wc_cart_notice'      => [
+			'et_pb_wc_cart_notice'              => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Cart_Notice',
 			],
-			'et_pb_wc_description'      => [
+			'et_pb_wc_description'              => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Description',
 			],
-			'et_pb_wc_gallery'          => [
+			'et_pb_wc_gallery'                  => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Gallery',
 			],
-			'et_pb_wc_images'           => [
+			'et_pb_wc_images'                   => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Images',
 			],
-			'et_pb_wc_meta'             => [
+			'et_pb_wc_meta'                     => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Meta',
 			],
-			'et_pb_wc_price'            => [
+			'et_pb_wc_price'                    => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Price',
 			],
-			'et_pb_wc_rating'           => [
+			'et_pb_wc_rating'                   => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Rating',
 			],
-			'et_pb_wc_related_products' => [
+			'et_pb_wc_related_products'         => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Related_Products',
 			],
-			'et_pb_wc_reviews'          => [
+			'et_pb_wc_reviews'                  => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Reviews',
 			],
-			'et_pb_wc_stock'            => [
+			'et_pb_wc_stock'                    => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Stock',
 			],
-			'et_pb_wc_tabs'             => [
+			'et_pb_wc_tabs'                     => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Tabs',
 			],
-			'et_pb_wc_title'            => [
+			'et_pb_wc_title'                    => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Title',
 			],
-			'et_pb_wc_upsells'          => [
+			'et_pb_wc_upsells'                  => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Upsells',
+			],
+			'et_pb_wc_cart_products'            => [
+				'classname' => 'ET_Builder_Module_Woocommerce_Cart_Products',
+			],
+			'et_pb_wc_cross_sells'              => [
+				'classname' => 'ET_Builder_Module_Woocommerce_Cross_Sells',
+			],
+			'et_pb_wc_cart_totals'              => [
+				'classname' => 'ET_Builder_Module_Woocommerce_Cart_Totals',
+			],
+			'et_pb_wc_checkout_billing'         => [
+				'classname' => 'ET_Builder_Module_Woocommerce_Checkout_Billing',
+			],
+			'et_pb_wc_checkout_shipping'        => [
+				'classname' => 'ET_Builder_Module_Woocommerce_Checkout_Shipping',
+			],
+			'et_pb_wc_checkout_order_details'   => [
+				'classname' => 'ET_Builder_Module_Woocommerce_Checkout_Order_Details',
+			],
+			'et_pb_wc_checkout_payment_info'    => [
+				'classname' => 'ET_Builder_Module_Woocommerce_Checkout_Payment_Info',
+			],
+			'et_pb_wc_checkout_additional_info' => [
+				'classname' => 'ET_Builder_Module_Woocommerce_Checkout_Additional_Info',
 			],
 		];
 

@@ -10,6 +10,8 @@
  * @since   3.29
  */
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class representing WooCommerce Title component.
  */
@@ -18,10 +20,11 @@ class ET_Builder_Module_Woocommerce_Title extends ET_Builder_Module {
 	 * Initialize.
 	 */
 	public function init() {
-		$this->name       = esc_html__( 'Woo Title', 'et_builder' );
-		$this->plural     = esc_html__( 'Woo Titles', 'et_builder' );
-		$this->slug       = 'et_pb_wc_title';
-		$this->vb_support = 'on';
+		$this->name        = esc_html__( 'Woo Product Title', 'et_builder' );
+		$this->plural      = esc_html__( 'Woo Product Title', 'et_builder' );
+		$this->slug        = 'et_pb_wc_title';
+		$this->vb_support  = 'on';
+		$this->folder_name = 'et_pb_woo_modules';
 
 		$this->settings_modal_toggles = array(
 			'general'  => array(

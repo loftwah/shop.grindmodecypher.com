@@ -26,16 +26,438 @@ if ( ! defined( 'ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY' ) ) {
 }
 
 /**
- * Returning <img> string for default image placeholder
+ * Identify whether Woo v2 should replace content on Cart & Checkout pages.
  *
- * @since 4.0.10
+ * @param string $shortcode Post content. Builder converts empty string to shortcode string.
+ *
+ * @since ??
+ *
+ * @return bool
+ */
+function et_builder_wc_should_replace_content( $shortcode ) {
+	$default_shortcodes     = array( 'et_pb_section', 'et_pb_row', 'et_pb_column', 'et_pb_text', 'woocommerce_cart', 'woocommerce_checkout' );
+	$should_replace_content = true;
+
+	// Get all shortcodes on the page.
+	preg_match_all( '@\[([^<>&/\[\]\x00-\x20=]++)@', $shortcode, $matches );
+
+	$matched_shortcodes = $matches[1];
+
+	foreach ( $matched_shortcodes as $shortcode ) {
+		// If a shortcode exists that is not a default shortcode, don't replace content. The user has already built a custom page.
+		if ( ! in_array( $shortcode, $default_shortcodes, true ) ) {
+			$should_replace_content = false;
+			break;
+		}
+	}
+
+	return $should_replace_content;
+}
+
+/**
+ * Stop redirecting to Cart page when enabling builder on Checkout page.
+ *
+ * @since ??
+ *
+ * @link https://github.com/elegantthemes/Divi/issues/23873
+ *
+ * @param bool $flag Flag.
+ *
+ * @return bool
+ */
+function et_builder_stop_cart_redirect_while_enabling_builder( $flag ) {
+	/*
+	 * Don't need to check if the current page is Checkout page since this filter
+	 * `woocommerce_checkout_redirect_empty_cart` only fires if the
+	 * current page is a Checkout page.
+	 */
+
+	$post_id = get_the_ID();
+
+	if ( is_array( $_GET ) && isset( $_GET['et_fb'] ) && '1' === $_GET['et_fb'] ) {
+		$is_builder_activation_request = true;
+	} else {
+		// Verify if the request is a valid Builder activation request.
+		$is_builder_activation_request = et_core_security_check(
+			'',
+			"et_fb_activation_nonce_{$post_id}",
+			'et_fb_activation_nonce',
+			'_REQUEST',
+			false
+		);
+	}
+
+	return $is_builder_activation_request ? false : $flag;
+}
+
+/**
+ * Message to be displayed in Checkout Payment Info module in VB mode.
+ *
+ * So styling the Notice becomes easier.
+ *
+ * @since ??
  *
  * @return string
  */
-function et_builder_wc_placeholder_img() {
+function et_builder_wc_no_available_payment_methods_message() {
+	// Fallback.
+	$message = esc_html__( 'Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements.' );
+
+	if ( ! function_exists( 'WC' ) ) {
+		return $message;
+	}
+
+	if ( ! isset( WC()->customer ) && ! method_exists( WC()->customer, 'get_billing_country' ) ) {
+		return $message;
+	}
+
+	$message = WC()->customer->get_billing_country()
+		? esc_html__( 'Sorry, it seems that there are no available payment methods for your state. Please contact us if you require assistance or wish to make alternate arrangements.', 'et_builder' )
+		: esc_html__( 'Please fill in your details above to see available payment methods.', 'et_builder' );
+
+	return apply_filters(
+		'woocommerce_no_available_payment_methods_message',
+		$message
+	);
+}
+
+/**
+ * Output the cart shipping calculator.
+ *
+ * @param string $button_text Text for the shipping calculation toggle.
+ */
+function et_builder_woocommerce_shipping_calculator( $button_text = '' ) {
+	wp_enqueue_script( 'wc-country-select' );
+	wc_get_template(
+		'cart/shipping-calculator.php',
+		array(
+			'button_text' => $button_text,
+		)
+	);
+}
+
+/**
+ * Gets the Checkout modules notice to be displayed on non-checkout pages.
+ *
+ * @since ??
+ *
+ * @used-by et_fb_get_static_backend_helpers()
+ *
+ * @return string
+ */
+function et_builder_wc_get_non_checkout_page_notice() {
+	return esc_html__( 'This module will not function properly on the front end of your website because this is not the assigned Checkout page.', 'et_builder' );
+}
+
+/**
+ * Gets the Checkout notice to be displayed on Checkout Payment Info module.
+ *
+ * @since ??
+ *
+ * @param string $woocommerce_ship_to_destination Default `shipping`.
+ *
+ * @used-by et_fb_get_static_backend_helpers()
+ *
+ * @return string
+ */
+function et_builder_wc_get_checkout_notice( $woocommerce_ship_to_destination = 'shipping' ) {
+	$settings_modal_notice = '';
+
+	if ( 'billing_only' === $woocommerce_ship_to_destination ) {
+		$settings_modal_notice = wp_kses(
+			__( '<strong>Woo Billing Address Module</strong> must be added to this page to allow users to submit orders.', 'et_builder' ),
+			array( 'strong' => array() )
+		);
+	} else {
+		$settings_modal_notice = wp_kses(
+			__( '<strong>Woo Billing Address Module</strong> and <strong>Woo Shipping Address Module</strong> must be added to this page to allow users to submit orders.', 'et_builder' ),
+			array( 'strong' => array() )
+		);
+	}
+
+	return $settings_modal_notice;
+}
+
+/**
+ * Stop WooCommerce from redirecting Checkout page to Cart when the cart is empty.
+ *
+ * Divi Builder stops redirection only for logged-in admins.
+ *
+ * @since ??
+ */
+function et_builder_wc_template_redirect() {
+	$checkout_page_id = wc_get_page_id( 'checkout' );
+
+	$post = get_post( $checkout_page_id );
+	if ( ! ( $post instanceof WP_Post ) ) {
+		return;
+	}
+
+	$is_checkout_page = $checkout_page_id === $post->ID;
+
+	if ( ! $is_checkout_page ) {
+		return;
+	}
+
+	if ( ! et_core_is_fb_enabled() ) {
+		return;
+	}
+
+	if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	$has_wc_shortcode = has_shortcode( $post->post_content, 'et_pb_section' );
+
+	if ( ! $has_wc_shortcode ) {
+		return;
+	}
+
+	add_filter( 'woocommerce_checkout_redirect_empty_cart', '__return_false' );
+}
+
+/**
+ * Sets the meta to indicate that the Divi content has been modified.
+ *
+ * This avoids setting the default WooCommerce Modules layout more than once.
+ *
+ * @link https://github.com/elegantthemes/Divi/issues/16420
+ *
+ * @since ??
+ *
+ * @param int $post_id Post ID.
+ */
+function et_builder_wc_set_page_content_status( $post_id ) {
+	if ( 0 === absint( $post_id ) ) {
+		return;
+	}
+
+	/**
+	 * The ID page of the Checkout page set in WooCommerce Settings page.
+	 *
+	 * WooCommerce — Settings — Advanced — Checkout page
+	 */
+	$checkout_page_id = wc_get_page_id( 'checkout' );
+
+	/**
+	 * The ID page of the Cart page set in WooCommerce Settings page.
+	 *
+	 * WooCommerce — Settings — Advanced — Cart page
+	 */
+	$cart_page_id = wc_get_page_id( 'cart' );
+
+	$is_cart     = $post_id === $cart_page_id;
+	$is_checkout = $post_id === $checkout_page_id;
+	$is_product  = 'product' === get_post_type( $post_id );
+
+	// Take action only on Product, Cart and Checkout pages. Bail early otherwise.
+	if ( ! ( $is_product || $is_cart || $is_checkout ) ) {
+		return;
+	}
+
+	$modified_status            = 'modified';
+	$is_content_status_modified = get_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY, true ) === $modified_status;
+
+	if ( $is_content_status_modified ) {
+		return;
+	}
+
+	update_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY, $modified_status );
+}
+
+/**
+ * Gets the prefilled Cart Page content built using Divi Woo Modules.
+ *
+ * @since ??
+ *
+ * @return string
+ */
+function et_builder_wc_get_prefilled_cart_page_content() {
+	$page_title = '[et_pb_post_title meta="off" featured_image="off"][/et_pb_post_title]';
+
+	// Gets Parent theme's info in case child theme is used.
+	if ( 'Extra' === et_core_get_theme_info( 'Name' ) ) {
+		$page_title = '';
+	}
+
+	return '
+	[et_pb_section]
+		[et_pb_row]
+			[et_pb_column type="4_4"]
+				' . $page_title . '
+				[et_pb_wc_cart_notice page_type="cart"][/et_pb_wc_cart_notice]
+				[et_pb_wc_cart_products][/et_pb_wc_cart_products]
+			[/et_pb_column]
+		[/et_pb_row]
+		[et_pb_row column_structure="1_2,1_2"]
+			[et_pb_column type="1_2"]
+				[et_pb_wc_cross_sells][/et_pb_wc_cross_sells]
+			[/et_pb_column]
+			[et_pb_column type="1_2"]
+				[et_pb_wc_cart_totals][/et_pb_wc_cart_totals]
+			[/et_pb_column]
+		[/et_pb_row]
+	[/et_pb_section]
+	';
+}
+
+/**
+ * Gets the prefilled Checkout Page content built using Divi Woo Modules.
+ *
+ * @since ??
+ * @return string
+ */
+function et_builder_wc_get_prefilled_checkout_page_content() {
+	$page_title = '[et_pb_post_title meta="off" featured_image="off"][/et_pb_post_title]';
+
+	// Use `et_core_get_theme_info` to get Parent theme's info even when a child theme is used.
+	if ( 'Extra' === et_core_get_theme_info( 'Name' ) ) {
+		$page_title = '';
+	}
+
+	return '
+	[et_pb_section]
+		[et_pb_row custom_padding="||0%||false|false"]
+			[et_pb_column type="4_4"]
+				' . $page_title . '
+				[et_pb_wc_cart_notice page_type="checkout"][/et_pb_wc_cart_notice]
+			[/et_pb_column]
+		[/et_pb_row]
+		[et_pb_row column_structure="1_2,1_2"]
+			[et_pb_column type="1_2"]
+				[et_pb_wc_checkout_billing ][/et_pb_wc_checkout_billing]
+			[/et_pb_column]
+			[et_pb_column type="1_2"]
+				[et_pb_wc_checkout_shipping][/et_pb_wc_checkout_shipping]
+				[et_pb_wc_checkout_additional_info][/et_pb_wc_checkout_additional_info]
+			[/et_pb_column]
+		[/et_pb_row]
+		[et_pb_row]
+			[et_pb_column type="4_4"]
+				[et_pb_wc_checkout_order_details][/et_pb_wc_checkout_order_details]
+				[et_pb_wc_checkout_payment_info][/et_pb_wc_checkout_payment_info]
+			[/et_pb_column]
+		[/et_pb_row]
+	[/et_pb_section]
+	';
+}
+
+/**
+ * Sets the pre-filled Divi Woo Pages layout content.
+ *
+ * The following are the three types of WooCommerce pages that have pre-filled content.
+ *
+ * 1. WooCommerce Product page
+ * 2. WooCommerce Cart page
+ * 3. WooCommerce Checkout page
+ *
+ * @param string $maybe_shortcode_content May be shortcode content.
+ * @param int    $post_id Post ID.
+ *
+ * @return string
+ */
+function et_builder_wc_set_prefilled_page_content( $maybe_shortcode_content, $post_id ) {
+	$post = get_post( absint( $post_id ) );
+	if ( ! $post ) {
+		return $maybe_shortcode_content;
+	}
+
+	/**
+	 * The ID page of the Checkout page set in WooCommerce Settings page.
+	 *
+	 * WooCommerce — Settings — Advanced — Checkout page
+	 */
+	$checkout_page_id = wc_get_page_id( 'checkout' );
+
+	/**
+	 * The ID page of the Cart page set in WooCommerce Settings page.
+	 *
+	 * WooCommerce — Settings — Advanced — Cart page
+	 */
+	$cart_page_id = wc_get_page_id( 'cart' );
+
+	$is_cart     = $post_id === $cart_page_id;
+	$is_checkout = $post_id === $checkout_page_id;
+	$is_product  = ( $post instanceof WP_Post ) && 'product' === $post->post_type;
+
+	// Bail early when none of the conditions are met.
+	if ( ! ( $is_product || $is_checkout || $is_cart ) ) {
+		return $maybe_shortcode_content;
+	}
+
+	// Bail early if the Page already has initial content set.
+	$is_content_status_modified = 'modified' === get_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY, true );
+
+	if ( $is_content_status_modified ) {
+		return $maybe_shortcode_content;
+	}
+
+	$should_replace_content = true;
+	if ( $is_cart || $is_checkout ) {
+		$should_replace_content = et_builder_wc_should_replace_content( $maybe_shortcode_content );
+	}
+
+	if ( $is_cart && $should_replace_content ) {
+		return et_builder_wc_get_prefilled_cart_page_content();
+	} elseif ( $is_checkout && $should_replace_content ) {
+		return et_builder_wc_get_prefilled_checkout_page_content();
+	} elseif ( $is_product ) {
+		$args                = array();
+		$product_page_layout = et_builder_wc_get_product_layout( $post_id );
+
+		/*
+		 * When FALSE, this means the Product doesn't use Builder at all;
+		 * Or the Product has been using the Builder before WooCommerce Modules QF launched.
+		 */
+		if ( ! $product_page_layout ) {
+			$product_page_layout = et_get_option(
+				'et_pb_woocommerce_page_layout',
+				'et_build_from_scratch'
+			);
+		}
+
+		// Load default content.
+		if ( 'et_default_layout' === $product_page_layout ) {
+			return $maybe_shortcode_content;
+		}
+
+		$has_et_builder_shortcode          = has_shortcode( $maybe_shortcode_content, 'et_pb_section' );
+		$is_layout_type_build_from_scratch = 'et_build_from_scratch' === $product_page_layout;
+
+		if ( $has_et_builder_shortcode && $is_layout_type_build_from_scratch ) {
+			$args['existing_shortcode'] = $maybe_shortcode_content;
+		}
+
+		return et_builder_wc_get_prefilled_product_page_content( $args );
+	}
+
+	return $maybe_shortcode_content;
+}
+
+/**
+ * Returning <img> string for default image placeholder
+ *
+ * @since ?? Added $mode param.
+ * @since 4.0.10
+ *
+ * @param string $mode Default ET_BUILDER_PLACEHOLDER_LANDSCAPE_IMAGE_DATA. Either Landscape or
+ *                     Portrait image mode.
+ *
+ * @return string
+ */
+function et_builder_wc_placeholder_img( $mode = 'portrait' ) {
+	$allowed_list = array(
+		'portrait'  => ET_BUILDER_PLACEHOLDER_PORTRAIT_VARIATION_IMAGE_DATA,
+		'landscape' => ET_BUILDER_PLACEHOLDER_LANDSCAPE_IMAGE_DATA,
+	);
+
+	if ( ! in_array( $mode, array_keys( $allowed_list ), true ) ) {
+		$mode = 'portrait';
+	}
+
 	return sprintf(
 		'<img src="%1$s" alt="2$s" />',
-		et_core_esc_attr( 'placeholder', ET_BUILDER_PLACEHOLDER_LANDSCAPE_IMAGE_DATA ),
+		et_core_esc_attr( 'placeholder', $allowed_list[ $mode ] ),
 		esc_attr__( 'Product image', 'et_builder' )
 	);
 }
@@ -147,7 +569,7 @@ function et_builder_wc_add_settings( $builder_settings_fields ) {
  *
  * @return string
  */
-function et_builder_wc_get_initial_content( $args = array() ) {
+function et_builder_wc_get_prefilled_product_page_content( $args = array() ) {
 	/**
 	 * Filters the Top section Background in the default WooCommerce Modules layout.
 	 *
@@ -259,7 +681,7 @@ function et_builder_wc_set_initial_content( $maybe_shortcode_content, $post_id )
 		$args['existing_shortcode'] = $maybe_shortcode_content;
 	}
 
-	return et_builder_wc_get_initial_content( $args );
+	return et_builder_wc_get_prefilled_product_page_content( $args );
 }
 
 /**
@@ -384,6 +806,42 @@ function et_builder_wc_need_overwrite_global( $product_id = 'current' ) {
 }
 
 /**
+ * Gets the Product ID.
+ *
+ * @since ??
+ *
+ * @param array $args Module props.
+ *
+ * @return int $product_id
+ */
+function et_builder_wc_get_product_id( $args ) {
+	$maybe_product_id        = et_()->array_get( $args, 'product', 'latest' );
+	$is_latest_product       = 'latest' === $maybe_product_id;
+	$is_current_product_page = 'current' === $maybe_product_id;
+
+	if ( $is_latest_product ) {
+		// Dynamic filter's product_id need to be translated into correct id.
+		$product_id = ET_Builder_Module_Helper_Woocommerce_Modules::get_product_id( $maybe_product_id );
+	} elseif ( $is_current_product_page && wp_doing_ajax() && class_exists( 'ET_Builder_Element' ) ) {
+		/*
+		 * $product global doesn't exist in ajax request; thus get the fallback post id
+		 * this is likely happen in computed callback ajax request.
+		 */
+		$product_id = ET_Builder_Element::get_current_post_id();
+	} else {
+		// Besides two situation above, $product_id is current $args['product'].
+		if ( false !== get_post_status( $maybe_product_id ) ) {
+			$product_id = $maybe_product_id;
+		} else {
+			// Fallback to Latest product if saved product ID doesn't exist.
+			$product_id = ET_Builder_Module_Helper_Woocommerce_Modules::get_product_id( 'latest' );
+		}
+	}
+
+	return $product_id;
+}
+
+/**
  * Helper to render module template for module's front end and computed callback output
  *
  * @since 3.29
@@ -415,6 +873,9 @@ function et_builder_wc_render_module_template( $function_name, $args = array(), 
 		'wc_print_notice',
 		'woocommerce_output_related_products',
 		'woocommerce_upsell_display',
+		'woocommerce_checkout_login_form',
+		'wc_cart_empty_template',
+		'woocommerce_output_all_notices',
 	);
 
 	if ( ! in_array( $function_name, $allowlisted_functions, true ) ) {
@@ -441,25 +902,7 @@ function et_builder_wc_render_module_template( $function_name, $args = array(), 
 		// module's template rendering uses `wp_reset_postdata()` which resets global query.
 		et_theme_builder_wc_set_global_objects();
 	} elseif ( $overwrite_global ) {
-		$is_latest_product       = 'latest' === $args['product'];
-		$is_current_product_page = 'current' === $args['product'];
-
-		if ( $is_latest_product ) {
-			// Dynamic filter's product_id need to be translated into correct id
-			$product_id = ET_Builder_Module_Helper_Woocommerce_Modules::get_product_id( $args['product'] );
-		} elseif ( $is_current_product_page && wp_doing_ajax() && class_exists( 'ET_Builder_Element' ) ) {
-			// $product global doesn't exist in ajax request; thus get the fallback post id
-			// this is likely happen in computed callback ajax request
-			$product_id = ET_Builder_Element::get_current_post_id();
-		} else {
-			// Besides two situation above, $product_id is current $args['product'].
-			if ( false !== get_post_status( $args['product'] ) ) {
-				$product_id = $args['product'];
-			} else {
-				// Fallback to Latest product if saved product ID doesn't exist.
-				$product_id = ET_Builder_Module_Helper_Woocommerce_Modules::get_product_id( 'latest' );
-			}
-		}
+		$product_id = et_builder_wc_get_product_id( $args );
 
 		if ( 'product' !== get_post_type( $product_id ) ) {
 			// We are in a Theme Builder layout and the current post is not a product - use the latest one instead.
@@ -562,8 +1005,10 @@ function et_builder_wc_render_module_template( $function_name, $args = array(), 
 			echo wc_get_stock_html( $product ); // phpcs:ignore WordPress.Security.EscapeOutput -- `wc_get_stock_html` include woocommerce's `single-product/stock.php` template.
 			break;
 		case 'wc_print_notice':
+			$message = et_()->array_get( $args, 'wc_cart_message', '' );
+
 			// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
-			call_user_func( $function_name, wc_add_to_cart_message( $product->get_id(), false, true ) );
+			call_user_func( $function_name, $message );
 			break;
 		case 'wc_print_notices':
 			// Save existing notices to restore them as many times as we need.
@@ -577,10 +1022,40 @@ function et_builder_wc_render_module_template( $function_name, $args = array(), 
 				WC()->session->set( 'wc_notices', $et_wc_cached_notices );
 			}
 			break;
+		case 'woocommerce_checkout_login_form':
+			if ( function_exists( 'woocommerce_checkout_login_form' ) ) {
+				woocommerce_checkout_login_form();
+			}
+			if ( function_exists( 'woocommerce_checkout_coupon_form' ) ) {
+				woocommerce_checkout_coupon_form();
+			}
+
+			$is_builder = et_()->array_get( $args, 'is_builder', false );
+			if ( $is_builder ) {
+				ET_Builder_Module_Woocommerce_Cart_Notice::output_coupon_error_message();
+			}
+			break;
 		case 'woocommerce_upsell_display':
 			$order = isset( $args['order'] ) ? $args['order'] : '';
 			// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
 			call_user_func( $function_name, '', '', '', $order );
+			break;
+		case 'wc_cart_empty_template':
+			wc_get_template( 'cart/cart-empty.php' );
+			break;
+		case 'woocommerce_output_all_notices':
+			// Save existing notices to restore them as many times as we need.
+			$et_wc_cached_notices = WC()->session->get( 'wc_notices', array() );
+
+			if ( function_exists( $function_name ) ) {
+				// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Using for consistency.
+				call_user_func( $function_name );
+			}
+
+			// Restore notices which were removed after wc_print_notices() executed to render multiple modules on page.
+			if ( ! empty( $et_wc_cached_notices ) && empty( WC()->session->get( 'wc_notices', array() ) ) ) {
+				WC()->session->set( 'wc_notices', $et_wc_cached_notices );
+			}
 			break;
 		default:
 			// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
@@ -784,7 +1259,7 @@ function et_builder_wc_override_default_layout() {
  * Otherwise, the description would be shown in both Product Tabs and at the end of the
  * default WooCommerce layout set at
  *
- * @see et_builder_wc_get_initial_content()
+ * @see et_builder_wc_get_prefilled_product_page_content()
  *
  * @since 3.29
  *
@@ -903,7 +1378,8 @@ function et_builder_wc_is_non_product_post_type() {
 function et_builder_wc_load_scripts() {
 	global $post;
 
-	$is_shop = function_exists( 'is_shop' ) && is_shop();
+	$is_shop     = function_exists( 'is_shop' ) && is_shop();
+	$is_checkout = function_exists( 'is_checkout' ) && is_checkout();
 
 	// is_product_taxonomy() is not returning TRUE for Category & Tags.
 	// Hence we check Category & Tag archives individually.
@@ -918,6 +1394,7 @@ function et_builder_wc_load_scripts() {
 		&& ! $is_shop
 		&& ! $is_product_category
 		&& ! $is_product_tag
+		&& ! $is_checkout
 	) {
 		return;
 	}
@@ -951,6 +1428,10 @@ function et_builder_wc_load_scripts() {
 
 	wp_enqueue_script( 'woocommerce' );
 	wp_enqueue_script( 'wc-cart-fragments' );
+	wp_enqueue_script( 'wc-checkout' );
+	wp_enqueue_script( 'select2' );
+	wp_enqueue_script( 'selectWoo' );
+	wp_enqueue_style( 'select2' );
 
 	// Enqueue style.
 	$wc_styles = WC_Frontend_Scripts::get_styles();
@@ -1064,9 +1545,11 @@ function et_builder_wc_add_outer_content_class( $classes ) {
  *
  * They are 1) On WP Admin Publish/Update post 2) On VB Save.
  *
- * @param int $post_id Post id.
- *
+ * @since ?? Remove ET_BUILDER_WC_PRODUCT_PAGE_LAYOUT_META_KEY meta key on non-product post types.
+ *           Also move `since` section above `param` section.
  * @since 3.29
+ *
+ * @param int $post_id Post ID.
  */
 function et_builder_set_product_page_layout_meta( $post_id ) {
 	$post = get_post( $post_id );
@@ -1080,6 +1563,16 @@ function et_builder_set_product_page_layout_meta( $post_id ) {
 	 */
 	if ( ! et_pb_is_pagebuilder_used( $post_id ) ) {
 		delete_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_PAGE_LAYOUT_META_KEY );
+		return;
+	}
+
+	// The meta key is to be used only on Product post types.
+	// Hence remove the meta if exists on other post types.
+	$is_non_product_post_type = 'product' !== $post->post_type;
+	if ( $is_non_product_post_type ) {
+		// Returns FALSE when no meta key is found.
+		delete_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_PAGE_LAYOUT_META_KEY );
+
 		return;
 	}
 
@@ -1240,6 +1733,29 @@ function et_builder_wc_parse_description( $description ) {
 }
 
 /**
+ * Deletes ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY when Builder is OFF.
+ *
+ * The deletion allows switching between Divi Builder and the GB builder smoothly.
+ *
+ * @link https://github.com/elegantthemes/Divi/issues/22477
+ *
+ * @since ??
+ *
+ * @param WP_Post $post Post Object.
+ */
+function et_builder_wc_delete_post_meta( $post ) {
+	if ( ! ( $post instanceof WP_Post ) ) {
+		return;
+	}
+
+	if ( et_pb_is_pagebuilder_used( $post->ID ) ) {
+		return;
+	}
+
+	delete_post_meta( $post->ID, ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY );
+}
+
+/**
  * Entry point for the woocommerce-modules.php file.
  *
  * @since 3.29
@@ -1284,12 +1800,14 @@ function et_builder_wc_init() {
 	// we use this additional hook `et_pb_old_content_updated`.
 	add_action( 'et_pb_old_content_updated', 'et_builder_wc_long_description_metabox_save', 10, 3 );
 
-	// 01. Sets the initial Content when `Use Divi Builder` button is clicked
-	// in the Admin dashboard.
-	// 02. Sets the initial Content when `Enable Visual Builder` is clicked.
+	/*
+	 * 01. Sets the initial Content when `Use Divi Builder` button is clicked
+	 * in the Admin dashboard.
+	 * 02. Sets the initial Content when `Enable Visual Builder` is clicked.
+	 */
 	add_filter(
 		'et_fb_load_raw_post_content',
-		'et_builder_wc_set_initial_content',
+		'et_builder_wc_set_prefilled_page_content',
 		10,
 		2
 	);
@@ -1302,7 +1820,7 @@ function et_builder_wc_init() {
 	 *
 	 * @see https://github.com/elegantthemes/Divi/issues/16420
 	 */
-	add_action( 'et_update_post', 'et_builder_set_product_content_status' );
+	add_action( 'et_update_post', 'et_builder_wc_set_page_content_status' );
 
 	/*
 	 * Handle get Woocommerce tabs AJAX call initiated by Tabs checkbox in settings modal.
@@ -1323,6 +1841,22 @@ function et_builder_wc_init() {
 
 	add_filter( 'et_builder_wc_description', 'et_builder_wc_parse_description' );
 
+	add_filter( 'template_redirect', 'et_builder_wc_template_redirect', 9 );
+
+	/*
+	 * Delete `_et_pb_woo_page_content_status` post meta when Divi Builder is off
+	 * when using GB editor.
+	 *
+	 * The latest value of `_et_pb_use_builder` post meta is only available in
+	 * `rest_after_insert_page` and NOT in `rest_insert_page` hook.
+	 *
+	 * This action is documented in
+	 * wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php
+	 */
+	add_action( 'rest_after_insert_page', 'et_builder_wc_delete_post_meta' );
+
+	add_filter( 'woocommerce_checkout_redirect_empty_cart', 'et_builder_stop_cart_redirect_while_enabling_builder' );
+
 	/*
 	 * In the case of dynamic module framework's shortcode manager
 	 * we need to fire this hook on its own,
@@ -1333,6 +1867,14 @@ function et_builder_wc_init() {
 			[
 				'ET_Builder_Module_Woocommerce_Cart_Notice',
 				'disable_default_notice',
+			]
+		);
+
+		add_action(
+			'et_builder_module_lazy_shortcodes_registered',
+			[
+				'ET_Builder_Module_Woocommerce_Checkout_Additional_Info',
+				'maybe_invoke_woocommerce_hooks',
 			]
 		);
 	}

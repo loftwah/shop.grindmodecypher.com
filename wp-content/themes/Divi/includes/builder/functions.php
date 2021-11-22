@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.13.1' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.0' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -1372,10 +1372,12 @@ function et_fb_current_page_woocommerce_components() {
  */
 function et_fb_woocommerce_tabs() {
 	global $product, $post;
+
 	$old_product = $product;
 	$old_post    = $post;
+	$is_product  = isset( $product ) && is_a( $product, 'WC_Product' );
 
-	if ( ! isset( $product ) && et_is_woocommerce_plugin_active() ) {
+	if ( ! $is_product && et_is_woocommerce_plugin_active() ) {
 		$product = ET_Builder_Module_Helper_Woocommerce_Modules::get_product( 'latest' );
 
 		if ( $product ) {
@@ -2725,51 +2727,55 @@ endif;
  */
 function et_builder_get_acceptable_css_string_values( $property = 'all' ) {
 	$css_string_values = array(
-		'width'      => array(
+		'width'       => array(
 			'auto',
 			'inherit',
 			'initial',
 			'unset',
+			'',
 		),
-		'max-width'  => array(
+		'max-width'   => array(
 			'none',
 			'inherit',
 			'initial',
 			'unset',
 		),
-		'margin'     => array(
+		'margin'      => array(
 			'auto',
 			'inherit',
 			'initial',
 			'unset',
 		),
-		'padding'    => array(
+		'padding'     => array(
 			'inherit',
 			'initial',
 			'unset',
 		),
-		'height'     => array(
+		'height'      => array(
 			'auto',
 			'inherit',
 			'initial',
 			'unset',
 		),
-		'min-height' => array(
+		'min-height'  => array(
 			'auto',
 			'inherit',
 			'initial',
 			'unset',
 		),
-		'max-height' => array(
+		'max-height'  => array(
 			'none',
 			'inherit',
 			'initial',
 			'unset',
 		),
-		'z-index'    => array(
+		'z-index'     => array(
 			'auto',
 		),
-		'font-size'  => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ex', 'vh', 'vw' ),
+		'line-height' => array(
+			'',
+		),
+		'font-size'   => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ex', 'vh', 'vw' ),
 	);
 
 	$acceptable_strings = apply_filters( 'et_builder_acceptable_css_string_values', $css_string_values );
@@ -11152,6 +11158,11 @@ function et_fb_add_additional_attrs( $processed_attrs, $output ) {
 		}
 
 		$allowlisted_attrs[ $attr ] = $value;
+	}
+
+	// Extra conversion for the case with the `font_icon__hover` option.
+	if ( ! empty( $allowlisted_attrs['font_icon__hover'] ) && et_pb_maybe_old_divi_font_icon( $allowlisted_attrs['font_icon__hover'] ) ) {
+		$allowlisted_attrs['font_icon__hover'] = et_pb_build_extended_font_icon_value( $allowlisted_attrs['font_icon__hover'], null, null, true );
 	}
 
 	if ( $allowlisted_attrs ) {

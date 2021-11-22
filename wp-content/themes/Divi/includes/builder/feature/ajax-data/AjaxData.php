@@ -68,7 +68,7 @@ class ET_Builder_Ajax_Data {
 		 *
 		 * Useful for disabling/enabling "Display Condition" feature site-wide.
 		 *
-		 * @since ??
+		 * @since 4.13.1
 		 *
 		 * @param boolean True to enable the functionality, False to disable it.
 		 */

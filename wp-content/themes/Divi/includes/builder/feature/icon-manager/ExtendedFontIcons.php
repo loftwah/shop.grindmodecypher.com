@@ -115,9 +115,51 @@ if ( ! function_exists( 'et_pb_check_and_convert_icon_raw_value' ) ) {
 		$icon_raw_value = et_pb_get_extended_font_icon_value( $icon, false, true );
 
 		if ( ! empty( $icon_raw_value ) && in_array( $icon_type, array( 'fa', 'divi' ), true ) && in_array( (int) $font_weight, array( 400, 900 ), true ) ) {
-			return $icon_raw_value . '||' . $icon_type . '||' . $font_weight;
+			return et_pb_build_extended_font_icon_value( $icon_raw_value, $icon_type, $font_weight );
 		}
 		return '';
+	}
+}
+
+if ( ! function_exists( 'et_pb_build_extended_font_icon_value' ) ) {
+	/**
+	 * Create extended font icon value.
+	 *
+	 * @since ?
+	 *
+	 * @param string $icon_value      icon value (if passed icon value in the old divi format it will be convertetd to unicode value).
+	 * @param string $icon_type type of icon (divi is default).
+	 * @param string $font_weight type of icon (400 is default).
+	 * @param bool   $decode_amp do or not ampersand decoding (&amp; -> &).
+	 * @return string
+	 */
+	function et_pb_build_extended_font_icon_value( $icon_value, $icon_type = null, $font_weight = null, $decode_amp = false ) {
+
+		if ( et_pb_maybe_extended_icon( $icon_value ) ) {
+			return $icon_value;
+		}
+
+		if ( ! $icon_type ) {
+			$icon_type = 'divi';
+		}
+
+		if ( ! $font_weight ) {
+			$font_weight = et_pb_get_normal_font_weight_value();
+		}
+
+		if ( et_pb_maybe_old_divi_font_icon( $icon_value ) ) {
+
+			// the font icon value is saved in the following format: %%index_number%%.
+			$icon_index   = (int) str_replace( '%', '', $icon_value );
+			$icon_symbols = et_pb_get_font_icon_symbols();
+			$icon_value   = isset( $icon_symbols[ $icon_index ] ) ? $icon_symbols[ $icon_index ] : '';
+		}
+
+		if ( $decode_amp ) {
+			$icon_value = str_replace( '&amp;', '&', $icon_value );
+		}
+
+		return $icon_value . '||' . $icon_type . '||' . $font_weight;
 	}
 }
 
@@ -405,12 +447,13 @@ if ( ! function_exists( 'et_pb_get_font_icon_names_regex' ) ) :
 	 * @since ?
 	 *
 	 * @param bool $maybe_fa_icon_type define what kind of font icon we need o get regex.
+	 * @param bool $use_only_defined_icon_fields values will be searched only in certain fields that can contain icon values (see: `et_pb_get_font_icon_field_names()`).
 	 *
 	 * @return string
 	 */
-	function et_pb_get_font_icon_names_regex( $maybe_fa_icon_type = false ) {
+	function et_pb_get_font_icon_names_regex( $maybe_fa_icon_type = false, $use_only_defined_icon_fields = false ) {
 		$icon_type = $maybe_fa_icon_type ? 'fa' : 'divi';
-		return '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"([^"]*)\|\|(' . $icon_type . ')\|\|(400|900)\"/mi';
+		return ! $use_only_defined_icon_fields ? '/\=\"([^"]*)\|\|(' . $icon_type . ')\|\|(400|900)\"/mi' : '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"([^"]*)\|\|(' . $icon_type . ')\|\|(400|900)\"/mi';
 	}
 endif;
 
@@ -436,13 +479,15 @@ if ( ! function_exists( 'et_pb_check_if_post_contains_divi_font_icon' ) ) :
 	 * @since ?
 	 *
 	 * @param string $content post's content.
+	 * @param bool   $use_only_defined_icon_fields values will be searched only in certain fields that can contain icon values (see: `et_pb_get_font_icon_field_names()`).
 	 *
 	 * @return bool
 	 */
-	function et_pb_check_if_post_contains_divi_font_icon( $content ) {
+	function et_pb_check_if_post_contains_divi_font_icon( $content, $use_only_defined_icon_fields = false ) {
 		// Check the non-extended icon value.
-		$non_extended_icon_regex = '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"%%([^"]*)%%\"/mi';
-		return ! empty( preg_match_all( et_pb_get_font_icon_names_regex(), $content ) ) || ! empty( preg_match_all( $non_extended_icon_regex, $content ) );
+		$old_divi_icon_regex = ! $use_only_defined_icon_fields ? '/\=\"%%([^"]*)%%\"/mi' : '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"%%([^"]*)%%\"/mi';
+
+		return ! empty( preg_match_all( et_pb_get_font_icon_names_regex(), $content ) ) || ! empty( preg_match_all( $old_divi_icon_regex, $content ) );
 	}
 endif;
 

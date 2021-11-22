@@ -10,6 +10,8 @@
  * @since   3.29
  */
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class representing WooCommerce Breadcrumb component.
  */
@@ -25,10 +27,11 @@ class ET_Builder_Module_Woocommerce_Breadcrumb extends ET_Builder_Module {
 	 * Initialize.
 	 */
 	public function init() {
-		$this->name             = esc_html__( 'Woo Breadcrumb', 'et_builder' );
+		$this->name             = esc_html__( 'Woo Breadcrumbs', 'et_builder' );
 		$this->plural           = esc_html__( 'Woo Breadcrumbs', 'et_builder' );
 		$this->slug             = 'et_pb_wc_breadcrumb';
 		$this->vb_support       = 'on';
+		$this->folder_name      = 'et_pb_woo_modules';
 		$this->main_css_element = '%%order_class%% .woocommerce-breadcrumb';
 
 		$this->settings_modal_toggles = array(

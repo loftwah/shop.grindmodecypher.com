@@ -265,20 +265,29 @@ function et_core_get_main_fonts() {
 endif;
 
 
-if ( ! function_exists( 'et_core_get_theme_info' ) ):
-function et_core_get_theme_info( $key ) {
-	static $theme_info = null;
+if ( ! function_exists( 'et_core_get_theme_info' ) ) :
+	/**
+	 * Gets Theme Info.
+	 *
+	 * Gets Parent theme's info even when child theme is used.
+	 *
+	 * @param string $key One of WP_Theme class public properties.
+	 *
+	 * @returns string
+	 */
+	function et_core_get_theme_info( $key ) {
+		static $theme_info = null;
 
-	if ( ! $theme_info ) {
-		$theme_info = wp_get_theme();
+		if ( ! $theme_info ) {
+			$theme_info = wp_get_theme();
 
-		if ( defined( 'STYLESHEETPATH' ) && is_child_theme() ) {
-			$theme_info = wp_get_theme( $theme_info->parent_theme );
+			if ( defined( 'STYLESHEETPATH' ) && is_child_theme() ) {
+				$theme_info = wp_get_theme( $theme_info->parent_theme );
+			}
 		}
-	}
 
-	return $theme_info->display( $key );
-}
+		return $theme_info->display( $key );
+	}
 endif;
 
 
@@ -875,7 +884,8 @@ if ( ! function_exists( 'et_requeue_child_theme_styles' ) ) :
 
 			foreach ( $styles->registered as $handle => $style ) {
 				if ( preg_match( '/' . $template_directory_uri . '.*/', $style->src ) ) {
-					et_core_replace_enqueued_style( $style->src, '', $theme_version, '', $style_dep, false );
+					$style_version = isset( $style->ver ) ? $style->ver : $theme_version;
+					et_core_replace_enqueued_style( $style->src, '', $style_version, '', $style_dep, false );
 				}
 			}
 		}

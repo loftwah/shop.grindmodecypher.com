@@ -241,6 +241,9 @@ class ET_Builder_Module_Field_MarginPadding extends ET_Builder_Module_Field_Base
 				'sub_toggle'      => $sub_toggle,
 				'priority'        => $config['priority'],
 			);
+			if ( isset( $config['depends_on'] ) && '' !== $config['depends_on'] ) {
+				$fields[ $custom_padding ]['depends_on'] = $config['depends_on'];
+			}
 			$fields[ $custom_padding_tablet ] = array(
 				'type'        => 'skip',
 				'tab_slug'    => $tab_slug,

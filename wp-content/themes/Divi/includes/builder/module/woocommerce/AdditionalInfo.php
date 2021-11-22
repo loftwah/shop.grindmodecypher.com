@@ -10,6 +10,8 @@
  * @since   3.29
  */
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class representing WooCommerce Additional Info component.
  */
@@ -20,10 +22,11 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 	 * @since 4.0.6 Implemented Attribute Row, Title and Body Custom CSS fields.
 	 */
 	public function init() {
-		$this->name       = esc_html__( 'Woo Additional Info', 'et_builder' );
-		$this->plural     = esc_html__( 'Woo Additional Info', 'et_builder' );
-		$this->slug       = 'et_pb_wc_additional_info';
-		$this->vb_support = 'on';
+		$this->name        = esc_html__( 'Woo Product Information', 'et_builder' );
+		$this->plural      = esc_html__( 'Woo Product Information', 'et_builder' );
+		$this->slug        = 'et_pb_wc_additional_info';
+		$this->vb_support  = 'on';
+		$this->folder_name = 'et_pb_woo_modules';
 
 		$this->settings_modal_toggles = array(
 			'general'  => array(
@@ -34,7 +37,7 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 			),
 			'advanced' => array(
 				'toggles' => array(
-					'text'   => array(
+					'text'       => array(
 						'title'             => et_builder_i18n( 'Text' ),
 						'priority'          => 45,
 						'tabbed_subtoggles' => true,
@@ -50,8 +53,20 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 							),
 						),
 					),
-					'header' => array(
+					'header'     => array(
 						'title' => esc_html__( 'Title Text', 'et_builder' ),
+					),
+					'table'      => array(
+						'title'    => esc_html__( 'Table', 'et_builder' ),
+						'priority' => 70,
+					),
+					'table_row'  => array(
+						'title'    => esc_html__( 'Table Row', 'et_builder' ),
+						'priority' => 75,
+					),
+					'table_cell' => array(
+						'title'    => esc_html__( 'Table Cell', 'et_builder' ),
+						'priority' => 80,
 					),
 				),
 			),
@@ -155,6 +170,211 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 				'default' => false,
 			),
 			'button'         => false,
+			'form_field'     => array(
+				'table'      => array(
+					'label'                  => esc_html__( 'Table', 'et_builder' ),
+					'css'                    => array(
+						'main' => '%%order_class%% table.shop_attributes',
+					),
+					'font_field'             => false,
+					'margin_padding'         => array(
+						'css'         => array(
+							'main' => '%%order_class%% table.shop_attributes',
+						),
+						'use_padding' => false,
+					),
+					'text_color'             => false,
+					'focus_background_color' => false,
+					'focus_text_color'       => false,
+					'border_styles'          => array(
+						'table'      => array(
+							'label_prefix'      => 'Table',
+							'css'               => array(
+								'main' => array(
+									'border_styles' => '%%order_class%% table.shop_attributes',
+									'border_radii'  => '%%order_class%% table.shop_attributes',
+								),
+							),
+							'use_focus_borders' => false,
+							'defaults'          => array(
+								'border_radii'  => 'on|0px|0px|0px|0px',
+								'border_styles' => array(
+									'width' => '0px',
+									'style' => 'dotted',
+								),
+								'composite'     => array(
+									'border_top' => array(
+										'border_width_top' => '1px',
+									),
+								),
+							),
+						),
+						'box_shadow' => array(
+							'css' => array(
+								'main' => '%%order_class%% table.shop_attributes',
+							),
+						),
+					),
+					'table_row'              => array(
+						'label'                  => esc_html__( 'Table Row', 'et_builder' ),
+						'css'                    => array(
+							'main' => '%%order_class%% table.shop_attributes tr',
+						),
+						'font_field'             => false,
+						'margin_padding'         => array(
+							'css'        => array(
+								'main' => '%%order_class%% table.shop_attributes tr th, %%order_class%% table.shop_attributes tr td',
+							),
+							'use_margin' => false,
+						),
+						'text_color'             => false,
+						'focus_background_color' => false,
+						'focus_text_color'       => false,
+						'border_styles'          => array(
+							'table_row' => array(
+								'label_prefix'      => 'Table Row',
+								'css'               => array(
+									'main'      => array(
+										// Accepts only string and not array. Hence using `implode`.
+										'border_radii'  => implode(
+											', ',
+											array(
+												'%%order_class%% table.shop_attributes th',
+												'%%order_class%% table.shop_attributes td',
+											)
+										),
+										'border_styles' => implode(
+											', ',
+											array(
+												'%%order_class%% table.shop_attributes th',
+												'%%order_class%% table.shop_attributes td',
+											)
+										),
+									),
+									'important' => true,
+								),
+								'use_focus_borders' => false,
+								'defaults'          => array(
+									'border_radii'  => 'on|0px|0px|0px|0px',
+									'border_styles' => array(
+										'width' => '1px',
+										'style' => 'dotted',
+									),
+								),
+							),
+						),
+					),
+					'box_shadow'             => array(
+						'css' => array(
+							'main' => '%%order_class%% table.shop_attributes tr',
+						),
+					),
+				),
+				'table_row'  => array(
+					'label'                  => esc_html__( 'Table Row', 'et_builder' ),
+					'css'                    => array(
+						'main' => '%%order_class%% table.shop_attributes tr',
+					),
+					'font_field'             => false,
+					'margin_padding'         => array(
+						'css'        => array(
+							'main' => '%%order_class%% table.shop_attributes tr th, %%order_class%% table.shop_attributes tr td',
+						),
+						'use_margin' => false,
+					),
+					'text_color'             => false,
+					'focus_background_color' => false,
+					'focus_text_color'       => false,
+					'border_styles'          => array(
+						'table_row' => array(
+							'label_prefix'      => 'Table Row',
+							'css'               => array(
+								'main' => array(
+									// Accepts only string and not array. Hence using `implode`.
+									'border_radii'  => implode(
+										', ',
+										array(
+											'%%order_class%% table.shop_attributes th',
+											'%%order_class%% table.shop_attributes td',
+										)
+									),
+									'border_styles' => implode(
+										', ',
+										array(
+											'%%order_class%% table.shop_attributes th',
+											'%%order_class%% table.shop_attributes td',
+										)
+									),
+								),
+							),
+							'use_focus_borders' => false,
+							'defaults'          => array(
+								'border_radii'  => 'on|0px|0px|0px|0px',
+								'border_styles' => array(
+									'width' => '1px',
+									'style' => 'dotted',
+								),
+							),
+						),
+					),
+					'box_shadow'             => array(
+						'css' => array(
+							'main' => '%%order_class%% table.shop_attributes tr',
+						),
+					),
+				),
+				'table_cell' => array(
+					'label'                  => esc_html__( 'Table Cell', 'et_builder' ),
+					'css'                    => array(
+						'main' => '%%order_class%% table.shop_attributes tr th, %%order_class%% table.shop_attributes tr td',
+					),
+					'font_field'             => false,
+					'margin_padding'         => array(
+						'css'        => array(
+							'main' => implode(
+								', ',
+								array(
+									'%%order_class%% table.shop_attributes tr th',
+									'%%order_class%% table.shop_attributes tr td',
+								)
+							),
+						),
+						'use_margin' => false,
+					),
+					'text_color'             => false,
+					'focus_background_color' => false,
+					'focus_text_color'       => false,
+					'border_styles'          => array(
+						'table_cell' => array(
+							'label_prefix'      => 'Table Cell',
+							'css'               => array(
+								'main' => array(
+									'border_styles' => '%%order_class%% table.shop_attributes tr th,%%order_class%% table.shop_attributes tr td',
+									'border_radii'  => '%%order_class%% table.shop_attributes tr th, %%order_class%% table.shop_attributes tr td',
+								),
+							),
+							'use_focus_borders' => false,
+							'defaults'          => array(
+								'border_radii'  => 'on|0px|0px|0px|0px',
+								'border_styles' => array(
+									'width' => '1px',
+									'style' => 'dotted',
+								),
+								'composite'     => array(
+									'border_top' => array(
+										'border_width_top' => '1px',
+									),
+								),
+							),
+						),
+					),
+					'box_shadow'             => array(
+						'css' => array(
+							'main' => '%%order_class%% table.shop_attributes tr th, %%order_class%% table.shop_attributes td',
+						),
+					),
+				),
+			),
 		);
 
 		$this->custom_css_fields = array(
@@ -331,6 +551,24 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 		$this->add_classname( $this->get_text_orientation_classname() );
 
 		add_filter( "et_builder_module_{$render_slug}_outer_wrapper_attrs", array( $this, 'add_multi_view_attrs' ), 10, 2 );
+
+		$table_row_bg_color = et_()->array_get( $this->props, 'table_row_background_color', '' );
+
+		if ( ! empty( $table_row_bg_color ) ) {
+			ET_Builder_Element::set_style(
+				$render_slug,
+				array(
+					'selector'    => implode(
+						',',
+						array(
+							'%%order_class%% table.shop_attributes tr:nth-child(even) th',
+							'%%order_class%% table.shop_attributes tr:nth-child(even) td',
+						)
+					),
+					'declaration' => 'background: inherit',
+				)
+			);
+		}
 
 		$output = self::get_additional_info( $this->props );
 
