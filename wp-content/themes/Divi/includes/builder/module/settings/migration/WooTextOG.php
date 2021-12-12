@@ -4,7 +4,7 @@
  *
  * Contains Woo Notice and Woo Add to cart modules migrations.
  *
- * @since ??
+ * @since 4.14.0
  * @package Divi
  */
 

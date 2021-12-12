@@ -27,7 +27,9 @@ trait DateTimeCondition {
 	 * @return boolean Condition output.
 	 */
 	protected function _process_date_time_condition( $condition_settings ) {
-		$display_rule                   = isset( $condition_settings['dateTimeDisplay'] ) ? $condition_settings['dateTimeDisplay'] : 'isAfter';
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule            = isset( $condition_settings['dateTimeDisplay'] ) ? $condition_settings['dateTimeDisplay'] : 'isAfter';
+		$display_rule                   = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
 		$date                           = isset( $condition_settings['date'] ) ? $condition_settings['date'] : '';
 		$time                           = isset( $condition_settings['time'] ) ? $condition_settings['time'] : '';
 		$all_day                        = isset( $condition_settings['allDay'] ) ? $condition_settings['allDay'] : '';
@@ -132,6 +134,9 @@ trait DateTimeCondition {
 	 * @return boolean          Condition repetition result.
 	 */
 	protected function _is_datetime_condition_repeated( $condition_settings, $is_on_specific_date, $current_datetime, $target_datetime ) {
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule            = isset( $condition_settings['dateTimeDisplay'] ) ? $condition_settings['dateTimeDisplay'] : 'isAfter';
+		$display_rule                   = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
 		$repeat                         = isset( $condition_settings['repeat'] ) ? $condition_settings['repeat'] : '';
 		$repeat_frequency               = isset( $condition_settings['repeatFrequency'] ) ? $condition_settings['repeatFrequency'] : '';
 		$repeat_frequency_specific_days = isset( $condition_settings['repeatFrequencySpecificDays'] ) ? $condition_settings['repeatFrequencySpecificDays'] : '';
@@ -142,7 +147,7 @@ trait DateTimeCondition {
 		$from_time                      = isset( $condition_settings['fromTime'] ) ? $condition_settings['fromTime'] : '';
 		$until_time                     = isset( $condition_settings['untilTime'] ) ? $condition_settings['untilTime'] : '';
 		$is_repeated                    = false;
-		$is_on_specific_days            = 'isOnSpecificDays' === $condition_settings['dateTimeDisplay'];
+		$is_on_specific_days            = 'isOnSpecificDays' === $display_rule;
 
 		if ( $is_on_specific_days || ( 'on' === $repeat && ! $is_on_specific_date ) ) {
 			if ( $is_on_specific_days ) {

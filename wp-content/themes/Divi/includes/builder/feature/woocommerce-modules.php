@@ -30,7 +30,7 @@ if ( ! defined( 'ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY' ) ) {
  *
  * @param string $shortcode Post content. Builder converts empty string to shortcode string.
  *
- * @since ??
+ * @since 4.14.0
  *
  * @return bool
  */
@@ -57,7 +57,7 @@ function et_builder_wc_should_replace_content( $shortcode ) {
 /**
  * Stop redirecting to Cart page when enabling builder on Checkout page.
  *
- * @since ??
+ * @since 4.14.0
  *
  * @link https://github.com/elegantthemes/Divi/issues/23873
  *
@@ -95,7 +95,7 @@ function et_builder_stop_cart_redirect_while_enabling_builder( $flag ) {
  *
  * So styling the Notice becomes easier.
  *
- * @since ??
+ * @since 4.14.0
  *
  * @return string
  */
@@ -139,7 +139,7 @@ function et_builder_woocommerce_shipping_calculator( $button_text = '' ) {
 /**
  * Gets the Checkout modules notice to be displayed on non-checkout pages.
  *
- * @since ??
+ * @since 4.14.0
  *
  * @used-by et_fb_get_static_backend_helpers()
  *
@@ -152,7 +152,7 @@ function et_builder_wc_get_non_checkout_page_notice() {
 /**
  * Gets the Checkout notice to be displayed on Checkout Payment Info module.
  *
- * @since ??
+ * @since 4.14.0
  *
  * @param string $woocommerce_ship_to_destination Default `shipping`.
  *
@@ -183,7 +183,7 @@ function et_builder_wc_get_checkout_notice( $woocommerce_ship_to_destination = '
  *
  * Divi Builder stops redirection only for logged-in admins.
  *
- * @since ??
+ * @since 4.14.0
  */
 function et_builder_wc_template_redirect() {
 	$checkout_page_id = wc_get_page_id( 'checkout' );
@@ -223,7 +223,7 @@ function et_builder_wc_template_redirect() {
  *
  * @link https://github.com/elegantthemes/Divi/issues/16420
  *
- * @since ??
+ * @since 4.14.0
  *
  * @param int $post_id Post ID.
  */
@@ -268,7 +268,7 @@ function et_builder_wc_set_page_content_status( $post_id ) {
 /**
  * Gets the prefilled Cart Page content built using Divi Woo Modules.
  *
- * @since ??
+ * @since 4.14.0
  *
  * @return string
  */
@@ -304,7 +304,7 @@ function et_builder_wc_get_prefilled_cart_page_content() {
 /**
  * Gets the prefilled Checkout Page content built using Divi Woo Modules.
  *
- * @since ??
+ * @since 4.14.0
  * @return string
  */
 function et_builder_wc_get_prefilled_checkout_page_content() {
@@ -437,7 +437,7 @@ function et_builder_wc_set_prefilled_page_content( $maybe_shortcode_content, $po
 /**
  * Returning <img> string for default image placeholder
  *
- * @since ?? Added $mode param.
+ * @since 4.14.0 Added $mode param.
  * @since 4.0.10
  *
  * @param string $mode Default ET_BUILDER_PLACEHOLDER_LANDSCAPE_IMAGE_DATA. Either Landscape or
@@ -808,7 +808,7 @@ function et_builder_wc_need_overwrite_global( $product_id = 'current' ) {
 /**
  * Gets the Product ID.
  *
- * @since ??
+ * @since 4.14.0
  *
  * @param array $args Module props.
  *
@@ -1545,7 +1545,7 @@ function et_builder_wc_add_outer_content_class( $classes ) {
  *
  * They are 1) On WP Admin Publish/Update post 2) On VB Save.
  *
- * @since ?? Remove ET_BUILDER_WC_PRODUCT_PAGE_LAYOUT_META_KEY meta key on non-product post types.
+ * @since 4.14.0 Remove ET_BUILDER_WC_PRODUCT_PAGE_LAYOUT_META_KEY meta key on non-product post types.
  *           Also move `since` section above `param` section.
  * @since 3.29
  *
@@ -1739,7 +1739,7 @@ function et_builder_wc_parse_description( $description ) {
  *
  * @link https://github.com/elegantthemes/Divi/issues/22477
  *
- * @since ??
+ * @since 4.14.0
  *
  * @param WP_Post $post Post Object.
  */

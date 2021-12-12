@@ -7,7 +7,7 @@
  *
  * @package Divi\Builder
  *
- * @since   ??
+ * @since 4.14.0
  */
 
 defined( 'ABSPATH' ) || exit;

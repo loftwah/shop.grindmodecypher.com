@@ -31,8 +31,9 @@ trait TagPageCondition {
 			return false;
 		}
 
-		// Get condition's settings.
-		$display_rule            = isset( $condition_settings['tagPageDisplay'] ) ? $condition_settings['tagPageDisplay'] : 'is';
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule     = isset( $condition_settings['tagPageDisplay'] ) ? $condition_settings['tagPageDisplay'] : 'is';
+		$display_rule            = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
 		$tags_raw                = isset( $condition_settings['tags'] ) ? $condition_settings['tags'] : [];
 		$queried_object          = get_queried_object();
 		$is_queried_object_valid = $queried_object instanceof \WP_Term && property_exists( $queried_object, 'taxonomy' );

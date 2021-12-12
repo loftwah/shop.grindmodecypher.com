@@ -7,7 +7,7 @@
  *
  * @package Divi\Builder
  *
- * @since   ??
+ * @since 4.14.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,7 +20,7 @@ class ET_Builder_Module_Woocommerce_Checkout_Billing extends ET_Builder_Module {
 	/**
 	 * Initialize.
 	 *
-	 * @since ?? Fixed PHP Warnings {@link https://github.com/elegantthemes/Divi/issues/22104}
+	 * @since 4.14.0 Fixed PHP Warnings {@link https://github.com/elegantthemes/Divi/issues/22104}
 	 */
 	public function init() {
 		$this->name        = esc_html__( 'Woo Checkout Billing', 'et_builder' );

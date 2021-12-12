@@ -31,8 +31,9 @@ trait TagsCondition {
 			return false;
 		}
 
-		// Get condition's settings.
-		$display_rule                 = isset( $condition_settings['tagsDisplay'] ) ? $condition_settings['tagsDisplay'] : 'is';
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule          = isset( $condition_settings['tagsDisplay'] ) ? $condition_settings['tagsDisplay'] : 'is';
+		$display_rule                 = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
 		$tags_raw                     = isset( $condition_settings['tags'] ) ? $condition_settings['tags'] : [];
 		$tags                         = array_map(
 			function( $item ) {

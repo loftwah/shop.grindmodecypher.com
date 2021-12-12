@@ -25,7 +25,9 @@ trait CookieCondition {
 	 * @return boolean Condition output.
 	 */
 	protected function _process_cookie_condition( $condition_settings ) {
-		$display_rule           = isset( $condition_settings['cookieDisplay'] ) ? $condition_settings['cookieDisplay'] : 'cookieExists';
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule    = isset( $condition_settings['cookieDisplay'] ) ? $condition_settings['cookieDisplay'] : 'cookieExists';
+		$display_rule           = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
 		$cookie_name            = isset( $condition_settings['cookieName'] ) ? $condition_settings['cookieName'] : '';
 		$cookie_value           = isset( $condition_settings['cookieValue'] ) ? $condition_settings['cookieValue'] : '';
 		$is_cookie_set          = ( isset( $_COOKIE[ $cookie_name ] ) ) ? true : false;

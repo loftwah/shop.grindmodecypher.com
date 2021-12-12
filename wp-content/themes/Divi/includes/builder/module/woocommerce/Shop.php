@@ -663,7 +663,7 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 	/**
 	 * Appends offset to the WP_Query that retrieves Products.
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 *
 	 * @param array $query_args Query args.
 	 *

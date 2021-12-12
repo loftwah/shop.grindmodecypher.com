@@ -267,7 +267,7 @@ class ET_Builder_Module_Icon extends ET_Builder_Module {
 	 *
 	 * @return string
 	 */
-	public function render( $attrs, $content = null, $render_slug ) {
+	public function render( $attrs, $content, $render_slug ) {
 		$multi_view       = et_pb_multi_view_options( $this );
 		$title_text       = $this->props['title_text'];
 		$url              = $this->props['url'];

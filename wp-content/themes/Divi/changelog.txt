@@ -1,3 +1,76 @@
+version 4.14.2 ( updated 11-30-2021 )
+- Fixed issue with Divi activation upon editing Divi Layout Block in Gutenberg.
+- Fixed the margin applying for the icon with the left placement in the Blurb module.
+- Fixed delayed editor switching from GB to VB when activating VB by replacing waitForSave() that is based on@wordpress/data's subscribe() with evaluating state and props change that is already passed by Higher Order Component from store's state.
+- Fixed break in gallery module tablet layout when item titles have different lengths.
+- Added wrapper to expanded icon picker styles.
+- Fixed Text alignment option not working on front-end pages.
+- Fixed padding setting for modules that have buttons (including the Button module) and set an button's icon.
+- Fixed issue that renders invisible text in Gutenberg editor.
+- Fixed center text alignment not working for the Person module.
+- Fixed console error caused by invalid srcset attributes in SVG images when "Enable Responsive Images" option is on.
+- Improved Display Conditions technical implementation for rendering Tooltip contents.
+- Fixed tablet/mobile (auto) width not reflecting in VB when width is assigned in responsive view for desktop only.
+- Fixed the Fields default border radius value for Cart Totals and Cart Products modules.
+- Fixed PHP 8 deprecation warning on Icon module.
+- Fixed error when accessing background image of button module.
+- Improved display of Divi icons when Dynamic Assets is turning on.
+- Added loading of the Icon Modules styles on FE.
+- Fixed some layout export errors in PHP 8.
+- Fixed hidden sections dots appearing in page dot navigation.
+- Fixed Default white link color in Footer Widgets set from Theme Customizer was not working.
+	* core/components/Portability.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/gutenberg/EditorTypography.php
+	* includes/builder/feature/icon-manager/ExtendedFontIcons.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/i18n/display-conditions.php
+	* includes/builder/functions.php
+	* includes/builder/module/Icon.php
+	* includes/builder/module/field/display-conditions/Author.php
+	* includes/builder/module/field/display-conditions/Browser.php
+	* includes/builder/module/field/display-conditions/CartContents.php
+	* includes/builder/module/field/display-conditions/Categories.php
+	* includes/builder/module/field/display-conditions/CategoryPage.php
+	* includes/builder/module/field/display-conditions/Cookie.php
+	* includes/builder/module/field/display-conditions/DateArchive.php
+	* includes/builder/module/field/display-conditions/DateTime.php
+	* includes/builder/module/field/display-conditions/DynamicPosts.php
+	* includes/builder/module/field/display-conditions/LoggedInStatus.php
+	* includes/builder/module/field/display-conditions/OperatingSystem.php
+	* includes/builder/module/field/display-conditions/PageVisit.php
+	* includes/builder/module/field/display-conditions/PostType.php
+	* includes/builder/module/field/display-conditions/ProductPurchase.php
+	* includes/builder/module/field/display-conditions/SearchResults.php
+	* includes/builder/module/field/display-conditions/TagPage.php
+	* includes/builder/module/field/display-conditions/Tags.php
+	* includes/builder/module/field/display-conditions/UserRole.php
+	* includes/builder/module/woocommerce/CartProducts.php
+	* includes/builder/module/woocommerce/CartTotals.php
+	* js/src/custom-dynamic.js
+	* js/src/custom.js
+
+version 4.14.1 ( updated 11-23-2021 )
+- Fixed broken styles in the Divi Builder Plugin due to missing content wrapper.
+- Fixed et_get_first_section console error.
+- Fixed validation when Country, whose state isn't pre-defined, is selected during Checkout.
+- Fixed issue affecting Checkout when using Divi modules as well as the default WooCommerce checkout shortcode.
+- Fixed "no available payment" warning showing twice.
+- Fixed broken shipping fields on Checkout page when WooCommerce shortcode within Text module.
+- Fixed a bug that caused generated file lock files to not delete when they should have, during the creation of dynamic css files.
+- Fixed PHP error occurring when the WP Rest API is used fetch posts which include a WC Cart Notice module in their content.
+- Fixed hidden quantity text in the quantity field on WooCommerce product pages.
+- Fixed static CSS cache clearing not working on Windows.
+	* core/components/cache/Directory.php
+	* includes/builder/core.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/woocommerce/CartNotice.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/woocommerce-modules.js
+	* includes/builder/scripts/src/builder.js
+	* js/src/custom.js
+
 version 4.14 ( updated 11-22-2021 )
 - Introduced 8 new Divi WooCommerce modules, including the ability to customize your WooCommerce cart and checkout pages.
 - An additional conversion of icons values created in previous Divi versions for 3p modules was added.

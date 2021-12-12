@@ -71,6 +71,12 @@ if ( isset( $args['yith_wc_email'] ) && isset( $args['yith_wc_email']->id ) && !
 	if ( 'emails/waitlist-new-signup.php' == $template_name ) {
 		$template = 'woocommerce_waitlist_signup_email';
 	}
+	if ( 'emails/dokan-admin-new-booking.php' == $template_name ) {
+		$template = 'Dokan_Email_Booking_New';
+	}
+	if ( 'emails/dokan-customer-booking-cancelled.php' == $template_name ) {
+		$template = 'Dokan_Email_Booking_Cancelled_NEW';
+	}
 }
 if ( isset( $args['email'] ) && isset( $args['email']->id ) && false !== strpos( get_class( $args['email'] ), 'ORDDD_Email_Delivery_Reminder' ) ) {
 	$template .= '_customer';

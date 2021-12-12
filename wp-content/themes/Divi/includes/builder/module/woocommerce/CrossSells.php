@@ -5,7 +5,7 @@
  * The ET_Builder_Module_Woocommerce_Cross_Sells Class is responsible for rendering the
  * Cross sells using the WooCommerce template.
  *
- * @since   ??
+ * @since 4.14.0
  * @package Divi\Builder
  */
 
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class representing WooCommerce Cart Upsells component.
  *
- * @since ??
+ * @since 4.14.0
  */
 class ET_Builder_Module_Woocommerce_Cross_Sells extends ET_Builder_Module {
 

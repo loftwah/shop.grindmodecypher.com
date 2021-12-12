@@ -30,7 +30,8 @@ trait AuthorCondition {
 			return false;
 		}
 
-		$display_rule           = isset( $condition_settings['authorDisplay'] ) ? $condition_settings['authorDisplay'] : '';
+		$legacy_display_rule    = isset( $condition_settings['authorDisplay'] ) ? $condition_settings['authorDisplay'] : 'is';
+		$display_rule           = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
 		$authors_raw            = isset( $condition_settings['authors'] ) ? $condition_settings['authors'] : [];
 		$authors_ids            = array_map(
 			function( $item ) {

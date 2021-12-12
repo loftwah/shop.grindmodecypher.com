@@ -11,67 +11,59 @@ msgstr ""
 msgid "Stripe Credit Card payment method"
 msgstr ""
 
-#: client/data/payment-gateway/actions.js:45
-#: client/data/settings/actions.js:49
-msgid "Settings saved."
+#: client/components/payment-method-fees-pill/index.js:20
+#. %s: Transaction fee text.
+msgid "Base transaction fees: %s"
 msgstr ""
 
-#: client/data/payment-gateway/actions.js:50
-#: client/data/settings/actions.js:54
-msgid "Error saving settings."
+#: client/components/payment-method-missing-currency-pill/index.js:27
+#. $1: a payment method name. %2: Currency(ies).
+msgid "%1$s won't be visible to your customers until you add %2$s to your store."
+msgid_plural ""
+"%1$s won't be visible to your customers until you add one of these "
+"currencies to your store: %2$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: client/components/payment-method-missing-currency-pill/index.js:38
+msgid "Requires currency"
 msgstr ""
 
-#: client/settings/advanced-settings-section/index.js:18
-msgid "Advanced settings"
+#: client/data/account/actions.js:33
+msgid "Error updating account data."
 msgstr ""
 
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:100
-msgid "Disable the new payments experience"
+#: client/settings/connect-stripe-account/index.js:104
+msgid "Create or connect an account"
 msgstr ""
 
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:114
-#: client/settings/general-settings-section/remove-method-confirmation-modal.js:42
-#: client/settings/payments-and-transactions-section/manual-capture-control.js:90
-msgid "Cancel"
+#: client/settings/connect-stripe-account/index.js:117
+msgid "Enter account keys (advanced)"
 msgstr ""
 
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:123
-msgid "Disable"
+#: client/settings/connect-stripe-account/index.js:121
+msgid "Enter account keys"
 msgstr ""
 
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:129
+#: client/settings/connect-stripe-account/index.js:69
+msgid "Get started with Stripe"
+msgstr ""
+
+#: client/settings/connect-stripe-account/index.js:75
 msgid ""
-"Without the new payments experience, your customers will only be able to "
-"pay using credit card / debit card. You will not be able to add other "
-"sales-boosting payment methods anymore."
+"Connect or create a Stripe account to accept payments directly onsite, "
+"including Payment Request buttons (such as Apple Pay and Google Pay), "
+"iDeal, SEPA, Sofort, and more international payment methods."
 msgstr ""
 
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:138
-msgid "Payment methods that require the new payments experience:"
+#: client/settings/connect-stripe-account/index.js:84
+msgid ""
+"By clicking \"Create or connect an account\", you agree to the "
+"{{tosLink}}Terms of service.{{/tosLink}}"
 msgstr ""
 
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:165
-msgid "Need help? Visit {{ docsLink /}} or {{supportLink /}}."
-msgstr ""
-
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:172
-msgid "Stripe docs"
-msgstr ""
-
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:180
-msgid "contact support"
-msgstr ""
-
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:53
-msgid "🤔 What made you disable the new payments experience?"
-msgstr ""
-
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:60
-msgid "Share feedback (1 min)"
-msgstr ""
-
-#: client/settings/general-settings-section/disable-upe-confirmation-modal.js:73
-msgid "There was an error disabling the new payment methods."
+#: client/settings/general-settings-section/index.js:47
+msgid "Updating payment methods information, please wait."
 msgstr ""
 
 #: client/settings/general-settings-section/remove-method-confirmation-modal.js:14
@@ -90,68 +82,102 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+#: client/settings/general-settings-section/remove-method-confirmation-modal.js:42
+msgid "Cancel"
+msgstr ""
+
 #: client/settings/general-settings-section/remove-method-confirmation-modal.js:53
 msgid "You can add it again at any time in Stripe settings."
 msgstr ""
 
-#: client/settings/payments-and-transactions-section/manual-capture-control.js:102
-msgid "Are you sure you want to enable manual capture of payments?"
+#: client/settings/general-settings-section/section-heading.js:50
+msgid "Payment methods"
 msgstr ""
 
-#: client/settings/payments-and-transactions-section/manual-capture-control.js:109
-msgid ""
-"Only cards support manual capture. When enabled, all other payment methods "
-"will be hidden from checkout."
+#: client/settings/general-settings-section/section-heading.js:53
+msgid "Early access"
 msgstr ""
 
-#: client/settings/payments-and-transactions-section/manual-capture-control.js:115
-msgid ""
-"You must capture the payment on the order details screen within 7 days of "
-"authorization, otherwise the money will return to the shopper."
+#: client/settings/general-settings-section/section-heading.js:63
+msgid "Payment methods menu"
 msgstr ""
 
-#: client/settings/payments-and-transactions-section/manual-capture-control.js:71
-msgid "Issue an authorization on checkout, and capture later"
+#: client/settings/general-settings-section/section-heading.js:69
+msgid "Refresh payment methods"
 msgstr ""
 
-#: client/settings/payments-and-transactions-section/manual-capture-control.js:75
-msgid ""
-"Charge must be captured on the order details screen within 7 days of "
-"authorization, otherwise the authorization and order will be canceled."
+#: client/settings/general-settings-section/section-heading.js:76
+msgid "Disable"
 msgstr ""
 
-#: client/settings/payments-and-transactions-section/manual-capture-control.js:83
-msgid "Enable manual capture"
+#: client/settings/save-settings-section/index.js:23
+msgid "Save changes"
 msgstr ""
 
-#: client/settings/payments-and-transactions-section/manual-capture-control.js:96
-msgid "Enable"
+#: client/stripe-utils/utils.js:106
+msgid "Invalid email address, please correct and try again."
 msgstr ""
 
-#: client/upe-onboarding-wizard/upe-preview-methods-selector/add-payment-methods-task.js:136
-msgid "Add payment methods"
+#: client/stripe-utils/utils.js:111
+msgid "Unable to process this payment, please try again or use alternative method."
 msgstr ""
 
-#: client/upe-onboarding-wizard/upe-preview-methods-selector/add-payment-methods-task.js:168
-msgid "Review accepted payment methods"
+#: client/stripe-utils/utils.js:39
+msgid "The card number is not a valid credit card number."
 msgstr ""
 
-#: client/upe-onboarding-wizard/upe-preview-methods-selector/add-payment-methods-task.js:177
-msgid ""
-"We've added methods that you'd already enabled. For best results, we "
-"recommand adding all available payment methods. We'll only show your "
-"customers the most relevant payment methods based on their location and "
-"purchasing history. {{learnMoreLink}}Learn more{{/learnMoreLink}}"
+#: client/stripe-utils/utils.js:43
+msgid "The card expiration month is invalid."
 msgstr ""
 
-#: client/upe-onboarding-wizard/upe-preview-methods-selector/add-payment-methods-task.js:196
-msgid "Payments accepted at checkout"
+#: client/stripe-utils/utils.js:47
+msgid "The card expiration year is invalid."
 msgstr ""
 
-#: client/upe-onboarding-wizard/upe-preview-methods-selector/add-payment-methods-task.js:206
-msgid "Select all"
+#: client/stripe-utils/utils.js:51
+msgid "The card security code is invalid."
 msgstr ""
 
-#: client/upe-onboarding-wizard/upe-preview-methods-selector/payment-method-checkbox/index.js:36
-msgid "Information about the payment method, click to expand"
+#: client/stripe-utils/utils.js:55
+msgid "The card number is incorrect."
+msgstr ""
+
+#: client/stripe-utils/utils.js:59
+msgid "The card number is incomplete."
+msgstr ""
+
+#: client/stripe-utils/utils.js:63
+msgid "The card security code is incomplete."
+msgstr ""
+
+#: client/stripe-utils/utils.js:67
+msgid "The card expiration date is incomplete."
+msgstr ""
+
+#: client/stripe-utils/utils.js:71
+msgid "The card has expired."
+msgstr ""
+
+#: client/stripe-utils/utils.js:75
+msgid "The card security code is incorrect."
+msgstr ""
+
+#: client/stripe-utils/utils.js:79
+msgid "The card zip code failed validation."
+msgstr ""
+
+#: client/stripe-utils/utils.js:83
+msgid "The card expiration year is in the past"
+msgstr ""
+
+#: client/stripe-utils/utils.js:87
+msgid "The card was declined."
+msgstr ""
+
+#: client/stripe-utils/utils.js:91
+msgid "There is no card on a customer that is being charged."
+msgstr ""
+
+#: client/stripe-utils/utils.js:95
+msgid "An error occurred while processing the card."
 msgstr ""

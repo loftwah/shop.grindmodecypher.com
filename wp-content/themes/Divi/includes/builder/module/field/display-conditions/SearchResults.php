@@ -30,7 +30,9 @@ trait SearchResultsCondition {
 			return false;
 		}
 
-		$display_rule                = isset( $condition_settings['searchResultsDisplay'] ) ? $condition_settings['searchResultsDisplay'] : 'is';
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule         = isset( $condition_settings['searchResultsDisplay'] ) ? $condition_settings['searchResultsDisplay'] : 'specificSearchQueries';
+		$display_rule                = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
 		$specific_search_queries_raw = isset( $condition_settings['specificSearchQueries'] ) ? $condition_settings['specificSearchQueries'] : '';
 		$excluded_search_queries_raw = isset( $condition_settings['excludedSearchQueries'] ) ? $condition_settings['excludedSearchQueries'] : '';
 		$specific_search_queries     = explode( ',', $specific_search_queries_raw );

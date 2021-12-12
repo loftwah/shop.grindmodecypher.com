@@ -1123,7 +1123,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Enable `woocommerce_before_checkout_form` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function attach_wc_before_checkout_form() {
 			add_action(
@@ -1136,7 +1136,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Enable `woocommerce_before_checkout_form` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function attach_wc_checkout_coupon_form() {
 			add_action(
@@ -1149,7 +1149,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Enable `woocommerce_before_checkout_form` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function attach_wc_checkout_login_form() {
 			add_action(
@@ -1162,7 +1162,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Remove `woocommerce_checkout_billing` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function detach_wc_checkout_billing() {
 			if ( ! function_exists( 'WC' ) ) {
@@ -1184,7 +1184,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Enable `woocommerce_checkout_billing` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function attach_wc_checkout_billing() {
 			if ( ! function_exists( 'WC' ) ) {
@@ -1203,7 +1203,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Remove `woocommerce_checkout_shipping` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function detach_wc_checkout_shipping() {
 			if ( ! function_exists( 'WC' ) ) {
@@ -1225,7 +1225,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Enable `woocommerce_checkout_shipping` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function attach_wc_checkout_shipping() {
 			if ( ! function_exists( 'WC' ) ) {
@@ -1247,7 +1247,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Remove `woocommerce_checkout_order_review` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function detach_wc_checkout_payment() {
 			remove_action(
@@ -1260,7 +1260,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Enable `woocommerce_checkout_order_review` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function attach_wc_checkout_payment() {
 			add_action(
@@ -1287,7 +1287,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Enable `woocommerce_checkout_order_review` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function attach_wc_checkout_order_review() {
 			add_action( 'woocommerce_checkout_order_review', 'woocommerce_order_review', 10 );
@@ -1296,7 +1296,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Remove `woocommerce_cart_collaterals` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function detach_wc_cart_totals() {
 			remove_action(
@@ -1309,7 +1309,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Enable `woocommerce_cart_collaterals` hook.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function attach_wc_cart_totals() {
 			add_action( 'woocommerce_cart_collaterals', 'woocommerce_cart_totals', 10 );
@@ -1391,7 +1391,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		 * @param array $cart_contents Cart contents.
 		 *
 		 * @return array
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		public static function set_dummy_cart_contents( $cart_contents ) {
 			if ( ! is_array( $cart_contents ) ) {
@@ -1454,7 +1454,7 @@ if ( et_is_woocommerce_plugin_active() ) {
 		/**
 		 * Get the Page Type default based on the Cart & Checkout pages.
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 *
 		 * @return string
 		 */

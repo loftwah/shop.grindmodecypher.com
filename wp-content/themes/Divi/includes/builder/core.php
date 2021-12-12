@@ -6539,7 +6539,7 @@ function et_builder_add_builder_content_wrapper( $content ) {
 	 *
 	 * @param bool $wrap
 	 */
-	$wrap = apply_filters( 'et_builder_add_outer_content_wrap', et_core_is_fb_enabled() );
+	$wrap = apply_filters( 'et_builder_add_outer_content_wrap', true );
 
 	if ( $wrap ) {
 		$content = et_builder_get_builder_content_opening_wrapper() . $content . et_builder_get_builder_content_closing_wrapper();

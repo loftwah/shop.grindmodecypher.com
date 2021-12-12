@@ -7,7 +7,7 @@
  *
  * @package Divi\Builder
  *
- * @since   ??
+ * @since 4.14.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -538,9 +538,6 @@ class ET_Builder_Module_Woocommerce_Checkout_Payment_Info extends ET_Builder_Mod
 		ET_Builder_Module_Helper_Woocommerce_Modules::attach_wc_checkout_billing();
 		ET_Builder_Module_Helper_Woocommerce_Modules::attach_wc_checkout_shipping();
 		ET_Builder_Module_Helper_Woocommerce_Modules::attach_wc_checkout_order_review();
-
-		$class = 'ET_Builder_Module_Woocommerce_Checkout_Payment_Info';
-		remove_filter( 'wc_get_template', array( $class, 'swap_template' ) );
 	}
 
 	/**
@@ -552,30 +549,23 @@ class ET_Builder_Module_Woocommerce_Checkout_Payment_Info extends ET_Builder_Mod
 		ET_Builder_Module_Helper_Woocommerce_Modules::detach_wc_checkout_billing();
 		ET_Builder_Module_Helper_Woocommerce_Modules::detach_wc_checkout_shipping();
 		ET_Builder_Module_Helper_Woocommerce_Modules::detach_wc_checkout_order_review();
-
-		$class = 'ET_Builder_Module_Woocommerce_Checkout_Payment_Info';
-		add_filter(
-			'wc_get_template',
-			array(
-				$class,
-				// phpcs:ignore WordPress.Arrays.CommaAfterArrayItem.NoComma -- Call to a function.
-				'swap_template'
-			),
-			10,
-			5
-		);
 	}
 
 	/**
 	 * Gets the Checkout Payment info markup.
 	 *
+	 * @param array $args             Additional arguments.
+	 * @param array $conditional_tags Array of conditional tags.
+	 *
 	 * @return string
 	 */
-	public static function get_checkout_payment_info() {
+	public static function get_checkout_payment_info( $args = array(), $conditional_tags = array() ) {
 		if ( ! class_exists( 'WC_Shortcode_Checkout' )
 			|| ! method_exists( 'WC_Shortcode_Checkout', 'output' ) ) {
 			return '';
 		}
+
+		$is_tb = et_()->array_get( $conditional_tags, 'is_tb', false );
 
 		self::maybe_handle_hooks();
 
@@ -591,9 +581,41 @@ class ET_Builder_Module_Woocommerce_Checkout_Payment_Info extends ET_Builder_Mod
 			);
 		}
 
+		if ( et_fb_is_computed_callback_ajax() || $is_tb ) {
+			/*
+			 * Show Login form in VB.
+			 *
+			 * The swapped login form will display irrespective of the user logged-in status.
+			 *
+			 * Previously swapped template (FE) will only display the form when
+			 * a user is not logged-in. Hence we use a different template in VB.
+			 */
+			add_filter(
+				'wc_get_template',
+				[
+					'ET_Builder_Module_Woocommerce_Checkout_Payment_Info',
+					'swap_template',
+				],
+				10,
+				5
+			);
+		}
+
 		ob_start();
 		WC_Shortcode_Checkout::output( array() );
 		$markup = ob_get_clean();
+
+		if ( et_fb_is_computed_callback_ajax() || $is_tb ) {
+			remove_filter(
+				'wc_get_template',
+				[
+					'ET_Builder_Module_Woocommerce_Checkout_Payment_Info',
+					'swap_template',
+				],
+				10,
+				5
+			);
+		}
 
 		if ( $is_cart_empty && $is_pb_mode ) {
 			remove_filter(
@@ -626,7 +648,7 @@ class ET_Builder_Module_Woocommerce_Checkout_Payment_Info extends ET_Builder_Mod
 		// Module classname.
 		$this->add_classname( $this->get_text_orientation_classname() );
 
-		$output = self::get_checkout_payment_info();
+		$output = self::get_checkout_payment_info( $attrs );
 
 		return $this->_render_module_wrapper( $output, $render_slug );
 	}

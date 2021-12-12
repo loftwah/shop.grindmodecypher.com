@@ -283,7 +283,7 @@ class ET_Builder_Ajax_Cache {
 		 *
 		 * @see GlobalHistoryMigrationTest
 		 *
-		 * @since ??
+		 * @since 4.14.0
 		 */
 		return apply_filters( 'et_builder_ajax_cache_instance', self::$_instance );
 	}

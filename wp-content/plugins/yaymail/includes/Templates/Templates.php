@@ -57,6 +57,12 @@ class Templates {
 				array_slice( $listEmails, $customer_shipment_position )
 			);
 		}
+		if ( class_exists( 'AW_Referrals_Plugin_Data' ) && ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) || is_plugin_active( 'email-customizer-automatewoo/yaymail-automatewoo.php' ) ) ) {
+			$referrals_email        = new stdClass();
+			$referrals_email->id    = 'AutomateWoo_Referrals_Email';
+			$referrals_email->title = __( 'AutomateWoo Referrals Email', 'yaymail' );
+			$listEmails             = array_merge( $listEmails, array( 'AutomateWoo_Referrals_Email' => $referrals_email ) );
+		}
 		$listEmails            = apply_filters( 'YaymailCreateFollowUpTemplates', $listEmails );
 		$listEmails            = apply_filters( 'YaymailCreateAutomateWooTemplates', $listEmails );
 		$listEmails            = apply_filters( 'YaymailCreateTrackShipWooTemplates', $listEmails );

@@ -1639,6 +1639,10 @@ class ET_Core_Portability {
 	 * @return array
 	 */
 	protected function get_data_images( $data, $force = false ) {
+		if ( empty( $data ) ) {
+			return array();
+		}
+
 		$images     = array();
 		$images_src = array();
 		$basenames  = array(
@@ -1663,8 +1667,19 @@ class ET_Core_Portability {
 		}
 
 		foreach ( $data as $value ) {
-			if ( is_array( $value ) || is_object( $value ) ) {
-				$images = array_merge( $images, $this->get_data_images( (array) $value ) );
+			// If the $value is an object, but not a Post object then it's unlikely to contain any image data.
+			if ( is_object( $value ) && ! $value instanceof WP_Post ) {
+				continue;
+			}
+
+			if ( is_array( $value ) ) {
+				$images = array_merge( $images, $this->get_data_images( $value ) );
+				$value  = implode( '|', $value );
+			} elseif ( $value instanceof WP_Post ) {
+				// If the $value is a Post object, we need only the post content.
+				$value  = (array) $value->post_content;
+				$images = array_merge( $images, $this->get_data_images( $value ) );
+				$value  = implode( '|', $value );
 			}
 
 			// Extract images from HTML or shortcodes.

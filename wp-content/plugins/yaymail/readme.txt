@@ -7,32 +7,32 @@ Stable tag: 2.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Beautify your emails and make customers come back for more
+Customize WooCommerce email templates with live preview & drag and drop email builder
 
 
 == Description ==
 
-**Customize WooCommerce email templates with live preview & drag and drop email builder**
+**The best WooCommerce Email Customizer with custom blocks and HTML elements**
 
-[YAYMAIL PRO](https://yaycommerce.com/yaymail-woocommerce-email-customizer/) | [YAYMAIL ADDONS](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-subscriptions) | [DOCS](https://docs.yaycommerce.com/yaymail/getting-started/introduction)
+[DOCS](https://docs.yaycommerce.com/yaymail/getting-started/introduction) | [YAYMAIL PRO](https://yaycommerce.com/yaymail-woocommerce-email-customizer/) | [YAYMAIL ADDONS](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-subscriptions)
 
-[youtube https://www.youtube.com/watch?v=Umc71EpfUsA]
+[youtube https://youtu.be/sfVwCGV5RBQ]
 
-YayMail is an **email template builder** for WooCommerce. When combined with [**YayMail Premium Addons**](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addons), you will unlock the visual email designer integration to go with 50+ third-party WooCommerce plugins.
+YayMail is a free **email template builder** for WooCommerce. When combined with [**YayMail Premium Addons**](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addons), you will unlock the visual email designer integration to go with 50+ third-party WooCommerce plugins.
 
 With YayMail, you can drag and drop elements to the email templates. Each element makes a block in the WooCommerce email editor. And it is very easy to edit content and design email layouts, just like how you do it with the Gutenberg editor or Elementor page builder.
 
-Exclusively, you can also personalize email content using WooCommerce conditional logic.
+Exclusively, you can also send personalized email templates using WooCommerce conditional logic.
 
 ###⚡️ FEATURES
 
-The YayMail free version comes with all the features listed below:
+The YayMail free version allows you to add unlimited elements to create html email template:
 
 **Drag and Drop Interface**
 Easy to navigate between the element sidebar and the preview area to customise email block elements.
 
 **Edit Everything**
-You can edit content and design of email header, email body, visual footer, signature, social follow module, and more.
+You can edit content, layout, and design of email header, email body, visual footer, signature, social follow module, and more.
 
 **Visual Email Editor**
 Design HTML email and live preview on the same screen. Apart from the full window view, you can take a look on desktop and mobile view.
@@ -43,19 +43,19 @@ You have a variety of placeholders for order details, customer details, billing 
 **Send Test Email**
 One-click to send a test email template to make sure it looks good on different email clients & devices.
 
-**Fully Customize 11 Woo Order Emails**
+**Fully Customize 11 WooCommerce Order Email Template**
 
 - New Order Email
 - Order Cancelled Email
 - Order Failed Email
-- Order On-Hold Email
-- Order Processing Email
-- Order Completed Email
-- Order Refunded Email
-- Customer Invoice Email
-- Customer Note Email
-- Customer New Account Email
-- Customer Reset Password Email
+- Order On-Hold Email: first order status or payment pending sent to customer
+- Order Processing Email: order confirmation email template sent to customer
+- Order Completed Email: order complete status with post-purchase interactions
+- Order Refunded Email: notify customer about order refund request
+- Customer Invoice Email: manually send personalized invoice to customer
+- Customer Note Email: manually send custom note and additional information to customer
+- Customer New Account Email: welcome email template for new customer
+- Customer Reset Password Email: password reset instructions and useful resources sent to customer
 
 ### YAYMAIL PRO
 
@@ -127,6 +127,8 @@ That said, if you're using one of the extensions below, you have to buy its YayM
 - License Manager for WooCommerce ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-license-manager-for-woo))
 - AliDropship for WooCommerce ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-alidropship))
 - TeraWallet for WooCommerce ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-alidropship))
+- WooCommerce MultiLocation Inventory & Order Routing ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-multiwarehouse-order-routing))
+- WCMp - Multivendor Marketplace for WooCommerce ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wcmp-marketplace))
 
 Happy Customizing! 💛 
 
@@ -167,6 +169,35 @@ Shhh, we offer one-time payment and unlimited sites packages, too! [Check it out
 3. A WC email template designed with YayMail
 
 == Changelog ==
+
+= Dec 10, 2021 - Version 2.7.8 =
+- Fixed: Shortcode [yaymail_customer_notes]
+- Fixed: Shortcode shipping phone
+- Fixed: Small bugs
+
+= Dec 3, 2021 - Version 2.7.7 =
+- Added: Shortcode shipping phone
+- Fixed: Class to customize CSS
+- Fixed: WooCommerce Subcriptions (template Customer Renewal Invoice can not send test)
+
+= Dec 1, 2021 - Version 2.7.6 =
+- Improved: License renewal link
+
+= Nov 30, 2021 - Version 2.7.5 =
+- Added: Annoucement on expired license.
+- Fixed: Check activation.
+
+= Nov 29, 2021 - Version 2.7.4 =
+- Added: Support WC Marketplace (Addon)
+- Fixed: Germanzied addon
+
+= Nov 22, 2021 - Version 2.7.3 =
+- Fixed: Germanized addon
+- Fixed: Conditional Logic addon 
+
+= Nov 18, 2021 - Version 2.7.2 =
+- Fixed: Bug addon Dokan
+- Updated: AutomateWoo Addon (supported AutomateWoo - Refer A Friend Addon)
 
 = Nov 17, 2021 - Version 2.7.1 =
 - Fixed: Optimize speed

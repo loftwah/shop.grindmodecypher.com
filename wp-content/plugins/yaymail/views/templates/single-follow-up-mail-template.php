@@ -26,7 +26,7 @@ $general_attrs        = array( 'tableWidth' => str_replace( 'px', '', $yaymail_s
 				h1{ font-family:inherit;text-shadow:unset;text-align:inherit;}
 				h2,h3{ font-family:inherit;color:inherit;text-align:inherit;}
 				<?php
-				if ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) ) {
+				if ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) || is_plugin_active( 'email-customizer-automatewoo/yaymail-automatewoo.php' ) ) {
 					if ( function_exists( 'aw_get_template' ) ) {
 						aw_get_template( 'email/styles.php' );
 					}

@@ -27,6 +27,7 @@ $get_order_item_totals_class = array(
 	'payment_method' => 'yaymail_item_payment_method_title',
 	'order_total'    => 'yaymail_item_total_title',
 	'refund_0'       => 'yaymail_item_fully_refunded',
+	'tax'            => 'yaymail_item_tax',
 );
 $borderColor                 = isset( $atts['bordercolor'] ) && $atts['bordercolor'] ? 'border-color:' . html_entity_decode( $atts['bordercolor'], ENT_QUOTES, 'UTF-8' ) : 'border-color:inherit';
 $textColor                   = isset( $atts['textcolor'] ) && $atts['textcolor'] ? 'color:' . html_entity_decode( $atts['textcolor'], ENT_QUOTES, 'UTF-8' ) : 'color:inherit';
@@ -71,20 +72,28 @@ $textColor                   = isset( $atts['textcolor'] ) && $atts['textcolor']
 			$i++;
 			?>
 
-		<tr>
-			<th class="td 
-			<?php
+		<tr class="<?php
 			if ( array_key_exists( $key, $get_order_item_totals_class ) ) {
 				if ( 'refund_0' == $key ) {
 					if ( __( 'Order fully refunded.', 'woocommerce' ) == $total['label'] ) {
-						echo esc_html( $get_order_item_totals_class[ $key ] );
+						echo esc_attr( $get_order_item_totals_class[ $key ] . '_row');
 					}
 				} else {
-					echo esc_html( $get_order_item_totals_class[ $key ] );
+					echo esc_attr( $get_order_item_totals_class[ $key ] . '_row');
 				}
 			}
-			?>
-			" scope="row" colspan="2" style="text-align:<?php echo esc_attr( $text_align ); ?>;vertical-align: middle;padding: 12px;font-size: 14px;border-width: 1px;border-style: solid;<?php echo esc_attr( $borderColor ); ?>; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
+			?>">
+			<th class="td <?php
+			if ( array_key_exists( $key, $get_order_item_totals_class ) ) {
+				if ( 'refund_0' == $key ) {
+					if ( __( 'Order fully refunded.', 'woocommerce' ) == $total['label'] ) {
+						echo esc_attr( $get_order_item_totals_class[ $key ] );
+					}
+				} else {
+					echo esc_attr( $get_order_item_totals_class[ $key ] );
+				}
+			}
+			?>" scope="row" colspan="2" style="text-align:<?php echo esc_attr( $text_align ); ?>;vertical-align: middle;padding: 12px;font-size: 14px;border-width: 1px;border-style: solid;<?php echo esc_attr( $borderColor ); ?>; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
 				<?php
 				if ( array_key_exists( $key, $get_order_item_totals ) ) {
 					if ( 'refund_0' == $key ) {

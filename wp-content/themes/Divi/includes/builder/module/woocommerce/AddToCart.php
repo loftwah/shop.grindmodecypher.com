@@ -423,7 +423,7 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 	/**
 	 * Replaces the Add to Cart form's action.
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 *
 	 * @param string $permalink Permalink.
 	 *
@@ -444,7 +444,7 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 	/**
 	 * Get add to cart markup as string
 	 *
-	 * @since ?? Update Add to Cart Form action {@see https://github.com/elegantthemes/Divi/issues/16682}
+	 * @since 4.14.0 Update Add to Cart Form action {@see https://github.com/elegantthemes/Divi/issues/16682}
 	 *
 	 * @since 4.4.0 Fixed compatibility w/ WooCommerce Product Add-ons
 	 * @see   https://github.com/elegantthemes/Divi/issues/19116

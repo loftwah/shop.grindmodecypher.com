@@ -19,7 +19,7 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 	/**
 	 * Initialize.
 	 *
-	 * @since ?? Fixed PHP Warnings
+	 * @since 4.14.0 Fixed PHP Warnings
 	 */
 	public function init() {
 		$this->name        = esc_html__( 'Woo Notice', 'et_builder' );
@@ -595,7 +595,7 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since ?? Dynamic defaults for Page Type & Placeholder color introduced.
+	 * @since 4.14.0 Dynamic defaults for Page Type & Placeholder color introduced.
 	 */
 	public function get_fields() {
 		if ( ! method_exists( 'ET_Builder_Module_Helper_Woocommerce_Modules', 'get_field' ) ) {
@@ -767,7 +767,7 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 	 *
 	 * This output is intentional in VB. However, WooCommerce will handle display on the FE.
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 */
 	public static function output_coupon_error_message() {
 		$msg = __( 'Coupon "DIVI" does not exist!', 'et_builder' );
@@ -918,7 +918,7 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 	/**
 	 * Gets the Cart message based on the Page type.
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 *
 	 * @param array $args Args.
 	 *
@@ -978,7 +978,7 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 
 		self::maybe_handle_hooks( $conditional_tags );
 
-		if ( et_fb_enabled() || et_fb_is_builder_ajax() || et_fb_is_computed_callback_ajax() ) {
+		if ( $is_builder || et_core_is_fb_enabled() ) {
 			if ( 'checkout' === $page_type ) {
 				$markup = et_builder_wc_render_module_template(
 					'woocommerce_checkout_login_form',

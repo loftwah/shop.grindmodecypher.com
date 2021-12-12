@@ -94,6 +94,7 @@ class Shortcodes {
 				'shipping_method',
 				'shipping_postcode',
 				'shipping_state',
+				'shipping_phone',
 			);
 
 			// Billings
@@ -908,6 +909,11 @@ class Shortcodes {
 		} else {
 			$shortcode['[yaymail_shipping_state]'] = '';
 		}
+		if ( ! empty( $order->get_shipping_phone() ) ) {
+			$shortcode['[yaymail_shipping_phone]'] = $order->get_shipping_phone();
+		} else {
+			$shortcode['[yaymail_shipping_phone]'] = '';
+		}
 
 		// BILLINGS
 		$shortcode['[yaymail_billing_address]'] = $billing_address;
@@ -1173,6 +1179,7 @@ class Shortcodes {
 		$shortcode['[yaymail_shipping_method]']     = '';
 		$shortcode['[yaymail_shipping_postcode]']   = esc_html__( '48744', 'yaymail' );
 		$shortcode['[yaymail_shipping_state]']      = esc_html__( 'Random', 'yaymail' );
+		$shortcode['[yaymail_shipping_phone]']      = esc_html__( '(910) 529-1147', 'yaymail' );
 
 		// BILLING
 		$shortcode['[yaymail_billing_address]']    = $billing_address;
@@ -1502,7 +1509,7 @@ class Shortcodes {
 		foreach ( $customerNotes as $customerNote ) {
 			?>
 			
-				<?php echo wp_kses_post( $customerNote->comment_content ); ?>
+				<?php echo wp_kses_post(wpautop( wptexturize( make_clickable( $customerNote->comment_content ) ) )); ?>
 			
 			<?php
 		}

@@ -29,10 +29,12 @@ trait ProductPurchaseCondition {
 			return false;
 		}
 
-		$display_rule = isset( $condition_settings['productPurchaseDisplay'] ) ? $condition_settings['productPurchaseDisplay'] : 'hasBoughtProduct';
-		$products_raw = isset( $condition_settings['products'] ) ? $condition_settings['products'] : [];
-		$current_user = wp_get_current_user();
-		$products_ids = array_map(
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule = isset( $condition_settings['productPurchaseDisplay'] ) ? $condition_settings['productPurchaseDisplay'] : 'hasBoughtProduct';
+		$display_rule        = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
+		$products_raw        = isset( $condition_settings['products'] ) ? $condition_settings['products'] : [];
+		$current_user        = wp_get_current_user();
+		$products_ids        = array_map(
 			function( $item ) {
 				return isset( $item['value'] ) ? $item['value'] : '';
 			},

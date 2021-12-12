@@ -485,9 +485,10 @@ if ( ! function_exists( 'et_pb_check_if_post_contains_divi_font_icon' ) ) :
 	 */
 	function et_pb_check_if_post_contains_divi_font_icon( $content, $use_only_defined_icon_fields = false ) {
 		// Check the non-extended icon value.
-		$old_divi_icon_regex = ! $use_only_defined_icon_fields ? '/\=\"%%([^"]*)%%\"/mi' : '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"%%([^"]*)%%\"/mi';
+		$old_divi_icon_regex         = ! $use_only_defined_icon_fields ? '/\=\"%%([^"]*)%%\"/mi' : '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"%%([^"]*)%%\"/mi';
+		$single_char_divi_icon_regex = '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"[\s\S]\"/mi';
 
-		return ! empty( preg_match_all( et_pb_get_font_icon_names_regex(), $content ) ) || ! empty( preg_match_all( $old_divi_icon_regex, $content ) );
+		return ! empty( preg_match_all( et_pb_get_font_icon_names_regex(), $content ) ) || ! empty( preg_match_all( $old_divi_icon_regex, $content ) ) || ! empty( preg_match_all( $single_char_divi_icon_regex, $content ) );
 	}
 endif;
 

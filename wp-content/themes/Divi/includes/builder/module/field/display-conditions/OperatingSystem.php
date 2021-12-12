@@ -25,7 +25,9 @@ trait OperatingSystemCondition {
 	 * @return boolean Condition output.
 	 */
 	protected function _process_operating_system_condition( $condition_settings ) {
-		$display_rule          = isset( $condition_settings['operatingSystemDisplay'] ) ? $condition_settings['operatingSystemDisplay'] : 'is';
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule   = isset( $condition_settings['operatingSystemDisplay'] ) ? $condition_settings['operatingSystemDisplay'] : 'is';
+		$display_rule          = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
 		$operating_systems_raw = isset( $condition_settings['operatingSystems'] ) ? $condition_settings['operatingSystems'] : '';
 		$operating_systems     = explode( '|', $operating_systems_raw );
 		$current_os            = $this->_get_os();

@@ -15,8 +15,9 @@ class WooTemplate {
 	protected static $instance = null;
 	private $templateAccount;
 	private $templateSubscription;
-	private $automatewoo_info = null;
-	private $trackShipArgs    = null;
+	private $automatewoo_info                    = null;
+	private $automatewoo_referrals_email_content = null;
+	private $trackShipArgs                       = null;
 	public static function getInstance() {
 		if ( null == self::$instance ) {
 			self::$instance = new self();
@@ -28,7 +29,7 @@ class WooTemplate {
 
 	private function doHooks() {
 		$this->templateAccount         = array( 'customer_new_account', 'customer_new_account_activation', 'customer_reset_password' );
-		$this->templateGermanizedForWC = array( 'sab_simple_invoice', 'sab_cancellation_invoice' );
+		$this->templateGermanizedForWC = array( 'sab_simple_invoice', 'sab_cancellation_invoice', 'sab_packing_slip','sab_document_admin','sab_document' );
 		add_filter( 'storeabill_get_template', array( $this, 'storeabill_get_template' ), 100, 5 );
 		add_filter( 'wc_get_template', array( $this, 'getTemplateMail' ), 100, 5 );
 		add_filter( 'fue_before_sending_email', array( $this, 'getFollowUpTemplates' ), 100, 3 );
@@ -37,9 +38,37 @@ class WooTemplate {
 		}
 		add_filter( 'retrieve_password_message', array( $this, 'admin_reset_password' ), 100, 4 );
 		add_action( 'automatewoo_before_action_run', array( $this, 'automatewoo_before_action_run' ), 10 );
+		add_filter( 'automatewoo/referrals/invite_email/mailer', array( $this, 'automatewoo_invite_email' ), 100, 2 );
+	}
+	public function automatewoo_invite_email( $mailer, $invite_email ) {
+		if ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) || is_plugin_active( 'email-customizer-automatewoo/yaymail-automatewoo.php' ) ) {
+			$template        = 'AutomateWoo_Referrals_Email';
+			$postID          = CustomPostType::postIDByTemplate( $template );
+			$template_status = get_post_meta( $postID, '_yaymail_status', true );
+			if ( $template_status ) {
+				$templateActive = file_exists( YAYMAIL_PLUGIN_PATH . 'views/templates/single-follow-up-mail-template.php' ) ? YAYMAIL_PLUGIN_PATH . 'views/templates/single-follow-up-mail-template.php' : false;
+				ob_start();
+				include $templateActive;
+				$template_body = ob_get_contents();
+				ob_end_clean();
+				if ( '' !== $template_body ) {
+					$template_body                             = $invite_email->replace_variables( $template_body );
+					$this->automatewoo_referrals_email_content = $template_body;
+				}
+				add_filter(
+					'woocommerce_mail_content',
+					function( $email_content ) {
+						return $this->automatewoo_referrals_email_content;
+					},
+					100,
+					1
+				);
+			}
+		}
+		return $mailer;
 	}
 	public function automatewoo_before_action_run( $action ) {
-		if( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) ) {
+		if ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) || is_plugin_active( 'email-customizer-automatewoo/yaymail-automatewoo.php' ) ) {
 			$this->automatewoo_info = $action;
 			$template               = 'AutomateWoo_' . $action->workflow->get_id();
 			$postID                 = CustomPostType::postIDByTemplate( $template );
@@ -58,7 +87,7 @@ class WooTemplate {
 							'email'    => '',
 							'workflow' => $workflow,
 						);
-	
+
 						ob_start();
 						include $templateActive;
 						$template_body = ob_get_contents();
@@ -231,6 +260,13 @@ class WooTemplate {
 			}
 			if ( 'emails/waitlist-new-signup.php' == $template_name ) {
 				$template = 'woocommerce_waitlist_signup_email';
+			}
+
+			if ( 'emails/dokan-admin-new-booking.php' == $template_name ) {
+				$template = 'Dokan_Email_Booking_New';
+			}
+			if ( 'emails/dokan-customer-booking-cancelled.php' == $template_name ) {
+				$template = 'Dokan_Email_Booking_Cancelled_NEW';
 			}
 		}
 

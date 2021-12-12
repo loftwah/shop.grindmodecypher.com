@@ -25,17 +25,19 @@ trait UserRoleCondition {
 	 * @return boolean Condition output.
 	 */
 	protected function _process_user_role_condition( $condition_settings ) {
-		$display_rule = isset( $condition_settings['userRoleDisplay'] ) ? $condition_settings['userRoleDisplay'] : 'is';
-		$roles_raw    = isset( $condition_settings['userRoles'] ) ? $condition_settings['userRoles'] : [];
-		$ids_raw      = isset( $condition_settings['userIds'] ) ? $condition_settings['userIds'] : '';
-		$roles        = array_map(
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule = isset( $condition_settings['userRoleDisplay'] ) ? $condition_settings['userRoleDisplay'] : 'is';
+		$display_rule        = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
+		$roles_raw           = isset( $condition_settings['userRoles'] ) ? $condition_settings['userRoles'] : [];
+		$ids_raw             = isset( $condition_settings['userIds'] ) ? $condition_settings['userIds'] : '';
+		$roles               = array_map(
 			function( $item ) {
 				return $item['value'];
 			},
 			$roles_raw
 		);
-		$ids          = isset( $ids_raw ) ? array_map( 'trim', array_filter( explode( ',', $ids_raw ) ) ) : array();
-		$user         = wp_get_current_user();
+		$ids                 = isset( $ids_raw ) ? array_map( 'trim', array_filter( explode( ',', $ids_raw ) ) ) : array();
+		$user                = wp_get_current_user();
 
 		$should_display_based_on_roles = array_intersect( $roles, (array) $user->roles ) ? true : false;
 		$should_display_based_on_ids   = array_intersect( $ids, (array) $user->ID ) ? true : false;

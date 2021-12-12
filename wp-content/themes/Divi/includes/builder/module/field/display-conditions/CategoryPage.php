@@ -31,8 +31,9 @@ trait CategoryPageCondition {
 			return false;
 		}
 
-		// Get condition's settings.
-		$display_rule            = isset( $condition_settings['categoryPageDisplay'] ) ? $condition_settings['categoryPageDisplay'] : 'is';
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule     = isset( $condition_settings['categoryPageDisplay'] ) ? $condition_settings['categoryPageDisplay'] : 'is';
+		$display_rule            = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
 		$categories_raw          = isset( $condition_settings['categories'] ) ? $condition_settings['categories'] : [];
 		$queried_object          = get_queried_object();
 		$is_queried_object_valid = $queried_object instanceof \WP_Term && property_exists( $queried_object, 'taxonomy' );

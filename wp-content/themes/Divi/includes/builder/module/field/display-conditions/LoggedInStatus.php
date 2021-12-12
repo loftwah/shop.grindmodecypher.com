@@ -25,26 +25,12 @@ trait LoggedInStatusCondition {
 	 * @return boolean Condition output.
 	 */
 	protected function _process_logged_in_status_condition( $condition_settings ) {
-		$logged_in_status = isset( $condition_settings['loggedInStatus'] ) ? $condition_settings['loggedInStatus'] : 'loggedIn';
-		$should_display   = ( is_user_logged_in() ) ? true : false;
-		return ( 'loggedIn' === $logged_in_status ) ? $should_display : ! $should_display;
-	}
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule = isset( $condition_settings['loggedInStatus'] ) ? $condition_settings['loggedInStatus'] : 'loggedIn';
+		$display_rule        = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
+		$should_display      = ( is_user_logged_in() ) ? true : false;
 
-	/**
-	 * Checks logged in status for possible conflicts.
-	 *
-	 * @param string $current_value      Curent setting value.
-	 * @param string $prev_value         Previous setting value.
-	 * @param array  $conflicting_value  Defined conflicting value.
-	 * @return boolean
-	 */
-	protected function _is_logged_in_status_conflicted( $current_value, $prev_value, $conflicting_value ) {
-		$is_current_value_conflicted = in_array( $current_value, $conflicting_value, true );
-		$is_prev_value_conflicted    = in_array( $prev_value, $conflicting_value, true );
-		if ( $is_current_value_conflicted && $is_prev_value_conflicted ) {
-			return true;
-		}
-		return false;
+		return ( 'loggedIn' === $display_rule ) ? $should_display : ! $should_display;
 	}
 
 }

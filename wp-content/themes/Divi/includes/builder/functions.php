@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.0' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.2' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -2116,6 +2116,7 @@ add_action( 'wp_ajax_et_fb_ajax_drop_autosave', 'et_fb_ajax_drop_autosave' );
  * Ajax Callback :: Save layout.
  */
 function et_fb_ajax_save() {
+
 	if ( ! isset( $_POST['et_fb_save_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['et_fb_save_nonce'] ), 'et_fb_save_nonce' ) ) {
 		wp_send_json_error();
 	}
@@ -2168,7 +2169,9 @@ function et_fb_ajax_save() {
 			// Get old content and if we should return to the Default Editor.
 			$post_content = get_post_meta( $post_id, '_et_pb_old_content', true );
 		} else {
-			update_post_meta( $post_id, '_et_pb_use_builder', 'on' );
+			if ( ! $is_layout_block_preview ) {
+				update_post_meta( $post_id, '_et_pb_use_builder', 'on' );
+			}
 			$post_content = et_fb_process_to_shortcode( $shortcode_data, $options, $layout_type, true, true );
 		}
 
@@ -12491,6 +12494,11 @@ if ( ! function_exists( 'et_filter_wp_calculate_image_srcset' ) ) :
 			foreach ( $responsive_metadata as $max_width => $size_data ) {
 				if ( ! $size_data ) {
 					continue;
+				}
+
+				// In some SVG images, the value of `$max_width` is 0, in those cases we can set `$max_width` from `$size_array`.
+				if ( ! $max_width ) {
+					$max_width = $size_array[0];
 				}
 
 				$responsive_sources[ $max_width ] = array(

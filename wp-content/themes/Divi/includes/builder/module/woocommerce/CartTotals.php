@@ -7,7 +7,7 @@
  *
  * @package Divi\Builder
  *
- * @since   ??
+ * @since 4.14.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,7 +20,7 @@ class ET_Builder_Module_Woocommerce_Cart_Totals extends ET_Builder_Module {
 	/**
 	 * Initialize.
 	 *
-	 * @since ?? Fixed PHP Warnings {@link https://github.com/elegantthemes/Divi/issues/22104}
+	 * @since 4.14.0 Fixed PHP Warnings {@link https://github.com/elegantthemes/Divi/issues/22104}
 	 */
 	public function init() {
 		$this->name        = esc_html__( 'Woo Cart Totals', 'et_builder' );
@@ -409,7 +409,7 @@ class ET_Builder_Module_Woocommerce_Cart_Totals extends ET_Builder_Module {
 								),
 							),
 							'defaults'     => array(
-								'border_radii'  => 'on|3px|3px|3px|3px',
+								'border_radii'  => 'on|0px|0px|0px|0px',
 								'border_styles' => array(
 									'width' => '0px',
 									'style' => 'solid',
@@ -439,7 +439,7 @@ class ET_Builder_Module_Woocommerce_Cart_Totals extends ET_Builder_Module {
 								),
 							),
 							'defaults'     => array(
-								'border_radii'  => 'on|3px|3px|3px|3px',
+								'border_radii'  => 'on|0px|0px|0px|0px',
 								'border_styles' => array(
 									'width' => '0px',
 									'style' => 'solid',

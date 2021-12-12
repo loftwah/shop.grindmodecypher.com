@@ -3,7 +3,7 @@
  * Plugin Name: YayMail - WooCommerce Email Customizer
  * Plugin URI: https://yaycommerce.com/yaymail-woocommerce-email-customizer/
  * Description: Create awesome transactional emails with a drag and drop email builder
- * Version: 2.7.1
+ * Version: 2.7.8
  * Author: YayCommerce
  * Author URI: https://yaycommerce.com
  * Text Domain: yaymail
@@ -29,11 +29,11 @@ if ( ! defined( 'YAYMAIL_PREFIX' ) ) {
 }
 
 if ( ! defined( 'YAYMAIL_DEBUG' ) ) {
-	define( 'YAYMAIL_DEBUG', 'false' );
+	define( 'YAYMAIL_DEBUG', false );
 }
 
 if ( ! defined( 'YAYMAIL_VERSION' ) ) {
-	define( 'YAYMAIL_VERSION', '2.7.1' );
+	define( 'YAYMAIL_VERSION', '2.7.8' );
 }
 
 if ( ! defined( 'YAYMAIL_PLUGIN_URL' ) ) {

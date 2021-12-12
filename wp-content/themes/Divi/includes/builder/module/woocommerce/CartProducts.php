@@ -7,7 +7,7 @@
  *
  * @package Divi\Builder
  *
- * @since   ??
+ * @since 4.14.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,7 +20,7 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 	/**
 	 * Initialize.
 	 *
-	 * @since ?? Fixed PHP Warnings {@link https://github.com/elegantthemes/Divi/issues/22104}
+	 * @since 4.14.0 Fixed PHP Warnings {@link https://github.com/elegantthemes/Divi/issues/22104}
 	 */
 	public function init() {
 		$this->name        = esc_html__( 'Woo Cart Products', 'et_builder' );
@@ -498,7 +498,7 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 								'important' => true,
 							),
 							'defaults'     => array(
-								'border_radii'  => 'on|3px|3px|3px|3px',
+								'border_radii'  => 'on|0px|0px|0px|0px',
 								'border_styles' => array(
 									'width' => '0px',
 									'style' => 'solid',
@@ -527,7 +527,7 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 								'important' => true,
 							),
 							'defaults'     => array(
-								'border_radii'  => 'on|3px|3px|3px|3px',
+								'border_radii'  => 'on|0px|0px|0px|0px',
 								'border_styles' => array(
 									'width' => '0px',
 									'style' => 'solid',
@@ -1493,6 +1493,7 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 		$this->add_classname( 'woocommerce-cart' );
 		$this->add_classname( 'woocommerce' );
 		$this->add_classname( 'et_pb_woo_custom_button_icon' );
+		$this->add_classname( $this->get_text_orientation_classname() );
 
 		if ( function_exists( 'WC' ) && isset( WC()->cart ) && WC()->cart->is_empty() ) {
 			$this->add_classname( 'et_pb_wc_cart_empty' );

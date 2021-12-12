@@ -30,16 +30,18 @@ trait DynamicPostsCondition {
 			return false;
 		}
 
-		$display_rule      = isset( $condition_settings['dynamicPostsDisplay'] ) ? $condition_settings['dynamicPostsDisplay'] : '';
-		$dynamic_posts_raw = isset( $condition_settings['dynamicPosts'] ) ? $condition_settings['dynamicPosts'] : [];
-		$dynamic_posts_ids = array_map(
+		// Checks for additional display rule for compatibility with Conditional Display older versions which didn't use `displayRule` key.
+		$legacy_display_rule = isset( $condition_settings['dynamicPostsDisplay'] ) ? $condition_settings['dynamicPostsDisplay'] : 'is';
+		$display_rule        = isset( $condition_settings['displayRule'] ) ? $condition_settings['displayRule'] : $legacy_display_rule;
+		$dynamic_posts_raw   = isset( $condition_settings['dynamicPosts'] ) ? $condition_settings['dynamicPosts'] : [];
+		$dynamic_posts_ids   = array_map(
 			function( $item ) {
 				return isset( $item['value'] ) ? $item['value'] : '';
 			},
 			$dynamic_posts_raw
 		);
-		$is_on_shop_page   = class_exists( 'WooCommerce' ) && is_shop();
-		$current_page_id   = $is_on_shop_page ? wc_get_page_id( 'shop' ) : get_queried_object_id();
+		$is_on_shop_page     = class_exists( 'WooCommerce' ) && is_shop();
+		$current_page_id     = $is_on_shop_page ? wc_get_page_id( 'shop' ) : get_queried_object_id();
 
 		$should_display = array_intersect( $dynamic_posts_ids, (array) $current_page_id ) ? true : false;
 

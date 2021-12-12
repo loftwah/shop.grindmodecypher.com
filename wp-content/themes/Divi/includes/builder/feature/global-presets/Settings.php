@@ -399,7 +399,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Apply attribute migrations.
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 */
 	public function apply_attribute_migrations() {
 		foreach ( $this->_settings as $module => $preset_structure ) {
@@ -412,7 +412,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Configuring and running migration of global presets via "et_pb_module_shortcode_attributes".
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 *
 	 * @param object $preset Global preset object.
 	 * @param string $module_slug Module slug.

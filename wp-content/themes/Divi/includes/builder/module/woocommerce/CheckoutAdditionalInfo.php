@@ -7,7 +7,7 @@
  *
  * @package Divi\Builder
  *
- * @since   ??
+ * @since 4.14.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,7 +20,7 @@ final class ET_Builder_Module_Woocommerce_Checkout_Additional_Info extends ET_Bu
 	/**
 	 * Initialize.
 	 *
-	 * @since ?? Fixed PHP Warnings {@link https://github.com/elegantthemes/Divi/issues/22104}
+	 * @since 4.14.0 Fixed PHP Warnings {@link https://github.com/elegantthemes/Divi/issues/22104}
 	 */
 	public function init() {
 		$this->name        = esc_html__( 'Woo Checkout Information', 'et_builder' );
@@ -423,7 +423,7 @@ final class ET_Builder_Module_Woocommerce_Checkout_Additional_Info extends ET_Bu
 	 * Since we do not have control over the WooCommerce Additional Info markup,
 	 * we inject Multi view attributes on to the Outer wrapper.
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 *
 	 * @param array $outer_wrapper_attrs Outer wrapper attributes.
 	 *

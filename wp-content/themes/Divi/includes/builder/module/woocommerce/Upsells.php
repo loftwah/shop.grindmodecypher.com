@@ -549,7 +549,7 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 	/**
 	 * Appends offset to the WP_Query that retrieves Products.
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 *
 	 * @param array $query_args Query args.
 	 *

@@ -7,7 +7,7 @@
  *
  * @package Divi\Builder
  *
- * @since   ??
+ * @since 4.14.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class representing WooCommerce Checkout shipping component.
  *
- * @since ??
+ * @since 4.14.0
  */
 class ET_Builder_Module_Woocommerce_Checkout_Shipping extends ET_Builder_Module {
 	/**

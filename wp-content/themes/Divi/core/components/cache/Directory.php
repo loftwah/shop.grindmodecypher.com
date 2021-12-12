@@ -83,7 +83,7 @@ class ET_Core_Cache_Directory {
 		}
 
 		$this->can_write = $can_write || $can_create;
-		$this->path      = $path;
+		$this->path      = et_()->normalize_path( $path );
 		$this->url       = $url;
 
 		$this->_maybe_adjust_path_for_multisite( $uploads_dir_info );

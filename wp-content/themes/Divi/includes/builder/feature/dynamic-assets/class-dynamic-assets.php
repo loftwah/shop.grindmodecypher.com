@@ -881,32 +881,15 @@ class ET_Dynamic_Assets {
 		$suffix        = empty( $suffix ) ? '' : "-{$suffix}";
 		$file_name     = "et-{$this->_owner}-dynamic{$tb_ids}{$maybe_post_id}{$late_suffix}{$suffix}.css";
 		$file_path     = et_()->normalize_path( "{$file_dir}{$file_name}" );
-		$lock_file     = wp_tempnam( $file_name );
+		if ( file_exists( $file_path ) ) {
+			return;
+		}
 
 		// Iterate over all the asset data to generate dynamic asset files.
 		foreach ( $assets_data as $file_type => $data ) {
 			$file_contents .= implode( "\n", array_unique( $data['content'] ) );
 		}
-
-		if ( file_exists( $file_path ) ) {
-			return;
-		}
-
-		// Try to create a temporary directory which we'll use as a pseudo file lock.
-		if ( file_exists( $lock_file ) ) {
-			$wp_filesystem->put_contents( $lock_file, '' );
-
-			// Create the static resource file.
-			$asset_created = $wp_filesystem->put_contents( $file_path, $file_contents, FS_CHMOD_FILE );
-
-			if ( ! $asset_created ) {
-				// There's no point in continuing.
-				return;
-			} else {
-				// Remove the temporary file.
-				unlink( $lock_file );
-			}
-		}
+		$wp_filesystem->put_contents( $file_path, $file_contents, FS_CHMOD_FILE );
 	}
 
 	/**
@@ -1614,6 +1597,11 @@ class ET_Dynamic_Assets {
 				'css' => array(
 					"{$assets_prefix}/css/blurb{$this->_cpt_suffix}.css",
 					"{$assets_prefix}/css/legacy_animations{$this->_cpt_suffix}.css",
+				),
+			),
+			'et_pb_icon'                        => array(
+				'css' => array(
+					"{$assets_prefix}/css/icon{$this->_cpt_suffix}.css",
 				),
 			),
 			'et_pb_button'                      => array(

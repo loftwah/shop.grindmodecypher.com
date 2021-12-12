@@ -100,11 +100,6 @@ return array(
 	'Editor'                                => esc_html__( 'Editor', 'et_builder' ),
 	'Subscriber'                            => esc_html__( 'Subscriber', 'et_builder' ),
 
-	'Pages'                                 => esc_html__( 'Pages', 'et_builder' ),
-	'Display Only If Page'                  => esc_html__( 'Display Only If Page', 'et_builder' ),
-
-	'Posts'                                 => esc_html__( 'Posts', 'et_builder' ),
-
 	'Post Type'                             => esc_html__( 'Post Type', 'et_builder' ),
 	'Display Only If Post Type'             => esc_html__( 'Display Only If Post Type', 'et_builder' ),
 
@@ -148,4 +143,68 @@ return array(
 	'Days'                                  => esc_html__( 'Days', 'et_builder' ),
 	'Minutes'                               => esc_html__( 'Minutes', 'et_builder' ),
 	'Hours'                                 => esc_html__( 'Hours', 'et_builder' ),
+
+	// Logged In Status Tooltip.
+	'Only display to logged in visitors'    => esc_html__( 'Only display to logged in visitors', 'et_builder' ),
+	'Only display to logged out visitors'   => esc_html__( 'Only display to logged out visitors', 'et_builder' ),
+
+	// Post Type and Other Common Tooltips.
+	'Only display on'                       => esc_html__( 'Only display on', 'et_builder' ),
+	"Don't display on"                      => esc_html__( "Don't display on", 'et_builder' ),
+
+	// Author Tooltip.
+	'Only display on posts authored by'     => esc_html__( 'Only display on posts authored by', 'et_builder' ),
+	"Don't display on posts authored by"    => esc_html__( "Don't display on posts authored by", 'et_builder' ),
+
+	// User Role and Other Common Tooltips.
+	'Only display to'                       => esc_html__( 'Only display to', 'et_builder' ),
+	"Don't display to"                      => esc_html__( "Don't display to", 'et_builder' ),
+
+	// Date & Time Tooltip.
+	'Only display after'                    => esc_html__( 'Only display after', 'et_builder' ),
+	'Only display before'                   => esc_html__( 'Only display before', 'et_builder' ),
+	'Only display on first day of month'    => esc_html__( 'Only display on first day of the month', 'et_builder' ),
+	'Only display on last day of month'     => esc_html__( 'Only display on last day of the month', 'et_builder' ),
+
+	// Category Page, Tag Page, Page Visit Tooltip.
+	'Pages'                                 => esc_html__( 'Pages', 'et_builder' ),
+
+	// Cart Content Tooltip.
+	'Cart Contents Has Products'            => esc_html__( 'Only display to users with Products in their cart', 'et_builder' ),
+	'Cart Contents Is Empty'                => esc_html__( 'Only display to users with an empty cart', 'et_builder' ),
+	'Only display to users with'            => esc_html__( 'Only display to users with', 'et_builder' ),
+	'in their cart'                         => esc_html__( 'in their cart', 'et_builder' ),
+	'Only display to users without'         => esc_html__( 'Only display to users without', 'et_builder' ),
+
+	// Cookie Tooltip.
+	'cookie'                                => esc_html__( 'cookie', 'et_builder' ),
+	'cookie with'                           => esc_html__( 'cookie with', 'et_builder' ),
+	'value'                                 => esc_html__( 'value', 'et_builder' ),
+	'Only display to users who have'        => esc_html__( 'Only display to users who have', 'et_builder' ),
+	"Don't display to users who have"       => esc_html__( "Don't display to users who have", 'et_builder' ),
+
+	// Date Archive Tooltip.
+	'Only display on date archives after'   => esc_html__( 'Only display on date archives after', 'et_builder' ),
+	'Only display on date archives before'  => esc_html__( 'Only display on date archives before', 'et_builder' ),
+
+	// Number of Views Tooltip.
+	'Only display'                          => esc_html__( 'Only display', 'et_builder' ),
+	', Reset after'                         => esc_html__( ', Reset after', 'et_builder' ),
+	'times'                                 => esc_html__( 'times', 'et_builder' ),
+
+	// Page Visit, Post Visit Tooltip.
+	'Only display to users visited'         => esc_html__( 'Only display to users who have visited', 'et_builder' ),
+	"Don't display to users visited"        => esc_html__( "Don't display to users who have visited", 'et_builder' ),
+	'Posts'                                 => esc_html__( 'Posts', 'et_builder' ),
+
+	// Product Purchase Tooltip.
+	'Only display to users bought product'  => esc_html__( 'Only display to users who have bought a product', 'et_builder' ),
+	"Don't display to users bought product" => esc_html__( "Don't display to users who have bought a product", 'et_builder' ),
+	'Only Display to users who bought'      => esc_html__( 'Only Display to users who have bought', 'et_builder' ),
+	"Don't display to users who bought"     => esc_html__( "Don't display to users who have bought", 'et_builder' ),
+
+	// Search Results Tooltip.
+	'Only display on search results for'    => esc_html__( 'Only display on search results for', 'et_builder' ),
+	"Don't display on search results for"   => esc_html__( "Don't display on search results for", 'et_builder' ),
+
 );

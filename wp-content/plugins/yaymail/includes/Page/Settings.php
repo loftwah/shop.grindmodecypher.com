@@ -138,7 +138,7 @@ class Settings {
 		register_post_type( 'yaymail_template', $args );
 	}
 	public function settingsMenu() {
-		add_submenu_page( 'woocommerce', __( 'Email Builder Settings', 'yaymail' ), __( 'Email Customizer', 'yaymail' ), 'manage_options', $this->getPageId(), array( $this, 'settingsPage' ) );
+		add_submenu_page( 'woocommerce', __( 'Email Builder Settings', 'yaymail' ), __( 'Email Customizer', 'yaymail' ), 'manage_woocommerce', $this->getPageId(), array( $this, 'settingsPage' ) );
 	}
 
 	public function nitWebPluginRegisterButtons( $buttons ) {
@@ -218,6 +218,12 @@ class Settings {
 					array( 'WC_GZD_Email_Customer_Partial_Shipment' => $partial_email ),
 					array_slice( $this->emails, $customer_shipment_position )
 				);
+			}
+			if ( class_exists( 'AW_Referrals_Plugin_Data' ) && ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) || is_plugin_active( 'email-customizer-automatewoo/yaymail-automatewoo.php' ) ) ) {
+				$referrals_email        = new stdClass();
+				$referrals_email->id    = 'AutomateWoo_Referrals_Email';
+				$referrals_email->title = __( 'AutomateWoo Referrals Email', 'yaymail' );
+				$this->emails           = array_merge( $this->emails, array( 'AutomateWoo_Referrals_Email' => $referrals_email ) );
 			}
 			// Insert database all order template from Woo
 			$templateEmail = Templates::getInstance();
@@ -370,9 +376,8 @@ class Settings {
 				}
 			}
 
-			$allowed_html_tags = wp_kses_allowed_html('post');
+			$allowed_html_tags          = wp_kses_allowed_html( 'post' );
 			$allowed_html_tags['style'] = array();
-
 
 			// List email supported
 
@@ -921,7 +926,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-terawallet',
 				),
-				'CustomFieldsforWooCommerce'                          => array(
+				'CustomFieldsforWooCommerce'          => array(
 					'plugin_name'   => 'Custom Fields for WooCommerce by Addify',
 					'template_name' => array(
 						'af_email_admin_register_new_user',
@@ -931,13 +936,44 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-custom-fields-addify',
 				),
-				'WooCommerceMultiLocationInventory'                          => array(
+				'WooCommerceMultiLocationInventory'   => array(
 					'plugin_name'   => 'WooCommerce MultiLocation Inventory & Order Routing',
 					'template_name' => array(
 						'wh_new_order',
 						'wh_reassign',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-multiwarehouse-order-routing',
+				),
+				'MultivendorMarketplaceSolutionWooCommerce'   => array(
+					'plugin_name'   => 'Multivendor Marketplace Solution for WooCommerce - WC Marketplace',
+					'template_name' => array(
+						'admin_added_new_product_to_vendor', 
+						'admin_change_order_status',
+						'admin_new_question',
+						'admin_new_vendor',
+						'admin_widthdrawal_request',
+						'approved_vendor_new_account',
+						'customer_answer',
+						'notify_shipped',
+						'rejected_vendor_new_account',
+						'wcmp_send_report_abuse',
+						'suspend_vendor_new_account',
+						'vendor_commissions_transaction',
+						'vendor_contact_widget_email',
+						'vendor_direct_bank',
+						'vendor_followed',
+						'vendor_new_account',
+						'vendor_new_announcement',
+						'admin_new_vendor_coupon',
+						'vendor_new_order',
+						'admin_new_vendor_product',
+						'vendor_new_question',
+						'vendor_orders_stats_report',
+						'admin_vendor_product_rejected',
+						'review_vendor_alert',
+						'customer_order_refund_request',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wcmp-marketplace',
 				),
 			);
 
@@ -1009,7 +1045,7 @@ class Settings {
 					'billing_country'            => $billing_country,
 					'payment_methods'            => $arr_payment_methods,
 					'link_detail_smtp'           => self_admin_url( 'plugin-install.php?tab=plugin-information&plugin=yaysmtp&section=description&TB_iframe=true&width=600&height=800' ),
-					'yaymail_automatewoo_active' => is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) ? true : false,
+					'yaymail_automatewoo_active' => ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) || is_plugin_active( 'email-customizer-automatewoo/yaymail-automatewoo.php' ) ) ? true : false,
 					'yaymail_dokan_active'       => is_plugin_active( 'yaymail-addon-for-dokan/yaymail-premium-addon-dokan.php' ) ? true : false,
 					'yaysmtp_active'             => $this->check_plugin_installed( 'yaysmtp/yay-smtp.php' ) || $this->check_plugin_installed( 'yaysmtp-pro/yay-smtp.php' ) ? true : false,
 					'yaysmtp_setting'            => admin_url( 'admin.php?page=yaysmtp' ),

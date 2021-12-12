@@ -580,7 +580,7 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 	/**
 	 * Filters the related product category Ids.
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 *
 	 * @param array $term_ids Term IDs.
 	 *
@@ -605,7 +605,7 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 	/**
 	 * Appends offset to the WP_Query that retrieves Products.
 	 *
-	 * @since ??
+	 * @since 4.14.0
 	 *
 	 * @param array $query_args Query args.
 	 *
