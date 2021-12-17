@@ -58,10 +58,10 @@ class ET_Builder_Module_Icon extends ET_Builder_Module {
 		$this->advanced_fields = array(
 			'margin_padding' => array(
 				'css' => array(
-					'main'    => '%%order_class%% .et_pb_icon_wrap',
-					'hover'   => '%%order_class%% .et_pb_icon_wrap:hover',
-					'padding' => '%%order_class%% .et_pb_icon_wrap',
-					'margin'  => '%%order_class%% .et_pb_icon_wrap',
+					'main'      => '%%order_class%%',
+					'padding'   => '%%order_class%% .et_pb_icon_wrap',
+					'margin'    => '%%order_class%%',
+					'important' => 'all',
 				),
 			),
 			'borders'        => array(

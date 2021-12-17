@@ -127,7 +127,7 @@ function et_builder_is_critical_enabled() {
 		$value = et_get_option( $shortname . '_critical_css', 'on' );
 	}
 
-	return 'on' === $value;
+	return apply_filters( 'et_pb_critical_css_enabled', 'on' === $value );
 }
 
 require_once ET_BUILDER_DIR . 'compat/early.php';

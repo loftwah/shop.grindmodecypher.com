@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.2' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.3' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -1898,6 +1898,17 @@ function et_fb_process_to_shortcode( $object, $options = array(), $library_item_
 						$value = str_ireplace( '\\', '%92', $value );
 
 					} elseif ( et_builder_parse_dynamic_content( $value )->is_dynamic() ) {
+						$value = str_replace( '\\', '%92', $value );
+					}
+
+					// Encode backslash for custom date format attributes.
+					$modules_and_attr_with_custom_date = array(
+						'et_pb_blog'                 => 'meta_date',
+						'et_pb_fullwidth_post_title' => 'date_format',
+						'et_pb_post_title'           => 'date_format',
+					);
+
+					if ( ! empty( $modules_and_attr_with_custom_date[ $type ] ) && $modules_and_attr_with_custom_date[ $type ] === $attribute ) {
 						$value = str_replace( '\\', '%92', $value );
 					}
 
@@ -5450,8 +5461,9 @@ if ( ! function_exists( 'et_pb_postinfo_meta' ) ) :
 			$postinfo_meta[] = ' ' . esc_html__( 'by', 'et_builder' ) . ' <span class="author vcard">' . et_pb_get_the_author_posts_link() . '</span>';
 		}
 
+
 		if ( in_array( 'date', $postinfo, true ) ) {
-			$postinfo_meta[] = '<span class="published">' . esc_html( get_the_time( wp_unslash( $date_format ) ) ) . '</span>';
+			$postinfo_meta[] = '<span class="published">' . esc_html( get_the_time( $date_format ) ) . '</span>';
 		}
 
 		if ( in_array( 'categories', $postinfo, true ) ) {
@@ -10721,7 +10733,7 @@ function et_fb_generate_post_content_module_selector( array $array, $element_typ
  * @return array
  */
 function et_fb_generate_tb_body_area_with_post_content( $theme_builder_body_fields, $selector, $post_content_fields ) {
-	if ( isset( $selector['row'] ) && null === $selector['row'] && null === $selector['column'] ) {
+	if ( ! isset( $selector['row'] ) && ! isset( $selector['column'] ) ) {
 		$original_post_content_module = $theme_builder_body_fields[ $selector['section'] ]['content'][ $selector['module'] ];
 
 		$theme_builder_body_fields[ $selector['section'] ]['attrs']['post_content_module_attrs']        = $original_post_content_module['attrs'];

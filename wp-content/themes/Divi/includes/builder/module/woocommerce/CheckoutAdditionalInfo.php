@@ -89,7 +89,14 @@ final class ET_Builder_Module_Woocommerce_Checkout_Additional_Info extends ET_Bu
 				'form_field' => array(
 					'label'           => esc_html__( 'Fields', 'et_builder' ),
 					'css'             => array(
-						'main' => '%%order_class%% form .form-row .input-text',
+						'main'             => '%%order_class%% form .form-row .input-text',
+						'focus_text_color' => implode(
+							',',
+							[
+								'.woocommerce %%order_class%% form .form-row .input-text:focus',
+								'.woocommerce-page %%order_class%% form .form-row .input-text:focus',
+							]
+						),
 					),
 					'box_shadow'      => false,
 					'border_styles'   => array(
@@ -496,6 +503,15 @@ final class ET_Builder_Module_Woocommerce_Checkout_Additional_Info extends ET_Bu
 				'type'                            => 'color',
 			)
 		);
+
+		if ( isset( WC()->cart )
+			&& ! is_null( WC()->cart && method_exists( WC()->cart, 'check_cart_items' ) ) ) {
+			$return = WC()->cart->check_cart_items();
+
+			if ( wc_notice_count( 'error' ) > 0 ) {
+				$this->add_classname( 'et_pb_hide_module' );
+			}
+		}
 
 		$output = self::get_additional_info( $this->props );
 

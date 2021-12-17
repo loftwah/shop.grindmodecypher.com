@@ -998,9 +998,11 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 									? ' | '
 									: '';
 
+								// phpcs:disable WordPress.WP.I18n.NoEmptyStrings -- intentionally used.
 								$date = 'on' === $args['show_date']
-									? et_get_safe_localization( sprintf( __( '%s', 'et_builder' ), '<span class="published">' . esc_html( get_the_date( $args['meta_date'] ) ) . '</span>' ) )
+									? et_get_safe_localization( sprintf( __( '%s', 'et_builder' ), '<span class="published">' . esc_html( get_the_date( str_replace( '\\\\', '\\', $args['meta_date'] ) ) ) . '</span>' ) )
 									: '';
+								// phpcs:enable
 
 								$date_separator = ( ( 'on' === $args['show_author'] || 'on' === $args['show_date'] ) && 'on' === $args['show_categories'] )
 									? ' | '

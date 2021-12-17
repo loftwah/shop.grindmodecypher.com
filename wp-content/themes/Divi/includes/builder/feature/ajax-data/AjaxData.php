@@ -34,13 +34,14 @@ class ET_Builder_Ajax_Data {
 	 * Registers the AJAX actions when class is constructed.
 	 */
 	public function __construct() {
-		add_action( 'wp_ajax_et_builder_ajax_get_post_types', array( $this, 'et_builder_ajax_get_post_types' ) );
-		add_action( 'wp_ajax_et_builder_ajax_get_authors', array( $this, 'et_builder_ajax_get_authors' ) );
-		add_action( 'wp_ajax_et_builder_ajax_get_user_roles', array( $this, 'et_builder_ajax_get_user_roles' ) );
-		add_action( 'wp_ajax_et_builder_ajax_get_categories', array( $this, 'et_builder_ajax_get_categories' ) );
-		add_action( 'wp_ajax_et_builder_ajax_get_tags', array( $this, 'et_builder_ajax_get_tags' ) );
-		add_action( 'wp_ajax_et_builder_ajax_search_products', array( $this, 'et_builder_ajax_search_products' ) );
-		add_action( 'wp_ajax_et_builder_ajax_get_display_conditions_status', array( $this, 'et_builder_ajax_get_display_conditions_status' ) );
+		add_action( 'wp_ajax_et_builder_ajax_get_post_types', array( $this, 'get_post_types' ) );
+		add_action( 'wp_ajax_et_builder_ajax_get_authors', array( $this, 'get_authors' ) );
+		add_action( 'wp_ajax_et_builder_ajax_get_user_roles', array( $this, 'get_user_roles' ) );
+		add_action( 'wp_ajax_et_builder_ajax_get_categories', array( $this, 'get_categories' ) );
+		add_action( 'wp_ajax_et_builder_ajax_get_tags', array( $this, 'get_tags' ) );
+		add_action( 'wp_ajax_et_builder_ajax_search_products', array( $this, 'search_products' ) );
+		add_action( 'wp_ajax_et_builder_ajax_get_display_conditions_status', array( $this, 'get_display_conditions_status' ) );
+		add_action( 'wp_ajax_et_builder_ajax_get_post_meta_fields', array( $this, 'get_post_meta_fields' ) );
 	}
 
 	/**
@@ -60,7 +61,7 @@ class ET_Builder_Ajax_Data {
 	 *
 	 * @return void
 	 */
-	public function et_builder_ajax_get_display_conditions_status() {
+	public function get_display_conditions_status() {
 		et_core_security_check( 'edit_posts', 'et_builder_ajax_get_display_conditions_status', 'nonce', '_POST' );
 
 		/**
@@ -97,7 +98,7 @@ class ET_Builder_Ajax_Data {
 	 *
 	 * @return void
 	 */
-	public function et_builder_ajax_search_products() {
+	public function search_products() {
 		et_core_security_check( 'edit_posts', 'et_builder_ajax_search_products', 'nonce', '_GET' );
 
 		$current_page     = isset( $_GET['page'] ) ? (int) $_GET['page'] : 0;
@@ -154,7 +155,7 @@ class ET_Builder_Ajax_Data {
 	 *
 	 * @return void
 	 */
-	public function et_builder_ajax_get_categories() {
+	public function get_categories() {
 		et_core_security_check( 'edit_posts', 'et_builder_ajax_get_categories', 'nonce', '_GET' );
 
 		$data                = [];
@@ -206,7 +207,7 @@ class ET_Builder_Ajax_Data {
 	 *
 	 * @return void
 	 */
-	public function et_builder_ajax_get_tags() {
+	public function get_tags() {
 		et_core_security_check( 'edit_posts', 'et_builder_ajax_get_tags', 'nonce', '_GET' );
 
 		$data                = [];
@@ -264,7 +265,7 @@ class ET_Builder_Ajax_Data {
 	 *
 	 * @return void
 	 */
-	public function et_builder_ajax_get_post_types() {
+	public function get_post_types() {
 		et_core_security_check( 'edit_posts', 'et_builder_ajax_get_post_types', 'nonce', '_GET' );
 
 		$current_page = isset( $_GET['page'] ) ? (int) $_GET['page'] : 0;
@@ -318,7 +319,7 @@ class ET_Builder_Ajax_Data {
 	 *
 	 * @return void
 	 */
-	public function et_builder_ajax_get_authors() {
+	public function get_authors() {
 		et_core_security_check( 'edit_posts', 'et_builder_ajax_get_authors', 'nonce', '_GET' );
 
 		$current_page     = isset( $_GET['page'] ) ? (int) $_GET['page'] : 0;
@@ -390,7 +391,7 @@ class ET_Builder_Ajax_Data {
 	 *
 	 * @return void
 	 */
-	public function et_builder_ajax_get_user_roles() {
+	public function get_user_roles() {
 		et_core_security_check( 'edit_posts', 'et_builder_ajax_get_user_roles', 'nonce', '_GET' );
 
 		$user_roles = [];
@@ -413,6 +414,36 @@ class ET_Builder_Ajax_Data {
 
 		$results = [
 			'results' => $user_roles,
+		];
+
+		wp_send_json_success( $results );
+	}
+
+	/**
+	 * AJAX Action for getting a list of all meta fields assigned to a post.
+	 *
+	 * @return void
+	 */
+	public function get_post_meta_fields() {
+		et_core_security_check( 'edit_posts', 'et_builder_ajax_get_post_meta_fields', 'nonce', '_GET' );
+
+		$data        = [];
+		$post_id     = isset( $_GET['postId'] ) ? sanitize_text_field( $_GET['postId'] ) : '';
+		$meta_fields = get_post_meta( (int) $post_id );
+
+		/**
+		 * Filters included meta fields for `et_builder_ajax_get_post_meta_fields` ajax action.
+		 *
+		 * @since ??
+		 *
+		 * @param array $meta_fields
+		 */
+		$meta_fields = apply_filters( 'et_builder_ajax_get_post_meta_fields', $meta_fields );
+
+		$data = is_array( $meta_fields ) ? $meta_fields : [];
+
+		$results = [
+			'results' => $data,
 		];
 
 		wp_send_json_success( $results );

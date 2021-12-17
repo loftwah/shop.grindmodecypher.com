@@ -75,7 +75,7 @@ function _et_pb_autoload_modules( $class ) {
 
 	if ( file_exists( ET_BUILDER_DIR . "module/{$class}.php" ) ) {
 		require_once "module/{$class}.php";
-	} elseif ( 'Shop' === $class &&
+	} elseif ( 'Shop' === $class && et_is_woocommerce_plugin_active() &&
 
 		/*
 		 * ET_Builder_Module_Shop class moved to "woocommerce/" directory

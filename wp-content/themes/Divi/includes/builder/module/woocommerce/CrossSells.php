@@ -265,7 +265,7 @@ class ET_Builder_Module_Woocommerce_Cross_Sells extends ET_Builder_Module {
 	 *
 	 * @return string
 	 */
-	public function render( $attrs, $content = null, $render_slug ) {
+	public function render( $attrs, $content, $render_slug ) {
 		// Module classnames.
 		$this->add_classname(
 			array(

@@ -1,3 +1,65 @@
+version 4.14.3 ( updated 12-16-2021 )
+- Added the all new "Product Stock" condition to Display Conditions feature.
+- Added the all new "Custom Field" condition to Display Conditions feature.
+- Added the all new "URL Parameter" condition to Display Conditions feature.
+- Fixed various various TinyMCE editor options not working in Theme Builder in Extra theme.
+- Fixed repetitive text on all Checkout modules along w/ the missing default border width for the payment methods.
+- Fixed all Checkout modules that displayed errors when a Product in cart goes out of stock while Checkout.
+- The margin container in the Icon Module was reassigned to the main Icon Module container.
+- Fixed Fields Text size option not targeting the right elements on Checkout page.
+- Fixed default pricing tables color for frequency not being properly applied in certain cases.
+- Fixed an issue where preset CSS are always Loaded even when presets are not used.
+- Fixed fatal error shown when Shop module, used on a page, is viewed after disabling the Woocommerce plugin.
+- Fixed Checkout workflow failure when checkout page is built using Theme Builder.
+- Fixed using of slashes in the Date Format option in Blog, Fullwidth Post Title and Post Title modules.
+- Fixed max-height set on image module for mobile devices resulting in stretched image.
+- Fixed a PHP warning that occurred when the stored Global Presets History was an array instead of an object.
+- Fixed shipping address not working when Cart Totals module is used.
+- Fixed inconsistent form notice's font weight in the Checkout Payment module.
+- Fixed bottom content jumping issue with Sliders on Webkit based browsers.
+- Fixed a PHP 8 deprecation notice in the Cross Sells Module.
+- Fixed bug with removing sections from Post Content module when there is only one section inside the Body Layout.
+- Fixed issue with editing page content that is nested inside the Post Content Module in Body Template in Full Site Editing mode.
+- Fixed Blurb module header color transition not working with the Text Color option.
+- Fixed an issue with video responsiveness and dimensions on accordion module when dynamic js lib was enabled.
+- Improve SiteGround Optimizer plugin compatibility with Dynamic Assets.
+- Fixed broken Column Label Option Group styles on Table & Phone modes in Cart Totals module.
+- Fixed compatibility issues with Optima Express IDX Plugin.
+- Improve reCaptcha compatibility with 3rd Party reCaptcha solutions.
+- Fixed Cart Totals module's Table Cells Background Color option not working in Phone mode.
+- Fixed Fields Focus Text color being overridden in Checkout Info module.
+	* composer.json
+	* includes/builder/autoload.php
+	* includes/builder/class-et-builder-module-shortcode-manager.php
+	* includes/builder/core.php
+	* includes/builder/feature/ajax-data/AjaxData.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/global-presets/History.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/i18n/display-conditions.php
+	* includes/builder/functions.php
+	* includes/builder/module/Blog.php
+	* includes/builder/module/Blurb.php
+	* includes/builder/module/Icon.php
+	* includes/builder/module/Image.php
+	* includes/builder/module/field/DisplayConditions.php
+	* includes/builder/module/field/display-conditions/CustomField.php
+	* includes/builder/module/field/display-conditions/ProductStock.php
+	* includes/builder/module/field/display-conditions/UrlParameter.php
+	* includes/builder/module/woocommerce/CartNotice.php
+	* includes/builder/module/woocommerce/CartTotals.php
+	* includes/builder/module/woocommerce/CheckoutAdditionalInfo.php
+	* includes/builder/module/woocommerce/CheckoutBilling.php
+	* includes/builder/module/woocommerce/CheckoutOrderDetails.php
+	* includes/builder/module/woocommerce/CheckoutShipping.php
+	* includes/builder/module/woocommerce/CrossSells.php
+	* includes/builder/plugin-compat/sg-cachepress.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/woocommerce-modules.js
+	* includes/builder/scripts/src/builder.js
+
 version 4.14.2 ( updated 11-30-2021 )
 - Fixed issue with Divi activation upon editing Divi Layout Block in Gutenberg.
 - Fixed the margin applying for the icon with the left placement in the Blurb module.

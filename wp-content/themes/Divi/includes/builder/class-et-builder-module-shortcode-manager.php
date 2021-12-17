@@ -180,9 +180,6 @@ class ET_Builder_Module_Shortcode_Manager {
 			'et_pb_search'                      => [
 				'classname' => 'ET_Builder_Module_Search',
 			],
-			'et_pb_shop'                        => [
-				'classname' => 'ET_Builder_Module_Shop',
-			],
 			'et_pb_sidebar'                     => [
 				'classname' => 'ET_Builder_Module_Sidebar',
 			],
@@ -437,6 +434,9 @@ class ET_Builder_Module_Shortcode_Manager {
 			],
 			'et_pb_wc_checkout_additional_info' => [
 				'classname' => 'ET_Builder_Module_Woocommerce_Checkout_Additional_Info',
+			],
+			'et_pb_shop'                        => [
+				'classname' => 'ET_Builder_Module_Shop',
 			],
 		];
 

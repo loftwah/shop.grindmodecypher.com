@@ -26,6 +26,48 @@ if ( ! defined( 'ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY' ) ) {
 }
 
 /**
+ * Handles Shipping calculator Update button click.
+ *
+ * `wc-form-handler` handles shipping calculator update ONLY when WooCommerce shortcode is used.
+ * Hence, Cart Total's shipping calculator update is handled this way.
+ *
+ * @since ??
+ */
+function et_builder_handle_shipping_calculator_update_btn_click() {
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification is handled by WooCommerce plugin.
+	if ( ! isset( $_POST['woocommerce-shipping-calculator-nonce'] ) ) {
+		return;
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification is handled by WooCommerce plugin.
+	if ( ! isset( $_POST['_wp_http_referer'] ) ) {
+		return;
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification is handled by WooCommerce plugin.
+	$referrer         = esc_url_raw( $_POST['_wp_http_referer'] );
+	$referrer_page_id = url_to_postid( $referrer );
+	$cart_page_id     = wc_get_page_id( 'cart' );
+
+	if ( $cart_page_id !== $referrer_page_id ) {
+		return;
+	}
+
+	$post_content = get_post_field( 'post_content', $referrer_page_id );
+
+	if ( has_shortcode( $post_content, 'woocommerce_cart' ) ) {
+		return;
+	}
+
+	if ( ( ! class_exists( 'WC_Shortcodes' ) ) ||
+		( ! method_exists( 'WC_Shortcodes', 'cart' ) ) ) {
+		return;
+	}
+
+	WC_Shortcodes::cart();
+}
+
+/**
  * Identify whether Woo v2 should replace content on Cart & Checkout pages.
  *
  * @param string $shortcode Post content. Builder converts empty string to shortcode string.
@@ -1856,6 +1898,15 @@ function et_builder_wc_init() {
 	add_action( 'rest_after_insert_page', 'et_builder_wc_delete_post_meta' );
 
 	add_filter( 'woocommerce_checkout_redirect_empty_cart', 'et_builder_stop_cart_redirect_while_enabling_builder' );
+
+	/*
+	 * `wp_loaded` is used intentionally because
+	 * `get_cart()` should not be called before wp_loaded hook.
+	 */
+	add_action(
+		'wp_loaded',
+		'et_builder_handle_shipping_calculator_update_btn_click'
+	);
 
 	/*
 	 * In the case of dynamic module framework's shortcode manager

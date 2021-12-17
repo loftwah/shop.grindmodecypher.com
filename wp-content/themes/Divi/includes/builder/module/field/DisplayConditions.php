@@ -36,6 +36,9 @@ require_once __DIR__ . '/display-conditions/Cookie.php';
 require_once __DIR__ . '/display-conditions/CategoryPage.php';
 require_once __DIR__ . '/display-conditions/TagPage.php';
 require_once __DIR__ . '/display-conditions/NumberOfViews.php';
+require_once __DIR__ . '/display-conditions/CustomField.php';
+require_once __DIR__ . '/display-conditions/UrlParameter.php';
+require_once __DIR__ . '/display-conditions/ProductStock.php';
 
 /**
  * Import class dependencies
@@ -72,6 +75,9 @@ class ET_Builder_Module_Field_DisplayConditions extends ET_Builder_Module_Field_
 	use CategoryPageCondition;
 	use TagPageCondition;
 	use NumberOfViewsCondition;
+	use CustomFieldCondition;
+	use UrlParameterCondition;
+	use ProductStockCondition;
 
 	/**
 	 * Custom current date.
@@ -285,6 +291,15 @@ class ET_Builder_Module_Field_DisplayConditions extends ET_Builder_Module_Field_
 			case 'numberOfViews':
 				return $this->_process_number_of_views_condition( $condition_id, $condition_settings );
 
+			case 'customField':
+				return $this->_process_custom_field_condition( $condition_settings );
+
+			case 'urlParameter':
+				return $this->_process_url_parameter_condition( $condition_settings );
+
+			case 'productStock':
+				return $this->_process_product_stock_condition( $condition_settings );
+
 			default:
 				if ( isset( $condition_settings['dynamicPosts'] ) ) {
 					return $this->_process_dynamic_posts_condition( $condition_settings );
@@ -332,6 +347,20 @@ class ET_Builder_Module_Field_DisplayConditions extends ET_Builder_Module_Field_
 				$is_conflicted = true;
 				break;
 			} elseif ( $is_datetime ) {
+				$is_conflicted = false;
+				break;
+			}
+
+			// Exception! "Custom Field" Condition can have multiple conditions.
+			$is_custom_field = 'customField' === $condition['condition'];
+			if ( $is_custom_field ) {
+				$is_conflicted = false;
+				break;
+			}
+
+			// Exception! "URL Parameter" Condition can have multiple conditions.
+			$is_url_parameter = 'urlParameter' === $condition['condition'];
+			if ( $is_url_parameter ) {
 				$is_conflicted = false;
 				break;
 			}

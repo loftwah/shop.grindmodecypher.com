@@ -2504,6 +2504,7 @@ function et_fb_get_nonces() {
 		'getTags'                         => wp_create_nonce( 'et_builder_ajax_get_tags' ),
 		'searchProducts'                  => wp_create_nonce( 'et_builder_ajax_search_products' ),
 		'getDisplayConditionsStatus'      => wp_create_nonce( 'et_builder_ajax_get_display_conditions_status' ),
+		'getPostMetaFields'               => wp_create_nonce( 'et_builder_ajax_get_post_meta_fields' ),
 		'globalColorsSave'                => wp_create_nonce( 'et_builder_global_colors_save' ),
 		'defaultColorsUpdate'             => wp_create_nonce( 'et_builder_default_colors_update' ),
 	);

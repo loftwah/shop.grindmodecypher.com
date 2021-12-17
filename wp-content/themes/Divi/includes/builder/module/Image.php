@@ -482,14 +482,23 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 
 		// Only if force fullwidth is not set.
 		if ( 'on' !== $force_fullwidth ) {
-			// Only height or max-height is set, no width set.
-			if ( 'auto' === $width && 'auto' !== $height || 'none' !== $max_height ) {
-				$el_style = array(
-					'selector'    => '%%order_class%% .et_pb_image_wrap img',
-					'declaration' => 'width: auto;',
-				);
-				ET_Builder_Element::set_style( $render_slug, $el_style );
+			$responsive_width     = et_pb_responsive_options()->get_property_values( $this->props, 'width' );
+			$responsive_height    = et_pb_responsive_options()->get_property_values( $this->props, 'height' );
+			$responsive_max_width = et_pb_responsive_options()->get_property_values( $this->props, 'max_height' );
+			$image_style_width    = [];
+			$modes                = [ 'desktop', 'tablet', 'phone' ];
+
+			foreach ( $modes as $mode ) {
+				// Only height or max-height is set, no width set.
+				if ( 'auto' === $responsive_width[ $mode ] && 'auto' !== $responsive_height[ $mode ] || 'none' !== $responsive_max_width[ $mode ] ) {
+					$image_style_width[ $mode ] = [
+						'width' => 'auto',
+					];
+				}
 			}
+
+			et_pb_responsive_options()->generate_responsive_css( $image_style_width, '%%order_class%% .et_pb_image_wrap img', '', $render_slug, '', '' );
+
 		}
 
 		$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'src' );

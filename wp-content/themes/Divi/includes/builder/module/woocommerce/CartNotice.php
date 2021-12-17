@@ -1110,6 +1110,16 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 			);
 		}
 
+		if ( in_array( $page_type, [ 'checkout', 'cart' ], true )
+			&& isset( WC()->cart )
+			&& ! is_null( WC()->cart && method_exists( WC()->cart, 'check_cart_items' ) ) ) {
+			$return = WC()->cart->check_cart_items();
+
+			if ( 'checkout' === $page_type && wc_notice_count( 'error' ) > 0 ) {
+				$this->add_classname( 'et_pb_hide_module' );
+			}
+		}
+
 		$output = self::get_cart_notice( $this->props );
 
 		return $this->_render_module_wrapper( $output, $render_slug );

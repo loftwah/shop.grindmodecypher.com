@@ -601,6 +601,15 @@ class ET_Builder_Module_Woocommerce_Checkout_Order_Details extends ET_Builder_Mo
 			'border-spacing' /* Can be anything other than `range`. */
 		);
 
+		if ( isset( WC()->cart )
+			&& ! is_null( WC()->cart && method_exists( WC()->cart, 'check_cart_items' ) ) ) {
+			$return = WC()->cart->check_cart_items();
+
+			if ( wc_notice_count( 'error' ) > 0 ) {
+				$this->add_classname( 'et_pb_hide_module' );
+			}
+		}
+
 		return $this->_render_module_wrapper( $output, $render_slug );
 	}
 }

@@ -77,6 +77,10 @@ class ET_Builder_Global_Presets_History {
 
 		$history = json_decode( stripslashes( $_POST['history'] ) );
 
+		if ( empty( $history->history ) ) {
+			et_core_die( esc_html__( 'Global History data is empty.', 'et_builder' ) );
+		}
+
 		if ( self::sanitize_and_validate( $history ) ) {
 			$current_settings = $history->history[ $history->index ];
 			et_update_option( ET_Builder_Global_Presets_Settings::GLOBAL_PRESETS_OPTION, $current_settings->settings );
@@ -265,6 +269,9 @@ class ET_Builder_Global_Presets_History {
 			);
 		}
 
+		// Ensure history is an object.
+		$history = is_object( $history ) ? $history : (object) $history;
+
 		$this->_apply_attribute_migrations( $history );
 
 		return $history;
@@ -323,7 +330,14 @@ class ET_Builder_Global_Presets_History {
 	 * @return void
 	 */
 	protected function _apply_attribute_migrations( $history ) {
+		if ( empty( $history->history ) ) {
+			return;
+		}
+
 		foreach ( $history->history as $record ) {
+			if ( empty( $record->settings ) ) {
+				continue;
+			}
 			foreach ( $record->settings as $module => $preset_structure ) {
 				foreach ( $preset_structure->presets as $preset_id => $preset ) {
 					ET_Builder_Global_Presets_Settings::migrate_settings_as_module_attributes( $preset, $module );

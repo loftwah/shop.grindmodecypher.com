@@ -420,6 +420,10 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 			'background-color' => '%%order_class%% .et_pb_only_image_mode_wrap, %%order_class%% .et-pb-icon',
 		);
 
+		$fields['background_layout'] = array(
+			'color' => '%%order_class%% .et_pb_module_header, %%order_class%% .et_pb_blurb_description',
+		);
+
 		$fields['body_text_color'] = array(
 			'color' => '%%order_class%% .et_pb_blurb_description',
 		);

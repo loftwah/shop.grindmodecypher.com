@@ -220,6 +220,13 @@ class ET_Builder_Module_Woocommerce_Checkout_Shipping extends ET_Builder_Module 
 					),
 					'font_field'      => array(
 						'css'         => array(
+							'main'      => implode(
+								',',
+								[
+									'.woocommerce %%order_class%% .select2-container--default .select2-selection--single',
+									'.woocommerce %%order_class%% form .form-row .input-text',
+								]
+							),
 
 							// Required to override default WooCommerce styles.
 							'important' => array( 'line-height', 'size', 'font' ),
@@ -486,6 +493,15 @@ class ET_Builder_Module_Woocommerce_Checkout_Shipping extends ET_Builder_Module 
 		}
 
 		$this->add_classname( $this->get_text_orientation_classname() );
+
+		if ( isset( WC()->cart )
+			&& ! is_null( WC()->cart && method_exists( WC()->cart, 'check_cart_items' ) ) ) {
+			$return = WC()->cart->check_cart_items();
+
+			if ( wc_notice_count( 'error' ) > 0 ) {
+				$this->add_classname( 'et_pb_hide_module' );
+			}
+		}
 
 		return $this->_render_module_wrapper( $output, $render_slug );
 	}
