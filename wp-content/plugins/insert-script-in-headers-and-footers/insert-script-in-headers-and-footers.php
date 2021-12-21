@@ -1,20 +1,17 @@
 <?php
  
 /*
-
 Plugin Name: Insert Script In Headers And Footers
-
 Description: A plugin to insert script in headers and footers
-
 Author: Geek Code Lab
-
-Version: 1.5
-
+Version: 1.7
 Author URI: https://geekcodelab.com/
-
+Text Domain: insert-script-in-headers-and-footers
 */
 
 if( !defined( 'ABSPATH' ) ) exit;
+
+define("ishf_BUILD", '1.6');
 
 require_once( plugin_dir_path (__FILE__) .'functions.php' );
 
@@ -30,49 +27,18 @@ add_action('wp_body_open', 'ishf_frontendBodyScript',100);
 
 add_action('wp_footer', 'ishf_frontendFooterScript',100);
 
-register_activation_hook( __FILE__, 'ishf_plugin_active_header_footer_script' );
-
 $plugin = plugin_basename( __FILE__ );
 add_filter( "plugin_action_links_$plugin", 'ishf_plugin_add_settings_link');
 
 function ishf_plugin_add_settings_link( $links ) { 
-	$support_link = '<a href="https://geekcodelab.com/contact/"  target="_blank" >' . __( 'Support' ) . '</a>'; 
+	$support_link = '<a href="https://geekcodelab.com/contact/"  target="_blank" >' . __( 'Support','insert-script-in-headers-and-footers' ) . '</a>'; 
 	array_unshift( $links, $support_link );	
 
-	$pro_link = '<a href="https://geekcodelab.com/wordpress-plugins/insert-script-in-headers-and-footers-pro/"  target="_blank" style="color:#46b450;font-weight: 600;">' . __( 'Premium Upgrade' ) . '</a>'; 
-	array_unshift( $links, $pro_link );	
-
-	$settings_link = '<a href="admin.php?page=insert-script-in-header-and-footer-option">' . __( 'Settings' ) . '</a>'; 	
+	$settings_link = '<a href="options-general.php?page=insert-script-in-header-and-footer-option">' . __( 'Settings','insert-script-in-headers-and-footers' ) . '</a>'; 	
 	array_unshift( $links, $settings_link );	
 
-	return $links;	
+	return $links;
 }
-
-function ishf_plugin_active_header_footer_script(){
-	if (is_plugin_active( 'insert-script-in-headers-and-footers-pro/insert-script-in-headers-and-footers-pro.php' ) ) {
-		deactivate_plugins('insert-script-in-headers-and-footers-pro/insert-script-in-headers-and-footers-pro.php');
-	}
-	
-	$header_script= ishf_get_option_header_script();
-	$body_script= ishf_get_option_body_script();
-	$footer_script= ishf_get_option_footer_script();
-	
-	if(empty($header_script))
-	{
-		update_option('insert_header_script_gk', $header_script);
-	}
-
-	if(empty($body_script))
-	{ 
-		update_option('insert_body_script_gk', $body_script);
-	}
-	
-	if(empty($footer_script))
-	{ 
-		update_option('insert_footer_script_gk', $footer_script);
-	}
-}
-
 function ishf_registerSettings() {
 	$plugin_data = get_plugin_data( __FILE__ );
 	$plugin_name = $plugin_data['Name'];
@@ -101,7 +67,7 @@ function ishf_options_menu_header_footer_script(){
 	
 	if(!current_user_can('manage_options') ){
 			
-		wp_die( __('You do not have sufficient permissions to access this page.') );
+		wp_die( __('You do not have sufficient permissions to access this page.','insert-script-in-headers-and-footers') );
 		
 	}	
 	include( plugin_dir_path( __FILE__ ) . 'options.php' );
@@ -115,9 +81,8 @@ function ishf_enqueue_styles_scripts_header_footer_script()
 
         $css= plugins_url() . '/'.  basename(dirname(__FILE__)) . "/assets/css/style.css";               
 
-        wp_enqueue_style( 'main-header-footer-script-css', $css );
+        wp_enqueue_style( 'main-header-footer-script-css', $css, array(), ishf_BUILD );
 
     }
-
 }
 ?>
