@@ -31,7 +31,7 @@ if ( ! defined( 'ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY' ) ) {
  * `wc-form-handler` handles shipping calculator update ONLY when WooCommerce shortcode is used.
  * Hence, Cart Total's shipping calculator update is handled this way.
  *
- * @since ??
+ * @since 4.14.3
  */
 function et_builder_handle_shipping_calculator_update_btn_click() {
 	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification is handled by WooCommerce plugin.

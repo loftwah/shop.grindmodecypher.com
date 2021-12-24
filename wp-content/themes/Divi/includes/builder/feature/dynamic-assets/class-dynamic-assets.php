@@ -2390,8 +2390,19 @@ class ET_Dynamic_Assets {
 
 		// Handle fitvids script.
 		if ( ! $this->_enqueue_fitvids ) {
+			$fitvids_deps = array(
+				'et_pb_blog',
+				'et_pb_slider',
+				'et_pb_video',
+				'et_pb_video_slider',
+				'et_pb_slide_video',
+				'et_pb_code',
+				'et_pb_fullwidth_code',
+				'et_pb_portfolio',
+				'et_pb_filterable_portfolio',
+			);
 
-			$this->_enqueue_fitvids = $this->_et_dynamic_video_check();
+			$this->_enqueue_fitvids = $this->check_for_dependency( $fitvids_deps, $current_shortcodes );
 
 			if ( ( is_single() && ! $this->_page_builder_used ) || ( is_home() && ! is_front_page() ) || ! is_singular() ) {
 				$this->_enqueue_fitvids = true;
@@ -2740,46 +2751,10 @@ class ET_Dynamic_Assets {
 	}
 
 	/**
-	 * Check if content has embeds.
-	 *
-	 * @since ??
-	 */
-	private function _et_dynamic_video_check() {
-		$has_video = false;
-		$content   = get_the_content();
-
-		// If not embeds found directly on the content,
-		// Check for urls.
-		// Also run the do shortocde for making regex failsafe.
-		$content = do_shortcode( $content );
-		$embeds  = get_media_embedded_in_content( $content );
-
-		// Early bail if any embeds found.
-		if ( $embeds ) {
-			return true;
-		}
-
-		preg_match_all( '/https?\:\/\/[^\" \n]+/i', $content, $urls );
-
-		foreach ( $urls[0] as $url ) {
-			$oembed = wp_oembed_get( esc_url( wp_strip_all_tags( $url ) ) );
-
-			if ( ! $oembed ) {
-				continue;
-			}
-
-			$has_video = true;
-			break;
-		}
-
-		return $has_video;
-	}
-
-	/**
 	 * Check if current page is virtual.
 	 *
 	 * @return bool
-	 * @since ??
+	 * @since 4.14.3
 	 */
 	public function is_virtual_page() {
 		global $wp;
@@ -2793,7 +2768,7 @@ class ET_Dynamic_Assets {
 		 * Add more virtual pages slug if there are known compatibility issues.
 		 *
 		 * @return bool
-		 * @since ??
+		 * @since 4.14.3
 		 */
 		$valid_virtual_pages = apply_filters(
 			'et_builder_dynamic_css_virtual_pages',

@@ -434,7 +434,7 @@ class ET_Builder_Ajax_Data {
 		/**
 		 * Filters included meta fields for `et_builder_ajax_get_post_meta_fields` ajax action.
 		 *
-		 * @since ??
+		 * @since 4.14.3
 		 *
 		 * @param array $meta_fields
 		 */

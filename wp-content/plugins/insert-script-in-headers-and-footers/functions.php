@@ -49,5 +49,5 @@ function ishf_output($setting){
 
 	// Output
 	
-	_e(html_entity_decode(wp_unslash(esc_html($meta))));
+	_e(html_entity_decode(wp_unslash($meta)));
 }

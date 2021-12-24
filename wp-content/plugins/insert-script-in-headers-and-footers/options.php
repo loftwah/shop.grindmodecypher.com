@@ -70,7 +70,31 @@ $footer_script=ishf_get_option_footer_script();
 			
 		</div>
 		<div class="col-6">
-			
+			<div class="ishf_pro_details">
+				<h2><?php esc_html_e('Insert Script In Headers And Footers Pro','insert-script-in-headers-and-footers'); ?></h2>
+				<ul>
+					<li><?php esc_html_e('Add script to single page priority of loading script.','insert-script-in-headers-and-footers'); ?></li>
+					<li><?php esc_html_e('Add header script to single post, custom post and page.','insert-script-in-headers-and-footers'); ?></li>
+					<li><?php esc_html_e('Add Footer script to single post, custom Post and page.','insert-script-in-headers-and-footers'); ?></li>
+					<li><?php esc_html_e('Give Priority to Script(At Beginning or At End)','insert-script-in-headers-and-footers'); ?></li>
+					<li><?php esc_html_e('Select where to Show Script - Admin or Front Side','insert-script-in-headers-and-footers'); ?></li>
+					<li><?php esc_html_e('Add Script to Post, Custom Post and Page','insert-script-in-headers-and-footers'); ?></li>
+					<li><?php esc_html_e('Controlling the priority of loading script code.','insert-script-in-headers-and-footers'); ?></li>
+					<li>
+					<?php esc_html_e('Basic code editor options','insert-script-in-headers-and-footers'); ?>
+						<ul>
+							<li><?php esc_html_e('Code syntax highlighting','insert-script-in-headers-and-footers'); ?></li>
+							<li><?php esc_html_e('Line numbering','insert-script-in-headers-and-footers'); ?></li>
+							<li><?php esc_html_e('Active line highlighting','insert-script-in-headers-and-footers'); ?></li>
+							<li><?php esc_html_e('Tab indentation','insert-script-in-headers-and-footers'); ?></li>
+						</ul>
+					</li>
+					<li><?php esc_html_e('Timely','insert-script-in-headers-and-footers'); ?> <a href="<?php echo esc_url('https://geekcodelab.com/contact/'); ?>" target="_blank"><?php esc_html_e('support','insert-script-in-headers-and-footers'); ?></a> <?php esc_html_e('24/7.','insert-script-in-headers-and-footers'); ?></li>
+					<li><?php esc_html_e('Regular updates.','insert-script-in-headers-and-footers'); ?></li>
+					<li><?php esc_html_e('Well documented.','insert-script-in-headers-and-footers'); ?></li>
+				</ul>
+    			<a href="<?php echo esc_url('https://geekcodelab.com/wordpress-plugins/insert-script-in-headers-and-footers-pro/'); ?>" title="<?php echo esc_attr('Upgrade to Premium','insert-script-in-headers-and-footers'); ?>" class="ishf_premium_btn" target="_blank"><?php esc_html_e('Upgrade to Premium','insert-script-in-headers-and-footers'); ?></a>
+			</div>
 		</div>
 	</div>
 	

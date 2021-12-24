@@ -18,7 +18,7 @@ trait CustomFieldCondition {
 	/**
 	 * Evaluates "Custom Field" condition.
 	 *
-	 * @since ??
+	 * @since 4.14.3
 	 *
 	 * @param  array $condition_settings The Condition settings containing:
 	 *                                   'selectConditionalMetaField' => base64_data.

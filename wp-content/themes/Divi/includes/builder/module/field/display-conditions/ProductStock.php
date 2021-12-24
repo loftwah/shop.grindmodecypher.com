@@ -2,7 +2,7 @@
 /**
  * Product Stock Condition logic swiftly crafted.
  *
- * @since ??
+ * @since 4.14.3
  *
  * @package     Divi
  * @sub-package Builder
@@ -18,7 +18,7 @@ trait ProductStockCondition {
 	/**
 	 * Processes "Product Stock" condition.
 	 *
-	 * @since ??
+	 * @since 4.14.3
 	 *
 	 * @param  array $condition_settings The Condition settings containing:
 	 *                                   'displayRule' => string,

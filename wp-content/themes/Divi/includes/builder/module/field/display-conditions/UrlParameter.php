@@ -2,7 +2,7 @@
 /**
  * URL Parameter Condition logic swiftly crafted.
  *
- * @since ??
+ * @since 4.14.3
  *
  * @package     Divi
  * @sub-package Builder
@@ -18,7 +18,7 @@ trait UrlParameterCondition {
 	/**
 	 * Processes "URL Parameter" condition.
 	 *
-	 * @since ??
+	 * @since 4.14.3
 	 *
 	 * @param  array $condition_settings The Condition settings containing:
 	 *                                   'displayRule' => string,
@@ -64,7 +64,7 @@ trait UrlParameterCondition {
 	/**
 	 * Returns all parameter values.
 	 *
-	 * @since ??
+	 * @since 4.14.3
 	 *
 	 * @return array
 	 */
@@ -80,7 +80,7 @@ trait UrlParameterCondition {
 	/**
 	 * Checks if `$haystack` items contain `$needle` in their values.
 	 *
-	 * @since ??
+	 * @since 4.14.3
 	 *
 	 * @param array  $haystack The array to search in.
 	 * @param string $needle   The string needle to search for.

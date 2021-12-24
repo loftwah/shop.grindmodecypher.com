@@ -40,8 +40,12 @@ class ET_Builder_Plugin_Compat_SiteGround_Optimizer extends ET_Builder_Plugin_Co
 	 * @return void
 	 */
 	public function init_hooks() {
-
 		if ( ! is_plugin_active( $this->plugin_id ) ) {
+			return;
+		}
+
+		// Do nothing if it's not on frontend.
+		if ( ! et_builder_is_frontend() ) {
 			return;
 		}
 
@@ -61,9 +65,9 @@ class ET_Builder_Plugin_Compat_SiteGround_Optimizer extends ET_Builder_Plugin_Co
 	 * @param string $handle Resource handle.
 	 * @param string $src Resource src.
 	 *
-	 * @since ??
+	 * @since 4.14.3
 	 *
-	 * @return void
+	 * @return string
 	 */
 	public function get_page_resource_handles( $tag, $handle, $src ) {
 		if ( empty( $src ) ) {
@@ -78,6 +82,8 @@ class ET_Builder_Plugin_Compat_SiteGround_Optimizer extends ET_Builder_Plugin_Co
 		}
 
 		$this->_excluded[] = $handle;
+
+		return $tag;
 	}
 
 	/**

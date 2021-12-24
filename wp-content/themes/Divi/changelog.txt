@@ -1,3 +1,14 @@
+version 4.14.4 ( updated 12-17-2021 )
+- Fixed a conflict with SiteGround Optimizer where the Theme Customizer styles would not work when the Output Styles Inline option was enabled in Divi's Theme Options.
+- Fixed a compatibility issue with SiteGround Optimizer that would cause the Divi Builder to timeout.
+- Fixed order class suffix changing from _0 to _1 due to the use of do_shortcode().
+	* composer.json
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/plugin-compat/sg-cachepress.php
+	* includes/builder/scripts/src/builder.js
+
 version 4.14.3 ( updated 12-16-2021 )
 - Added the all new "Product Stock" condition to Display Conditions feature.
 - Added the all new "Custom Field" condition to Display Conditions feature.
