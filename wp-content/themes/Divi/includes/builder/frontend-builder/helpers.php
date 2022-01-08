@@ -2209,16 +2209,17 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 			'modal' => array(
 				'title'                       => esc_html__( 'Builder Settings', 'et_builder' ),
 				'labels'                      => array(
-					'toolbar'            => esc_html__( 'Customize Builder Settings Toolbar', 'et_builder' ),
-					'interaction_mode'   => esc_html__( 'Builder Default Interaction Mode', 'et_builder' ),
-					'history'            => esc_html__( 'History State Interval', 'et_builder' ),
-					'modal_position'     => esc_html__( 'Settings Modal Default Position', 'et_builder' ),
-					'animation'          => esc_html__( 'Builder Interface Animations', 'et_builder' ),
-					'disabled_modules'   => esc_html__( 'Show Disabled Modules At 50% Opacity', 'et_builder' ),
-					'group_settings'     => esc_html__( 'Group Settings Into Closed Toggles', 'et_builder' ),
-					'dummy_content'      => esc_html__( 'Add Placeholder Content To New Modules', 'et_builder' ),
-					'view_mode'          => esc_html__( 'Builder Default View Mode', 'et_builder' ),
-					'page_creation_flow' => esc_html__( 'Page Creation Flow', 'et_builder' ),
+					'toolbar'              => esc_html__( 'Customize Builder Settings Toolbar', 'et_builder' ),
+					'interaction_mode'     => esc_html__( 'Builder Default Interaction Mode', 'et_builder' ),
+					'history'              => esc_html__( 'History State Interval', 'et_builder' ),
+					'modal_position'       => esc_html__( 'Settings Modal Default Position', 'et_builder' ),
+					'animation'            => esc_html__( 'Builder Interface Animations', 'et_builder' ),
+					'disabled_modules'     => esc_html__( 'Show Disabled Modules At 50% Opacity', 'et_builder' ),
+					'group_settings'       => esc_html__( 'Group Settings Into Closed Toggles', 'et_builder' ),
+					'dummy_content'        => esc_html__( 'Add Placeholder Content To New Modules', 'et_builder' ),
+					'view_mode'            => esc_html__( 'Builder Default View Mode', 'et_builder' ),
+					'page_creation_flow'   => esc_html__( 'Page Creation Flow', 'et_builder' ),
+					'visual_theme_builder' => esc_html__( 'Theme Builder Template Editing', 'et_builder' ),
 				),
 				'view_mode_select'            => array(
 					'desktop'   => $app_preferences['view_mode']['options']['desktop'],
@@ -2261,6 +2262,10 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 					'off' => et_builder_i18n( 'Off' ),
 				),
 				'enable_dummy_content'        => array(
+					'on'  => et_builder_i18n( 'On' ),
+					'off' => et_builder_i18n( 'Off' ),
+				),
+				'enable_visual_theme_builder' => array(
 					'on'  => et_builder_i18n( 'On' ),
 					'off' => et_builder_i18n( 'Off' ),
 				),

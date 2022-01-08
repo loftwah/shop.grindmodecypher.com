@@ -27,18 +27,35 @@ if ( ! function_exists( 'et_pb_maybe_fa_font_icon' ) ) {
 		return et_pb_maybe_extended_icon( $icon_data ) && 'fa' === et_pb_get_extended_font_icon_type( $icon_data );
 	}
 }
+
+if ( ! function_exists( 'et_pb_maybe_old_single_utf_divi_icon' ) ) {
+	/**
+	 * Checking if the passed icon value is old Divi single unicode value.
+	 *
+	 * @since ?
+	 *
+	 * @param string $icon_value icon value from shortcode or presets.
+	 *
+	 * @return bool
+	 */
+	function et_pb_maybe_old_single_utf_divi_icon( $icon_value ) {
+		return 1 === strlen( utf8_decode( $icon_value ) ) && in_array( $icon_value, et_pb_get_decoded_divi_icons(), true );
+	}
+}
+
 if ( ! function_exists( 'et_pb_maybe_old_divi_font_icon' ) ) {
 	/**
 	 * Checking if the passed icon value is in the old Divi icon format.
 	 *
 	 * @since ?
 	 *
-	 * @param string $icon_data icon value from shortcode or presets.
+	 * @param string $icon_value icon value from shortcode or presets.
+	 * @param bool   $check_single_utf_value will check for the old Divi single unicode icon format.
 	 *
 	 * @return bool
 	 */
-	function et_pb_maybe_old_divi_font_icon( $icon_data ) {
-		return 1 === preg_match( '/^%%[0-9]{1,3}%%$/', trim( $icon_data ) );
+	function et_pb_maybe_old_divi_font_icon( $icon_value, $check_single_utf_value = true ) {
+		return 1 === preg_match( '/^%%[0-9]{1,3}%%$/', trim( $icon_value ) ) || ( $check_single_utf_value && et_pb_maybe_old_single_utf_divi_icon( $icon_value ) );
 	}
 }
 if ( ! function_exists( 'et_pb_maybe_divi_font_icon' ) ) {
@@ -82,6 +99,10 @@ if ( ! function_exists( 'et_pb_get_extended_font_icon_value' ) ) {
 	 * @return string
 	 */
 	function et_pb_get_extended_font_icon_value( $icon_data, $do_decode = false, $return_raw_unicode = false ) {
+		if ( ! et_pb_maybe_extended_icon( $icon_data ) ) {
+			$icon_data = et_pb_build_extended_font_icon_value( $icon_data );
+		}
+
 		$icon_value = et_pb_get_extended_icon_data( $icon_data, 'icon_value' );
 
 		$icons_list = et_pb_get_decoded_extended_font_icon_symbols();
@@ -147,12 +168,17 @@ if ( ! function_exists( 'et_pb_build_extended_font_icon_value' ) ) {
 			$font_weight = et_pb_get_normal_font_weight_value();
 		}
 
-		if ( et_pb_maybe_old_divi_font_icon( $icon_value ) ) {
-
+		if ( et_pb_maybe_old_divi_font_icon( $icon_value, false ) ) {
 			// the font icon value is saved in the following format: %%index_number%%.
 			$icon_index   = (int) str_replace( '%', '', $icon_value );
 			$icon_symbols = et_pb_get_font_icon_symbols();
 			$icon_value   = isset( $icon_symbols[ $icon_index ] ) ? $icon_symbols[ $icon_index ] : '';
+		} elseif ( et_pb_maybe_old_single_utf_divi_icon( $icon_value ) ) {
+			$index      = array_search( $icon_value, et_pb_get_decoded_divi_icons(), true );
+			$font_icons = et_pb_get_extended_font_icon_symbols();
+			if ( $index && ! empty( $font_icons[ $index ] ) && ! empty( $font_icons[ $index ]['unicode'] ) ) {
+				$icon_value = $font_icons[ $index ]['unicode'];
+			}
 		}
 
 		if ( $decode_amp ) {
@@ -379,11 +405,44 @@ if ( ! function_exists( 'et_pb_get_decoded_extended_font_icon_symbols' ) ) :
 	 * @return array
 	 */
 	function et_pb_get_decoded_extended_font_icon_symbols() {
-		$font_icons = et_pb_get_extended_font_icon_symbols();
-		foreach ( $font_icons as &$font_icon ) {
-			$font_icon['decoded_unicode'] = et_pb_get_decode_extended_font_icon_symbol( $font_icon['unicode'] );
+		$cache_key = 'et_pb_get_decoded_extended_font_icon_symbols';
+		if ( ! et_core_cache_has( $cache_key ) ) {
+			$font_icons = et_pb_get_extended_font_icon_symbols();
+			foreach ( $font_icons as &$font_icon ) {
+				$font_icon['decoded_unicode'] = et_pb_get_decode_extended_font_icon_symbol( $font_icon['unicode'] );
+			}
+			et_core_cache_set( $cache_key, $font_icons );
+		} else {
+			$font_icons = et_core_cache_get( $cache_key );
 		}
 		return $font_icons;
+	}
+endif;
+
+if ( ! function_exists( 'et_pb_get_decoded_divi_icons' ) ) :
+	/**
+	 * Returns Divi icons decoded utf values.
+	 *
+	 * @since ?
+	 *
+	 * @return array
+	 */
+	function et_pb_get_decoded_divi_icons() {
+		$cache_key = 'et_pb_get_decoded_divi_icons';
+		if ( ! et_core_cache_has( $cache_key ) ) {
+			$font_icons         = et_pb_get_extended_font_icon_symbols();
+			$decoded_divi_icons = array();
+			foreach ( $font_icons as $font_icon ) {
+				if ( ! $font_icon['is_divi_icon'] ) {
+					break;
+				}
+				$decoded_divi_icons[] = et_pb_get_decode_extended_font_icon_symbol( $font_icon['unicode'] );
+			}
+			et_core_cache_set( $cache_key, $decoded_divi_icons );
+		} else {
+			$decoded_divi_icons = et_core_cache_get( $cache_key );
+		}
+		return $decoded_divi_icons;
 	}
 endif;
 
@@ -486,7 +545,7 @@ if ( ! function_exists( 'et_pb_check_if_post_contains_divi_font_icon' ) ) :
 	function et_pb_check_if_post_contains_divi_font_icon( $content, $use_only_defined_icon_fields = false ) {
 		// Check the non-extended icon value.
 		$old_divi_icon_regex         = ! $use_only_defined_icon_fields ? '/\=\"%%([^"]*)%%\"/mi' : '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"%%([^"]*)%%\"/mi';
-		$single_char_divi_icon_regex = '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"[\s\S]\"/mi';
+		$single_char_divi_icon_regex = '/(' . et_pb_get_all_font_icon_option_names_string() . ')\=\"[\s\S]\"/miu';
 
 		return ! empty( preg_match_all( et_pb_get_font_icon_names_regex(), $content ) ) || ! empty( preg_match_all( $old_divi_icon_regex, $content ) ) || ! empty( preg_match_all( $single_char_divi_icon_regex, $content ) );
 	}
@@ -599,13 +658,21 @@ if ( ! function_exists( 'et_pb_get_extended_font_icon_symbols' ) ) :
 	 * @return array
 	 */
 	function et_pb_get_extended_font_icon_symbols() {
-		$full_icons_list_path = __DIR__ . '/full_icons_list.json';
-		if ( file_exists( $full_icons_list_path ) ) {
-			$icons_data = json_decode( file_get_contents( $full_icons_list_path ), true );
-			if ( JSON_ERROR_NONE === json_last_error() ) {
-				return $icons_data;
+		$cache_key = 'et_pb_get_extended_font_icon_symbols';
+		if ( ! et_core_cache_has( $cache_key ) ) {
+			$full_icons_list_path = __DIR__ . '/full_icons_list.json';
+			if ( file_exists( $full_icons_list_path ) ) {
+				// phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Can't use wp_remote_get() for local file
+				$icons_data = json_decode( file_get_contents( $full_icons_list_path ), true );
+				// phpcs:enable
+				if ( JSON_ERROR_NONE === json_last_error() ) {
+					et_core_cache_set( $cache_key, $icons_data );
+					return $icons_data;
+				}
 			}
+			et_wrong( 'Problem with loading the icon data on this path: ' . $full_icons_list_path );
+		} else {
+			return et_core_cache_get( $cache_key );
 		}
-		et_wrong( 'Problem with loading the icon data on this path: ' . $full_icons_list_path );
 	}
 endif;

@@ -117,7 +117,7 @@ class Shortcodes {
 			$reset_password_list = array( 'password_reset_url', 'password_reset_url_string' );
 
 			// New Users
-			$new_users_list = array( 'user_new_password', 'user_activation_link' );
+			$new_users_list = array( 'user_new_password', 'user_activation_link', 'set_password_url_string' );
 
 			// General
 			$general_list = array(
@@ -479,6 +479,11 @@ class Shortcodes {
 							$shortcode['[yaymail_user_new_password]'] = '';
 						}
 					}
+
+					if ( isset( $args['set_password_url']) && ! empty( $args['set_password_url'] ) ) {
+						$shortcode['[yaymail_set_password_url_string]'] = $args['set_password_url'];
+					}
+
 					if ( isset( $args['email']->user_login ) && ! empty( $args['email']->user_login ) ) {
 						$shortcode['[yaymail_customer_username]'] = $args['email']->user_login;
 						$user                                     = get_user_by( 'email', $args['email']->user_email );
@@ -495,7 +500,7 @@ class Shortcodes {
 					if ( isset( $args['email']->user_email ) && ! empty( $args['email']->user_email ) ) {
 						$shortcode['[yaymail_user_email]'] = $args['email']->user_email;
 					}
-					if ( isset( $args['email']->id ) && ( 'customer_new_account' == $args['email']->id || 'customer_new_account_activation' == $args['email']->id ) ) {
+					if ( isset( $args['email']->id ) && ( 'customer_new_account_activation' == $args['email']->id ) ) {
 						if ( 'customer_new_account_activation' == $args['email']->id ) {
 							if ( isset( $args['email']->user_activation_url ) && ! empty( $args['email']->user_activation_url ) ) {
 								$shortcode['[yaymail_user_activation_link]'] = $args['email']->user_activation_url;
@@ -709,28 +714,28 @@ class Shortcodes {
 		$yaymail_settings = get_option( 'yaymail_settings' );
 		$order_url        = $order->get_edit_order_url();
 		// if ( class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ) {
-		// 	add_action(
-		// 		'woocommerce_email_customer_details',
-		// 		function( $order ) {
-		// 			if ( 'Shortcodes.php' === basename( __FILE__ ) ) {
-		// 				$this->shipping_address = $order->get_formatted_shipping_address();
-		// 				$this->billing_address  = $order->get_formatted_billing_address();
-		// 			}
-		// 		},
-		// 		100,
-		// 		1
-		// 	);
-		// 	ob_start();
-		// 	do_action( 'woocommerce_email_customer_details', $order );
-		// 	$delete_write = ob_get_contents();
-		// 	ob_end_clean();
+		// add_action(
+		// 'woocommerce_email_customer_details',
+		// function( $order ) {
+		// if ( 'Shortcodes.php' === basename( __FILE__ ) ) {
+		// $this->shipping_address = $order->get_formatted_shipping_address();
+		// $this->billing_address  = $order->get_formatted_billing_address();
+		// }
+		// },
+		// 100,
+		// 1
+		// );
+		// ob_start();
+		// do_action( 'woocommerce_email_customer_details', $order );
+		// $delete_write = ob_get_contents();
+		// ob_end_clean();
 		// }
 		$this->shipping_address = $order->get_formatted_shipping_address();
 		$this->billing_address  = $order->get_formatted_billing_address();
-		$shipping_address     = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->shipping_address : $order->get_formatted_shipping_address();
-		$billing_address      = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->billing_address : $order->get_formatted_billing_address();
-		$postID               = CustomPostType::postIDByTemplate( $this->template );
-		$yaymail_informations = array(
+		$shipping_address       = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->shipping_address : $order->get_formatted_shipping_address();
+		$billing_address        = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->billing_address : $order->get_formatted_billing_address();
+		$postID                 = CustomPostType::postIDByTemplate( $this->template );
+		$yaymail_informations   = array(
 			'post_id'          => $postID,
 			'template'         => $this->template,
 			'order'            => $order,
@@ -741,7 +746,7 @@ class Shortcodes {
 				'textLinkColor'        => get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A',
 			),
 		);
-		$text_link_color      = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A';
+		$text_link_color        = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A';
 		if ( $order->get_billing_phone() ) {
 			$billing_address .= "<br/> <a href='tel:" . esc_html( $order->get_billing_phone() ) . "' style='color:" . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>" . esc_html( $order->get_billing_phone() ) . '</a>';
 		}
@@ -909,7 +914,7 @@ class Shortcodes {
 		} else {
 			$shortcode['[yaymail_shipping_state]'] = '';
 		}
-		if ( ! empty( $order->get_shipping_phone() ) ) {
+		if ( method_exists($order, 'get_shipping_phone') && ! empty( $order->get_shipping_phone() ) ) {
 			$shortcode['[yaymail_shipping_phone]'] = $order->get_shipping_phone();
 		} else {
 			$shortcode['[yaymail_shipping_phone]'] = '';
@@ -1201,6 +1206,7 @@ class Shortcodes {
 
 		// NEW USERS:
 		$shortcode['[yaymail_user_new_password]']    = esc_html__( 'G(UAM1(eIX#G', 'yaymail' );
+		$shortcode['[yaymail_set_password_url_string]']    = esc_url( get_home_url() ) . '/my-account/set-password/';
 		$shortcode['[yaymail_user_activation_link]'] = '';
 
 		// GENERALS
@@ -1509,7 +1515,7 @@ class Shortcodes {
 		foreach ( $customerNotes as $customerNote ) {
 			?>
 			
-				<?php echo wp_kses_post(wpautop( wptexturize( make_clickable( $customerNote->comment_content ) ) )); ?>
+				<?php echo wp_kses_post( wpautop( wptexturize( make_clickable( $customerNote->comment_content ) ) ) ); ?>
 			
 			<?php
 		}

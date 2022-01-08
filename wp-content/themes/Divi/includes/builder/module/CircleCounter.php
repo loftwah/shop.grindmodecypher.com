@@ -219,7 +219,7 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 
 		$sticky                = et_pb_sticky_options();
 		$multi_view            = et_pb_multi_view_options( $this );
-		$number                = $multi_view->get_value( 'number' );
+		$number                = $multi_view->get_value( 'number', 'desktop', '' );
 		$percent_sign          = $this->props['percent_sign'];
 		$title                 = $multi_view->render_element(
 			array(

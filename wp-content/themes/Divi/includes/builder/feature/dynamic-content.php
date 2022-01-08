@@ -1181,7 +1181,7 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 			$custom_format = $_->array_get( $settings, 'custom_date_format', $def( $post_id, $name, 'custom_date_format' ) );
 
 			if ( 'default' === $format ) {
-				$format = get_option( 'date_format' );
+				$format = strval( get_option( 'date_format' ) );
 			}
 
 			if ( 'custom' === $format ) {

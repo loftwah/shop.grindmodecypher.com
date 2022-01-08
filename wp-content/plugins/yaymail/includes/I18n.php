@@ -31,4 +31,10 @@ class I18n {
 			YAYMAIL_PLUGIN_URL . 'i18n/languages/'
 		);
 	}
+
+	public static function jsTranslate() {
+		return array(
+			'ELEMENTS' => __('ELEMENTS','yaymail')
+		);
+	}
 }

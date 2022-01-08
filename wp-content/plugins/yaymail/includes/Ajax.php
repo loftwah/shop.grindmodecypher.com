@@ -315,7 +315,11 @@ class Ajax {
 					$subject = $wc_emails->emails[ $email ]->subject;
 					return $subject;
 				} else {
-					$subject = $wc_emails->emails[ $email ]->subject;
+					if (!empty($wc_emails->emails[ $email ]->subject)) {
+						$subject = $wc_emails->emails[ $email ]->subject;
+						return $subject;
+					}
+					$subject = $wc_emails->emails[ $email ]->get_subject();
 					return $subject;
 				}
 			}

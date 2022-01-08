@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.4' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.5' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -1047,7 +1047,7 @@ endif;
  */
 function et_fb_app_preferences_settings() {
 	$app_preferences = array(
-		'settings_bar_location'             => array(
+		'settings_bar_location'               => array(
 			'type'    => 'string',
 			'default' => 'bottom',
 			'options' => array(
@@ -1061,19 +1061,23 @@ function et_fb_app_preferences_settings() {
 				'left',
 			),
 		),
-		'builder_animation'                 => array(
+		'builder_animation'                   => array(
 			'type'    => 'bool',
 			'default' => true,
 		),
-		'builder_display_modal_settings'    => array(
+		'builder_display_modal_settings'      => array(
 			'type'    => 'bool',
 			'default' => false,
 		),
-		'builder_enable_dummy_content'      => array(
+		'builder_enable_dummy_content'        => array(
 			'type'    => 'bool',
 			'default' => true,
 		),
-		'event_mode'                        => array(
+		'builder_enable_visual_theme_builder' => array(
+			'type'    => 'bool',
+			'default' => true,
+		),
+		'event_mode'                          => array(
 			'type'    => 'string',
 			'default' => 'hover',
 			'options' => array(
@@ -1082,7 +1086,7 @@ function et_fb_app_preferences_settings() {
 				'grid'  => esc_html__( 'Grid Mode', 'et_builder' ),
 			),
 		),
-		'view_mode'                         => array(
+		'view_mode'                           => array(
 			'type'    => 'string',
 			'default' => et_builder_bfb_enabled() ? 'wireframe' : 'desktop',
 			'options' => array(
@@ -1092,11 +1096,11 @@ function et_fb_app_preferences_settings() {
 				'wireframe' => esc_html__( 'Wireframe View', 'et_builder' ),
 			),
 		),
-		'hide_disabled_modules'             => array(
+		'hide_disabled_modules'               => array(
 			'type'    => 'bool',
 			'default' => false,
 		),
-		'history_intervals'                 => array(
+		'history_intervals'                   => array(
 			'type'    => 'int',
 			'default' => 1,
 			'options' => array(
@@ -1107,30 +1111,30 @@ function et_fb_app_preferences_settings() {
 				'40' => esc_html__( 'After Every 40th Action', 'et_builder' ),
 			),
 		),
-		'page_creation_flow'                => array(
+		'page_creation_flow'                  => array(
 			'type'    => 'string',
 			'default' => 'default',
 			'options' => et_builder_page_creation_settings(),
 		),
-		'quick_actions_always_start_with'   => array(
+		'quick_actions_always_start_with'     => array(
 			'type'    => 'string',
 			'default' => 'nothing',
 		),
-		'quick_actions_show_recent_queries' => array(
+		'quick_actions_show_recent_queries'   => array(
 			'type'    => 'string',
 			'default' => 'off',
 		),
-		'quick_actions_recent_queries'      => array(
+		'quick_actions_recent_queries'        => array(
 			'type'       => 'string',
 			'default'    => '',
 			'max_length' => 100,
 		),
-		'quick_actions_recent_category'     => array(
+		'quick_actions_recent_category'       => array(
 			'type'       => 'string',
 			'default'    => '',
 			'max_length' => 100,
 		),
-		'modal_preference'                  => array(
+		'modal_preference'                    => array(
 			'type'    => 'string',
 			'default' => 'default',
 			'options' => array(
@@ -1144,104 +1148,104 @@ function et_fb_app_preferences_settings() {
 				// 'top'     => esc_html__( 'Fixed Top Panel', 'et_builder' ),.
 			),
 		),
-		'modal_snap_location'               => array(
+		'modal_snap_location'                 => array(
 			'type'    => 'string',
 			'default' => '',
 		),
-		'modal_snap'                        => array(
+		'modal_snap'                          => array(
 			'type'    => 'bool',
 			'default' => false,
 		),
-		'modal_fullscreen'                  => array(
+		'modal_fullscreen'                    => array(
 			'type'    => 'bool',
 			'default' => false,
 		),
-		'modal_dimension_width'             => array(
+		'modal_dimension_width'               => array(
 			'type'    => 'int',
 			'default' => 400,
 		),
-		'modal_dimension_height'            => array(
+		'modal_dimension_height'              => array(
 			'type'    => 'int',
 			'default' => 400,
 		),
-		'modal_position_x'                  => array(
+		'modal_position_x'                    => array(
 			'type'    => 'int',
 			'default' => 30,
 		),
-		'modal_position_y'                  => array(
+		'modal_position_y'                    => array(
 			'type'    => 'int',
 			'default' => 50,
 		),
-		'toolbar_click'                     => array(
+		'toolbar_click'                       => array(
 			'type'    => 'bool',
 			'default' => false,
 		),
-		'toolbar_desktop'                   => array(
+		'toolbar_desktop'                     => array(
 			'type'    => 'bool',
 			'default' => true,
 		),
-		'toolbar_grid'                      => array(
+		'toolbar_grid'                        => array(
 			'type'    => 'bool',
 			'default' => false,
 		),
-		'toolbar_hover'                     => array(
+		'toolbar_hover'                       => array(
 			'type'    => 'bool',
 			'default' => false,
 		),
-		'toolbar_phone'                     => array(
+		'toolbar_phone'                       => array(
 			'type'    => 'bool',
 			'default' => true,
 		),
-		'toolbar_tablet'                    => array(
+		'toolbar_tablet'                      => array(
 			'type'    => 'bool',
 			'default' => true,
 		),
-		'toolbar_wireframe'                 => array(
+		'toolbar_wireframe'                   => array(
 			'type'    => 'bool',
 			'default' => true,
 		),
-		'toolbar_zoom'                      => array(
+		'toolbar_zoom'                        => array(
 			'type'    => 'bool',
 			'default' => true,
 		),
-		'lv_modal_dimension_height'         => array(
+		'lv_modal_dimension_height'           => array(
 			'type'    => 'int',
 			'default' => 0,
 		),
-		'lv_modal_dimension_width'          => array(
+		'lv_modal_dimension_width'            => array(
 			'type'    => 'int',
 			'default' => 0,
 		),
-		'lv_modal_position_x'               => array(
+		'lv_modal_position_x'                 => array(
 			'type'    => 'int',
 			'default' => 0,
 		),
-		'lv_modal_position_y'               => array(
+		'lv_modal_position_y'                 => array(
 			'type'    => 'int',
 			'default' => 0,
 		),
 		// Re: "width/height": responsive dimensions presume portrait orientation.
-		'responsive_tablet_width'           => array(
+		'responsive_tablet_width'             => array(
 			'type'    => 'int',
 			'default' => 768,
 		),
-		'responsive_tablet_height'          => array(
+		'responsive_tablet_height'            => array(
 			'type'    => 'int',
 			'default' => 0,
 		),
-		'responsive_phone_width'            => array(
+		'responsive_phone_width'              => array(
 			'type'    => 'int',
 			'default' => 400,
 		),
-		'responsive_phone_height'           => array(
+		'responsive_phone_height'             => array(
 			'type'    => 'int',
 			'default' => 0,
 		),
-		'responsive_minimum_width'          => array(
+		'responsive_minimum_width'            => array(
 			'type'    => 'int',
 			'default' => 320,
 		),
-		'responsive_maximum_width'          => array(
+		'responsive_maximum_width'            => array(
 			'type'    => 'int',
 			'default' => 980,
 		),
@@ -1358,6 +1362,67 @@ function et_fb_current_page_woocommerce_components() {
 	);
 
 	return $woocommerce_components;
+}
+
+/**
+ * Before & after components for builder.
+ *
+ * This method should not be used for anything other than to determine whether a module
+ * has before & after components on builder load.
+ *
+ * @since 4.14.5
+ *
+ * @return array Components (HTML).
+ */
+function et_fb_current_page_before_after_components() {
+	$modules_components = array();
+
+	// Bail early if current request comes from any Ajax request.
+	if ( wp_doing_ajax() ) {
+		return $modules_components;
+	}
+
+	// Bail early if Module Shortcode Manager class doesn't exist.
+	if ( ! class_exists( 'ET_Builder_Module_Shortcode_Manager' ) ) {
+		return $modules_components;
+	}
+
+	/**
+	 * Filters modules list.
+	 *
+	 * The modules list comes from Shortcode Manager only contains built-in modules
+	 * intentionally. 3rd-party modules need to include their module slug and class name
+	 * via `et_fb_fetch_before_after_modules_map` filter.
+	 *
+	 * @param array Modules list.
+	 */
+	$modules_map = apply_filters( 'et_fb_fetch_before_after_modules_map', ET_Builder_Module_Shortcode_Manager::get_modules_map() );
+
+	// Bail early if components map is empty.
+	if ( empty( $modules_map ) ) {
+		return $modules_components;
+	}
+
+	foreach ( $modules_map as $module_slug => $module_data ) {
+		$module_class = et_()->array_get( $module_data, 'classname' );
+
+		// Skip if module class name is not found.
+		if ( empty( $module_class ) || ! class_exists( $module_class ) ) {
+			continue;
+		}
+
+		$module_components = $module_class::get_component_before_after_module( $module_slug, array() );
+
+		// Skip if there is no before & after components.
+		$has_components = et_()->array_get( $module_components, 'has_components' );
+		if ( true !== $has_components ) {
+			continue;
+		}
+
+		$modules_components[ $module_slug ] = $module_components;
+	}
+
+	return $modules_components;
 }
 
 /**
@@ -1547,6 +1612,7 @@ function et_fb_current_page_params() {
 				'et_builder'
 			),
 		),
+		'beforeAfterComponents' => et_fb_current_page_before_after_components(),
 	);
 
 	return apply_filters( 'et_fb_current_page_params', $current_page );
@@ -1673,6 +1739,103 @@ function et_pb_process_computed_property() {
 	}
 }
 add_action( 'wp_ajax_et_pb_process_computed_property', 'et_pb_process_computed_property' );
+
+/**
+ * Fetch before or after components.
+ *
+ * @since 4.14.5
+ *
+ * @return string Components outputs.
+ */
+function et_fb_fetch_before_after_components() {
+	// Bail early if the nonce is incorrect or current user can't edit posts.
+	$nonce = ! empty( $_POST['et_fb_fetch_before_after_components_nonce'] ) ? sanitize_text_field( $_POST['et_fb_fetch_before_after_components_nonce'] ) : '';
+
+	if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'et_fb_fetch_before_after_components_nonce' ) ) {
+		wp_send_json_error();
+	}
+
+	if ( ! current_user_can( 'edit_posts' ) ) {
+		wp_send_json_error();
+	}
+
+	// Bail early if Module Shortcode Manager class doesn't exist.
+	if ( ! class_exists( 'ET_Builder_Module_Shortcode_Manager' ) ) {
+		wp_send_json_error();
+	}
+
+	/**
+	 * Filters modules list.
+	 *
+	 * The modules list comes from Shortcode Manager only contains built-in modules
+	 * intentionally. 3rd-party modules need to include their module slug and class name
+	 * via `et_fb_fetch_before_after_modules_map` filter.
+	 *
+	 * @param array Modules list.
+	 */
+	$modules_map = apply_filters( 'et_fb_fetch_before_after_modules_map', ET_Builder_Module_Shortcode_Manager::get_modules_map() );
+
+	// Bail early if components map is empty.
+	if ( empty( $modules_map ) ) {
+		return $modules_components;
+	}
+
+	$module_type  = ! empty( $_POST['module_type'] ) ? sanitize_text_field( $_POST['module_type'] ) : '';
+	$module_class = et_()->array_get( $modules_map, array( $module_type, 'classname' ) );
+
+	// Bail early if module class name is not found.
+	if ( empty( $module_class ) || ! class_exists( $module_class ) ) {
+		wp_send_json_error();
+	}
+
+	// phpcs:disable ET.Sniffs.ValidatedSanitizedInput -- Sanitization of following arrays is done on Sanitize values section below.
+	$conditional_tags = isset( $_POST['conditional_tags'] ) ? $_POST['conditional_tags'] : array();
+	$current_page     = isset( $_POST['current_page'] ) ? $_POST['current_page'] : array();
+	$module_attrs     = isset( $_POST['module_attrs'] ) ? $_POST['module_attrs'] : array();
+	// phpcs:enable
+
+	// Allow list keys.
+	$conditional_tags = array_intersect_key( $conditional_tags, et_fb_conditional_tag_params() );
+	$current_page     = array_intersect_key( $current_page, et_fb_current_page_params() );
+
+	// Sanitize values.
+	$conditional_tags = et_()->sanitize_text_fields( $conditional_tags );
+	$current_page     = et_()->sanitize_text_fields( $current_page );
+	$module_attrs     = et_()->sanitize_text_fields( $module_attrs );
+	$render_mode      = isset( $_POST['render_mode'] ) ? sanitize_text_field( $_POST['render_mode'] ) : '';
+	$post_type        = isset( $_POST['post_type'] ) ? sanitize_text_field( $_POST['post_type'] ) : '';
+	$action           = isset( $_POST['action'] ) ? sanitize_text_field( $_POST['action'] ) : '';
+
+	// Bail early if current user can't edit this post.
+	if ( empty( $current_page['id'] ) || ! current_user_can( 'edit_post', $current_page['id'] ) ) {
+		wp_send_json_error();
+	}
+
+	// Setup module data.
+	$module_data = array(
+		'conditional_tags' => $conditional_tags,
+		'current_page'     => $current_page,
+		'module_attrs'     => $module_attrs,
+		'render_mode'      => $render_mode,
+		'post_type'        => $post_type,
+		'action'           => $action,
+	);
+
+	/**
+	 * Fires before processing before & after components.
+	 *
+	 * @since 4.14.5
+	 *
+	 * @param string $module_type Module slug.
+	 * @param array  $module_data Module data passed from the request.
+	 */
+	do_action( 'et_fb_pre_fetch_before_after_components', $module_type, $module_data );
+
+	$output = $module_class::get_component_before_after_module( $module_type, $module_data );
+
+	wp_send_json_success( $output );
+}
+add_action( 'wp_ajax_et_fb_fetch_before_after_components', 'et_fb_fetch_before_after_components' );
 
 /**
  * Process shortcode json.
@@ -10145,10 +10308,13 @@ function et_fb_get_page_url() {
  * @return void
  */
 function et_fb_add_admin_bar_link() {
-	$is_not_builder_enabled_single = ! is_singular() || ! et_builder_fb_enabled_for_post( get_the_ID() );
-	$is_not_in_wc_shop             = ! et_builder_used_in_wc_shop();
-	$not_allowed_fb_access         = ! et_pb_is_allowed( 'use_visual_builder' );
-	$is_not_theme_builder_used     = ! et_fb_is_theme_builder_used_on_page() || ! et_pb_is_allowed( 'theme_builder' );
+	$is_not_builder_enabled_single   = ! is_singular() || ! et_builder_fb_enabled_for_post( get_the_ID() );
+	$is_not_in_wc_shop               = ! et_builder_used_in_wc_shop();
+	$not_allowed_fb_access           = ! et_pb_is_allowed( 'use_visual_builder' );
+	$app_preferences                 = et_fb_app_preferences_settings();
+	$default_visual_theme_builder    = et_()->array_get( $app_preferences, 'enable_visual_theme_builder.default' );
+	$is_visual_theme_builder_enabled = et_get_option( 'et_fb_pref_builder_enable_visual_theme_builder', $default_visual_theme_builder );
+	$is_not_theme_builder_used       = ! et_fb_is_theme_builder_used_on_page() || ! et_pb_is_allowed( 'theme_builder' ) || ! filter_var( $is_visual_theme_builder_enabled, FILTER_VALIDATE_BOOLEAN );
 
 	if ( $not_allowed_fb_access || ( $is_not_builder_enabled_single && $is_not_in_wc_shop && $is_not_theme_builder_used ) ) {
 		return;
@@ -10284,7 +10450,8 @@ add_action( 'wp_ajax_et_fb_process_imported_content', 'et_fb_process_imported_co
  * @return string
  */
 function et_fb_maybe_get_bfb_initial_content( $content, $post_id ) {
-	$from_post = filter_input( INPUT_GET, 'from_post', FILTER_SANITIZE_STRING );
+	$from_post = isset( $_GET['from_post'] ) ? sanitize_text_field( $_GET['from_post'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
+
 	if ( ! empty( $from_post ) && 'empty' !== $from_post ) {
 		$copy_content_from = get_post( $from_post );
 		$existing_content  = $copy_content_from->post_content;
@@ -12804,7 +12971,7 @@ if ( ! function_exists( 'et_builder_default_colors_ajax_update_handler' ) ) :
 	 */
 	function et_builder_default_colors_ajax_update_handler() {
 		// Get nonce from $_POST.
-		$nonce = filter_input( INPUT_POST, 'et_builder_default_colors_nonce', FILTER_SANITIZE_STRING );
+		$nonce = isset( $_POST['et_builder_default_colors_nonce'] ) ? sanitize_text_field( $_POST['et_builder_default_colors_nonce'] ) : '';
 
 		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'et_builder_default_colors_update' ) ) {
 			wp_send_json_error();
@@ -12815,8 +12982,7 @@ if ( ! function_exists( 'et_builder_default_colors_ajax_update_handler' ) ) :
 		}
 
 		// Get default_colors from $_POST.
-		$post_default_colors = filter_input( INPUT_POST, 'default_colors', FILTER_SANITIZE_STRING );
-		$default_colors      = sanitize_text_field( wp_unslash( $post_default_colors ) );
+		$default_colors = isset( $_POST['default_colors'] ) ? sanitize_text_field( wp_unslash( $_POST['default_colors'] ) ) : '';
 
 		et_update_option( 'divi_color_palette', str_replace( ',', '|', $default_colors ) );
 
@@ -12834,7 +13000,7 @@ if ( ! function_exists( 'et_builder_global_colors_ajax_save_handler' ) ) :
 	 */
 	function et_builder_global_colors_ajax_save_handler() {
 		// Get nonce from $_POST.
-		$nonce = filter_input( INPUT_POST, 'et_builder_global_colors_save_nonce', FILTER_SANITIZE_STRING );
+		$nonce = isset( $_POST['et_builder_global_colors_save_nonce'] ) ? sanitize_text_field( $_POST['et_builder_global_colors_save_nonce'] ) : '';
 
 		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'et_builder_global_colors_save' ) ) {
 			wp_send_json_error();

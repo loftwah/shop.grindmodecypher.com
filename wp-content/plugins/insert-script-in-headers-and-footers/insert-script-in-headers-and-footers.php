@@ -4,7 +4,7 @@
 Plugin Name: Insert Script In Headers And Footers
 Description: A plugin to insert script in headers and footers
 Author: Geek Code Lab
-Version: 1.8
+Version: 1.9
 Author URI: https://geekcodelab.com/
 Text Domain: insert-script-in-headers-and-footers
 */

@@ -133,6 +133,7 @@ function et_builder_is_critical_enabled() {
 require_once ET_BUILDER_DIR . 'compat/early.php';
 require_once ET_BUILDER_DIR . 'compat/scripts.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/blocks/Layout.php';
+require_once ET_BUILDER_DIR . 'feature/gutenberg/blocks/PostExcerpt.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/utils/Conversion.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/EditorTypography.php';
 require_once ET_BUILDER_DIR . 'core.php';
@@ -249,6 +250,7 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 			'et_builder_get_woocommerce_tabs',
 			'et_builder_global_colors_save',
 			'et_builder_default_colors_update',
+			'et_fb_fetch_before_after_components',
 		),
 	);
 

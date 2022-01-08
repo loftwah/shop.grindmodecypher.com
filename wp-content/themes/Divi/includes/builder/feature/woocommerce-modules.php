@@ -1243,6 +1243,439 @@ function et_builder_wc_disable_default_layout() {
 }
 
 /**
+ * Relocate all registered callbacks from `woocommerce_single_product_summary` hook to
+ * any suitable Woo modules.
+ *
+ * @since ??
+ */
+function et_builder_wc_relocate_single_product_summary() {
+	global $post, $wp_filter;
+
+	// Bail early if there is no `woocommerce_single_product_summary` hook callbacks.
+	$hook = et_()->array_get( $wp_filter, 'woocommerce_single_product_summary', null );
+	if ( empty( $hook->callbacks ) ) {
+		return;
+	}
+
+	$is_copy_needed = false;
+	$is_move_needed = false;
+	$post_id        = ! empty( $post->ID ) ? $post->ID : false;
+	$post_type      = ! empty( $post->post_type ) ? $post->post_type : '';
+
+	// Product related pages.
+	$is_product          = function_exists( 'is_product' ) && is_product();
+	$is_shop             = function_exists( 'is_shop' ) && is_shop();
+	$is_product_category = function_exists( 'is_product_category' ) && is_product_category();
+	$is_product_tag      = function_exists( 'is_product_tag' ) && is_product_tag();
+
+	// Copy single product summary hooks when current page is:
+	// - Product related pages: single, shop, category, & tag.
+	// - Theme Builder or Page Builder.
+	// - Before & after components AJAX request.
+	// - Has TB layouts contain WC modules.
+	if (
+		$is_product
+		|| $is_shop
+		|| $is_product_category
+		|| $is_product_tag
+		|| et_builder_tb_enabled()
+		|| et_core_is_fb_enabled()
+		|| et_fb_is_before_after_components_callback_ajax()
+		|| et_builder_wc_is_non_product_post_type()
+	) {
+		$is_copy_needed = true;
+	}
+
+	// Move single product summary hooks when current page is single product with:
+	// - Builder is used.
+	// - TB Body layout overrides the content.
+	if ( $is_product ) {
+		if (
+			et_pb_is_pagebuilder_used( $post_id )
+			|| et_theme_builder_overrides_layout( ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE )
+		) {
+			$is_move_needed = true;
+		}
+	}
+
+	/**
+	 * Filters whether to copy single product summary hooks output or not.
+	 *
+	 * 3rd-party plugins can use this filter to force enable or disable this action.
+	 *
+	 * @since ??
+	 *
+	 * @param boolean $is_copy_needed Whether to copy single product summary or not.
+	 */
+	$is_copy_needed = apply_filters( 'et_builder_wc_relocate_single_product_summary_is_copy_needed', $is_copy_needed );
+
+	/**
+	 * Filters whether to move (remove the original) single product summary or not.
+	 *
+	 * 3rd-party plugins can use this filter to force enable or disable this action.
+	 *
+	 * @since ??
+	 *
+	 * @param boolean $is_move_needed Whether to move single product summary or not.
+	 */
+	$is_move_needed = apply_filters( 'et_builder_wc_relocate_single_product_summary_is_move_needed', $is_move_needed );
+
+	// Bail early if copy action is not needed.
+	if ( ! $is_copy_needed ) {
+		return;
+	}
+
+	/**
+	 * Filters the list of ignored `woocommerce_single_product_summary` hook callbacks.
+	 *
+	 * 3rd-party plugins can use this filter to keep their callbacks so they won't be
+	 * relocated from `woocommerce_single_product_summary` hook. The value is string of
+	 * `function_name` or `class::method` combination. By default, it contanis all single
+	 * product summary actions from WooCommerce plugin.
+	 *
+	 * @since ??
+	 *
+	 * @param array $ignored_callbacks List of ignored callbacks.
+	 */
+	$ignored_callbacks = apply_filters(
+		'et_builder_wc_relocate_single_product_summary_ignored_callbacks',
+		array(
+			'WC_Structured_Data::generate_product_data',
+			'woocommerce_template_single_title',
+			'woocommerce_template_single_rating',
+			'woocommerce_template_single_price',
+			'woocommerce_template_single_excerpt',
+			'woocommerce_template_single_add_to_cart',
+			'woocommerce_template_single_meta',
+			'woocommerce_template_single_sharing',
+		)
+	);
+
+	// Pair of WooCommerce layout priority numbers and Woo module slugs.
+	$modules_priority = array(
+		'5'  => 'et_pb_wc_title',
+		'10' => 'et_pb_wc_price', // `et_pb_wc_rating` also has the same priority.
+		'20' => 'et_pb_wc_description', // It's `excerpt` on WooCommerce default layout.
+		'30' => 'et_pb_wc_add_to_cart',
+		'40' => 'et_pb_wc_meta',
+	);
+
+	foreach ( $hook->callbacks as $callback_priority => $callbacks ) {
+		foreach ( $callbacks as $callback_args ) {
+			// 1. Generate 'callback name' (string).
+			// Get the callback name stored on the `function` argument.
+			$callback_function = et_()->array_get( $callback_args, 'function' );
+			$callback_name     = $callback_function;
+
+			// Bail early if the callback is not callable to avoid any unexpected issue.
+			if ( ! is_callable( $callback_function ) ) {
+				continue;
+			}
+
+			// If the `function` is an array, it's probably a class based function. We should
+			// convert it into string based callback name for validating purpose.
+			if ( is_array( $callback_function ) ) {
+				$callback_name   = '';
+				$callback_object = et_()->array_get( $callback_function, 0 );
+				$callback_method = et_()->array_get( $callback_function, 1 );
+
+				// Ensure the index `0` is an object and the index `1` is string. We're going to
+				// use the class::method combination as callback name.
+				if ( is_object( $callback_object ) && is_string( $callback_method ) ) {
+					$callback_class = get_class( $callback_object );
+					$callback_name  = "{$callback_class}::{$callback_method}";
+				}
+			}
+
+			// Bail early if callback name is not string or empty to avoid unexpected issues.
+			if ( ! is_string( $callback_name ) || empty( $callback_name ) ) {
+				continue;
+			}
+
+			// Bail early if current callback is listed on ignored callbacks list.
+			if ( in_array( $callback_name, $ignored_callbacks, true ) ) {
+				continue;
+			}
+
+			// 2. Generate 'module priority' to get suitable 'module slug'.
+			// Find the module priority number by round down the priority to the nearest 10.
+			// It's needed to get suitable Woo module. For example, a callback with priority
+			// 41 means we have to put it on module with priority 40 which is `et_pb_wc_meta`.
+			$rounded_callback_priority = intval( floor( $callback_priority / 10 ) * 10 );
+			$module_priority           = $rounded_callback_priority;
+
+			// Additional rules for module priority:
+			// - 0  : Make it 5 as default to target `et_pb_wc_title` because there is no
+			// module with priority less than 5.
+			// - 50 : Make it 40 as default to target `et_pb_wc_meta` because there is no
+			// module with priority more than 40.
+			if ( 0 === $rounded_callback_priority ) {
+				$module_priority = 5;
+			} elseif ( $rounded_callback_priority >= 50 ) {
+				$module_priority = 40;
+			}
+
+			$module_slug = et_()->array_get( $modules_priority, $module_priority );
+
+			/**
+			 * Filters target module for the current callback.
+			 *
+			 * 3rd-party plugins can use this filter to target different module slug.
+			 *
+			 * @since ??
+			 *
+			 * @param string $module_slug     Module slug.
+			 * @param string $callback_name   Callback name.
+			 * @param string $module_priority Module priority.
+			 */
+			$module_slug = apply_filters( 'et_builder_wc_relocate_single_product_summary_module_slug', $module_slug, $callback_name, $module_priority );
+
+			// Bail early if module slug is empty.
+			if ( empty( $module_slug ) ) {
+				continue;
+			}
+
+			// 3. Determine 'output location'.
+			// Move the callback to the suitable Woo module. Since we can't call the action
+			// inside the module render, we have to buffer the output and prepend/append it
+			// to the module output or preview. By default, the default location is 'after'
+			// the module output or preview. But, for priority less than 5, we have to put it
+			// before the `et_pb_wc_title` because there is no module on that location.
+			$output_location = $callback_priority < 5 ? 'before' : 'after';
+
+			/**
+			 * Filters output location for the current module and callback.
+			 *
+			 * 3rd-party plugins can use this filter to change the output location.
+			 *
+			 * @since ??
+			 *
+			 * @param string $output_location   Output location.
+			 * @param string $callback_name     Callback name.
+			 * @param string $module_slug       Module slug.
+			 * @param string $callback_priority Callback priority.
+			 */
+			$output_location = apply_filters( 'et_builder_wc_relocate_single_product_summary_output_location', $output_location, $callback_name, $module_slug, $callback_priority );
+
+			// Bail early if the output location is not 'before' or 'after'.
+			if ( ! in_array( $output_location, array( 'before', 'after' ), true ) ) {
+				continue;
+			}
+
+			// 4. Determine 'module output priority'.
+			// Get the "{$module_slug}_{$hook_suffix_name}}" filter priority number by sum up
+			// default hook priority number (10) and the remainder. This part is important,
+			// so we can prepend and append the layout output more accurate. For example:
+			// Callback A with priority 42 should be added after callback B with priority 41
+			// on `et_pb_wc_meta` module. So, "et_pb_wc_meta_{$hook_suffix_name}_output" hook
+			// priority for callback A will be 12, meanwhile callback B will be 11.
+			$remainder_priority = $rounded_callback_priority > 0 ? $callback_priority % 10 : $callback_priority - 5;
+			$output_priority    = 10 + $remainder_priority;
+
+			/**
+			 * Filters module output priority number for the current module and callback.
+			 *
+			 * 3rd-party plugins can use this filter to rearrange the output priority.
+			 *
+			 * @since ??
+			 *
+			 * @param string $output_priority   Module output priority number.
+			 * @param string $callback_name     Callback name.
+			 * @param string $module_slug       Module slug.
+			 * @param string $callback_priority Callback priority.
+			 */
+			$output_priority = apply_filters( 'et_builder_wc_relocate_single_product_summary_output_priority', $output_priority, $callback_name, $module_slug, $callback_priority );
+
+			// Remove the callback from `woocommerce_single_product_summary` when it's needed.
+			if ( $is_move_needed ) {
+				remove_action( 'woocommerce_single_product_summary', $callback_function, $callback_priority );
+			}
+
+			// Finally, copy and paste it to suitable location & module.
+			add_action( "et_builder_wc_single_product_summary_{$output_location}_{$module_slug}", $callback_function );
+
+			// Builder - Move it to suitable Woo modules before and/or after components.
+			add_filter( "{$module_slug}_fb_before_after_components", 'et_builder_wc_single_product_summary_before_after_components', $output_priority, 3 );
+
+			// FE - Move it to suitable Woo modules shortcode output.
+			add_filter( "{$module_slug}_shortcode_output", 'et_builder_wc_single_product_summary_module_output', $output_priority, 3 );
+		}
+	}
+}
+
+/**
+ * Prepend and/or append callback output to the suitable module output on FE.
+ *
+ * @since ??
+ *
+ * @param string             $module_output   Module output.
+ * @param string             $module_slug     Module slug.
+ * @param ET_Builder_Element $module_instance Module instance.
+ *
+ * @return string Processed module output.
+ */
+function et_builder_wc_single_product_summary_module_output( $module_output, $module_slug, $module_instance ) {
+	// Bail early if module output is not string.
+	if ( ! is_string( $module_output ) ) {
+		return $module_output;
+	}
+
+	global $post, $product;
+
+	$original_post    = $post;
+	$original_product = $product;
+	$target_id        = '';
+	$is_overwritten   = false;
+
+	if ( ! empty( $module_instance->props ) ) {
+		// Get target ID if any.
+		$target_id = et_()->array_get( $module_instance->props, 'product' );
+		$target_id = class_exists( 'ET_Builder_Element' ) ? ET_Builder_Module_Helper_Woocommerce_Modules::get_product_id( $target_id ) : $target_id;
+	}
+
+	// Determine whether global product and post objects need to be overwritten or not.
+	if ( 'current' !== $target_id ) {
+		$target_product = wc_get_product( $target_id );
+
+		if ( $target_product instanceof WC_Product ) {
+			$is_overwritten = false;
+			$product        = $target_product;
+			$post           = get_post( $product->get_id() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride -- Overriding global post is safe as original $post has been restored at the end.
+		}
+	}
+
+	// Get before & after outputs only if product is WC_Product instance.
+	if ( $product instanceof WC_Product ) {
+		$before_output = et_builder_wc_single_product_summary_before_module( $module_slug );
+		$after_output  = et_builder_wc_single_product_summary_after_module( $module_slug );
+		$module_output = $before_output . $module_output . $after_output;
+	}
+
+	// Reset product and/or post object.
+	if ( $is_overwritten ) {
+		$product = $original_product;
+		$post    = $original_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride -- Restore global post.
+	}
+
+	return $module_output;
+}
+
+/**
+ * Set callback output as before and/or after components on builder.
+ *
+ * @since ??
+ *
+ * @param array  $module_components Default module before & after components.
+ * @param string $module_slug       Module slug.
+ * @param array  $module_data       Module data.
+ *
+ * @return array Processed module before & after components.
+ */
+function et_builder_wc_single_product_summary_before_after_components( $module_components, $module_slug, $module_data ) {
+	// Bail early if module components variable is not an array.
+	if ( ! is_array( $module_components ) ) {
+		return $module_components;
+	}
+
+	global $post, $product;
+
+	$original_post    = $post;
+	$original_product = $product;
+	$target_id        = '';
+	$overwritten_by   = '';
+	$is_tb_enabled    = et_builder_tb_enabled();
+	$is_fb_enabled    = et_core_is_fb_enabled();
+
+	if ( ! empty( $module_data ) ) {
+		// Get target ID if any.
+		$target_id = et_()->array_get( $module_data, array( 'module_attrs', 'product' ) );
+		$target_id = class_exists( 'ET_Builder_Element' ) ? ET_Builder_Module_Helper_Woocommerce_Modules::get_product_id( $target_id ) : $target_id;
+	}
+
+	// Determine whether global product and post objects need to be overwritten or not.
+	// - Dummy product:  TB and FB initial load.
+	// - Target product: Components request from builder.
+	if ( $is_tb_enabled || $is_fb_enabled ) {
+		et_theme_builder_wc_set_global_objects( array( 'is_tb' => true ) );
+		$overwritten_by = 'dummy_product';
+	} elseif ( 'current' !== $target_id && et_fb_is_before_after_components_callback_ajax() ) {
+		$target_product = wc_get_product( $target_id );
+
+		if ( $target_product instanceof WC_Product ) {
+			$overwritten_by = 'target_product';
+			$product        = $target_product;
+			$post           = get_post( $product->get_id() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride -- Overriding global post is safe as original $post has been restored at the end.
+		}
+	}
+
+	// Get before & after components only if product is WC_Product instance.
+	if ( $product instanceof WC_Product ) {
+		$default_before_component = et_()->array_get( $module_components, '__before_component', '' );
+		$default_after_component  = et_()->array_get( $module_components, '__after_component', '' );
+		$current_before_component = et_builder_wc_single_product_summary_before_module( $module_slug );
+		$current_after_component  = et_builder_wc_single_product_summary_after_module( $module_slug );
+
+		$module_components['has_components']     = true;
+		$module_components['__before_component'] = $default_before_component . $current_before_component;
+		$module_components['__after_component']  = $default_after_component . $current_after_component;
+	}
+
+	// Reset product and/or post object.
+	if ( 'dummy_product' === $overwritten_by ) {
+		et_theme_builder_wc_reset_global_objects( array( 'is_tb' => true ) );
+	} elseif ( 'target_product' === $overwritten_by ) {
+		$product = $original_product;
+		$post    = $original_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride -- Restore global post.
+	}
+
+	return $module_components;
+}
+
+/**
+ * Render single product summary before Woo module output.
+ *
+ * @since ??
+ *
+ * @param string $module_slug Module slug.
+ *
+ * @return string Rendered output.
+ */
+function et_builder_wc_single_product_summary_before_module( $module_slug ) {
+	ob_start();
+
+	/**
+	 * Fires additional output for single product summary before module output.
+	 *
+	 * @since ??
+	 */
+	do_action( "et_builder_wc_single_product_summary_before_{$module_slug}" );
+
+	return ob_get_clean();
+}
+
+/**
+ * Render single product summary after Woo module output.
+ *
+ * @since ??
+ *
+ * @param string $module_slug Module slug.
+ *
+ * @return string Rendered output.
+ */
+function et_builder_wc_single_product_summary_after_module( $module_slug ) {
+	ob_start();
+
+	/**
+	 * Fires additional output for single product summary after module output.
+	 *
+	 * @since ??
+	 */
+	do_action( "et_builder_wc_single_product_summary_after_{$module_slug}" );
+
+	return ob_get_clean();
+}
+
+/**
  * Overrides the default WooCommerce layout.
  *
  * @see woocommerce/includes/wc-template-functions.php
@@ -1929,6 +2362,9 @@ function et_builder_wc_init() {
 			]
 		);
 	}
+
+	// Relocate WC single product summary hooks to any suitable modules.
+	add_action( 'et_builder_ready', 'et_builder_wc_relocate_single_product_summary' );
 }
 
 et_builder_wc_init();

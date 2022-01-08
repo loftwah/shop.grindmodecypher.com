@@ -589,7 +589,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 				? $email
 				: get_site_option( 'admin_email' );
 
-			$et_site_name = get_option( 'blogname' );
+			$et_site_name = strval( get_option( 'blogname' ) );
 
 			$contact_name = isset( $processed_fields_values['name'] ) ? stripslashes( sanitize_text_field( $processed_fields_values['name']['value'] ) ) : '';
 

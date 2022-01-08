@@ -144,9 +144,15 @@ function et_theme_builder_wc_set_global_objects( $conditional_tags = array() ) {
  * Reset global objects needed to manipulate `ETBuilderBackend.currentPage.woocommerceComponents`
  *
  * @since 4.0.1
+ * @since ?? Add conditional tags parameter to evaluate AJAX request.
+ *
+ * @param array $conditional_tags Evaluate conditional tags when current request is AJAX request.
  */
-function et_theme_builder_wc_reset_global_objects() {
-	if ( ! et_builder_tb_enabled() ) {
+function et_theme_builder_wc_reset_global_objects( $conditional_tags = array() ) {
+	$is_tb = et_()->array_get( $conditional_tags, 'is_tb', false );
+
+	// Check if current request is theme builder (direct page / AJAX request).
+	if ( ! et_builder_tb_enabled() && ! $is_tb ) {
 		return;
 	}
 

@@ -66,7 +66,7 @@
 
 				<div id="et-info">
 				<?php if ( '' !== ( $et_phone_number = et_get_option( 'phone_number' ) ) ) : ?>
-					<span id="et-info-phone"><?php echo et_core_esc_previously( et_sanitize_html_input_text( $et_phone_number ) ); ?></span>
+					<span id="et-info-phone"><?php echo et_core_esc_previously( et_sanitize_html_input_text( strval( $et_phone_number ) ) ); ?></span>
 				<?php endif; ?>
 
 				<?php if ( '' !== ( $et_email = et_get_option( 'header_email' ) ) ) : ?>
@@ -175,7 +175,7 @@
 
 				<div id="et-info">
 				<?php if ( '' !== ( $et_phone_number = et_get_option( 'phone_number' ) ) ) : ?>
-					<span id="et-info-phone"><?php echo et_core_esc_previously( et_sanitize_html_input_text( $et_phone_number ) ); ?></span>
+					<span id="et-info-phone"><?php echo et_core_esc_previously( et_sanitize_html_input_text( strval( $et_phone_number ) ) ); ?></span>
 				<?php endif; ?>
 
 				<?php if ( '' !== ( $et_email = et_get_option( 'header_email' ) ) ) : ?>

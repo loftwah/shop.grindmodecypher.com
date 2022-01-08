@@ -29,10 +29,11 @@ trait PageContentRetriever {
 	 * If $post is not given, It then uses global $post if available.
 	 *
 	 * @since 4.11.0
+	 * @since ?? Return empty string on failure instead of null.
 	 *
 	 * @param  WP_Post|int $post Optional. WP_Post instance or Post ID. Default null.
 	 *
-	 * @return null|string null on failure, string on success.
+	 * @return string Empty string on failure.
 	 */
 	public function get_entire_page_content( $post = null ) {
 
@@ -52,8 +53,10 @@ trait PageContentRetriever {
 			$wp_post = \WP_Post::get_instance( $post );
 		}
 
+		// Return empty string on failure because the return value is mostly used along with
+		// PHP PCRE or String functions that require non-nullable value.
 		if ( ! $wp_post ) {
-			return null;
+			return '';
 		}
 
 		/**

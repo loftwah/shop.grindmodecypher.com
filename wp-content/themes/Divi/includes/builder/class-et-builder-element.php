@@ -3306,11 +3306,13 @@ class ET_Builder_Element {
 		 * refers to the slug of the module for which the shortcode output was generated.
 		 *
 		 * @since 3.0.87
+		 * @since ?? Pass module instance as 3rd argument.
 		 *
 		 * @param string $output
 		 * @param string $module_slug
+		 * @param object $this        Module instance.
 		 */
-		$output = apply_filters( "{$render_slug}_shortcode_output", $output, $render_slug );
+		$output = apply_filters( "{$render_slug}_shortcode_output", $output, $render_slug, $this );
 
 		$this->_bump_render_count();
 
@@ -16627,7 +16629,7 @@ class ET_Builder_Element {
 		// Hover styles.
 		// Bind margin_padding hover styles to the specified `hover` selector in the field's `css` attrs section.
 		$margin_padding_hover_selector = self::$_->array_get( $this->advanced_fields, 'margin_padding.css.hover' );
-		$custom_margin_hover           = $hover->get_value( 'custom_margin', $this->props );
+		$custom_margin_hover           = $hover->get_value( 'custom_margin', $this->props, '' );
 
 		if ( '' !== $custom_margin_hover && et_builder_is_hover_enabled( 'custom_margin', $this->props ) ) {
 			$css_element_margin = self::$_->array_get( $this->advanced_fields, 'margin_padding.css.margin', $this->main_css_element );
@@ -16655,7 +16657,7 @@ class ET_Builder_Element {
 		}
 
 		// Sticky styles.
-		$custom_margin_sticky = $sticky->get_value( 'custom_margin', $this->props );
+		$custom_margin_sticky = $sticky->get_value( 'custom_margin', $this->props, '' );
 
 		if ( '' !== $custom_margin_sticky && $sticky->is_enabled( 'custom_margin', $this->props ) ) {
 			$css_element_margin = et_()->array_get( $this->advanced_fields, 'margin_padding.css.margin', $this->main_css_element );
@@ -16921,7 +16923,7 @@ class ET_Builder_Element {
 
 				// Processed values.
 				$button_text_size_processed           = $is_default_button_text_size ? '20px' : et_builder_process_range_value( $button_text_size );
-				$button_text_size_hover_processed     = strlen( $button_text_size_hover ) && $button_text_size !== $button_text_size_hover ? et_builder_process_range_value( $button_text_size_hover ) : '';
+				$button_text_size_hover_processed     = null !== $button_text_size_hover && $button_text_size !== $button_text_size_hover ? et_builder_process_range_value( $button_text_size_hover ) : '';
 				$button_border_radius_processed       = '' !== $button_border_radius && 'px' !== $button_border_radius ? et_builder_process_range_value( $button_border_radius ) : '';
 				$button_border_radius_hover_processed = null !== $button_border_radius_hover && 'px' !== $button_border_radius_hover && $button_border_radius_hover !== $button_border_radius ? et_builder_process_range_value( $button_border_radius_hover ) : '';
 				$button_use_icon                      = '' === $button_use_icon ? 'on' : $button_use_icon;
@@ -20504,7 +20506,7 @@ class ET_Builder_Element {
 		static $builder_post_types = null;
 		static $allowed_post_types = null;
 
-		$declaration = rtrim( $style['declaration'] );
+		$declaration = isset( $style['declaration'] ) && ! is_null( $style['declaration'] ) ? rtrim( $style['declaration'] ) : '';
 		if ( empty( $declaration ) ) {
 			// Do not add empty declarations.
 			return;
@@ -22693,6 +22695,54 @@ class ET_Builder_Element {
 				'field_template' => $field_template,
 			)
 		);
+	}
+
+	/**
+	 * Get components before & after module.
+	 *
+	 * This method is introduced to handle additional components added on WooCommerce
+	 * product summary that should be moved to any suitable modules on builder preview.
+	 *
+	 * @since ??
+	 *
+	 * @param string $module_slug Module slug.
+	 * @param array  $module_data Module data passed.
+	 *
+	 * @return array Components before & after module.
+	 */
+	public static function get_component_before_after_module( $module_slug, $module_data ) {
+		// Default processed components for the return request. Need to use `__` to be set
+		// as the attribute name.
+		$processed_components = array(
+			'has_components'     => false,
+			'__before_component' => '',
+			'__after_component'  => '',
+		);
+
+		/**
+		 * Filters module's before & after components for current builder page.
+		 *
+		 * @since ??
+		 *
+		 * @param array  $processed_components Default of module's before & after components.
+		 * @param string $module_slug          Module slug.
+		 * @param array  $module_data          Module data passed from the request.
+		 */
+		$components = apply_filters( "{$module_slug}_fb_before_after_components", $processed_components, $module_slug, $module_data );
+
+		// Skip if there is no before & after components.
+		$has_components = et_()->array_get( $components, 'has_components' );
+		if ( true !== $has_components ) {
+			return $processed_components;
+		}
+
+		$processed_components = array(
+			'has_components'     => true,
+			'__before_component' => et_()->array_get( $components, '__before_component' ),
+			'__after_component'  => et_()->array_get( $components, '__after_component' ),
+		);
+
+		return $processed_components;
 	}
 
 	/**

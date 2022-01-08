@@ -2607,7 +2607,8 @@ class ET_Core_SupportCenter {
 				);
 				$response['token']  = '';
 				if ( ! empty( $site_id ) && is_string( $site_id ) ) {
-					$response['token'] = $account_settings['token'] . '|' . $site_id;
+					$account_setting_token = isset( $account_settings['token'] ) ? $account_settings['token'] : '';
+					$response['token']     = $account_setting_token . '|' . $site_id;
 				}
 				$response['message'] = esc_html__(
 					'ET Support User role has been activated.',
@@ -3025,12 +3026,13 @@ class ET_Core_SupportCenter {
 						$site_id           = get_option( 'et_support_site_id' );
 						$support_token_cta = '';
 						if ( intval( $is_et_support_user_active ) > 0 && ! empty( $site_id ) && is_string( $site_id ) ) {
-							$account_settings  = get_option( $this->support_user_options_name );
-							$support_token_cta = '<a class="copy_support_token" data-token="'
-												 . esc_attr( $account_settings['token'] . '|' . $site_id )
-												 . '">'
-												 . esc_html__( 'Copy Support Token', 'et-core' )
-												 . '</a>';
+							$account_settings      = get_option( $this->support_user_options_name );
+							$account_setting_token = isset( $account_settings['token'] ) ? $account_settings['token'] : '';
+							$support_token_cta     = '<a class="copy_support_token" data-token="'
+												. esc_attr( $account_setting_token . '|' . $site_id )
+												. '">'
+												. esc_html__( 'Copy Support Token', 'et-core' )
+												. '</a>';
 						}
 
 						$card_content .= '<div class="et_card_cta">'

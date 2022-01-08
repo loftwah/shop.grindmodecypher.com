@@ -2025,6 +2025,9 @@ class ET_Dynamic_Assets {
 	 * @since 4.10.0
 	 */
 	public function maybe_add_global_modules_content( $content ) {
+		// Ensure the $content is valid string.
+		$content = is_string( $content ) ? $content : '';
+
 		preg_match_all( '@global_module="(\d+)"@', $content, $matches );
 
 		$global_modules = $this->get_unique_array_values( $matches[1], $this->_global_modules );
@@ -2062,6 +2065,9 @@ class ET_Dynamic_Assets {
 	public function get_early_shortcodes( $content ) {
 		$shortcodes        = array_keys( $this->get_shortcode_assets_list( false ) );
 		$processed_content = $this->maybe_add_global_modules_content( $content );
+
+		// Ensure the $processed_content is valid string.
+		$processed_content = is_string( $processed_content ) ? $processed_content : '';
 
 		preg_match_all( '@\[([^<>&/\[\]\x00-\x20=]++)@', $processed_content, $matches );
 
@@ -2604,6 +2610,9 @@ class ET_Dynamic_Assets {
 	 * @since 4.10.0
 	 */
 	public function check_if_attribute_exits( $attribute, $content ) {
+		// Ensure the $content is valid string.
+		$content = is_string( $content ) ? $content : '';
+
 		$has_attribute = preg_match( '/' . $attribute . '=".+"/', $content );
 
 		if ( ! empty( $this->_presets_attributes ) ) {
@@ -2624,6 +2633,9 @@ class ET_Dynamic_Assets {
 	 * @since 4.10.5
 	 */
 	public function check_if_class_exits( $class, $content ) {
+		// Ensure the $content is valid string.
+		$content = is_string( $content ) ? $content : '';
+
 		return preg_match( '/class=".*' . preg_quote( $class, '/' ) . '/', $content );
 	}
 

@@ -787,7 +787,7 @@ if ( ! function_exists( 'show_page_menu' ) ) {
 
 		//excluded pages
 		if ( $menupages = et_get_option( $shortname.'_menupages' ) ) {
-			$exclude_pages = implode( ",", $menupages );
+			$exclude_pages = is_array( $menupages ) ? implode( ',', $menupages ) : '';
 		}
 
 		//dropdown for pages
@@ -825,7 +825,7 @@ if ( ! function_exists( 'show_categories_menu' ) ) {
 
 		//excluded categories
 		if ( $menucats = et_get_option( $shortname.'_menucats' ) ) {
-			$exclude_cats = implode( ",", $menucats );
+			$exclude_cats = implode( ',', (array) $menucats );
 		}
 
 		//hide empty categories
@@ -1098,7 +1098,7 @@ if ( ! function_exists( 'elegant_titles_filter' ) ) {
 		#if the title is being displayed on the homepage
 		if ( ( is_home() || is_front_page() ) && ! elegant_is_blog_posts_page() ) {
 			if ( 'on' === et_get_option( $shortname . '_seo_home_title' ) ) {
-				$custom_title = et_get_option( $shortname . '_seo_home_titletext' );
+				$custom_title = strval( et_get_option( $shortname . '_seo_home_titletext' ) );
 			} else {
 				$seo_home_type = et_get_option( $shortname . '_seo_home_type' );
 				$seo_home_separate = et_get_option( $shortname . '_seo_home_separate' );
@@ -1355,7 +1355,7 @@ function add_favicon(){
 
 	// If the `has_site_icon` function doesn't exist (ie we're on < WP 4.3) or if the site icon has not been set,
 	// and when we have a icon URL from theme option
-	if ( ( ! function_exists( 'has_site_icon' ) || ! has_site_icon() ) && false !== $favicon_url && '' !== $favicon_url ) {
+	if ( ( ! function_exists( 'has_site_icon' ) || ! has_site_icon() ) && ! empty( $favicon_url ) ) {
 		echo '<link rel="shortcut icon" href="' . esc_url( $favicon_url ) . '" />';
 	} elseif ( function_exists( 'has_site_icon' ) && has_site_icon() ) {
 		et_update_option( $shortname . '_favicon', '' );
@@ -1377,7 +1377,7 @@ function et_create_images_temp_folder(){
 	if ( false !== $et_images_temp_folder ) return;
 
 	$uploads_dir = wp_upload_dir();
-	$destination_dir = ( false === $uploads_dir['error'] ) ? path_join( $uploads_dir['basedir'], 'et_temp' ) : null;
+	$destination_dir = ( false === $uploads_dir['error'] ) ? path_join( $uploads_dir['basedir'], 'et_temp' ) : '';
 
 	if ( ! wp_mkdir_p( $destination_dir ) ) update_option( 'et_images_temp_folder', '' );
 	else {

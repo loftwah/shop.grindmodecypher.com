@@ -7,6 +7,7 @@ use YayMail\Ajax;
 use YayMail\Page\Source\CustomPostType;
 use YayMail\Page\Source\DefaultElement;
 use YayMail\Templates\Templates;
+use YayMail\I18n;
 
 defined( 'ABSPATH' ) || exit;
 /**
@@ -830,8 +831,9 @@ class Settings {
 					'plugin_name'   => 'WooCommerce Gift Cards',
 					'template_name' => array(
 						'gift_card_received',
+						'gift_card_send_to_buyer',
 					),
-					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-gift-cards-somewherewarm',
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-gift-cards-woocommerce',
 				),
 				'AutomateWoo'                         => array(
 					'plugin_name'   => 'AutomateWoo',
@@ -975,6 +977,16 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wcmp-marketplace',
 				),
+				'AffiliateForWooCommerce'   => array(
+					'plugin_name'   => 'Affiliate For WooCommerce',
+					'template_name' => array(
+						'afwc_commission_paid',
+						'afwc_new_conversion',
+						'afwc_new_registration',
+						'afwc_welcome',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-affiliate-storeapps',
+				),
 			);
 
 			$list_plugin_for_pro = array();
@@ -1051,6 +1063,7 @@ class Settings {
 					'yaysmtp_setting'            => admin_url( 'admin.php?page=yaysmtp' ),
 					'list_shortcode_addon'       => $listShortCodeAddon,
 					'shipping_methods'           => $shipping_methods,
+					'i18n'                       => I18n::jsTranslate(),
 				)
 			);
 			do_action( 'yaymail_enqueue_script_conditional_logic' );

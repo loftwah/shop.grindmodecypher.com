@@ -148,6 +148,7 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 							array(
 								'%%order_class%% table.cart th',
 								'%%order_class%%.et_pb_row_layout_vertical table.shop_table_responsive tr td::before',
+								'%%order_class%%.et_pb_row_layout_default table.shop_table_responsive tr td::before',
 							)
 						),
 					),
@@ -1105,60 +1106,6 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 	}
 
 	/**
-	 * Renders the Cart Products table's `table-layout` styles.
-	 *
-	 * @param array  $attrs       Module props.
-	 * @param string $render_slug Module slug.
-	 */
-	public function render_table_layout_styles( $attrs, $render_slug ) {
-		$toggle_options = [
-			'show_product_image',
-			'show_remove_item_icon',
-		];
-
-		$show_product_image_style_values    = [];
-		$show_remove_item_icon_style_values = [];
-		$css_property                       = 'table-layout';
-
-		foreach ( $toggle_options as $toggle_option ) {
-			foreach ( et_pb_responsive_options()->get_modes() as $device ) {
-				${$toggle_option} = et_pb_responsive_options()->get_property_value(
-					$attrs,
-					$toggle_option,
-					'on',
-					$device,
-					true
-				);
-
-				if ( 'off' === ${$toggle_option} ) {
-					${$toggle_option . '_style_values'}[ $device ] = array(
-						$css_property => 'auto',
-					);
-				} else {
-					${$toggle_option . '_style_values'}[ $device ] = array(
-						$css_property => 'fixed',
-					);
-				}
-			}
-		}
-
-		foreach ( et_pb_responsive_options()->get_modes() as $device ) {
-			$table_layout_style_values[ $device ] = ( 'auto' === $show_product_image_style_values[ $device ][ $css_property ] )
-				? $show_product_image_style_values[ $device ]
-				: $show_remove_item_icon_style_values[ $device ];
-		}
-
-		et_pb_responsive_options()->generate_responsive_css(
-			$table_layout_style_values,
-			'%%order_class%% table.shop_table',
-			'table-layout',
-			$render_slug,
-			'',
-			'table-layout' /* Can be anything other than `range`. */
-		);
-	}
-
-	/**
 	 * Swaps login form template.
 	 *
 	 * By default WooCommerce displays these only when logged-out.
@@ -1674,8 +1621,6 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 				'type'                            => 'color',
 			)
 		);
-
-		$this->render_table_layout_styles( $attrs, $render_slug );
 
 		return $this->_render_module_wrapper( $output, $render_slug );
 	}

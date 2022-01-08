@@ -17,26 +17,26 @@ class ET_Builder_Module_Shortcode_Manager {
 	/**
 	 * Modules container.
 	 *
-	 * @access private
+	 * @access public
 	 * @var array
 	 */
-	private $_modules_map = [];
+	public static $modules_map = [];
 
 	/**
 	 * WooCommerce modules container.
 	 *
-	 * @access private
+	 * @access public
 	 * @var array
 	 */
-	private $_woo_modules_map = [];
+	public static $woo_modules_map = [];
 
 	/**
 	 * Structural Modules container.
 	 *
-	 * @access private
+	 * @access public
 	 * @var array
 	 */
-	private $_structural_modules_map = [];
+	public static $structural_modules_map = [];
 
 	/**
 	 * Initialize shortcode manager class.
@@ -51,6 +51,27 @@ class ET_Builder_Module_Shortcode_Manager {
 		$this->register_structural_modules();
 		$this->register_woo_modules();
 		$this->register_shortcode();
+	}
+
+	/**
+	 * Get modules map.
+	 *
+	 * @since ??
+	 *
+	 * @param string $type Modules map type.
+	 *
+	 * @return array Modules map.
+	 */
+	public static function get_modules_map( $type = false ) {
+		if ( 'woo_modules' === $type ) {
+			return self::$woo_modules_map;
+		}
+
+		if ( 'structural_modules' === $type ) {
+			return self::$structural_modules_map;
+		}
+
+		return self::$modules_map;
 	}
 
 	/**
@@ -248,7 +269,8 @@ class ET_Builder_Module_Shortcode_Manager {
 		 * @param array $additional_modules Additional modules.
 		 */
 		$additional_modules = apply_filters( 'et_module_classes', [] );
-		$this->_modules_map = array_merge( $this->_modules_map, $modules, $additional_modules );
+
+		self::$modules_map = array_merge( self::$modules_map, $modules, $additional_modules );
 	}
 
 	/**
@@ -306,7 +328,8 @@ class ET_Builder_Module_Shortcode_Manager {
 		 * @param array $additional_modules Additional modules.
 		 */
 		$additional_modules = apply_filters( 'et_fullwidth_module_classes', [] );
-		$this->_modules_map = array_merge( $this->_modules_map, $modules, $additional_modules );
+
+		self::$modules_map = array_merge( self::$modules_map, $modules, $additional_modules );
 	}
 
 	/**
@@ -345,8 +368,9 @@ class ET_Builder_Module_Shortcode_Manager {
 		 *
 		 * @param array $additional_modules Additional modules.
 		 */
-		$additional_modules            = apply_filters( 'et_structural_module_classes', [] );
-		$this->_structural_modules_map = array_merge( $modules, $additional_modules );
+		$additional_modules = apply_filters( 'et_structural_module_classes', [] );
+
+		self::$structural_modules_map = array_merge( $modules, $additional_modules );
 	}
 
 	/**
@@ -453,9 +477,10 @@ class ET_Builder_Module_Shortcode_Manager {
 		 *
 		 * @param array $additional_modules Additional modules.
 		 */
-		$additional_modules     = apply_filters( 'et_woo_module_classes', [] );
-		$this->_woo_modules_map = $woo_modules;
-		$this->_modules_map     = array_merge( $this->_modules_map, $woo_modules, $additional_modules );
+		$additional_modules = apply_filters( 'et_woo_module_classes', [] );
+
+		self::$woo_modules_map = $woo_modules;
+		self::$modules_map     = array_merge( self::$modules_map, $woo_modules, $additional_modules );
 	}
 
 	/**
@@ -526,7 +551,7 @@ class ET_Builder_Module_Shortcode_Manager {
 	public function register_lazy_shortcodes() {
 		// A fake handler has to be registered for every shortcode, otherways
 		// code will exit early and the pre_do_shortcode_tag hook won't be executed.
-		foreach ( $this->_modules_map as $shortcode_slug => $module_data ) {
+		foreach ( self::$modules_map as $shortcode_slug => $module_data ) {
 			add_shortcode( $shortcode_slug, '__return_empty_string' );
 		}
 
@@ -574,7 +599,7 @@ class ET_Builder_Module_Shortcode_Manager {
 
 		// Only compute this once.
 		if ( empty( $module_slugs ) ) {
-			$module_slugs = array_keys( $this->_woo_modules_map );
+			$module_slugs = array_keys( self::$woo_modules_map );
 		}
 
 		return array_unique( array_merge( $loaded, $module_slugs ) );
@@ -593,7 +618,7 @@ class ET_Builder_Module_Shortcode_Manager {
 
 		// Only compute this once.
 		if ( empty( $module_slugs ) ) {
-			$module_slugs = array_keys( $this->_modules_map );
+			$module_slugs = array_keys( self::$modules_map );
 		}
 
 		return array_unique( array_merge( $loaded, $module_slugs ) );
@@ -612,7 +637,7 @@ class ET_Builder_Module_Shortcode_Manager {
 
 		// Only compute this once.
 		if ( empty( $structural_module_slugs ) ) {
-			$structural_module_slugs = array_keys( $this->_structural_modules_map );
+			$structural_module_slugs = array_keys( self::$structural_modules_map );
 		}
 
 		return array_unique( array_merge( $loaded, $structural_module_slugs ) );
@@ -642,12 +667,12 @@ class ET_Builder_Module_Shortcode_Manager {
 	 */
 	public function maybe_load_module_from_slug( $tag ) {
 
-		if ( empty( $this->_modules_map[ $tag ] ) ) {
+		if ( empty( self::$modules_map[ $tag ] ) ) {
 			// None of our business.
 			return;
 		}
 
-		$module =& $this->_modules_map[ $tag ];
+		$module =& self::$modules_map[ $tag ];
 
 		if ( empty( $module['instance'] ) ) {
 			/**

@@ -22,7 +22,7 @@ echo esc_attr( ';' . $borderColor );
 ">
 	<tr>
 		<?php if ( ! empty( $billing_address ) ) { ?>
-			<td style="width: 
+			<td class="yaymail_billing_address_content" style="width: 
 			<?php
 			echo esc_attr( $width );
 			echo esc_attr( ';' . $borderColor );
@@ -49,7 +49,7 @@ echo esc_attr( ';' . $borderColor );
 			</td>
 		<?php } ?>
 		<?php if ( ! empty( $shipping_address ) ) { ?>
-			<td style="width: 
+			<td class="yaymail_shipping_address_content" style="width: 
 			<?php
 			echo esc_attr( $width );
 			echo esc_attr( ';' . $borderColor );

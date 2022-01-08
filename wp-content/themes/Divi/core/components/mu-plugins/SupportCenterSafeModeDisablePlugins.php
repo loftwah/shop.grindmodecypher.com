@@ -57,7 +57,7 @@ function et_safe_mode_maybe_disable_plugins( $plugins = array() ) {
 	}
 
 	/** @var array Collection of plugins that we will NOT disable when Safe Mode is activated. */
-	$plugins_allowlist = get_option( 'et_safe_mode_plugins_allowlist' );
+	$plugins_allowlist = (array) get_option( 'et_safe_mode_plugins_allowlist' );
 
 	$clean_plugins = $plugins;
 

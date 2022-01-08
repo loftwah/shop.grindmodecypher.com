@@ -25,6 +25,7 @@ $get_order_item_totals = array(
 $get_order_item_totals_class = array(
 	'cart_subtotal'  => 'yaymail_item_subtoltal_title',
 	'payment_method' => 'yaymail_item_payment_method_title',
+	'shipping'       => 'yaymail_item_shipping_title',
 	'order_total'    => 'yaymail_item_total_title',
 	'refund_0'       => 'yaymail_item_fully_refunded',
 	'tax'            => 'yaymail_item_tax',
@@ -71,15 +72,14 @@ $textColor                   = isset( $atts['textcolor'] ) && $atts['textcolor']
 		foreach ( $totalItem as $key => $total ) {
 			$i++;
 			?>
-
 		<tr class="<?php
 			if ( array_key_exists( $key, $get_order_item_totals_class ) ) {
 				if ( 'refund_0' == $key ) {
 					if ( __( 'Order fully refunded.', 'woocommerce' ) == $total['label'] ) {
-						echo esc_attr( $get_order_item_totals_class[ $key ] . '_row');
+						echo esc_attr( $get_order_item_totals_class[ $key ] . '_row' );
 					}
 				} else {
-					echo esc_attr( $get_order_item_totals_class[ $key ] . '_row');
+					echo esc_attr( $get_order_item_totals_class[ $key ] . '_row' );
 				}
 			}
 			?>">

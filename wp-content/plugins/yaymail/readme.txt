@@ -170,6 +170,18 @@ Shhh, we offer one-time payment and unlimited sites packages, too! [Check it out
 
 == Changelog ==
 
+= Dec 24, 2021 - Version 2.8 - Merry Christmas 🎄😊 =
+- Added: Support Affiliate For WooCommerce (by StoreApps) (Addon)
+- Added: Support WooCommerce Shipping & Tax (in Pro)
+- Added: File .pot
+- Fixed: Bug send test mail
+- Fixed: Display custom CSS
+- Fixed: Addon Woo Deposits - PHP error
+
+= Dec 17, 2021 - Version 2.7.9 =
+- Addon Woo Gift cards: Add support template Self-use gift card received
+- Fixed: Shortcode shipping phone and CSS class 
+
 = Dec 10, 2021 - Version 2.7.8 =
 - Fixed: Shortcode [yaymail_customer_notes]
 - Fixed: Shortcode shipping phone

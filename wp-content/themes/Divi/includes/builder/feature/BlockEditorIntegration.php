@@ -214,6 +214,8 @@ class ET_Builder_Block_Editor_Integration {
 			'status'      => get_site_option( 'et_account_status', 'not_active' ),
 		);
 
+		$library_i18n = require ET_BUILDER_DIR . 'frontend-builder/i18n/library.php';
+
 		// Set helpers needed by our own Gutenberg bundle.
 		$gutenberg = array(
 			'helpers'       => array(
@@ -243,6 +245,7 @@ class ET_Builder_Block_Editor_Integration {
 							'default' => esc_html__( 'Use Default Editor', 'et_builder' ),
 						),
 					),
+					'library'     => $library_i18n,
 				),
 			),
 

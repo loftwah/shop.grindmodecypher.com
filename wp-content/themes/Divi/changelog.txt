@@ -1,3 +1,65 @@
+version 4.14.5 ( updated 01-05-2022 )
+- Fixed missing Table Header styles in Phone mode when using the Cart Products module.
+- Added option to let user enable or disable Theme Builder Editor inside Visual Builder.
+- Fixed the broken magic colors system.
+- Fixed a compatibility issue with WP Rocket where the option to remove unused CSS was removing required CSS for the Blog Module's column size.
+- Fixed PHP 8.1 deprecated FILTER_SANITIZE_STRING constant on BFB initial content.
+- Fixed PHP 8.1 deprecated FILTER_SANITIZE_STRING constant on Global Presets and Colors features.
+- Fixed broken WooCommerce extensions elements added on single product, product related pages, and Woo modules.
+- Fixed Divi icons rendering saved in the Global Presets(GP) with unicode format: &amp;#x24; on VB.
+- Fixed the Cart Products table styles allowing the table to be responsive.
+- Fixed an issue with slide move-to that caused unwanted max-height being applied on all modules that use this function.
+- Fixed issue with double wrappers when page has only the Body Layout created in Theme Builder.
+- Fixed error in the console when scrolling and having 3rd party modules with child in the content.
+- Fixed missing no account warning text when accessing Library Layouts of Divi Layout block.
+- Fixed PHP 8.1 warnings when Dynamic Assets feature is enabled.
+- Fixed some PHP 8.1 deprecation warnings and errors.
+- Fixed an issue where the Blog module grid style would not work correctly due to Salvattore failing to retrieve the number of columns.
+- Improved display of Divi icons when Dynamic Assets is turning on.
+- Fixed incorrect Core - Post Excerpt block result on the FE.
+- Fixed copy/paste between Radio and Selected Radio option groups in the Checkout Payment module.
+- Fixed wrong height of Full-width slider image when placed immediately after transparent primary Menu.
+- Fixed reCaptcha not visible when Dynamic CSS option is disabled.
+- Added "Posts for Current Page" loop option for Blog module in Visual Theme Builder Editor.
+- Fixed some PHP 8.1 deprecation warnings and errors.
+	* core/components/SupportCenter.php
+	* core/components/api/spam/ReCaptcha.php
+	* core/components/mu-plugins/SupportCenterSafeModeDisablePlugins.php
+	* core/ui/utils/property-resolver.js
+	* epanel/core_functions.php
+	* epanel/custom_functions.php
+	* functions.php
+	* header.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-module-shortcode-manager.php
+	* includes/builder/core.php
+	* includes/builder/feature/BlockEditorIntegration.php
+	* includes/builder/feature/content-retriever/retrievers/PageContentRetriever.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-content.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/feature/gutenberg/blocks/PostExcerpt.php
+	* includes/builder/feature/icon-manager/ExtendedFontIcons.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/theme-builder/dynamic-content.php
+	* includes/builder/frontend-builder/theme-builder/woocommerce.php
+	* includes/builder/functions.php
+	* includes/builder/module/BarCountersItem.php
+	* includes/builder/module/CircleCounter.php
+	* includes/builder/module/ContactForm.php
+	* includes/builder/module/CountdownTimer.php
+	* includes/builder/module/woocommerce/CartProducts.php
+	* includes/builder/plugin-compat/sg-cachepress.php
+	* includes/builder/plugin-compat/sitepress-multilingual-cms.php
+	* includes/builder/plugin-compat/wp-rocket.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/social_icons.php
+	* single.php
+	* theme-header.php
+
 version 4.14.4 ( updated 12-17-2021 )
 - Fixed a conflict with SiteGround Optimizer where the Theme Customizer styles would not work when the Output Styles Inline option was enabled in Divi's Theme Options.
 - Fixed a compatibility issue with SiteGround Optimizer that would cause the Divi Builder to timeout.

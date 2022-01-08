@@ -7497,7 +7497,7 @@ function et_pb_print_font_style( $styles = '', $important = '' ) {
 	// Prepare variable
 	$font_styles = "";
 
-	if ( '' !== $styles && false !== $styles ) {
+	if ( '' !== $styles && false !== $styles && ! is_null( $styles ) ) {
 		// Convert string into array
 		$styles_array = explode( '|', $styles );
 
@@ -7749,7 +7749,7 @@ add_filter( 'admin_body_class', 'et_add_wp_version' );
  * @return bool
  */
 function et_divi_is_transparent_primary_nav() {
-	return 'rgba' == substr( et_get_option( 'primary_nav_bg', '#ffffff' ), 0, 4 );
+	return 'rgba' === substr( strval( et_get_option( 'primary_nav_bg', '#ffffff' ) ), 0, 4 );
 }
 
 function et_layout_body_class( $classes ) {
@@ -7858,7 +7858,7 @@ function et_layout_body_class( $classes ) {
 		}
 
 		$logo = et_get_option( 'divi_logo', '' );
-		if ( '.svg' === substr( $logo, -4, 4 ) ) {
+		if ( '.svg' === substr( strval( $logo ), -4, 4 ) ) {
 			$classes[] = 'et_pb_svg_logo';
 		}
     }
@@ -7922,7 +7922,7 @@ function et_layout_post_class( $classes ) {
 
 	$post_id       = get_the_ID();
 	$post_type     = get_post_type( $post_id );
-	$template_name = basename( $template );
+	$template_name = ! empty( $template ) ? basename( $template ) : ''; // phpcs:ignore Generic.WhiteSpace.ScopeIndent.Incorrect -- We decided to ignore indentation change.
 
 	if ( 'page' === $post_type ) {
 		// Don't add the class to pages.
@@ -7980,9 +7980,9 @@ if ( ! function_exists( 'et_divi_get_top_nav_items' ) ) {
 	function et_divi_get_top_nav_items() {
 		$items = new stdClass;
 
-		$items->phone_number = trim( et_get_option( 'phone_number' ) );
+		$items->phone_number = trim( strval( et_get_option( 'phone_number' ) ) );
 
-		$items->email = trim( et_get_option( 'header_email' ) );
+		$items->email = trim( strval( et_get_option( 'header_email' ) ) );
 
 		$items->contact_info_defined = $items->phone_number || $items->email;
 
@@ -8502,7 +8502,7 @@ function et_get_footer_credits() {
 
 	$footer_credits = et_get_option( 'custom_footer_credits', '' );
 
-	if ( '' === trim( $footer_credits ) ) {
+	if ( '' === trim( strval( $footer_credits ) ) ) { // phpcs:ignore Generic.WhiteSpace.ScopeIndent.IncorrectExact -- We decided to ignore indentation change.
 		return et_get_safe_localization( sprintf( $credits_format, $original_footer_credits, 'p' ) );
 	}
 

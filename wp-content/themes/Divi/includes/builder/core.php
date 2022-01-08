@@ -112,7 +112,7 @@ if ( ! function_exists( 'et_builder_should_load_framework' ) ) :
 		}
 
 		$is_admin              = is_admin();
-		$required_admin_pages  = array( 'edit.php', 'post.php', 'post-new.php', 'admin.php', 'customize.php', 'edit-tags.php', 'admin-ajax.php', 'export.php', 'options-permalink.php', 'themes.php', 'revision.php', 'widgets.php' ); // list of admin pages where we need to load builder files.
+		$required_admin_pages  = array( 'edit.php', 'post.php', 'post-new.php', 'admin.php', 'customize.php', 'edit-tags.php', 'admin-ajax.php', 'export.php', 'options-permalink.php', 'themes.php', 'revision.php', 'widgets.php', 'site-editor.php' ); // list of admin pages where we need to load builder files.
 		$specific_filter_pages = array( 'edit.php', 'post.php', 'post-new.php', 'admin.php', 'edit-tags.php' ); // list of admin pages where we need more specific filtering.
 		$post_id               = (int) et_()->array_get( $_GET, 'post', 0 );
 
@@ -623,6 +623,9 @@ function et_builder_get_enabled_builder_post_types() {
 	 * @return string[]
 	 */
 	$options = apply_filters( 'et_builder_enabled_builder_post_type_options', array() );
+
+	// Ensure $options value type is array.
+	$options = is_array( $options ) ? $options : array();
 
 	foreach ( $default as $post_type ) {
 		if ( ! isset( $options[ $post_type ] ) ) {
@@ -2507,6 +2510,7 @@ function et_fb_get_nonces() {
 		'getPostMetaFields'               => wp_create_nonce( 'et_builder_ajax_get_post_meta_fields' ),
 		'globalColorsSave'                => wp_create_nonce( 'et_builder_global_colors_save' ),
 		'defaultColorsUpdate'             => wp_create_nonce( 'et_builder_default_colors_update' ),
+		'beforeAfterComponents'           => wp_create_nonce( 'et_fb_fetch_before_after_components_nonce' ),
 	);
 
 	return array_merge( $nonces, $fb_nonces );
@@ -4833,6 +4837,23 @@ if ( ! function_exists( 'et_fb_is_computed_callback_ajax' ) ) :
 	}
 endif;
 
+if ( ! function_exists( 'et_fb_is_before_after_components_callback_ajax' ) ) :
+	/**
+	 * Returns whether current request is before & after components callback AJAX call.
+	 *
+	 * @since ??
+	 *
+	 * @return bool
+	 */
+	function et_fb_is_before_after_components_callback_ajax() {
+		// phpcs:disable WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
+		$action = ! empty( $_REQUEST['action'] ) ? sanitize_text_field( $_REQUEST['action'] ) : '';
+
+		return wp_doing_ajax() && 'et_fb_fetch_before_after_components' === $action;
+		// phpcs:enable
+	}
+endif;
+
 if ( ! function_exists( 'et_fb_is_resolve_post_content_callback_ajax' ) ) :
 	/**
 	 * Returns whether current request is resolve post content callback AJAX call
@@ -6540,7 +6561,10 @@ function et_builder_add_builder_content_wrapper( $content ) {
 	 *
 	 * @param bool $wrap
 	 */
-	$wrap = apply_filters( 'et_builder_add_outer_content_wrap', true );
+	$post_id                   = is_singular() ? get_the_ID() : 0;
+	$is_custom_post_type       = et_builder_post_is_of_custom_post_type( $post_id ) && ! ET_Builder_Element::is_theme_builder_layout();
+	$should_content_be_wrapped = $is_custom_post_type || et_is_builder_plugin_active() || et_core_is_fb_enabled();
+	$wrap                      = apply_filters( 'et_builder_add_outer_content_wrap', $should_content_be_wrapped );
 
 	if ( $wrap ) {
 		$content = et_builder_get_builder_content_opening_wrapper() . $content . et_builder_get_builder_content_closing_wrapper();

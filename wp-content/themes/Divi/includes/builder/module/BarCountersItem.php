@@ -306,7 +306,7 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 		$multi_view = et_pb_multi_view_options( $this );
 		$multi_view->set_custom_prop( 'use_percentages', $et_pb_counters_settings['use_percentages'] );
 
-		$percent                       = $multi_view->get_value( 'percent' );
+		$percent                       = $multi_view->get_value( 'percent', 'desktop', '' );
 		$bar_background_color          = self::$_->array_get( $this->props, 'bar_background_color' );
 		$bar_background_color          = empty( $bar_background_color ) ? $et_pb_counters_settings['bar_bg_color'] : $bar_background_color;
 		$background_image              = $this->props['background_image'];

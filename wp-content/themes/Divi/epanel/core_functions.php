@@ -54,7 +54,7 @@ if ( ! function_exists( 'et_epanel_admin_js' ) ) {
 if ( ! function_exists( 'et_epanel_enable_css_lint' ) ) {
 	function et_epanel_enable_css_lint( $settings ){
 		$modes = array( 'text/css', 'css', 'text/x-scss', 'text/x-less', 'text/x-sass' );
-		
+
 		if ( in_array( $settings['codemirror']['mode'], $modes, true ) ) {
 			$settings['codemirror']['lint'] = true;
 			$settings['codemirror']['gutters'] = array( 'CodeMirror-lint-markers' );
@@ -397,7 +397,7 @@ if ( ! function_exists( 'et_build_epanel' ) ) {
 														$et_upload_button_data = isset( $value['button_text'] ) ? sprintf( ' data-button_text="%1$s"', esc_attr( $value['button_text'] ) ) : '';
 													?>
 
-														<input id="<?php echo esc_attr( $value['id'] ); ?>" class="et-upload-field" type="text" size="90" name="<?php echo esc_attr( $value['id'] ); ?>" value="<?php echo esc_url( et_get_option( $value['id'], '', '', false, $is_new_global_setting, $global_setting_main_name, $global_setting_sub_name ) ); ?>" />
+														<input id="<?php echo esc_attr( $value['id'] ); ?>" class="et-upload-field" type="text" size="90" name="<?php echo esc_attr( $value['id'] ); ?>" value="<?php echo esc_url( strval( et_get_option( $value['id'], '', '', false, $is_new_global_setting, $global_setting_main_name, $global_setting_sub_name ) ) ); ?>" />
 														<div class="et-upload-buttons">
 															<span class="et-upload-image-reset"><?php esc_html_e( 'Reset', $themename ); ?></span>
 															<input class="et-upload-image-button" type="button"<?php echo et_core_esc_previously( $et_upload_button_data ); ?> value="<?php esc_attr_e( 'Upload', $themename ); ?>" />
@@ -414,7 +414,7 @@ if ( ! function_exists( 'et_build_epanel' ) ) {
 																	$et_use_option_values = ( isset( $value['et_array_for'] ) && in_array( $value['et_array_for'], array( 'pages', 'categories' ) ) ) ||
 																	( isset( $value['et_save_values'] ) && $value['et_save_values'] ) ? true : false;
 
-																	$et_option_db_value = et_get_option( $value['id'] );
+																	$et_option_db_value = strval( et_get_option( $value['id'] ) );
 
 																	if ( ( $et_use_option_values && ( $et_option_db_value === $option_key ) ) || ( stripslashes( $et_option_db_value ) === trim( stripslashes( $option ) ) ) || ( ! $et_option_db_value && isset( $value['std'] ) && stripslashes( $option ) === stripslashes( $value['std'] ) ) )
 																		$et_select_active = ' selected="selected"';
@@ -438,7 +438,7 @@ if ( ! function_exists( 'et_build_epanel' ) ) {
 																$class_name_last = 0 === $i % 3 ? ' last' : '';
 
 																if ( et_get_option( $value['id'] ) ) {
-																	if ( in_array( $option, et_get_option( $value['id'] ) ) ) {
+																	if ( in_array( $option, (array) et_get_option( $value['id'] ), true ) ) {
 																		$checked = "checked=\"checked\"";
 																	}
 																}
@@ -474,7 +474,9 @@ if ( ! function_exists( 'et_build_epanel' ) ) {
 														foreach ( $value['options'] as $option ) {
 															$checked = '';
 															if ( et_get_option( $value['id'] ) !== false ) {
-																if ( in_array( $option, et_get_option( $value['id'] ) ) ) $checked = "checked=\"checked\"";
+																if ( in_array( $option, (array) et_get_option( $value['id'] ), true ) ) {
+																	$checked = 'checked="checked"';
+																}
 															} elseif ( isset( $value['std'] ) ) {
 																if ( in_array( $option, $value['std'] ) ) {
 																	$checked = "checked=\"checked\"";
@@ -493,10 +495,10 @@ if ( ! function_exists( 'et_build_epanel' ) ) {
 														call_user_func( $value['function_name'] ); ?>
 
 													<?php } elseif ( 'et_color_palette' === $value['type'] ) {
-															$items_amount = isset( $value['items_amount'] ) ? $value['items_amount'] : 1;
-															$et_input_value = et_get_option( $value['id'], '', '', false, $is_new_global_setting, $global_setting_main_name, $global_setting_sub_name );
+															$items_amount             = isset( $value['items_amount'] ) ? $value['items_amount'] : 1;
+															$et_input_value           = strval( et_get_option( $value['id'], '', '', false, $is_new_global_setting, $global_setting_main_name, $global_setting_sub_name ) );
 															$et_input_value_processed = str_replace( '|', '', $et_input_value );
-															$et_input_value = ! empty( $et_input_value_processed ) ? $et_input_value : $value['std'];
+															$et_input_value           = ! empty( $et_input_value_processed ) ? $et_input_value : $value['std'];
 														?>
 															<div class="et_pb_colorpalette_overview">
 														<?php
