@@ -66,6 +66,7 @@ class Templates {
 		$listEmails            = apply_filters( 'YaymailCreateFollowUpTemplates', $listEmails );
 		$listEmails            = apply_filters( 'YaymailCreateAutomateWooTemplates', $listEmails );
 		$listEmails            = apply_filters( 'YaymailCreateTrackShipWooTemplates', $listEmails );
+    $listEmails            = apply_filters( 'YaymailCreateWCFMWooFMTemplates', $listEmails );
 		$listEmailDefaultOfWoo = array(
 			'new_order',
 			'failed_order',

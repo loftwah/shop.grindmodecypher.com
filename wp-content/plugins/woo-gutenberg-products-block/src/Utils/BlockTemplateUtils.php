@@ -1,6 +1,9 @@
 <?php
 namespace Automattic\WooCommerce\Blocks\Utils;
 
+use Automattic\WooCommerce\Blocks\Domain\Services\FeatureGating;
+
+
 /**
  * BlockTemplateUtils class used for serving block templates from Woo Blocks.
  * IMPORTANT: These methods have been duplicated from Gutenberg/lib/full-site-editing/block-templates.php as those functions are not for public usage.
@@ -26,6 +29,15 @@ class BlockTemplateUtils {
 		'TEMPLATES'                 => 'templates',
 		'TEMPLATE_PARTS'            => 'parts',
 	);
+
+	/**
+	 * WooCommerce plugin slug
+	 *
+	 * This is used to save templates to the DB which are stored against this value in the wp_terms table.
+	 *
+	 * @var string
+	 */
+	const PLUGIN_SLUG = 'woocommerce/woocommerce';
 
 	/**
 	 * Returns an array containing the references of
@@ -119,7 +131,7 @@ class BlockTemplateUtils {
 		$template                 = new \WP_Block_Template();
 		$template->wp_id          = $post->ID;
 		$template->id             = $theme . '//' . $post->post_name;
-		$template->theme          = 'woocommerce' === $theme ? 'WooCommerce' : $theme;
+		$template->theme          = $theme;
 		$template->content        = $post->post_content;
 		$template->slug           = $post->post_name;
 		$template->source         = 'custom';
@@ -138,7 +150,10 @@ class BlockTemplateUtils {
 			}
 		}
 
-		if ( 'woocommerce' === $theme ) {
+		// We are checking 'woocommerce' to maintain legacy templates which are saved to the DB,
+		// prior to updating to use the correct slug.
+		// More information found here: https://github.com/woocommerce/woocommerce-gutenberg-products-block/issues/5423.
+		if ( self::PLUGIN_SLUG === $theme || 'woocommerce' === strtolower( $theme ) ) {
 			$template->origin = 'plugin';
 		}
 
@@ -164,8 +179,8 @@ class BlockTemplateUtils {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$template_content  = file_get_contents( $template_file->path );
 		$template          = new \WP_Block_Template();
-		$template->id      = $template_is_from_theme ? $theme_name . '//' . $template_file->slug : 'woocommerce//' . $template_file->slug;
-		$template->theme   = $template_is_from_theme ? $theme_name : 'WooCommerce';
+		$template->id      = $template_is_from_theme ? $theme_name . '//' . $template_file->slug : self::PLUGIN_SLUG . '//' . $template_file->slug;
+		$template->theme   = $template_is_from_theme ? $theme_name : self::PLUGIN_SLUG;
 		$template->content = self::gutenberg_inject_theme_attribute_in_content( $template_content );
 		// Plugin was agreed as a valid source value despite existing inline docs at the time of creating: https://github.com/WordPress/gutenberg/issues/36597#issuecomment-976232909.
 		$template->source         = $template_file->source ? $template_file->source : 'plugin';
@@ -196,10 +211,10 @@ class BlockTemplateUtils {
 
 		$new_template_item = array(
 			'slug'        => $template_slug,
-			'id'          => $template_is_from_theme ? $theme_name . '//' . $template_slug : 'woocommerce//' . $template_slug,
+			'id'          => $template_is_from_theme ? $theme_name . '//' . $template_slug : self::PLUGIN_SLUG . '//' . $template_slug,
 			'path'        => $template_file,
 			'type'        => $template_type,
-			'theme'       => $template_is_from_theme ? $theme_name : 'woocommerce',
+			'theme'       => $template_is_from_theme ? $theme_name : self::PLUGIN_SLUG,
 			// Plugin was agreed as a valid source value despite existing inline docs at the time of creating: https://github.com/WordPress/gutenberg/issues/36597#issuecomment-976232909.
 			'source'      => $template_is_from_theme ? 'theme' : 'plugin',
 			'title'       => self::convert_slug_to_title( $template_slug ),
@@ -254,15 +269,12 @@ class BlockTemplateUtils {
 	 * Converts template paths into a slug
 	 *
 	 * @param string $path The template's path.
-	 * @param string $directory_name The template's directory name.
 	 * @return string slug
 	 */
-	public static function generate_template_slug_from_path( $path, $directory_name = 'block-templates' ) {
-		return substr(
-			$path,
-			strpos( $path, $directory_name . DIRECTORY_SEPARATOR ) + 1 + strlen( $directory_name ),
-			-5
-		);
+	public static function generate_template_slug_from_path( $path ) {
+		$template_extension = '.html';
+
+		return basename( $path, $template_extension );
 	}
 
 	/**
@@ -298,8 +310,8 @@ class BlockTemplateUtils {
 			function( $carry, $item ) use ( $template_filename ) {
 				$filepath = DIRECTORY_SEPARATOR . $item . DIRECTORY_SEPARATOR . $template_filename;
 
-				$carry[] = get_template_directory() . $filepath;
 				$carry[] = get_stylesheet_directory() . $filepath;
+				$carry[] = get_template_directory() . $filepath;
 
 				return $carry;
 			},
@@ -353,6 +365,28 @@ class BlockTemplateUtils {
 	}
 
 	/**
+	 * Retrieves a single unified template object using its id.
+	 *
+	 * @param string $id            Template unique identifier (example: theme_slug//template_slug).
+	 * @param string $template_type Optional. Template type: `'wp_template'` or '`wp_template_part'`.
+	 *                             Default `'wp_template'`.
+	 *
+	 * @return WP_Block_Template|null Template.
+	 */
+	public static function get_block_template( $id, $template_type ) {
+		if ( function_exists( 'get_block_template' ) ) {
+			return get_block_template( $id, $template_type );
+		}
+
+		if ( function_exists( 'gutenberg_get_block_template' ) ) {
+			return gutenberg_get_block_template( $id, $template_type );
+		}
+
+		return null;
+
+	}
+
+	/**
 	 * Checks if we can fallback to the `archive-product` template for a given slug
 	 *
 	 * `taxonomy-product_cat` and `taxonomy-product_tag` templates can generally use the
@@ -402,4 +436,36 @@ class BlockTemplateUtils {
 
 		return false;
 	}
+
+	/**
+	 * Filter block templates by feature flag.
+	 *
+	 * @param WP_Block_Template[] $block_templates An array of block template objects.
+	 *
+	 * @return WP_Block_Template[] An array of block template objects.
+	 */
+	public static function filter_block_templates_by_feature_flag( $block_templates ) {
+		$feature_gating = new FeatureGating();
+		$flag           = $feature_gating->get_flag();
+
+		/**
+		 * An array of block templates with slug as key and flag as value.
+		 *
+		 * @var array
+		*/
+		$block_templates_with_feature_gate = array(
+			'mini-cart' => $feature_gating->get_experimental_flag(),
+		);
+
+		return array_filter(
+			$block_templates,
+			function( $block_template ) use ( $flag, $block_templates_with_feature_gate ) {
+				if ( isset( $block_templates_with_feature_gate[ $block_template->slug ] ) ) {
+					return $block_templates_with_feature_gate[ $block_template->slug ] <= $flag;
+				}
+				return true;
+			}
+		);
+	}
+
 }

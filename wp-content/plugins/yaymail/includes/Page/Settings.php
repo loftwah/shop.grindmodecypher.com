@@ -288,6 +288,9 @@ class Settings {
 			$this->emails          = apply_filters( 'YaymailCreateTrackShipWooTemplates', $this->emails );
 			$settingEnableDisables = apply_filters( 'YaymailCreateSelectTrackShipWooTemplates', $settingEnableDisables );
 
+			$this->emails          = apply_filters( 'YaymailCreateWCFMWooFMTemplates', $this->emails );
+			$settingEnableDisables = apply_filters( 'YaymailCreateSelectWCFMWooFMTemplates', $settingEnableDisables );
+
 			$settingDefaultGenerals = array(
 				'payment'                      => 2,
 				'product_image'                => 0,
@@ -398,6 +401,13 @@ class Settings {
 						'customer_processing_renewal_order',
 						'customer_payment_retry',
 						'payment_retry',
+						'_enr_customer_auto_renewal_reminder',
+						'_enr_customer_expiry_reminder',
+						'_enr_customer_manual_renewal_reminder',
+						'_enr_customer_processing_shipping_fulfilment_order',
+						'_enr_customer_shipping_frequency_notification',
+						'_enr_customer_subscription_price_updated',
+						'_enr_customer_trial_ending_reminder',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-subscriptions',
 				),
@@ -874,6 +884,10 @@ class Settings {
 						'WC_Memberships_User_Membership_Ending_Soon_Email',
 						'WC_Memberships_User_Membership_Note_Email',
 						'WC_Memberships_User_Membership_Renewal_Reminder_Email',
+						'wc_memberships_for_teams_team_invitation',
+						'wc_memberships_for_teams_team_membership_ended',
+						'wc_memberships_for_teams_team_membership_ending_soon',
+						'wc_memberships_for_teams_team_membership_renewal_reminder',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-memberships',
 				),
@@ -987,6 +1001,20 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-affiliate-storeapps',
 				),
+				'WooCommerceProductVendors'             => array(
+					'plugin_name'   => 'WooCommerce Product Vendors',
+					'template_name' => array(
+						'vendor_approval',
+						'cancelled_order_email_to_vendor',
+						'order_email_to_vendor',
+						'order_fulfill_status_to_admin',
+						'order_note_to_customer',
+						'product_added_notice',
+						'vendor_registration_to_admin',
+						'vendor_registration_to_vendor',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-product-vendors/',
+				)
 			);
 
 			$list_plugin_for_pro = array();

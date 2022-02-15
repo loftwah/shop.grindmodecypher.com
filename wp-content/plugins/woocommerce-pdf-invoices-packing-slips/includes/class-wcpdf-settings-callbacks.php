@@ -122,6 +122,7 @@ class Settings_Callbacks {
 			'size'			=> isset( $args['text_input_size'] ) ? $args['text_input_size'] : NULL,
 		)  + $args;
 		unset( $input_args['current'] );
+		unset( $input_args['setting_name'] );
 
 		ob_start();
 		$this->text_input( $input_args );
@@ -388,6 +389,17 @@ class Settings_Callbacks {
 				$in_height = floatval( $header_logo_height );
 			} else {
 				// don't display resolution
+			}
+
+			/*
+			 * .webp support can be disabled but still showing the image in settings.
+			 * We should add a notice because this will display an error when redering the PDF using DOMPDF.
+			 */
+			if ( 'webp' === wp_check_filetype( $attachment_src )['ext'] && ! function_exists( 'imagecreatefromwebp' ) ) {
+				printf(
+					'<div class="notice notice-warning inline" style="display:inline-block; width:auto;"><p>%s</p></div>',
+					wp_kses_post( 'File type <strong>webp</strong> is not supported by your server! Please check your <strong>System Configurations</strong> under the <strong>Status</strong> tab.', 'woocommerce-pdf-invoices-packing-slips' )
+				);
 			}
 
 			printf( '<img src="%1$s" style="display:block" id="img-%2$s"/>', esc_attr( $attachment_src ), esc_attr( $id ) );

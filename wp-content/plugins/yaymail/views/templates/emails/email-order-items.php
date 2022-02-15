@@ -63,7 +63,7 @@ foreach ( $items as $item_id => $item ) :
 		if ( 'Bottom' == $orderImagePostions && '1' == $orderImage ) {
 			echo ( '<div class="yaymail-product-text" style="padding: 5px 0;">' );
 			// Product name
-			echo wp_kses_post( '<span class="yaymail-product-name">' . $item->get_name() . '</span>' );
+			echo wp_kses_post( '<span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span>' );
 
 			// SKU
 			if ( $args['show_sku'] && is_object( $product ) && $product->get_sku() && $product ) {
@@ -91,7 +91,7 @@ foreach ( $items as $item_id => $item ) :
 			}
 			echo ( '<div style="padding: 5px 0;">' );
 			// Product name
-			echo wp_kses_post( '<span class="yaymail-product-name">' . $item->get_name() . '</span>' );
+			echo wp_kses_post( '<span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span>' );
 
 			// SKU
 			if ( $args['show_sku'] && is_object( $product ) && $product->get_sku() && $product ) {

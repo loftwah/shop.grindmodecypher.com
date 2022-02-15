@@ -67,6 +67,7 @@ class Shortcodes {
 				'items_downloadable_product',
 				'items_downloadable_title',
 				'get_heading',
+				'woocommerce_email_order_details',
 				'woocommerce_email_before_order_table',
 				'woocommerce_email_after_order_table',
 			);
@@ -163,7 +164,7 @@ class Shortcodes {
 			$shortcodes_lists       = array_merge( $shortcodes_lists, $general_list );
 			$this->shortcodes_lists = $shortcodes_lists;
 			foreach ( $this->shortcodes_lists as $key => $shortcode_name ) {
-				if ( 'woocommerce_email_before_order_table' == $shortcode_name || 'woocommerce_email_after_order_table' == $shortcode_name ) {
+				if ( 'woocommerce_email_before_order_table' == $shortcode_name || 'woocommerce_email_after_order_table' == $shortcode_name  || 'woocommerce_email_order_details' == $shortcode_name) {
 					add_shortcode( $shortcode_name, array( $this, 'shortcodeCallBack' ) );
 				} else {
 					$function_name = $this->parseShortCodeToFunctionName( 'yaymail_' . $shortcode_name );
@@ -792,9 +793,10 @@ class Shortcodes {
 		$shortcode['[yaymail_get_heading]']          = $this->getEmailHeading( $args, $this->order, $sent_to_admin );
 
 		// WC HOOK
+		$shortcode['[woocommerce_email_order_details]']  = $this->orderWoocommerceOrderDetailsHook( $args, $sent_to_admin ); // not Changed
 		$shortcode['[woocommerce_email_before_order_table]'] = $this->orderWoocommerceBeforeHook( $args, $sent_to_admin ); // not Changed
 		$shortcode['[woocommerce_email_after_order_table]']  = $this->orderWoocommerceAfterHook( $args, $sent_to_admin ); // not Changed
-
+		
 		// Define shortcode from plugin addon
 		$shortcode = apply_filters( 'yaymail_do_shortcode', $shortcode, $yaymail_informations, $this->args_email );
 
@@ -1002,7 +1004,7 @@ class Shortcodes {
 		}
 
 		// GENERALS
-		$shortcode['[yaymail_customer_note]']  = $customerNoteHtml;
+		$shortcode['[yaymail_customer_note]']  = strip_tags( $customerNoteHtml );
 		$shortcode['[yaymail_customer_notes]'] = $customerNoteHtmlList;
 		if ( ! empty( $order->get_customer_note() ) ) {
 			$shortcode['[yaymail_customer_provided_note]'] = $order->get_customer_note();
@@ -1147,6 +1149,7 @@ class Shortcodes {
 		$shortcode['[yaymail_get_heading]']          = $this->getEmailHeading( '', $this->order, $sent_to_admin );
 
 		// WC HOOK
+		$shortcode['[woocommerce_email_order_details]']  = $this->orderWoocommerceOrderDetailsHook( array(), $sent_to_admin, 'sampleOrder' ); // not Changed
 		$shortcode['[woocommerce_email_before_order_table]'] = $this->orderWoocommerceBeforeHook( array(), $sent_to_admin, 'sampleOrder' ); // not changed
 		$shortcode['[woocommerce_email_after_order_table]']  = $this->orderWoocommerceAfterHook( array(), $sent_to_admin, 'sampleOrder' ); // not changed
 
@@ -1154,7 +1157,7 @@ class Shortcodes {
 		$shortcode = apply_filters( 'yaymail_do_shortcode', $shortcode, $yaymail_informations, '' );
 
 		$shortcode['[yaymail_items]']               = $this->orderItems( array(), $sent_to_admin, 'sampleOrder' );
-		$shortcode['[yaymail_order_date]']          = gmdate( 'd-m-Y' );
+		$shortcode['[yaymail_order_date]']          = date_i18n( wc_date_format() );
 		$shortcode['[yaymail_order_fee]']           = 0;
 		$shortcode['[yaymail_order_id]']            = 1;
 		$shortcode['[yaymail_order_link]']          = '<a href="" style="color:' . esc_attr( $text_link_color ) . ';">' . esc_html__( 'Order', 'yaymail' ) . '</a>';
@@ -1525,6 +1528,20 @@ class Shortcodes {
 	}
 
 	/*  Woocommerce Hook - End */
+
+	public function orderWoocommerceOrderDetailsHook( $args, $sent_to_admin = '', $checkOrder = '' ) {
+		if ( 'sampleOrder' === $checkOrder ) {
+			return '[woocommerce_email_order_details]';
+		} else {
+			$order = $this->order;
+			ob_start();
+			$path = YAYMAIL_PLUGIN_PATH . 'views/templates/emails/wc-email-order-detail.php';
+			include $path;
+			$html = ob_get_contents();
+			ob_end_clean();
+			return $html;
+		}
+	}
 	public function orderWoocommerceBeforeHook( $args, $sent_to_admin = '', $checkOrder = '' ) {
 		if ( 'sampleOrder' === $checkOrder ) {
 			return '[woocommerce_email_before_order_table]';

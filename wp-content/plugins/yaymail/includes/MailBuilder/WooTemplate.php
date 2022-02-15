@@ -39,7 +39,33 @@ class WooTemplate {
 		add_filter( 'retrieve_password_message', array( $this, 'admin_reset_password' ), 100, 4 );
 		add_action( 'automatewoo_before_action_run', array( $this, 'automatewoo_before_action_run' ), 10 );
 		add_filter( 'automatewoo/referrals/invite_email/mailer', array( $this, 'automatewoo_invite_email' ), 100, 2 );
+
+		if ( class_exists( 'WCFM' ) ) {
+			$WCFMWooFM_Template = CustomPostType::postIDByTemplate( 'WCFMWooFM_Template' );
+			if ( get_post_meta( $WCFMWooFM_Template, '_yaymail_status', true ) ) {
+				global $WCFM;
+				remove_action( 'wcfm_email_content_wrapper', array( $WCFM, 'wcfm_email_content_wrapper' ),10 );
+				add_filter( 'wcfm_email_content_wrapper', array( &$this, 'wcfm_email_content_wrapper' ), 1, 2 );
+			}
+		}
 	}
+
+	public function wcfm_email_content_wrapper( $content_body, $email_heading ) {
+		$template       = 'WCFMWooFM_Template';
+		$postID         = CustomPostType::postIDByTemplate( 'WCFMWooFM_Template' );
+		$templateActive = file_exists( YAYMAIL_PLUGIN_PATH . 'views/templates/single-follow-up-mail-template.php' ) ? YAYMAIL_PLUGIN_PATH . 'views/templates/single-follow-up-mail-template.php' : false;
+		$args           = array(
+			'order'    => null,
+			'content_body'    => $content_body,
+			'email_heading'    => $email_heading,
+		);
+		ob_start();
+		include $templateActive;
+		$template_body = ob_get_contents();
+		ob_end_clean();
+		return $template_body;
+	}
+	
 	public function automatewoo_invite_email( $mailer, $invite_email ) {
 		if ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) || is_plugin_active( 'email-customizer-automatewoo/yaymail-automatewoo.php' ) ) {
 			$template        = 'AutomateWoo_Referrals_Email';

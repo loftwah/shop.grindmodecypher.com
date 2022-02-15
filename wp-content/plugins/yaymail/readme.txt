@@ -1,8 +1,8 @@
 === YayMail - WooCommerce Email Customizer ===
 Contributors: YayCommerce
-Tags: woocommerce emails, email designer, email template, email customizer, woocommerce email templates, woocommerce email customizer, woo mail, new order email
+Tags: woocommerce emails, email designer, woocommerce email templates, woocommerce email customizer, email template, woo mail, new order email, email customizer,
 Requires at least: 3.0
-Tested up to: 5.8
+Tested up to: 5.9
 Stable tag: 2.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -32,7 +32,7 @@ The YayMail free version allows you to add unlimited elements to create html ema
 Easy to navigate between the element sidebar and the preview area to customise email block elements.
 
 **Edit Everything**
-You can edit content, layout, and design of email header, email body, visual footer, signature, social follow module, and more.
+You can edit content, layout, and design of email header, email body, visual footer, signature, social follow module, and more. It means that all your communication with your customers will finally match the rest of your branding.
 
 **Visual Email Editor**
 Design HTML email and live preview on the same screen. Apart from the full window view, you can take a look on desktop and mobile view.
@@ -88,7 +88,7 @@ With YayMail Addons, you have a huge amount of flexibility to what can be put in
 That said, if you're using one of the extensions below, you have to buy its YayMail Addon to design those extra email templates:
 
 - Conditional Logic for Email Blocks ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#conditional-logic))
-- WooCommerce Subscriptions ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-subscriptions))
+- WooCommerce Subscriptions & Enhancer for WooCommerce Subscriptions ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-subscriptions))
 - WooCommerce Bookings ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-bookings))
 - AutomateWoo ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-automatewoo))
 - Follow-Ups - Custom Email Templates ([Get Addon](https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-follow-ups))
@@ -169,6 +169,19 @@ Shhh, we offer one-time payment and unlimited sites packages, too! [Check it out
 3. A WC email template designed with YayMail
 
 == Changelog ==
+
+= Jan 20, 2021 - Version 2.8.3 =
+- Added: Shipping method (Addon Conditional Logic 1.6)
+- Supported: Teams for WooCommerce Memberships (Addon WooCommerce Memberships 1.2)
+
+= Jan 17, 2021 - Version 2.8.2 =
+- Supported: Enhancer for WooCommerce Subscriptions (Addon WooCommerce Subscriptions 1.7)
+- Fixed: License key request
+
+= Dec 30, 2021 - Version 2.8.1 =
+- Added: Support Loco Translate (in Pro)
+- Added: Support WooCommerce Product Vendors (Addon)
+- Fixed: PHPCS
 
 = Dec 24, 2021 - Version 2.8 - Merry Christmas 🎄😊 =
 - Added: Support Affiliate For WooCommerce (by StoreApps) (Addon)

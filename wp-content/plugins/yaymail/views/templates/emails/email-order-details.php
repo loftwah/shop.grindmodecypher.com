@@ -179,5 +179,3 @@ if ( $sent_to_admin ) {
 		<?php } ?>
 	</tfoot>
 </table>
-
-<?php do_action( 'woocommerce_email_after_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>

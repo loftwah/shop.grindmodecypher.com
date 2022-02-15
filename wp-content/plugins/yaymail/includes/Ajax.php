@@ -747,7 +747,7 @@ class Ajax {
 					$setting           = array_map( 'sanitize_text_field', wp_unslash( $_POST['settings'] ) );
 					$yaymail_direction = $setting['direction_rtl'];
 					isset( $yaymail_direction ) ? update_option( 'yaymail_direction', $yaymail_direction ) : update_option( 'yaymail_direction', 'ltr' );
-					// Helper::checkNonce();
+					$setting['custom_css'] = wp_kses_post( isset( $_POST['settings']['custom_css'] ) ? $_POST['settings']['custom_css'] : '' );
 					update_option( 'yaymail_settings', $setting );
 					wp_send_json_success( array( 'mess' => __( 'Settings saved.', 'yaymail' ) ) );
 				}
