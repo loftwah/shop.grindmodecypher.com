@@ -1,3 +1,54 @@
+version 4.14.7 ( updated 01-20-2022 )
+- Fixed an issue where the Global Presets history didn't update with every action causing changes to not save.
+- Fixed lazy loading images to occur only on below the fold content when Divi Builder is used.
+- Recover some Block Editor control buttons on Template Editor mode.
+- Fixed broken layout on Divi Woo Products module.
+- Fixed incorrectly set Page Type in Theme Builder when using the Woo Notice module.
+- Fixed issue where flip section divider is not showing in Safari.
+- Fixed issue where the menu items wrap into multiple lines.
+- Fixed builder issue when users edit a WooCommerce product and use FSE theme.
+- Improved Theme Builder Template compatibility with Block Editor Template.
+- Fixed Account name/password incorrect validation while on Checkout page built using Divi Builder.
+- Fixed Divi block styling issue on Template Editor.
+- Disable ET buttons when users open Template Editor.
+- Fixed issue where global color becomes static if hover options are enabled.
+- Fixed Payment form repeatedly showing in all Divi Checkout modules.
+- Fixed an issue where the Pricing Table child element text color didn't overwrite the parent module text color in some cases.
+- Added support for SVG files in portability export.
+	* core/components/Portability.php
+	* includes/builder/compat/early.php
+	* includes/builder/feature/BlockEditorIntegration.php
+	* includes/builder/feature/BlockTemplates.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/PricingTablesItem.php
+	* includes/builder/module/woocommerce/CheckoutAdditionalInfo.php
+	* includes/builder/module/woocommerce/CheckoutBilling.php
+	* includes/builder/module/woocommerce/CheckoutOrderDetails.php
+	* includes/builder/module/woocommerce/CheckoutShipping.php
+	* includes/builder/scripts/frontend/woocommerce-modules.js
+	* includes/builder/templates/block-template-canvas.php
+
+version 4.14.6 ( updated 01-13-2022 )
+- Fixed auto-opening preview tab when Divi Woo Product page is loaded w/ Rank Math plugin enabled.
+- Fixed unintended lag in the Visual Builder caused by a previous bug fix.
+- Fixed an issue where the layout(s) images were not exported from Divi Libray in some cases.
+	* core/components/Portability.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-module-shortcode-manager.php
+	* includes/builder/core.php
+	* includes/builder/feature/content-retriever/retrievers/PageContentRetriever.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/feature/gutenberg/blocks/PostExcerpt.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/woocommerce.php
+	* includes/builder/functions.php
+	* includes/builder/plugin-compat/wp-rocket.php
+	* includes/builder/scripts/frontend/scripts.js
+
 version 4.14.5 ( updated 01-05-2022 )
 - Fixed missing Table Header styles in Phone mode when using the Cart Products module.
 - Added option to let user enable or disable Theme Builder Editor inside Visual Builder.

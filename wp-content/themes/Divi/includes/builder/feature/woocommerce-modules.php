@@ -1099,6 +1099,16 @@ function et_builder_wc_render_module_template( $function_name, $args = array(), 
 				WC()->session->set( 'wc_notices', $et_wc_cached_notices );
 			}
 			break;
+		case 'woocommerce_template_single_meta':
+			if ( is_a( $product, 'WC_Product' ) ) {
+
+				/*
+				 * Variable functions.
+				 * @see https://www.php.net/manual/en/functions.variable-functions.php
+				 */
+				$function_name();
+			}
+			break;
 		default:
 			// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
 			call_user_func( $function_name );
@@ -1246,7 +1256,7 @@ function et_builder_wc_disable_default_layout() {
  * Relocate all registered callbacks from `woocommerce_single_product_summary` hook to
  * any suitable Woo modules.
  *
- * @since ??
+ * @since 4.14.5
  */
 function et_builder_wc_relocate_single_product_summary() {
 	global $post, $wp_filter;
@@ -1303,7 +1313,7 @@ function et_builder_wc_relocate_single_product_summary() {
 	 *
 	 * 3rd-party plugins can use this filter to force enable or disable this action.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @param boolean $is_copy_needed Whether to copy single product summary or not.
 	 */
@@ -1314,7 +1324,7 @@ function et_builder_wc_relocate_single_product_summary() {
 	 *
 	 * 3rd-party plugins can use this filter to force enable or disable this action.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @param boolean $is_move_needed Whether to move single product summary or not.
 	 */
@@ -1333,7 +1343,7 @@ function et_builder_wc_relocate_single_product_summary() {
 	 * `function_name` or `class::method` combination. By default, it contanis all single
 	 * product summary actions from WooCommerce plugin.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @param array $ignored_callbacks List of ignored callbacks.
 	 */
@@ -1422,7 +1432,7 @@ function et_builder_wc_relocate_single_product_summary() {
 			 *
 			 * 3rd-party plugins can use this filter to target different module slug.
 			 *
-			 * @since ??
+			 * @since 4.14.5
 			 *
 			 * @param string $module_slug     Module slug.
 			 * @param string $callback_name   Callback name.
@@ -1448,7 +1458,7 @@ function et_builder_wc_relocate_single_product_summary() {
 			 *
 			 * 3rd-party plugins can use this filter to change the output location.
 			 *
-			 * @since ??
+			 * @since 4.14.5
 			 *
 			 * @param string $output_location   Output location.
 			 * @param string $callback_name     Callback name.
@@ -1477,7 +1487,7 @@ function et_builder_wc_relocate_single_product_summary() {
 			 *
 			 * 3rd-party plugins can use this filter to rearrange the output priority.
 			 *
-			 * @since ??
+			 * @since 4.14.5
 			 *
 			 * @param string $output_priority   Module output priority number.
 			 * @param string $callback_name     Callback name.
@@ -1506,7 +1516,7 @@ function et_builder_wc_relocate_single_product_summary() {
 /**
  * Prepend and/or append callback output to the suitable module output on FE.
  *
- * @since ??
+ * @since 4.14.5
  *
  * @param string             $module_output   Module output.
  * @param string             $module_slug     Module slug.
@@ -1563,7 +1573,7 @@ function et_builder_wc_single_product_summary_module_output( $module_output, $mo
 /**
  * Set callback output as before and/or after components on builder.
  *
- * @since ??
+ * @since 4.14.5
  *
  * @param array  $module_components Default module before & after components.
  * @param string $module_slug       Module slug.
@@ -1634,7 +1644,7 @@ function et_builder_wc_single_product_summary_before_after_components( $module_c
 /**
  * Render single product summary before Woo module output.
  *
- * @since ??
+ * @since 4.14.5
  *
  * @param string $module_slug Module slug.
  *
@@ -1646,7 +1656,7 @@ function et_builder_wc_single_product_summary_before_module( $module_slug ) {
 	/**
 	 * Fires additional output for single product summary before module output.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 */
 	do_action( "et_builder_wc_single_product_summary_before_{$module_slug}" );
 
@@ -1656,7 +1666,7 @@ function et_builder_wc_single_product_summary_before_module( $module_slug ) {
 /**
  * Render single product summary after Woo module output.
  *
- * @since ??
+ * @since 4.14.5
  *
  * @param string $module_slug Module slug.
  *
@@ -1668,7 +1678,7 @@ function et_builder_wc_single_product_summary_after_module( $module_slug ) {
 	/**
 	 * Fires additional output for single product summary after module output.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 */
 	do_action( "et_builder_wc_single_product_summary_after_{$module_slug}" );
 

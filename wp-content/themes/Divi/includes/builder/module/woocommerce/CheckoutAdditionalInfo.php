@@ -504,6 +504,11 @@ final class ET_Builder_Module_Woocommerce_Checkout_Additional_Info extends ET_Bu
 			)
 		);
 
+		global $wp;
+		if ( ! empty( $wp->query_vars['order-pay'] ) ) {
+			$this->add_classname( 'et_pb_wc_order_pay' );
+		}
+
 		if ( isset( WC()->cart )
 			&& ! is_null( WC()->cart && method_exists( WC()->cart, 'check_cart_items' ) ) ) {
 			$return = WC()->cart->check_cart_items();

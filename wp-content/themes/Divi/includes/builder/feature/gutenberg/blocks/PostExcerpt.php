@@ -35,7 +35,7 @@ class ET_GB_Block_Post_Excerpt {
 	/**
 	 * Get class instance.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @return ET_GB_Block_Post_Excerpt Class instance.
 	 */
@@ -50,7 +50,7 @@ class ET_GB_Block_Post_Excerpt {
 	/**
 	 * Register hooks
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 */
 	public function register_hooks() {
 		add_filter( 'render_block_core/post-excerpt', array( $this, 'render_block' ), 10, 2 );
@@ -60,7 +60,7 @@ class ET_GB_Block_Post_Excerpt {
 	/**
 	 * Filter rendered Core - Post Excerpt block on FE.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @param string $block_content Saved & serialized block data.
 	 * @param array  $parsed_block  Block info.
@@ -79,7 +79,7 @@ class ET_GB_Block_Post_Excerpt {
 	 * Only filter post excerpt rendered from REST API request. This API request is being
 	 * used by Block Editor.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @param string $post_excerpt Current post excerpt rendered.
 	 *
@@ -98,7 +98,7 @@ class ET_GB_Block_Post_Excerpt {
 	 * Get rendered post excerpt built with builder. Always return rendered $block_excerpt
 	 * because it's already wrapped with Post Excerpt block wrapper.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @param string  $block_excerpt Current rendered post excerpt.
 	 * @param boolean $is_wrapped    Whether the post excerpt is wrapped or not.

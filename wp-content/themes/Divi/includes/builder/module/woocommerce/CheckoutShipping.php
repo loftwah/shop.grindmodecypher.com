@@ -355,6 +355,14 @@ class ET_Builder_Module_Woocommerce_Checkout_Shipping extends ET_Builder_Module 
 		ET_Builder_Module_Helper_Woocommerce_Modules::detach_wc_checkout_login_form();
 		ET_Builder_Module_Helper_Woocommerce_Modules::detach_wc_checkout_order_review();
 		ET_Builder_Module_Helper_Woocommerce_Modules::detach_wc_checkout_payment();
+
+		remove_action(
+			'woocommerce_checkout_billing',
+			[
+				WC_Checkout::instance(),
+				'checkout_form_billing',
+			]
+		);
 	}
 
 	/**
@@ -365,6 +373,14 @@ class ET_Builder_Module_Woocommerce_Checkout_Shipping extends ET_Builder_Module 
 		ET_Builder_Module_Helper_Woocommerce_Modules::attach_wc_checkout_login_form();
 		ET_Builder_Module_Helper_Woocommerce_Modules::attach_wc_checkout_order_review();
 		ET_Builder_Module_Helper_Woocommerce_Modules::attach_wc_checkout_payment();
+
+		add_action(
+			'woocommerce_checkout_billing',
+			[
+				WC_Checkout::instance(),
+				'checkout_form_billing',
+			]
+		);
 	}
 
 	/**
@@ -388,13 +404,17 @@ class ET_Builder_Module_Woocommerce_Checkout_Shipping extends ET_Builder_Module 
 			);
 		}
 
-		add_filter( 'woocommerce_cart_needs_shipping_address', '__return_true' );
+		if ( $is_pb_mode ) {
+			add_filter( 'woocommerce_cart_needs_shipping_address', '__return_true' );
+		}
 
 		ob_start();
 		WC_Shortcode_Checkout::output( array() );
 		$markup = ob_get_clean();
 
-		remove_filter( 'woocommerce_cart_needs_shipping_address', '__return_true' );
+		if ( $is_pb_mode ) {
+			remove_filter( 'woocommerce_cart_needs_shipping_address', '__return_true' );
+		}
 
 		if ( $is_cart_empty && $is_pb_mode ) {
 			remove_filter(
@@ -501,6 +521,11 @@ class ET_Builder_Module_Woocommerce_Checkout_Shipping extends ET_Builder_Module 
 			if ( wc_notice_count( 'error' ) > 0 ) {
 				$this->add_classname( 'et_pb_hide_module' );
 			}
+		}
+
+		global $wp;
+		if ( ! empty( $wp->query_vars['order-pay'] ) ) {
+			$this->add_classname( 'et_pb_wc_order_pay' );
 		}
 
 		return $this->_render_module_wrapper( $output, $render_slug );

@@ -582,6 +582,11 @@ class ET_Builder_Module_Woocommerce_Checkout_Billing extends ET_Builder_Module {
 
 		$this->add_classname( $this->get_text_orientation_classname() );
 
+		global $wp;
+		if ( ! empty( $wp->query_vars['order-pay'] ) ) {
+			$this->add_classname( 'et_pb_wc_order_pay' );
+		}
+
 		if ( isset( WC()->cart )
 			&& ! is_null( WC()->cart && method_exists( WC()->cart, 'check_cart_items' ) ) ) {
 			$return = WC()->cart->check_cart_items();

@@ -606,8 +606,8 @@ class ET_Builder_Module_Fullwidth_Menu extends ET_Builder_Module {
 		$fields['dropdown_menu_text_color']        = array( 'color' => "%%order_class%%.{$menu_slug} .nav li ul a" );
 		$fields['dropdown_menu_active_link_color'] = array( 'color' => "%%order_class%%.{$menu_slug} .nav li ul li.current-menu-item a" );
 
-		$fields['logo_width']      = array( 'width' => '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap .et_pb_menu__logo, %%order_class%% .et_pb_menu__logo-slot' );
-		$fields['logo_max_width']  = array( 'max-width' => '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap .et_pb_menu__logo, %%order_class%% .et_pb_menu__logo-slot' );
+		$fields['logo_width']      = array( 'width' => '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap, %%order_class%% .et_pb_menu__logo-slot' );
+		$fields['logo_max_width']  = array( 'max-width' => '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap, %%order_class%% .et_pb_menu__logo-slot' );
 		$fields['logo_height']     = array( 'height' => '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap .et_pb_menu__logo img, %%order_class%% .et_pb_menu__logo-slot .et_pb_menu__logo-wrap img' );
 		$fields['logo_max_height'] = array( 'max-height' => '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap .et_pb_menu__logo img, %%order_class%% .et_pb_menu__logo-slot .et_pb_menu__logo-wrap img' );
 
@@ -797,7 +797,7 @@ class ET_Builder_Module_Fullwidth_Menu extends ET_Builder_Module {
 			ET_Builder_Element::set_style( $render_slug, $el_style );
 		}
 
-		$logo_width_selector  = '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap .et_pb_menu__logo, %%order_class%% .et_pb_menu__logo-slot';
+		$logo_width_selector  = '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap, %%order_class%% .et_pb_menu__logo-slot';
 		$logo_height_selector = '%%order_class%% .et_pb_row > .et_pb_menu__logo-wrap .et_pb_menu__logo img, %%order_class%% .et_pb_menu__logo-slot .et_pb_menu__logo-wrap img';
 
 		// Width.

@@ -3306,7 +3306,7 @@ class ET_Builder_Element {
 		 * refers to the slug of the module for which the shortcode output was generated.
 		 *
 		 * @since 3.0.87
-		 * @since ?? Pass module instance as 3rd argument.
+		 * @since 4.14.5 Pass module instance as 3rd argument.
 		 *
 		 * @param string $output
 		 * @param string $module_slug
@@ -4116,16 +4116,6 @@ class ET_Builder_Element {
 					// Unset the background color attrs if it was default based on selected network.
 					unset( $attrs['background_color'] );
 				}
-			}
-
-			// Unset the custom_margin that only has | as the value.
-			if ( ! empty( $attrs['custom_margin'] ) && '' === str_replace( '|', '', $attrs['custom_margin'] ) ) {
-				unset( $attrs['custom_margin'] );
-			}
-
-			// Unset the custom_padding that only has | as the value.
-			if ( ! empty( $attrs['custom_padding'] ) && '' === str_replace( '|', '', $attrs['custom_padding'] ) ) {
-				unset( $attrs['custom_padding'] );
 			}
 
 			return array_merge( $module_preset_settings, $attrs );
@@ -22703,7 +22693,7 @@ class ET_Builder_Element {
 	 * This method is introduced to handle additional components added on WooCommerce
 	 * product summary that should be moved to any suitable modules on builder preview.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @param string $module_slug Module slug.
 	 * @param array  $module_data Module data passed.
@@ -22722,7 +22712,7 @@ class ET_Builder_Element {
 		/**
 		 * Filters module's before & after components for current builder page.
 		 *
-		 * @since ??
+		 * @since 4.14.5
 		 *
 		 * @param array  $processed_components Default of module's before & after components.
 		 * @param string $module_slug          Module slug.

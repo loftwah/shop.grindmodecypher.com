@@ -10,14 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @class   ET_Builder_Plugin_Compat_WP_Rocket
  * @package Divi
  * @subpackage Builder
- * @since ??
+ * @since 4.14.5
  * @link https://wp-rocket.me/
  */
 class ET_Builder_Plugin_Compat_WP_Rocket extends ET_Builder_Plugin_Compat_Base {
 	/**
 	 * Constructor.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 */
 	public function __construct() {
 		$this->plugin_id = 'wp-rocket/wp-rocket.php';
@@ -27,7 +27,7 @@ class ET_Builder_Plugin_Compat_WP_Rocket extends ET_Builder_Plugin_Compat_Base {
 	/**
 	 * Hook methods to WordPress.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @return void
 	 */
@@ -44,7 +44,7 @@ class ET_Builder_Plugin_Compat_WP_Rocket extends ET_Builder_Plugin_Compat_Base {
 	 * CSS safelist to exclude from WP Rocket's 'Unused CSS' option.
 	 * The array may contain CSS filenames, IDs or classes.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @param array[] $css_safelist list of CSS filenames, IDs or classes.
 	 *

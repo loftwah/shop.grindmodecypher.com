@@ -29,7 +29,7 @@ trait PageContentRetriever {
 	 * If $post is not given, It then uses global $post if available.
 	 *
 	 * @since 4.11.0
-	 * @since ?? Return empty string on failure instead of null.
+	 * @since 4.14.5 Return empty string on failure instead of null.
 	 *
 	 * @param  WP_Post|int $post Optional. WP_Post instance or Post ID. Default null.
 	 *

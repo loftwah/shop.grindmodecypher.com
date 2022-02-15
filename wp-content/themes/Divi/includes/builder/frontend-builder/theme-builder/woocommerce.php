@@ -144,7 +144,7 @@ function et_theme_builder_wc_set_global_objects( $conditional_tags = array() ) {
  * Reset global objects needed to manipulate `ETBuilderBackend.currentPage.woocommerceComponents`
  *
  * @since 4.0.1
- * @since ?? Add conditional tags parameter to evaluate AJAX request.
+ * @since 4.14.5 Add conditional tags parameter to evaluate AJAX request.
  *
  * @param array $conditional_tags Evaluate conditional tags when current request is AJAX request.
  */

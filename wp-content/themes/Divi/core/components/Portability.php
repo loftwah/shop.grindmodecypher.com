@@ -1667,19 +1667,21 @@ class ET_Core_Portability {
 		}
 
 		foreach ( $data as $value ) {
-			// If the $value is an object, but not a Post object then it's unlikely to contain any image data.
-			if ( is_object( $value ) && ! $value instanceof WP_Post ) {
+			// If the $value is an object and there is no post_content property,
+			// it's unlikely to contain any image data so we can continue with the next iteration.
+			if ( is_object( $value ) && ! property_exists( $value, 'post_content' ) ) {
 				continue;
 			}
 
-			if ( is_array( $value ) ) {
-				$images = array_merge( $images, $this->get_data_images( $value ) );
-				$value  = implode( '|', $value );
-			} elseif ( $value instanceof WP_Post ) {
-				// If the $value is a Post object, we need only the post content.
-				$value  = (array) $value->post_content;
-				$images = array_merge( $images, $this->get_data_images( $value ) );
-				$value  = implode( '|', $value );
+			if ( is_array( $value ) || is_object( $value ) ) {
+				// If the $value contains the post_content property, set $value to use
+				// this object's property value instead of the entire object.
+				if ( property_exists( $value, 'post_content' ) ) {
+					$value = $value->post_content;
+				}
+
+				$images = array_merge( $images, $this->get_data_images( (array) $value ) );
+				continue;
 			}
 
 			// Extract images from HTML or shortcodes.
@@ -1700,10 +1702,15 @@ class ET_Core_Portability {
 				}
 			}
 
-			if ( preg_match( '/^.+?\.(jpg|jpeg|jpe|png|gif|webp)/', $value, $match ) || $force ) {
+			if ( preg_match( '/^.+?\.(jpg|jpeg|jpe|png|gif|svg|webp)/', $value, $match ) || $force ) {
 				$basename = basename( $value );
 
-				// Avoid duplicates.
+				// Skip if the value is not a valid URL or an image ID (integer).
+				if ( ! ( wp_http_validate_url( $value ) || is_int( $value ) ) ) {
+					continue;
+				}
+
+				// Skip if the images array already contains the value to avoid duplicates.
 				if ( isset( $images[$value] ) ) {
 					continue;
 				}
@@ -1929,7 +1936,19 @@ class ET_Core_Portability {
 					'name'     => $basename,
 					'tmp_name' => $temp_file,
 				);
-				$upload = media_handle_sideload( $file, 0 );
+
+
+				$upload        = media_handle_sideload( $file );
+				$attachment_id = is_wp_error( $upload ) ? 0 : $upload;
+
+				/**
+				 * Fires when image attachments are created during portability import.
+				 *
+				 * @since 4.14.6
+				 *
+				 * @param int $attachment_id The attachment id or 0 if attachment upload failed.
+				 */
+				do_action( 'et_core_portability_import_attachment_created', $attachment_id );
 
 				if ( ! is_wp_error( $upload ) ) {
 					// Set the replacement as an id if the original image was set as an id (for gallery).

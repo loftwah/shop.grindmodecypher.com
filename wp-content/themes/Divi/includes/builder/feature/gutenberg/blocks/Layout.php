@@ -167,7 +167,7 @@ class ET_GB_Block_Layout {
 	 *
 	 * @since 4.1.0
 	 * @since 4.10.0 Filter core/post-excerpt rendered output.
-	 * @since ?? Move other blocks. {@see feature/gutenberg/blocks}.
+	 * @since 4.14.5 Move other blocks. {@see feature/gutenberg/blocks}.
 	 *
 	 * @param string $block_content Saved & serialized block data.
 	 * @param array  $block         Block info.

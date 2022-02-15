@@ -92,8 +92,8 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 				'body'               => array(
 					'label'          => et_builder_i18n( 'Body' ),
 					'css'            => array(
-						'main'         => "{$this->main_css_element} .et_pb_pricing li",
-						'limited_main' => "{$this->main_css_element} .et_pb_pricing li, {$this->main_css_element} .et_pb_pricing li span, {$this->main_css_element} .et_pb_pricing li a",
+						'main'         => "{$this->main_css_element} ul.et_pb_pricing li",
+						'limited_main' => "{$this->main_css_element} ul.et_pb_pricing li, {$this->main_css_element} ul.et_pb_pricing li span, {$this->main_css_element} ul.et_pb_pricing li a",
 					),
 					'line_height'    => array(
 						'range_settings' => array(
@@ -140,7 +140,7 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 				'currency_frequency' => array(
 					'label'           => esc_html__( 'Currency &amp; Frequency', 'et_builder' ),
 					'css'             => array(
-						'main' => "{$this->main_css_element} .et_pb_dollar_sign, {$this->main_css_element} .et_pb_frequency",
+						'main' => "{$this->main_css_element} .et_pb_et_price .et_pb_dollar_sign, {$this->main_css_element} .et_pb_et_price .et_pb_frequency",
 					),
 					'hide_text_align' => true,
 				),

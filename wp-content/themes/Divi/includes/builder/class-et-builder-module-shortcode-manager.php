@@ -56,7 +56,7 @@ class ET_Builder_Module_Shortcode_Manager {
 	/**
 	 * Get modules map.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @param string $type Modules map type.
 	 *

@@ -79,3 +79,51 @@ if ( defined( 'OP3_VERSION' ) ) {
 	// because the two aren't compatible.
 	et_builder_disable_jquery_body();
 }
+
+/**
+ * Sets the loading attr threshold based on Post meta.
+ *
+ * @param int $omit_threshold The number of media elements where the `loading`
+ *                            attribute will not be added. Default 1.
+ *
+ * @return int
+ */
+function et_builder_set_loading_attr_threshold_by_atf_content( $omit_threshold ) {
+	global $post;
+
+	if ( empty( $post ) ) {
+		return $omit_threshold;
+	}
+
+	$post_id = $post->ID;
+
+	$post_threshold = get_post_meta(
+		$post_id,
+		'_et_builder_dynamic_assets_loading_attr_threshold',
+		true
+	);
+
+	$post_threshold = absint( $post_threshold );
+
+	return $post_threshold > 1 ? $post_threshold : $omit_threshold;
+
+}
+
+/**
+ * Execute the following on `wp` hook.
+ *
+ * The loading attribute threshold is set on `wp` hook. This is because framework.php is run on `init` which determines the threshold value.
+ * Once the value is determined (happens only on first load), it is the saved on to post meta.
+ * The saved post meta is retrieved on every load until the page is changed or cache cleared.
+ * The value is then fed to WordPress using the `wp_omit_loading_attr_threshold` filter.
+ *
+ * @return void
+ */
+function et_builder_on_wp() {
+	add_filter(
+		'wp_omit_loading_attr_threshold',
+		'et_builder_set_loading_attr_threshold_by_atf_content'
+	);
+}
+
+add_action( 'wp', 'et_builder_on_wp' );

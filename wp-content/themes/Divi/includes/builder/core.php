@@ -4841,7 +4841,7 @@ if ( ! function_exists( 'et_fb_is_before_after_components_callback_ajax' ) ) :
 	/**
 	 * Returns whether current request is before & after components callback AJAX call.
 	 *
-	 * @since ??
+	 * @since 4.14.5
 	 *
 	 * @return bool
 	 */

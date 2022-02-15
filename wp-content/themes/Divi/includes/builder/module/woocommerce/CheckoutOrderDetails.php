@@ -610,6 +610,11 @@ class ET_Builder_Module_Woocommerce_Checkout_Order_Details extends ET_Builder_Mo
 			}
 		}
 
+		global $wp;
+		if ( ! empty( $wp->query_vars['order-pay'] ) ) {
+			$this->add_classname( 'et_pb_wc_order_pay' );
+		}
+
 		return $this->_render_module_wrapper( $output, $render_slug );
 	}
 }
