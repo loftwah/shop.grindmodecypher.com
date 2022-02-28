@@ -1,11 +1,12 @@
 ﻿=== Woo Donations===
 Contributors: rajkakadiya, rvadhel
 Donate link: https://paypal.me/rvadhel
-Tags: WooCommerce Donation, WooCommerce Donation Campaign, WooCommerce Cart Page Donation, Woocommerce Checkout Page Donation, Woocommerce Donation on Pages,covid19,
+Tags: WooCommerce Donation, WooCommerce Donation Campaign, WooCommerce Cart Page Donation, Woocommerce Checkout Page Donation, Woocommerce Donation on Pages,covid19
 Requires PHP: 5.2.4
 Requires at least: 3.0.1
-Tested up to: 5.8
-Stable tag: 2.5
+Tested up to: 5.9
+Stable tag: 2.6
+WC tested up to: 6.2.1
 
 This Plugin provide you options to accept donations in woocommerce with amount specified by the end user, so they can donate any amount they wish to donate.
 
@@ -126,6 +127,9 @@ After Plugin Active go to WooCommerce-> Donation.
 
 
 == Changelog ==
+
+= 2.6=
+Tested Up to wp version 5.9
 
 = 2.5=
 Fixed donation form validation issue.
