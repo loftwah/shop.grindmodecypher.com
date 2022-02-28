@@ -963,7 +963,11 @@ class ET_Core_PageResource {
 			(array) glob( "{$cache_dir}/archive/et-{$_owner}-dynamic*" ),
 			(array) glob( "{$cache_dir}/search/et-{$_owner}-dynamic*" ),
 			(array) glob( "{$cache_dir}/notfound/et-{$_owner}-dynamic*" ),
-			(array) glob( "{$cache_dir}/home/et-{$_owner}-dynamic*" )
+			(array) glob( "{$cache_dir}/home/et-{$_owner}-dynamic*" ),
+			// WP Templates and Template Parts.
+			(array) glob( "{$cache_dir}/*/et-{$_owner}-{$_slug}-*wpe-{$_post_id}*" ),
+			(array) glob( "{$cache_dir}/*/*/et-{$_owner}-{$_slug}-*wpe-{$_post_id}*" ),
+			(array) glob( "{$cache_dir}/*/*/*/et-{$_owner}-{$_slug}-*wpe-{$_post_id}*" )
 		);
 
 		self::_remove_files_in_directory( $files, $cache_dir );

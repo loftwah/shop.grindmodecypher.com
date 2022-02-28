@@ -241,6 +241,7 @@ function et_fb_enqueue_assets() {
 	$fb_bundle_dependencies = apply_filters( 'et_fb_bundle_dependencies', $dependencies_list );
 
 	if ( et_pb_enqueue_google_maps_script() ) {
+		add_filter( 'script_loader_tag', 'et_fb_disable_google_maps_script', 10, 3 );
 		wp_enqueue_script(
 			'google-maps-api',
 			esc_url(
@@ -339,6 +340,23 @@ function et_fb_app_src( $tag, $handle, $src ) {
 	}
 	return $tag;
 	// phpcs:enable
+}
+
+/**
+ * Disable google maps api script. Google maps api script dynamically injects scripts in the head
+ * which will be blocked by Preboot.js while DOM move resources from top window to app window.
+ * The google maps script will be reenable once the resources has been moved into iframe.
+ *
+ * @param string $tag    The `<script>` tag for the enqueued script.
+ * @param string $handle The script's registered handle.
+ * @param string $src    The script's source URL.
+ */
+function et_fb_disable_google_maps_script( $tag, $handle, $src ) {
+	if ( 'google-maps-api' !== $handle || ! et_core_is_fb_enabled() || et_builder_bfb_enabled() || et_builder_tb_enabled() ) {
+		return $tag;
+	}
+
+	return str_replace( "type='text/javascript'", "type='text/tempdisablejs' data-et-type='text/javascript'", $tag );
 }
 
 /**

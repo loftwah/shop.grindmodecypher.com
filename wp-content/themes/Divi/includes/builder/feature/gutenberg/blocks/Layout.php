@@ -168,6 +168,7 @@ class ET_GB_Block_Layout {
 	 * @since 4.1.0
 	 * @since 4.10.0 Filter core/post-excerpt rendered output.
 	 * @since 4.14.5 Move other blocks. {@see feature/gutenberg/blocks}.
+	 * @since 4.14.8 Add support for WP Editor.
 	 *
 	 * @param string $block_content Saved & serialized block data.
 	 * @param array  $block         Block info.
@@ -178,19 +179,86 @@ class ET_GB_Block_Layout {
 			return $block_content;
 		}
 
-		global $et_is_layout_block;
+		global $et_is_layout_block, $et_layout_block_info;
+
+		// Get WP Editor template data to determine whether current Divi Layout block is
+		// rendered inside WP Editor template or not.
+		$template        = $this->get_wp_editor_template_on_render();
+		$template_id     = isset( $template->wp_id ) ? (int) $template->wp_id : 0;
+		$block_to_render = class_exists( 'WP_Block_Supports' ) && ! empty( WP_Block_Supports::$block_to_render ) ? WP_Block_Supports::$block_to_render : array();
 
 		// Set flag.
-		$et_is_layout_block = true;
+		$et_is_layout_block   = true;
+		$et_layout_block_info = array(
+			'block'           => $block,
+			'block_to_render' => $block_to_render,
+			'template'        => $template,
+		);
 
+		// Start - Divi Layout block inside WP Editor Template or Template Part.
+		if ( ! empty( $template ) && $template_id > 0 ) {
+			ET_Builder_Element::begin_wp_editor_template( $template_id );
+		}
+
+		// Render - Divi Layout block inside Post Content/Template/Template Part.
 		// Render block content's shortcode. Block content actually can be rendered without this
 		// method and only depending to WordPress' `do_shortcode` hooked into `the_content`. However
 		// layout block need to set global for detecting that shortcode is rendered inside layout
 		// block hence the early shortcode rendering between global variables.
 		$block_content = do_shortcode( $block_content );
 
+		// End - Divi Layout block inside WP Editor Template or Template Part.
+		if ( ! empty( $template ) && $template_id > 0 ) {
+			// 1. Append builder layout and content wrappers.
+			$block_content = et_builder_get_layout_opening_wrapper() . $block_content . et_builder_get_layout_closing_wrapper();
+
+			/** This filter is documented in core.php */
+			$wrap = apply_filters( 'et_builder_add_outer_content_wrap', true );
+
+			if ( $wrap ) {
+				$block_content = et_builder_get_builder_content_opening_wrapper() . $block_content . et_builder_get_builder_content_closing_wrapper();
+			}
+
+			// 2. Pass styles to page resource which will handle their output.
+			$post_id = is_singular() ? ET_Post_Stack::get_main_post_id() : $template_id;
+			$result  = ET_Builder_Element::setup_advanced_styles_manager( $post_id );
+
+			$advanced_styles_manager = $result['manager'];
+			if ( isset( $result['deferred'] ) ) {
+				$deferred_styles_manager = $result['deferred'];
+			}
+
+			if ( ET_Builder_Element::$forced_inline_styles || ! $advanced_styles_manager->has_file() || $advanced_styles_manager->forced_inline ) {
+				/** This filter is documented in frontend-builder/theme-builder/frontend.php */
+				$is_critical_enabled = apply_filters( 'et_builder_critical_css_enabled', false );
+
+				$critical = $is_critical_enabled ? ET_Builder_Element::get_style( false, $template_id, true ) . ET_Builder_Element::get_style( true, $template_id, true ) : array();
+				$styles   = ET_Builder_Element::get_style( false, $template_id ) . ET_Builder_Element::get_style( true, $template_id );
+
+				if ( empty( $critical ) ) {
+					// No critical styles defined, just enqueue everything as usual.
+					if ( ! empty( $styles ) ) {
+						if ( isset( $deferred_styles_manager ) ) {
+							$deferred_styles_manager->set_data( $styles, 40 );
+						} else {
+							$advanced_styles_manager->set_data( $styles, 40 );
+						}
+					}
+				} else {
+					$advanced_styles_manager->set_data( $critical, 40 );
+					if ( ! empty( $styles ) ) {
+						// Defer everything else.
+						$deferred_styles_manager->set_data( $styles, 40 );
+					}
+				}
+			}
+
+			ET_Builder_Element::end_wp_editor_template();
+		}
+
 		// Reset flag.
-		$et_is_layout_block = false;
+		$et_is_layout_block   = false;
+		$et_layout_block_info = false;
 
 		return $block_content;
 	}
@@ -561,6 +629,94 @@ class ET_GB_Block_Layout {
 				[et_pb_column type="4_4"]' . $post_content_shortcode . '[/et_pb_column]
 			[/et_pb_row]
 		[/et_pb_section]';
+	}
+
+	/**
+	 * Get current active WP Editor template on block render.
+	 *
+	 * @since 4.14.8
+	 *
+	 * @return WP_Block_Template|null Template. Return null if it doesn't exist.
+	 */
+	public function get_wp_editor_template_on_render() {
+		global $post;
+
+		static $templates_result = null;
+
+		// Bail early if `get_block_template` function doesn't exist because we need it to
+		// get template data. This function is introduced on WP 5.8 along with Template and
+		// Template Parts editors.
+		if ( ! function_exists( 'get_block_template' ) ) {
+			return null;
+		}
+
+		// Bail early if current post is not singular.
+		if ( ! is_singular() ) {
+			return null;
+		}
+
+		// Get WP Editor template data to determine whether current Divi Layout block is
+		// rendered inside WP Editor template or not.
+		$block_to_render      = class_exists( 'WP_Block_Supports' ) && ! empty( WP_Block_Supports::$block_to_render ) ? WP_Block_Supports::$block_to_render : array();
+		$block_to_render_name = et_()->array_get( $block_to_render, 'blockName', '' );
+
+		// Bail early if block to render name is post content. Divi Layout block inside post
+		// content will be rendered normally.
+		if ( 'core/post-content' === $block_to_render_name ) {
+			return null;
+		}
+
+		// 1. Generate template type and slug.
+		$template_type = '';
+		$template_slug = '';
+
+		if ( 'core/template-part' === $block_to_render_name ) {
+			$template_type = ET_WP_EDITOR_TEMPLATE_PART_POST_TYPE;
+			$template_slug = et_()->array_get( $block_to_render, array( 'attrs', 'slug' ), '' );
+		} else {
+			$template_type = ET_WP_EDITOR_TEMPLATE_POST_TYPE;
+			$template_slug = ! empty( $post->page_template ) ? $post->page_template : $this->get_default_template_slug();
+		}
+
+		$template_type_slug = "{$template_type}-{$template_slug}";
+
+		// Bail early if current template type + slug is already processed.
+		if ( ! empty( $templates_result[ $template_type_slug ] ) ) {
+			return $templates_result[ $template_type_slug ];
+		}
+
+		// 2. Get block template data based on post slug and post type.
+		$template = ! empty( $template_type ) && ! empty( $template_slug ) ? get_block_template( get_stylesheet() . '//' . $template_slug, $template_type ) : null;
+
+		// 3. Save the result to be used later.
+		$templates_result[ $template_type_slug ] = $template;
+
+		return $template;
+	}
+
+	/**
+	 * Get default template slug.
+	 *
+	 * @since 4.14.8
+	 *
+	 * @return string Template type.
+	 */
+	public function get_default_template_slug() {
+		// Bail early if current page isn't singular. At this moment, Divi Layout block only
+		// support singular page. Once we solved Divi Layout block issue on Site Editor, the
+		// template type check below will be updated.
+		if ( ! is_singular() ) {
+			return '';
+		}
+
+		// At this moment, only single.html and page.html are editable.
+		if ( is_page() ) {
+			return 'page';
+		} elseif ( is_single() ) {
+			return 'single';
+		}
+
+		return '';
 	}
 }
 

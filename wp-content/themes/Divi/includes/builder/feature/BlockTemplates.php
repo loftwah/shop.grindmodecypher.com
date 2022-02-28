@@ -47,7 +47,7 @@ class ET_Builder_Block_Templates {
 	/**
 	 * Initialize some hooks to support compatibility with block templates.
 	 *
-	 * @since ??
+	 * @since 4.14.7
 	 */
 	public function init_hooks() {
 		// Bail early if block templates compatibility is not needed.
@@ -75,7 +75,7 @@ class ET_Builder_Block_Templates {
 	 * - Current WordPress or Gutenberg supports block templates
 	 * - Current theme supports block templates
 	 *
-	 * @since ??
+	 * @since 4.14.7
 	 *
 	 * @return boolean Compatibility status.
 	 */
@@ -117,7 +117,7 @@ class ET_Builder_Block_Templates {
 	 * - TB Template is active on current page
 	 * - Current template is block template canvas
 	 *
-	 * @since ??
+	 * @since 4.14.7
 	 *
 	 * @param string $template Current template path.
 	 */
@@ -176,7 +176,7 @@ class ET_Builder_Block_Templates {
 		/**
 		 * Fires additional actions after builder override block template.
 		 *
-		 * @since ??
+		 * @since 4.14.7
 		 *
 		 * @param string $template          New processed block template.
 		 * @param string $original_template Original block template.
@@ -192,7 +192,7 @@ class ET_Builder_Block_Templates {
 	 * Provide the opening wrapper tags only to ensure TB layout works smoothly. The same
 	 * wrapper is being used on Divi theme.
 	 *
-	 * @since ??
+	 * @since 4.14.7
 	 */
 	public function main_content_opening_wrapper() {
 		// By default, content class is `builder-content`. This class has no style at all
@@ -226,7 +226,7 @@ class ET_Builder_Block_Templates {
 	 * Provide the closing wrapper tag only to ensure TB layout works smoothly. The same
 	 * wrapper is being used on Divi theme.
 	 *
-	 * @since ??
+	 * @since 4.14.7
 	 */
 	public function main_content_closing_wrapper() {
 		?>
@@ -238,7 +238,7 @@ class ET_Builder_Block_Templates {
 	/**
 	 * Enqueue block templates compatibility styles.
 	 *
-	 * @since ??
+	 * @since 4.14.7
 	 */
 	public function block_template_styles() {
 		wp_enqueue_style( 'et-block-templates-styles', ET_BUILDER_URI . '/styles/block_templates.css', array(), ET_BUILDER_PRODUCT_VERSION );
@@ -254,7 +254,7 @@ class ET_Builder_Block_Templates {
 	 * - footer
 	 * - comments
 	 *
-	 * @since ??
+	 * @since 4.14.7
 	 *
 	 * @param string $file File info.
 	 */
@@ -273,7 +273,7 @@ class ET_Builder_Block_Templates {
 	 * overrides some filters and few of them are related to builder. Hence, we need to
 	 * remove those filters to ensure Divi Builder works normally.
 	 *
-	 * @since ??
+	 * @since 4.14.7
 	 */
 	public function remove_unsupported_theme_filter() {
 		// Single Product.

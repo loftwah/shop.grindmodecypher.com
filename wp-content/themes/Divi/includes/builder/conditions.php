@@ -38,10 +38,11 @@ if ( ! function_exists( 'et_builder_is_frontend' ) ) :
 	 */
 	function et_builder_is_frontend() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Only used to disable some FE optmizations.
-		$is_builder = isset( $_GET['et_fb'] ) || isset( $_GET['et_bfb'] );
+		$is_builder              = isset( $_GET['et_fb'] ) || isset( $_GET['et_bfb'] );
+		$is_block_layout_preview = isset( $_GET['et_block_layout_preview'] );
 		// phpcs:enable
 
-		return $is_builder || is_admin() || wp_doing_ajax() || wp_doing_cron() ? false : true;
+		return $is_builder || is_admin() || wp_doing_ajax() || wp_doing_cron() || $is_block_layout_preview ? false : true;
 	}
 endif;
 

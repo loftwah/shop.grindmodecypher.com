@@ -31,7 +31,7 @@ class ET_Builder_Do_Not_Cache_Page {
 	 * ET_Builder_Do_Not_Cache_Page constructor.
 	 */
 	public function __construct() {
-		add_action( 'get_header', [ $this, 'maybe_prevent_cache' ] );
+		add_action( 'template_redirect', [ $this, 'maybe_prevent_cache' ] );
 	}
 
 	/**
@@ -118,6 +118,8 @@ class ET_Builder_Do_Not_Cache_Page {
 	 * @return void
 	 */
 	public function maybe_prevent_cache() {
+		global $shortname;
+
 		// Bail if the magic already happened.
 		if ( $this->_processed ) {
 			return;
@@ -128,8 +130,11 @@ class ET_Builder_Do_Not_Cache_Page {
 			return;
 		}
 
+		$product          = in_array( $shortname, [ 'divi', 'extra' ], true ) ? $shortname : 'divi-builder';
 		$post_id          = et_core_page_resource_get_the_ID();
-		$is_preview       = is_preview() || is_et_pb_preview();
+		$is_preview       = is_preview() || is_et_pb_preview() || isset( $_GET['et_pb_preview_nonce'] ) || is_customize_preview();  // phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification -- Only checks if the parameter exists, and is therefore not susceptible to CSRF.
+		$is_singular      = et_core_page_resource_is_singular();
+		$is_cpt           = et_builder_should_wrap_styles();
 		$forced_in_footer = $post_id && et_builder_setting_is_on( 'et_pb_css_in_footer', $post_id );
 		$forced_inline    = (
 			! $post_id ||
@@ -152,10 +157,11 @@ class ET_Builder_Do_Not_Cache_Page {
 			return;
 		}
 
-		$unified = ! $forced_inline && ! $forced_in_footer;
-		$owner   = $unified ? 'core' : 'builder';
-		$slug    = $unified ? 'unified' : 'module-design';
-		$slug   .= $unified && et_builder_post_is_of_custom_post_type( $post_id ) ? '-cpt' : '';
+		$unified = $is_singular && ! $forced_inline && ! $forced_in_footer && et_core_is_builder_used_on_current_request();
+		$post_id = $unified ? $post_id : 'global';
+		$owner   = $unified ? 'core' : $product;
+		$slug    = $unified ? 'unified' : 'customizer';
+		$slug   .= $is_cpt ? '-cpt' : '';
 		$slug    = et_theme_builder_decorate_page_resource_slug( $post_id, $slug );
 
 		$resource = et_core_page_resource_get( $owner, $slug, $post_id );

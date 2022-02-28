@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.7' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.8' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -5809,8 +5809,17 @@ if ( ! function_exists( 'et_pb_get_global_module_content' ) ) {
 	 * @return bool|false|string|string[]|null
 	 */
 	function et_pb_get_global_module_content( $content, $shortcode_name, $for_inner_row = false ) {
+		/**
+		 * Filter list of modules where we don't need to apply autop to the global module content.
+		 *
+		 * @param array Module slugs list.
+		 */
+		$custom_autop_ignored_modules  = apply_filters( 'et_builder_global_modules_ignore_autop', array() );
+		$custom_autop_ignored_modules  = is_array( $custom_autop_ignored_modules ) ? $custom_autop_ignored_modules : array();
+		$default_autop_ignored_modules = array_merge( array( 'et_pb_code', 'et_pb_fullwidth_code' ), $custom_autop_ignored_modules );
+
 		// Do not apply autop to code modules.
-		if ( in_array( $shortcode_name, array( 'et_pb_code', 'et_pb_fullwidth_code' ), true ) ) {
+		if ( in_array( $shortcode_name, $default_autop_ignored_modules, true ) ) {
 			return et_pb_extract_shortcode_content( $content, $shortcode_name );
 		}
 
@@ -10317,8 +10326,20 @@ function et_fb_add_admin_bar_link() {
 	$default_visual_theme_builder    = et_()->array_get( $app_preferences, 'enable_visual_theme_builder.default' );
 	$is_visual_theme_builder_enabled = et_get_option( 'et_fb_pref_builder_enable_visual_theme_builder', $default_visual_theme_builder );
 	$is_not_theme_builder_used       = ! et_fb_is_theme_builder_used_on_page() || ! et_pb_is_allowed( 'theme_builder' ) || ! filter_var( $is_visual_theme_builder_enabled, FILTER_VALIDATE_BOOLEAN );
+	$is_enabled_for_post_type        = ! is_singular() || et_builder_enabled_for_post_type( get_post_type( get_the_ID() ) );
 
-	if ( $not_allowed_fb_access || ( $is_not_builder_enabled_single && $is_not_in_wc_shop && $is_not_theme_builder_used ) ) {
+	// Return if builder is not allowed for the  user.
+	if ( $not_allowed_fb_access ) {
+		return;
+	}
+
+	// Return if builder is not enabled for the post type.
+	if ( ! $is_enabled_for_post_type && $is_not_builder_enabled_single ) {
+		return;
+	}
+
+	// Return for non-singular pages if they are not WC shop page and Theme Builder is not used.
+	if ( $is_not_builder_enabled_single && $is_not_in_wc_shop && $is_not_theme_builder_used ) {
 		return;
 	}
 
@@ -10350,7 +10371,7 @@ function et_fb_add_admin_bar_link() {
 
 	$user_is_allowed_to_edit = isset( $current_object->ID ) ? current_user_can( 'edit_post', $current_object->ID ) : ( et_fb_is_theme_builder_used_on_page() && et_pb_is_allowed( 'theme_builder' ) );
 
-	if ( ! $user_is_allowed_to_edit || ! et_pb_is_allowed( 'divi_builder_control' ) ) {
+	if ( is_admin() || ! $user_is_allowed_to_edit || ! et_pb_is_allowed( 'divi_builder_control' ) ) {
 		return;
 	}
 

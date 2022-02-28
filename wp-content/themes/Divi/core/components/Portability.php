@@ -1676,7 +1676,7 @@ class ET_Core_Portability {
 			if ( is_array( $value ) || is_object( $value ) ) {
 				// If the $value contains the post_content property, set $value to use
 				// this object's property value instead of the entire object.
-				if ( property_exists( $value, 'post_content' ) ) {
+				if ( is_object( $value ) && property_exists( $value, 'post_content' ) ) {
 					$value = $value->post_content;
 				}
 
@@ -1886,31 +1886,44 @@ class ET_Core_Portability {
 	protected function upload_images( $images ) {
 		$filesystem = $this->set_filesystem();
 
+		/**
+		 * Filters whether or not to allow duplicate images to be uploaded
+		 * during Portability import.
+		 *
+		 * @since 4.14.8
+		 *
+		 * @param bool $allow_duplicates Whether or not to allow duplicates. Default is `false`.
+		 */
+		$allow_duplicates = apply_filters( 'et_core_portability_import_attachment_allow_duplicates', false );
+
 		foreach ( $images as $key => $image ) {
-			$basename    = sanitize_file_name( wp_basename( $image['url'] ) );
-			$attachments = get_posts( array(
-				'posts_per_page' => -1,
-				'post_type'      => 'attachment',
-				'meta_key'       => '_wp_attached_file',
-				'meta_value'     => pathinfo( $basename, PATHINFO_FILENAME ),
-				'meta_compare'   => 'LIKE',
-			) );
-			$id = 0;
-			$url = '';
+			$basename = sanitize_file_name( wp_basename( $image['url'] ) );
+			$id       = 0;
+			$url      = '';
 
-			// Avoid duplicates.
-			if ( ! is_wp_error( $attachments ) && ! empty( $attachments ) ) {
-				foreach ( $attachments as $attachment ) {
-					$attachment_url = wp_get_attachment_url( $attachment->ID );
-					$file           = get_attached_file( $attachment->ID );
-					$filename       = sanitize_file_name( wp_basename( $file ) );
+			if ( ! $allow_duplicates ) {
+				$attachments = get_posts( array(
+					'posts_per_page' => -1,
+					'post_type'      => 'attachment',
+					'meta_key'       => '_wp_attached_file',
+					'meta_value'     => pathinfo( $basename, PATHINFO_FILENAME ),
+					'meta_compare'   => 'LIKE',
+				) );
 
-					// Use existing image only if the content matches.
-					if ( $filesystem->get_contents( $file ) === base64_decode( $image['encoded'] ) ) {
-						$id = isset( $image['id'] ) ? $attachment->ID : 0;
-						$url = $attachment_url;
+				// Avoid duplicates.
+				if ( ! is_wp_error( $attachments ) && ! empty( $attachments ) ) {
+					foreach ( $attachments as $attachment ) {
+						$attachment_url = wp_get_attachment_url( $attachment->ID );
+						$file           = get_attached_file( $attachment->ID );
+						$filename       = sanitize_file_name( wp_basename( $file ) );
 
-						break;
+						// Use existing image only if the content matches.
+						if ( $filesystem->get_contents( $file ) === base64_decode( $image['encoded'] ) ) {
+							$id  = isset( $image['id'] ) ? $attachment->ID : 0;
+							$url = $attachment_url;
+
+							break;
+						}
 					}
 				}
 			}
@@ -1921,13 +1934,25 @@ class ET_Core_Portability {
 				$filesystem->put_contents( $temp_file, base64_decode( $image['encoded'] ) );
 				$filetype = wp_check_filetype_and_ext( $temp_file, $basename );
 
-				// Avoid further duplicates if the proper_file name match an existing image.
-				if ( isset( $filetype['proper_filename'] ) && $filetype['proper_filename'] !== $basename ) {
-					if ( isset( $filename ) && $filename === $filetype['proper_filename'] ) {
-						// Use existing image only if the basenames and content match.
-						if ( $filesystem->get_contents( $file ) === $filesystem->get_contents( $temp_file ) ) {
-							$filesystem->delete( $temp_file );
-							continue;
+				if ( ! $allow_duplicates && ! empty( $attachments ) && ! is_wp_error( $attachments ) ) {
+					// Avoid further duplicates if the proper_filename matches an existing image.
+					if ( isset( $filetype['proper_filename'] ) && $filetype['proper_filename'] !== $basename ) {
+						foreach ( $attachments as $attachment ) {
+							$attachment_url = wp_get_attachment_url( $attachment->ID );
+							$file           = get_attached_file( $attachment->ID );
+							$filename       = sanitize_file_name( wp_basename( $file ) );
+
+							if ( isset( $filename ) && $filename === $filetype['proper_filename'] ) {
+								// Use existing image only if the basenames and content match.
+								if ( $filesystem->get_contents( $file ) === $filesystem->get_contents( $temp_file ) ) {
+									$id  = isset( $image['id'] ) ? $attachment->ID : 0;
+									$url = $attachment_url;
+
+									$filesystem->delete( $temp_file );
+
+									break;
+								}
+							}
 						}
 					}
 				}

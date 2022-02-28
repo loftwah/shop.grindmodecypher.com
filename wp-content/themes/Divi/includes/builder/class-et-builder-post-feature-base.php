@@ -223,11 +223,22 @@ class ET_Builder_Post_Feature_Base {
 			$tb_data[ $tb_id ] = $tb_post->post_modified_gmt;
 		}
 
+		// Ignore WP Editor template if current page use TB.
+		$wpe_data = [];
+		if ( empty( $tb_data ) ) {
+			$wpe_ids = $dynamic_assets->get_wp_editor_template_ids();
+			foreach ( $wpe_ids as $wpe_id ) {
+				$wpe_post            = get_post( $wpe_id );
+				$wpe_data[ $wpe_id ] = $wpe_post->post_modified_gmt;
+			}
+		}
+
 		return array(
 			'gph'  => ET_Builder_Global_Presets_History::instance()->get_global_history_index(),
 			'divi' => et_get_theme_version(),
 			'wp'   => $wp_version,
 			'tb'   => $tb_data,
+			'wpe'  => $wpe_data,
 		);
 	}
 

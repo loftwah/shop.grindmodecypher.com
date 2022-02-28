@@ -3,7 +3,7 @@
  * Modified block template canvas file to render Visual and Theme Builder layouts.
  *
  * @since 4.9.8
- * @since ?? Remove block template HTML to only display TB Template.
+ * @since 4.14.7 Remove block template HTML to only display TB Template.
  *
  * This block template canvas should be used only when TB Template (Header/Footer/Body)
  * is active on current page. Otherwise, we have to use default Block Editor template.
@@ -28,7 +28,7 @@ if ( is_singular() && have_posts() ) {
 	 *
 	 * Use this hook to display custom output for non singular page.
 	 *
-	 * @since ??
+	 * @since 4.14.7
 	 *
 	 * Template type: 404, archive, author, category, date, home (non-page), index, search, tag, taxonomy.
 	 */

@@ -2107,6 +2107,29 @@ class ET_Dynamic_Assets {
 	}
 
 	/**
+	 * Get the post IDs of active WP Editor templates and template parts.
+	 *
+	 * @since 4.14.8
+	 *
+	 * @return array
+	 */
+	public function get_wp_editor_template_ids() {
+		$templates    = et_builder_get_wp_editor_templates();
+		$template_ids = array();
+
+		// Bail early if current page doesn't have templates.
+		if ( empty( $templates ) ) {
+			return $template_ids;
+		}
+
+		foreach ( $templates as $template ) {
+			$template_ids[] = isset( $template->wp_id ) ? (int) $template->wp_id : 0;
+		}
+
+		return $template_ids;
+	}
+
+	/**
 	 * Merge multiple arrays and returns an array with unique values.
 	 *
 	 * @since 4.10.0
@@ -2704,7 +2727,7 @@ class ET_Dynamic_Assets {
 			 *
 			 * @param array $img_attrs Image attributes.
 			 *
-			 * @since ??
+			 * @since 4.14.7
 			 */
 			$additional_img_attrs = apply_filters( 'et_dynamic_assets_atf_omit_image_attributes', [] );
 			$default_img_attrs    = array(

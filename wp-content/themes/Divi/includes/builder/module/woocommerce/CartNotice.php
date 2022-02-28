@@ -1120,6 +1120,36 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 			}
 		}
 
+		if ( 'Extra' === et_core_get_theme_info( 'Name' ) ) {
+			// Handle Padding left because of the Icons in Extra theme.
+			$padding_values        = et_pb_responsive_options()->get_property_values( $this->props, 'custom_padding' );
+			$padding_left_selector = '%%order_class%% .woocommerce-info, %%order_class%% .woocommerce-error';
+
+			$padding_left_values = array();
+
+			foreach ( $padding_values as $device => $padding_value ) {
+
+				if ( empty( $padding_value ) ) {
+					$padding_left_values[ $device ] = '';
+				} else {
+					$psv = explode( '|', $padding_value );
+
+					if ( isset( $psv[3] ) ) {
+						$padding_left_values[ $device ] = sprintf( 'calc( %s + 34px ) !important', $psv[3] );
+					}
+				}
+			}
+
+			et_pb_responsive_options()->generate_responsive_css(
+				$padding_left_values,
+				$padding_left_selector,
+				'padding-left',
+				$render_slug,
+				'',
+				'padding'
+			);
+		}
+
 		$output = self::get_cart_notice( $this->props );
 
 		return $this->_render_module_wrapper( $output, $render_slug );

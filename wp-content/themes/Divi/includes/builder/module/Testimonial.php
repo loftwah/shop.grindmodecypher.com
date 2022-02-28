@@ -40,7 +40,7 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 				'body'     => array(
 					'label'            => et_builder_i18n( 'Body' ),
 					'css'              => array(
-						'main' => "{$this->main_css_element} *",
+						'main' => "{$this->main_css_element} .et_pb_testimonial_content",
 					),
 					'hide_text_shadow' => true,
 					'block_elements'   => array(

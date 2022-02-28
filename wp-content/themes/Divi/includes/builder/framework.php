@@ -135,6 +135,7 @@ require_once ET_BUILDER_DIR . 'compat/scripts.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/blocks/Layout.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/blocks/PostExcerpt.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/utils/Conversion.php';
+require_once ET_BUILDER_DIR . 'feature/gutenberg/utils/Editor.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/EditorTypography.php';
 require_once ET_BUILDER_DIR . 'core.php';
 require_once ET_BUILDER_DIR . 'conditions.php';
@@ -391,7 +392,12 @@ function et_builder_load_modules_styles() {
 		'v'   => 3,
 		'key' => et_pb_get_google_api_key(),
 	);
-	$google_maps_api_url      = add_query_arg( $google_maps_api_url_args, is_ssl() ? 'https://maps.googleapis.com/maps/api/js' : 'http://maps.googleapis.com/maps/api/js' );
+
+	if ( $is_fb_enabled && ! et_builder_tb_enabled() && ! et_builder_bfb_enabled() ) {
+		$google_maps_api_url_args['callback'] = 'ETBuilderInitGoogleMaps';
+	}
+
+	$google_maps_api_url = add_query_arg( $google_maps_api_url_args, is_ssl() ? 'https://maps.googleapis.com/maps/api/js' : 'http://maps.googleapis.com/maps/api/js' );
 
 	wp_register_script( 'salvattore', ET_BUILDER_URI . '/feature/dynamic-assets/assets/js/salvattore.js', array(), ET_BUILDER_VERSION, true );
 	wp_register_script( 'google-maps-api', esc_url_raw( $google_maps_api_url ), array(), ET_BUILDER_VERSION, true );

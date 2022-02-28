@@ -1,3 +1,48 @@
+version 4.14.8 ( updated 02-17-2022 )
+- Fixed issue where the google maps are not loading in the Map Module in the VB.
+- Performance improved by preventing unnecessary re-renderings of some components.
+- Fixed price showing for Woo related products when disabled.
+- Fixed an issue where DONOTCACHEPAGE didn't work as intended with CDNs and several Caching Plugins.
+- Introduced new hook, et_builder_global_modules_ignore_autop, to allow third-party modules to ignore autop on Global Module content processing.
+- Optimized performance when Elements that are located inside the Post Content Module are hovered.
+- Fixed conditions for when to show Enable Divi Builder button in WP admin bar.
+- Fixed light font weight overriding strong tag in body text in the testimonial module.
+- Fixed Divi Layout block styling issues when it is rendered inside WP Template or WP Template Parts.
+- Fixing styling issue with the Woo Notice module.
+- Fixed image overlay icon not perfectly centered.
+- Fixed inverted Divi Placeholder text color when Twenty Twenty Two theme uses dark background.
+- Fixed Layer View modal not dropping the dragged module.
+- Fixed bug with module Drag&Drop when the page has custom Body Template.
+- Fixed "unable to process your order" error when using Stripe payment gateway.
+- Fixed a PHP error that occurred in some cases when exporting through Divi's portability system.
+- Added Template Editor support on Divi and Extra themes.
+- Fixed an issue with the Search widget where part of the "search" button text displays on a new line with some fonts.
+	* core/components/PageResource.php
+	* core/components/Portability.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-post-feature-base.php
+	* includes/builder/conditions.php
+	* includes/builder/feature/BlockTemplates.php
+	* includes/builder/feature/DoNotCachePage.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/feature/gutenberg/utils/Editor.php
+	* includes/builder/feature/woocommerce/templates/checkout/form-checkout.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/functions.php
+	* includes/builder/module/Testimonial.php
+	* includes/builder/module/woocommerce/CartNotice.php
+	* includes/builder/module/woocommerce/CheckoutAdditionalInfo.php
+	* includes/builder/module/woocommerce/CheckoutBilling.php
+	* includes/builder/module/woocommerce/CheckoutOrderDetails.php
+	* includes/builder/module/woocommerce/CheckoutShipping.php
+	* includes/builder/module/woocommerce/RelatedProducts.php
+	* includes/builder/scripts/frontend/woocommerce-modules.js
+	* includes/builder/templates/block-template-canvas.php
+
 version 4.14.7 ( updated 01-20-2022 )
 - Fixed an issue where the Global Presets history didn't update with every action causing changes to not save.
 - Fixed lazy loading images to occur only on below the fold content when Divi Builder is used.

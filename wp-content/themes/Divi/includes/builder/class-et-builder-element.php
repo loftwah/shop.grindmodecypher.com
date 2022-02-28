@@ -530,6 +530,15 @@ class ET_Builder_Element {
 	protected static $theme_builder_layout = array();
 
 	/**
+	 * A stack of the current active WP Editor template post type such as:
+	 * - wp_template
+	 * - wp_template_part
+	 *
+	 * @var array[]
+	 */
+	public static $wp_editor_template = array();
+
+	/**
 	 * Compile list of modules that has rich editor option.
 	 *
 	 * @var array
@@ -1509,7 +1518,16 @@ class ET_Builder_Element {
 
 		$resource_slug .= $unified_styles && et_builder_post_is_of_custom_post_type( $post_id ) ? '-cpt' : '';
 
+		// Temporarily keep resource slug before TB slug processing.
+		$temp_resource_slug = $resource_slug;
+
 		$resource_slug = et_theme_builder_decorate_page_resource_slug( $post_id, $resource_slug );
+
+		// TB should be prioritized over WP Editor. If resource slug is not changed, it is
+		// not for TB. Ensure current module is one of WP Editor template before checking.
+		if ( $temp_resource_slug === $resource_slug && self::is_wp_editor_template() ) {
+			$resource_slug = et_builder_wp_editor_decorate_page_resource_slug( $post_id, $resource_slug );
+		}
 
 		// If the post is password protected and a password has not been provided yet,
 		// no content (including any custom style) will be printed.
@@ -2233,6 +2251,7 @@ class ET_Builder_Element {
 	 * Get an index.
 	 *
 	 * @since 4.0
+	 * @since 4.14.8 Add WP Editor template check.
 	 *
 	 * @param string $key The path in the array.
 	 *
@@ -2240,7 +2259,13 @@ class ET_Builder_Element {
 	 */
 	protected static function _get_index( $key ) {
 		$theme_builder_group = self::get_theme_builder_layout_type();
-		$key                 = array_merge( array( $theme_builder_group ), (array) $key );
+
+		// TB should be prioritized over WP Editor.
+		if ( 'default' === $theme_builder_group ) {
+			$theme_builder_group = self::get_wp_editor_template_type( true );
+		}
+
+		$key = array_merge( array( $theme_builder_group ), (array) $key );
 
 		return et_()->array_get( self::$_indices, $key, -1 );
 	}
@@ -2249,6 +2274,7 @@ class ET_Builder_Element {
 	 * Set an index.
 	 *
 	 * @since 4.0
+	 * @since 4.14.8 Add WP Editor template check.
 	 *
 	 * @param string $key The path in the array.
 	 * @param mixed  $index The value to set.
@@ -2257,7 +2283,13 @@ class ET_Builder_Element {
 	 */
 	protected static function _set_index( $key, $index ) {
 		$theme_builder_group = self::get_theme_builder_layout_type();
-		$key                 = array_merge( array( $theme_builder_group ), (array) $key );
+
+		// TB should be prioritized over WP Editor.
+		if ( 'default' === $theme_builder_group ) {
+			$theme_builder_group = self::get_wp_editor_template_type( true );
+		}
+
+		$key = array_merge( array( $theme_builder_group ), (array) $key );
 
 		et_()->array_set( self::$_indices, $key, $index );
 	}
@@ -3929,6 +3961,7 @@ class ET_Builder_Element {
 			'shortcode_index'             => $render_count,
 			'type'                        => $output_render_slug,
 			'theme_builder_suffix'        => self::_get_theme_builder_order_class_suffix(),
+			'wp_editor_suffix'            => self::_get_wp_editor_order_class_suffix(),
 			'component_path'              => $component_path,
 			'main_css_element'            => $this->main_css_element,
 			'attrs'                       => $attrs,
@@ -19868,7 +19901,7 @@ class ET_Builder_Element {
 	 * @return int|string
 	 */
 	public static function get_style_key() {
-		if ( self::is_theme_builder_layout() ) {
+		if ( self::is_theme_builder_layout() || self::is_wp_editor_template() ) {
 			return self::get_layout_id();
 		}
 
@@ -20631,7 +20664,14 @@ class ET_Builder_Element {
 		}
 
 		$theme_builder_suffix = self::_get_theme_builder_order_class_suffix();
-		$order_class_name     = sprintf( '%1$s_%2$s%3$s', $function_name, $shortcode_order_num, $theme_builder_suffix );
+		$wp_editor_suffix     = self::_get_wp_editor_order_class_suffix();
+
+		// TB should be prioritized over WP Editor. Need to check WP Template editor suffix.
+		if ( empty( $theme_builder_suffix ) && ! empty( $wp_editor_suffix ) ) {
+			$theme_builder_suffix = $wp_editor_suffix;
+		}
+
+		$order_class_name = sprintf( '%1$s_%2$s%3$s', $function_name, $shortcode_order_num, $theme_builder_suffix );
 
 		return $order_class_name;
 	}
@@ -21997,14 +22037,25 @@ class ET_Builder_Element {
 	 * Get the current TB layout ID if we are rendering one or the current post ID instead.
 	 *
 	 * @since 4.0
+	 * @since 4.14.8 Get WP Template ID if we are rendering Divi Builder block in template.
 	 *
 	 * @return integer
 	 */
 	public static function get_layout_id() {
+		// TB Layout ID.
 		$layout_id = self::get_theme_builder_layout_id();
-		$post_id   = self::get_current_post_id_reverse();
+		if ( $layout_id ) {
+			return $layout_id;
+		}
 
-		return $layout_id ? $layout_id : $post_id;
+		// WP Template ID.
+		$template_id = self::get_wp_editor_template_id();
+		if ( $template_id ) {
+			return $template_id;
+		}
+
+		// Post ID by default.
+		return self::get_current_post_id_reverse();
 	}
 
 	/**
@@ -22107,6 +22158,136 @@ class ET_Builder_Element {
 		}
 
 		return $type_map[ $layout_type ];
+	}
+
+	/**
+	 * Begin Divi Builder block output on WP Editor template.
+	 *
+	 * As identifier od Divi Builder block render template location and the template ID.
+	 * Introduced to handle Divi Layout block render on WP Template outside Post Content.
+	 * WP Editor templates:
+	 * - wp_template
+	 * - wp_template_part
+	 *
+	 * @since 4.14.8
+	 *
+	 * @param array $template_id Template post ID.
+	 *
+	 * @return void
+	 */
+	public static function begin_wp_editor_template( $template_id ) {
+		$type = get_post_type( $template_id );
+
+		if ( ! et_builder_is_wp_editor_template_post_type( $type ) ) {
+			$type = 'default';
+		}
+
+		self::$wp_editor_template[] = array(
+			'id'   => (int) $template_id,
+			'type' => $type,
+		);
+	}
+
+	/**
+	 * End Divi Builder block output on WP Editor template.
+	 *
+	 * @since 4.14.8
+	 *
+	 * @return void
+	 */
+	public static function end_wp_editor_template() {
+		array_pop( self::$wp_editor_template );
+	}
+
+	/**
+	 * Whether a module is rendered in WP Editor template or not.
+	 *
+	 * @since 4.14.8
+	 *
+	 * @return bool WP Editor template status.
+	 */
+	public static function is_wp_editor_template() {
+		return 'default' !== self::get_wp_editor_template_type();
+	}
+
+	/**
+	 * Get the current WP Editor template id.
+	 *
+	 * Returns 0 if no template has been started.
+	 *
+	 * @since 4.14.8
+	 *
+	 * @return integer Template post ID (wp_id).
+	 */
+	public static function get_wp_editor_template_id() {
+		$count = count( self::$wp_editor_template );
+		$id    = 0;
+
+		if ( $count > 0 ) {
+			$id = et_()->array_get( self::$wp_editor_template, array( $count - 1, 'id' ), 0 );
+		}
+
+		// Just want to be safe to not return any unexpected result.
+		return is_int( $id ) ? $id : 0;
+	}
+
+	/**
+	 * Get the current WP Editor template type.
+	 *
+	 * Returns 'default' if no template has been started.
+	 *
+	 * @since 4.14.8
+	 *
+	 * @param boolean $is_id_needed Whether template ID is needed or not.
+	 *
+	 * @return string Template type.
+	 */
+	public static function get_wp_editor_template_type( $is_id_needed = false ) {
+		$count = count( self::$wp_editor_template );
+		$type  = '';
+
+		if ( $count > 0 ) {
+			$type = et_()->array_get( self::$wp_editor_template, array( $count - 1, 'type' ) );
+
+			// Page may have more than one template parts. So, the wp_id is needed in certain
+			// situation as unique identifier.
+			if ( $is_id_needed && ET_WP_EDITOR_TEMPLATE_PART_POST_TYPE === $type ) {
+				$id    = self::get_wp_editor_template_id();
+				$type .= "-{$id}";
+			}
+		}
+
+		// Just want to be safe to not return any unexpected result.
+		return ! empty( $type ) && is_string( $type ) ? $type : 'default';
+	}
+
+	/**
+	 * Get the order class suffix for the current WP Editor template, if any.
+	 *
+	 * @since 4.14.8
+	 *
+	 * @return string Order class suffix.
+	 */
+	protected static function _get_wp_editor_order_class_suffix() {
+		$template_type = self::get_wp_editor_template_type();
+		$type_map      = array(
+			ET_WP_EDITOR_TEMPLATE_POST_TYPE      => '_wp_template',
+			ET_WP_EDITOR_TEMPLATE_PART_POST_TYPE => '_wp_template_part',
+		);
+
+		if ( ! isset( $type_map[ $template_type ] ) ) {
+			return '';
+		}
+
+		$suffix = $type_map[ $template_type ];
+
+		// Page may have more than one template parts. So, the wp_id is needed identifier.
+		if ( ET_WP_EDITOR_TEMPLATE_PART_POST_TYPE === $template_type ) {
+			$id      = self::get_wp_editor_template_id();
+			$suffix .= "-{$id}";
+		}
+
+		return $suffix;
 	}
 
 	/**

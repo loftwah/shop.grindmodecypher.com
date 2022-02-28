@@ -315,6 +315,7 @@ function et_fb_get_dynamic_backend_helpers() {
 		'exportUrl'                    => et_fb_get_portability_export_url(),
 		'nonces'                       => et_fb_get_nonces(),
 		'currentPage'                  => et_fb_current_page_params(),
+		'currentTheme'                 => et_core_get_theme_info( 'Name' ),
 		'appPreferences'               => et_fb_app_preferences(),
 		'pageSettingsFields'           => ET_Builder_Settings::get_fields(),
 		'pageSettingsValues'           => ET_Builder_Settings::get_settings_values(),
