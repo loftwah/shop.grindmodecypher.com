@@ -935,6 +935,8 @@ class ET_Builder_Module_Fullwidth_Header extends ET_Builder_Module {
 			'<section%7$s class="%1$s"%9$s%10$s>
 				%6$s
 				%8$s
+				%11$s
+				%12$s
 				<div class="et_pb_fullwidth_header_container%5$s">
 					%2$s
 					%3$s
@@ -951,7 +953,9 @@ class ET_Builder_Module_Fullwidth_Header extends ET_Builder_Module {
 			$this->module_id(),
 			$video_background,
 			et_core_esc_previously( $data_background_layout ),
-			et_core_esc_previously( $muti_view_data_attr ) // #10
+			et_core_esc_previously( $muti_view_data_attr ), // #10
+			et_core_esc_previously( $this->background_pattern() ), // #11
+			et_core_esc_previously( $this->background_mask() ) // #12
 		);
 
 		return $output;

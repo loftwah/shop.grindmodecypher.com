@@ -135,6 +135,9 @@ class Settings_Debug {
 					?>
 				</form>
 			</p>
+			<p>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=wpo-wcpdf-setup' ) ); ?>" class="button"><?php esc_html_e( 'Run the Setup Wizard', 'woocommerce-pdf-invoices-packing-slips' ); ?></a>
+			</p>
 		</div>
 		<br>
 		<?php
@@ -276,6 +279,18 @@ class Settings_Debug {
 					'option_name'	=> $option_name,
 					'id'			=> 'log_to_order_notes',
 					'description'	=> __( 'Log PDF document creation to order notes.', 'woocommerce-pdf-invoices-packing-slips' ),
+				)
+			),
+			array(
+				'type'			=> 'setting',
+				'id'			=> 'disable_preview',
+				'title'			=> __( 'Disable document preview', 'woocommerce-pdf-invoices-packing-slips' ),
+				'callback'		=> 'checkbox',
+				'section'		=> 'debug_settings',
+				'args'			=> array(
+					'option_name'	=> $option_name,
+					'id'			=> 'disable_preview',
+					'description'	=> __( 'Disables the document preview on the plugin settings pages.', 'woocommerce-pdf-invoices-packing-slips' ),
 				)
 			),
 		);

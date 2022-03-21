@@ -856,6 +856,8 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 				<div class="et_pb_ajax_pagination_container">
 					%6$s
 					%5$s
+					%11$s
+					%12$s
 					%7$s
 						%2$s
 					%8$s
@@ -871,7 +873,9 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 			$fullwidth ? '' : '<div class="et_pb_portfolio_grid_items">',
 			$fullwidth ? '' : '</div>',
 			isset( $pagination ) ? $pagination : '',
-			et_core_esc_previously( $data_background_layout ) // #10
+			et_core_esc_previously( $data_background_layout ), // #10
+			et_core_esc_previously( $this->background_pattern() ), // #11
+			et_core_esc_previously( $this->background_mask() ) // #12
 		);
 
 		return $output;

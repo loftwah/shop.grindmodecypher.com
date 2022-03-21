@@ -460,6 +460,8 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 			'<div%6$s class="%4$s"%9$s%10$s>
 				%8$s
 				%7$s
+				%11$s
+				%12$s
 				%5$s
 				<div class="et_pb_audio_module_content et_audio_container">
 					%1$s
@@ -480,7 +482,9 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 			$video_background, // #7
 			$parallax_image_background, // #8
 			et_core_esc_previously( $data_background_layout ), // #9
-			et_core_esc_previously( $muti_view_data_attr ) // #10
+			et_core_esc_previously( $muti_view_data_attr ), // #10
+			et_core_esc_previously( $this->background_pattern() ), // #11
+			et_core_esc_previously( $this->background_mask() ) // #12
 		);
 
 		return $output;

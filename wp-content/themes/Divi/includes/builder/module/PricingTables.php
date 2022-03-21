@@ -828,6 +828,8 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 			'<div%3$s class="%2$s"%6$s>
 				%5$s
 				%4$s
+				%7$s
+				%8$s
 				<div class="et_pb_pricing_table_wrap">
 					%1$s
 				</div>
@@ -837,7 +839,9 @@ class ET_Builder_Module_Pricing_Tables extends ET_Builder_Module {
 			$this->module_id(),
 			$video_background,
 			$parallax_image_background,
-			$multi_view_data_attr
+			$multi_view_data_attr,
+			et_core_esc_previously( $this->background_pattern() ), // #7
+			et_core_esc_previously( $this->background_mask() ) // #8
 		);
 
 		$output .= $this->keep_box_shadow_compatibility( $attrs, $content, $render_slug );

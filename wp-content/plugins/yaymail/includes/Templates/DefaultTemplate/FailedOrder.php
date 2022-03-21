@@ -25,7 +25,7 @@ class FailedOrder {
 		$emailTitle          = str_replace( '#{order_number}', '', $emailTitle );
 		$emailtext           = esc_html__( 'Payment for order #', 'woocommerce' ) . esc_html( do_shortcode( '[yaymail_order_id]' ) ) . esc_html__( ' from ', 'woocommerce' ) . esc_html( do_shortcode( '[yaymail_billing_first_name] [yaymail_billing_last_name]' ) ) . esc_html__( ' has failed. The order was as follows:', 'woocommerce' );
 		$additionalContent   = __( 'Hopefully they\'ll be back. Read more about <a href=\"https://docs.woocommerce.com/document/managing-orders/\">troubleshooting failed payments</a>.', 'woocommerce' );
-		$additionalContent   = str_replace( '<a', '<a style=\"color: #96588a;\"', $additionalContent );
+		$additionalContent   = str_replace( '<a', '<a style=\"color: #7f54b3;\"', $additionalContent );
 		$textShippingAddress = __( 'Shipping Address', 'woocommerce' );
 		$textBillingAddress  = __( 'Billing Address', 'woocommerce' );
 
@@ -60,7 +60,7 @@ class FailedOrder {
         "nameElement": "Email Heading",
         "settingRow": {
           "content": "<h1 style=\"font-size: 30px; font-weight: 300; line-height: normal; margin: 0; color: inherit;\">' . $emailTitle . ' #[yaymail_order_id]</h1>",
-          "backgroundColor": "#96588A",
+          "backgroundColor": "#7f54b3",
           "textColor": "#ffffff",
           "family": "Helvetica,Roboto,Arial,sans-serif",
           "paddingTop": "36",
@@ -93,7 +93,7 @@ class FailedOrder {
           "contentTitle": "[yaymail_items_border_title]",
           "content": "[yaymail_items_border_content]",
           "backgroundColor": "#fff",
-          "titleColor" : "#96588a",
+          "titleColor" : "#7f54b3",
           "textColor": "#636363",
           "borderColor": "#e5e5e5",
           "family": "Helvetica,Roboto,Arial,sans-serif",
@@ -121,7 +121,7 @@ class FailedOrder {
             "paddingRight":"50",
             "paddingTop":"15",
             "textColor":"#636363",
-            "titleColor":"#96588a",
+            "titleColor":"#7f54b3",
             "titleID": "ID",
             "titleStartDate": "Start date",
             "titleEndDate": "End date",
@@ -140,7 +140,7 @@ class FailedOrder {
           "titleBilling": "' . $textBillingAddress . '",
           "titleShipping": "' . $textShippingAddress . '",
           "content": "[yaymail_billing_shipping_address_content]",
-          "titleColor" : "#96588a",
+          "titleColor" : "#7f54b3",
           "backgroundColor": "#fff",
           "borderColor": "#e5e5e5",
           "textColor": "#636363",
@@ -171,7 +171,7 @@ class FailedOrder {
         "type": "ElementText",
         "nameElement": "Footer",
         "settingRow": {
-          "content": "<p style=\"font-size: 14px;margin: 0px 0px 16px; text-align: center;\">[yaymail_site_name]&nbsp;- Built with <a style=\"color: #96588a; font-weight: normal; text-decoration: underline;\" href=\"https://woocommerce.com\" target=\"_blank\" rel=\"noopener\">WooCommerce</a></p>",
+          "content": "<p style=\"font-size: 14px;margin: 0px 0px 16px; text-align: center;\">[yaymail_site_name]&nbsp;- Built with <a style=\"color: #7f54b3; font-weight: normal; text-decoration: underline;\" href=\"https://woocommerce.com\" target=\"_blank\" rel=\"noopener\">WooCommerce</a></p>",
           "backgroundColor": "#ececec",
           "textColor": "#8a8a8a",
           "family": "Helvetica,Roboto,Arial,sans-serif",

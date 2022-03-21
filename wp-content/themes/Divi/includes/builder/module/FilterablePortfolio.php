@@ -761,6 +761,8 @@ class ET_Builder_Module_Filterable_Portfolio extends ET_Builder_Module_Type_Post
 			'<div%4$s class="%1$s" data-posts-number="%5$d"%8$s%11$s>
 				%10$s
 				%9$s
+				%13$s
+				%14$s
 				<div class="et_pb_portfolio_filters clearfix">%2$s</div>
 
 				<div class="et_pb_portfolio_items_wrapper %6$s"%12$s>
@@ -779,7 +781,9 @@ class ET_Builder_Module_Filterable_Portfolio extends ET_Builder_Module_Type_Post
 			$video_background,
 			$parallax_image_background, // #10
 			et_core_esc_previously( $data_background_layout ),
-			$pagination_classes_multi_view_attr
+			$pagination_classes_multi_view_attr,
+			et_core_esc_previously( $this->background_pattern() ), // #13
+			et_core_esc_previously( $this->background_mask() ) // #14
 		);
 
 		return $output;

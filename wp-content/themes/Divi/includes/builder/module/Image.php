@@ -572,13 +572,17 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 			'<div%3$s class="%2$s">
 				%5$s
 				%4$s
+				%6$s
+				%7$s
 				%1$s
 			</div>',
 			$output,
 			$this->module_classname( $render_slug ),
 			$this->module_id(),
 			$video_background,
-			$parallax_image_background
+			$parallax_image_background,
+			et_core_esc_previously( $this->background_pattern() ), // #6
+			et_core_esc_previously( $this->background_mask() ) // #7
 		);
 
 		return $output;

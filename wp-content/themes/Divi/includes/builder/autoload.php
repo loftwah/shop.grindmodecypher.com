@@ -41,6 +41,39 @@ function _et_pb_autoload_helpers_motion( $class ) {
 }
 
 /**
+ * Autoloader for module mask style.
+ *
+ * @param string $class The class name.
+ */
+function _et_pb_autoload_mask_pattern_helpers( $class ) {
+	// For multipart classnames.
+	$class = str_replace( '_', '', $class );
+	require_once "feature/background-masks/{$class}.php";
+}
+
+/**
+ * Autoloader for module mask style.
+ *
+ * @param string $class The class name.
+ */
+function _et_pb_autoload_mask( $class ) {
+	// For multipart classnames.
+	$class = str_replace( '_', '', $class );
+	require_once "feature/background-masks/mask/{$class}.php";
+}
+
+/**
+ * Autoloader for module pattern style.
+ *
+ * @param string $class The class name.
+ */
+function _et_pb_autoload_pattern( $class ) {
+	// For multipart classnames.
+	$class = str_replace( '_', '', $class );
+	require_once "feature/background-masks/pattern/{$class}.php";
+}
+
+/**
  * Autoloader for module types.
  *
  * @param string $class The class name.
@@ -121,6 +154,12 @@ function _et_pb_autoload( $class ) {
 		require_once 'class-et-builder-dynamic-assets-feature.php';
 	} elseif ( 'ET_Builder_Module_Field_DisplayConditions' === $class ) {
 		require_once 'module/field/DisplayConditions.php';
+	} elseif ( strpos( $class, 'ET_Builder_Background_Mask' ) !== false || strpos( $class, 'ET_Builder_Background_Pattern' ) !== false ) {
+		_et_pb_autoload_mask_pattern_helpers( str_replace( 'ET_Builder_', '', $class ) );
+	} elseif ( strpos( $class, 'ET_Builder_Mask_' ) !== false ) {
+		_et_pb_autoload_mask( str_replace( 'ET_Builder_Mask_', '', $class ) );
+	} elseif ( strpos( $class, 'ET_Builder_Pattern_' ) !== false ) {
+		_et_pb_autoload_pattern( str_replace( 'ET_Builder_Pattern_', '', $class ) );
 	} elseif ( 'ET_Builder_Woocommerce_Product_Simple_Placeholder' === $class ) {
 		require_once 'feature/woocommerce/placeholder/WoocommerceProductSimplePlaceholder.php';
 	} elseif ( strpos( $class, 'ET_Builder_Module_Helper_Motion_' ) !== false ) {

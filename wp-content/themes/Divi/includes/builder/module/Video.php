@@ -443,6 +443,8 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 			'<div%2$s class="%3$s">
 				%6$s
 				%5$s
+				%7$s
+				%8$s
 				%1$s
 				%4$s
 			</div>',
@@ -451,7 +453,9 @@ class ET_Builder_Module_Video extends ET_Builder_Module {
 			$this->module_classname( $render_slug ),
 			$muti_view_video_overlay,
 			$video_background,
-			$parallax_image_background
+			$parallax_image_background,
+			et_core_esc_previously( $this->background_pattern() ), // #7
+			et_core_esc_previously( $this->background_mask() ) // #8
 		);
 
 		return $output;

@@ -397,6 +397,8 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 			'<div%3$s class="%2$s"%12$s%13$s>
 				%11$s
 				%10$s
+				%14$s
+				%15$s
 				<form role="search" method="get" class="et_pb_searchform" action="%1$s">
 					<div>
 						<label class="screen-reader-text" for="s">%8$s</label>
@@ -421,7 +423,9 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 			$video_background, // #10
 			$parallax_image_background,
 			et_core_esc_previously( $data_background_layout ),
-			$multi_view_show_button_data_attr
+			$multi_view_show_button_data_attr,
+			et_core_esc_previously( $this->background_pattern() ), // #14
+			et_core_esc_previously( $this->background_mask() ) // #15
 		);
 
 		return $output;

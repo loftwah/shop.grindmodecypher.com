@@ -255,6 +255,8 @@ class ET_Builder_Module_Fullwidth_Map extends ET_Builder_Module {
 			'<div%5$s class="%6$s"%11$s>
 				%10$s
 				%9$s
+				%12$s
+				%13$s
 				<div class="et_pb_map" data-center-lat="%1$s" data-center-lng="%2$s" data-zoom="%3$d" data-mouse-wheel="%7$s" data-mobile-dragging="%8$s"></div>
 				%4$s
 			</div>',
@@ -268,7 +270,9 @@ class ET_Builder_Module_Fullwidth_Map extends ET_Builder_Module {
 			esc_attr( $mobile_dragging ),
 			$video_background,
 			$parallax_image_background,
-			$grayscale_filter_data
+			$grayscale_filter_data,
+			et_core_esc_previously( $this->background_pattern() ), // #12
+			et_core_esc_previously( $this->background_mask() ) // #13
 		);
 
 		return $output;

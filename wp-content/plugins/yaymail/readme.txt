@@ -170,6 +170,32 @@ Shhh, we offer one-time payment and unlimited sites packages, too! [Check it out
 
 == Changelog ==
 
+= Mar 18, 2022 - Version 2.8.8 =
+- Changed: Default color
+- Fixed: Image overlay in video element
+- Fixed: Bug related to AST plugin
+- Fixed: Bug in Addon German Market
+
+= Mar 16, 2022 - Version 2.8.7 =
+- Added: Shipping phone to shipping address
+- Added: Shortcode yaymail_items_products_quantity_price
+- Fixed: Support plugin Back In Stock Notifier by codewoogeek (Pro)
+- Added: Review box (Pro)
+
+= Mar 1, 2022 - Version 2.8.6 =
+- Supported: Addon Back In Stock Notifications (by WooCommerce) (1.0)
+- Fixed: Bug Addon WooCommerce Bookings (Customer's shortcodes not displayed) (1.5)
+
+= Feb 11, 2022 - Version 2.8.5 =
+- Added: Link to product
+- Added: Shortcode [yaymail_order_link_string]
+- Added: Logic for coupon code and fixed Shipping method condition (Conditional Logic Addon 1.8)
+- Fixed: Addon WooCommerce gift cards (1.5)
+
+= Jan 27, 2022 - Version 2.8.4 =
+- Fixed: Error with plugin FooEvents for WooCommerce (Pro)
+- Fixed: Error in Addon WooCommerce Subscriptions (1.9)
+
 = Jan 20, 2021 - Version 2.8.3 =
 - Added: Shipping method (Addon Conditional Logic 1.6)
 - Supported: Teams for WooCommerce Memberships (Addon WooCommerce Memberships 1.2)

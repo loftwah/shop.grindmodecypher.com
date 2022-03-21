@@ -1143,6 +1143,8 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 			"{$background_base}_use_color_gradient" => "{$background_base}_enable_use_color_gradient",
 			"{$background_base}_image"              => "{$background_base}_enable_image",
 			"video_{$background_base}_values"       => "video_{$background_base}_values",
+			"{$background_base}_pattern_style"      => "{$background_base}_enable_pattern_style",
+			"{$background_base}_mask_style"         => "{$background_base}_enable_mask_style",
 		);
 
 		// Empty string is slug for desktop.
@@ -1171,19 +1173,29 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 
 		foreach ( $map_slugs[ $preview_mode ] as $slug ) {
 
-			// BG Color.
-			if ( in_array( $base_setting, array( "{$background_base}_color", "{$background_base}_image" ) ) ) {
-
+			// BG Color, BG Image, BG Pattern, BG Mask.
+			if (
+				in_array(
+					$base_setting,
+					array(
+						"{$background_base}_color",
+						"{$background_base}_image",
+						"{$background_base}_pattern_style",
+						"{$background_base}_mask_style",
+					),
+					true
+				)
+			) {
 				$base_type      = str_replace( "{$background_base}_", '', $base_setting );
 				$enable_default = ! empty( $fields[ "{$background_base}_enable_{$base_type}{$slug}" ] ) && ! empty( $fields[ "{$background_base}_enable_{$base_type}{$slug}" ]['default'] ) ? $fields[ "{$background_base}_enable_{$base_type}{$slug}" ]['default'] : '';
 				$enable_value   = ! empty( $attrs[ "{$background_base}_enable_{$base_type}{$slug}" ] ) ? $attrs[ "{$background_base}_enable_{$base_type}{$slug}" ] : $enable_default;
-				$bg_value       = ! empty( $attrs[ "{$background_base}_{$base_type}{$slug}" ] ) ? $attrs[ "{$background_base}_{$base_type}{$slug}" ] : '';
-				$is_bg_enabled  = 'off' !== $enable_value;
+				$setting_value  = ! empty( $attrs[ "{$background_base}_{$base_type}{$slug}" ] ) ? $attrs[ "{$background_base}_{$base_type}{$slug}" ] : '';
+				$is_tab_enabled = 'off' !== $enable_value;
 
-				if ( '' !== $bg_value && $is_bg_enabled ) {
-					$new_value = $bg_value;
+				if ( '' !== $setting_value && $is_tab_enabled ) {
+					$new_value = $setting_value;
 					break;
-				} elseif ( ! $is_bg_enabled ) {
+				} elseif ( ! $is_tab_enabled ) {
 					$new_value = '';
 					break;
 				}

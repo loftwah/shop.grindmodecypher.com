@@ -10,14 +10,14 @@ if ( ! empty( $billing_address ) && ! empty( $shipping_address ) ) {
 ?>
 <?php if ( ! empty( $billing_address ) ) { ?>
 <div style="width: <?php echo esc_attr( $width ); ?>; float: left;">
-  <h2 style="color: #96588a; display: block; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px;">
+  <h2 style="color: #7f54b3; display: block; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px;">
 	<?php esc_html_e( 'Billing Address', 'woocommerce' ); ?>
   </h2>
 </div>
 <?php } ?>
 <?php if ( ! empty( $shipping_address ) ) { ?>
 <div style="width: <?php echo esc_attr( $width ); ?>; float: right;">
-  <h2 style="color: #96588a; display: block; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px;">
+  <h2 style="color: #7f54b3; display: block; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px;">
 	<?php esc_html_e( 'Shipping Address', 'woocommerce' ); ?>
   </h2>
 </div>

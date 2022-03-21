@@ -4,23 +4,23 @@ defined( 'ABSPATH' ) || exit;
 
 use YayMail\Page\Source\CustomPostType;
 $postID          = CustomPostType::postIDByTemplate( $this->template );
-$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588a';
+$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 
-$sent_to_admin = ( isset( $sent_to_admin ) ? true : false );
+$sent_to_admin = ( isset( $sent_to_admin ) ? $sent_to_admin : false );
 $text_align    = is_rtl() ? 'right' : 'left';
 
 ?>
 
-<h2 class="yaymail_builder_order" style="color: #96588a;">
+<h2 class="yaymail_builder_order" style="color: #7f54b3;">
 	<?php
-	$before = '<a style="color: ' . $text_link_color . '" class="yaymail_builder_link" href="">';
+	$before = '<a style="color: ' . esc_attr( $text_link_color ) . '" class="yaymail_builder_link" href="">';
 	$after  = '</a>';
 	/* translators: %s: Order ID. */
 	echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . $after . ' (<time datetime="%s">%s</time>)', 1, new WC_DateTime(), wc_format_datetime( new WC_DateTime() ) ) );
 	?>
 </h2>
 
-<table class="yaymail_builder_table_items_border" cellspacing="0" cellpadding="6" border="1" style="width: 100% !important;color: inherit" width="100%">
+<table class="yaymail_builder_table_items_content" cellspacing="0" cellpadding="6" border="1" style="width: 100% !important;color: inherit;flex-direction:column;border: 1px solid;border-color: inherit;" width="100%">
 	<thead>
 		<tr style="word-break: normal">
 			<th class="td" scope="col" style="text-align:left;">

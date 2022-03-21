@@ -1245,6 +1245,8 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 			'<div%5$s class="%3$s"%4$s%8$s%9$s%10$s%11$s>
 				%7$s
 				%6$s
+				%12$s
+				%13$s
 				%1$s
 				%2$s
 			</div>',
@@ -1258,7 +1260,9 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 			$success_redirect_url,
 			$success_redirect_query,
 			et_core_esc_previously( $data_background_layout ), // #10,
-			$wrapper_multi_view_classes
+			$wrapper_multi_view_classes,
+			et_core_esc_previously( $this->background_pattern() ), // #12
+			et_core_esc_previously( $this->background_mask() ) // #13
 		);
 
 		return $output;

@@ -755,6 +755,8 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 		$header_level              = $this->props['header_level'];
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
+		$pattern_background        = $this->background_pattern();
+		$mask_background           = $this->background_mask();
 		$background_color          = $this->get_slider_item_background_color();
 		$custom_icon_values        = et_pb_responsive_options()->get_property_values( $this->props, 'button_icon' );
 		$custom_icon               = isset( $custom_icon_values['desktop'] ) ? $custom_icon_values['desktop'] : '';
@@ -1111,6 +1113,8 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 					</div>
 				</div>
 				%5$s
+				%13$s
+				%14$s
 			</div>
 			',
 			$slide_content,
@@ -1124,7 +1128,9 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 			'on' === $use_bg_overlay ? '<div class="et_pb_slide_overlay_container"></div>' : '',
 			et_core_esc_previously( $data_background_layout ), // #10
 			self::get_module_order_class( $render_slug ),
-			$multi_view_classes
+			$multi_view_classes,
+			et_core_esc_previously( $pattern_background ), // #13
+			et_core_esc_previously( $mask_background ) // #14
 		);
 
 		return $output;

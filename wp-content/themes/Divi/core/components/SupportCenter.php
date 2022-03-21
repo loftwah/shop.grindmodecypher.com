@@ -1391,7 +1391,7 @@ class ET_Core_SupportCenter {
 				'pass_minus_one' => false,
 				'pass_zero'      => false,
 				'minimum'        => null,
-				'recommended'    => '7.2 or higher',
+				'recommended'    => '7.4 or higher',
 				'actual'         => (float) phpversion(),
 				'help_text'      => et_core_intentionally_unescaped( __( 'We recommend using the latest stable version of PHP. This will not only ensure compatibility with Divi, but it will also greatly speed up your website leading to less memory and CPU related issues.', 'et-core' ), 'html' ),
 				'learn_more'     => 'http://php.net/releases/',

@@ -24,10 +24,10 @@
 		  <?php if ( '' !== $attrs['pathImg'] ) : ?>
 			<div 
 			  style="text-align: center;background-size: cover;margin:auto;background-position:center;
-				<?php echo esc_attr( 'backgroundImage: url(' . $attrs['pathImg'] . ');' ); ?>
+				<?php echo esc_attr( 'background-image: url(' . $attrs['pathImg'] . ');' ); ?>
 				<?php echo esc_attr( 'width: ' . $attrs['width'] . '%;' ); ?>
 				<?php echo esc_attr( 'height: ' . $attrs['height'] . 'px;' ); ?>
-				<?php echo esc_attr( 'lineHeight: ' . $attrs['height'] . 'px;' ); ?>
+				<?php echo esc_attr( 'line-height: ' . $attrs['height'] . 'px;' ); ?>
 			  "
 			>
 			  <img
@@ -40,7 +40,7 @@
 			  style="text-align: center;
 			  <?php echo esc_attr( 'width: ' . $attrs['width'] . '%;' ); ?>
 			  <?php echo esc_attr( 'height: ' . $attrs['height'] . 'px;' ); ?>
-			  <?php echo esc_attr( 'lineHeight: ' . $attrs['height'] . 'px;' ); ?>
+			  <?php echo esc_attr( 'line-height: ' . $attrs['height'] . 'px;' ); ?>
 			  "
 			>
 			  <img

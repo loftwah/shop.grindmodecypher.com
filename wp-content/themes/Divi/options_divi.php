@@ -409,7 +409,7 @@ $options = array (
 		'name' => esc_html__( 'Improve Google Fonts Loading', 'Divi' ),
 		'id'   => 'divi_google_fonts_inline',
 		'type' => 'checkbox',
-		'std'  => 'on',
+		'std'  => 'off',
 		'desc' => esc_html__( 'Enable caching of Google Fonts and load them inline. This reduces render-blocking requests and improves page load times.', 'Divi' ),
 	),
 	array(

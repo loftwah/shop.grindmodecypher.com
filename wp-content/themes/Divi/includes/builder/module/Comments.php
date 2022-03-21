@@ -581,6 +581,8 @@ class ET_Builder_Module_Comments extends ET_Builder_Module {
 		$output = sprintf(
 			'<div%3$s class="%2$s"%4$s%7$s%8$s%9$s%10$s>
 				%5$s
+				%11$s
+				%12$s
 				%6$s
 				%1$s
 			</div>',
@@ -593,7 +595,9 @@ class ET_Builder_Module_Comments extends ET_Builder_Module {
 			et_core_esc_previously( $data_background_layout ),
 			'' !== $comments_custom_icon_tablet ? sprintf( ' data-icon-tablet="%1$s"', esc_attr( et_pb_process_font_icon( $comments_custom_icon_tablet ) ) ) : '',
 			'' !== $comments_custom_icon_phone ? sprintf( ' data-icon-phone="%1$s"', esc_attr( et_pb_process_font_icon( $comments_custom_icon_phone ) ) ) : '',
-			$multi_view_data_attr // #10
+			$multi_view_data_attr, // #10
+			et_core_esc_previously( $this->background_pattern() ), // #11
+			et_core_esc_previously( $this->background_mask() ) // #12
 		);
 
 		return $output;

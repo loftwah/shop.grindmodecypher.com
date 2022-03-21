@@ -368,10 +368,12 @@ class ET_Builder_Module_Icon extends ET_Builder_Module {
 			: '';
 
 		$output = sprintf(
-			'<span class="et_pb_icon_wrap %1$s">%2$s%3$s</span>',
+			'<span class="et_pb_icon_wrap %1$s">%2$s%4$s%5$s%3$s</span>',
 			$box_shadow_overlay_wrap_class,
 			$box_shadow_overlay_element,
-			$output
+			$output,
+			et_core_esc_previously( $this->background_pattern() ), // #4
+			et_core_esc_previously( $this->background_mask() ) // #5
 		);
 
 		$title_text = ! empty( $title_text ) ? sprintf( 'title="%1$s"', esc_attr( $title_text ) ) : '';

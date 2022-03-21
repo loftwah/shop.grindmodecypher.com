@@ -29,11 +29,12 @@ class ET_Builder_I18n {
 		switch ( $key ) {
 			// To avoid breaking tests:
 			// 1. Do not remove `i18-list-begin` / `i18-list-end` tags.
-			// 2. One traslation per line.
+			// 2. One translation per line.
 			// 3. `et_builder` Text Domain only.
 			// 4. No comments / empty lines.
 			// 5. Keep the list ordered, if can't do with your IDE, switch to Emacs.
 			// i18-list-begin.
+			case 'Actual Size'     : return esc_html__( 'Actual Size', 'et_builder' );
 			case 'Admin Label'     : return esc_html__( 'Admin Label', 'et_builder' );
 			case 'Advanced'        : return esc_html__( 'Advanced', 'et_builder' );
 			case 'After'           : return esc_html__( 'After', 'et_builder' );
@@ -56,7 +57,9 @@ class ET_Builder_I18n {
 			case 'Color Dodge'     : return esc_html__( 'Color Dodge', 'et_builder' );
 			case 'Color'           : return esc_html__( 'Color', 'et_builder' );
 			case 'Content'         : return esc_html__( 'Content', 'et_builder' );
+			case 'Cover'           : return esc_html__( 'Cover', 'et_builder' );
 			case 'Custom CSS'      : return esc_html__( 'Custom CSS', 'et_builder' );
+			case 'Custom Size'     : return esc_html__( 'Custom Size', 'et_builder' );
 			case 'Dark'            : return esc_html__( 'Dark', 'et_builder' );
 			case 'Darken'          : return esc_html__( 'Darken', 'et_builder' );
 			case 'Default'         : return esc_html__( 'Default', 'et_builder' );
@@ -73,6 +76,7 @@ class ET_Builder_I18n {
 			case 'Exclusion'       : return esc_html__( 'Exclusion', 'et_builder' );
 			case 'Expand'          : return esc_html__( 'Expand', 'et_builder' );
 			case 'Fade'            : return esc_html__( 'Fade', 'et_builder' );
+			case 'Fit'             : return esc_html__( 'Fit', 'et_builder' );
 			case 'Flip'            : return esc_html__( 'Flip', 'et_builder' );
 			case 'Hard Light'      : return esc_html__( 'Hard Light', 'et_builder' );
 			case 'Hue'             : return esc_html__( 'Hue', 'et_builder' );
@@ -87,6 +91,7 @@ class ET_Builder_I18n {
 			case 'Luminosity'      : return esc_html__( 'Luminosity', 'et_builder' );
 			case 'Main Element'    : return esc_html__( 'Main Element', 'et_builder' );
 			case 'Multiply'        : return esc_html__( 'Multiply', 'et_builder' );
+			case 'No Repeat'       : return esc_html__( 'No Repeat', 'et_builder' );
 			case 'No'              : return esc_html__( 'No', 'et_builder' );
 			case 'None'            : return esc_html__( 'None', 'et_builder' );
 			case 'Normal'          : return esc_html__( 'Normal', 'et_builder' );
@@ -97,14 +102,19 @@ class ET_Builder_I18n {
 			case 'Phone'           : return esc_html__( 'Phone', 'et_builder' );
 			case 'Position'        : return esc_html__( 'Position', 'et_builder' );
 			case 'Radial'          : return esc_html__( 'Radial', 'et_builder' );
+			case 'Repeat X (horizontal)'     : return esc_html__( 'Repeat X (horizontal)', 'et_builder' );
+			case 'Repeat Y (vertical)'       : return esc_html__( 'Repeat Y (vertical)', 'et_builder' );
+			case 'Repeat and Stretch'        : return esc_html__( 'Repeat and Stretch', 'et_builder' );
+			case 'Repeat with space between' : return esc_html__( 'Repeat with space between', 'et_builder' );
+			case 'Repeat'          : return esc_html__( 'Repeat', 'et_builder' );
 			case 'Right'           : return esc_html__( 'Right', 'et_builder' );
 			case 'Saturation'      : return esc_html__( 'Saturation', 'et_builder' );
 			case 'Screen'          : return esc_html__( 'Screen', 'et_builder' );
 			case 'Sizing'          : return esc_html__( 'Sizing', 'et_builder' );
 			case 'Slide'           : return esc_html__( 'Slide', 'et_builder' );
 			case 'Soft Light'      : return esc_html__( 'Soft Light', 'et_builder' );
-			case 'Space'           : return esc_html__( 'Space', 'et_builder' );
 			case 'Square'          : return esc_html__( 'Square', 'et_builder' );
+			case 'Stretch to Fill' : return esc_html__( 'Stretch to Fill', 'et_builder' );
 			case 'Tablet'          : return esc_html__( 'Tablet', 'et_builder' );
 			case 'Text'            : return esc_html__( 'Text', 'et_builder' );
 			case 'Title'           : return esc_html__( 'Title', 'et_builder' );

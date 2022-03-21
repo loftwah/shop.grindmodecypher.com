@@ -213,6 +213,8 @@ class ET_Builder_Module_Countdown_Timer extends ET_Builder_Module {
 			'<div%1$s class="%2$s"%3$s data-end-timestamp="%4$s"%16$s>
 				%15$s
 				%14$s
+				%17$s
+				%18$s
 				<div class="et_pb_countdown_timer_container clearfix">
 					%5$s
 					<div class="days section values" data-short="%13$s" data-full="%6$s">
@@ -251,7 +253,9 @@ class ET_Builder_Module_Countdown_Timer extends ET_Builder_Module {
 			esc_attr__( 'Day', 'et_builder' ),
 			$video_background,
 			$parallax_image_background, // #15
-			et_core_esc_previously( $data_background_layout )
+			et_core_esc_previously( $data_background_layout ),
+			et_core_esc_previously( $this->background_pattern() ), // #17
+			et_core_esc_previously( $this->background_mask() ) // #18
 		);
 
 		return $output;

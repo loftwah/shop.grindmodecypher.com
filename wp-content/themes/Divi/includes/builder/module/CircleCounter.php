@@ -47,6 +47,11 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 					),
 				),
 			),
+			'background'      => array(
+				'css' => array(
+					'main' => "{$this->main_css_element} .et_pb_circle_counter_inner",
+				),
+			),
 			'margin_padding'  => array(
 				'css'           => array(
 					'important' => array( 'custom_margin' ),
@@ -352,6 +357,8 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 				<div class="et_pb_circle_counter_inner" data-number-value="%3$s" data-bar-bg-color="%4$s"%7$s%8$s%12$s%13$s%14$s%15$s%16$s%17$s%18$s%19$s%20$s%21$s%22$s%23$s%24$s%25$s>
 				%10$s
 				%9$s
+				%26$s
+				%27$s
 					<div class="percent"%19$s><p><span class="percent-value"></span><span class="percent-sign">%5$s</span></p></div>
 					%6$s
 				</div>
@@ -380,7 +387,9 @@ class ET_Builder_Module_Circle_Counter extends ET_Builder_Module {
 			$bar_bg_color_data_sticky,
 			$circle_color_data_sticky,
 			$circle_color_alpha_data_sticky,
-			$data_sticky_id // #25
+			$data_sticky_id, // #25
+			et_core_esc_previously( $this->background_pattern() ), // #26
+			et_core_esc_previously( $this->background_mask() ) // #27
 		);
 
 		return $output;

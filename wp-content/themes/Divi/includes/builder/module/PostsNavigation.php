@@ -383,6 +383,8 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 						<?php
 							echo et_core_esc_previously( $parallax_image_background );
 							echo et_core_esc_previously( $video_background );
+							echo et_core_esc_previously( $this->background_pattern() );
+							echo et_core_esc_previously( $this->background_mask() );
 						?>
 						<span class="meta-nav">&larr; </span><span class="nav-label"<?php $multi_view->render_attrs( array( 'content' => '{{prev_text}}' ), true ); ?>><?php echo esc_html( $posts_navigation['prev']->title ); ?></span>
 					</a>
@@ -408,6 +410,8 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 						<?php
 							echo et_core_esc_previously( $parallax_image_background );
 							echo et_core_esc_previously( $video_background );
+							echo et_core_esc_previously( $this->background_pattern() );
+							echo et_core_esc_previously( $this->background_mask() );
 						?>
 						<span class="nav-label"<?php $multi_view->render_attrs( array( 'content' => '{{next_text}}' ), true ); ?>><?php echo esc_html( $posts_navigation['next']->title ); ?></span><span class="meta-nav"> &rarr;</span>
 					</a>

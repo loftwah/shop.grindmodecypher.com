@@ -301,7 +301,7 @@ class WooTemplate {
 		}
 
 		// can't load tempalte email-delivery-date.php because it will has error when check out, with plugin WooCommerce Order Delivery
-		if ( $template && 'emails/email-delivery-date.php' != $template_name ) {
+		if ( $template && 'emails/email-delivery-date.php' != $template_name && 'emails/email-order-details.php' != $template_name) {
 
 			// Yith Stripe
 

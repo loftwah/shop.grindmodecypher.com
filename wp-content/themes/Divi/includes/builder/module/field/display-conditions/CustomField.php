@@ -64,11 +64,19 @@ trait CustomFieldCondition {
 		$field_name_meta  = (string) get_post_meta( $queried_object_id, $field_name, true );
 		$field_value_meta = $has_custom_field_value ? (string) $custom_field_value : (string) get_post_meta( $queried_object_id, $selected_field_value, true );
 
+		// The PHP 7.4 and below will throw warning if we pass empty string on the 2nd arg
+		// of `strpos`. We have to avoid this issue and make sure the `Contains` condition
+		// threat $field_value_meta empty value as invalid condition (no match).
+		$contains = false;
+		if ( ! empty( $field_value_meta ) ) {
+			$contains = strpos( $field_name_meta, $field_value_meta );
+		}
+
 		$output = [
 			'is'             => $field_name_meta === $field_value_meta,
 			'isNot'          => $field_name_meta !== $field_value_meta,
-			'contains'       => strpos( $field_name_meta, $field_value_meta ) !== false,
-			'doesNotContain' => strpos( $field_name_meta, $field_value_meta ) === false,
+			'contains'       => false !== $contains,
+			'doesNotContain' => false === $contains,
 			'isAnyValue'     => strlen( $field_name_meta ) > 0,
 			'hasNoValue'     => strlen( $field_name_meta ) === 0,
 			'isGreaterThan'  => (float) $field_name_meta > (float) $field_value_meta,

@@ -301,7 +301,7 @@ class Settings {
 				'product_des'                  => 0,
 				'background_color_table_items' => '#e5e5e5',
 				'content_items_color'          => '#636363',
-				'title_items_color'            => '#96588a',
+				'title_items_color'            => '#7f54b3',
 				'container_width'              => '605px',
 				'order_url'                    => '',
 				'custom_css'                   => '',
@@ -960,10 +960,10 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-multiwarehouse-order-routing',
 				),
-				'MultivendorMarketplaceSolutionWooCommerce'   => array(
+				'MultivendorMarketplaceSolutionWooCommerce' => array(
 					'plugin_name'   => 'Multivendor Marketplace Solution for WooCommerce - WC Marketplace',
 					'template_name' => array(
-						'admin_added_new_product_to_vendor', 
+						'admin_added_new_product_to_vendor',
 						'admin_change_order_status',
 						'admin_new_question',
 						'admin_new_vendor',
@@ -991,7 +991,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wcmp-marketplace',
 				),
-				'AffiliateForWooCommerce'   => array(
+				'AffiliateForWooCommerce'             => array(
 					'plugin_name'   => 'Affiliate For WooCommerce',
 					'template_name' => array(
 						'afwc_commission_paid',
@@ -1001,7 +1001,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-affiliate-storeapps',
 				),
-				'WooCommerceProductVendors'             => array(
+				'WooCommerceProductVendors'           => array(
 					'plugin_name'   => 'WooCommerce Product Vendors',
 					'template_name' => array(
 						'vendor_approval',
@@ -1014,7 +1014,16 @@ class Settings {
 						'vendor_registration_to_vendor',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-product-vendors/',
-				)
+				),
+				'WooCommerceBackInStockNotifications'             => array(
+					'plugin_name'   => 'WooCommerce Back In Stock Notifications',
+					'template_name' => array(
+						'bis_notification_confirm',
+						'bis_notification_received',
+						'bis_notification_verify',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-back-in-stock-notifications',
+				),
 			);
 
 			$list_plugin_for_pro = array();
@@ -1060,7 +1069,31 @@ class Settings {
 
 			$shipping_methods = $data;
 
+			global $wpdb;
+			$get_coupon_codes = $wpdb->get_col("SELECT post_name FROM $wpdb->posts WHERE post_type = 'shop_coupon' AND post_status = 'publish' ORDER BY post_name ASC");
+			$data_coupon_codes            = array();
+			foreach ( $get_coupon_codes as $coupon_codes ) {
+				$item = array(
+					'id'           => $coupon_codes,
+					'coupon_codes' => $coupon_codes,
+				);
+
+				$data_coupon_codes[] = $item;
+			}
+
+			$coupon_codes = $data_coupon_codes;
+
 			$listShortCodeAddon = apply_filters( 'yaymail_list_shortcodes', array() );
+
+			$this->emails = array_map(
+				function( $item ) {
+					$final_item        = new stdClass();
+					$final_item->id    = $item->id;
+					$final_item->title = $item->title;
+					return $final_item;
+				},
+				$this->emails
+			);
 			wp_localize_script(
 				$scriptId,
 				'yaymail_data',
@@ -1091,6 +1124,7 @@ class Settings {
 					'yaysmtp_setting'            => admin_url( 'admin.php?page=yaysmtp' ),
 					'list_shortcode_addon'       => $listShortCodeAddon,
 					'shipping_methods'           => $shipping_methods,
+					'coupon_codes'               => $coupon_codes,
 					'i18n'                       => I18n::jsTranslate(),
 				)
 			);

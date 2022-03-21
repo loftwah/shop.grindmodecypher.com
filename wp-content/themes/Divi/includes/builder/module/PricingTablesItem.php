@@ -646,6 +646,8 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 			'<div class="%1$s">
 				%10$s
 				%9$s
+				%11$s
+				%12$s
 				<div class="et_pb_pricing_heading">
 					%2$s
 					%3$s
@@ -667,7 +669,9 @@ class ET_Builder_Module_Pricing_Tables_Item extends ET_Builder_Module {
 			et_core_esc_previously( $sum ),
 			et_core_esc_previously( $per ),
 			$video_background,
-			$parallax_image_background
+			$parallax_image_background,
+			et_core_esc_previously( $this->background_pattern() ), // #11
+			et_core_esc_previously( $this->background_mask() ) // #12
 		);
 
 		return $output;

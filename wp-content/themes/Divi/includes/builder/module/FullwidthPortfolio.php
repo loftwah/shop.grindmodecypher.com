@@ -642,6 +642,8 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 				%8$s
 				%7$s
 				%6$s
+				%10$s
+				%11$s
 				<div class="et_pb_portfolio_items clearfix" data-portfolio-columns="">
 					%2$s
 				</div>
@@ -654,7 +656,9 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 			$title,
 			$video_background,
 			$parallax_image_background,
-			et_core_esc_previously( $data_background_layout )
+			et_core_esc_previously( $data_background_layout ),
+			et_core_esc_previously( $this->background_pattern() ), // #10
+			et_core_esc_previously( $this->background_mask() ) // #11
 		);
 
 		return $output;

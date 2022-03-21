@@ -215,12 +215,16 @@ class ET_Builder_Module_Tabs_Item extends ET_Builder_Module {
 			'<div class="%2$s">
 				%4$s
 				%3$s
+				%5$s
+				%6$s
 				%1$s
 			</div>',
 			$content,
 			$this->module_classname( $render_slug ),
 			$video_background,
-			$parallax_image_background
+			$parallax_image_background,
+			et_core_esc_previously( $this->background_pattern() ), // #5
+			et_core_esc_previously( $this->background_mask() ) // #6
 		);
 
 		return $output;

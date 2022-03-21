@@ -712,6 +712,8 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 			'<div%3$s class="%4$s"%10$s%11$s>
 				%9$s
 				%8$s
+				%12$s
+				%13$s
 				%7$s
 				<div class="et_pb_testimonial_description">
 					<div class="et_pb_testimonial_description_inner">%1$s</div>
@@ -729,7 +731,9 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 			$video_background,
 			$parallax_image_background,
 			et_core_esc_previously( $data_background_layout ), // #10
-			et_core_esc_previously( $multi_view_icon_off_data_attr )
+			et_core_esc_previously( $multi_view_icon_off_data_attr ),
+			et_core_esc_previously( $this->background_pattern() ), // #12
+			et_core_esc_previously( $this->background_mask() ) // #13
 		);
 
 		return $output;

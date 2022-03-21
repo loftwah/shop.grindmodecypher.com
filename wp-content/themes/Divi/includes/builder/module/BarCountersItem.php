@@ -49,7 +49,8 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 			'background'     => array(
 				'use_background_color' => 'fields_only',
 				'css'                  => array(
-					'main' => ".et_pb_counters li{$this->main_css_element} .et_pb_counter_container",
+					'main'      => ".et_pb_counters li{$this->main_css_element} .et_pb_counter_container",
+					'important' => 'all',
 				),
 			),
 			'margin_padding' => array(
@@ -155,88 +156,96 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 		return $fields;
 	}
 
-	function get_parallax_image_background( $base_name = 'background' ) {
+	/**
+	 * Checks if module has background.
+	 *
+	 * @since 4.15.0
+	 *
+	 * @return bool
+	 */
+	protected function _has_background() {
 		global $et_pb_counters_settings;
 
-		// Parallax setting is only derived from parent if bar counter item has no background
-		$use_counter_value   = '' !== $this->props['background_color'] || 'on' === $this->props['use_background_color_gradient'] || '' !== $this->props['background_image'] || '' !== $this->props['background_video_mp4'] || '' !== $this->props['background_video_webm'];
-		$background_image    = $use_counter_value ? $this->props['background_image'] : $et_pb_counters_settings['background_image'];
-		$parallax            = $use_counter_value ? $this->props['parallax'] : $et_pb_counters_settings['parallax'];
-		$parallax_method     = $use_counter_value ? $this->props['parallax_method'] : $et_pb_counters_settings['parallax_method'];
-		$parallax_background = '';
+		// Since background color might inherit from parent, checking for different value in child.
+		$has_background_color      = ! empty( $this->props['background_color'] ) && ( isset( $et_pb_counters_settings['background_color'] ) && $this->props['background_color'] !== $et_pb_counters_settings['background_color'] );
+		$has_background_gradient   = isset( $this->props['use_background_color_gradient'] ) && 'on' === $this->props['use_background_color_gradient'];
+		$has_background_image      = ! empty( $this->props['background_image'] );
+		$has_background_video_mp4  = ! empty( $this->props['background_video_mp4'] );
+		$has_background_video_webm = ! empty( $this->props['background_video_webm'] );
+		$has_background_pattern    = isset( $this->props['background_enable_pattern_style'] ) && 'on' === $this->props['background_enable_pattern_style'] && ! empty( $this->props['background_pattern_style'] );
+		$has_background_mask       = isset( $this->props['background_enable_mask_style'] ) && 'on' === $this->props['background_enable_mask_style'] && ! empty( $this->props['background_mask_style'] );
 
-		if ( '' !== $background_image && 'on' == $parallax ) {
-			$parallax_classname = array(
-				'et_parallax_bg',
-			);
-
-			if ( 'off' === $parallax_method ) {
-				$parallax_classname[] = 'et_pb_parallax_css';
-			}
-
-			$parallax_background = sprintf(
-				'<div class="et_parallax_bg_wrap"><div
-					class="%1$s"
-					style="background-image: url(%2$s);"
-					></div></div>',
-				esc_attr( implode( ' ', $parallax_classname ) ),
-				esc_attr( $background_image )
-			);
-		}
-
-		return $parallax_background;
+		return $has_background_color
+			|| $has_background_gradient
+			|| $has_background_image
+			|| $has_background_video_mp4
+			|| $has_background_video_webm
+			|| $has_background_pattern
+			|| $has_background_mask;
 	}
 
-	function video_background( $args = array(), $base_name = 'background' ) {
+	/**
+	 * Returns Parallax element.
+	 *
+	 * @since 4.15.0
+	 *
+	 * @return string JSX
+	 */
+	public function get_background_parallax() {
 		global $et_pb_counters_settings;
 
-		$use_counter_value       = '' !== $this->props['background_color'] || 'on' === $this->props['use_background_color_gradient'] || '' !== $this->props['background_image'] || '' !== $this->props['background_video_mp4'] || '' !== $this->props['background_video_webm'];
-		$background_video_mp4    = $use_counter_value && isset( $this->props['background_video_mp4'] ) ? $this->props['background_video_mp4'] : $et_pb_counters_settings['background_video_mp4'];
-		$background_video_webm   = $use_counter_value && isset( $this->props['background_video_webm'] ) ? $this->props['background_video_webm'] : $et_pb_counters_settings['background_video_webm'];
-		$background_video_width  = $use_counter_value && isset( $this->props['background_video_width'] ) ? $this->props['background_video_width'] : $et_pb_counters_settings['background_video_width'];
-		$background_video_height = $use_counter_value && isset( $this->props['background_video_height'] ) ? $this->props['background_video_height'] : $et_pb_counters_settings['background_video_height'];
+		// Parallax settings derived from parent if bar counter item has no background.
+		$background_props = $this->_has_background() ? $this->props : $et_pb_counters_settings;
 
-		if ( ! empty( $args ) ) {
-			$background_video = self::get_video_background( $args );
+		return $this->get_parallax_image_background( 'background', $background_props );
+	}
 
-			$allow_player_pause     = isset( $args['allow_player_pause'] ) ? $args['allow_player_pause'] : 'off';
-			$pause_outside_viewport = isset( $args['background_video_pause_outside_viewport'] ) ? $args['background_video_pause_outside_viewport'] : 'on';
-		} else {
-			$background_video = self::get_video_background(
-				array(
-					'background_video_mp4'    => $background_video_mp4,
-					'background_video_webm'   => $background_video_webm,
-					'background_video_width'  => $background_video_width,
-					'background_video_height' => $background_video_height,
-				)
-			);
+	/**
+	 * Returns Video element.
+	 *
+	 * @since 4.15.0
+	 *
+	 * @return string JSX
+	 */
+	public function get_background_video() {
+		global $et_pb_counters_settings;
 
-			$allow_player_pause     = $use_counter_value ? $this->props['allow_player_pause'] : $et_pb_counters_settings['allow_player_pause'];
-			$pause_outside_viewport = $use_counter_value ? $this->props['background_video_pause_outside_viewport'] : $et_pb_counters_settings['background_video_pause_outside_viewport'];
-		}
+		// Video settings derived from parent if bar counter item has no background.
+		$background_props = $this->_has_background() ? $this->props : $et_pb_counters_settings;
 
-		$video_background = '';
+		return $this->video_background( $background_props );
+	}
 
-		if ( $background_video ) {
-			$video_background = sprintf(
-				'<div class="et_pb_section_video_bg%2$s">
-					%1$s
-				</div>',
-				$background_video,
-				( 'on' === $allow_player_pause ? ' et_pb_allow_player_pause' : '' ),
-				( 'off' === $pause_outside_viewport ? ' et_pb_video_play_outside_viewport' : '' )
-			);
+	/**
+	 * Returns Pattern element.
+	 *
+	 * @since 4.15.0
+	 *
+	 * @return string JSX
+	 */
+	public function get_background_pattern() {
+		global $et_pb_counters_settings;
 
-			wp_enqueue_style( 'wp-mediaelement' );
-			wp_enqueue_script( 'wp-mediaelement' );
-		}
+		// Pattern settings derived from parent if bar counter item has no background.
+		$background_props = $this->_has_background() ? $this->props : $et_pb_counters_settings;
 
-		// Added classname for module wrapper
-		if ( '' !== $video_background ) {
-			$this->add_classname( array( 'et_pb_section_video', 'et_pb_preload' ) );
-		}
+		return $this->background_pattern( $background_props );
+	}
 
-		return $video_background;
+	/**
+	 * Returns Mask element.
+	 *
+	 * @since 4.15.0
+	 *
+	 * @return string JSX
+	 */
+	public function get_background_mask() {
+		global $et_pb_counters_settings;
+
+		// Pattern settings derived from parent if bar counter item has no background.
+		$background_props = $this->_has_background() ? $this->props : $et_pb_counters_settings;
+
+		return $this->background_mask( $background_props );
 	}
 
 	/**
@@ -306,11 +315,9 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 		$multi_view = et_pb_multi_view_options( $this );
 		$multi_view->set_custom_prop( 'use_percentages', $et_pb_counters_settings['use_percentages'] );
 
-		$percent                       = $multi_view->get_value( 'percent', 'desktop', '' );
-		$bar_background_color          = self::$_->array_get( $this->props, 'bar_background_color' );
-		$bar_background_color          = empty( $bar_background_color ) ? $et_pb_counters_settings['bar_bg_color'] : $bar_background_color;
-		$background_image              = $this->props['background_image'];
-		$use_background_color_gradient = $this->props['use_background_color_gradient'];
+		$percent              = $multi_view->get_value( 'percent', 'desktop', '' );
+		$bar_background_color = self::$_->array_get( $this->props, 'bar_background_color' );
+		$bar_background_color = empty( $bar_background_color ) ? $et_pb_counters_settings['bar_bg_color'] : $bar_background_color;
 
 		// Background Color.
 		$background_color        = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'desktop' );
@@ -334,17 +341,22 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 		}
 
 		$background_color_style = $bar_bg_color_style = '';
-		$parent_bg_image        = isset( $et_pb_counters_settings['background_image'] ) ? $et_pb_counters_settings['background_image'] : '';
-		$parent_use_bg_gradient = isset( $et_pb_counters_settings['use_background_color_gradient'] ) ? $et_pb_counters_settings['use_background_color_gradient'] : 'off';
-		$parent_enable_bg_image = ! empty( $parent_bg_image ) || 'on' === $parent_use_bg_gradient;
 
-		if ( '' !== $background_color && $parent_enable_bg_image ) {
+		$background_image              = $this->props['background_image'];
+		$use_background_color_gradient = $this->props['use_background_color_gradient'];
+		$parent_bg_image               = isset( $et_pb_counters_settings['background_image'] ) ? $et_pb_counters_settings['background_image'] : '';
+		$parent_use_bg_gradient        = isset( $et_pb_counters_settings['use_background_color_gradient'] ) ? $et_pb_counters_settings['use_background_color_gradient'] : 'off';
+		$parent_enable_bg_image        = ! empty( $parent_bg_image ) || 'on' === $parent_use_bg_gradient;
+
+		// In frontend, background color might inherit from parent.
+		if ( $this->_has_background() && '' !== $this->props['background_color'] && $parent_enable_bg_image ) {
+			// Need to override parent image that could be set, so inherited bg color can show up.
 			if ( empty( $background_image ) && 'on' !== $use_background_color_gradient ) {
 				ET_Builder_Element::set_style(
 					$render_slug,
 					array(
 						'selector'    => '.et_pb_counters %%order_class%% .et_pb_counter_container',
-						'declaration' => 'background-image: none!important;',
+						'declaration' => 'background-image: none !important;',
 					)
 				);
 			}
@@ -356,7 +368,7 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 			'tablet'  => esc_html( $background_color_tablet ),
 			'phone'   => esc_html( $background_color_phone ),
 		);
-		et_pb_responsive_options()->generate_responsive_css( $background_color_values, '%%order_class%% .et_pb_counter_container', 'background-color', $render_slug, '', 'color' );
+		et_pb_responsive_options()->generate_responsive_css( $background_color_values, '.et_pb_counters %%order_class%% .et_pb_counter_container', 'background-color', $render_slug, ' !important; ', 'color' );
 
 		// Bar background color.
 		$bar_background_color_values = array(
@@ -410,8 +422,10 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 			)
 		);
 
-		$video_background          = $this->video_background();
-		$parallax_image_background = $this->get_parallax_image_background();
+		$video_background          = $this->get_background_video();
+		$parallax_image_background = $this->get_background_parallax();
+		$pattern_background        = $this->get_background_pattern();
+		$mask_background           = $this->get_background_mask();
 
 		// Module classname
 		$this->add_classname( $this->get_text_orientation_classname() );
@@ -454,6 +468,8 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 				<span class="et_pb_counter_container"%4$s%10$s>
 					%8$s
 					%7$s
+					%12$s
+					%13$s
 					<span class="et_pb_counter_amount" style="%5$s" data-width="%3$s"><span class="et_pb_counter_amount_number"><span class="et_pb_counter_amount_number_inner"%11$s>%2$s</span></span></span>
 					<span class="et_pb_counter_amount overlay" style="%5$s" data-width="%3$s"><span class="et_pb_counter_amount_number"><span class="et_pb_counter_amount_number_inner"%11$s>%2$s</span></span></span>
 				</span>
@@ -468,7 +484,9 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 			$parallax_image_background,
 			$multi_view_data_title,
 			$multi_view_data_percent_attrs, // #10
-			$multi_view_data_percent_content
+			$multi_view_data_percent_content,
+			et_core_esc_previously( $pattern_background ), // #12
+			et_core_esc_previously( $mask_background ) // #13
 		);
 
 		return $output;

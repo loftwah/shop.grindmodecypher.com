@@ -361,6 +361,8 @@ class ET_Builder_Module_Video_Slider extends ET_Builder_Module {
 			'<div%3$s class="%4$s">
 				%6$s
 				%5$s
+				%8$s
+				%9$s
 				<div class="et_pb_slider et_pb_preload%1$s"%7$s>
 					<div class="et_pb_slides">
 						%2$s
@@ -374,7 +376,9 @@ class ET_Builder_Module_Video_Slider extends ET_Builder_Module {
 			$this->module_classname( $render_slug ),
 			$video_background,
 			$parallax_image_background,
-			$multi_view_data_attr
+			$multi_view_data_attr,
+			et_core_esc_previously( $this->background_pattern() ), // #8
+			et_core_esc_previously( $this->background_mask() ) // #9
 		);
 
 		return $output;

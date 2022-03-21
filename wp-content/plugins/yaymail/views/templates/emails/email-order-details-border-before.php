@@ -8,7 +8,7 @@ $text_align = is_rtl() ? 'right' : 'left';
 $paymentGateways        = wc_get_payment_gateway_by_order( $order );
 $yaymail_settings       = get_option( 'yaymail_settings' );
 $colorContentTableItems = isset( $yaymail_settings['content_items_color'] ) && ! empty( $yaymail_settings['content_items_color'] ) ? $yaymail_settings['content_items_color'] : '#636363';
-$colorTitleTableItems   = isset( $yaymail_settings['title_items_color'] ) && ! empty( $yaymail_settings['title_items_color'] ) ? $yaymail_settings['title_items_color'] : '#96588a';
+$colorTitleTableItems   = isset( $yaymail_settings['title_items_color'] ) && ! empty( $yaymail_settings['title_items_color'] ) ? $yaymail_settings['title_items_color'] : '#7f54b3';
 $cash_on_delivery       = esc_html__( 'Cash on delivery', 'woocommerce' );
 if ( ( 'customer_on_hold_order' === $this->template
 	|| 'customer_processing_order' === $this->template

@@ -68,7 +68,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 	 *
 	 * @var string
 	 */
-	public static $max_version = '4.14.0';
+	public static $max_version = '4.15';
 
 	/**
 	 * Array of already migrated data.
@@ -109,6 +109,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 		'4.13.0'  => 'IconManager',
 		'4.13.1'  => 'ContactFormUniqueID',
 		'4.14.0'  => 'WooTextOG',
+		'4.15'    => 'BackgroundGradientOverlaysImage',
 	);
 
 	/**
@@ -257,6 +258,18 @@ abstract class ET_Builder_Module_Settings_Migration {
 		return $fields;
 	}
 
+	/**
+	 * Maybe override shortcode attributes.
+	 *
+	 * @param array  $attrs Module's attributes.
+	 * @param array  $unprocessed_attrs Raw attributes.
+	 * @param string $module_slug Module's slug.
+	 * @param string $module_address Module's address.
+	 * @param string $content Content.
+	 * @param bool   $maybe_global_presets_migration whether to migrate preset or not.
+	 *
+	 * @return mixed
+	 */
 	public static function maybe_override_shortcode_attributes( $attrs, $unprocessed_attrs, $module_slug, $module_address, $content = '', $maybe_global_presets_migration = false ) {
 		if ( empty( $attrs['_builder_version'] ) ) {
 			$attrs['_builder_version'] = '3.0.47';

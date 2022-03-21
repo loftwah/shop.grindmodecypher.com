@@ -304,10 +304,12 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 				'css' => array(
 					// Defined explicitly to solve
 					// @see https://github.com/elegantthemes/Divi/issues/17200#issuecomment-542140907
-					'main'      => '%%order_class%% .woocommerce-message, %%order_class%% .woocommerce-info, %%order_class%% .woocommerce-error',
+					'main'             => '%%order_class%% .woocommerce-message, %%order_class%% .woocommerce-info, %%order_class%% .woocommerce-error',
+					'mask_selector'    => '%%order_class%% > .et_pb_background_mask',
+					'pattern_selector' => '%%order_class%% > .et_pb_background_pattern',
 					// Important is required to override
 					// Appearance ⟶ Customize ⟶ Color schemes styles.
-					'important' => 'all',
+					'important'        => 'all',
 				),
 			),
 			'border'         => array(

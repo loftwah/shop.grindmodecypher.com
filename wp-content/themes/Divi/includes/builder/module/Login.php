@@ -415,9 +415,11 @@ class ET_Builder_Module_Login extends ET_Builder_Module {
 		);
 
 		$output = sprintf(
-			'<div%4$s class="%2$s"%7$s%7$s>
+			'<div%4$s class="%2$s"%7$s%8$s>
 				%6$s
 				%5$s
+				%9$s
+				%10$s
 				%3$s
 				%1$s
 			</div>',
@@ -428,7 +430,9 @@ class ET_Builder_Module_Login extends ET_Builder_Module {
 			$video_background, // #5
 			$parallax_image_background,
 			et_core_esc_previously( $data_background_layout ),
-			$wrapper_multi_view_classes
+			$wrapper_multi_view_classes,
+			et_core_esc_previously( $this->background_pattern() ), // #9
+			et_core_esc_previously( $this->background_mask() ) // #10
 		);
 
 		return $output;

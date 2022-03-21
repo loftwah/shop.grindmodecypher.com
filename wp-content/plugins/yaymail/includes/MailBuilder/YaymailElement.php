@@ -235,8 +235,10 @@ class YaymailElement {
 		$html = do_shortcode( $html );
 		// Replace shortcode cannot do_shortcode
 		$reg  = '/\[yaymail.*?\]/m';
-		$html = preg_replace( $reg, '', $html );
-		echo wp_kses_post( $html );
+		$html                       = preg_replace( $reg, '', $html );
+		$allowed_html_tags          = wp_kses_allowed_html( 'post' );
+		$allowed_html_tags['style'] = array();
+		echo wp_kses( $html, $allowed_html_tags );
 	}
 
 	public function yaymail_space( $args, $attrs, $general_attrs, $id, $postID = '', $isInColumns = false ) {

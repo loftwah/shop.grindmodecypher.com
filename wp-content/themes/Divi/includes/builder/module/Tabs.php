@@ -58,7 +58,9 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 			),
 			'background'     => array(
 				'css'      => array(
-					'main' => "{$this->main_css_element} .et_pb_all_tabs",
+					'main'    => "{$this->main_css_element} .et_pb_all_tabs",
+					'mask'    => "{$this->main_css_element} > .et_pb_background_mask",
+					'pattern' => "{$this->main_css_element} > .et_pb_background_pattern",
 				),
 				'settings' => array(
 					'color' => 'alpha',
@@ -276,6 +278,8 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 			'<div%3$s class="%4$s" %7$s>
 				%6$s
 				%5$s
+				%8$s
+				%9$s
 				<ul class="et_pb_tabs_controls clearfix">
 					%1$s
 				</ul>
@@ -289,7 +293,9 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 			$this->module_classname( $render_slug ),
 			$video_background,
 			$parallax_image_background,
-			/* 7$s */ 'et_pb_wc_tabs' === $render_slug ? $this->get_multi_view_attrs() : ''
+			/* 7$s */ 'et_pb_wc_tabs' === $render_slug ? $this->get_multi_view_attrs() : '',
+			et_core_esc_previously( $this->background_pattern() ), // #8
+			et_core_esc_previously( $this->background_mask() ) // #9
 		);
 
 		return $output;

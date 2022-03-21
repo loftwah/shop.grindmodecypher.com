@@ -90,7 +90,7 @@ class I18n {
 			'ChooseFile' => __( 'Choose File1', 'yaymail' ),
 			'Import' => __( 'Import', 'yaymail' ),
 			'Nofilechosen' => __( 'No file chosen', 'yaymail' ),
-			'BACKTOWORDPRESS' => __( 'BACK TO WORDPRESS', 'yaymail' ),
+			'BACKTOWORDPRESS' => __( 'BACK TO DASHBOARD', 'yaymail' ),
 			'Sampleordertoshow' => __( 'Sample order to show', 'yaymail' ),
 			'Shortcodes' => __( 'Shortcodes', 'yaymail' ),
 			'generals' => __( 'generals', 'yaymail' ),

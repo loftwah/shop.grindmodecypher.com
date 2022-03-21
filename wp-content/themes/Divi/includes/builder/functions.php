@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.14.8' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.15.1' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -2899,60 +2899,80 @@ endif;
 /**
  * Get all acceptable string value for given CSS property
  *
+ * @since 4.15.0 Added background-size to allow only 'auto' and ''.
+ *
  * @param string $property property name.
  * @return array of acceptable CSS string values of given property name.
  */
 function et_builder_get_acceptable_css_string_values( $property = 'all' ) {
 	$css_string_values = array(
-		'width'       => array(
+		'width'           => array(
 			'auto',
 			'inherit',
 			'initial',
 			'unset',
 			'',
 		),
-		'max-width'   => array(
+		'max-width'       => array(
 			'none',
 			'inherit',
 			'initial',
 			'unset',
 		),
-		'margin'      => array(
+		'margin'          => array(
 			'auto',
 			'inherit',
 			'initial',
 			'unset',
 		),
-		'padding'     => array(
+		'padding'         => array(
 			'inherit',
 			'initial',
 			'unset',
 		),
-		'height'      => array(
+		'height'          => array(
 			'auto',
 			'inherit',
 			'initial',
 			'unset',
-		),
-		'min-height'  => array(
-			'auto',
-			'inherit',
-			'initial',
-			'unset',
-		),
-		'max-height'  => array(
-			'none',
-			'inherit',
-			'initial',
-			'unset',
-		),
-		'z-index'     => array(
-			'auto',
-		),
-		'line-height' => array(
 			'',
 		),
-		'font-size'   => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ex', 'vh', 'vw' ),
+		'min-height'      => array(
+			'auto',
+			'inherit',
+			'initial',
+			'unset',
+		),
+		'max-height'      => array(
+			'none',
+			'inherit',
+			'initial',
+			'unset',
+		),
+		'z-index'         => array(
+			'auto',
+		),
+		'line-height'     => array(
+			'',
+		),
+		'font-size'       => array(
+			'%',
+			'em',
+			'rem',
+			'px',
+			'cm',
+			'mm',
+			'in',
+			'pt',
+			'pc',
+			'ex',
+			'vh',
+			'vw',
+		),
+		'background-size' => array(
+			'auto',
+			'',
+		),
 	);
 
 	$acceptable_strings = apply_filters( 'et_builder_acceptable_css_string_values', $css_string_values );

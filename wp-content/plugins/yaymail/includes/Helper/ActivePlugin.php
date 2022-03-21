@@ -42,7 +42,7 @@ class ActivePlugin {
 					'_yaymail_template'               => $key,
 					'_email_backgroundColor_settings' => 'rgb(236, 236, 236)',
 					'_yaymail_elements'               => json_decode( $template['elements'], true ),
-					'_yaymail_email_textLinkColor_settings' => '#96588A',
+					'_yaymail_email_textLinkColor_settings' => '#7f54b3',
 					'_yaymail_email_order_item_title' => array(
 						'order_title'                   => '',
 						'product_title'                 => 'Product',
@@ -66,7 +66,7 @@ class ActivePlugin {
 				$insert = CustomPostType::insert( $arr );
 			} else {
 				if ( ! metadata_exists( 'post', CustomPostType::postIDByTemplate( $key ), '_yaymail_email_textLinkColor_settings' ) ) {
-					update_post_meta( CustomPostType::postIDByTemplate( $key ), '_yaymail_email_textLinkColor_settings', '#96588A' );
+					update_post_meta( CustomPostType::postIDByTemplate( $key ), '_yaymail_email_textLinkColor_settings', '#7f54b3' );
 				}
 
 				if ( ! metadata_exists( 'post', CustomPostType::postIDByTemplate( $key ), '_yaymail_email_order_item_title' ) ) {
@@ -190,7 +190,7 @@ class ActivePlugin {
 				'product_des'                  => 0,
 				'background_color_table_items' => '#e5e5e5',
 				'content_items_color'          => '#636363',
-				'title_items_color'            => '#96588a',
+				'title_items_color'            => '#7f54b3',
 				'container_width'              => '605px',
 				'order_url'                    => '',
 				'custom_css'                   => '',

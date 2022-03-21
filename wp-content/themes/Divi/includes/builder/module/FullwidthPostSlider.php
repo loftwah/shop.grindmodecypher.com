@@ -989,6 +989,18 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module_Type_Pos
 		$header_level            = $this->props['header_level'];
 		$offset_number           = $this->props['offset_number'];
 
+		$use_gradient_options    = $this->props['use_background_color_gradient'];
+		$gradient_overlays_image = $this->props['background_color_gradient_overlays_image'];
+
+		$background_options        = et_pb_background_options();
+		$gradient_properties       = $background_options->get_gradient_properties( $this->props, 'background', '' );
+		$background_gradient_style = $background_options->get_gradient_style( $gradient_properties );
+		$is_gradient_on            = false;
+
+		if ( 'on' === $use_gradient_options && 'on' === $gradient_overlays_image && 'on' === $parallax ) {
+			$is_gradient_on = '' !== $background_gradient_style;
+		}
+
 		$custom_icon_values = et_pb_responsive_options()->get_property_values( $this->props, 'button_icon' );
 		$custom_icon        = isset( $custom_icon_values['desktop'] ) ? $custom_icon_values['desktop'] : '';
 		$custom_icon_tablet = isset( $custom_icon_values['tablet'] ) ? $custom_icon_values['tablet'] : '';
@@ -1212,6 +1224,21 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module_Type_Pos
 							echo ' et_pb_parallax_css'; }
 						?>
 						" style="background-image: url(<?php echo esc_url( $query->posts[ $post_index ]->post_featured_image ); ?>);"<?php echo et_core_esc_previously( $multi_view_attrs_parallax_bg ); ?>></div>
+						<?php
+						if ( $is_gradient_on ) {
+							printf(
+								'<span class="et_parallax_gradient" style="%1$s%2$s"></span>',
+								sprintf(
+									'background-image: %1$s;',
+									esc_html( $background_gradient_style )
+								),
+								( '' !== $background_blend && 'normal' !== $background_blend ) ? sprintf(
+									'mix-blend-mode: %1$s;',
+									esc_html( $background_blend )
+								) : ''
+							);
+						}
+						?>
 					</div>
 				<?php } ?>
 				<?php if ( 'on' === $use_bg_overlay ) { ?>
@@ -1398,6 +1425,8 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module_Type_Pos
 			'<div%3$s class="%1$s"%7$s%8$s>
 				%5$s
 				%4$s
+				%9$s
+				%10$s
 				<div class="et_pb_slides">
 					%2$s
 				</div>
@@ -1411,7 +1440,9 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module_Type_Pos
 			$parallax_image_background, // #5
 			$this->inner_shadow_back_compatibility( $render_slug ),
 			et_core_esc_previously( $data_background_layout ),
-			$muti_view_data_attr
+			$muti_view_data_attr,
+			et_core_esc_previously( $this->background_pattern() ), // #9
+			et_core_esc_previously( $this->background_mask() ) // #10
 		);
 
 		// Restore $wp_filter

@@ -606,6 +606,8 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 			'<div%3$s class="%2$s"%6$s>
 				%5$s
 				%4$s
+				%7$s
+				%8$s
 				%1$s
 			</div>',
 			$content,
@@ -613,7 +615,9 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 			$this->module_id(),
 			$video_background,
 			$parallax_image_background, // #5
-			et_core_esc_previously( $data_background_layout )
+			et_core_esc_previously( $data_background_layout ),
+			et_core_esc_previously( $this->background_pattern() ), // #7
+			et_core_esc_previously( $this->background_mask() ) // #8
 		);
 
 		return $output;

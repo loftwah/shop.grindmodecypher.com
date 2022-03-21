@@ -1775,6 +1775,8 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					<div class="%1$s">
 					%7$s
 					%6$s
+					%10$s
+					%11$s
 					<div class="et_pb_ajax_pagination_container">
 						%2$s
 					</div>
@@ -1788,7 +1790,9 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				$video_background,
 				$parallax_image_background,
 				$this->drop_shadow_back_compatibility( $render_slug ),
-				et_core_esc_previously( $data_background_layout )
+				et_core_esc_previously( $data_background_layout ),
+				et_core_esc_previously( $this->background_pattern() ), // #10
+				et_core_esc_previously( $this->background_mask() ) // #11
 			);
 		} else {
 			// Module classname
@@ -1812,6 +1816,8 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				'<div%4$s class="%1$s"%8$s>
 				%6$s
 				%5$s
+				%9$s
+				%10$s
 				<div class="et_pb_ajax_pagination_container">
 					%2$s
 				</div>
@@ -1823,7 +1829,9 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				$video_background, // #5
 				$parallax_image_background,
 				$this->drop_shadow_back_compatibility( $render_slug ),
-				et_core_esc_previously( $data_background_layout )
+				et_core_esc_previously( $data_background_layout ),
+				et_core_esc_previously( $this->background_pattern() ), // #9
+				et_core_esc_previously( $this->background_mask() ) // #10
 			);
 		}
 

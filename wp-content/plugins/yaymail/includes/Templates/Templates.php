@@ -121,7 +121,7 @@ class Templates {
 	public static function getCssFortmat() {
 		$yaymail_settings       = get_option( 'yaymail_settings' );
 		$colorTableItems        = isset( $yaymail_settings['background_color_table_items'] ) && ! empty( $yaymail_settings['background_color_table_items'] ) ? sanitize_text_field( $yaymail_settings['background_color_table_items'] ) : '#e5e5e5';
-		$colorTitleTableItems   = isset( $yaymail_settings['title_items_color'] ) && ! empty( $yaymail_settings['title_items_color'] ) ? sanitize_text_field( $yaymail_settings['title_items_color'] ) : '#96588a';
+		$colorTitleTableItems   = isset( $yaymail_settings['title_items_color'] ) && ! empty( $yaymail_settings['title_items_color'] ) ? sanitize_text_field( $yaymail_settings['title_items_color'] ) : '#7f54b3';
 		$colorContentTableItems = isset( $yaymail_settings['content_items_color'] ) && ! empty( $yaymail_settings['content_items_color'] ) ? sanitize_text_field( $yaymail_settings['content_items_color'] ) : '#636363';
 		$custom_css             = isset( $yaymail_settings['custom_css'] ) && ! empty( $yaymail_settings['custom_css'] ) ? sanitize_text_field( $yaymail_settings['custom_css'] ) : '';
 		$enableCustomCss        = isset( $yaymail_settings['enable_css_custom'] ) && ! empty( $yaymail_settings['enable_css_custom'] ) ? $yaymail_settings['enable_css_custom'] : '';
@@ -394,7 +394,7 @@ class Templates {
     }';
 
 		$css .= '.yaymail-yith-review-discounts h2 {
-      color: #96588a !important; 
+      color: #7f54b3 !important; 
     }';
 
 		$css .= '.yaymail-items-order-border tbody[data-shordcode="yaymail_items_border_content"],
@@ -431,7 +431,7 @@ class Templates {
 
 		$css .= '#web-ad422370-f762-4a26-92de-c4cf3821b8eb-order-item .yaymail_items_border_default h2,
     #web-ad422370-f762-4a26-92de-c4cf3821b8eb-order-item .yaymail_items_border_default h3 {
-      color: #96588a;
+      color: #7f54b3;
     }';
 		$css .= '.yaymail_items_border_custom h2,.yaymail_items_border_custom h3 {
       color: inherit !important;

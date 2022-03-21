@@ -623,6 +623,8 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 			'<div%4$s class="%2$s">
 				%6$s
 				%5$s
+				%8$s
+				%9$s
 				%1$s
 				<div class="et_pb_toggle_content clearfix"%7$s>%3$s</div>
 			</div>',
@@ -632,7 +634,9 @@ class ET_Builder_Module_Toggle extends ET_Builder_Module {
 			$this->module_id(),
 			$video_background, // #5
 			$parallax_image_background,
-			et_core_esc_previously( $multi_view_content )
+			et_core_esc_previously( $multi_view_content ),
+			et_core_esc_previously( $this->background_pattern() ), // #8
+			et_core_esc_previously( $this->background_mask() ) // #9
 		);
 
 		return $output;

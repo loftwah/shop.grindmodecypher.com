@@ -1,3 +1,175 @@
+version 4.15.1 ( updated 03-18-2022 )
+- Fixed a PHP error in Extra Theme which was caused by Background Settings helper class.
+- Updated Image Position option to show for all image repeat options in Background Settings.
+- Fixed a bug that was causing Button Background Settings to not render properly on front end.
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/module/helpers/Background.php
+
+version 4.15 ( updated 03-17-2022 )
+- Added the new Background Masks design setting. Background Masks frame your backgrounds to create new shapes and visual effects.
+- Added the new Background Patterns design setting. Background Patterns overlay your background elements, adding texture to your page.
+- Added new Background Image Size option.
+- Added new Background Image Offset options to allow for background image position adjustment.
+- The "Place Gradient Above Background Image" option now works with parallax background images.
+- Copying and pasting background options will now work correctly between standard and specialty sections.
+- Fixed duplication issue when multiple output elements are added on the same Woo module.
+- Fixed builder being laggy after adjusting draggable sizing.
+- Fixed PHP warning when Contains conditional logic for Custom Field is being used and the second custom field value is empty.
+- Fixed module animation doesn't work when Popup Maker plugin is active.
+	* core/components/data/Utils.php
+	* includes/builder/autoload.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/feature/I18n.php
+	* includes/builder/feature/background-masks/BackgroundMaskOptions.php
+	* includes/builder/feature/background-masks/BackgroundMaskStyleBase.php
+	* includes/builder/feature/background-masks/BackgroundMaskStyleFactory.php
+	* includes/builder/feature/background-masks/BackgroundPatternOptions.php
+	* includes/builder/feature/background-masks/BackgroundPatternStyleBase.php
+	* includes/builder/feature/background-masks/BackgroundPatternStyleFactory.php
+	* includes/builder/feature/background-masks/Functions.php
+	* includes/builder/feature/background-masks/MaskFields.php
+	* includes/builder/feature/background-masks/PatternFields.php
+	* includes/builder/feature/background-masks/mask/README.md
+	* includes/builder/feature/background-masks/mask/arch.php
+	* includes/builder/feature/background-masks/mask/bean.php
+	* includes/builder/feature/background-masks/mask/blades.php
+	* includes/builder/feature/background-masks/mask/caret.php
+	* includes/builder/feature/background-masks/mask/chevrons.php
+	* includes/builder/feature/background-masks/mask/corner-blob.php
+	* includes/builder/feature/background-masks/mask/corner-lake.php
+	* includes/builder/feature/background-masks/mask/corner-paint.php
+	* includes/builder/feature/background-masks/mask/corner-pill.php
+	* includes/builder/feature/background-masks/mask/corner-square.php
+	* includes/builder/feature/background-masks/mask/diagonal-bars-2.php
+	* includes/builder/feature/background-masks/mask/diagonal-bars.php
+	* includes/builder/feature/background-masks/mask/diagonal-pills.php
+	* includes/builder/feature/background-masks/mask/diagonal.php
+	* includes/builder/feature/background-masks/mask/ellipse.php
+	* includes/builder/feature/background-masks/mask/floating-squares.php
+	* includes/builder/feature/background-masks/mask/honeycomb.php
+	* includes/builder/feature/background-masks/mask/layer-blob.php
+	* includes/builder/feature/background-masks/mask/paint.php
+	* includes/builder/feature/background-masks/mask/rock-stack.php
+	* includes/builder/feature/background-masks/mask/square-stripes.php
+	* includes/builder/feature/background-masks/mask/triangles.php
+	* includes/builder/feature/background-masks/mask/wave.php
+	* includes/builder/feature/background-masks/pattern/3d-diamonds.php
+	* includes/builder/feature/background-masks/pattern/README.md
+	* includes/builder/feature/background-masks/pattern/checkerboard.php
+	* includes/builder/feature/background-masks/pattern/confetti.php
+	* includes/builder/feature/background-masks/pattern/crosses.php
+	* includes/builder/feature/background-masks/pattern/cubes.php
+	* includes/builder/feature/background-masks/pattern/diagonal-stripes-2.php
+	* includes/builder/feature/background-masks/pattern/diagonal-stripes.php
+	* includes/builder/feature/background-masks/pattern/diamonds.php
+	* includes/builder/feature/background-masks/pattern/honeycomb.php
+	* includes/builder/feature/background-masks/pattern/inverted-chevrons-2.php
+	* includes/builder/feature/background-masks/pattern/inverted-chevrons.php
+	* includes/builder/feature/background-masks/pattern/ogees.php
+	* includes/builder/feature/background-masks/pattern/pills.php
+	* includes/builder/feature/background-masks/pattern/pinwheel.php
+	* includes/builder/feature/background-masks/pattern/polka-dots.php
+	* includes/builder/feature/background-masks/pattern/scallops.php
+	* includes/builder/feature/background-masks/pattern/shippo.php
+	* includes/builder/feature/background-masks/pattern/smiles.php
+	* includes/builder/feature/background-masks/pattern/squares.php
+	* includes/builder/feature/background-masks/pattern/triangles.php
+	* includes/builder/feature/background-masks/pattern/tufted.php
+	* includes/builder/feature/background-masks/pattern/waves.php
+	* includes/builder/feature/background-masks/pattern/zig-zag-2.php
+	* includes/builder/feature/background-masks/pattern/zig-zag.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/functions.php
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/Accordion.php
+	* includes/builder/module/Audio.php
+	* includes/builder/module/BarCounters.php
+	* includes/builder/module/BarCountersItem.php
+	* includes/builder/module/Blog.php
+	* includes/builder/module/Blurb.php
+	* includes/builder/module/CircleCounter.php
+	* includes/builder/module/Code.php
+	* includes/builder/module/Comments.php
+	* includes/builder/module/ContactForm.php
+	* includes/builder/module/ContactFormItem.php
+	* includes/builder/module/CountdownTimer.php
+	* includes/builder/module/Cta.php
+	* includes/builder/module/Divider.php
+	* includes/builder/module/FilterablePortfolio.php
+	* includes/builder/module/FullwidthCode.php
+	* includes/builder/module/FullwidthHeader.php
+	* includes/builder/module/FullwidthImage.php
+	* includes/builder/module/FullwidthMap.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/FullwidthPortfolio.php
+	* includes/builder/module/FullwidthPostSlider.php
+	* includes/builder/module/FullwidthPostTitle.php
+	* includes/builder/module/FullwidthSlider.php
+	* includes/builder/module/Gallery.php
+	* includes/builder/module/Icon.php
+	* includes/builder/module/Image.php
+	* includes/builder/module/Login.php
+	* includes/builder/module/Map.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/NumberCounter.php
+	* includes/builder/module/Portfolio.php
+	* includes/builder/module/PostSlider.php
+	* includes/builder/module/PostTitle.php
+	* includes/builder/module/PostsNavigation.php
+	* includes/builder/module/PricingTables.php
+	* includes/builder/module/PricingTablesItem.php
+	* includes/builder/module/Search.php
+	* includes/builder/module/Sidebar.php
+	* includes/builder/module/Signup.php
+	* includes/builder/module/Slider.php
+	* includes/builder/module/SliderItem.php
+	* includes/builder/module/SocialMediaFollow.php
+	* includes/builder/module/Tabs.php
+	* includes/builder/module/TabsItem.php
+	* includes/builder/module/TeamMember.php
+	* includes/builder/module/Testimonial.php
+	* includes/builder/module/Text.php
+	* includes/builder/module/Toggle.php
+	* includes/builder/module/Video.php
+	* includes/builder/module/VideoSlider.php
+	* includes/builder/module/field/display-conditions/CustomField.php
+	* includes/builder/module/helpers/Background.php
+	* includes/builder/module/helpers/ResponsiveOptions.php
+	* includes/builder/module/settings/Migration.php
+	* includes/builder/module/settings/migration/BackgroundGradientOverlaysImage.php
+	* includes/builder/module/type/PostContent.php
+	* includes/builder/module/woocommerce/Breadcrumb.php
+	* includes/builder/module/woocommerce/CartNotice.php
+	* includes/builder/module/woocommerce/CheckoutPaymentInfo.php
+	* includes/builder/module/woocommerce/Shop.php
+	* includes/builder/plugin-compat/popup-maker.php
+	* includes/builder/scripts/frontend/scripts.js
+
+version 4.14.9 ( updated 03-10-2022 )
+- Fixed a compatibility issue with WP Offload Media where one of the plugin's methods was renamed causing a fatal error in our products.
+- Exposed hasValue helper for third-party extensions.
+- Fixed search module input placeholder hidden with field text alignment set to right.
+- Fixed a bug which were causing Background Settings on Responsive mode to not display properly on some cases.
+- PHP 7.4 or higher is now recommended for performance and security reasons. Divi Help & Support Center's System Status card has been updated to reflect this.
+- Fixed Presets pop-up window overflow issue when items exceeded viewport height.
+- Changed 'Improve Google Fonts Loading' option default to 'off'.
+	* core/components/Portability.php
+	* core/components/SupportCenter.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/feature/dynamic-assets/assets/js/search.js
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/feature/gutenberg/utils/Editor.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/module/woocommerce/CheckoutBilling.php
+	* includes/builder/plugin-compat/amazon-s3-and-cloudfront.php
+	* includes/builder/scripts/frontend/scripts.js
+	* options_divi.php
+
 version 4.14.8 ( updated 02-17-2022 )
 - Fixed issue where the google maps are not loading in the Map Module in the VB.
 - Performance improved by preventing unnecessary re-renderings of some components.

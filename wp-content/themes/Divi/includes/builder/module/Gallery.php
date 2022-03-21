@@ -607,14 +607,16 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 		$data_background_layout = et_pb_background_layout_options()->get_background_layout_attrs( $this->props );
 
 		$output = sprintf(
-			'<div%1$s class="%2$s"%4$s>%5$s%6$s
+			'<div%1$s class="%2$s"%4$s>%5$s%6$s%7$s%8$s
 				<div class="et_pb_gallery_items et_post_gallery clearfix" data-per_page="%3$d">',
 			$this->module_id(),
 			$this->module_classname( $render_slug ),
 			esc_attr( $posts_number ),
 			et_core_esc_previously( $data_background_layout ),
 			$parallax_image_background,
-			$video_background
+			$video_background,
+			et_core_esc_previously( $this->background_pattern() ), // #7
+			et_core_esc_previously( $this->background_mask() ) // #8
 		);
 
 		// Images: Add CSS Filters and Mix Blend Mode rules (if set)

@@ -946,6 +946,8 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 			'<div%5$s class="%4$s"%8$s>
 				%7$s
 				%6$s
+				%9$s
+				%10$s
 				<div class="et_pb_blurb_content">
 					%2$s
 					<div class="et_pb_blurb_container">
@@ -961,7 +963,9 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 			$this->module_id(), // #5
 			$video_background,
 			$parallax_image_background,
-			et_core_esc_previously( $data_background_layout )
+			et_core_esc_previously( $data_background_layout ),
+			et_core_esc_previously( $this->background_pattern() ), // #9
+			et_core_esc_previously( $this->background_mask() ) // #10
 		);
 
 		return $output;

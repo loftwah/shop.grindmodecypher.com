@@ -1257,6 +1257,7 @@ function et_builder_wc_disable_default_layout() {
  * any suitable Woo modules.
  *
  * @since 4.14.5
+ * @since 4.15.0 Move relocation process into outside callbacks loop to avoid duplication.
  */
 function et_builder_wc_relocate_single_product_summary() {
 	global $post, $wp_filter;
@@ -1334,6 +1335,8 @@ function et_builder_wc_relocate_single_product_summary() {
 	if ( ! $is_copy_needed ) {
 		return;
 	}
+
+	$modules_with_relocation = array();
 
 	/**
 	 * Filters the list of ignored `woocommerce_single_product_summary` hook callbacks.
@@ -1501,14 +1504,21 @@ function et_builder_wc_relocate_single_product_summary() {
 				remove_action( 'woocommerce_single_product_summary', $callback_function, $callback_priority );
 			}
 
-			// Finally, copy and paste it to suitable location & module.
-			add_action( "et_builder_wc_single_product_summary_{$output_location}_{$module_slug}", $callback_function );
+			// And, copy and paste it to suitable location & module.
+			add_action( "et_builder_wc_single_product_summary_{$output_location}_{$module_slug}", $callback_function, $output_priority );
 
-			// Builder - Move it to suitable Woo modules before and/or after components.
-			add_filter( "{$module_slug}_fb_before_after_components", 'et_builder_wc_single_product_summary_before_after_components', $output_priority, 3 );
+			$modules_with_relocation[] = $module_slug;
+		}
+	}
 
-			// FE - Move it to suitable Woo modules shortcode output.
-			add_filter( "{$module_slug}_shortcode_output", 'et_builder_wc_single_product_summary_module_output', $output_priority, 3 );
+	// Finally, move it to suitable Woo modules.
+	if ( ! empty( $modules_with_relocation ) ) {
+		foreach ( $modules_with_relocation as $module_slug ) {
+			// Builder - Before and/or after components.
+			add_filter( "{$module_slug}_fb_before_after_components", 'et_builder_wc_single_product_summary_before_after_components', 10, 3 );
+
+			// FE - Shortcode output.
+			add_filter( "{$module_slug}_shortcode_output", 'et_builder_wc_single_product_summary_module_output', 10, 3 );
 		}
 	}
 }

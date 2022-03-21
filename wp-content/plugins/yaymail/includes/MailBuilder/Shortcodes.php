@@ -50,10 +50,12 @@ class Shortcodes {
 				'items_downloadable_product',
 				'items_border',
 				'items',
+				'items_products_quantity_price',
 				'order_date',
 				'order_fee',
 				'order_id',
 				'order_link',
+				'order_link_string',
 				'order_number',
 				'order_refund',
 				'order_sub_total',
@@ -428,7 +430,7 @@ class Shortcodes {
 			}
 			if ( ! empty( $args ) ) {
 				$postID               = CustomPostType::postIDByTemplate( $this->template );
-				$text_link_color      = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A';
+				$text_link_color      = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 				$yaymail_settings     = get_option( 'yaymail_settings' );
 				$yaymail_informations = array(
 					'post_id'          => $postID,
@@ -437,7 +439,7 @@ class Shortcodes {
 					'general_settings' => array(
 						'tableWidth'           => $yaymail_settings['container_width'],
 						'emailBackgroundColor' => get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : '#ECECEC',
-						'textLinkColor'        => get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A',
+						'textLinkColor'        => get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3',
 					),
 				);
 				if ( isset( $args['email'] ) || isset( $args['admin_email'] ) || isset( $args['user'] ) ) {
@@ -664,7 +666,7 @@ class Shortcodes {
 
 					$result->elements                    = Helper::unsanitize_array( $updateElement->merge_new_props_to_elements( $list_elements ) );
 					$result->emailBackgroundColor        = get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : 'rgb(236, 236, 236)';
-					$result->emailTextLinkColor          = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A';
+					$result->emailTextLinkColor          = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 					$result->titleShipping               = get_post_meta( $postID, '_email_title_shipping', true ) ? get_post_meta( $postID, '_email_title_shipping', true ) : 'Shipping Address';
 					$result->titleBilling                = get_post_meta( $postID, '_email_title_billing', true ) ? get_post_meta( $postID, '_email_title_billing', true ) : 'Billing Address';
 					$result->orderTitle                  = get_post_meta( $postID, '_yaymail_email_order_item_title', true );
@@ -744,10 +746,10 @@ class Shortcodes {
 			'general_settings' => array(
 				'tableWidth'           => $yaymail_settings['container_width'],
 				'emailBackgroundColor' => get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : '#ECECEC',
-				'textLinkColor'        => get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A',
+				'textLinkColor'        => get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3',
 			),
 		);
-		$text_link_color        = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A';
+		$text_link_color        = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 		if ( $order->get_billing_phone() ) {
 			$billing_address .= "<br/> <a href='tel:" . esc_html( $order->get_billing_phone() ) . "' style='color:" . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>" . esc_html( $order->get_billing_phone() ) . '</a>';
 		}
@@ -800,7 +802,8 @@ class Shortcodes {
 		// Define shortcode from plugin addon
 		$shortcode = apply_filters( 'yaymail_do_shortcode', $shortcode, $yaymail_informations, $this->args_email );
 
-		$shortcode['[yaymail_items]'] = $this->orderItems( $items, $sent_to_admin );
+		$shortcode['[yaymail_items]'] = $this->orderItems( $items, $sent_to_admin, '', true );
+		$shortcode['[yaymail_items_products_quantity_price]'] = $this->orderItems( $items, $sent_to_admin, '', false );
 		if ( null != $created_date ) {
 			$shortcode['[yaymail_order_date]'] = $order->get_date_created()->date_i18n( wc_date_format() );
 		} else {
@@ -814,6 +817,7 @@ class Shortcodes {
 		}
 		$shortcode['[yaymail_order_link]'] = '<a href="' . esc_url( $order_url ) . '" style="color:' . esc_attr( $text_link_color ) . ';">' . esc_html__( 'Order', 'yaymail' ) . '</a>';
 		$shortcode['[yaymail_order_link]'] = str_replace( '[yaymail_order_id]', $order->get_id(), $shortcode['[yaymail_order_link]'] );
+		$shortcode['[yaymail_order_link_string]'] = esc_url( $order_url );
 		if ( ! empty( $order->get_order_number() ) ) {
 			$shortcode['[yaymail_order_number]'] = $order->get_order_number();
 		} else {
@@ -1119,7 +1123,7 @@ class Shortcodes {
 	public function defaultSampleOrderData( $sent_to_admin = '' ) {
 		$current_user         = wp_get_current_user();
 		$postID               = CustomPostType::postIDByTemplate( $this->template );
-		$text_link_color      = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A';
+		$text_link_color      = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 		$billing_address      = "John Doe<br/>YayCommerce<br/>7400 Edwards Rd<br/>Edwards Rd<br/><a href='tel:+18587433828' style='color: " . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>(910) 529-1147</a><br/>";
 		$shipping_address     = "John Doe<br/>YayCommerce<br/>755 E North Grove Rd<br/>Mayville, Michigan<br/><a href='tel:+18587433828' style='color: " . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>(910) 529-1147</a><br/>";
 		$user_id              = get_current_user_id();
@@ -1131,7 +1135,7 @@ class Shortcodes {
 			'general_settings' => array(
 				'tableWidth'           => $yaymail_settings['container_width'],
 				'emailBackgroundColor' => get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : '#ECECEC',
-				'textLinkColor'        => get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A',
+				'textLinkColor'        => get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3',
 			),
 		);
 
@@ -1156,11 +1160,13 @@ class Shortcodes {
 		// Define shortcode from plugin addon
 		$shortcode = apply_filters( 'yaymail_do_shortcode', $shortcode, $yaymail_informations, '' );
 
-		$shortcode['[yaymail_items]']               = $this->orderItems( array(), $sent_to_admin, 'sampleOrder' );
+		$shortcode['[yaymail_items]']               = $this->orderItems( array(), $sent_to_admin, 'sampleOrder', true );
+		$shortcode['[yaymail_items_products_quantity_price]'] = $this->orderItems( $items, $sent_to_admin, 'sampleOrder',false );
 		$shortcode['[yaymail_order_date]']          = date_i18n( wc_date_format() );
 		$shortcode['[yaymail_order_fee]']           = 0;
 		$shortcode['[yaymail_order_id]']            = 1;
 		$shortcode['[yaymail_order_link]']          = '<a href="" style="color:' . esc_attr( $text_link_color ) . ';">' . esc_html__( 'Order', 'yaymail' ) . '</a>';
+		$shortcode['[yaymail_order_link_string]']   = esc_url( get_home_url() );
 		$shortcode['[yaymail_order_number]']        = '1';
 		$shortcode['[yaymail_order_refund]']        = 0;
 		$shortcode['[yaymail_order_sub_total]']     = wc_price( '18.00' );
@@ -1259,6 +1265,8 @@ class Shortcodes {
 	}
 
 	public function ordetItemTables( $order, $default_args ) {
+		$postID               = CustomPostType::postIDByTemplate( $this->template );
+		$text_link_color      = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 		$items            = $order->get_items();
 		$path             = YAYMAIL_PLUGIN_PATH . 'views/templates/emails/email-order-items.php';
 		$yaymail_settings = get_option( 'yaymail_settings' );
@@ -1282,6 +1290,7 @@ class Shortcodes {
 			'plain_text'                    => $default_args['plain_text'],
 			'sent_to_admin'                 => $default_args['sent_to_admin'],
 			'order_item_table_border_color' => isset( $yaymail_settings['background_color_table_items'] ) ? $yaymail_settings['background_color_table_items'] : '#dddddd',
+		    'text_link_color'               => $text_link_color,
 		);
 		include $path;
 	}
@@ -1403,7 +1412,7 @@ class Shortcodes {
 
 	public function billingShippingAddress( $atts, $order ) {
 		$postID          = CustomPostType::postIDByTemplate( $this->template );
-		$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A';
+		$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 		if ( null !== $order ) {
 			$shipping_address = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->shipping_address : $order->get_formatted_shipping_address();
 			$billing_address  = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->billing_address : $order->get_formatted_billing_address();
@@ -1430,7 +1439,7 @@ class Shortcodes {
 	/* Billing Shipping Address - start */
 	public function billingShippingAddressTitle( $atts, $order ) {
 		$postID          = CustomPostType::postIDByTemplate( $this->template );
-		$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A';
+		$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 		if ( null !== $order ) {
 			$shipping_address = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->shipping_address : $order->get_formatted_shipping_address();
 			$billing_address  = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->billing_address : $order->get_formatted_billing_address();
@@ -1468,7 +1477,7 @@ class Shortcodes {
 
 	public function billingShippingAddressContent( $atts, $order ) {
 		$postID          = CustomPostType::postIDByTemplate( $this->template );
-		$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588A';
+		$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 		if ( null !== $order ) {
 			$shipping_address = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->shipping_address : $order->get_formatted_shipping_address();
 			$billing_address  = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->billing_address : $order->get_formatted_billing_address();
@@ -1477,6 +1486,10 @@ class Shortcodes {
 			}
 			if ( $order->get_billing_email() ) {
 				$billing_address .= "<br/><a href='mailto:" . esc_html( $order->get_billing_email() ) . "' style='color:" . esc_attr( $text_link_color ) . ";font-weight: normal; text-decoration: underline;'>" . esc_html( $order->get_billing_email() ) . '</a>';
+			}
+			
+			if ( $order->get_shipping_phone() ) {
+				$shipping_address .= "<br/> <a href='tel:" . esc_html( $order->get_shipping_phone() ) . "' style='color:" . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>" . esc_html( $order->get_shipping_phone() ) . '</a>';
 			}
 		} else {
 			$billing_address  = "John Doe<br/>YayCommerce<br/>7400 Edwards Rd<br/>Edwards Rd<br/><a href='tel:+18587433828' style='color: " . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>(910) 529-1147</a><br/>";
@@ -1492,7 +1505,7 @@ class Shortcodes {
 	}
 	/* Billing Shipping Address - end */
 
-	public function orderItems( $items, $sent_to_admin = '', $checkOrder = '' ) {
+	public function orderItems( $items, $sent_to_admin = '', $checkOrder = '', $is_display = true ) {
 		if ( 'sampleOrder' === $checkOrder ) {
 			ob_start();
 			$path  = YAYMAIL_PLUGIN_PATH . 'views/templates/emails/sampleOrder/email-order-details.php';

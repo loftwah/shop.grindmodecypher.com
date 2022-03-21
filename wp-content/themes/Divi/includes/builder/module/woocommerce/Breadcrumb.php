@@ -99,6 +99,10 @@ class ET_Builder_Module_Woocommerce_Breadcrumb extends ET_Builder_Module {
 				),
 			),
 			'background'     => array(
+				'css'      => array(
+					// Backgrounds need to be applied to module wrapper.
+					'main' => '%%order_class%%.et_pb_wc_breadcrumb',
+				),
 				'settings' => array(
 					'color' => 'alpha',
 				),

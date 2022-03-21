@@ -1194,6 +1194,8 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			'<div%2$s class="%3$s"%8$s %6$s data-shortcode_index="%7$s">
 				%5$s
 				%4$s
+				%9$s
+				%10$s
 				%1$s
 			</div>',
 			/* 1$s */ $this->get_shop( array(), array(), array( 'id' => $this->get_the_ID() ) ),
@@ -1203,7 +1205,9 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			/* 5$s */ $parallax_image_background,
 			/* 6$s */ et_core_esc_previously( $overlay_attributes ),
 			/* 7$s */ esc_attr( $shop_order ),
-			/* 8$s */ $multi_view_data_attr
+			/* 8$s */ $multi_view_data_attr,
+			/* 9$s */ et_core_esc_previously( $this->background_pattern() ),
+			/* 10$s */ et_core_esc_previously( $this->background_mask() )
 		);
 
 		return $output;

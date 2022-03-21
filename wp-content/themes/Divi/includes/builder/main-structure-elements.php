@@ -89,6 +89,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'use_background_color_gradient' => true,
 				'use_background_video'          => true,
 				'use_background_color_reset'    => 'fields_only',
+				'use_background_pattern'        => true,
+				'use_background_mask'           => true,
 				'css'                           => array(
 					'important' => 'all',
 					'main'      => 'div.et_pb_section%%order_class%%',
@@ -315,8 +317,12 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'background_color'                         => array(),
 				'bg_img'                                   => array(),
 				'background_size'                          => array(),
-				'background_position'                      => array(),
+				'background_image_width'                   => array(),
+				'background_image_height'                  => array(),
 				'background_repeat'                        => array(),
+				'background_position'                      => array(),
+				'background_horizontal_offset'             => array(),
+				'background_vertical_offset'               => array(),
 				'background_blend'                         => array(),
 				'padding_top_bottom_link'                  => array(),
 				'padding_left_right_link'                  => array(),
@@ -329,6 +335,30 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'background_color_gradient_start_position' => array(),
 				'background_color_gradient_end_position'   => array(),
 				'background_color_gradient_overlays_image' => array(),
+				'background_pattern_style'                 => array(),
+				'background_enable_pattern_style'          => array(),
+				'background_pattern_color'                 => array(),
+				'background_pattern_transform'             => array(),
+				'background_pattern_size'                  => array(),
+				'background_pattern_width'                 => array(),
+				'background_pattern_height'                => array(),
+				'background_pattern_repeat_origin'         => array(),
+				'background_pattern_horizontal_offset'     => array(),
+				'background_pattern_vertical_offset'       => array(),
+				'background_pattern_repeat'                => array(),
+				'background_pattern_blend_mode'            => array(),
+				'background_mask_style'                    => array(),
+				'background_mask_color'                    => array(),
+				'background_mask_transform'                => array(),
+				'background_mask_aspect_ratio'             => array(),
+				'background_mask_size'                     => array(),
+				'background_mask_width'                    => array(),
+				'background_mask_height'                   => array(),
+				'background_mask_position'                 => array(),
+				'background_mask_horizontal_offset'        => array(),
+				'background_mask_vertical_offset'          => array(),
+				'background_mask_blend_mode'               => array(),
+				'background_enable_mask_style'             => array(),
 				'background_video_mp4'                     => array(
 					'computed_affects' => array(
 						'__video_background',
@@ -473,44 +503,60 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 	}
 
 	/**
-	 * Get parallax image background.
+	 * Generate parallax image background markup.
 	 *
 	 * @since 3.24.1
-	 * @param string $base_name Background base.
+	 * @since 4.15.0 Added $props property.
 	 *
-	 * @return HTML Parallax backgrounds markup.
+	 * @param string $base_name Background base name.
+	 * @param array  $props Props (optional).
+	 *
+	 * @return string
 	 */
-	public function get_parallax_image_background( $base_name = 'background' ) {
-		$attr_prefix = "{$base_name}_";
+	public function get_parallax_image_background( $base_name = 'background', $props = array() ) {
+		$props         = empty( $props ) ? $this->props : $props;
+		$attr_prefix   = "{$base_name}_";
+		$custom_prefix = 'background' === $base_name ? '' : "{$base_name}_";
 
 		$parallax_processed  = array();
 		$parallax_background = '';
 		$hover_suffix        = et_pb_hover_options()->get_suffix();
-		$preview_modes       = array( $hover_suffix, '_phone', '_tablet', '' );
+		$sticky_suffix       = et_pb_sticky_options()->get_suffix();
+		$preview_modes       = array( $hover_suffix, $sticky_suffix, '_phone', '_tablet', '' );
 
 		// Featured Image as Background.
 		$featured_image     = '';
 		$featured_placement = '';
 		$featured_image_src = '';
 		if ( $this->featured_image_background ) {
-			$featured_image         = self::$_->array_get( $this->props, 'featured_image', '' );
-			$featured_placement     = self::$_->array_get( $this->props, 'featured_placement', '' );
-			$featured_image_src_obj = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'full' );
+			$featured_image         = self::$_->array_get( $props, 'featured_image', '' );
+			$featured_placement     = self::$_->array_get( $props, 'featured_placement', '' );
+			$featured_image_src_obj = wp_get_attachment_image_src( get_post_thumbnail_id( self::_get_main_post_id() ), 'full' );
 			$featured_image_src     = isset( $featured_image_src_obj[0] ) ? $featured_image_src_obj[0] : '';
 		}
 
+		// Parallax Gradient.
+		$background_options = et_pb_background_options();
+		$is_gradient_on     = false;
+
 		foreach ( $preview_modes as $suffix ) {
-			$is_hover = $hover_suffix === $suffix;
+			$is_hover  = $hover_suffix === $suffix;
+			$is_sticky = $sticky_suffix === $suffix;
 
 			// A. Bail early if hover or responsive settings disabled on mobile/hover.
 			if ( '' !== $suffix ) {
 				// Ensure responsive settings is enabled on mobile.
-				if ( ! $is_hover && ! et_pb_responsive_options()->is_responsive_enabled( $this->props, $base_name ) ) {
+				if ( ! $is_hover && ! $is_sticky && ! et_pb_responsive_options()->is_responsive_enabled( $props, $base_name ) ) {
 					continue;
 				}
 
 				// Ensure hover settings is enabled.
-				if ( $is_hover && ! et_pb_hover_options()->is_enabled( $base_name, $this->props ) ) {
+				if ( $is_hover && ! et_pb_hover_options()->is_enabled( $base_name, $props ) ) {
+					continue;
+				}
+
+				// Ensure sticky setting is enabled.
+				if ( $is_sticky && ! et_pb_sticky_options()->is_enabled( $base_name, $props ) ) {
 					continue;
 				}
 			}
@@ -518,16 +564,38 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			// Prepare preview mode.
 			$mode = '' !== $suffix ? str_replace( '_', '', $suffix ) : 'desktop';
 			$mode = $is_hover ? 'hover' : $mode;
+			$mode = $is_sticky ? 'sticky' : $mode;
 
 			// B.1. Get inherited background value.
-			$background_image = et_pb_responsive_options()->get_inheritance_background_value( $this->props, "{$attr_prefix}image", $mode, $base_name, $this->fields_unprocessed );
-			$parallax         = $is_hover ? et_pb_hover_options()->get_raw_value( 'parallax', $this->props ) : et_pb_responsive_options()->get_any_value( $this->props, "parallax{$suffix}", '', true );
-			$parallax_method  = $is_hover ? et_pb_hover_options()->get_raw_value( 'parallax_method', $this->props ) : et_pb_responsive_options()->get_any_value( $this->props, "parallax_method{$suffix}", '', true );
+			$use_gradient_options      = et_pb_responsive_options()->get_inheritance_background_value( $props, "use_{$base_name}_color_gradient", $mode, $base_name, $this->fields_unprocessed );
+			$background_image          = et_pb_responsive_options()->get_inheritance_background_value( $props, "{$attr_prefix}image", $mode, $base_name, $this->fields_unprocessed );
+			$parallax                  = et_pb_responsive_options()->get_any_value( $props, "parallax{$suffix}", '', true );
+			$parallax_method           = et_pb_responsive_options()->get_any_value( $props, "parallax_method{$suffix}", '', true );
+			$gradient_overlays_image   = et_pb_responsive_options()->get_any_value( $props, "{$base_name}_color_gradient_overlays_image{$suffix}", '', true );
+			$background_gradient_blend = et_pb_responsive_options()->get_any_value( $props, "{$base_name}_blend{$suffix}", 'normal', true );
 
 			// B.2. Set default value for parallax and parallax method on hover when they are empty.
-			if ( $is_hover ) {
-				$parallax        = empty( $parallax ) ? et_pb_responsive_options()->get_any_value( $this->props, 'parallax', '', true ) : $parallax;
-				$parallax_method = empty( $parallax_method ) ? et_pb_responsive_options()->get_any_value( $this->props, 'parallax_method', '', true ) : $parallax_method;
+			if ( $is_hover || $is_sticky ) {
+				$parallax                  = et_pb_hover_options()->get_raw_value( "{$custom_prefix}parallax", $props, $parallax );
+				$parallax_method           = et_pb_hover_options()->get_raw_value( "{$custom_prefix}parallax_method", $props, $parallax_method );
+				$gradient_overlays_image   = et_pb_hover_options()->get_raw_value( "{$base_name}_color_gradient_overlays_image", $props, $gradient_overlays_image );
+				$background_gradient_blend = et_pb_hover_options()->get_raw_value( "{$base_name}_blend", $props, $background_gradient_blend );
+
+				$gradient_properties_desktop = $background_options->get_gradient_properties( $props, $base_name, '' );
+				$gradient_properties         = $background_options->get_gradient_mode_properties(
+					$mode,
+					$props,
+					$base_name,
+					$gradient_properties_desktop
+				);
+				$background_gradient_style   = $background_options->get_gradient_style( $gradient_properties );
+			} else {
+				$gradient_properties       = $background_options->get_gradient_properties( $props, $base_name, $suffix );
+				$background_gradient_style = $background_options->get_gradient_style( $gradient_properties );
+			}
+
+			if ( 'on' === $use_gradient_options && 'on' === $gradient_overlays_image && 'on' === $parallax ) {
+				$is_gradient_on = '' !== $background_gradient_style;
 			}
 
 			// B.3. Override background image with featured image if needed.
@@ -536,53 +604,95 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			}
 
 			// C.1. Parallax BG Class to inform if other modes exist.
-			$parallax_classname = array();
+			$parallax_classname          = array();
+			$parallax_gradient_classname = array();
 			if ( ( '_tablet' === $suffix || '' === $suffix ) && in_array( '_phone', $parallax_processed, true ) ) {
-				$parallax_classname[] = 'et_parallax_bg_phone_exist';
+				$parallax_classname[]          = 'et_parallax_bg_phone_exist';
+				$parallax_gradient_classname[] = 'et_parallax_gradient_phone_exist';
 			}
 
 			if ( '' === $suffix && in_array( '_tablet', $parallax_processed, true ) ) {
-				$parallax_classname[] = 'et_parallax_bg_tablet_exist';
+				$parallax_classname[]          = 'et_parallax_bg_tablet_exist';
+				$parallax_gradient_classname[] = 'et_parallax_gradient_tablet_exist';
 			}
 
 			if ( in_array( $hover_suffix, $parallax_processed, true ) ) {
-				$parallax_classname[] = 'et_parallax_bg_hover_exist';
+				$parallax_classname[]          = 'et_parallax_bg_hover_exist';
+				$parallax_gradient_classname[] = 'et_parallax_gradient_hover_exist';
+			}
+
+			if ( in_array( $sticky_suffix, $parallax_processed, true ) ) {
+				$parallax_classname[]          = 'et_parallax_bg_sticky_exist';
+				$parallax_gradient_classname[] = 'et_parallax_gradient_sticky_exist';
 			}
 
 			// C.2. Set up parallax class and wrapper.
 			if ( '' !== $background_image && 'on' === $parallax ) {
-				$parallax_classname[] = 'et_parallax_bg';
+				$parallax_classname[]          = 'et_parallax_bg';
+				$parallax_gradient_classname[] = 'et_parallax_gradient';
 
 				if ( 'off' === $parallax_method ) {
-					$parallax_classname[] = 'et_pb_parallax_css';
+					$parallax_classname[]          = 'et_pb_parallax_css';
+					$parallax_gradient_classname[] = 'et_pb_parallax_css';
 
-					$inner_shadow = $this->props['inner_shadow'];
-					if ( 'off' !== $inner_shadow ) {
+					if ( isset( $props['inner_shadow'] ) && 'off' !== $props['inner_shadow'] ) {
 						$parallax_classname[] = 'et_pb_inner_shadow';
 					}
 				}
 
 				// Parallax BG Class with suffix.
 				if ( '' !== $suffix ) {
-					$parallax_classname[] = "et_parallax_bg{$suffix}";
+					$parallax_classname[]          = "et_parallax_bg{$suffix}";
+					$parallax_gradient_classname[] = "et_parallax_gradient{$suffix}";
 				}
 
-				$parallax_background .= sprintf(
-					'<div class="et_parallax_bg_wrap"><div
+				$background_gradient_image = sprintf(
+					'background-image: %1$s;',
+					esc_attr( $background_gradient_style )
+				);
+				$background_gradient_blend = 'normal' !== $background_gradient_blend
+					? sprintf(
+						'mix-blend-mode: %1$s;',
+						esc_attr( $background_gradient_blend )
+					)
+					: '';
+				$parallax_gradient         = sprintf(
+					'<span
 						class="%1$s"
-						style="background-image: url(%2$s);"
-					></div></div>',
-					esc_attr( implode( ' ', $parallax_classname ) ),
-					esc_url( $background_image )
+						style="%2$s%3$s"
+					></span>',
+					esc_attr( implode( ' ', $parallax_gradient_classname ) ), // #1
+					et_core_esc_previously( $background_gradient_image ), // #2
+					et_core_esc_previously( $background_gradient_blend ) // #3
 				);
 
+				$parallax_background .= sprintf(
+					'<span class="et_parallax_bg_wrap"><span
+						class="%1$s"
+						style="background-image: url(%2$s);"
+					></span>%3$s</span>',
+					esc_attr( implode( ' ', $parallax_classname ) ),
+					esc_url( $background_image ),
+					$is_gradient_on ? et_core_esc_previously( $parallax_gradient ) : ''
+				);
+
+				// Cleanup.
+				$background_gradient_image = null;
+				$background_gradient_blend = null;
+				$parallax_gradient         = null;
+
 				// set `.et_parallax_bg_wrap` border-radius.
-				et_set_parallax_bg_wrap_border_radius( $this->props, $this->slug, '%%order_class%%' );
+				et_set_parallax_bg_wrap_border_radius( $props, $this->slug, '%%order_class%%' );
 			}
 
 			// C.3. Hover parallax class.
 			if ( '' !== $background_image && $is_hover ) {
 				$this->add_classname( 'et_pb_section_parallax_hover' );
+			}
+
+			// C.4. Sticky parallax class.
+			if ( '' !== $background_image && $is_sticky ) {
+				$this->add_classname( 'et_pb_section_parallax_sticky' );
 			}
 
 			array_push( $parallax_processed, $suffix );
@@ -616,71 +726,83 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		$parallax_method                              = $this->props['parallax_method'];
 		$fullwidth                                    = $this->props['fullwidth'];
 		$specialty                                    = $this->props['specialty'];
-		$background_color_1                           = $this->props['background_color_1'];
-		$background_color_2                           = $this->props['background_color_2'];
-		$background_color_3                           = $this->props['background_color_3'];
-		$bg_img_1                                     = $this->props['bg_img_1'];
-		$bg_img_2                                     = $this->props['bg_img_2'];
-		$bg_img_3                                     = $this->props['bg_img_3'];
-		$background_size_1                            = $this->props['background_size_1'];
-		$background_size_2                            = $this->props['background_size_2'];
-		$background_size_3                            = $this->props['background_size_3'];
-		$background_position_1                        = $this->props['background_position_1'];
-		$background_position_2                        = $this->props['background_position_2'];
-		$background_position_3                        = $this->props['background_position_3'];
-		$background_repeat_1                          = $this->props['background_repeat_1'];
-		$background_repeat_2                          = $this->props['background_repeat_2'];
-		$background_repeat_3                          = $this->props['background_repeat_3'];
-		$background_blend_1                           = $this->props['background_blend_1'];
-		$background_blend_2                           = $this->props['background_blend_2'];
-		$background_blend_3                           = $this->props['background_blend_3'];
-		$parallax_1                                   = $this->props['parallax_1'];
-		$parallax_2                                   = $this->props['parallax_2'];
-		$parallax_3                                   = $this->props['parallax_3'];
-		$parallax_method_1                            = $this->props['parallax_method_1'];
-		$parallax_method_2                            = $this->props['parallax_method_2'];
-		$parallax_method_3                            = $this->props['parallax_method_3'];
-		$padding_top_1                                = $this->props['padding_top_1'];
-		$padding_right_1                              = $this->props['padding_right_1'];
-		$padding_bottom_1                             = $this->props['padding_bottom_1'];
-		$padding_left_1                               = $this->props['padding_left_1'];
-		$padding_top_2                                = $this->props['padding_top_2'];
-		$padding_right_2                              = $this->props['padding_right_2'];
-		$padding_bottom_2                             = $this->props['padding_bottom_2'];
-		$padding_left_2                               = $this->props['padding_left_2'];
-		$padding_top_3                                = $this->props['padding_top_3'];
-		$padding_right_3                              = $this->props['padding_right_3'];
-		$padding_bottom_3                             = $this->props['padding_bottom_3'];
-		$padding_left_3                               = $this->props['padding_left_3'];
-		$padding_1_tablet                             = $this->props['padding_1_tablet'];
-		$padding_2_tablet                             = $this->props['padding_2_tablet'];
-		$padding_3_tablet                             = $this->props['padding_3_tablet'];
-		$padding_1_phone                              = $this->props['padding_1_phone'];
-		$padding_2_phone                              = $this->props['padding_2_phone'];
-		$padding_3_phone                              = $this->props['padding_3_phone'];
-		$padding_1_last_edited                        = $this->props['padding_1_last_edited'];
-		$padding_2_last_edited                        = $this->props['padding_2_last_edited'];
-		$padding_3_last_edited                        = $this->props['padding_3_last_edited'];
+		$background_color_1                           = isset( $this->props['background_color_1'] ) ? $this->props['background_color_1'] : '';
+		$background_color_2                           = isset( $this->props['background_color_2'] ) ? $this->props['background_color_2'] : '';
+		$background_color_3                           = isset( $this->props['background_color_3'] ) ? $this->props['background_color_3'] : '';
+		$bg_img_1                                     = isset( $this->props['bg_img_1'] ) ? $this->props['bg_img_1'] : '';
+		$bg_img_2                                     = isset( $this->props['bg_img_2'] ) ? $this->props['bg_img_2'] : '';
+		$bg_img_3                                     = isset( $this->props['bg_img_3'] ) ? $this->props['bg_img_3'] : '';
+		$background_size_1                            = isset( $this->props['background_size_1'] ) ? $this->props['background_size_1'] : '';
+		$background_size_2                            = isset( $this->props['background_size_2'] ) ? $this->props['background_size_2'] : '';
+		$background_size_3                            = isset( $this->props['background_size_3'] ) ? $this->props['background_size_3'] : '';
+		$background_image_width_1                     = isset( $this->props['background_image_width_1'] ) ? $this->props['background_image_width_1'] : '';
+		$background_image_width_2                     = isset( $this->props['background_image_width_2'] ) ? $this->props['background_image_width_2'] : '';
+		$background_image_width_3                     = isset( $this->props['background_image_width_3'] ) ? $this->props['background_image_width_3'] : '';
+		$background_image_height_1                    = isset( $this->props['background_image_height_1'] ) ? $this->props['background_image_height_1'] : '';
+		$background_image_height_2                    = isset( $this->props['background_image_height_2'] ) ? $this->props['background_image_height_2'] : '';
+		$background_image_height_3                    = isset( $this->props['background_image_height_3'] ) ? $this->props['background_image_height_3'] : '';
+		$background_position_1                        = isset( $this->props['background_position_1'] ) ? $this->props['background_position_1'] : '';
+		$background_position_2                        = isset( $this->props['background_position_2'] ) ? $this->props['background_position_2'] : '';
+		$background_position_3                        = isset( $this->props['background_position_3'] ) ? $this->props['background_position_3'] : '';
+		$background_horizontal_offset_1               = isset( $this->props['background_horizontal_offset_1'] ) ? $this->props['background_horizontal_offset_1'] : '';
+		$background_horizontal_offset_2               = isset( $this->props['background_horizontal_offset_2'] ) ? $this->props['background_horizontal_offset_2'] : '';
+		$background_horizontal_offset_3               = isset( $this->props['background_horizontal_offset_3'] ) ? $this->props['background_horizontal_offset_3'] : '';
+		$background_vertical_offset_1                 = isset( $this->props['background_vertical_offset_1'] ) ? $this->props['background_vertical_offset_1'] : '';
+		$background_vertical_offset_2                 = isset( $this->props['background_vertical_offset_2'] ) ? $this->props['background_vertical_offset_2'] : '';
+		$background_vertical_offset_3                 = isset( $this->props['background_vertical_offset_3'] ) ? $this->props['background_vertical_offset_3'] : '';
+		$background_repeat_1                          = isset( $this->props['background_repeat_1'] ) ? $this->props['background_repeat_1'] : '';
+		$background_repeat_2                          = isset( $this->props['background_repeat_2'] ) ? $this->props['background_repeat_2'] : '';
+		$background_repeat_3                          = isset( $this->props['background_repeat_3'] ) ? $this->props['background_repeat_3'] : '';
+		$background_blend_1                           = isset( $this->props['background_blend_1'] ) ? $this->props['background_blend_1'] : '';
+		$background_blend_2                           = isset( $this->props['background_blend_2'] ) ? $this->props['background_blend_2'] : '';
+		$background_blend_3                           = isset( $this->props['background_blend_3'] ) ? $this->props['background_blend_3'] : '';
+		$parallax_1                                   = isset( $this->props['parallax_1'] ) ? $this->props['parallax_1'] : '';
+		$parallax_2                                   = isset( $this->props['parallax_2'] ) ? $this->props['parallax_2'] : '';
+		$parallax_3                                   = isset( $this->props['parallax_3'] ) ? $this->props['parallax_3'] : '';
+		$parallax_method_1                            = isset( $this->props['parallax_method_1'] ) ? $this->props['parallax_method_1'] : '';
+		$parallax_method_2                            = isset( $this->props['parallax_method_2'] ) ? $this->props['parallax_method_2'] : '';
+		$parallax_method_3                            = isset( $this->props['parallax_method_3'] ) ? $this->props['parallax_method_3'] : '';
+		$padding_top_1                                = isset( $this->props['padding_top_1'] ) ? $this->props['padding_top_1'] : '';
+		$padding_top_2                                = isset( $this->props['padding_top_2'] ) ? $this->props['padding_top_2'] : '';
+		$padding_top_3                                = isset( $this->props['padding_top_3'] ) ? $this->props['padding_top_3'] : '';
+		$padding_right_1                              = isset( $this->props['padding_right_1'] ) ? $this->props['padding_right_1'] : '';
+		$padding_right_2                              = isset( $this->props['padding_right_2'] ) ? $this->props['padding_right_2'] : '';
+		$padding_right_3                              = isset( $this->props['padding_right_3'] ) ? $this->props['padding_right_3'] : '';
+		$padding_left_1                               = isset( $this->props['padding_left_1'] ) ? $this->props['padding_left_1'] : '';
+		$padding_left_3                               = isset( $this->props['padding_left_2'] ) ? $this->props['padding_left_2'] : '';
+		$padding_left_2                               = isset( $this->props['padding_left_3'] ) ? $this->props['padding_left_3'] : '';
+		$padding_bottom_1                             = isset( $this->props['padding_bottom_1'] ) ? $this->props['padding_bottom_1'] : '';
+		$padding_bottom_2                             = isset( $this->props['padding_bottom_2'] ) ? $this->props['padding_bottom_2'] : '';
+		$padding_bottom_3                             = isset( $this->props['padding_bottom_3'] ) ? $this->props['padding_bottom_3'] : '';
+		$padding_1_tablet                             = isset( $this->props['padding_1_tablet'] ) ? $this->props['padding_1_tablet'] : '';
+		$padding_2_tablet                             = isset( $this->props['padding_2_tablet'] ) ? $this->props['padding_2_tablet'] : '';
+		$padding_3_tablet                             = isset( $this->props['padding_3_tablet'] ) ? $this->props['padding_3_tablet'] : '';
+		$padding_1_phone                              = isset( $this->props['padding_1_phone'] ) ? $this->props['padding_1_phone'] : '';
+		$padding_2_phone                              = isset( $this->props['padding_2_phone'] ) ? $this->props['padding_2_phone'] : '';
+		$padding_3_phone                              = isset( $this->props['padding_3_phone'] ) ? $this->props['padding_3_phone'] : '';
+		$padding_1_last_edited                        = isset( $this->props['padding_1_last_edited'] ) ? $this->props['padding_1_last_edited'] : '';
+		$padding_2_last_edited                        = isset( $this->props['padding_2_last_edited'] ) ? $this->props['padding_2_last_edited'] : '';
+		$padding_3_last_edited                        = isset( $this->props['padding_3_last_edited'] ) ? $this->props['padding_3_last_edited'] : '';
 		$gutter_width                                 = $this->props['gutter_width'];
 		$gutter_width_hover                           = $this->get_hover_value( 'gutter_width' );
 		$make_equal                                   = $this->props['make_equal'];
 		$global_module                                = $this->props['global_module'];
 		$use_custom_gutter                            = $this->props['use_custom_gutter'];
-		$module_id_1                                  = $this->props['module_id_1'];
-		$module_id_2                                  = $this->props['module_id_2'];
-		$module_id_3                                  = $this->props['module_id_3'];
-		$module_class_1                               = $this->props['module_class_1'];
-		$module_class_2                               = $this->props['module_class_2'];
-		$module_class_3                               = $this->props['module_class_3'];
-		$custom_css_before_1                          = $this->props['custom_css_before_1'];
-		$custom_css_before_2                          = $this->props['custom_css_before_2'];
-		$custom_css_before_3                          = $this->props['custom_css_before_3'];
-		$custom_css_main_1                            = $this->props['custom_css_main_1'];
-		$custom_css_main_2                            = $this->props['custom_css_main_2'];
-		$custom_css_main_3                            = $this->props['custom_css_main_3'];
-		$custom_css_after_1                           = $this->props['custom_css_after_1'];
-		$custom_css_after_2                           = $this->props['custom_css_after_2'];
-		$custom_css_after_3                           = $this->props['custom_css_after_3'];
+		$module_id_1                                  = isset( $this->props['module_id_1'] ) ? $this->props['module_id_1'] : '';
+		$module_id_2                                  = isset( $this->props['module_id_2'] ) ? $this->props['module_id_2'] : '';
+		$module_id_3                                  = isset( $this->props['module_id_3'] ) ? $this->props['module_id_3'] : '';
+		$module_class_1                               = isset( $this->props['module_class_1'] ) ? $this->props['module_class_1'] : '';
+		$module_class_2                               = isset( $this->props['module_class_2'] ) ? $this->props['module_class_2'] : '';
+		$module_class_3                               = isset( $this->props['module_class_3'] ) ? $this->props['module_class_3'] : '';
+		$custom_css_before_1                          = isset( $this->props['custom_css_before_1'] ) ? $this->props['custom_css_before_1'] : '';
+		$custom_css_before_2                          = isset( $this->props['custom_css_before_2'] ) ? $this->props['custom_css_before_2'] : '';
+		$custom_css_before_3                          = isset( $this->props['custom_css_before_3'] ) ? $this->props['custom_css_before_3'] : '';
+		$custom_css_main_1                            = isset( $this->props['custom_css_main_1'] ) ? $this->props['custom_css_main_1'] : '';
+		$custom_css_main_2                            = isset( $this->props['custom_css_main_2'] ) ? $this->props['custom_css_main_2'] : '';
+		$custom_css_main_3                            = isset( $this->props['custom_css_main_3'] ) ? $this->props['custom_css_main_3'] : '';
+		$custom_css_after_1                           = isset( $this->props['custom_css_after_1'] ) ? $this->props['custom_css_after_1'] : '';
+		$custom_css_after_2                           = isset( $this->props['custom_css_after_2'] ) ? $this->props['custom_css_after_2'] : '';
+		$custom_css_after_3                           = isset( $this->props['custom_css_after_3'] ) ? $this->props['custom_css_after_3'] : '';
 		$custom_css_before_1_hover                    = $this->get_hover_value( 'custom_css_before_1' );
 		$custom_css_before_2_hover                    = $this->get_hover_value( 'custom_css_before_2' );
 		$custom_css_before_3_hover                    = $this->get_hover_value( 'custom_css_before_3' );
@@ -699,51 +821,123 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		$custom_css_after_1_sticky                    = $sticky->get_value( 'custom_css_after_1', $this->props, '' );
 		$custom_css_after_2_sticky                    = $sticky->get_value( 'custom_css_after_2', $this->props, '' );
 		$custom_css_after_3_sticky                    = $sticky->get_value( 'custom_css_after_3', $this->props, '' );
-		$use_background_color_gradient_1              = $this->props['use_background_color_gradient_1'];
-		$use_background_color_gradient_2              = $this->props['use_background_color_gradient_2'];
-		$use_background_color_gradient_3              = $this->props['use_background_color_gradient_3'];
-		$background_color_gradient_type_1             = $this->props['background_color_gradient_type_1'];
-		$background_color_gradient_type_2             = $this->props['background_color_gradient_type_2'];
-		$background_color_gradient_type_3             = $this->props['background_color_gradient_type_3'];
-		$background_color_gradient_direction_1        = $this->props['background_color_gradient_direction_1'];
-		$background_color_gradient_direction_2        = $this->props['background_color_gradient_direction_2'];
-		$background_color_gradient_direction_3        = $this->props['background_color_gradient_direction_3'];
-		$background_color_gradient_direction_radial_1 = $this->props['background_color_gradient_direction_radial_1'];
-		$background_color_gradient_direction_radial_2 = $this->props['background_color_gradient_direction_radial_2'];
-		$background_color_gradient_direction_radial_3 = $this->props['background_color_gradient_direction_radial_3'];
-		$background_color_gradient_start_1            = $this->props['background_color_gradient_start_1'];
-		$background_color_gradient_start_2            = $this->props['background_color_gradient_start_2'];
-		$background_color_gradient_start_3            = $this->props['background_color_gradient_start_3'];
-		$background_color_gradient_end_1              = $this->props['background_color_gradient_end_1'];
-		$background_color_gradient_end_2              = $this->props['background_color_gradient_end_2'];
-		$background_color_gradient_end_3              = $this->props['background_color_gradient_end_3'];
-		$background_color_gradient_start_position_1   = $this->props['background_color_gradient_start_position_1'];
-		$background_color_gradient_start_position_2   = $this->props['background_color_gradient_start_position_2'];
-		$background_color_gradient_start_position_3   = $this->props['background_color_gradient_start_position_3'];
-		$background_color_gradient_end_position_1     = $this->props['background_color_gradient_end_position_1'];
-		$background_color_gradient_end_position_2     = $this->props['background_color_gradient_end_position_2'];
-		$background_color_gradient_end_position_3     = $this->props['background_color_gradient_end_position_3'];
-		$background_color_gradient_overlays_image_1   = $this->props['background_color_gradient_overlays_image_1'];
-		$background_color_gradient_overlays_image_2   = $this->props['background_color_gradient_overlays_image_2'];
-		$background_color_gradient_overlays_image_3   = $this->props['background_color_gradient_overlays_image_3'];
-		$background_video_mp4_1                       = $this->props['background_video_mp4_1'];
-		$background_video_mp4_2                       = $this->props['background_video_mp4_2'];
-		$background_video_mp4_3                       = $this->props['background_video_mp4_3'];
-		$background_video_webm_1                      = $this->props['background_video_webm_1'];
-		$background_video_webm_2                      = $this->props['background_video_webm_2'];
-		$background_video_webm_3                      = $this->props['background_video_webm_3'];
-		$background_video_width_1                     = $this->props['background_video_width_1'];
-		$background_video_width_2                     = $this->props['background_video_width_2'];
-		$background_video_width_3                     = $this->props['background_video_width_3'];
-		$background_video_height_1                    = $this->props['background_video_height_1'];
-		$background_video_height_2                    = $this->props['background_video_height_2'];
-		$background_video_height_3                    = $this->props['background_video_height_3'];
-		$allow_player_pause_1                         = $this->props['allow_player_pause_1'];
-		$allow_player_pause_2                         = $this->props['allow_player_pause_2'];
-		$allow_player_pause_3                         = $this->props['allow_player_pause_3'];
-		$background_video_pause_outside_viewport_1    = $this->props['background_video_pause_outside_viewport_1'];
-		$background_video_pause_outside_viewport_2    = $this->props['background_video_pause_outside_viewport_2'];
-		$background_video_pause_outside_viewport_3    = $this->props['background_video_pause_outside_viewport_3'];
+		$use_background_color_gradient_1              = isset( $this->props['use_background_color_gradient_1'] ) ? $this->props['use_background_color_gradient_1'] : '';
+		$use_background_color_gradient_2              = isset( $this->props['use_background_color_gradient_2'] ) ? $this->props['use_background_color_gradient_2'] : '';
+		$use_background_color_gradient_3              = isset( $this->props['use_background_color_gradient_3'] ) ? $this->props['use_background_color_gradient_3'] : '';
+		$background_color_gradient_type_1             = isset( $this->props['background_color_gradient_type_1'] ) ? $this->props['background_color_gradient_type_1'] : '';
+		$background_color_gradient_type_2             = isset( $this->props['background_color_gradient_type_2'] ) ? $this->props['background_color_gradient_type_2'] : '';
+		$background_color_gradient_type_3             = isset( $this->props['background_color_gradient_type_3'] ) ? $this->props['background_color_gradient_type_3'] : '';
+		$background_color_gradient_direction_1        = isset( $this->props['background_color_gradient_direction_1'] ) ? $this->props['background_color_gradient_direction_1'] : '';
+		$background_color_gradient_direction_2        = isset( $this->props['background_color_gradient_direction_2'] ) ? $this->props['background_color_gradient_direction_2'] : '';
+		$background_color_gradient_direction_3        = isset( $this->props['background_color_gradient_direction_3'] ) ? $this->props['background_color_gradient_direction_3'] : '';
+		$background_color_gradient_direction_radial_1 = isset( $this->props['background_color_gradient_direction_radial_1'] ) ? $this->props['background_color_gradient_direction_radial_1'] : '';
+		$background_color_gradient_direction_radial_2 = isset( $this->props['background_color_gradient_direction_radial_2'] ) ? $this->props['background_color_gradient_direction_radial_2'] : '';
+		$background_color_gradient_direction_radial_3 = isset( $this->props['background_color_gradient_direction_radial_3'] ) ? $this->props['background_color_gradient_direction_radial_3'] : '';
+		$background_color_gradient_start_1            = isset( $this->props['background_color_gradient_start_1'] ) ? $this->props['background_color_gradient_start_1'] : '';
+		$background_color_gradient_start_2            = isset( $this->props['background_color_gradient_start_2'] ) ? $this->props['background_color_gradient_start_2'] : '';
+		$background_color_gradient_start_3            = isset( $this->props['background_color_gradient_start_3'] ) ? $this->props['background_color_gradient_start_3'] : '';
+		$background_color_gradient_end_1              = isset( $this->props['background_color_gradient_end_1'] ) ? $this->props['background_color_gradient_end_1'] : '';
+		$background_color_gradient_end_2              = isset( $this->props['background_color_gradient_end_2'] ) ? $this->props['background_color_gradient_end_2'] : '';
+		$background_color_gradient_end_3              = isset( $this->props['background_color_gradient_end_3'] ) ? $this->props['background_color_gradient_end_3'] : '';
+		$background_color_gradient_start_position_1   = isset( $this->props['background_color_gradient_start_position_1'] ) ? $this->props['background_color_gradient_start_position_1'] : '';
+		$background_color_gradient_start_position_2   = isset( $this->props['background_color_gradient_start_position_2'] ) ? $this->props['background_color_gradient_start_position_2'] : '';
+		$background_color_gradient_start_position_3   = isset( $this->props['background_color_gradient_start_position_3'] ) ? $this->props['background_color_gradient_start_position_3'] : '';
+		$background_color_gradient_end_position_1     = isset( $this->props['background_color_gradient_end_position_1'] ) ? $this->props['background_color_gradient_end_position_1'] : '';
+		$background_color_gradient_end_position_2     = isset( $this->props['background_color_gradient_end_position_2'] ) ? $this->props['background_color_gradient_end_position_2'] : '';
+		$background_color_gradient_end_position_3     = isset( $this->props['background_color_gradient_end_position_3'] ) ? $this->props['background_color_gradient_end_position_3'] : '';
+		$background_color_gradient_overlays_image_1   = isset( $this->props['background_color_gradient_overlays_image_1'] ) ? $this->props['background_color_gradient_overlays_image_1'] : '';
+		$background_color_gradient_overlays_image_2   = isset( $this->props['background_color_gradient_overlays_image_2'] ) ? $this->props['background_color_gradient_overlays_image_2'] : '';
+		$background_color_gradient_overlays_image_3   = isset( $this->props['background_color_gradient_overlays_image_3'] ) ? $this->props['background_color_gradient_overlays_image_3'] : '';
+		$background_enable_pattern_style_1            = isset( $this->props['background_enable_pattern_style_1'] ) ? $this->props['background_enable_pattern_style_1'] : '';
+		$background_enable_pattern_style_2            = isset( $this->props['background_enable_pattern_style_2'] ) ? $this->props['background_enable_pattern_style_2'] : '';
+		$background_enable_pattern_style_3            = isset( $this->props['background_enable_pattern_style_3'] ) ? $this->props['background_enable_pattern_style_3'] : '';
+		$background_pattern_style_1                   = isset( $this->props['background_pattern_style_1'] ) ? $this->props['background_pattern_style_1'] : '';
+		$background_pattern_style_2                   = isset( $this->props['background_pattern_style_2'] ) ? $this->props['background_pattern_style_2'] : '';
+		$background_pattern_style_3                   = isset( $this->props['background_pattern_style_3'] ) ? $this->props['background_pattern_style_3'] : '';
+		$background_pattern_color_1                   = isset( $this->props['background_pattern_color_1'] ) ? $this->props['background_pattern_color_1'] : '';
+		$background_pattern_color_2                   = isset( $this->props['background_pattern_color_2'] ) ? $this->props['background_pattern_color_2'] : '';
+		$background_pattern_color_3                   = isset( $this->props['background_pattern_color_3'] ) ? $this->props['background_pattern_color_3'] : '';
+		$background_pattern_transform_1               = isset( $this->props['background_pattern_transform_1'] ) ? $this->props['background_pattern_transform_1'] : '';
+		$background_pattern_transform_2               = isset( $this->props['background_pattern_transform_2'] ) ? $this->props['background_pattern_transform_2'] : '';
+		$background_pattern_transform_3               = isset( $this->props['background_pattern_transform_3'] ) ? $this->props['background_pattern_transform_3'] : '';
+		$background_pattern_size_1                    = isset( $this->props['background_pattern_size_1'] ) ? $this->props['background_pattern_size_1'] : '';
+		$background_pattern_size_2                    = isset( $this->props['background_pattern_size_2'] ) ? $this->props['background_pattern_size_2'] : '';
+		$background_pattern_size_3                    = isset( $this->props['background_pattern_size_3'] ) ? $this->props['background_pattern_size_3'] : '';
+		$background_pattern_width_1                   = isset( $this->props['background_pattern_width_1'] ) ? $this->props['background_pattern_width_1'] : '';
+		$background_pattern_width_2                   = isset( $this->props['background_pattern_width_2'] ) ? $this->props['background_pattern_width_2'] : '';
+		$background_pattern_width_3                   = isset( $this->props['background_pattern_width_3'] ) ? $this->props['background_pattern_width_3'] : '';
+		$background_pattern_height_1                  = isset( $this->props['background_pattern_height_1'] ) ? $this->props['background_pattern_height_1'] : '';
+		$background_pattern_height_2                  = isset( $this->props['background_pattern_height_2'] ) ? $this->props['background_pattern_height_2'] : '';
+		$background_pattern_height_3                  = isset( $this->props['background_pattern_height_3'] ) ? $this->props['background_pattern_height_3'] : '';
+		$background_pattern_repeat_origin_1           = isset( $this->props['background_pattern_repeat_origin_1'] ) ? $this->props['background_pattern_repeat_origin_1'] : '';
+		$background_pattern_repeat_origin_2           = isset( $this->props['background_pattern_repeat_origin_2'] ) ? $this->props['background_pattern_repeat_origin_2'] : '';
+		$background_pattern_repeat_origin_3           = isset( $this->props['background_pattern_repeat_origin_3'] ) ? $this->props['background_pattern_repeat_origin_3'] : '';
+		$background_pattern_horizontal_offset_1       = isset( $this->props['background_pattern_horizontal_offset_1'] ) ? $this->props['background_pattern_horizontal_offset_1'] : '';
+		$background_pattern_horizontal_offset_2       = isset( $this->props['background_pattern_horizontal_offset_2'] ) ? $this->props['background_pattern_horizontal_offset_2'] : '';
+		$background_pattern_horizontal_offset_3       = isset( $this->props['background_pattern_horizontal_offset_3'] ) ? $this->props['background_pattern_horizontal_offset_3'] : '';
+		$background_pattern_vertical_offset_1         = isset( $this->props['background_pattern_vertical_offset_1'] ) ? $this->props['background_pattern_vertical_offset_1'] : '';
+		$background_pattern_vertical_offset_2         = isset( $this->props['background_pattern_vertical_offset_2'] ) ? $this->props['background_pattern_vertical_offset_2'] : '';
+		$background_pattern_vertical_offset_3         = isset( $this->props['background_pattern_vertical_offset_3'] ) ? $this->props['background_pattern_vertical_offset_3'] : '';
+		$background_pattern_repeat_1                  = isset( $this->props['background_pattern_repeat_1'] ) ? $this->props['background_pattern_repeat_1'] : '';
+		$background_pattern_repeat_2                  = isset( $this->props['background_pattern_repeat_2'] ) ? $this->props['background_pattern_repeat_2'] : '';
+		$background_pattern_repeat_3                  = isset( $this->props['background_pattern_repeat_3'] ) ? $this->props['background_pattern_repeat_3'] : '';
+		$background_pattern_blend_mode_1              = isset( $this->props['background_pattern_blend_mode_1'] ) ? $this->props['background_pattern_blend_mode_1'] : '';
+		$background_pattern_blend_mode_2              = isset( $this->props['background_pattern_blend_mode_2'] ) ? $this->props['background_pattern_blend_mode_2'] : '';
+		$background_pattern_blend_mode_3              = isset( $this->props['background_pattern_blend_mode_3'] ) ? $this->props['background_pattern_blend_mode_3'] : '';
+		$background_enable_mask_style_1               = isset( $this->props['background_enable_mask_style_1'] ) ? $this->props['background_enable_mask_style_1'] : '';
+		$background_enable_mask_style_2               = isset( $this->props['background_enable_mask_style_2'] ) ? $this->props['background_enable_mask_style_2'] : '';
+		$background_enable_mask_style_3               = isset( $this->props['background_enable_mask_style_3'] ) ? $this->props['background_enable_mask_style_3'] : '';
+		$background_mask_style_1                      = isset( $this->props['background_mask_style_1'] ) ? $this->props['background_mask_style_1'] : '';
+		$background_mask_style_2                      = isset( $this->props['background_mask_style_2'] ) ? $this->props['background_mask_style_2'] : '';
+		$background_mask_style_3                      = isset( $this->props['background_mask_style_3'] ) ? $this->props['background_mask_style_3'] : '';
+		$background_mask_color_1                      = isset( $this->props['background_mask_color_1'] ) ? $this->props['background_mask_color_1'] : '';
+		$background_mask_color_2                      = isset( $this->props['background_mask_color_2'] ) ? $this->props['background_mask_color_2'] : '';
+		$background_mask_color_3                      = isset( $this->props['background_mask_color_3'] ) ? $this->props['background_mask_color_3'] : '';
+		$background_mask_transform_1                  = isset( $this->props['background_mask_transform_1'] ) ? $this->props['background_mask_transform_1'] : '';
+		$background_mask_transform_2                  = isset( $this->props['background_mask_transform_2'] ) ? $this->props['background_mask_transform_2'] : '';
+		$background_mask_transform_3                  = isset( $this->props['background_mask_transform_3'] ) ? $this->props['background_mask_transform_3'] : '';
+		$background_mask_aspect_ratio_1               = isset( $this->props['background_mask_aspect_ratio_1'] ) ? $this->props['background_mask_aspect_ratio_1'] : '';
+		$background_mask_aspect_ratio_2               = isset( $this->props['background_mask_aspect_ratio_2'] ) ? $this->props['background_mask_aspect_ratio_2'] : '';
+		$background_mask_aspect_ratio_3               = isset( $this->props['background_mask_aspect_ratio_3'] ) ? $this->props['background_mask_aspect_ratio_3'] : '';
+		$background_mask_size_1                       = isset( $this->props['background_mask_size_1'] ) ? $this->props['background_mask_size_1'] : '';
+		$background_mask_size_2                       = isset( $this->props['background_mask_size_2'] ) ? $this->props['background_mask_size_2'] : '';
+		$background_mask_size_3                       = isset( $this->props['background_mask_size_3'] ) ? $this->props['background_mask_size_3'] : '';
+		$background_mask_width_1                      = isset( $this->props['background_mask_width_1'] ) ? $this->props['background_mask_width_1'] : '';
+		$background_mask_width_2                      = isset( $this->props['background_mask_width_2'] ) ? $this->props['background_mask_width_2'] : '';
+		$background_mask_width_3                      = isset( $this->props['background_mask_width_3'] ) ? $this->props['background_mask_width_3'] : '';
+		$background_mask_height_1                     = isset( $this->props['background_mask_height_1'] ) ? $this->props['background_mask_height_1'] : '';
+		$background_mask_height_2                     = isset( $this->props['background_mask_height_2'] ) ? $this->props['background_mask_height_2'] : '';
+		$background_mask_height_3                     = isset( $this->props['background_mask_height_3'] ) ? $this->props['background_mask_height_3'] : '';
+		$background_mask_position_1                   = isset( $this->props['background_mask_position_1'] ) ? $this->props['background_mask_position_1'] : '';
+		$background_mask_position_2                   = isset( $this->props['background_mask_position_2'] ) ? $this->props['background_mask_position_2'] : '';
+		$background_mask_position_3                   = isset( $this->props['background_mask_position_3'] ) ? $this->props['background_mask_position_3'] : '';
+		$background_mask_horizontal_offset_1          = isset( $this->props['background_mask_horizontal_offset_1'] ) ? $this->props['background_mask_horizontal_offset_1'] : '';
+		$background_mask_horizontal_offset_2          = isset( $this->props['background_mask_horizontal_offset_2'] ) ? $this->props['background_mask_horizontal_offset_2'] : '';
+		$background_mask_horizontal_offset_3          = isset( $this->props['background_mask_horizontal_offset_3'] ) ? $this->props['background_mask_horizontal_offset_3'] : '';
+		$background_mask_vertical_offset_1            = isset( $this->props['background_mask_vertical_offset_1'] ) ? $this->props['background_mask_vertical_offset_1'] : '';
+		$background_mask_vertical_offset_2            = isset( $this->props['background_mask_vertical_offset_2'] ) ? $this->props['background_mask_vertical_offset_2'] : '';
+		$background_mask_vertical_offset_3            = isset( $this->props['background_mask_vertical_offset_3'] ) ? $this->props['background_mask_vertical_offset_3'] : '';
+		$background_mask_blend_mode_1                 = isset( $this->props['background_mask_blend_mode_1'] ) ? $this->props['background_mask_blend_mode_1'] : '';
+		$background_mask_blend_mode_2                 = isset( $this->props['background_mask_blend_mode_2'] ) ? $this->props['background_mask_blend_mode_2'] : '';
+		$background_mask_blend_mode_3                 = isset( $this->props['background_mask_blend_mode_3'] ) ? $this->props['background_mask_blend_mode_3'] : '';
+		$background_video_mp4_1                       = isset( $this->props['background_video_mp4_1'] ) ? $this->props['background_video_mp4_1'] : '';
+		$background_video_mp4_2                       = isset( $this->props['background_video_mp4_2'] ) ? $this->props['background_video_mp4_2'] : '';
+		$background_video_mp4_3                       = isset( $this->props['background_video_mp4_3'] ) ? $this->props['background_video_mp4_3'] : '';
+		$background_video_webm_1                      = isset( $this->props['background_video_webm_1'] ) ? $this->props['background_video_webm_1'] : '';
+		$background_video_webm_2                      = isset( $this->props['background_video_webm_2'] ) ? $this->props['background_video_webm_2'] : '';
+		$background_video_webm_3                      = isset( $this->props['background_video_webm_3'] ) ? $this->props['background_video_webm_3'] : '';
+		$background_video_width_1                     = isset( $this->props['background_video_width_1'] ) ? $this->props['background_video_width_1'] : '';
+		$background_video_width_2                     = isset( $this->props['background_video_width_2'] ) ? $this->props['background_video_width_2'] : '';
+		$background_video_width_3                     = isset( $this->props['background_video_width_3'] ) ? $this->props['background_video_width_3'] : '';
+		$background_video_height_1                    = isset( $this->props['background_video_height_1'] ) ? $this->props['background_video_height_1'] : '';
+		$background_video_height_2                    = isset( $this->props['background_video_height_2'] ) ? $this->props['background_video_height_2'] : '';
+		$background_video_height_3                    = isset( $this->props['background_video_height_3'] ) ? $this->props['background_video_height_3'] : '';
+		$allow_player_pause_1                         = isset( $this->props['allow_player_pause_1'] ) ? $this->props['allow_player_pause_1'] : '';
+		$allow_player_pause_2                         = isset( $this->props['allow_player_pause_2'] ) ? $this->props['allow_player_pause_2'] : '';
+		$allow_player_pause_3                         = isset( $this->props['allow_player_pause_3'] ) ? $this->props['allow_player_pause_3'] : '';
+		$background_video_pause_outside_viewport_1    = isset( $this->props['background_video_pause_outside_viewport_1'] ) ? $this->props['background_video_pause_outside_viewport_1'] : '';
+		$background_video_pause_outside_viewport_2    = isset( $this->props['background_video_pause_outside_viewport_2'] ) ? $this->props['background_video_pause_outside_viewport_2'] : '';
+		$background_video_pause_outside_viewport_3    = isset( $this->props['background_video_pause_outside_viewport_3'] ) ? $this->props['background_video_pause_outside_viewport_3'] : '';
 		$prev_background_color                        = $this->props['prev_background_color'];
 		$next_background_color                        = $this->props['next_background_color'];
 
@@ -837,40 +1031,52 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 			$et_pb_column_backgrounds = array(
 				array(
-					'color'                => $background_color_1,
-					'color_hover'          => $column_hover_backgrounds['column_1_color_hover'],
-					'color_hover_enabled'  => $column_hover_backgrounds['column_1_color_hover_enabled'],
-					'color_sticky'         => $column_sticky_backgrounds['column_1_color_sticky'],
-					'color_sticky_enabled' => $column_sticky_backgrounds['column_1_color_sticky_enabled'],
-					'image'                => $bg_img_1,
-					'image_size'           => $background_size_1,
-					'image_position'       => $background_position_1,
-					'image_repeat'         => $background_repeat_1,
-					'image_blend'          => $background_blend_1,
+					'color'                   => $background_color_1,
+					'color_hover'             => $column_hover_backgrounds['column_1_color_hover'],
+					'color_hover_enabled'     => $column_hover_backgrounds['column_1_color_hover_enabled'],
+					'color_sticky'            => $column_sticky_backgrounds['column_1_color_sticky'],
+					'color_sticky_enabled'    => $column_sticky_backgrounds['column_1_color_sticky_enabled'],
+					'image'                   => $bg_img_1,
+					'image_size'              => $background_size_1,
+					'image_width'             => $background_image_width_1,
+					'image_height'            => $background_image_height_1,
+					'image_position'          => $background_position_1,
+					'image_horizontal_offset' => $background_horizontal_offset_1,
+					'image_vertical_offset'   => $background_vertical_offset_1,
+					'image_repeat'            => $background_repeat_1,
+					'image_blend'             => $background_blend_1,
 				),
 				array(
-					'color'                => $background_color_2,
-					'color_hover'          => $column_hover_backgrounds['column_2_color_hover'],
-					'color_hover_enabled'  => $column_hover_backgrounds['column_2_color_hover_enabled'],
-					'color_sticky'         => $column_sticky_backgrounds['column_2_color_sticky'],
-					'color_sticky_enabled' => $column_sticky_backgrounds['column_2_color_sticky_enabled'],
-					'image'                => $bg_img_2,
-					'image_size'           => $background_size_2,
-					'image_position'       => $background_position_2,
-					'image_repeat'         => $background_repeat_2,
-					'image_blend'          => $background_blend_2,
+					'color'                   => $background_color_2,
+					'color_hover'             => $column_hover_backgrounds['column_2_color_hover'],
+					'color_hover_enabled'     => $column_hover_backgrounds['column_2_color_hover_enabled'],
+					'color_sticky'            => $column_sticky_backgrounds['column_2_color_sticky'],
+					'color_sticky_enabled'    => $column_sticky_backgrounds['column_2_color_sticky_enabled'],
+					'image'                   => $bg_img_2,
+					'image_size'              => $background_size_2,
+					'image_width'             => $background_image_width_2,
+					'image_height'            => $background_image_height_2,
+					'image_position'          => $background_position_2,
+					'image_horizontal_offset' => $background_horizontal_offset_2,
+					'image_vertical_offset'   => $background_vertical_offset_2,
+					'image_repeat'            => $background_repeat_2,
+					'image_blend'             => $background_blend_2,
 				),
 				array(
-					'color'                => $background_color_3,
-					'color_hover'          => $column_hover_backgrounds['column_3_color_hover'],
-					'color_hover_enabled'  => $column_hover_backgrounds['column_3_color_hover_enabled'],
-					'color_sticky'         => $column_sticky_backgrounds['column_3_color_sticky'],
-					'color_sticky_enabled' => $column_sticky_backgrounds['column_3_color_sticky_enabled'],
-					'image'                => $bg_img_3,
-					'image_size'           => $background_size_3,
-					'image_position'       => $background_position_3,
-					'image_repeat'         => $background_repeat_3,
-					'image_blend'          => $background_blend_3,
+					'color'                   => $background_color_3,
+					'color_hover'             => $column_hover_backgrounds['column_3_color_hover'],
+					'color_hover_enabled'     => $column_hover_backgrounds['column_3_color_hover_enabled'],
+					'color_sticky'            => $column_sticky_backgrounds['column_3_color_sticky'],
+					'color_sticky_enabled'    => $column_sticky_backgrounds['column_3_color_sticky_enabled'],
+					'image'                   => $bg_img_3,
+					'image_size'              => $background_size_3,
+					'image_width'             => $background_image_width_3,
+					'image_height'            => $background_image_height_3,
+					'image_position'          => $background_position_3,
+					'image_horizontal_offset' => $background_horizontal_offset_3,
+					'image_vertical_offset'   => $background_vertical_offset_3,
+					'image_repeat'            => $background_repeat_3,
+					'image_blend'             => $background_blend_3,
 				),
 			);
 
@@ -907,6 +1113,96 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					'start_position'   => $background_color_gradient_start_position_3,
 					'end_position'     => $background_color_gradient_end_position_3,
 					'overlays_image'   => $background_color_gradient_overlays_image_3,
+				),
+			);
+
+			$et_pb_column_backgrounds_pattern = array(
+				array(
+					'enable_pattern_style'      => $background_enable_pattern_style_1,
+					'pattern_style'             => $background_pattern_style_1,
+					'pattern_color'             => $background_pattern_color_1,
+					'pattern_transform'         => $background_pattern_transform_1,
+					'pattern_size'              => $background_pattern_size_1,
+					'pattern_width'             => $background_pattern_width_1,
+					'pattern_height'            => $background_pattern_height_1,
+					'pattern_repeat'            => $background_pattern_repeat_1,
+					'pattern_repeat_origin'     => $background_pattern_repeat_origin_1,
+					'pattern_horizontal_offset' => $background_pattern_horizontal_offset_1,
+					'pattern_vertical_offset'   => $background_pattern_vertical_offset_1,
+					'pattern_blend_mode'        => $background_pattern_blend_mode_1,
+				),
+				array(
+					'enable_pattern_style'      => $background_enable_pattern_style_2,
+					'pattern_style'             => $background_pattern_style_2,
+					'pattern_color'             => $background_pattern_color_2,
+					'pattern_transform'         => $background_pattern_transform_2,
+					'pattern_size'              => $background_pattern_size_2,
+					'pattern_width'             => $background_pattern_width_2,
+					'pattern_height'            => $background_pattern_height_2,
+					'pattern_repeat'            => $background_pattern_repeat_2,
+					'pattern_repeat_origin'     => $background_pattern_repeat_origin_2,
+					'pattern_horizontal_offset' => $background_pattern_horizontal_offset_2,
+					'pattern_vertical_offset'   => $background_pattern_vertical_offset_2,
+					'pattern_blend_mode'        => $background_pattern_blend_mode_2,
+				),
+				array(
+					'enable_pattern_style'      => $background_enable_pattern_style_3,
+					'pattern_style'             => $background_pattern_style_3,
+					'pattern_color'             => $background_pattern_color_3,
+					'pattern_transform'         => $background_pattern_transform_3,
+					'pattern_size'              => $background_pattern_size_3,
+					'pattern_width'             => $background_pattern_width_3,
+					'pattern_height'            => $background_pattern_height_3,
+					'pattern_repeat'            => $background_pattern_repeat_3,
+					'pattern_repeat_origin'     => $background_pattern_repeat_origin_3,
+					'pattern_horizontal_offset' => $background_pattern_horizontal_offset_3,
+					'pattern_vertical_offset'   => $background_pattern_vertical_offset_3,
+					'pattern_blend_mode'        => $background_pattern_blend_mode_3,
+				),
+			);
+
+			$et_pb_column_backgrounds_mask = array(
+				array(
+					'enable_mask_style'      => $background_enable_mask_style_1,
+					'mask_style'             => $background_mask_style_1,
+					'mask_color'             => $background_mask_color_1,
+					'mask_transform'         => $background_mask_transform_1,
+					'mask_aspect_ratio'      => $background_mask_aspect_ratio_1,
+					'mask_size'              => $background_mask_size_1,
+					'mask_width'             => $background_mask_width_1,
+					'mask_height'            => $background_mask_height_1,
+					'mask_position'          => $background_mask_position_1,
+					'mask_horizontal_offset' => $background_mask_horizontal_offset_1,
+					'mask_vertical_offset'   => $background_mask_vertical_offset_1,
+					'mask_blend_mode'        => $background_mask_blend_mode_1,
+				),
+				array(
+					'enable_mask_style'      => $background_enable_mask_style_2,
+					'mask_style'             => $background_mask_style_2,
+					'mask_color'             => $background_mask_color_2,
+					'mask_transform'         => $background_mask_transform_2,
+					'mask_aspect_ratio'      => $background_mask_aspect_ratio_2,
+					'mask_size'              => $background_mask_size_2,
+					'mask_width'             => $background_mask_width_2,
+					'mask_height'            => $background_mask_height_2,
+					'mask_position'          => $background_mask_position_2,
+					'mask_horizontal_offset' => $background_mask_horizontal_offset_2,
+					'mask_vertical_offset'   => $background_mask_vertical_offset_2,
+					'mask_blend_mode'        => $background_mask_blend_mode_2,
+				),
+				array(
+					'enable_mask_style'      => $background_enable_mask_style_3,
+					'mask_style'             => $background_mask_style_3,
+					'mask_color'             => $background_mask_color_3,
+					'mask_transform'         => $background_mask_transform_3,
+					'mask_aspect_ratio'      => $background_mask_aspect_ratio_3,
+					'mask_size'              => $background_mask_size_3,
+					'mask_width'             => $background_mask_width_3,
+					'mask_height'            => $background_mask_height_3,
+					'mask_position'          => $background_mask_position_3,
+					'mask_horizontal_offset' => $background_mask_horizontal_offset_3,
+					'mask_vertical_offset'   => $background_mask_vertical_offset_3,
+					'mask_blend_mode'        => $background_mask_blend_mode_3,
 				),
 			);
 
@@ -1059,6 +1355,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'keep_column_padding_mobile'        => 'on',
 				'et_pb_column_backgrounds'          => $et_pb_column_backgrounds,
 				'et_pb_column_backgrounds_gradient' => $et_pb_column_backgrounds_gradient,
+				'et_pb_column_backgrounds_pattern'  => $et_pb_column_backgrounds_pattern,
+				'et_pb_column_backgrounds_mask'     => $et_pb_column_backgrounds_mask,
 				'et_pb_column_backgrounds_video'    => $et_pb_column_backgrounds_video,
 				'et_pb_column_parallax'             => $et_pb_column_parallax,
 				'et_pb_columns_counter'             => 0,
@@ -1275,8 +1573,10 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				%9$s
 				%7$s
 				%2$s
+				%12$s
+				%13$s
 				%5$s
-					%1$s
+				%1$s
 				%6$s
 				%10$s
 			</div>',
@@ -1292,7 +1592,9 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			$this->get_module_data_attributes(), // 8
 			et_core_esc_previously( $top ), // 9
 			et_core_esc_previously( $bottom ), // 10,
-			et_core_esc_previously( $muti_view_attributes )
+			et_core_esc_previously( $muti_view_attributes ), // 11
+			et_core_esc_previously( $this->background_pattern() ), // 12
+			et_core_esc_previously( $this->background_mask() ) // 13
 		);
 
 		if ( 'on' === $specialty ) {
@@ -1422,6 +1724,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'use_background_image'          => true,
 				'use_background_color_gradient' => true,
 				'use_background_video'          => true,
+				'use_background_pattern'        => true,
+				'use_background_mask'           => true,
 				'options'                       => array(
 					'background_color'   => array(
 						'default' => '',
@@ -1643,7 +1947,11 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 					'default_on_front' => 'on',
 				),
 				'background_size'                          => array(),
+				'background_image_width'                   => array(),
+				'background_image_height'                  => array(),
 				'background_position'                      => array(),
+				'background_horizontal_offset'             => array(),
+				'background_vertical_offset'               => array(),
 				'background_repeat'                        => array(),
 				'background_blend'                         => array(),
 				'use_background_color_gradient'            => array(),
@@ -1655,6 +1963,30 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'background_color_gradient_start_position' => array(),
 				'background_color_gradient_end_position'   => array(),
 				'background_color_gradient_overlays_image' => array(),
+				'background_enable_pattern_style'          => array(),
+				'background_pattern_style'                 => array(),
+				'background_pattern_color'                 => array(),
+				'background_pattern_transform'             => array(),
+				'background_pattern_size'                  => array(),
+				'background_pattern_width'                 => array(),
+				'background_pattern_height'                => array(),
+				'background_pattern_repeat'                => array(),
+				'background_pattern_repeat_origin'         => array(),
+				'background_pattern_horizontal_offset'     => array(),
+				'background_pattern_vertical_offset'       => array(),
+				'background_pattern_blend_mode'            => array(),
+				'background_enable_mask_style'             => array(),
+				'background_mask_style'                    => array(),
+				'background_mask_color'                    => array(),
+				'background_mask_transform'                => array(),
+				'background_mask_aspect_ratio'             => array(),
+				'background_mask_size'                     => array(),
+				'background_mask_width'                    => array(),
+				'background_mask_height'                   => array(),
+				'background_mask_position'                 => array(),
+				'background_mask_horizontal_offset'        => array(),
+				'background_mask_vertical_offset'          => array(),
+				'background_mask_blend_mode'               => array(),
 				'background_video_mp4'                     => array(
 					'computed_affects' => array(
 						'__video_background',
@@ -1929,6 +2261,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				%1$s
 				%6$s
 				%5$s
+				%9$s
+				%10$s
 			</div>',
 			$inner_content,
 			$module_classes,
@@ -1937,7 +2271,9 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			$background_video,
 			$parallax_image,
 			$content_dependent_classname,
-			et_core_esc_previously( $gutter_hover_data )
+			et_core_esc_previously( $gutter_hover_data ),
+			et_core_esc_previously( $this->background_pattern() ), // 9
+			et_core_esc_previously( $this->background_mask() ) // 10
 		);
 
 		return $output;
@@ -1968,6 +2304,8 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'use_background_image'          => true,
 				'use_background_color_gradient' => true,
 				'use_background_video'          => true,
+				'use_background_pattern'        => true,
+				'use_background_mask'           => true,
 			),
 			'margin_padding'  => array(
 				'css' => array(
@@ -2123,7 +2461,11 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 					'default_on_front' => 'on',
 				),
 				'background_size'                          => array(),
+				'background_image_width'                   => array(),
+				'background_image_height'                  => array(),
 				'background_position'                      => array(),
+				'background_horizontal_offset'             => array(),
+				'background_vertical_offset'               => array(),
 				'background_repeat'                        => array(),
 				'background_blend'                         => array(),
 				'use_background_color_gradient'            => array(),
@@ -2135,6 +2477,30 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'background_color_gradient_start_position' => array(),
 				'background_color_gradient_end_position'   => array(),
 				'background_color_gradient_overlays_image' => array(),
+				'background_enable_pattern_style'          => array(),
+				'background_pattern_style'                 => array(),
+				'background_pattern_color'                 => array(),
+				'background_pattern_transform'             => array(),
+				'background_pattern_size'                  => array(),
+				'background_pattern_width'                 => array(),
+				'background_pattern_height'                => array(),
+				'background_pattern_repeat'                => array(),
+				'background_pattern_repeat_origin'         => array(),
+				'background_pattern_horizontal_offset'     => array(),
+				'background_pattern_vertical_offset'       => array(),
+				'background_pattern_blend_mode'            => array(),
+				'background_enable_mask_style'             => array(),
+				'background_mask_style'                    => array(),
+				'background_mask_color'                    => array(),
+				'background_mask_transform'                => array(),
+				'background_mask_aspect_ratio'             => array(),
+				'background_mask_size'                     => array(),
+				'background_mask_width'                    => array(),
+				'background_mask_height'                   => array(),
+				'background_mask_position'                 => array(),
+				'background_mask_horizontal_offset'        => array(),
+				'background_mask_vertical_offset'          => array(),
+				'background_mask_blend_mode'               => array(),
 				'background_video_mp4'                     => array(
 					'computed_affects' => array(
 						'__video_background',
@@ -2400,6 +2766,8 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				%1$s
 				%5$s
 				%6$s
+				%9$s
+				%10$s
 			</div>',
 			$inner_content,
 			$module_classes,
@@ -2408,7 +2776,9 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 			$parallax_image,
 			$background_video,
 			$content_dependent_classname,
-			et_core_esc_previously( $gutter_hover_data )
+			et_core_esc_previously( $gutter_hover_data ),
+			et_core_esc_previously( $this->background_pattern() ), // 9
+			et_core_esc_previously( $this->background_mask() ) // 10
 		);
 
 		return $output;
@@ -2547,11 +2917,14 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		$array_index                  = self::$_->array_get( $gobal_column_settings_holder, "{$current_row_position}.et_pb_columns_counter", 0 );
 		$keep_column_padding_mobile   = self::$_->array_get( $gobal_column_settings_holder, "{$current_row_position}.keep_column_padding_mobile", 'on' );
 		$sticky                       = et_pb_sticky_options();
+		$background_options           = et_pb_background_options();
 
 		if ( $is_specialty_column ) {
 			$et_specialty_column_type = $type;
 			$backgrounds_array        = self::$_->array_get( $et_pb_all_column_settings, "{$current_row_position}.et_pb_column_backgrounds", array() );
 			$background_gradient      = self::$_->array_get( $et_pb_all_column_settings, "{$current_row_position}.et_pb_column_backgrounds_gradient.[{$array_index}]", '' );
+			$pattern_array            = self::$_->array_get( $et_pb_all_column_settings, "{$current_row_position}.et_pb_column_backgrounds_pattern.[{$array_index}]", array() );
+			$mask_array               = self::$_->array_get( $et_pb_all_column_settings, "{$current_row_position}.et_pb_column_backgrounds_mask.[{$array_index}]", array() );
 			$background_video         = self::$_->array_get( $et_pb_all_column_settings, "{$current_row_position}.et_pb_column_backgrounds_video.[{$array_index}]", '' );
 			$paddings_array           = self::$_->array_get( $et_pb_all_column_settings, "{$current_row_position}.et_pb_column_paddings", array() );
 			$paddings_mobile_array    = self::$_->array_get( $et_pb_all_column_settings, "{$current_row_position}.et_pb_column_paddings_mobile", array() );
@@ -2561,7 +2934,11 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			$background_color                   = isset( $backgrounds_array[ $array_index ]['color'] ) ? $backgrounds_array[ $array_index ]['color'] : '';
 			$background_img                     = isset( $backgrounds_array[ $array_index ]['image'] ) ? $backgrounds_array[ $array_index ]['image'] : '';
 			$background_size                    = isset( $backgrounds_array[ $array_index ]['image_size'] ) ? $backgrounds_array[ $array_index ]['image_size'] : '';
+			$background_image_width             = isset( $backgrounds_array[ $array_index ]['image_width'] ) ? $backgrounds_array[ $array_index ]['image_width'] : '';
+			$background_image_height            = isset( $backgrounds_array[ $array_index ]['image_height'] ) ? $backgrounds_array[ $array_index ]['image_height'] : '';
 			$background_position                = isset( $backgrounds_array[ $array_index ]['image_position'] ) ? $backgrounds_array[ $array_index ]['image_position'] : '';
+			$background_horizontal_offset       = isset( $backgrounds_array[ $array_index ]['image_horizontal_offset'] ) ? $backgrounds_array[ $array_index ]['image_horizontal_offset'] : '';
+			$background_vertical_offset         = isset( $backgrounds_array[ $array_index ]['image_vertical_offset'] ) ? $backgrounds_array[ $array_index ]['image_vertical_offset'] : '';
 			$background_repeat                  = isset( $backgrounds_array[ $array_index ]['image_repeat'] ) ? $backgrounds_array[ $array_index ]['image_repeat'] : '';
 			$background_blend                   = isset( $backgrounds_array[ $array_index ]['image_blend'] ) ? $backgrounds_array[ $array_index ]['image_blend'] : '';
 			$background_gradient_overlays_image = isset( $background_gradient['overlays_image'] ) ? $background_gradient['overlays_image'] : '';
@@ -2570,10 +2947,66 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 			$background_color_sticky            = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], 'color_sticky' ) : '';
 			$background_color_sticky_enabled    = isset( $backgrounds_array[ $array_index ] ) ? self::$_->array_get( $backgrounds_array[ $array_index ], 'color_sticky_enabled' ) : '';
 
+			// Pattern.
+			$enable_pattern_style_default      = $background_options->get_attr_default( 'style', 'background_enable_pattern', $this->fields_unprocessed );
+			$pattern_style_name_default        = $background_options->get_attr_default( 'style', 'background_pattern', $this->fields_unprocessed );
+			$pattern_color_default             = $background_options->get_attr_default( 'color', 'background_pattern', $this->fields_unprocessed );
+			$pattern_transform_default         = $background_options->get_attr_default( 'transform', 'background_pattern', $this->fields_unprocessed );
+			$pattern_size_default              = $background_options->get_attr_default( 'size', 'background_pattern', $this->fields_unprocessed );
+			$pattern_width_default             = $background_options->get_attr_default( 'width', 'background_pattern', $this->fields_unprocessed );
+			$pattern_height_default            = $background_options->get_attr_default( 'height', 'background_pattern', $this->fields_unprocessed );
+			$pattern_repeat_default            = $background_options->get_attr_default( 'repeat', 'background_pattern', $this->fields_unprocessed );
+			$pattern_repeat_origin_default     = $background_options->get_attr_default( 'repeat_origin', 'background_pattern', $this->fields_unprocessed );
+			$pattern_horizontal_offset_default = $background_options->get_attr_default( 'horizontal_offset', 'background_pattern', $this->fields_unprocessed );
+			$pattern_vertical_offset_default   = $background_options->get_attr_default( 'vertical_offset', 'background_pattern', $this->fields_unprocessed );
+			$pattern_blend_mode_default        = $background_options->get_attr_default( 'blend_mode', 'background_pattern', $this->fields_unprocessed );
+
+			$enable_pattern_style      = ! empty( $pattern_array['enable_pattern_style'] ) ? $pattern_array['enable_pattern_style'] : $enable_pattern_style_default;
+			$pattern_style_name        = ! empty( $pattern_array['pattern_style'] ) ? $pattern_array['pattern_style'] : $pattern_style_name_default;
+			$pattern_color             = ! empty( $pattern_array['pattern_color'] ) ? $pattern_array['pattern_color'] : $pattern_color_default;
+			$pattern_transform         = ! empty( $pattern_array['pattern_transform'] ) ? $pattern_array['pattern_transform'] : $pattern_transform_default;
+			$pattern_size              = ! empty( $pattern_array['pattern_size'] ) ? $pattern_array['pattern_size'] : $pattern_size_default;
+			$pattern_width             = ! empty( $pattern_array['pattern_width'] ) ? $pattern_array['pattern_width'] : $pattern_width_default;
+			$pattern_height            = ! empty( $pattern_array['pattern_height'] ) ? $pattern_array['pattern_height'] : $pattern_height_default;
+			$pattern_repeat            = ! empty( $pattern_array['pattern_repeat'] ) ? $pattern_array['pattern_repeat'] : $pattern_repeat_default;
+			$pattern_repeat_origin     = ! empty( $pattern_array['pattern_repeat_origin'] ) ? $pattern_array['pattern_repeat_origin'] : $pattern_repeat_origin_default;
+			$pattern_horizontal_offset = ! empty( $pattern_array['pattern_horizontal_offset'] ) ? $pattern_array['pattern_horizontal_offset'] : $pattern_horizontal_offset_default;
+			$pattern_vertical_offset   = ! empty( $pattern_array['pattern_vertical_offset'] ) ? $pattern_array['pattern_vertical_offset'] : $pattern_vertical_offset_default;
+			$pattern_blend_mode        = ! empty( $pattern_array['pattern_blend_mode'] ) ? $pattern_array['pattern_blend_mode'] : $pattern_blend_mode_default;
+
+			// Mask.
+			$enable_mask_style_default      = $background_options->get_attr_default( 'style', 'background_enable_mask', $this->fields_unprocessed );
+			$mask_style_name_default        = $background_options->get_attr_default( 'style', 'background_mask', $this->fields_unprocessed );
+			$mask_color_default             = $background_options->get_attr_default( 'color', 'background_mask', $this->fields_unprocessed );
+			$mask_transform_default         = $background_options->get_attr_default( 'transform', 'background_mask', $this->fields_unprocessed );
+			$mask_ratio_default             = $background_options->get_attr_default( 'aspect_ratio', 'background_mask', $this->fields_unprocessed );
+			$mask_size_default              = $background_options->get_attr_default( 'size', 'background_mask', $this->fields_unprocessed );
+			$mask_width_default             = $background_options->get_attr_default( 'width', 'background_mask', $this->fields_unprocessed );
+			$mask_height_default            = $background_options->get_attr_default( 'height', 'background_mask', $this->fields_unprocessed );
+			$mask_position_default          = $background_options->get_attr_default( 'position', 'background_mask', $this->fields_unprocessed );
+			$mask_horizontal_offset_default = $background_options->get_attr_default( 'horizontal_offset', 'background_mask', $this->fields_unprocessed );
+			$mask_vertical_offset_default   = $background_options->get_attr_default( 'vertical_offset', 'background_mask', $this->fields_unprocessed );
+			$mask_blend_mode_default        = $background_options->get_attr_default( 'blend_mode', 'background_mask', $this->fields_unprocessed );
+
+			$enable_mask_style      = ! empty( $mask_array['enable_mask_style'] ) ? $mask_array['enable_mask_style'] : $enable_mask_style_default;
+			$mask_style_name        = ! empty( $mask_array['mask_style'] ) ? $mask_array['mask_style'] : $mask_style_name_default;
+			$mask_color             = ! empty( $mask_array['mask_color'] ) ? $mask_array['mask_color'] : $mask_color_default;
+			$mask_transform         = ! empty( $mask_array['mask_transform'] ) ? $mask_array['mask_transform'] : $mask_transform_default;
+			$mask_aspect_ratio      = ! empty( $mask_array['mask_aspect_ratio'] ) ? $mask_array['mask_aspect_ratio'] : $mask_ratio_default;
+			$mask_size              = ! empty( $mask_array['mask_size'] ) ? $mask_array['mask_size'] : $mask_size_default;
+			$mask_width             = ! empty( $mask_array['mask_width'] ) ? $mask_array['mask_width'] : $mask_width_default;
+			$mask_height            = ! empty( $mask_array['mask_height'] ) ? $mask_array['mask_height'] : $mask_height_default;
+			$mask_position          = ! empty( $mask_array['mask_position'] ) ? $mask_array['mask_position'] : $mask_position_default;
+			$mask_horizontal_offset = ! empty( $mask_array['mask_horizontal_offset'] ) ? $mask_array['mask_horizontal_offset'] : $mask_horizontal_offset_default;
+			$mask_vertical_offset   = ! empty( $mask_array['mask_vertical_offset'] ) ? $mask_array['mask_vertical_offset'] : $mask_vertical_offset_default;
+			$mask_blend_mode        = ! empty( $mask_array['mask_blend_mode'] ) ? $mask_array['mask_blend_mode'] : $mask_blend_mode_default;
+
+			// Others.
 			$padding_values            = isset( $paddings_array[ $array_index ] ) ? $paddings_array[ $array_index ] : array();
 			$padding_mobile_values     = isset( $paddings_mobile_array[ $array_index ] ) ? $paddings_mobile_array[ $array_index ] : array();
 			$padding_last_edited       = isset( $padding_mobile_values['last_edited'] ) ? $padding_mobile_values['last_edited'] : 'off|desktop';
 			$padding_responsive_active = et_pb_get_responsive_status( $padding_last_edited );
+			$is_parallax               = isset( $column_parallax[ $array_index ][0] ) && 'on' === $column_parallax[ $array_index ][0] ? true : false;
 			$parallax_method           = isset( $column_parallax[ $array_index ][0] ) && 'on' === $column_parallax[ $array_index ][0] ? $column_parallax[ $array_index ][1] : '';
 			$custom_css_class          = isset( $column_css_array['css_class'][ $array_index ] ) ? ' ' . $column_css_array['css_class'][ $array_index ] : '';
 			$custom_css_id             = isset( $column_css_array['css_id'][ $array_index ] ) ? $column_css_array['css_id'][ $array_index ] : '';
@@ -2621,6 +3054,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		// Still need to manually output this for Specialty columns.
 		if ( $is_specialty_column ) {
 			$background_images = array();
+			$is_gradient_on    = false;
 
 			if ( '' !== $background_gradient && 'on' === $background_gradient['active'] ) {
 				$has_background_gradient = true;
@@ -2659,28 +3093,26 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				);
 
 				if ( '' !== $background_size ) {
-					$el_style = array(
-						'selector'    => '%%order_class%%',
-						'declaration' => sprintf(
-							'background-size:%s;',
-							esc_attr( $background_size )
-						),
-					);
-					ET_Builder_Element::set_style( $function_name, $el_style );
+					$image_size_style = et_pb_background_options()->get_background_size_css( $background_size, $background_image_width, $background_image_height );
+
+					if ( isset( $image_size_style['size'] ) && $image_size_style['size'] ) {
+						$el_style = array(
+							'selector'    => '%%order_class%%',
+							'declaration' => sprintf(
+								'background-size:%s;',
+								esc_attr( $image_size_style['size'] )
+							),
+						);
+
+						ET_Builder_Element::set_style( $function_name, $el_style );
+					}
 				}
 
-				if ( '' !== $background_position ) {
-					$el_style = array(
-						'selector'    => '%%order_class%%',
-						'declaration' => sprintf(
-							'background-position:%s;',
-							esc_attr( str_replace( '_', ' ', $background_position ) )
-						),
-					);
-					ET_Builder_Element::set_style( $function_name, $el_style );
-				}
+				// Check if image size has 'stretch' value or not.
+				$is_image_size_stretch = 'stretch' === $background_size;
 
-				if ( '' !== $background_repeat ) {
+				// Image Repeat.
+				if ( '' !== $background_repeat && ! $is_image_size_stretch ) {
 					$el_style = array(
 						'selector'    => '%%order_class%%',
 						'declaration' => sprintf(
@@ -2689,6 +3121,26 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 						),
 					);
 					ET_Builder_Element::set_style( $function_name, $el_style );
+				}
+
+				// Check if image repeat has 'space' value or not.
+				$is_image_repeat_space = 'space' === $background_repeat;
+
+				// Image Position.
+				if (
+					! $is_image_size_stretch
+					&& ! $is_image_repeat_space
+					&& ( '' !== $background_position || $background_horizontal_offset || $background_vertical_offset )
+				) {
+					$image_position_style = et_pb_background_options()->get_background_position_css( $background_position, $background_horizontal_offset, $background_vertical_offset );
+					$el_style_position    = array(
+						'selector'    => '%%order_class%%',
+						'declaration' => sprintf(
+							'background-position:%1$s; ',
+							esc_attr( $image_position_style['position'] )
+						),
+					);
+					ET_Builder_Element::set_style( $function_name, $el_style_position );
 				}
 
 				if ( '' !== $background_blend ) {
@@ -2709,9 +3161,20 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 					$background_images = array_reverse( $background_images );
 				}
 
+				// Check if Parallax and Gradient Overlays are on.
+				if ( 'on' === $background_gradient['active'] && 'on' === $background_gradient_overlays_image && $is_parallax ) {
+					// Set background image to initial when Parallax and Gradient Overlays are on.
+					$image_style = 'initial';
+
+					$is_gradient_on = true;
+				} else {
+					// Set background image styles only it's different compared to the larger device.
+					$image_style = implode( ', ', $background_images );
+				}
+
 				$background_images_declaration = sprintf(
 					'background-image: %1$s;',
-					esc_html( implode( ', ', $background_images ) )
+					esc_html( $image_style )
 				);
 
 				$el_style = array(
@@ -2778,6 +3241,163 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 					'declaration' => 'background-color: initial;',
 				);
 				ET_Builder_Element::set_style( $function_name, $el_style );
+			}
+
+			// Pattern Style.
+			$pattern_selector  = $this->add_suffix_to_selectors( ' > .et_pb_background_pattern', '%%order_class%%' );
+			$is_pattern_active = 'off' !== $enable_pattern_style && '' !== $pattern_style_name;
+
+			if ( $is_pattern_active ) {
+				$style_pattern = '';
+
+				// Pattern Transform.
+				$pattern_is_horizontal = $background_options->get_transform_state( $pattern_transform, 'horizontal' );
+				$pattern_is_vertical   = $background_options->get_transform_state( $pattern_transform, 'vertical' );
+				$pattern_is_rotated    = $background_options->get_transform_state( $pattern_transform, 'rotate' );
+				$pattern_is_inverted   = $background_options->get_transform_state( $pattern_transform, 'invert' );
+
+				if ( '' !== $pattern_transform && ( $pattern_is_horizontal || $pattern_is_vertical ) ) {
+					$style_pattern .= sprintf(
+						'transform: %s;',
+						esc_attr( esc_html( $background_options->get_transform_css( $pattern_is_horizontal, $pattern_is_vertical ) ) )
+					);
+				};
+
+				// Pattern Image.
+				$pattern_style_svg = et_pb_background_pattern_options()->get_svg( $pattern_style_name, $pattern_color, 'default', $pattern_is_rotated, $pattern_is_inverted );
+
+				$style_pattern .= sprintf(
+					'background-image: %s;',
+					esc_html( $pattern_style_svg )
+				);
+
+				// Pattern Size.
+				if ( '' !== $pattern_size && $pattern_size !== $pattern_size_default ) {
+					$pattern_size_style = $background_options->get_background_size_css( $pattern_size, $pattern_width, $pattern_height );
+
+					if ( isset( $pattern_size_style['size'] ) && $pattern_size_style['size'] ) {
+						$style_pattern .= sprintf(
+							'background-size: %1$s; ',
+							esc_html( $pattern_size_style['size'] )
+						);
+					}
+				}
+
+				// Check if pattern size has 'stretch' value or not.
+				$is_pattern_size_stretch = 'stretch' === $pattern_size;
+
+				// Pattern Repeat.
+				if ( '' !== $pattern_repeat && $pattern_repeat !== $pattern_repeat_default && ! $is_pattern_size_stretch ) {
+					$style_pattern .= sprintf(
+						'background-repeat: %1$s; ',
+						esc_html( $pattern_repeat )
+					);
+				}
+
+				// Check if pattern repeat has 'space' value or not.
+				$is_pattern_repeat_space  = 'space' === $pattern_repeat;
+				$has_pattern_repeat_value = '' !== $pattern_repeat_origin && $pattern_repeat_origin !== $pattern_repeat_origin_default;
+
+				// Pattern Repeat Origin.
+				if (
+					! $is_pattern_size_stretch
+					&& ! $is_pattern_repeat_space
+					&& ( $has_pattern_repeat_value || $pattern_horizontal_offset || $pattern_vertical_offset )
+				) {
+					$pattern_position_style = $background_options->get_background_position_css( $pattern_repeat_origin, $pattern_horizontal_offset, $pattern_vertical_offset );
+					$style_pattern         .= sprintf(
+						'background-position: %1$s; ',
+						esc_html( $pattern_position_style['position'] )
+					);
+				}
+
+				// Pattern Blend Mode.
+				if ( '' !== $pattern_blend_mode && $pattern_blend_mode !== $pattern_blend_mode_default ) {
+					$style_pattern .= sprintf(
+						'mix-blend-mode: %1$s; ',
+						esc_html( $pattern_blend_mode )
+					);
+				}
+
+				// Output Pattern Style.
+				if ( '' !== $style_pattern ) {
+					$el_pattern_style = array(
+						'selector'    => $pattern_selector,
+						'declaration' => rtrim( $style_pattern ),
+					);
+					ET_Builder_Element::set_style( $function_name, $el_pattern_style );
+				}
+			}
+
+			// Mask Style.
+			$mask_selector  = $this->add_suffix_to_selectors( ' > .et_pb_background_mask', '%%order_class%%' );
+			$is_mask_active = 'off' !== $enable_mask_style && '' !== $mask_style_name;
+
+			if ( $is_mask_active ) {
+				$style_mask = '';
+
+				// Mask Transform.
+				$mask_is_horizontal = $background_options->get_transform_state( $mask_transform, 'horizontal' );
+				$mask_is_vertical   = $background_options->get_transform_state( $mask_transform, 'vertical' );
+				$mask_is_rotated    = $background_options->get_transform_state( $mask_transform, 'rotate' );
+				$mask_is_inverted   = $background_options->get_transform_state( $mask_transform, 'invert' );
+
+				if ( '' !== $mask_transform && ( $mask_is_horizontal || $mask_is_vertical ) ) {
+					$style_mask .= sprintf(
+						'transform: %s;',
+						esc_attr( esc_html( $background_options->get_transform_css( $mask_is_horizontal, $mask_is_vertical ) ) )
+					);
+				};
+
+				// Mask Size.
+				if ( '' !== $mask_size && $mask_size !== $mask_size_default ) {
+					$mask_size_style = $background_options->get_background_size_css( $mask_size, $mask_width, $mask_height, 'mask' );
+
+					if ( isset( $mask_size_style['size'] ) && $mask_size_style['size'] ) {
+						$style_mask .= sprintf(
+							'background-size: %1$s; ',
+							esc_html( $mask_size_style['size'] )
+						);
+					}
+				}
+
+				// Mask Image.
+				$mask_style_svg = et_pb_background_mask_options()->get_svg( $mask_style_name, $mask_color, $mask_aspect_ratio, $mask_is_rotated, $mask_is_inverted, $mask_size );
+
+				$style_mask .= sprintf(
+					'background-image: %s;',
+					esc_html( $mask_style_svg )
+				);
+
+				// Check if mask size has 'stretch' value or not.
+				$is_mask_size_stretch    = 'stretch' === $mask_size;
+				$has_mask_position_value = '' !== $mask_position && $mask_position !== $mask_position_default;
+
+				// Mask Position.
+				if ( ! $is_mask_size_stretch && ( $has_mask_position_value || $mask_horizontal_offset || $mask_vertical_offset ) ) {
+					$mask_position_style = $background_options->get_background_position_css( $mask_position, $mask_horizontal_offset, $mask_vertical_offset );
+					$style_mask         .= sprintf(
+						'background-position: %1$s; ',
+						esc_html( $mask_position_style['position'] )
+					);
+				}
+
+				// Mask Blend Mode.
+				if ( '' !== $mask_blend_mode && $mask_blend_mode !== $mask_blend_mode_default ) {
+					$style_mask .= sprintf(
+						'mix-blend-mode: %1$s; ',
+						esc_html( $mask_blend_mode )
+					);
+				}
+
+				// Output Mask Style.
+				if ( '' !== $style_mask ) {
+					$el_mask_style = array(
+						'selector'    => $mask_selector,
+						'declaration' => rtrim( $style_mask ),
+					);
+					ET_Builder_Element::set_style( $function_name, $el_mask_style );
+				}
 			}
 
 			if ( ! empty( $padding_values ) ) {
@@ -3033,12 +3653,30 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		if ( $is_specialty_column ) {
 			$video_background = trim( $this->video_background( $background_video ) );
 			if ( '' !== $background_img && '' !== $parallax_method ) {
+				$parallax_gradient = sprintf(
+					'<div
+						class="et_parallax_gradient%1$s"
+						style="%2$s%3$s"
+					></div>',
+					( 'off' === $parallax_method ? ' et_pb_parallax_css' : '' ),
+					sprintf(
+						'background-image: %1$s;',
+						esc_html( $background_images[0] )
+					),
+					'' !== $background_blend && 'normal' !== $background_blend ? sprintf(
+						'mix-blend-mode: %1$s;',
+						esc_html( $background_blend )
+					) : ''
+				);
+
 				$parallax_image = sprintf(
 					'<div class="et_parallax_bg_wrap">
 						<div class="et_parallax_bg%2$s" style="background-image: url(%1$s);"></div>
+						%3$s
 					</div>',
 					esc_attr( $background_img ),
-					( 'off' === $parallax_method ? ' et_pb_parallax_css' : '' )
+					( 'off' === $parallax_method ? ' et_pb_parallax_css' : '' ),
+					$is_gradient_on ? et_core_esc_previously( $parallax_gradient ) : ''
 				);
 			}
 
@@ -3094,19 +3732,53 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		// Inner content dependant class in column shouldn't use add_classname/remove_classname method.
 		$content_dependent_classname = '' === trim( $inner_content ) ? ' et_pb_column_empty' : '';
 
-		$output = sprintf(
-			'<div class="%1$s%6$s"%4$s>
+		if ( $is_specialty_column ) {
+			$pattern_args = array(
+				'background_enable_pattern_style' => $enable_pattern_style,
+				'background_pattern_style'        => $pattern_style_name,
+			);
+			$mask_args    = array(
+				'background_enable_mask_style' => $enable_mask_style,
+				'background_mask_style'        => $mask_style_name,
+				'background_mask_size'         => $mask_size,
+			);
+
+			$output = sprintf(
+				'<div class="%1$s%6$s"%4$s>
 				%5$s
+				%7$s
+				%8$s
+				%3$s
+				%2$s
+			</div> <!-- .et_pb_column -->',
+				$module_classname,
+				$inner_content,
+				$parallax_image,
+				'' !== $custom_css_id ? sprintf( ' id="%1$s"', esc_attr( $custom_css_id ) ) : '', // 5
+				$video_background,
+				$content_dependent_classname,
+				et_core_esc_previously( $this->background_pattern( $pattern_args ) ), // 7
+				et_core_esc_previously( $this->background_mask( $mask_args ) ) // 8
+			);
+		} else {
+			$output = sprintf(
+				'<div class="%1$s%6$s"%4$s>
+				%5$s
+				%7$s
+				%8$s
 				%3$s
 				%2$s
 			</div>',
-			$module_classname,
-			$inner_content,
-			$parallax_image,
-			'' !== $custom_css_id ? sprintf( ' id="%1$s"', esc_attr( $custom_css_id ) ) : '', // 5
-			$video_background,
-			$content_dependent_classname
-		);
+				$module_classname,
+				$inner_content,
+				$parallax_image,
+				'' !== $custom_css_id ? sprintf( ' id="%1$s"', esc_attr( $custom_css_id ) ) : '', // 5
+				$video_background,
+				$content_dependent_classname,
+				et_core_esc_previously( $this->background_pattern() ), // 7
+				et_core_esc_previously( $this->background_mask() ) // 8
+			);
+		}
 
 		return $output;
 

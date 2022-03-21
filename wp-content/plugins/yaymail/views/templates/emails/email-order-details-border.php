@@ -7,17 +7,20 @@ $email           = ( isset( $email ) ? $email : '' );
 $plain_text      = ( isset( $plain_text ) ? $plain_text : '' );
 $text_align      = is_rtl() ? 'right' : 'left';
 $postID          = CustomPostType::postIDByTemplate( $this->template );
-$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588a';
+$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 // instructions payment
 $paymentGateways  = wc_get_payment_gateway_by_order( $order );
 $yaymail_settings = get_option( 'yaymail_settings' );
 $cash_on_delivery = esc_html__( 'Cash on delivery', 'woocommerce' );
+
 if ( ( 'customer_on_hold_order' === $this->template
 	|| 'customer_processing_order' === $this->template
 	|| 'customer_completed_order' === $this->template
 	|| 'customer_refunded_order' === $this->template
 	|| 'customer_invoice' === $this->template
-	|| 'customer_note' === $this->template )
+	|| 'customer_note' === $this->template
+	|| 'customer_partial_shipped_order' === $this->template
+	|| 'customer_shipped_order' === $this->template )
 	&& 2 == $yaymail_settings['payment']
 	|| ( isset( $paymentGateways->method_title ) ? $cash_on_delivery == $paymentGateways->method_title : false
 	&& 'cancelled_order' != $this->template
@@ -54,12 +57,15 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 		'bic'            => 'BIC',
 	);
 	$direct_bank_transfer = esc_html__( 'Direct bank transfer', 'woocommerce' );
+
 	if ( ( 'customer_on_hold_order' === $this->template
 		|| 'customer_processing_order' === $this->template
 		|| 'customer_completed_order' === $this->template
 		|| 'customer_refunded_order' === $this->template
 		|| 'customer_invoice' === $this->template
-		|| 'customer_note' === $this->template )
+		|| 'customer_note' === $this->template
+		|| 'customer_partial_shipped_order' === $this->template
+		|| 'customer_shipped_order' === $this->template )
 		&& $direct_bank_transfer == $paymentGateways->method_title
 		&& is_array( $account_details )
 		&& count( $account_details ) > 0
@@ -68,7 +74,7 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 		?>
 
 		<section style="text-align: ' . $text_align . '" class="yaymail_builder_wrap_account">
-			<h2 class="yaymail_builder_bank_details" style="color: #96588a;">
+			<h2 class="yaymail_builder_bank_details" style="color: #7f54b3;">
 		<?php esc_html_e( 'Our bank details', 'woocommerce' ); ?>
 			</h2>
 
@@ -77,7 +83,7 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 			foreach ( $accounts as $label_name => $infor_account ) {
 				if ( 'account_name' === $label_name && ! empty( $infor_account ) ) {
 					?>
-						<h3 class="yaymail_builder_account_name" style="color: #96588a;">
+						<h3 class="yaymail_builder_account_name" style="color: #7f54b3;">
 					<?php
 					esc_html_e( $infor_account, 'woocommerce' );
 					?>
@@ -112,10 +118,10 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 ?>
 
 <!-- Title Table Order Items -->
-<h2 class="yaymail_builder_order" style="color: #96588a;font-size: 18px;font-weight: 700;">
+<div class="yaymail_builder_order" style="color: #7f54b3;font-size: 18px;font-weight: 700;">
 	<?php
 	if ( $sent_to_admin ) {
-		$before = '<a style="font-weight: normal;color: ' . $text_link_color . '" class="yaymail_builder_link" href="' . esc_url( $order->get_edit_order_url() ) . '">';
+		$before = '<a style="font-weight: normal;color: ' . esc_attr( $text_link_color ) . '" class="yaymail_builder_link" href="' . esc_url( $order->get_edit_order_url() ) . '">';
 		$after  = '</a>';
 		/* translators: %s: Order ID. */
 		echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . $after . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) );
@@ -126,7 +132,7 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 		echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) . $after );
 	}
 	?>
-</h2>
+</div>
 
 <!-- Table Items has Border -->
 <table class="yaymail_builder_table_items_content" cellspacing="0" cellpadding="6" border="1" style="width: 100% !important;color: inherit;flex-direction:column;border: 1px solid;border-color: inherit;" width="100%">

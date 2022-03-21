@@ -342,7 +342,7 @@ class Ajax {
 				if ( isset( $_POST['template'] ) ) {
 					// Helper::checkNonce();
 					$emailBackgroundColor = isset( $_POST['emailBackgroundColor'] ) ? sanitize_text_field( $_POST['emailBackgroundColor'] ) : 'rgb(236, 236, 236)';
-					$emailTextLinkColor   = isset( $_POST['emailTextLinkColor'] ) ? sanitize_text_field( $_POST['emailTextLinkColor'] ) : '#96588a';
+					$emailTextLinkColor   = isset( $_POST['emailTextLinkColor'] ) ? sanitize_text_field( $_POST['emailTextLinkColor'] ) : '#7f54b3';
 					$titleShipping        = isset( $_POST['titleShipping'] ) ? sanitize_text_field( $_POST['titleShipping'] ) : 'Shipping Address';
 					$titleBilling         = isset( $_POST['titleBilling'] ) ? sanitize_text_field( $_POST['titleBilling'] ) : 'Billing Address';
 					$orderTitle           = ( isset( $_POST['orderTitle'] ) && is_array( $_POST['orderTitle'] ) ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['orderTitle'] ) ) : array();
@@ -461,7 +461,7 @@ class Ajax {
 						$postID               = CustomPostType::postIDByTemplate( $copyFrom );
 						$emailContentsFrom    = get_post_meta( $postID, '_yaymail_elements', true );
 						$emailBackgroundColor = get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : 'rgb(236, 236, 236)';
-						$emailTextLinkColor   = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#96588a';
+						$emailTextLinkColor   = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 						$titleShipping        = isset( $_POST['titleShipping'] ) ? sanitize_text_field( $_POST['titleShipping'] ) : 'Shipping Address';
 						$titleBilling         = isset( $_POST['titleBilling'] ) ? sanitize_text_field( $_POST['titleBilling'] ) : 'Billing Address';
 						$orderTitle           = isset( $_POST['orderTitle'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['orderTitle'] ) ) : array();
@@ -555,7 +555,7 @@ class Ajax {
 								$postID = CustomPostType::postIDByTemplate( $key );
 								update_post_meta( $postID, '_yaymail_elements', json_decode( $template['elements'], true ) );
 								update_post_meta( $postID, '_email_backgroundColor_settings', 'rgb(236, 236, 236)' );
-								update_post_meta( $postID, '_yaymail_email_textLinkColor_settings', '#96588a' );
+								update_post_meta( $postID, '_yaymail_email_textLinkColor_settings', '#7f54b3' );
 								update_post_meta( $postID, '_email_title_shipping', __( 'Shipping Address', 'yaymail' ) );
 								update_post_meta( $postID, '_email_title_billing', __( 'Billing Address', 'yaymail' ) );
 								update_post_meta( $postID, '_yaymail_email_order_item_title', $orderTitle );
@@ -575,7 +575,7 @@ class Ajax {
 							$postID = CustomPostType::postIDByTemplate( $reset );
 							update_post_meta( $postID, '_yaymail_elements', json_decode( $templates[ $reset ]['elements'], true ) );
 							update_post_meta( $postID, '_email_backgroundColor_settings', 'rgb(236, 236, 236)' );
-							update_post_meta( $postID, '_yaymail_email_textLinkColor_settings', '#96588a' );
+							update_post_meta( $postID, '_yaymail_email_textLinkColor_settings', '#7f54b3' );
 							update_post_meta( $postID, '_email_title_shipping', __( 'Shipping Address', 'yaymail' ) );
 							update_post_meta( $postID, '_email_title_billing', __( 'Billing Address', 'yaymail' ) );
 							update_post_meta( $postID, '_yaymail_email_order_item_title', $orderTitle );

@@ -1081,6 +1081,29 @@ class ET_Core_Data_Utils {
 
 		return implode( ',', $css_selectors_processed );
 	}
+
+	/**
+	 * Helper function to prepare attributes for SVG.
+	 *
+	 * @param array $props Props.
+	 *
+	 * @return string
+	 */
+	public function get_svg_attrs( $props ) {
+		$result = '';
+		$attrs  = array_merge(
+			$props,
+			array(
+				'xmlns' => 'http://www.w3.org/2000/svg',
+			)
+		);
+
+		foreach ( $attrs as $key => $value ) {
+			$result .= " {$key}=\"{$value}\"";
+		}
+
+		return $result;
+	}
 }
 
 

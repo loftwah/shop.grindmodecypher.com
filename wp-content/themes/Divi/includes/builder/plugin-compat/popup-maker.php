@@ -52,6 +52,9 @@ class ET_Builder_Plugin_Compat_Popup_Maker extends ET_Builder_Plugin_Compat_Base
 
 		// Disable Cache in Feature Manager.
 		add_filter( 'et_builder_post_feature_cache_enabled', array( $this, 'et_builder_disable_dynamic_features' ), 10, 4 );
+
+		// Override Waypoint context.
+		add_filter( 'et_builder_waypoints_options', array( $this, 'maybe_override_waypoints_options' ) );
 	}
 
 	/**
@@ -143,6 +146,29 @@ class ET_Builder_Plugin_Compat_Popup_Maker extends ET_Builder_Plugin_Compat_Base
 
 		// Add suffix to make sure not prefixed divi-style won't be dequeued.
 		return $handle . '-pum';
+	}
+
+	/**
+	 * Override Waypoints context for modules inside Popup Maker overlay.
+	 *
+	 * @since 4.15.0
+	 *
+	 * @param array $options Waypoints options.
+	 *
+	 * @return array Filtered Waypoints options.
+	 */
+	public function maybe_override_waypoints_options( $options ) {
+		// Check whether `context` property exists or not.
+		if ( ! isset( $options['context'] ) ) {
+			$options['context'] = array();
+		}
+
+		// Make sure the existing `context` is already on array format. Then add Popup Maker
+		// overlay selector to the list.
+		$options['context']   = (array) $options['context'];
+		$options['context'][] = '.pum-overlay';
+
+		return $options;
 	}
 }
 

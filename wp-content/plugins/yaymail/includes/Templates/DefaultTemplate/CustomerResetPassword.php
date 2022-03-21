@@ -61,7 +61,7 @@ class CustomerResetPassword {
         "nameElement": "Email Heading",
         "settingRow": {
           "content": "<h1 style=\"font-size: 30px; font-weight: 300; line-height: normal; margin: 0; color: inherit;\">' . $emailTitle . '</h1>",
-          "backgroundColor": "#96588A",
+          "backgroundColor": "#7f54b3",
           "textColor": "#ffffff",
           "family": "Helvetica,Roboto,Arial,sans-serif",
           "paddingTop": "36",
@@ -88,7 +88,7 @@ class CustomerResetPassword {
         "type": "ElementText",
         "nameElement": "Footer",
         "settingRow": {
-          "content": "<p style=\"font-size: 14px;margin: 0px 0px 16px; text-align: center;\">[yaymail_site_name]&nbsp;- Built with <a style=\"color: #96588a; font-weight: normal; text-decoration: underline;\" href=\"https://woocommerce.com\" target=\"_blank\" rel=\"noopener\">WooCommerce</a></p>",
+          "content": "<p style=\"font-size: 14px;margin: 0px 0px 16px; text-align: center;\">[yaymail_site_name]&nbsp;- Built with <a style=\"color: #7f54b3; font-weight: normal; text-decoration: underline;\" href=\"https://woocommerce.com\" target=\"_blank\" rel=\"noopener\">WooCommerce</a></p>",
           "backgroundColor": "#ececec",
           "textColor": "#8a8a8a",
           "family": "Helvetica,Roboto,Arial,sans-serif",

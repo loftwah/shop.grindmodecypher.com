@@ -282,6 +282,8 @@ class ET_Builder_Module_Map extends ET_Builder_Module {
 			'<div%5$s class="%6$s"%8$s%12$s%13$s>
 				%11$s
 				%10$s
+				%14$s
+				%15$s
 				<div class="et_pb_map" data-center-lat="%1$s" data-center-lng="%2$s" data-zoom="%3$d" data-mouse-wheel="%7$s" data-mobile-dragging="%9$s"></div>
 				%4$s
 			</div>',
@@ -297,7 +299,9 @@ class ET_Builder_Module_Map extends ET_Builder_Module {
 			$video_background, // #10
 			$parallax_image_background,
 			$grayscale_filter_data_tablet,
-			$grayscale_filter_data_phone
+			$grayscale_filter_data_phone,
+			et_core_esc_previously( $this->background_pattern() ), // #14
+			et_core_esc_previously( $this->background_mask() ) // #15
 		);
 
 		return $output;

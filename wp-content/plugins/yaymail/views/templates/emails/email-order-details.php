@@ -1,34 +1,44 @@
 <?php
 
 defined( 'ABSPATH' ) || exit;
-use YayMail\Helper\Helper;
-
-$sent_to_admin = ( isset( $sent_to_admin ) ? $sent_to_admin : false );
-$email         = ( isset( $email ) ? $email : '' );
-$plain_text    = ( isset( $plain_text ) ? $plain_text : '' );
-$text_align    = is_rtl() ? 'right' : 'left';
-// Instructions Payment
+use YayMail\Page\Source\CustomPostType;
+$sent_to_admin   = ( isset( $sent_to_admin ) ? $sent_to_admin : false );
+$email           = ( isset( $email ) ? $email : '' );
+$plain_text      = ( isset( $plain_text ) ? $plain_text : '' );
+$text_align      = is_rtl() ? 'right' : 'left';
+$postID          = CustomPostType::postIDByTemplate( $this->template );
+$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
+// instructions payment
 $paymentGateways  = wc_get_payment_gateway_by_order( $order );
 $yaymail_settings = get_option( 'yaymail_settings' );
 $cash_on_delivery = esc_html__( 'Cash on delivery', 'woocommerce' );
-if ( 'customer_on_hold_order' === $this->template
+
+if ( ( 'customer_on_hold_order' === $this->template
+	|| 'customer_processing_order' === $this->template
+	|| 'customer_completed_order' === $this->template
+	|| 'customer_refunded_order' === $this->template
+	|| 'customer_invoice' === $this->template
+	|| 'customer_note' === $this->template
+	|| 'customer_partial_shipped_order' === $this->template
+	|| 'customer_shipped_order' === $this->template )
 	&& 2 == $yaymail_settings['payment']
-	|| ( Helper::checkKeyExist( $paymentGateways, 'method_title', false ) == $cash_on_delivery
+	|| ( isset( $paymentGateways->method_title ) ? $cash_on_delivery == $paymentGateways->method_title : false
 	&& 'cancelled_order' != $this->template
 	&& 'new_order' != $this->template
 	&& 'failed_order' != $this->template
-	&& 'customer_refunded_order' != $this->template
 	&& 'customer_new_account' != $this->template
 	&& 'customer_reset_password' != $this->template )
 ) {?>
 
-	<p class="yaymail_builder_instructions"><?php esc_html_e( isset( $paymentGateways->instructions ) ? $paymentGateways->instructions : '', 'woocommerce' ); ?></p>
+	<p style="text-align: <?php echo esc_attr( $text_align ); ?>; margin: 0 0 16px;" class="yaymail_builder_instructions">
+	<?php echo wp_kses_post( isset( $paymentGateways->instructions ) ? $paymentGateways->instructions : '', 'woocommerce' ); ?>
+	</p>
 
-	<?php
-} elseif ( 1 == $yaymail_settings['payment'] ) {
-	?>
+<?php } elseif ( 1 == $yaymail_settings['payment'] ) { ?>
 
-	<p class="yaymail_builder_instructions"><?php esc_html_e( isset( $paymentGateways->instructions ) ? $paymentGateways->instructions : '', 'woocommerce' ); ?></p>
+	<p style="margin: 0 0 16px;" class="yaymail_builder_instructions">
+	<?php echo wp_kses_post( isset( $paymentGateways->instructions ) ? $paymentGateways->instructions : '', 'woocommerce' ); ?>
+	</p>
 
 	<?php
 }
@@ -47,22 +57,37 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 		'bic'            => 'BIC',
 	);
 	$direct_bank_transfer = esc_html__( 'Direct bank transfer', 'woocommerce' );
-	if ( 'customer_on_hold_order' === $this->template
-		&& Helper::checkKeyExist( $paymentGateways, 'method_title', false ) == $direct_bank_transfer
+
+	if ( ( 'customer_on_hold_order' === $this->template
+		|| 'customer_processing_order' === $this->template
+		|| 'customer_completed_order' === $this->template
+		|| 'customer_refunded_order' === $this->template
+		|| 'customer_invoice' === $this->template
+		|| 'customer_note' === $this->template
+		|| 'customer_partial_shipped_order' === $this->template
+		|| 'customer_shipped_order' === $this->template )
+		&& $direct_bank_transfer == $paymentGateways->method_title
 		&& is_array( $account_details )
 		&& count( $account_details ) > 0
 		&& 1 == $yaymail_settings['payment']
 	) {
 		?>
 
-		<section class="yaymail_builder_wrap_account">
-			<h2 class="yaymail_builder_bank_details"><?php esc_html_e( 'Our bank details', 'woocommerce' ); ?></h2>
+		<section style="text-align: ' . $text_align . '" class="yaymail_builder_wrap_account">
+			<h2 class="yaymail_builder_bank_details" style="color: #7f54b3;">
+		<?php esc_html_e( 'Our bank details', 'woocommerce' ); ?>
+			</h2>
+
 		<?php
 		foreach ( $account_details as $accounts ) {
 			foreach ( $accounts as $label_name => $infor_account ) {
 				if ( 'account_name' === $label_name && ! empty( $infor_account ) ) {
 					?>
-						<h3 class="yaymail_builder_account_name"> <?php esc_html_e( $infor_account, 'woocommerce' ); ?> </h3>
+						<h3 class="yaymail_builder_account_name" style="color: #7f54b3;">
+					<?php
+					esc_html_e( $infor_account, 'woocommerce' );
+					?>
+						</h3>
 					<?php
 				}
 			}
@@ -73,9 +98,11 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 			foreach ( $accounts as $label_name => $infor_account ) {
 				if ( 'account_name' !== $label_name && ! empty( $infor_account ) ) {
 					?>
+
 							<li><?php esc_html_e( $texts[ $label_name ], 'woocommerce' ); ?>:
 								<strong><?php esc_html_e( $infor_account, 'woocommerce' ); ?></strong>
 							</li>
+
 					<?php
 				}
 			}
@@ -83,47 +110,49 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 				</ul>
 
 		<?php } ?>
+
 		</section>
 		<?php
 	}
 }
 ?>
 
-<!-- Title Table Order -->
-<h2 class="yaymail_builder_order">
-<?php
-if ( $sent_to_admin ) {
-	$before = '<a class="yaymail_builder_link" href="' . esc_url( $order->get_edit_order_url() ) . '">';
-	$after  = '</a>';
-	/* translators: %s: Order ID. */
-	echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . $after . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) );
-} else {
-	$before = '<h2 class="yaymail_builder_link" >';
-	$after  = '</h2>';
-	/* translators: %s: Order ID. */
-	echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) . $after );
-}
+<!-- Title Table Order Items -->
+<?php if ( $is_display ) { ?>
+<div class="yaymail_builder_order" style="color: #7f54b3;font-size: 18px;font-weight: 700;">
+	<?php
+	if ( $sent_to_admin ) {
+		$before = '<a style="font-weight: normal;color: ' . esc_attr( $text_link_color ) . '" class="yaymail_builder_link" href="' . esc_url( $order->get_edit_order_url() ) . '">';
+		$after  = '</a>';
+		/* translators: %s: Order ID. */
+		echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . $after . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) );
+	} else {
+		$before = '<h2 style="font-weight: normal;' . esc_attr( $text_link_color ) . '" class="yaymail_builder_link" >';
+		$after  = '</h2>';
+		/* translators: %s: Order ID. */
+		echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) . $after );
+	}
+	?>
+</div>
+<?php } ?>
 
-?>
-</h2>
-
-<!-- Table Items not border -->
-<table class="yaymail_builder_table_items" cellspacing="0" cellpadding="6" style="width: 100% !important;" width="100%">
+<!-- Table Items has Border -->
+<table class="yaymail_builder_table_items_content" cellspacing="0" cellpadding="6" border="1" style="border-collapse: separate; color: #636363; border: 1px solid #e5e5e5; font-family: Helvetica,Roboto,Arial,sans-serif;" width="100%">
 	<thead>
 		<tr style="word-break: normal">
-			<th class="td" scope="col" style="text-align:left;">
+			<th class="td" scope="col" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit;">
 				<?php esc_html_e( 'Product', 'woocommerce' ); ?>
 			</th>
-			<th class="td" scope="col" style="text-align:left;">
+			<th class="td" scope="col" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit;">
 				<?php esc_html_e( 'Quantity', 'woocommerce' ); ?>
 			</th>
-			<th class="td" scope="col" style="text-align:left; width: 30%;">
+			<th class="td" scope="col" style="text-align:left; width: 30%;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit;">
 				<?php esc_html_e( 'Price', 'woocommerce' ); ?>
 			</th>
 		</tr>
 	</thead>
 
-	<tbody>
+	<tbody style="flex-direction:inherit;" >
 		<?php
 		echo wp_kses_post(
 			$this->ordetItemTables(
@@ -138,44 +167,43 @@ if ( $sent_to_admin ) {
 			)
 		);
 
-
 		?>
 	</tbody>
 
-  <tfoot>
+	<tfoot>
 		<?php
+		if ( $is_display ) {
 		$totalItem = $order->get_order_item_totals();
 		$i         = 0;
 		foreach ( $totalItem as $key => $total ) {
 			$i++;
 			?>
 
-			<tr>
-				<th class="td" scope="row" colspan="2" style="text-align:left; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
+		<tr>
+			<th class="td" scope="row" colspan="2" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
 			<?php echo esc_html( $total['label'] ); ?>
-				</th>
-				<td class="td" style="text-align:left; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
+			</th>
+			<td class="td" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
 			<?php echo wp_kses_post( $total['value'] ); ?>
-				</td>
-			</tr>
+			</td>
+		</tr>
 
 			<?php
 		}
-
 
 		if ( ! empty( $order->get_customer_note() ) ) {
 			$note = $order->get_customer_note();
 			?>
 
 			<tr>
-					<th class="td" scope="row" colspan="2" style="text-align:left; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
+				<th class="td" scope="row" colspan="2" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
 			<?php esc_html_e( 'Note:', 'woocommerce' ); ?>
-					</th>
-					<td class="td" style="text-align:left; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
+				</th>
+				<td class="td" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
 			<?php echo esc_html( $note ); ?>
-					</td>
+				</td>
 			</tr>
 
-		<?php } ?>
+		<?php } } ?>
 	</tfoot>
 </table>

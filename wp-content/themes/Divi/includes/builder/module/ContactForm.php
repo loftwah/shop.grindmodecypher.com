@@ -764,6 +764,8 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 			<div id="%4$s" class="%5$s" data-form_unique_num="%6$s" data-form_unique_id="%10$s"%7$s>
 				%9$s
 				%8$s
+				%11$s
+				%12$s
 				%1$s
 				<div class="et-pb-contact-message">%2$s</div>
 				%3$s
@@ -778,7 +780,9 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 			'on' === $use_redirect && '' !== $redirect_url ? sprintf( ' data-redirect_url="%1$s"', esc_attr( $redirect_url ) ) : '',
 			$video_background,
 			$parallax_image_background,
-			esc_attr( $unique_id ) // #10
+			esc_attr( $unique_id ), // #10
+			et_core_esc_previously( $this->background_pattern() ), // #11
+			et_core_esc_previously( $this->background_mask() ) // #12
 		);
 
 		return $output;
