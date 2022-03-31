@@ -138,7 +138,7 @@ class ET_Core_Portability {
 		}
 
 		if ( ! empty( $import['global_colors'] ) ) {
-			$import['data'] = $this->_maybe_inject_gcid( $import['data'] );
+			$import['data'] = $this->_maybe_inject_gcid( $import['data'], $import['global_colors'] );
 		}
 
 		$data = $import['data'];
@@ -1399,15 +1399,15 @@ class ET_Core_Portability {
 	 *
 	 * @param array $data - The multidimensional array representing a import object structure.
 	 */
-	protected function _maybe_inject_gcid( &$data ) {
+	protected function _maybe_inject_gcid( &$data, &$gcolors = null ) {
 		foreach ( $data as $post_id => &$post_data ) {
 			if ( is_array( $post_data ) ) {
 				$shortcode_object = et_fb_process_shortcode( $post_data['post_content'] );
-				$this->_inject_gcid( $shortcode_object );
+				$this->_inject_gcid( $shortcode_object, $gcolors );
 				$data[ $post_id ]['post_content'] = et_fb_process_to_shortcode( $shortcode_object, array(), '', false );
 			} else {
 				$shortcode_object = et_fb_process_shortcode( $post_data );
-				$this->_inject_gcid( $shortcode_object );
+				$this->_inject_gcid( $shortcode_object, $gcolors );
 				$data[ $post_id ] = et_fb_process_to_shortcode( $shortcode_object, array(), '', false );
 			}
 		}
@@ -1424,18 +1424,27 @@ class ET_Core_Portability {
 	 *
 	 * @param array $shortcode_object - The multidimensional array representing a page/module structure.
 	 */
-	protected function _inject_gcid( &$shortcode_object ) {
+	protected function _inject_gcid( &$shortcode_object, &$global_colors ) {
 		foreach ( $shortcode_object as &$module ) {
 			// No global colors set for this module.
-			if ( ! empty( $module['attrs']['global_colors_info'] ) ) {
+			if ( ! empty( $module['attrs']['global_colors_info'] ) && ! empty( $global_colors ) ) {
 				$colors_array = json_decode( $module['attrs']['global_colors_info'], true );
 
 				if ( ! empty( $colors_array ) ) {
 					foreach ( $colors_array as $color_id => $attrs_array ) {
 						if ( ! empty( $attrs_array ) ) {
+							// Get settings for this global color.
+							$color = '';
+							foreach ( $global_colors as $gcid ) {
+								if ( $color_id === $gcid[0] && 'yes' === $gcid[1]['active'] ) {
+									$color = $gcid[1]['color'];
+								}
+							}
+
 							foreach ( $attrs_array as $attr_name ) {
 								if ( isset( $module['attrs'][ $attr_name ] ) && '' !== $module['attrs'][ $attr_name ] ) {
-									$module['attrs'][ $attr_name ] = $color_id;
+									// Match substring (needed for attrs like gradient stops).
+									$module['attrs'][ $attr_name ] = str_replace( $color, $color_id, $module['attrs'][ $attr_name ] );
 								}
 							}
 						}
@@ -1444,7 +1453,7 @@ class ET_Core_Portability {
 			}
 
 			if ( isset( $module['content'] ) && is_array( $module['content'] ) ) {
-				$this->_inject_gcid( $module['content'] );
+				$this->_inject_gcid( $module['content'], $global_colors );
 			}
 		}
 	}

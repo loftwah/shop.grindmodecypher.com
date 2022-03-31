@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { cart } from '@woocommerce/icons';
 import { Icon } from '@wordpress/icons';
-import { registerExperimentalBlockType } from '@woocommerce/block-settings';
+import { registerFeaturePluginBlockType } from '@woocommerce/block-settings';
 
 /**
  * Internal dependencies
@@ -31,20 +31,7 @@ const settings = {
 	supports: {
 		html: false,
 		multiple: false,
-		color: {
-			/**
-			 * Because we don't target the wrapper element, we don't need
-			 * to add color classes and style to the wrapper.
-			 */
-			__experimentalSkipSerialization: true,
-			background: true,
-		},
-		/**
-		 * We need this experimental flag because we don't want to style the
-		 * wrapper but inner elements.
-		 */
-		__experimentalSelector:
-			'.wc-block-mini-cart__button, .wc-block-mini-cart__badge',
+		color: true,
 	},
 	example: {
 		attributes: {
@@ -52,18 +39,14 @@ const settings = {
 		},
 	},
 	attributes: {
-		align: {
-			type: 'string',
-			default: 'right',
-		},
 		isPreview: {
 			type: 'boolean',
 			default: false,
 			save: false,
 		},
-		transparentButton: {
-			type: 'boolean',
-			default: true,
+		addToCartBehaviour: {
+			type: 'string',
+			default: 'none',
 		},
 	},
 
@@ -74,4 +57,4 @@ const settings = {
 	},
 };
 
-registerExperimentalBlockType( 'woocommerce/mini-cart', settings );
+registerFeaturePluginBlockType( 'woocommerce/mini-cart', settings );

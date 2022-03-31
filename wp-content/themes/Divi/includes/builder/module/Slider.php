@@ -489,7 +489,7 @@ class ET_Builder_Module_Slider extends ET_Builder_Module {
 		$dot_nav_custom_color_tablet = isset( $dot_nav_custom_color_values['tablet'] ) ? $dot_nav_custom_color_values['tablet'] : '';
 		$dot_nav_custom_color_phone  = isset( $dot_nav_custom_color_values['phone'] ) ? $dot_nav_custom_color_values['phone'] : '';
 
-		// Pass Slider Module setting to Slide Item
+		// Pass Slider Module setting to Slide Item.
 		global $et_pb_slider;
 
 		$et_pb_slider = array(
@@ -504,43 +504,121 @@ class ET_Builder_Module_Slider extends ET_Builder_Module {
 			'background_color_tablet'                      => $this->props['background_color_tablet'],
 			'background_color_phone'                       => $this->props['background_color_phone'],
 			'background_color__hover'                      => isset( $this->props['background_color__hover'] ) ? $this->props['background_color__hover'] : '',
+
 			// Background Gradient.
 			'use_background_color_gradient'                => $this->props['use_background_color_gradient'],
 			'use_background_color_gradient_tablet'         => $this->props['use_background_color_gradient_tablet'],
 			'use_background_color_gradient_phone'          => $this->props['use_background_color_gradient_phone'],
-			'use_background_color_gradient__hover'         => isset( $this->props['use_background_color_gradient__hover'] ) ? $this->props['use_background_color_gradient__hover'] : '',
+			'use_background_color_gradient__hover'         => isset( $this->props['use_background_color_gradient__hover'] )
+				? $this->props['use_background_color_gradient__hover']
+				: '',
+
+			'background_color_gradient_repeat'             => isset( $this->props['background_color_gradient_repeat'] )
+				? $this->props['background_color_gradient_repeat']
+				: '',
+			'background_color_gradient_repeat_tablet'      => isset( $this->props['background_color_gradient_repeat_tablet'] )
+				? $this->props['background_color_gradient_repeat_tablet']
+				: '',
+			'background_color_gradient_repeat_phone'       => isset( $this->props['background_color_gradient_repeat_phone'] )
+				? $this->props['background_color_gradient_repeat_phone']
+				: '',
+			'background_color_gradient_repeat__hover'      => isset( $this->props['background_color_gradient_repeat__hover'] )
+				? $this->props['background_color_gradient_repeat__hover']
+				: '',
+			'background_color_gradient_repeat__sticky'     => isset( $this->props['background_color_gradient_repeat__sticky'] )
+				? $this->props['background_color_gradient_repeat__sticky']
+				: '',
+
 			'background_color_gradient_type'               => $this->props['background_color_gradient_type'],
 			'background_color_gradient_type_tablet'        => $this->props['background_color_gradient_type_tablet'],
 			'background_color_gradient_type_phone'         => $this->props['background_color_gradient_type_phone'],
-			'background_color_gradient_type__hover'        => isset( $this->props['background_color_gradient_type__hover'] ) ? $this->props['background_color_gradient_type__hover'] : '',
+			'background_color_gradient_type__hover'        => isset( $this->props['background_color_gradient_type__hover'] )
+				? $this->props['background_color_gradient_type__hover']
+				: '',
+
 			'background_color_gradient_direction'          => $this->props['background_color_gradient_direction'],
 			'background_color_gradient_direction_tablet'   => $this->props['background_color_gradient_direction_tablet'],
 			'background_color_gradient_direction_phone'    => $this->props['background_color_gradient_direction_phone'],
-			'background_color_gradient_direction__hover'   => isset( $this->props['background_color_gradient_direction__hover'] ) ? $this->props['background_color_gradient_direction__hover'] : '',
+			'background_color_gradient_direction__hover'   => isset( $this->props['background_color_gradient_direction__hover'] )
+				? $this->props['background_color_gradient_direction__hover']
+				: '',
+
 			'background_color_gradient_direction_radial'   => $this->props['background_color_gradient_direction_radial'],
 			'background_color_gradient_direction_radial_tablet' => $this->props['background_color_gradient_direction_radial_tablet'],
 			'background_color_gradient_direction_radial_phone' => $this->props['background_color_gradient_direction_radial_phone'],
-			'background_color_gradient_direction_radial__hover' => isset( $this->props['background_color_gradient_direction_radial__hover'] ) ? $this->props['background_color_gradient_direction_radial__hover'] : '',
-			'background_color_gradient_start'              => $this->props['background_color_gradient_start'],
-			'background_color_gradient_start_tablet'       => $this->props['background_color_gradient_start_tablet'],
-			'background_color_gradient_start_phone'        => $this->props['background_color_gradient_start_phone'],
-			'background_color_gradient_start__hover'       => isset( $this->props['background_color_gradient_start__hover'] ) ? $this->props['background_color_gradient_start__hover'] : '',
-			'background_color_gradient_end'                => $this->props['background_color_gradient_end'],
-			'background_color_gradient_end_tablet'         => $this->props['background_color_gradient_end_tablet'],
-			'background_color_gradient_end_phone'          => $this->props['background_color_gradient_end_phone'],
-			'background_color_gradient_end__hover'         => isset( $this->props['background_color_gradient_end__hover'] ) ? $this->props['background_color_gradient_end__hover'] : '',
-			'background_color_gradient_start_position'     => $this->props['background_color_gradient_start_position'],
-			'background_color_gradient_start_position_tablet' => $this->props['background_color_gradient_start_position_tablet'],
-			'background_color_gradient_start_position_phone' => $this->props['background_color_gradient_start_position_phone'],
-			'background_color_gradient_start_position__hover' => isset( $this->props['background_color_gradient_start_position__hover'] ) ? $this->props['background_color_gradient_start_position__hover'] : '',
-			'background_color_gradient_end_position'       => $this->props['background_color_gradient_end_position'],
-			'background_color_gradient_end_position_tablet' => $this->props['background_color_gradient_end_position_tablet'],
-			'background_color_gradient_end_position_phone' => $this->props['background_color_gradient_end_position_phone'],
-			'background_color_gradient_end_position__hover' => isset( $this->props['background_color_gradient_end_position__hover'] ) ? $this->props['background_color_gradient_end_position__hover'] : '',
+			'background_color_gradient_direction_radial__hover' => isset( $this->props['background_color_gradient_direction_radial__hover'] )
+				? $this->props['background_color_gradient_direction_radial__hover']
+				: '',
+
+			'background_color_gradient_stops'              => $this->props['background_color_gradient_stops'],
+			'background_color_gradient_stops_tablet'       => $this->props['background_color_gradient_stops_tablet'],
+			'background_color_gradient_stops_phone'        => $this->props['background_color_gradient_stops_phone'],
+			'background_color_gradient_stops__hover'       => isset( $this->props['background_color_gradient_stops__hover'] )
+				? $this->props['background_color_gradient_stops__hover']
+				: '',
+			'background_color_gradient_stops__sticky'      => isset( $this->props['background_color_gradient_stops__sticky'] )
+				? $this->props['background_color_gradient_stops__sticky']
+				: '',
+
 			'background_color_gradient_overlays_image'     => $this->props['background_color_gradient_overlays_image'],
 			'background_color_gradient_overlays_image_tablet' => $this->props['background_color_gradient_overlays_image_tablet'],
 			'background_color_gradient_overlays_image_phone' => $this->props['background_color_gradient_overlays_image_phone'],
-			'background_color_gradient_overlays_image__hover' => isset( $this->props['background_color_gradient_overlays_image__hover'] ) ? $this->props['background_color_gradient_overlays_image__hover'] : '',
+			'background_color_gradient_overlays_image__hover' => isset( $this->props['background_color_gradient_overlays_image__hover'] )
+				? $this->props['background_color_gradient_overlays_image__hover']
+				: '',
+
+			'background_color_gradient_start'              => isset( $this->props['background_color_gradient_start'] )
+				? $this->props['background_color_gradient_start']
+				: '',
+			'background_color_gradient_start_tablet'       => isset( $this->props['background_color_gradient_start_tablet'] )
+				? $this->props['background_color_gradient_start_tablet']
+				: '',
+			'background_color_gradient_start_phone'        => isset( $this->props['background_color_gradient_start_phone'] )
+				? $this->props['background_color_gradient_start_phone']
+				: '',
+			'background_color_gradient_start__hover'       => isset( $this->props['background_color_gradient_start__hover'] )
+				? $this->props['background_color_gradient_start__hover']
+				: '',
+
+			'background_color_gradient_end'                => isset( $this->props['background_color_gradient_end'] )
+				? $this->props['background_color_gradient_end']
+				: '',
+			'background_color_gradient_end_tablet'         => isset( $this->props['background_color_gradient_end_tablet'] )
+				? $this->props['background_color_gradient_end_tablet']
+				: '',
+			'background_color_gradient_end_phone'          => isset( $this->props['background_color_gradient_end_phone'] )
+				? $this->props['background_color_gradient_end_phone']
+				: '',
+			'background_color_gradient_end__hover'         => isset( $this->props['background_color_gradient_end__hover'] )
+				? $this->props['background_color_gradient_end__hover']
+				: '',
+
+			'background_color_gradient_start_position'     => isset( $this->props['background_color_gradient_start_position'] )
+				? $this->props['background_color_gradient_start_position']
+				: '',
+			'background_color_gradient_start_position_tablet' => isset( $this->props['background_color_gradient_start_position_tablet'] )
+				? $this->props['background_color_gradient_start_position_tablet']
+				: '',
+			'background_color_gradient_start_position_phone' => isset( $this->props['background_color_gradient_start_position_phone'] )
+				? $this->props['background_color_gradient_start_position_phone']
+				: '',
+			'background_color_gradient_start_position__hover' => isset( $this->props['background_color_gradient_start_position__hover'] )
+				? $this->props['background_color_gradient_start_position__hover']
+				: '',
+
+			'background_color_gradient_end_position'       => isset( $this->props['background_color_gradient_end_position'] )
+				? $this->props['background_color_gradient_end_position']
+				: '',
+			'background_color_gradient_end_position_tablet' => isset( $this->props['background_color_gradient_end_position_tablet'] )
+				? $this->props['background_color_gradient_end_position_tablet']
+				: '',
+			'background_color_gradient_end_position_phone' => isset( $this->props['background_color_gradient_end_position_phone'] )
+				? $this->props['background_color_gradient_end_position_phone']
+				: '',
+			'background_color_gradient_end_position__hover' => isset( $this->props['background_color_gradient_end_position__hover'] )
+				? $this->props['background_color_gradient_end_position__hover']
+				: '',
+
 			// Background Image.
 			'background_enable_image'                      => $this->props['background_enable_image'],
 			'background_enable_image_tablet'               => $this->props['background_enable_image_tablet'],

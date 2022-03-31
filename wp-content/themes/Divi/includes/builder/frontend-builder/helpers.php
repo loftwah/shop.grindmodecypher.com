@@ -827,14 +827,17 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 			),
 			'contactFormInputs'                 => array(),
 			'backgroundOptions'                 => array(
+				'repeat'          => ET_Global_Settings::get_value( 'all_background_gradient_repeat' ),
 				'type'            => ET_Global_Settings::get_value( 'all_background_gradient_type' ),
 				'direction'       => ET_Global_Settings::get_value( 'all_background_gradient_direction' ),
 				'radialDirection' => ET_Global_Settings::get_value( 'all_background_gradient_direction_radial' ),
-				'colorStart'      => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
-				'colorEnd'        => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
-				'startPosition'   => ET_Global_Settings::get_value( 'all_background_gradient_start_position' ),
-				'endPosition'     => ET_Global_Settings::get_value( 'all_background_gradient_end_position' ),
+				'stops'           => ET_Global_Settings::get_value( 'all_background_gradient_stops' ),
+				'unit'            => ET_Global_Settings::get_value( 'all_background_gradient_unit' ),
 				'overlaysImage'   => ET_Global_Settings::get_value( 'all_background_gradient_overlays_image' ),
+				'colorStart'      => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
+				'startPosition'   => ET_Global_Settings::get_value( 'all_background_gradient_start_position' ),
+				'colorEnd'        => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
+				'endPosition'     => ET_Global_Settings::get_value( 'all_background_gradient_end_position' ),
 			),
 			'filterOptions'                     => array(
 				'hue_rotate'     => ET_Global_Settings::get_value( 'all_filter_hue_rotate' ),
@@ -1140,31 +1143,15 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 						'sub_toggle'      => 'column_%s',
 					)
 				),
-				'background_color_gradient_start_%s'     => ET_Builder_Element::background_field_template(
-					'color_gradient_start',
+				'background_color_gradient_stops_%s'     => ET_Builder_Element::background_field_template(
+					'color_gradient_stops',
 					array(
-						'label'           => esc_html__( 'Column %s Gradient Start', 'et_builder' ),
-						'type'            => 'color-alpha',
+						'label'           => esc_html__( 'Column %s Gradient Stops', 'et_builder' ),
+						'type'            => 'gradient-stops',
 						'option_category' => 'configuration',
-						'description'     => '',
-						'default'         => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
-						'show_if'         => array(
-							'use_background_color_gradient_%s' => 'on',
-						),
-						'tab_slug'        => 'general',
-						'toggle_slug'     => 'background',
-						'sub_toggle'      => 'column_%s',
-					)
-				),
-				'background_color_gradient_end_%s'       => ET_Builder_Element::background_field_template(
-					'color_gradient_end',
-					array(
-						'label'           => esc_html__( 'Column %s Gradient End', 'et_builder' ),
-						'type'            => 'color-alpha',
-						'option_category' => 'configuration',
-						'description'     => '',
-						'default'         => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
-						'show_if'         => array(
+						'description'     => esc_html__( 'Add two or more color stops to your gradient background. Each stop can be dragged to any position on the gradient bar. From each color stop to the next the color is interpolated into a smooth gradient.', 'et_builder' ),
+						'default'         => ET_Global_Settings::get_value( 'all_background_gradient_stops' ),
+						'show_if'      => array(
 							'use_background_color_gradient_%s' => 'on',
 						),
 						'tab_slug'        => 'general',
@@ -1179,8 +1166,10 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 						'type'            => 'select',
 						'option_category' => 'configuration',
 						'options'         => array(
-							'linear' => et_builder_i18n( 'Linear' ),
-							'radial' => et_builder_i18n( 'Radial' ),
+							'linear'     => et_builder_i18n( 'Linear' ),
+							'circular'   => et_builder_i18n( 'Circular' ),
+							'elliptical' => et_builder_i18n( 'Elliptical' ),
+							'conic'      => et_builder_i18n( 'Conical' ),
 						),
 						'default'         => ET_Global_Settings::get_value( 'all_background_gradient_type' ),
 						'description'     => '',
@@ -1210,6 +1199,7 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 						'show_if'         => array(
 							'background_color_gradient_type_%s' => array(
 								'linear',
+								'conic',
 							),
 						),
 						'tab_slug'        => 'general',
@@ -1220,7 +1210,7 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 				'background_color_gradient_direction_radial_%s' => ET_Builder_Element::background_field_template(
 					'color_gradient_direction_radial',
 					array(
-						'label'           => esc_html__( 'Column %s Radial Direction', 'et_builder' ),
+						'label'           => esc_html__( 'Column %s Gradient Position', 'et_builder' ),
 						'type'            => 'select',
 						'option_category' => 'configuration',
 						'options'         => array(
@@ -1239,6 +1229,9 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 						'show_if'         => array(
 							'background_color_gradient_type_%s' => array(
 								'radial',
+								'circular',
+								'elliptical',
+								'conic',
 							),
 						),
 						'tab_slug'        => 'general',
@@ -1246,6 +1239,121 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 						'sub_toggle'      => 'column_%s',
 					)
 				),
+				'background_color_gradient_repeat_%s' => ET_Builder_Element::background_field_template(
+					'color_gradient_repeat',
+					array(
+						'label'           => esc_html__( 'Column %s Repeat Gradient', 'et_builder' ),
+						'type'            => 'yes_no_button',
+						'option_category' => 'configuration',
+						'options'         => array(
+							'off'     => et_builder_i18n( 'No' ),
+							'on'      => et_builder_i18n( 'Yes' ),
+							'default' => intval( ET_Global_Settings::get_value( 'all_background_gradient_repeat' ) ),
+						),
+						'description'     => '',
+						'show_if'         => array(
+							'use_background_color_gradient_%s' => 'on',
+						),
+						'tab_slug'        => 'general',
+						'toggle_slug'     => 'background',
+						'sub_toggle'      => 'column_%s',
+					)
+				),
+				'background_color_gradient_unit_%s'      => ET_Builder_Element::background_field_template(
+					'color_gradient_unit',
+					array(
+						'label'           => esc_html__( 'Column %s Gradient Unit', 'et_builder' ),
+						'type'            => 'select',
+						'option_category' => 'configuration',
+						'options'          => array(
+							'%'    => et_builder_i18n( 'Percent' ),
+							'px'   => et_builder_i18n( 'Pixels' ),
+							'em'   => et_builder_i18n( 'Font Size (em)' ),
+							'rem'  => et_builder_i18n( 'Root-level Font Size (rem)' ),
+							'ex'   => et_builder_i18n( 'X-Height (ex)' ),
+							'ch'   => et_builder_i18n( 'Zero-width (ch)' ),
+							'pc'   => et_builder_i18n( 'Picas (pc)' ),
+							'pt'   => et_builder_i18n( 'Points (pt)' ),
+							'cm'   => et_builder_i18n( 'Centimeters (cm)' ),
+							'mm'   => et_builder_i18n( 'Millimeters (mm)' ),
+							'in'   => et_builder_i18n( 'Inches (in)' ),
+							'vh'   => et_builder_i18n( 'Viewport Height (vh)' ),
+							'vw'   => et_builder_i18n( 'Viewport Width (vw)' ),
+							'vmin' => et_builder_i18n( 'Viewport Minimum (vmin)' ),
+							'vmax' => et_builder_i18n( 'Viewport Maximum (vmax)' ),
+						),
+						'default'         => ET_Global_Settings::get_value( 'all_background_gradient_unit' ),
+						'description'     => '',
+						'show_if'          => array(
+							// Do not render this control for conic gradients.
+							'background_color_gradient_type_%s' => array(
+								'linear',
+								'radial',
+								'circular',
+								'elliptical',
+							),
+						),
+						'tab_slug'        => 'general',
+						'toggle_slug'     => 'background',
+						'sub_toggle'      => 'column_%s',
+					)
+				),
+				'background_color_gradient_overlays_image_%s' => ET_Builder_Element::background_field_template(
+					'color_gradient_overlays_image',
+					array(
+						'label'           => esc_html__( 'Column %s Place Gradient Above Background Image', 'et_builder' ),
+						'type'            => 'yes_no_button',
+						'option_category' => 'configuration',
+						'options'         => array(
+							'off'     => et_builder_i18n( 'No' ),
+							'on'      => et_builder_i18n( 'Yes' ),
+							'default' => intval( ET_Global_Settings::get_value( 'all_background_gradient_overlays_image' ) ),
+						),
+						'description'     => '',
+						'show_if'         => array(
+							'use_background_color_gradient_%s' => 'on',
+						),
+						'tab_slug'        => 'general',
+						'toggle_slug'     => 'background',
+						'sub_toggle'      => 'column_%s',
+					)
+				),
+
+				// Deprecated.
+				'background_color_gradient_start_%s'     => ET_Builder_Element::background_field_template(
+					'color_gradient_start',
+					array(
+						'label'           => esc_html__( 'Column %s Gradient Start', 'et_builder' ),
+						'type'            => 'color-alpha',
+						'option_category' => 'configuration',
+						'description'     => '',
+						'default'         => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
+						'show_if'         => array(
+							'use_background_color_gradient_%s' => 'on',
+						),
+						'tab_slug'        => 'general',
+						'toggle_slug'     => 'background',
+						'sub_toggle'      => 'column_%s',
+					)
+				),
+				// Deprecated.
+				'background_color_gradient_end_%s'       => ET_Builder_Element::background_field_template(
+					'color_gradient_end',
+					array(
+						'label'           => esc_html__( 'Column %s Gradient End', 'et_builder' ),
+						'type'            => 'color-alpha',
+						'option_category' => 'configuration',
+						'description'     => '',
+						'default'         => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
+						'show_if'         => array(
+							'use_background_color_gradient_%s' => 'on',
+						),
+						'tab_slug'        => 'general',
+						'toggle_slug'     => 'background',
+						'sub_toggle'      => 'column_%s',
+					)
+				),
+				// Deprecated.
 				'background_color_gradient_start_position_%s' => ET_Builder_Element::background_field_template(
 					'color_gradient_start_position',
 					array(
@@ -1270,6 +1378,7 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 						'sub_toggle'      => 'column_%s',
 					)
 				),
+				// Deprecated.
 				'background_color_gradient_end_position_%s' => ET_Builder_Element::background_field_template(
 					'color_gradient_end_position',
 					array(
@@ -1286,27 +1395,6 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 						'allowed_units'   => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pc', 'ex', 'vh', 'vw' ),
 						'default_unit'    => '%',
 						'fixed_range'     => true,
-						'show_if'         => array(
-							'use_background_color_gradient_%s' => 'on',
-						),
-						'tab_slug'        => 'general',
-						'toggle_slug'     => 'background',
-						'sub_toggle'      => 'column_%s',
-					)
-				),
-				'background_color_gradient_overlays_image_%s' => ET_Builder_Element::background_field_template(
-					'color_gradient_overlays_image',
-					array(
-						'label'           => esc_html__( 'Column %s Place Gradient Above Background Image', 'et_builder' ),
-						'type'            => 'yes_no_button',
-						'option_category' => 'configuration',
-						'options'         => array(
-							'off'     => et_builder_i18n( 'No' ),
-							'on'      => et_builder_i18n( 'Yes' ),
-
-							'default' => intval( ET_Global_Settings::get_value( 'all_background_gradient_overlays_image' ) ),
-						),
-						'description'     => '',
 						'show_if'         => array(
 							'use_background_color_gradient_%s' => 'on',
 						),
@@ -1951,6 +2039,10 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 			'applyStylesToActivePreset' => esc_html__( 'Apply Styles To Active Preset', 'et_builder' ),
 			'editPresetStyle'           => esc_html__( 'Edit Preset Style', 'et_builder' ),
 			'goToLayer'                 => esc_html__( 'Go To Layer', 'et_builder' ),
+			'gradientStops'             => array(
+				'findReplace' => esc_html__( 'Find & Replace Color', 'et_builder' ),
+				'remove'      => esc_html__( 'Remove Gradient Stop', 'et_builder' ),
+			),
 		),
 		'tooltips'                  => array(
 			'insertModule'         => esc_html__( 'Insert Module', 'et_builder' ),

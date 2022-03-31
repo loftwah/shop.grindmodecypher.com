@@ -1,10 +1,10 @@
 <?php
 /**
- * Main migartion class.
+ * Main migration class.
  *
- * @package Divi
+ * @package    Divi
  * @subpackage Builder
- * @since ?
+ * @since      ?
  */
 
 /**
@@ -13,6 +13,7 @@
  * @since ?
  */
 abstract class ET_Builder_Module_Settings_Migration {
+
 
 	/**
 	 * Used to exclude names in case of BB.
@@ -68,7 +69,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 	 *
 	 * @var string
 	 */
-	public static $max_version = '4.15';
+	public static $max_version = '4.16';
 
 	/**
 	 * Array of already migrated data.
@@ -80,7 +81,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 	/**
 	 * Array of migrations in format( [ 'version' => 'name of migration script' ] ).
 	 *
-	 * @var array
+	 * @var string[]
 	 */
 	public static $migrations = array(
 		'3.0.48'  => 'BackgroundUI',
@@ -110,6 +111,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 		'4.13.1'  => 'ContactFormUniqueID',
 		'4.14.0'  => 'WooTextOG',
 		'4.15'    => 'BackgroundGradientOverlaysImage',
+		'4.16'    => 'BackgroundGradientStops',
 	);
 
 	/**
@@ -161,7 +163,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 				}
 
 				// For the BB...
-				if ( ! in_array( $old_name, self::$_bb_excluded_name_changes ) ) {
+				if ( ! in_array( $old_name, self::$_bb_excluded_name_changes, true ) ) {
 					self::$migrated['field_name_changes'][ $module_slug ][ $old_name ] = array(
 						'new_name' => $new_name,
 						'version'  => $version,
@@ -192,7 +194,8 @@ abstract class ET_Builder_Module_Settings_Migration {
 			}
 
 			if ( is_string( $migration ) ) {
-				self::$migrations[ $version ] = $migration = require_once "migration/{$migration}.php";
+				$migration                    = require_once "migration/{$migration}.php";
+				self::$migrations[ $version ] = $migration;
 			}
 
 			self::$migrations_by_version[ $module_version ][] = $migration;
@@ -208,14 +211,14 @@ abstract class ET_Builder_Module_Settings_Migration {
 	}
 
 	public function handle_field_name_migrations( $fields, $module_slug ) {
-		if ( ! in_array( $module_slug, $this->modules ) ) {
+		if ( ! in_array( $module_slug, $this->modules, true ) ) {
 			return $fields;
 		}
 
 		foreach ( $this->fields as $field_name => $field_info ) {
 			foreach ( $field_info['affected_fields'] as $affected_field => $affected_modules ) {
 
-				if ( $affected_field === $field_name || ! in_array( $module_slug, $affected_modules ) ) {
+				if ( $affected_field === $field_name || ! in_array( $module_slug, $affected_modules, true ) ) {
 					continue;
 				}
 
@@ -230,8 +233,8 @@ abstract class ET_Builder_Module_Settings_Migration {
 		}
 
 		return isset( self::$field_name_migrations[ $module_slug ] )
-			? self::_migrate_field_names( $fields, $module_slug, $this->version )
-			: $fields;
+		? self::_migrate_field_names( $fields, $module_slug, $this->version )
+		: $fields;
 	}
 
 	public static function init() {
@@ -242,6 +245,22 @@ abstract class ET_Builder_Module_Settings_Migration {
 		add_filter( 'et_pb_module_content', array( $class, 'maybe_override_content' ), 10, 6 );
 	}
 
+	/**
+	 * Remove added filters.
+	 *
+	 * Used by WPUnit tests.
+	 *
+	 * @since 4.16.0
+	 * @link  https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
+	 */
+	public static function tear_down() {
+		$class = 'ET_Builder_Module_Settings_Migration';
+
+		remove_filter( 'et_pb_module_processed_fields', array( $class, 'maybe_override_processed_fields' ) );
+		remove_filter( 'et_pb_module_shortcode_attributes', array( $class, 'maybe_override_shortcode_attributes' ) );
+		remove_filter( 'et_pb_module_content', array( $class, 'maybe_override_content' ) );
+	}
+
 	public static function maybe_override_processed_fields( $fields, $module_slug ) {
 		if ( ! $fields ) {
 			return $fields;
@@ -250,7 +269,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 		$migrations = self::get_migrations( 'all' );
 
 		foreach ( $migrations as $migration ) {
-			if ( in_array( $module_slug, $migration->modules ) ) {
+			if ( in_array( $module_slug, $migration->modules, true ) ) {
 				$fields = $migration->handle_field_name_migrations( $fields, $module_slug );
 			}
 		}
@@ -261,14 +280,14 @@ abstract class ET_Builder_Module_Settings_Migration {
 	/**
 	 * Maybe override shortcode attributes.
 	 *
-	 * @param array  $attrs Module's attributes.
-	 * @param array  $unprocessed_attrs Raw attributes.
-	 * @param string $module_slug Module's slug.
-	 * @param string $module_address Module's address.
-	 * @param string $content Content.
-	 * @param bool   $maybe_global_presets_migration whether to migrate preset or not.
+	 * @param array  $attrs Shortcode attributes.
+	 * @param array  $unprocessed_attrs Attributes that have not yet been processed.
+	 * @param string $module_slug Internal system name for the module type.
+	 * @param string $module_address Location of the current module on the page.
+	 * @param string $content Text/HTML content within the current module.
+	 * @param bool   $maybe_global_presets_migration Whether to include global presets.
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public static function maybe_override_shortcode_attributes( $attrs, $unprocessed_attrs, $module_slug, $module_address, $content = '', $maybe_global_presets_migration = false ) {
 		if ( empty( $attrs['_builder_version'] ) ) {
@@ -298,27 +317,45 @@ abstract class ET_Builder_Module_Settings_Migration {
 		foreach ( $migrations as $migration ) {
 			$migrated_attrs_count = 0;
 
-			if ( ! in_array( $module_slug, $migration->modules ) ) {
+			if ( ! in_array( $module_slug, $migration->modules, true ) ) {
 				continue;
 			}
+
+			$migration_fields = $migration->fields;
 
 			// It needs for IconManager's wpunit tests when it is necessary to test the migration of module posts attributes
 			// and migration of global presets within the same test session
 			// ( because migration fields array is depending on self::$_maybe_global_presets_migration variable ).
-			$migration_fields = ( 'ET_Builder_Module_Settings_Migration_IconManager' === get_class( $migration ) ) ? $migration->get_fields() : $migration->fields;
+			$classes_requiring_presets_migration = array(
+				'ET_Builder_Module_Settings_Migration_IconManager',
+				'ET_Builder_Module_Settings_Migration_BackgroundGradientStops',
+			);
 
+			if ( in_array( get_class( $migration ), $classes_requiring_presets_migration, true ) ) {
+				$migration_fields = $migration->get_fields();
+			}
+
+			// Each "migration field" is an object with a field name (key) and field info (property/value pairs).
 			foreach ( $migration_fields as $field_name => $field_info ) {
+				// Each "affected field" is a field name (key) with a list of modules that use that field name.
 				foreach ( $field_info['affected_fields'] as $affected_field => $affected_modules ) {
 
-					if ( ( ! $migration->add_missing_fields && ! isset( $attrs[ $affected_field ] ) ) || ! in_array( $module_slug, $affected_modules ) ) {
+					// Skip [what are we skipping?] if either:
+					// * there is no instruction to add missing fields AND the "affected field" is missing
+					// * this module isn't in the list of matching modules that use the field name.
+					if ( ( ! $migration->add_missing_fields && ! isset( $attrs[ $affected_field ] ) ) || ! in_array( $module_slug, $affected_modules, true ) ) {
 						continue;
 					}
 
+					// If the "migration field" name and the "affected field" name are different,
+					// then add the affected field name to the "unprocessed_attrs" list.
 					if ( $affected_field !== $field_name ) {
-						// Field name changed
+						// Field name changed.
 						$unprocessed_attrs[ $field_name ] = $attrs[ $affected_field ];
 					}
 
+					// If a value is set in the "unprocessed_attrs" list for the current field we're
+					// looking at (field_name), then inherit that value as the "before" state.
 					$current_value = isset( $unprocessed_attrs[ $field_name ] ) ? $unprocessed_attrs[ $field_name ] : '';
 
 					$saved_value = isset( $attrs[ $field_name ] ) ? $attrs[ $field_name ] : '';
@@ -354,7 +391,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 		foreach ( $migrations as $migration ) {
 			$migrated_content = false;
 
-			if ( ! in_array( $module_slug, $migration->get_content_migration_modules() ) ) {
+			if ( ! in_array( $module_slug, $migration->get_content_migration_modules(), true ) ) {
 				continue;
 			}
 

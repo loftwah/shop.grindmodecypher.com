@@ -676,16 +676,14 @@ final class ET_Core_Updates {
 			return $url;
 		}
 
-		$matches = array();
-
-		$update_transient = get_site_transient( 'et_update_all_plugins' );
-
-		if ( ! is_object( $update_transient ) || empty( $update_transient->response ) ) {
-			return $url;
-		}
-
+		$matches                 = array();
+		$update_transient        = get_site_transient( 'et_update_all_plugins' );
 		$et_updated_plugins_data = get_transient( 'et_updated_plugins_data' );
 		$has_last_checked        = ! empty( $update_transient->last_checked ) && ! empty( $et_updated_plugins_data->last_checked );
+
+		if ( ! is_object( $update_transient ) ) {
+			return $url;
+		}
 
 		/*
 		 * Attempt to use a cached list of updated plugins.
@@ -701,14 +699,18 @@ final class ET_Core_Updates {
 			foreach ( $update_transient->response as $response_plugin_settings ) {
 				$slug = sanitize_text_field( $response_plugin_settings->slug );
 
-				$et_updated_plugins_data->changelogs[ $slug ] = $response_plugin_settings->url . '?TB_iframe=true&width=1024&height=800';
+				$et_updated_plugins_data->changelogs[ $slug ] = esc_url( $response_plugin_settings->url . '?TB_iframe=true&width=1024&height=800' );
 			}
 
 			set_transient( 'et_updated_plugins_data', $et_updated_plugins_data );
 		}
 
-		if ( empty( $et_updated_plugins_data->changelogs ) ) {
-			return $url;
+		if ( ! empty( $update_transient->no_update ) ) {
+			foreach ( $update_transient->no_update as $no_update_plugin_settings ) {
+				$slug = sanitize_text_field( $no_update_plugin_settings->slug );
+
+				$et_updated_plugins_data->changelogs[ $slug ] = esc_url( $no_update_plugin_settings->url . '?TB_iframe=true&width=1024&height=800' );
+			}
 		}
 
 		preg_match( '/plugin=([^&]*)/', $path, $matches );

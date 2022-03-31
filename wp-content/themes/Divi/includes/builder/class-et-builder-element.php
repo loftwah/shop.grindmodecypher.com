@@ -9809,15 +9809,20 @@ class ET_Builder_Element {
 				"{$base_name}_color",
 			),
 			'gradient' => array(
-				"{$base_name}_color_gradient_start",
-				"{$base_name}_color_gradient_end",
 				$use_background_color_gradient,
+				"{$base_name}_color_gradient_repeat",
 				"{$base_name}_color_gradient_type",
 				"{$base_name}_color_gradient_direction",
 				"{$base_name}_color_gradient_direction_radial",
-				"{$base_name}_color_gradient_start_position",
-				"{$base_name}_color_gradient_end_position",
+				"{$base_name}_color_gradient_stops",
+				"{$base_name}_color_gradient_unit",
 				"{$base_name}_color_gradient_overlays_image",
+
+				// Deprecated.
+				"{$base_name}_color_gradient_start",
+				"{$base_name}_color_gradient_start_position",
+				"{$base_name}_color_gradient_end",
+				"{$base_name}_color_gradient_end_position",
 			),
 			'image'    => array(
 				"{$base_name}_image",
@@ -9969,11 +9974,9 @@ class ET_Builder_Element {
 				'gradient'                  => array(
 					'label' => esc_html__( 'Use Background Color Gradient', 'et_builder' ),
 				),
-				'gradient_start'            => array(
-					'label' => esc_html__( 'Gradient Start', 'et_builder' ),
-				),
-				'gradient_end'              => array(
-					'label' => esc_html__( 'Gradient End', 'et_builder' ),
+				'gradient_repeat'           => array(
+					'label'       => esc_html__( 'Repeat Gradient', 'et_builder' ),
+					'description' => esc_html__( 'If enabled, defined gradient stops will be repeated until the outer boundary of the background is reached.', 'et_builder' ),
 				),
 				'gradient_type'             => array(
 					'label'       => esc_html__( 'Gradient Type', 'et_builder' ),
@@ -9984,21 +9987,40 @@ class ET_Builder_Element {
 					'description' => esc_html__( 'Change the direction of the gradient by choosing a starting position within a 360 degree range.', 'et_builder' ),
 				),
 				'gradient_direction_radial' => array(
-					'label'       => esc_html__( 'Radial Direction', 'et_builder' ),
+					'label'       => esc_html__( 'Gradient Position', 'et_builder' ),
 					'description' => esc_html__( 'Change the direction of the gradient by choosing a starting position within a 360 degree range.', 'et_builder' ),
 				),
-				'gradient_start_position'   => array(
-					'label'       => esc_html__( 'Start Position', 'et_builder' ),
-					'description' => esc_html__( 'By adjusting the starting position of the gradient, you can control how quickly or slowly each color transitions, and where the transition begins.', 'et_builder' ),
+				'gradient_stops'            => array(
+					'label'       => esc_html__( 'Gradient Stops', 'et_builder' ),
+					'description' => esc_html__( 'Add two or more color stops to your gradient background. Each stop can be dragged to any position on the gradient bar. From each color stop to the next the color is interpolated into a smooth gradient.', 'et_builder' ),
 				),
-				'gradient_end_position'     => array(
-					'label'       => esc_html__( 'End Position', 'et_builder' ),
-					'description' => esc_html__( 'By adjusting the ending position of the gradient, you can control how quickly or slowly each color transitions, and where the transition begins.', 'et_builder' ),
+				'gradient_unit'             => array(
+					'label'       => esc_html__( 'Gradient Unit', 'et_builder' ),
+					'description' => esc_html__( 'Define the units of your gradient stop positions.', 'et_builder' ),
 				),
 				'gradient_overlay'          => array(
 					'label'       => esc_html__( 'Place Gradient Above Background Image', 'et_builder' ),
 					'description' => esc_html__( 'If enabled, gradient will be positioned on top of background-image', 'et_builder' ),
 				),
+				// Deprecated.
+				'gradient_start'            => array(
+					'label' => esc_html__( 'Gradient Start', 'et_builder' ),
+				),
+				// Deprecated.
+				'gradient_start_position'   => array(
+					'label'       => esc_html__( 'Start Position', 'et_builder' ),
+					'description' => esc_html__( 'By adjusting the starting position of the gradient, you can control how quickly or slowly each color transitions, and where the transition begins.', 'et_builder' ),
+				),
+				// Deprecated.
+				'gradient_end'              => array(
+					'label' => esc_html__( 'Gradient End', 'et_builder' ),
+				),
+				// Deprecated.
+				'gradient_end_position'     => array(
+					'label'       => esc_html__( 'End Position', 'et_builder' ),
+					'description' => esc_html__( 'By adjusting the ending position of the gradient, you can control how quickly or slowly each color transitions, and where the transition begins.', 'et_builder' ),
+				),
+
 				'image'                     => array(
 					'label'       => esc_html__( 'Background Image', 'et_builder' ),
 					'choose_text' => esc_attr__( 'Choose a Background Image', 'et_builder' ),
@@ -10147,39 +10169,28 @@ class ET_Builder_Element {
 				)
 			);
 
-			$options[ "{$base_name}_color_gradient_start" ] = self::background_field_template(
-				'color_gradient_start',
+			$options[ "{$base_name}_color_gradient_repeat" ] = self::background_field_template(
+				'color_gradient_repeat',
 				array(
-					'label'            => $i18n['background']['gradient_start']['label'],
-					'description'      => '',
-					'type'             => 'skip' === $background_tab ? 'skip' : 'color-alpha',
+					'label'            => $i18n['background']['gradient_repeat']['label'],
+					'description'      => $i18n['background']['gradient_repeat']['description'],
+					'type'             => 'skip' === $background_tab ? 'skip' : 'yes_no_button',
 					'option_category'  => 'configuration',
-					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
+					'options'          => array(
+						'off' => et_builder_i18n( 'No' ),
+						'on'  => et_builder_i18n( 'Yes' ),
+					),
+					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_repeat' ),
 					'default_on_child' => true,
 					'tab_slug'         => $tab_slug,
 					'toggle_slug'      => $toggle_slug,
-					'field_template'   => 'color_gradient_start',
+					'field_template'   => 'color_gradient_repeat',
 					'mobile_options'   => true,
 					'sticky'           => true,
 					'hover'            => 'tabs',
-				)
-			);
-
-			$options[ "{$base_name}_color_gradient_end" ] = self::background_field_template(
-				'color_gradient_end',
-				array(
-					'label'            => $i18n['background']['gradient_end']['label'],
-					'description'      => '',
-					'type'             => 'skip' === $background_tab ? 'skip' : 'color-alpha',
-					'option_category'  => 'configuration',
-					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
-					'default_on_child' => true,
-					'tab_slug'         => $tab_slug,
-					'toggle_slug'      => $toggle_slug,
-					'field_template'   => 'color_gradient_end',
-					'mobile_options'   => true,
-					'sticky'           => true,
-					'hover'            => 'tabs',
+					'show_if'          => array(
+						"$use_background_color_gradient_name" => 'on',
+					),
 				)
 			);
 
@@ -10191,12 +10202,13 @@ class ET_Builder_Element {
 					'type'             => 'skip' === $background_tab ? 'skip' : 'select',
 					'option_category'  => 'configuration',
 					'options'          => array(
-						'linear' => et_builder_i18n( 'Linear' ),
-						'radial' => et_builder_i18n( 'Radial' ),
+						'linear'     => et_builder_i18n( 'Linear' ),
+						'circular'   => et_builder_i18n( 'Circular' ),
+						'elliptical' => et_builder_i18n( 'Elliptical' ),
+						'conic'      => et_builder_i18n( 'Conical' ),
 					),
 					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_type' ),
 					'default_on_child' => true,
-					'description'      => '',
 					'tab_slug'         => $tab_slug,
 					'toggle_slug'      => $toggle_slug,
 					'field_template'   => 'color_gradient_type',
@@ -10235,6 +10247,7 @@ class ET_Builder_Element {
 					'show_if'          => array(
 						"{$base_name}_color_gradient_type" => array(
 							'linear',
+							'conic',
 						),
 					),
 				)
@@ -10260,7 +10273,6 @@ class ET_Builder_Element {
 					),
 					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_direction_radial' ),
 					'default_on_child' => true,
-					'description'      => '',
 					'tab_slug'         => $tab_slug,
 					'toggle_slug'      => $toggle_slug,
 					'field_template'   => 'color_gradient_direction_radial',
@@ -10270,32 +10282,26 @@ class ET_Builder_Element {
 					'show_if'          => array(
 						"{$base_name}_color_gradient_type" => array(
 							'radial',
+							'circular',
+							'elliptical',
+							'conic',
 						),
 					),
 				)
 			);
 
-			$options[ "{$base_name}_color_gradient_start_position" ] = self::background_field_template(
-				'color_gradient_start_position',
+			$options[ "{$base_name}_color_gradient_stops" ] = self::background_field_template(
+				'color_gradient_stops',
 				array(
-					'label'            => $i18n['background']['gradient_start_position']['label'],
-					'description'      => $i18n['background']['gradient_start_position']['description'],
-					'type'             => 'skip' === $background_tab ? 'skip' : 'range',
+					'label'            => $i18n['background']['gradient_stops']['label'],
+					'description'      => $i18n['background']['gradient_stops']['description'],
+					'type'             => 'skip' === $background_tab ? 'skip' : 'gradient-stops',
 					'option_category'  => 'configuration',
-					'range_settings'   => array(
-						'min'  => 0,
-						'max'  => 100,
-						'step' => 1,
-					),
-					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_start_position' ),
+					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_stops' ),
 					'default_on_child' => true,
-					'validate_unit'    => true,
-					'allowed_units'    => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pc', 'ex', 'vh', 'vw' ),
-					'default_unit'     => '%',
-					'fixed_range'      => true,
 					'tab_slug'         => $tab_slug,
 					'toggle_slug'      => $toggle_slug,
-					'field_template'   => 'color_gradient_start_position',
+					'field_template'   => 'color_gradient_stops',
 					'mobile_options'   => true,
 					'sticky'           => true,
 					'hover'            => 'tabs',
@@ -10305,32 +10311,46 @@ class ET_Builder_Element {
 				)
 			);
 
-			$options[ "{$base_name}_color_gradient_end_position" ] = self::background_field_template(
-				'color_gradient_end_position',
+			$options[ "{$base_name}_color_gradient_unit" ] = self::background_field_template(
+				'color_gradient_unit',
 				array(
-					'label'            => $i18n['background']['gradient_end_position']['label'],
-					'description'      => $i18n['background']['gradient_end_position']['description'],
-					'type'             => 'skip' === $background_tab ? 'skip' : 'range',
+					'label'            => $i18n['background']['gradient_unit']['label'],
+					'description'      => $i18n['background']['gradient_unit']['description'],
+					'type'             => 'skip' === $background_tab ? 'skip' : 'select',
 					'option_category'  => 'configuration',
-					'range_settings'   => array(
-						'min'  => 0,
-						'max'  => 100,
-						'step' => 1,
+					'options'          => array(
+						'%'    => et_builder_i18n( 'Percent' ),
+						'px'   => et_builder_i18n( 'Pixels' ),
+						'em'   => et_builder_i18n( 'Font Size (em)' ),
+						'rem'  => et_builder_i18n( 'Root-level Font Size (rem)' ),
+						'ex'   => et_builder_i18n( 'X-Height (ex)' ),
+						'ch'   => et_builder_i18n( 'Zero-width (ch)' ),
+						'pc'   => et_builder_i18n( 'Picas (pc)' ),
+						'pt'   => et_builder_i18n( 'Points (pt)' ),
+						'cm'   => et_builder_i18n( 'Centimeters (cm)' ),
+						'mm'   => et_builder_i18n( 'Millimeters (mm)' ),
+						'in'   => et_builder_i18n( 'Inches (in)' ),
+						'vh'   => et_builder_i18n( 'Viewport Height (vh)' ),
+						'vw'   => et_builder_i18n( 'Viewport Width (vw)' ),
+						'vmin' => et_builder_i18n( 'Viewport Minimum (vmin)' ),
+						'vmax' => et_builder_i18n( 'Viewport Maximum (vmax)' ),
 					),
-					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_end_position' ),
+					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_unit' ),
 					'default_on_child' => true,
-					'validate_unit'    => true,
-					'allowed_units'    => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pc', 'ex', 'vh', 'vw' ),
-					'default_unit'     => '%',
-					'fixed_range'      => true,
 					'tab_slug'         => $tab_slug,
 					'toggle_slug'      => $toggle_slug,
-					'field_template'   => 'color_gradient_end_position',
+					'field_template'   => 'color_gradient_unit',
 					'mobile_options'   => true,
 					'sticky'           => true,
 					'hover'            => 'tabs',
 					'show_if'          => array(
-						"$use_background_color_gradient_name" => 'on',
+						// Do not render this control for conic gradients.
+						"{$base_name}_color_gradient_type" => array(
+							'linear',
+							'radial',
+							'circular',
+							'elliptical',
+						),
 					),
 				)
 			);
@@ -10356,6 +10376,112 @@ class ET_Builder_Element {
 					'hover'            => 'tabs',
 					'show_if'          => array(
 						"$use_background_color_gradient_name" => 'on',
+					),
+				)
+			);
+
+			// Deprecated.
+			$options[ "{$base_name}_color_gradient_start" ] = self::background_field_template(
+				'color_gradient_start',
+				array(
+					'label'            => $i18n['background']['gradient_start']['label'],
+					'description'      => '',
+					'type'             => 'skip',
+					'option_category'  => 'configuration',
+					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
+					'default_on_child' => true,
+					'tab_slug'         => $tab_slug,
+					'toggle_slug'      => $toggle_slug,
+					'field_template'   => 'color_gradient_start',
+					'mobile_options'   => true,
+					'sticky'           => true,
+					'hover'            => 'tabs',
+					'show_if'          => array(
+						"$use_background_color_gradient_name" => 'deprecated',
+					),
+				)
+			);
+
+			// Deprecated.
+			$options[ "{$base_name}_color_gradient_start_position" ] = self::background_field_template(
+				'color_gradient_start_position',
+				array(
+					'label'            => $i18n['background']['gradient_start_position']['label'],
+					'description'      => $i18n['background']['gradient_start_position']['description'],
+					'type'             => 'skip',
+					'option_category'  => 'configuration',
+					'range_settings'   => array(
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					),
+					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_start_position' ),
+					'default_on_child' => true,
+					'validate_unit'    => true,
+					'allowed_units'    => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pc', 'ex', 'vh', 'vw' ),
+					'default_unit'     => '%',
+					'fixed_range'      => true,
+					'tab_slug'         => $tab_slug,
+					'toggle_slug'      => $toggle_slug,
+					'field_template'   => 'color_gradient_start_position',
+					'mobile_options'   => true,
+					'sticky'           => true,
+					'hover'            => 'tabs',
+					'show_if'          => array(
+						"$use_background_color_gradient_name" => 'deprecated',
+					),
+				)
+			);
+
+			// Deprecated.
+			$options[ "{$base_name}_color_gradient_end" ] = self::background_field_template(
+				'color_gradient_end',
+				array(
+					'label'            => $i18n['background']['gradient_end']['label'],
+					'description'      => '',
+					'type'             => 'skip',
+					'option_category'  => 'configuration',
+					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
+					'default_on_child' => true,
+					'tab_slug'         => $tab_slug,
+					'toggle_slug'      => $toggle_slug,
+					'field_template'   => 'color_gradient_end',
+					'mobile_options'   => true,
+					'sticky'           => true,
+					'hover'            => 'tabs',
+					'show_if'          => array(
+						"$use_background_color_gradient_name" => 'deprecated',
+					),
+				)
+			);
+
+			// Deprecated.
+			$options[ "{$base_name}_color_gradient_end_position" ] = self::background_field_template(
+				'color_gradient_end_position',
+				array(
+					'label'            => $i18n['background']['gradient_end_position']['label'],
+					'description'      => $i18n['background']['gradient_end_position']['description'],
+					'type'             => 'skip',
+					'option_category'  => 'configuration',
+					'range_settings'   => array(
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					),
+					'default'          => ET_Global_Settings::get_value( 'all_background_gradient_end_position' ),
+					'default_on_child' => true,
+					'validate_unit'    => true,
+					'allowed_units'    => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pc', 'ex', 'vh', 'vw' ),
+					'default_unit'     => '%',
+					'fixed_range'      => true,
+					'tab_slug'         => $tab_slug,
+					'toggle_slug'      => $toggle_slug,
+					'field_template'   => 'color_gradient_end_position',
+					'mobile_options'   => true,
+					'sticky'           => true,
+					'hover'            => 'tabs',
+					'show_if'          => array(
+						"$use_background_color_gradient_name" => 'deprecated',
 					),
 				)
 			);
@@ -12929,27 +13055,45 @@ class ET_Builder_Element {
 		$defaults = apply_filters(
 			'et_pb_default_gradient',
 			array(
+				'repeat'           => ET_Global_Settings::get_value( 'all_background_gradient_repeat' ),
 				'type'             => ET_Global_Settings::get_value( 'all_background_gradient_type' ),
 				'direction'        => ET_Global_Settings::get_value( 'all_background_gradient_direction' ),
 				'radial_direction' => ET_Global_Settings::get_value( 'all_background_gradient_direction_radial' ),
-				'color_start'      => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
-				'color_end'        => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
-				'start_position'   => ET_Global_Settings::get_value( 'all_background_gradient_start_position' ),
-				'end_position'     => ET_Global_Settings::get_value( 'all_background_gradient_end_position' ),
+				'stops'            => ET_Global_Settings::get_value( 'all_background_gradient_stops' ),
+				'unit'             => ET_Global_Settings::get_value( 'all_background_gradient_unit' ),
 			)
 		);
 
-		$args           = wp_parse_args( array_filter( $args ), $defaults );
-		$direction      = 'linear' === $args['type'] ? $args['direction'] : "circle at {$args['radial_direction']}";
-		$start_position = et_sanitize_input_unit( $args['start_position'], false, '%' );
-		$end_position   = et_sanitize_input_unit( $args['end_position'], false, '%' );
+		$args  = wp_parse_args( array_filter( $args ), $defaults );
+		$stops = str_replace( '|', ', ', $args['stops'] );
+
+		switch ( $args['type'] ) {
+			case 'conic':
+				$type      = 'conic';
+				$direction = "from {$args['direction']} at {$args['radial_direction']}";
+				break;
+			case 'elliptical':
+				$type      = 'radial';
+				$direction = "ellipse at {$args['radial_direction']}";
+				break;
+			case 'radial':
+			case 'circular':
+				$type      = 'radial';
+				$direction = "circle at {$args['radial_direction']}";
+				break;
+			case 'linear':
+			default:
+				$type      = 'linear';
+				$direction = $args['direction'];
+		}
+
+		// Apply gradient repeat (if set).
+		if ( 'on' === $args['repeat'] ) {
+			$type = 'repeating-' . $type;
+		}
 
 		return esc_html(
-			"{$args['type']}-gradient(
-			{$direction},
-			{$args['color_start']} ${start_position},
-			{$args['color_end']} ${end_position}
-		)"
+			"{$type}-gradient( {$direction}, {$stops} )"
 		);
 	}
 
@@ -13203,14 +13347,33 @@ class ET_Builder_Element {
 				continue;
 			}
 
-			// if color value starts with `gcid-`.
-			if ( ! empty( $attr_value ) && strpos( $attr_value, 'gcid-' ) === 0 ) {
-				$global_color_info = et_builder_get_global_color_info( $attr_value );
+			// Don't convert anything in the `global_colors_info` array.
+			if ( 'global_colors_info' === $attr_key ) {
+				continue;
+			}
 
-				// Making sure we skip empty value, if for any reason that happen.
-				if ( ! empty( $global_color_info['color'] ) ) {
-					$this->props[ $attr_key ] = esc_attr( $global_color_info['color'] );
+			// if color value includes `gcid-`, check for associated Global Color value.
+			if ( empty( $attr_value ) || false === strpos( $attr_value, 'gcid-' ) ) {
+				continue;
+			}
+
+			$global_color_info = et_builder_get_all_global_colors();
+
+			// If there are no matching Global Colors, return null.
+			if ( ! is_array( $global_color_info ) ) {
+				continue;
+			}
+
+			foreach ( $global_color_info as $gcid => $details ) {
+				if ( false !== strpos( $attr_value, $gcid ) ) {
+					// Match substring (needed for attrs like gradient stops).
+					$this->props[ $attr_key ] = str_replace( $gcid, $details['color'], $this->props[ $attr_key ] );
 				}
+			}
+
+			// Finally, escape the output.
+			if ( ! empty( $global_color_info['color'] ) ) {
+				$this->props[ $attr_key ] = esc_attr( $this->props[ $attr_key ] );
 			}
 		}
 	}
@@ -22112,13 +22275,17 @@ class ET_Builder_Element {
 	/**
 	 * Generate background field setting properties by template
 	 *
-	 * @since 4.8.0
+	 * NOTE: Unless the `priority` property is used, the order that settings are listed is the order
+	 * that they'll appear in the settings modal.
 	 *
 	 * @param string $field_template Field template slug.
 	 * @param array  $overrides      Field properties to override.
 	 * @param array  $unsets         Field properties to unset.
 	 *
 	 * @return array
+	 *
+	 * @since 4.8.0
+	 *
 	 */
 	public static function background_field_template( $field_template, $overrides = array(), $unsets = array() ) {
 		static $cache = null;
@@ -22157,57 +22324,101 @@ class ET_Builder_Element {
 					'priority' => 200,
 					'data'     => array(
 						'use_color_gradient'              => array(
+							'priority'       => 201,
 							'type'           => 'yes_no_button',
 							'mobile_options' => false,
 							'hover'          => false,
 							'sticky'         => false,
 							'tab_filler'     => true,
 						),
-						'color_gradient_start'            => array(
-							'type'           => 'color-alpha',
-							'mobile_options' => false,
-							'hover'          => false,
-							'sticky'         => false,
-						),
-						'color_gradient_end'              => array(
-							'type'           => 'color-alpha',
+						'color_gradient_repeat'           => array(
+							'priority'       => 205,
+							'type'           => 'yes_no_button',
 							'mobile_options' => false,
 							'hover'          => false,
 							'sticky'         => false,
 						),
 						'color_gradient_type'             => array(
+							'priority'       => 203,
 							'type'           => 'select',
 							'mobile_options' => false,
 							'hover'          => false,
 							'sticky'         => false,
 						),
 						'color_gradient_direction'        => array(
+							'priority'       => 204,
 							'type'           => 'range',
 							'mobile_options' => false,
 							'hover'          => false,
 							'sticky'         => false,
+							'show_if'        => array(
+								'color_gradient_type' => array(
+									'conic',
+									'linear',
+								),
+							),
 						),
 						'color_gradient_direction_radial' => array(
+							'priority'       => 204,
+							'type'           => 'select',
+							'mobile_options' => false,
+							'hover'          => false,
+							'sticky'         => false,
+							'show_if'        => array(
+								'color_gradient_type' => array(
+									'radial',
+									'circular',
+									'elliptical',
+								),
+							),
+						),
+						'color_gradient_stops'            => array(
+							'priority'       => 202,
+							'type'           => 'gradient-stops',
+							'mobile_options' => false,
+							'hover'          => false,
+							'sticky'         => false,
+						),
+						'color_gradient_unit'             => array(
+							'priority'       => 206,
 							'type'           => 'select',
 							'mobile_options' => false,
 							'hover'          => false,
 							'sticky'         => false,
 						),
+						'color_gradient_overlays_image'   => array(
+							'priority'       => 299,
+							'type'           => 'yes_no_button',
+							'mobile_options' => false,
+							'hover'          => false,
+							'sticky'         => false,
+						),
+
+						// Deprecated.
+						'color_gradient_start'            => array(
+							'type'           => 'skip',
+							'mobile_options' => false,
+							'hover'          => false,
+							'sticky'         => false,
+						),
+						// Deprecated.
 						'color_gradient_start_position'   => array(
-							'type'            => 'range',
+							'type'            => 'skip',
 							'mobile_options'  => false,
 							'hover'           => false,
 							'sticky'          => false,
 							'option_category' => 'configuration',
 						),
-						'color_gradient_end_position'     => array(
-							'type'           => 'range',
+						// Deprecated.
+						'color_gradient_end'              => array(
+							'type'           => 'skip',
 							'mobile_options' => false,
 							'hover'          => false,
 							'sticky'         => false,
 						),
-						'color_gradient_overlays_image'   => array(
-							'type'           => 'yes_no_button',
+						// Deprecated.
+						'color_gradient_end_position'     => array(
+							'type'           => 'skip',
 							'mobile_options' => false,
 							'hover'          => false,
 							'sticky'         => false,
@@ -22390,8 +22601,6 @@ class ET_Builder_Element {
 
 					$priority += 10;
 				}
-
-				$priority = 0;
 			}
 		}
 
@@ -22881,8 +23090,8 @@ class ET_Builder_Structure_Element extends ET_Builder_Element {
 					current_background_blend_color = typeof et_pb_background_blend_%1$s !== \'undefined\' && et_pb_background_blend_%1$s === \'normal\' ? \' selected="selected"\' : \'\';
 					current_background_blend_luminosity = typeof et_pb_background_blend_%1$s !== \'undefined\' && et_pb_background_blend_%1$s === \'luminosity\' ? \' selected="selected"\' : \'\';
 					current_use_background_color_gradient = typeof et_pb_use_background_color_gradient_%1$s !== \'undefined\' && \'on\' === et_pb_use_background_color_gradient_%1$s ? \' selected="selected"\' : \'\';
-					current_background_color_gradient_start = typeof et_pb_background_color_gradient_start_%1$s !== \'undefined\' ? et_pb_background_color_gradient_start_%1$s : \'%2$s\';
-					current_background_color_gradient_end = typeof et_pb_background_color_gradient_end_%1$s !== \'undefined\' ? et_pb_background_color_gradient_end_%1$s : \'%3$s\';
+					current_background_color_gradient_repeat = typeof et_pb_background_color_gradient_repeat_%1$s !== \'undefined\' && \'on\' === et_pb_background_color_gradient_repeat_%1$s ? \' selected="selected"\' : \'%6$s\';
+					current_background_color_gradient_unit = typeof et_pb_background_color_gradient_unit_%1$s !== \'undefined\'  ? et_pb_background_color_gradient_unit_%1$s : \'%7$s\';
 					current_background_color_gradient_type = typeof et_pb_background_color_gradient_type_%1$s !== \'undefined\' && \'radial\' === et_pb_background_color_gradient_type_%1$s ? \' selected="selected"\' : \'\';
 					current_background_color_gradient_direction = typeof et_pb_background_color_gradient_direction_%1$s !== \'undefined\' ? et_pb_background_color_gradient_direction_%1$s : \'%4$s\';
 					current_background_color_gradient_direction_radial_center = typeof et_pb_background_color_gradient_direction_radial_%1$s !== \'undefined\' && \'center\' === et_pb_background_color_gradient_direction_radial_%1$s ? \' selected="selected"\' : \'\';
@@ -22894,9 +23103,10 @@ class ET_Builder_Structure_Element extends ET_Builder_Element {
 					current_background_color_gradient_direction_radial_bottom = typeof et_pb_background_color_gradient_direction_radial_%1$s !== \'undefined\' && \'bottom\' === et_pb_background_color_gradient_direction_radial_%1$s ? \' selected="selected"\' : \'\';
 					current_background_color_gradient_direction_radial_bottom_left = typeof et_pb_background_color_gradient_direction_radial_%1$s !== \'undefined\' && \'bottom left\' === et_pb_background_color_gradient_direction_radial_%1$s ? \' selected="selected"\' : \'\';
 					current_background_color_gradient_direction_radial_left = typeof et_pb_background_color_gradient_direction_radial_%1$s !== \'undefined\' && \'left\' === et_pb_background_color_gradient_direction_radial_%1$s ? \' selected="selected"\' : \'\';
-					current_background_color_gradient_start_position = typeof et_pb_background_color_gradient_start_position_%1$s !== \'undefined\' ? et_pb_background_color_gradient_start_position_%1$s : \'%5$s\';
-					current_background_color_gradient_end_position = typeof et_pb_background_color_gradient_end_position_%1$s !== \'undefined\' ? et_pb_background_color_gradient_end_position_%1$s : \'%6$s\';
+					current_background_color_gradient_stops = typeof et_pb_background_color_gradient_stops_%1$s !== \'undefined\' ? et_pb_background_color_gradient_stops_%1$s : \'%5$s\';
 					current_background_color_gradient_overlays_image = typeof et_pb_background_color_gradient_overlays_image_%1$s !== \'undefined\' && \'on\' === et_pb_background_color_gradient_overlays_image_%1$s ? \' selected="selected"\' : \'\';
+					current_background_color_gradient_start = typeof et_pb_background_color_gradient_start_%1$s !== \'undefined\' ? et_pb_background_color_gradient_start_%1$s : \'%2$s\';
+					current_background_color_gradient_end = typeof et_pb_background_color_gradient_end_%1$s !== \'undefined\' ? et_pb_background_color_gradient_end_%1$s : \'%3$s\';
 					current_background_video_mp4 = typeof et_pb_background_video_mp4_%1$s !== \'undefined\' ? et_pb_background_video_mp4_%1$s : \'\';
 					current_background_video_webm = typeof et_pb_background_video_webm_%1$s !== \'undefined\' ? et_pb_background_video_webm_%1$s : \'\';
 					current_background_video_width = typeof et_pb_background_video_width_%1$s !== \'undefined\' ? et_pb_background_video_width_%1$s : \'\';
@@ -22910,8 +23120,9 @@ class ET_Builder_Structure_Element extends ET_Builder_Element {
 				esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_start' ) ),
 				esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_end' ) ),
 				esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_direction' ) ),
-				esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_start_position' ) ), // #5
-				esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_end_position' ) )
+				esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_stops' ) ), // #5
+				esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_repeat' ) ),
+				esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_unit' ) )
 			);
 		}
 
@@ -22994,8 +23205,7 @@ class ET_Builder_Structure_Element extends ET_Builder_Element {
 						current_background_blend_color,
 						current_background_blend_luminosity,
 						current_use_background_color_gradient,
-						current_background_color_gradient_start,
-						current_background_color_gradient_end,
+						current_background_color_gradient_repeat,
 						current_background_color_gradient_type,
 						current_background_color_gradient_direction,
 						current_background_color_gradient_direction_radial_center,
@@ -23007,9 +23217,12 @@ class ET_Builder_Structure_Element extends ET_Builder_Element {
 						current_background_color_gradient_direction_radial_bottom,
 						current_background_color_gradient_direction_radial_bottom_left,
 						current_background_color_gradient_direction_radial_left,
-						current_background_color_gradient_start_position,
-						current_background_color_gradient_end_position,
+						current_background_color_gradient_stops,
 						current_background_color_gradient_overlays_image,
+						current_background_color_gradient_start,
+						current_background_color_gradient_start_position,
+						current_background_color_gradient_end,
+						current_background_color_gradient_end_position,
 						current_background_video_mp4,
 						current_background_video_webm,
 						current_background_video_width,
@@ -23080,8 +23293,11 @@ class ET_Builder_Structure_Element extends ET_Builder_Element {
 			esc_html__( 'Hex Value', 'et_builder' )
 		);
 
-		$tab_gradient = sprintf(
-			'<div class="et_pb_background-tab et_pb_background-tab--gradient" data-tab="gradient">
+		$tab_gradient_options = '';
+
+		// Gradient Preview (with Add/Swap/Delete buttons).
+		$tab_gradient_options .= sprintf(
+			'
 				<div class="et-pb-option-preview et-pb-option-preview--empty">
 					<button class="et-pb-option-preview-button et-pb-option-preview-button--add">
 						%1$s
@@ -23092,145 +23308,214 @@ class ET_Builder_Structure_Element extends ET_Builder_Element {
 					<button class="et-pb-option-preview-button et-pb-option-preview-button--delete">
 						%3$s
 					</button>
-				</div>
+				</div>',
+			$this->get_icon( 'add' ),
+			$this->get_icon( 'swap' ),
+			$this->get_icon( 'delete' )
+		);
+
+		// Use Background Color Gradient.
+		$tab_gradient_options .= sprintf(
+			'
 				<div class="et_pb_background-option et_pb_background-option--use_background_color_gradient et_pb_background-template--use_color_gradient et-pb-option et-pb-option--use_background_color_gradient">
-					<label for="et_pb_use_background_color_gradient_<%%= counter %%>">%4$s: </label>
+					<label for="et_pb_use_background_color_gradient_<%%= counter %%>">%1$s: </label>
 					<div class="et-pb-option-container et-pb-option-container--yes_no_button">
 						<div class="et_pb_yes_no_button_wrapper ">
 							<div class="et_pb_yes_no_button et_pb_off_state">
-								<span class="et_pb_value_text et_pb_on_value">%5$s</span>
+								<span class="et_pb_value_text et_pb_on_value">%2$s</span>
 								<span class="et_pb_button_slider"></span>
-								<span class="et_pb_value_text et_pb_off_value">%6$s</span>
+								<span class="et_pb_value_text et_pb_off_value">%3$s</span>
 							</div>
-							<select name="et_pb_use_background_color_gradient_<%%= counter %%>" id="et_pb_use_background_color_gradient_<%%= counter %%>" class="et-pb-main-setting regular-text et-pb-affects" data-affects="background_color_gradient_start_<%%= counter %%>, background_color_gradient_end_<%%= counter %%>, background_color_gradient_start_position_<%%= counter %%>, background_color_gradient_end_position_<%%= counter %%>, background_color_gradient_type_<%%= counter %%>, background_color_gradient_overlays_image_<%%= counter %%>" data-default="off">
-								<option value="off">%6$s</option>
-								<option value="on" <%%= current_use_background_color_gradient %%>>%5$s</option>
+							<select name="et_pb_use_background_color_gradient_<%%= counter %%>" id="et_pb_use_background_color_gradient_<%%= counter %%>" class="et-pb-main-setting regular-text et-pb-affects" data-affects="background_color_gradient_start_<%%= counter %%>, background_color_gradient_end_<%%= counter %%>, background_color_gradient_type_<%%= counter %%>, background_color_gradient_stops_<%%= counter %%>, background_color_gradient_repeat_<%%= counter %%>, background_color_gradient_overlays_image_<%%= counter %%>" data-default="off">
+								<option value="off">%3$s</option>
+								<option value="on" <%%= current_use_background_color_gradient %%>>%2$s</option>
 							</select>
 						</div><span class="et-pb-reset-setting"></span>
 					</div>
-				</div>
-				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_start et_pb_background-template--color_gradient_start et-pb-option et-pb-option--background_color_gradient_start" data-depends_show_if="on">
-					<label for="et_pb_background_color_gradient_start_<%%= counter %%>">%7$s: </label>
-					<div class="et-pb-option-container et-pb-option-container--color-alpha">
-						<div class="wp-picker-container">
-							<input id="et_pb_background_color_gradient_start_<%%= counter %%>" class="et-pb-color-picker-hex et-pb-color-picker-hex-alpha et-pb-main-setting" type="text" data-alpha="true" placeholder="%8$s" data-selected-value="<%%= current_background_color_gradient_start %%>" value="<%%= current_background_color_gradient_start %%>" data-default-color="%26$s" data-default="%26$s">
-						</div>
-						<span class="et-pb-reset-setting"></span>
-					</div>
-				</div>
-				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_end et_pb_background-template--color_gradient_end et-pb-option et-pb-option--background_color_gradient_end" data-depends_show_if="on">
-					<label for="et_pb_background_color_gradient_end_<%%= counter %%>">%9$s: </label>
-					<div class="et-pb-option-container et-pb-option-container--color-alpha">
-						<div class="wp-picker-container">
-							<input id="et_pb_background_color_gradient_end_<%%= counter %%>" class="et-pb-color-picker-hex et-pb-color-picker-hex-alpha et-pb-main-setting" type="text" data-alpha="true" placeholder="%8$s" data-selected-value="<%%= current_background_color_gradient_end %%>" value="<%%= current_background_color_gradient_end %%>" data-default-color="%27$s" data-default="%27$s">
-						</div>
-						<span class="et-pb-reset-setting"></span>
-					</div>
-				</div>
+				</div>',
+			esc_html__( 'Background Gradient', 'et_builder' ),
+			et_builder_i18n( 'On' ),
+			et_builder_i18n( 'Off' )
+		);
+
+		// Gradient Type.
+		$tab_gradient_options .= sprintf(
+			'
 				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_type et_pb_background-template--color_gradient_type et-pb-option et-pb-option--background_color_gradient_type" data-depends_show_if="on">
-					<label for="et_pb_background_color_gradient_type_<%%= counter %%>">%10$s: </label>
+					<label for="et_pb_background_color_gradient_type_<%%= counter %%>">%1$s: </label>
 					<div class="et-pb-option-container et-pb-option-container--select">
 						<select name="et_pb_background_color_gradient_type_<%%= counter %%>" id="et_pb_background_color_gradient_type_<%%= counter %%>" class="et-pb-main-setting  et-pb-affects" data-affects="background_color_gradient_direction_<%%= counter %%>, background_color_gradient_direction_radial_<%%= counter %%>" data-default="linear">
-							<option value="linear">%11$s</option>
-							<option value="radial" <%%= current_background_color_gradient_type %%>>%12$s</option>
+							<option value="linear">%2$s</option>
+							<option value="circular">%3$s</option>
+							<option value="elliptical" <%%= current_background_color_gradient_type %%>>%4$s</option>
+							<option value="conic">%5$s</option>
 						</select>
 						<span class="et-pb-reset-setting"></span>
 					</div>
-				</div>
-				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_direction et_pb_background-template--color_gradient_direction et-pb-option et-pb-option--background_color_gradient_direction" data-depends_show_if="linear">
-					<label for="et_pb_background_color_gradient_direction_<%%= counter %%>">%13$s: </label>
+				</div>',
+			esc_html__( 'Gradient Type', 'et_builder' ),
+			et_builder_i18n( 'Linear' ),
+			et_builder_i18n( 'Circular' ),
+			et_builder_i18n( 'Elliptical' ),
+			et_builder_i18n( 'Conical' )
+		);
+
+		// Gradient Direction.
+		$tab_gradient_options .= sprintf(
+			'
+				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_direction et_pb_background-template--color_gradient_direction et-pb-option et-pb-option--background_color_gradient_direction">
+					<label for="et_pb_background_color_gradient_direction_<%%= counter %%>">%1$s: </label>
 					<div class="et-pb-option-container et-pb-option-container--range">
 						<input type="range" class="et-pb-main-setting et-pb-range et-pb-fixed-range" data-default="180" value="<%%= current_background_color_gradient_direction %%>" min="0" max="360" step="1">
 						<input id="et_pb_background_color_gradient_direction_<%%= counter %%>" type="text" class="regular-text et-pb-validate-unit et-pb-range-input" value="<%%= current_background_color_gradient_direction %%>" data-default="180deg">
 						<span class="et-pb-reset-setting"></span>
 					</div>
-				</div>
-				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_direction_radial et_pb_background-template--color_gradient_direction_radial et-pb-option et-pb-option--background_color_gradient_direction_radial" data-depends_show_if="radial">
-					<label for="et_pb_background_color_gradient_direction_radial_<%%= counter %%>">%14$s: </label>
+				</div>',
+			esc_html__( 'Gradient Direction', 'et_builder' )
+		);
+
+		// Gradient Position.
+		$tab_gradient_options .= sprintf(
+			'
+				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_direction_radial et_pb_background-template--color_gradient_direction_radial et-pb-option et-pb-option--background_color_gradient_direction_radial">
+					<label for="et_pb_background_color_gradient_direction_radial_<%%= counter %%>">%1$s: </label>
 					<div class="et-pb-option-container et-pb-option-container--select">
 						<select name="et_pb_background_color_gradient_direction_radial_<%%= counter %%>" id="et_pb_background_color_gradient_direction_radial_<%%= counter %%>" class="et-pb-main-setting" data-default="center">
-							<option value="center" <%%= current_background_color_gradient_direction_radial_center %%>>%15$s</option>
-							<option value="top left" <%%= current_background_color_gradient_direction_radial_top_left %%>>%16$s</option>
-							<option value="top" <%%= current_background_color_gradient_direction_radial_top %%>>%17$s</option>
-							<option value="top right" <%%= current_background_color_gradient_direction_radial_top_right %%>>%18$s</option>
-							<option value="right" <%%= current_background_color_gradient_direction_radial_right %%>>%19$s</option>
-							<option value="bottom right" <%%= current_background_color_gradient_direction_radial_bottom_right %%>>%20$s</option>
-							<option value="bottom" <%%= current_background_color_gradient_direction_radial_bottom %%>>%21$s</option>
-							<option value="bottom left" <%%= current_background_color_gradient_direction_radial_bottom_left %%>>%22$s</option>
-							<option value="left" <%%= current_background_color_gradient_direction_radial_left %%>>%23$s</option>
+							<option value="center" <%%= current_background_color_gradient_direction_radial_center %%>>%2$s</option>
+							<option value="top left" <%%= current_background_color_gradient_direction_radial_top_left %%>>%3$s</option>
+							<option value="top" <%%= current_background_color_gradient_direction_radial_top %%>>%4$s</option>
+							<option value="top right" <%%= current_background_color_gradient_direction_radial_top_right %%>>%5$s</option>
+							<option value="right" <%%= current_background_color_gradient_direction_radial_right %%>>%6$s</option>
+							<option value="bottom right" <%%= current_background_color_gradient_direction_radial_bottom_right %%>>%7$s</option>
+							<option value="bottom" <%%= current_background_color_gradient_direction_radial_bottom %%>>%8$s</option>
+							<option value="bottom left" <%%= current_background_color_gradient_direction_radial_bottom_left %%>>%9$s</option>
+							<option value="left" <%%= current_background_color_gradient_direction_radial_left %%>>%10$s</option>
 						</select>
 						<span class="et-pb-reset-setting"></span>
 					</div>
-				</div>
-				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_start_position et_pb_background-template--color_gradient_start_position et-pb-option et-pb-option--background_color_gradient_start_position" data-depends_show_if="on">
-					<label for="et_pb_background_color_gradient_start_position_<%%= counter %%>">%24$s: </label>
-					<div class="et-pb-option-container et-pb-option-container--range">
-						<input type="range" class="et-pb-main-setting et-pb-range et-pb-fixed-range" data-default="0" value="<%%= parseInt( current_background_color_gradient_start_position.trim() ) %%>" min="0" max="100" step="1">
-						<input id="et_pb_background_color_gradient_start_position_<%%= counter %%>" type="text" class="regular-text et-pb-validate-unit et-pb-range-input" value="<%%= current_background_color_gradient_start_position %%>" data-default="0%%">
+				</div>',
+			esc_html__( 'Gradient Position', 'et_builder' ),
+			et_builder_i18n( 'Center' ),
+			et_builder_i18n( 'Top Left' ),
+			et_builder_i18n( 'Top' ),
+			et_builder_i18n( 'Top Right' ), // #5
+			et_builder_i18n( 'Right' ),
+			et_builder_i18n( 'Bottom Right' ),
+			et_builder_i18n( 'Bottom' ),
+			et_builder_i18n( 'Bottom Left' ),
+			et_builder_i18n( 'Left' ) // #10
+		);
+
+		// Gradient Stops.
+		$tab_gradient_options .= sprintf(
+			'
+				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_stops et_pb_background-template--color_gradient_stops et-pb-option et-pb-option--background_color_gradient_stops" data-depends_show_if="on">
+					<label for="et_pb_background_color_gradient_stops_<%%= counter %%>">%1$s: </label>
+					<div class="et-pb-option-container et-pb-option-container--text">
+						<input id="et_pb_background_color_gradient_stops_<%%= counter %%>" type="text" class="regular-text et-pb-main-setting" value="<%%= current_background_color_gradient_stops %%>" placeholder="%2$s">
 						<span class="et-pb-reset-setting"></span>
 					</div>
-				</div>
-				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_end_position et_pb_background-template--color_gradient_end_position et-pb-option et-pb-option--background_color_gradient_end_position" data-depends_show_if="on">
-					<label for="et_pb_background_color_gradient_end_position_<%%= counter %%>">%25$s: </label>
-					<div class="et-pb-option-container et-pb-option-container--range">
-						<input type="range" class="et-pb-main-setting et-pb-range et-pb-fixed-range" data-default="100" value="<%%= parseInt( current_background_color_gradient_end_position.trim() ) %%>" min="0" max="100" step="1">
-						<input id="et_pb_background_color_gradient_end_position_<%%= counter %%>" type="text" class="regular-text et-pb-validate-unit et-pb-range-input" value="<%%= current_background_color_gradient_end_position %%>" data-default="100%%">
-						<span class="et-pb-reset-setting"></span>
-					</div>
-				</div>
-				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_overlays_image et_pb_background-template--use_color_gradient et-pb-option et-pb-option--background_color_gradient_overlays_image">
-					<label for="et_pb_background_color_gradient_overlays_image_<%%= counter %%>">%35$s: </label>
+				</div>',
+			esc_html__( 'Gradient Stops', 'et_builder' ),
+			esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_stops' ) )
+		);
+
+		// Repeat Gradient toggle.
+		$tab_gradient_options .= sprintf(
+			'
+				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_repeat et_pb_background-template--use_color_gradient et-pb-option et-pb-option--background_color_gradient_repeat">
+					<label for="et_pb_background_color_gradient_repeat_<%%= counter %%>">%1$s: </label>
 					<div class="et-pb-option-container et-pb-option-container--yes_no_button">
 						<div class="et_pb_yes_no_button_wrapper ">
 							<div class="et_pb_yes_no_button et_pb_off_state">
-								<span class="et_pb_value_text et_pb_on_value">%5$s</span>
+								<span class="et_pb_value_text et_pb_on_value">%2$s</span>
 								<span class="et_pb_button_slider"></span>
-								<span class="et_pb_value_text et_pb_off_value">%6$s</span>
+								<span class="et_pb_value_text et_pb_off_value">%3$s</span>
 							</div>
-							<select name="et_pb_background_color_gradient_overlays_image_<%%= counter %%>" id="et_pb_background_color_gradient_overlays_image_<%%= counter %%>" class="et-pb-main-setting regular-text" data-depends_show_if="on" data-default="off">
-								<option value="off">%6$s</option>
-								<option value="on" <%%= current_background_color_gradient_overlays_image %%>>%5$s</option>
+							<select name="et_pb_background_color_gradient_repeat_<%%= counter %%>" id="et_pb_background_color_gradient_repeat_<%%= counter %%>" class="et-pb-main-setting regular-text" data-depends_show_if="on" data-default="off">
+								<option value="off">%3$s</option>
+								<option value="on" <%%= current_background_color_gradient_repeat %%>>%2$s</option>
 							</select>
 						</div><span class="et-pb-reset-setting"></span>
 					</div>
-				</div>
+				</div>',
+			esc_html__( 'Repeat Gradient', 'et_builder' ),
+			et_builder_i18n( 'On' ),
+			et_builder_i18n( 'Off' )
+		);
 
-			</div>',
-			$this->get_icon( 'add' ),
-			$this->get_icon( 'swap' ),
-			$this->get_icon( 'delete' ),
-			esc_html__( 'Background Gradient', 'et_builder' ),
-			et_builder_i18n( 'On' ), // #5
-			et_builder_i18n( 'Off' ),
-			esc_html__( 'Gradient Start', 'et_builder' ),
-			esc_html__( 'Hex Value', 'et_builder' ),
-			esc_html__( 'Gradient End', 'et_builder' ),
-			esc_html__( 'Gradient Type', 'et_builder' ), // #10
-			et_builder_i18n( 'Linear' ),
-			et_builder_i18n( 'Radial' ),
-			esc_html__( 'Gradient Direction', 'et_builder' ),
-			esc_html__( 'Radial Direction', 'et_builder' ),
-			et_builder_i18n( 'Center' ), // #15
-			et_builder_i18n( 'Top Left' ),
-			et_builder_i18n( 'Top' ),
-			et_builder_i18n( 'Top Right' ),
-			et_builder_i18n( 'Right' ),
-			et_builder_i18n( 'Bottom Right' ), // #20
-			et_builder_i18n( 'Bottom' ),
-			et_builder_i18n( 'Bottom Left' ),
-			et_builder_i18n( 'Left' ),
-			esc_html__( 'Start Position', 'et_builder' ),
-			esc_html__( 'End Position', 'et_builder' ), // #25
-			esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_start' ) ),
-			esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_end' ) ),
-			esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_type' ) ),
-			esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_direction' ) ),
-			esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_direction_radial' ) ), // #30
-			esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_start_position' ) ),
-			esc_attr( intval( ET_Global_Settings::get_value( 'all_background_gradient_start_position' ) ) ),
-			esc_attr( ET_Global_Settings::get_value( 'all_background_gradient_end_position' ) ),
-			esc_attr( intval( ET_Global_Settings::get_value( 'all_background_gradient_end_position' ) ) ),
-			esc_html__( 'Place Gradient Above Background Image', 'et_builder' ) // #35
+		// Gradient Unit list.
+		$tab_gradient_options .= sprintf(
+			'
+				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_unit et_pb_background-template--color_gradient_unit et-pb-option et-pb-option--background_color_gradient_unit" data-depends_show_if="on">
+					<label for="et_pb_background_color_gradient_unit_<%%= counter %%>">%1$s: </label>
+					<div class="et-pb-option-container et-pb-option-container--select">
+						<select name="et_pb_background_color_gradient_unit_<%%= counter %%>" id="et_pb_background_color_gradient_unit_<%%= counter %%>" class="et-pb-main-setting" data-default="linear">
+							<option value="%" <%%= current_background_color_gradient_unit %%>>%2$s</option>
+							<option value="px">%3$s</option>
+							<option value="em">%4$s</option>
+							<option value="rem">%5$s</option>
+							<option value="ex">%6$s</option>
+							<option value="ch">%7$s</option>
+							<option value="pc">%8$s</option>
+							<option value="pt">%9$s</option>
+							<option value="cm">%10$s</option>
+							<option value="mm">%11$s</option>
+							<option value="in">%12$s</option>
+							<option value="vh">%13$s</option>
+							<option value="vw">%14$s</option>
+							<option value="vmim">%15$s</option>
+							<option value="vmax">%16$s</option>
+						</select>
+						<span class="et-pb-reset-setting"></span>
+					</div>
+				</div>',
+			esc_html__( 'Gradient Unit', 'et_builder' ),
+			et_builder_i18n( 'Percent' ),
+			et_builder_i18n( 'Pixels' ),
+			et_builder_i18n( 'Font Size (em)' ),
+			et_builder_i18n( 'Root-level Font Size (rem)' ), // #5
+			et_builder_i18n( 'X-Height (ex)' ),
+			et_builder_i18n( 'Zero-width (ch)' ),
+			et_builder_i18n( 'Picas (pc)' ),
+			et_builder_i18n( 'Points (pt)' ),
+			et_builder_i18n( 'Centimeters (cm)' ), // #10
+			et_builder_i18n( 'Millimeters (mm)' ),
+			et_builder_i18n( 'Inches (in)' ),
+			et_builder_i18n( 'Viewport Height (vh)' ),
+			et_builder_i18n( 'Viewport Width (vw)' ),
+			et_builder_i18n( 'Viewport Minimum (vmin)' ), // #15
+			et_builder_i18n( 'Viewport Maximum (vmax)' )
+		);
+
+		// Gradient/Image Overlay.
+		$tab_gradient_options .= sprintf(
+			'
+				<div class="et_pb_background-option et_pb_background-option--background_color_gradient_overlays_image et_pb_background-template--use_color_gradient et-pb-option et-pb-option--background_color_gradient_overlays_image">
+					<label for="et_pb_background_color_gradient_overlays_image_<%%= counter %%>">%1$s: </label>
+					<div class="et-pb-option-container et-pb-option-container--yes_no_button">
+						<div class="et_pb_yes_no_button_wrapper ">
+							<div class="et_pb_yes_no_button et_pb_off_state">
+								<span class="et_pb_value_text et_pb_on_value">%2$s</span>
+								<span class="et_pb_button_slider"></span>
+								<span class="et_pb_value_text et_pb_off_value">%3$s</span>
+							</div>
+							<select name="et_pb_background_color_gradient_overlays_image_<%%= counter %%>" id="et_pb_background_color_gradient_overlays_image_<%%= counter %%>" class="et-pb-main-setting regular-text" data-depends_show_if="on" data-default="off">
+								<option value="off">%3$s</option>
+								<option value="on" <%%= current_background_color_gradient_overlays_image %%>>%2$s</option>
+							</select>
+						</div><span class="et-pb-reset-setting"></span>
+					</div>
+				</div>',
+			esc_html__( 'Place Gradient Above Background Image', 'et_builder' ),
+			et_builder_i18n( 'On' ),
+			et_builder_i18n( 'Off' )
+		);
+
+		// Options for the Gradient tab.
+		$tab_gradient = sprintf(
+			'<div class="et_pb_background-tab et_pb_background-tab--gradient" data-tab="gradient">%1$s</div>',
+			$tab_gradient_options
 		);
 
 		$select_background_size = sprintf(

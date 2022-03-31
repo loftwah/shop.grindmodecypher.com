@@ -77,14 +77,17 @@ class ET_Global_Settings {
 		);
 
 		$background_gradient_defaults = array(
-			'start'            => '#2b87da',
-			'end'              => '#29c4a9',
+			'stops'            => '#2b87da 0%|#29c4a9 100%',
 			'type'             => 'linear',
 			'direction'        => '180deg',
 			'direction_radial' => 'center',
+			'repeat'           => 'off',
+			'unit'             => '%',
+			'overlays_image'   => 'off',
+			'start'            => '#2b87da',
+			'end'              => '#29c4a9',
 			'start_position'   => '0%',
 			'end_position'     => '100%',
-			'overlays_image'   => 'off',
 		);
 
 		$background_image_defaults = array(
@@ -119,14 +122,21 @@ class ET_Global_Settings {
 			$hover->get_hover_field( 'all_buttons_border_radius' ) => '3',
 			$hover->get_hover_field( 'all_buttons_spacing' ) => '0',
 			// Global: Background Gradients.
-			'all_background_gradient_start'                => $background_gradient_defaults['start'],
-			'all_background_gradient_end'                  => $background_gradient_defaults['end'],
+			'all_background_gradient_repeat'               => $background_gradient_defaults['repeat'],
 			'all_background_gradient_type'                 => $background_gradient_defaults['type'],
 			'all_background_gradient_direction'            => $background_gradient_defaults['direction'],
 			'all_background_gradient_direction_radial'     => $background_gradient_defaults['direction_radial'],
-			'all_background_gradient_start_position'       => $background_gradient_defaults['start_position'],
-			'all_background_gradient_end_position'         => $background_gradient_defaults['end_position'],
+			'all_background_gradient_stops'                => $background_gradient_defaults['stops'],
+			'all_background_gradient_unit'                 => $background_gradient_defaults['unit'],
 			'all_background_gradient_overlays_image'       => $background_gradient_defaults['overlays_image'],
+			// Deprecated.
+			'all_background_gradient_start'                => $background_gradient_defaults['start'],
+			// Deprecated.
+			'all_background_gradient_end'                  => $background_gradient_defaults['end'],
+			// Deprecated.
+			'all_background_gradient_start_position'       => $background_gradient_defaults['start_position'],
+			// Deprecated.
+			'all_background_gradient_end_position'         => $background_gradient_defaults['end_position'],
 			// Global: Filters.
 			'all_filter_hue_rotate'                        => $filter_defaults['filter_hue_rotate'],
 			'all_filter_saturate'                          => $filter_defaults['filter_saturate'],

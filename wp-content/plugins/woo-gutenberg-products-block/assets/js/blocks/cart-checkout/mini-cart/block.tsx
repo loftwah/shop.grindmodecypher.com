@@ -37,10 +37,10 @@ import { blockName } from '../mini-cart-contents/attributes';
 
 interface Props {
 	isInitiallyOpen?: boolean;
-	transparentButton: boolean;
 	colorClassNames?: string;
 	style?: Record< string, Record< string, string > >;
 	contents: string;
+	addToCartBehaviour: string;
 }
 
 const MiniCartBlock = ( {
@@ -48,6 +48,7 @@ const MiniCartBlock = ( {
 	colorClassNames,
 	style,
 	contents = '',
+	addToCartBehaviour = 'none',
 }: Props ): JSX.Element => {
 	const {
 		cartItemsCount: cartItemsCountFromApi,
@@ -109,8 +110,10 @@ const MiniCartBlock = ( {
 
 	useEffect( () => {
 		const openMiniCart = () => {
-			setSkipSlideIn( false );
-			setIsOpen( true );
+			if ( addToCartBehaviour === 'open_drawer' ) {
+				setSkipSlideIn( false );
+				setIsOpen( true );
+			}
 		};
 
 		// Make it so we can read jQuery events triggered by WC Core elements.
@@ -132,7 +135,7 @@ const MiniCartBlock = ( {
 				openMiniCart
 			);
 		};
-	}, [] );
+	}, [ addToCartBehaviour ] );
 
 	const showIncludingTax = getSettingWithCoercion(
 		'displayCartPricesIncludingTax',
@@ -209,11 +212,7 @@ const MiniCartBlock = ( {
 						{ taxLabel }
 					</small>
 				) }
-				<QuantityBadge
-					count={ cartItemsCount }
-					colorClassNames={ colorClassNames }
-					style={ colorStyle }
-				/>
+				<QuantityBadge count={ cartItemsCount } />
 			</button>
 			<Drawer
 				className={ classnames(

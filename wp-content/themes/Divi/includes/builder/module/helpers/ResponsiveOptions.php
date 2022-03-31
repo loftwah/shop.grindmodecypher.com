@@ -1140,7 +1140,7 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 		$enable_fields = array(
 			"{$background_base}_color"              => "{$background_base}_enable_color",
 			'use_background_color_gradient'         => 'use_background_color_gradient',
-			"{$background_base}_use_color_gradient" => "{$background_base}_enable_use_color_gradient",
+			"{$background_base}_use_color_gradient" => "{$background_base}_use_color_gradient",
 			"{$background_base}_image"              => "{$background_base}_enable_image",
 			"video_{$background_base}_values"       => "video_{$background_base}_values",
 			"{$background_base}_pattern_style"      => "{$background_base}_enable_pattern_style",
@@ -1201,7 +1201,7 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 				}
 
 				// BG Gradient.
-			} elseif ( in_array( $base_setting, array( 'use_background_color_gradient', "{$background_base}_use_color_gradient" ) ) ) {
+			} elseif ( in_array( $base_setting, array( 'use_background_color_gradient', "{$background_base}_use_color_gradient" ), true ) ) {
 
 				$new_value = 'off';
 
@@ -1210,31 +1210,47 @@ class ET_Builder_Module_Helper_ResponsiveOptions {
 						'value' => "use_background_color_gradient{$slug}",
 						'start' => "{$background_base}_color_gradient_start{$slug}",
 						'end'   => "{$background_base}_color_gradient_end{$slug}",
+						'stops' => "{$background_base}_color_gradient_stops{$slug}",
+						'unit'  => "{$background_base}_color_gradient_unit{$slug}",
 					),
 					"{$background_base}_use_color_gradient" => array(
 						'value' => "{$background_base}_use_color_gradient{$slug}",
 						'start' => "{$background_base}_color_gradient_start{$slug}",
 						'end'   => "{$background_base}_color_gradient_end{$slug}",
+						'stops' => "{$background_base}_color_gradient_stops{$slug}",
+						'unit'  => "{$background_base}_color_gradient_unit{$slug}",
 					),
 				);
 
 				$field_value = '';
 				$field_start = '';
 				$field_end   = '';
+				$field_stops = '';
 
 				if ( ! empty( $field_map[ $base_setting ] ) ) {
 					$field_value = ! empty( $field_map[ $base_setting ]['value'] ) ? $field_map[ $base_setting ]['value'] : '';
 					$field_start = ! empty( $field_map[ $base_setting ]['start'] ) ? $field_map[ $base_setting ]['start'] : '';
 					$field_end   = ! empty( $field_map[ $base_setting ]['end'] ) ? $field_map[ $base_setting ]['end'] : '';
+					$field_stops = ! empty( $field_map[ $base_setting ]['stops'] ) ? $field_map[ $base_setting ]['stops'] : '';
 				}
 
-				$use_gradient_default = ! empty( $fields[ $field_value ] ) ? $fields[ $field_value ] : '';
-				$use_gradient_value   = ! empty( $attrs[ $field_value ] ) ? $attrs[ $field_value ] : $use_gradient_default;
-				$gradient_start_value = ! empty( $attrs[ $field_start ] ) ? $attrs[ $field_start ] : '';
-				$gradient_end_value   = ! empty( $attrs[ $field_end ] ) ? $attrs[ $field_end ] : '';
-				$is_gradient_enabled  = 'off' !== $use_gradient_value;
+				// Set value from attrs, otherwise, assign default value, for desktop/tablet/phone.
+				$use_gradient_value   = $this->get_any_value( $attrs, $field_value, 'off', true );
+				$gradient_start_value = $this->get_any_value( $attrs, $field_start, '', true );
+				$gradient_end_value   = $this->get_any_value( $attrs, $field_end, '', true );
+				$gradient_stops_value = $this->get_any_value( $attrs, $field_stops, '', true );
 
-				if ( ( '' !== $gradient_start_value || '' !== $gradient_end_value ) && $is_gradient_enabled ) {
+				// Set value from attrs, otherwise, assign value from desktop.
+				if ( in_array( $slug, array( '__hover', '__sticky' ), true ) ) {
+					$use_gradient_value   = ! empty( $attrs[ $field_value ] ) ? $attrs[ $field_value ] : $use_gradient_value;
+					$gradient_start_value = ! empty( $attrs[ $field_start ] ) ? $attrs[ $field_start ] : $gradient_start_value;
+					$gradient_end_value   = ! empty( $attrs[ $field_end ] ) ? $attrs[ $field_end ] : $gradient_end_value;
+					$gradient_stops_value = ! empty( $attrs[ $field_stops ] ) ? $attrs[ $field_stops ] : $gradient_stops_value;
+				}
+
+				$is_gradient_enabled = 'off' !== $use_gradient_value;
+
+				if ( ( '' !== $gradient_stops_value || ( '' !== $gradient_start_value || '' !== $gradient_end_value ) ) && $is_gradient_enabled ) {
 					$new_value = 'on';
 					break;
 				} elseif ( ! $is_gradient_enabled ) {

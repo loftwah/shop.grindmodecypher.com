@@ -35,4 +35,4 @@ http://www.elegantthemes.com/gallery/divi/documentation/divi-library/
 http://www.elegantthemes.com/gallery/divi/documentation/customizer/
 
 ## Copyright
-> **© Copyright 2013-2020, Elegant Themes, Inc.**
+> **© Copyright 2013-2022, Elegant Themes, Inc.**

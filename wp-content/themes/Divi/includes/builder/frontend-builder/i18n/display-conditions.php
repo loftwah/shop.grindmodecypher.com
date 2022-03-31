@@ -94,7 +94,6 @@ return array(
 	'User Role'                             => esc_html__( 'User Role', 'et_builder' ),
 	'Display Only If User Role'             => esc_html__( 'Display Only If User Role', 'et_builder' ),
 	'Admin'                                 => esc_html__( 'Admin', 'et_builder' ),
-	'Author'                                => esc_html__( 'Author', 'et_builder' ),
 	'Contributor'                           => esc_html__( 'Contributor', 'et_builder' ),
 	'Customer'                              => esc_html__( 'Customer', 'et_builder' ),
 	'Editor'                                => esc_html__( 'Editor', 'et_builder' ),

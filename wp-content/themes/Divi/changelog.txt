@@ -1,3 +1,38 @@
+version 4.16 ( updated 03-30-2022 )
+- Added new advanced gradient builder control to the background option group.
+- Improved VB performance by refactoring event listener in utils/mouse.js to be more efficient.
+- Removed mousemove event listener in ETBuilderRoot component.
+- Improved the logic to add/ remove event listener in ETBuilderPageSettingsBar component.
+- Improved VB performance by prevented certain actions from being executed on every click when not necessary.
+- Improved VB performance by refactoring event listener in utils/keyboard.js to be more efficient.
+- Fixed helper functions not being loaded in certain cases causing errors when 3rd party modules are autosaved.
+- Fixed a bug which were causing Background Size of Post Slider Module to be different in some cases on Frontend.
+- Fixed a bug where the left padding for specialty columns did not work in some cases.
+- Fixed an issue where the "View Details" link was not correctly set for products on the latest version.
+	* README.md
+	* core/components/Portability.php
+	* core/components/Updates.php
+	* core/ui/components/controls/slider/slider-utils.js
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-global-settings.php
+	* includes/builder/feature/I18n.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/i18n/display-conditions.php
+	* includes/builder/frontend-builder/init.php
+	* includes/builder/functions.php
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/FullwidthSlider.php
+	* includes/builder/module/Slider.php
+	* includes/builder/module/helpers/Background.php
+	* includes/builder/module/helpers/ResponsiveOptions.php
+	* includes/builder/module/settings/Migration.php
+	* includes/builder/module/settings/migration/BackgroundGradientStops.php
+	* includes/builder/module/settings/migration/ColumnOptions.php
+	* includes/builder/scripts/src/builder.js
+
 version 4.15.1 ( updated 03-18-2022 )
 - Fixed a PHP error in Extra Theme which was caused by Background Settings helper class.
 - Updated Image Position option to show for all image repeat options in Background Settings.

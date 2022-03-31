@@ -121,17 +121,19 @@ if ( ! defined( 'ET_BUILDER_LOAD_ON_AJAX' ) ) {
 	define( 'ET_BUILDER_LOAD_ON_AJAX', false );
 }
 
+// Always load helpers files to prevent errors when 3rd party modules are autosaved.
+define( 'ET_FB_URI', ET_BUILDER_URI . '/frontend-builder' );
+define( 'ET_FB_ASSETS_URI', ET_FB_URI . '/assets' );
+
+require_once ET_BUILDER_DIR . 'frontend-builder/helpers.php';
+
 // Stop here if the front end builder isn't enabled.
 if ( ! ET_FB_ENABLED && ! ET_BUILDER_LOAD_ON_AJAX ) {
 	return;
 }
 
-define( 'ET_FB_URI', ET_BUILDER_URI . '/frontend-builder' );
-define( 'ET_FB_ASSETS_URI', ET_FB_URI . '/assets' );
-
 require_once ET_BUILDER_DIR . 'frontend-builder/view.php';
 require_once ET_BUILDER_DIR . 'frontend-builder/assets.php';
-require_once ET_BUILDER_DIR . 'frontend-builder/helpers.php';
 require_once ET_BUILDER_DIR . 'frontend-builder/rtl.php';
 
 do_action( 'et_fb_framework_loaded' );

@@ -57,42 +57,18 @@ class ET_Builder_Module_Helper_Background {
 	}
 
 	/**
-	 * Get gradient properties based on given props
-	 *
-	 * @since 4.3.3
-	 *
-	 * @param array  $props          Module's props.
-	 * @param string $base_prop_name Background base prop name.
-	 * @param string $suffix         Background base prop name's suffix.
-	 *
-	 * @return array
-	 */
-	public function get_gradient_properties( $props, $base_prop_name, $suffix ) {
-		$color_start_value = et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_start{$suffix}", '', true );
-		$color_end_value   = et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_end{$suffix}", '', true );
-
-		return array(
-			'type'             => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_type{$suffix}", '', true ),
-			'direction'        => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_direction{$suffix}", '', true ),
-			'radial_direction' => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_direction_radial{$suffix}", '', true ),
-			'color_start'      => $this->get_color_value( $color_start_value ),
-			'color_end'        => $this->get_color_value( $color_end_value ),
-			'start_position'   => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_start_position{$suffix}", '', true ),
-			'end_position'     => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_end_position{$suffix}", '', true ),
-		);
-	}
-
-	/**
 	 * Get gradient properties for hover mode
 	 *
 	 * @since 4.3.3
 	 * @since 4.6.0 add capability to look for sticky style's gradient
+	 * @since 4.16.0   Uses the `_stops` field introduced in the Gradient Builder update.
 	 *
 	 * @param string $mode                        Mode name.
 	 * @param array  $props                       Module's props.
 	 * @param string $base_prop_name              Background base prop name.
 	 * @param array  $gradient_properties_desktop {
 	 *     @type string $mode
+	 *     @type string $stops
 	 *     @type string $type
 	 *     @type string $direction
 	 *     @type string $radial_direction
@@ -112,36 +88,74 @@ class ET_Builder_Module_Helper_Background {
 		}
 
 		// Desktop value as default.
-		$gradient_type_desktop             = isset( $gradient_properties_desktop['type'] ) ? $gradient_properties_desktop['type'] : '';
-		$gradient_direction_desktop        = isset( $gradient_properties_desktop['direction'] ) ? $gradient_properties_desktop['direction'] : '';
-		$gradient_radial_direction_desktop = isset( $gradient_properties_desktop['radial_direction'] ) ? $gradient_properties_desktop['radial_direction'] : '';
-		$gradient_color_start_desktop      = isset( $gradient_properties_desktop['color_start'] ) ? $gradient_properties_desktop['color_start'] : '';
-		$gradient_color_end_desktop        = isset( $gradient_properties_desktop['color_end'] ) ? $gradient_properties_desktop['color_end'] : '';
-		$gradient_start_position_desktop   = isset( $gradient_properties_desktop['start_position'] ) ? $gradient_properties_desktop['start_position'] : '';
-		$gradient_end_position_desktop     = isset( $gradient_properties_desktop['end_position'] ) ? $gradient_properties_desktop['end_position'] : '';
+		$gradient_repeat_desktop           = et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_repeat_image", '', true );
+		$gradient_type_desktop             = et_()->array_get( $gradient_properties_desktop, 'type', '' );
+		$gradient_direction_desktop        = et_()->array_get( $gradient_properties_desktop, 'direction', '' );
+		$gradient_radial_direction_desktop = et_()->array_get( $gradient_properties_desktop, 'radial_direction', '' );
+		$gradient_stops_desktop            = et_()->array_get( $gradient_properties_desktop, 'stops', '' );
+		$gradient_unit_desktop             = et_()->array_get( $gradient_properties_desktop, 'unit', '' );
 		$gradient_overlays_image_desktop   = et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_overlays_image", '', true );
 
+		$gradient_color_start_desktop    = et_()->array_get( $gradient_properties_desktop, 'color_start', '' );
+		$gradient_color_end_desktop      = et_()->array_get( $gradient_properties_desktop, 'color_end', '' );
+		$gradient_start_position_desktop = et_()->array_get( $gradient_properties_desktop, 'start_position', '' );
+		$gradient_end_position_desktop   = et_()->array_get( $gradient_properties_desktop, 'end_position', '' );
+
 		// Mode value.
+		$gradient_repeat_mode           = $helper->get_raw_value( "{$base_prop_name}_color_repeat_image", $props, $gradient_repeat_desktop );
 		$gradient_type_mode             = $helper->get_raw_value( "{$base_prop_name}_color_gradient_type", $props, $gradient_type_desktop );
 		$gradient_direction_mode        = $helper->get_raw_value( "{$base_prop_name}_color_gradient_direction", $props, $gradient_direction_desktop );
 		$gradient_direction_radial_mode = $helper->get_raw_value( "{$base_prop_name}_color_gradient_direction_radial", $props, $gradient_radial_direction_desktop );
-		$gradient_start_mode            = $helper->get_raw_value( "{$base_prop_name}_color_gradient_start", $props, $gradient_color_start_desktop );
-		$gradient_end_mode              = $helper->get_raw_value( "{$base_prop_name}_color_gradient_end", $props, $gradient_color_end_desktop );
-		$gradient_start_position_mode   = $helper->get_raw_value( "{$base_prop_name}_color_gradient_start_position", $props, $gradient_start_position_desktop );
-		$gradient_end_position_mode     = $helper->get_raw_value( "{$base_prop_name}_color_gradient_end_position", $props, $gradient_end_position_desktop );
+		$gradient_stops_mode            = $helper->get_raw_value( "{$base_prop_name}_color_gradient_stops", $props, $gradient_stops_desktop );
+		$gradient_unit_mode             = $helper->get_raw_value( "{$base_prop_name}_color_gradient_unit", $props, $gradient_unit_desktop );
 		$gradient_overlays_image_mode   = $helper->get_raw_value( "{$base_prop_name}_color_gradient_overlays_image", $props, $gradient_overlays_image_desktop );
+
+		$gradient_start_mode          = $helper->get_raw_value( "{$base_prop_name}_color_gradient_start", $props, $gradient_color_start_desktop );
+		$gradient_end_mode            = $helper->get_raw_value( "{$base_prop_name}_color_gradient_end", $props, $gradient_color_end_desktop );
+		$gradient_start_position_mode = $helper->get_raw_value( "{$base_prop_name}_color_gradient_start_position", $props, $gradient_start_position_desktop );
+		$gradient_end_position_mode   = $helper->get_raw_value( "{$base_prop_name}_color_gradient_end_position", $props, $gradient_end_position_desktop );
 
 		$color_start_value = '' !== $gradient_start_mode ? $gradient_start_mode : $gradient_color_start_desktop;
 		$color_end_value   = '' !== $gradient_end_mode ? $gradient_end_mode : $gradient_color_end_desktop;
 
 		return array(
+			'repeat'           => '' !== $gradient_repeat_mode ? $gradient_repeat_mode : $gradient_repeat_desktop,
 			'type'             => '' !== $gradient_type_mode ? $gradient_type_mode : $gradient_type_desktop,
 			'direction'        => '' !== $gradient_direction_mode ? $gradient_direction_mode : $gradient_direction_desktop,
 			'radial_direction' => '' !== $gradient_direction_radial_mode ? $gradient_direction_radial_mode : $gradient_radial_direction_desktop,
-			'color_start'      => $this->get_color_value( $color_start_value ),
-			'color_end'        => $this->get_color_value( $color_end_value ),
+			'stops'            => '' !== $gradient_stops_mode ? $gradient_stops_mode : $gradient_stops_desktop,
+			'color_start'      => '' !== $gradient_start_mode ? $gradient_start_mode : $gradient_color_start_desktop,
+			'color_end'        => '' !== $gradient_end_mode ? $gradient_end_mode : $gradient_color_end_desktop,
 			'start_position'   => '' !== $gradient_start_position_mode ? $gradient_start_position_mode : $gradient_start_position_desktop,
 			'end_position'     => '' !== $gradient_end_position_mode ? $gradient_end_position_mode : $gradient_end_position_desktop,
+			'unit'             => '' !== $gradient_unit_mode ? $gradient_unit_mode : $gradient_stops_desktop,
+		);
+	}
+
+	/**
+	 * Get gradient properties based on given props
+	 *
+	 * @since 4.3.3
+	 * @since 4.16.0   Uses the `_stops` field introduced in the Gradient Builder update.
+	 *
+	 * @param array  $props          Module's props.
+	 * @param string $base_prop_name Background base prop name.
+	 * @param string $suffix         Background base prop name's suffix.
+	 *
+	 * @return array
+	 */
+	public function get_gradient_properties( $props, $base_prop_name, $suffix ) {
+		return array(
+			'repeat'           => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_repeat{$suffix}", '', true ),
+			'type'             => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_type{$suffix}", '', true ),
+			'direction'        => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_direction{$suffix}", '', true ),
+			'radial_direction' => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_direction_radial{$suffix}", '', true ),
+			'stops'            => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_stops{$suffix}", '', true ),
+			'unit'             => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_unit{$suffix}", '', true ),
+			'color_start'      => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_start{$suffix}", '', true ),
+			'color_end'        => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_end{$suffix}", '', true ),
+			'start_position'   => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_start_position{$suffix}", '', true ),
+			'end_position'     => et_pb_responsive_options()->get_any_value( $props, "{$base_prop_name}_color_gradient_end_position{$suffix}", '', true ),
 		);
 	}
 
@@ -149,43 +163,64 @@ class ET_Builder_Module_Helper_Background {
 	 * Get background gradient style based on properties given
 	 *
 	 * @since 4.3.3
+	 * @since 4.16.0   Uses the `_stops` field introduced in the Gradient Builder update.
 	 *
 	 * @param array $args {
-	 *     @type string $type
-	 *     @type string $direction
-	 *     @type string $radial_direction
-	 *     @type string $color_start
-	 *     @type string $color_end
-	 *     @type string $start_position
-	 *     @type string $end_position
+	 *     @type string $repeat           Whether the gradient stops repeat.
+	 *     @type string $type             Linear or radial gradient.
+	 *     @type string $direction        The gradient line's angle of direction.
+	 *     @type string $radial_direction The position of the gradient.
+	 *     @type string $stops            Brace-delimited list of color stops.
+	 *     @type string $color_start      Deprecated.
+	 *     @type string $color_end        Deprecated.
+	 *     @type string $start_position   Deprecated.
+	 *     @type string $end_position     Deprecated.
 	 * }
 	 *
 	 * @return string
 	 */
 	public function get_gradient_style( $args ) {
 		$default_gradient = array(
+			'repeat'           => ET_Global_Settings::get_value( 'all_background_gradient_repeat' ),
 			'type'             => ET_Global_Settings::get_value( 'all_background_gradient_type' ),
 			'direction'        => ET_Global_Settings::get_value( 'all_background_gradient_direction' ),
 			'radial_direction' => ET_Global_Settings::get_value( 'all_background_gradient_direction_radial' ),
-			'color_start'      => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
-			'color_end'        => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
-			'start_position'   => ET_Global_Settings::get_value( 'all_background_gradient_start_position' ),
-			'end_position'     => ET_Global_Settings::get_value( 'all_background_gradient_end_position' ),
+			'stops'            => ET_Global_Settings::get_value( 'all_background_gradient_stops' ),
 		);
 
 		$defaults = apply_filters( 'et_pb_default_gradient', $default_gradient );
+		$args     = wp_parse_args( array_filter( $args ), $defaults );
+		$stops    = str_replace( '|', ', ', $args['stops'] );
 
-		$args           = wp_parse_args( array_filter( $args ), $defaults );
-		$direction      = 'linear' === $args['type'] ? $args['direction'] : "circle at {$args['radial_direction']}";
-		$start_position = et_sanitize_input_unit( $args['start_position'], false, '%' );
-		$end_position   = et_sanitize_input_unit( $args['end_position'], false, '%' );
+		$stops = $this->get_color_value( $stops );
+
+		switch ( $args['type'] ) {
+			case 'conic':
+				$type      = 'conic';
+				$direction = "from {$args['direction']} at {$args['radial_direction']}";
+				break;
+			case 'elliptical':
+				$type      = 'radial';
+				$direction = "ellipse at {$args['radial_direction']}";
+				break;
+			case 'radial':
+			case 'circular':
+				$type      = 'radial';
+				$direction = "circle at {$args['radial_direction']}";
+				break;
+			case 'linear':
+			default:
+				$type      = 'linear';
+				$direction = $args['direction'];
+		}
+
+		// Apply gradient repeat (if set).
+		if ( 'on' === $args['repeat'] ) {
+			$type = "repeating-{$type}";
+		}
 
 		return esc_html(
-			"{$args['type']}-gradient(
-			{$direction},
-			{$args['color_start']} ${start_position},
-			{$args['color_end']} ${end_position}
-		)"
+			"{$type}-gradient( {$direction}, {$stops} )"
 		);
 	}
 
@@ -409,10 +444,11 @@ class ET_Builder_Module_Helper_Background {
 				break;
 			case 'cover':
 			case 'contain':
+			case 'initial':
 				$output['size'] = $size_value;
 				break;
 			default:
-				$output['size'] = 'initial';
+				$output['size'] = '';
 		}
 
 		return $output;
@@ -686,7 +722,7 @@ class ET_Builder_Module_Helper_Background {
 
 					if ( '' !== $image_size_inherit || $image_width_inherit || $image_height_inherit ) {
 						// Get Size CSS.
-						$image_size_style = $this->get_background_size_css( $image_size_inherit, $image_width_inherit, $image_height_inherit, $image_size_default, 'mask' );
+						$image_size_style = $this->get_background_size_css( $image_size_inherit, $image_width_inherit, $image_height_inherit, $image_size_default, 'image' );
 
 						// Set image background size styles only it's different compared to the larger device.
 						if ( $processed_image_size_style !== $image_size_style ) {
@@ -719,8 +755,8 @@ class ET_Builder_Module_Helper_Background {
 					// Check if image repeat has 'space' value or not.
 					$is_image_repeat_space = 'space' === $this->get_attr_value( 'repeat', $base_prop_name, $suffix, $props, $fields_definition, false );
 
-					// Print pattern repeat origin/offset when pattern size is not 'stretch', and
-					// pattern repeat is not 'space'.
+					// Print image repeat origin/offset when image size is not 'stretch', and
+					// image repeat is not 'space'.
 					if (
 						! $is_image_size_stretch
 						&& ! $is_image_repeat_space
@@ -1295,8 +1331,8 @@ class ET_Builder_Module_Helper_Background {
 							$image_height_mode    = $helper->get_raw_value( "{$base_prop_name}_image_height", $props, $image_height_desktop );
 
 							// Get Size CSS.
-							$image_size_style_desktop = $this->get_background_size_css( $image_size_desktop, $image_width_desktop, $image_height_desktop, 'mask' );
-							$image_size_style_mode    = $this->get_background_size_css( $image_size_mode, $image_width_mode, $image_height_mode, 'mask' );
+							$image_size_style_desktop = $this->get_background_size_css( $image_size_desktop, $image_width_desktop, $image_height_desktop, 'image' );
+							$image_size_style_mode    = $this->get_background_size_css( $image_size_mode, $image_width_mode, $image_height_mode, 'image' );
 
 							$is_same_image_size_style = $image_size_style_mode === $image_size_style_desktop;
 
@@ -1815,16 +1851,30 @@ class ET_Builder_Module_Helper_Background {
 	 *
 	 * @param string $color Raw Color Value.
 	 *
+	 * @since 4.16.0 Refactored to perform a substring find/replace (for compound settings like in Gradient Builder).
+	 *
 	 * @return string
 	 */
 	public function get_color_value( $color ) {
-		if ( strpos( $color, 'gcid-' ) === 0 ) {
-			$global_color_info = et_builder_get_global_color_info( $color );
-
-			$color = esc_attr( $global_color_info['color'] );
+		if ( false === strpos( $color, 'gcid-' ) ) {
+			return $color;
 		}
 
-		return $color;
+		$global_colors = et_builder_get_all_global_colors();
+
+		// If there are no matching Global Colors, return null.
+		if ( ! is_array( $global_colors ) ) {
+			return null;
+		}
+
+		foreach ( $global_colors as $gcid => $details ) {
+			if ( false !== strpos( $color, $gcid ) ) {
+				// Match substring (needed for attrs like gradient stops).
+				return esc_attr( str_replace( $gcid, $details['color'], $color ) );
+			}
+		}
+
+		return null;
 	}
 
 	/**

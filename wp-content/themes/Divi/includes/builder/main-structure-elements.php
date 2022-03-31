@@ -12,7 +12,7 @@ do_action( 'et_builder_structure_elements_load' );
 /**
  * Section Element class
  *
- * @since [version]
+ * @since 3.0.16
  */
 class ET_Builder_Section extends ET_Builder_Structure_Element {
 	/**
@@ -324,14 +324,15 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'background_horizontal_offset'             => array(),
 				'background_vertical_offset'               => array(),
 				'background_blend'                         => array(),
-				'padding_top_bottom_link'                  => array(),
-				'padding_left_right_link'                  => array(),
 				'use_background_color_gradient'            => array(),
-				'background_color_gradient_start'          => array(),
-				'background_color_gradient_end'            => array(),
+				'background_color_gradient_repeat'         => array(),
 				'background_color_gradient_type'           => array(),
 				'background_color_gradient_direction'      => array(),
 				'background_color_gradient_direction_radial' => array(),
+				'background_color_gradient_stops'          => array(),
+				'background_color_gradient_unit'           => array(),
+				'background_color_gradient_start'          => array(),
+				'background_color_gradient_end'            => array(),
 				'background_color_gradient_start_position' => array(),
 				'background_color_gradient_end_position'   => array(),
 				'background_color_gradient_overlays_image' => array(),
@@ -769,8 +770,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		$padding_right_2                              = isset( $this->props['padding_right_2'] ) ? $this->props['padding_right_2'] : '';
 		$padding_right_3                              = isset( $this->props['padding_right_3'] ) ? $this->props['padding_right_3'] : '';
 		$padding_left_1                               = isset( $this->props['padding_left_1'] ) ? $this->props['padding_left_1'] : '';
-		$padding_left_3                               = isset( $this->props['padding_left_2'] ) ? $this->props['padding_left_2'] : '';
-		$padding_left_2                               = isset( $this->props['padding_left_3'] ) ? $this->props['padding_left_3'] : '';
+		$padding_left_2                               = isset( $this->props['padding_left_2'] ) ? $this->props['padding_left_2'] : '';
+		$padding_left_3                               = isset( $this->props['padding_left_3'] ) ? $this->props['padding_left_3'] : '';
 		$padding_bottom_1                             = isset( $this->props['padding_bottom_1'] ) ? $this->props['padding_bottom_1'] : '';
 		$padding_bottom_2                             = isset( $this->props['padding_bottom_2'] ) ? $this->props['padding_bottom_2'] : '';
 		$padding_bottom_3                             = isset( $this->props['padding_bottom_3'] ) ? $this->props['padding_bottom_3'] : '';
@@ -824,6 +825,9 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		$use_background_color_gradient_1              = isset( $this->props['use_background_color_gradient_1'] ) ? $this->props['use_background_color_gradient_1'] : '';
 		$use_background_color_gradient_2              = isset( $this->props['use_background_color_gradient_2'] ) ? $this->props['use_background_color_gradient_2'] : '';
 		$use_background_color_gradient_3              = isset( $this->props['use_background_color_gradient_3'] ) ? $this->props['use_background_color_gradient_3'] : '';
+		$background_color_gradient_repeat_1           = isset( $this->props['background_color_gradient_repeat_1'] ) ? $this->props['background_color_gradient_repeat_1'] : '';
+		$background_color_gradient_repeat_2           = isset( $this->props['background_color_gradient_repeat_2'] ) ? $this->props['background_color_gradient_repeat_2'] : '';
+		$background_color_gradient_repeat_3           = isset( $this->props['background_color_gradient_repeat_3'] ) ? $this->props['background_color_gradient_repeat_3'] : '';
 		$background_color_gradient_type_1             = isset( $this->props['background_color_gradient_type_1'] ) ? $this->props['background_color_gradient_type_1'] : '';
 		$background_color_gradient_type_2             = isset( $this->props['background_color_gradient_type_2'] ) ? $this->props['background_color_gradient_type_2'] : '';
 		$background_color_gradient_type_3             = isset( $this->props['background_color_gradient_type_3'] ) ? $this->props['background_color_gradient_type_3'] : '';
@@ -833,6 +837,15 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		$background_color_gradient_direction_radial_1 = isset( $this->props['background_color_gradient_direction_radial_1'] ) ? $this->props['background_color_gradient_direction_radial_1'] : '';
 		$background_color_gradient_direction_radial_2 = isset( $this->props['background_color_gradient_direction_radial_2'] ) ? $this->props['background_color_gradient_direction_radial_2'] : '';
 		$background_color_gradient_direction_radial_3 = isset( $this->props['background_color_gradient_direction_radial_3'] ) ? $this->props['background_color_gradient_direction_radial_3'] : '';
+		$background_color_gradient_stops_1            = isset( $this->props['background_color_gradient_stops_1'] ) ? $this->props['background_color_gradient_stops_1'] : '';
+		$background_color_gradient_stops_2            = isset( $this->props['background_color_gradient_stops_2'] ) ? $this->props['background_color_gradient_stops_2'] : '';
+		$background_color_gradient_stops_3            = isset( $this->props['background_color_gradient_stops_3'] ) ? $this->props['background_color_gradient_stops_3'] : '';
+		$background_color_gradient_unit_1             = isset( $this->props['background_color_gradient_unit_1'] ) ? $this->props['background_color_gradient_unit_1'] : '';
+		$background_color_gradient_unit_2             = isset( $this->props['background_color_gradient_unit_2'] ) ? $this->props['background_color_gradient_unit_2'] : '';
+		$background_color_gradient_unit_3             = isset( $this->props['background_color_gradient_unit_3'] ) ? $this->props['background_color_gradient_unit_3'] : '';
+		$background_color_gradient_overlays_image_1   = isset( $this->props['background_color_gradient_overlays_image_1'] ) ? $this->props['background_color_gradient_overlays_image_1'] : '';
+		$background_color_gradient_overlays_image_2   = isset( $this->props['background_color_gradient_overlays_image_2'] ) ? $this->props['background_color_gradient_overlays_image_2'] : '';
+		$background_color_gradient_overlays_image_3   = isset( $this->props['background_color_gradient_overlays_image_3'] ) ? $this->props['background_color_gradient_overlays_image_3'] : '';
 		$background_color_gradient_start_1            = isset( $this->props['background_color_gradient_start_1'] ) ? $this->props['background_color_gradient_start_1'] : '';
 		$background_color_gradient_start_2            = isset( $this->props['background_color_gradient_start_2'] ) ? $this->props['background_color_gradient_start_2'] : '';
 		$background_color_gradient_start_3            = isset( $this->props['background_color_gradient_start_3'] ) ? $this->props['background_color_gradient_start_3'] : '';
@@ -845,9 +858,6 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		$background_color_gradient_end_position_1     = isset( $this->props['background_color_gradient_end_position_1'] ) ? $this->props['background_color_gradient_end_position_1'] : '';
 		$background_color_gradient_end_position_2     = isset( $this->props['background_color_gradient_end_position_2'] ) ? $this->props['background_color_gradient_end_position_2'] : '';
 		$background_color_gradient_end_position_3     = isset( $this->props['background_color_gradient_end_position_3'] ) ? $this->props['background_color_gradient_end_position_3'] : '';
-		$background_color_gradient_overlays_image_1   = isset( $this->props['background_color_gradient_overlays_image_1'] ) ? $this->props['background_color_gradient_overlays_image_1'] : '';
-		$background_color_gradient_overlays_image_2   = isset( $this->props['background_color_gradient_overlays_image_2'] ) ? $this->props['background_color_gradient_overlays_image_2'] : '';
-		$background_color_gradient_overlays_image_3   = isset( $this->props['background_color_gradient_overlays_image_3'] ) ? $this->props['background_color_gradient_overlays_image_3'] : '';
 		$background_enable_pattern_style_1            = isset( $this->props['background_enable_pattern_style_1'] ) ? $this->props['background_enable_pattern_style_1'] : '';
 		$background_enable_pattern_style_2            = isset( $this->props['background_enable_pattern_style_2'] ) ? $this->props['background_enable_pattern_style_2'] : '';
 		$background_enable_pattern_style_3            = isset( $this->props['background_enable_pattern_style_3'] ) ? $this->props['background_enable_pattern_style_3'] : '';
@@ -1083,36 +1093,45 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			$et_pb_column_backgrounds_gradient = array(
 				array(
 					'active'           => $use_background_color_gradient_1,
+					'repeat'           => $background_color_gradient_repeat_1,
 					'type'             => $background_color_gradient_type_1,
 					'direction'        => $background_color_gradient_direction_1,
 					'radial_direction' => $background_color_gradient_direction_radial_1,
+					'stops'            => $background_color_gradient_stops_1,
+					'unit'             => $background_color_gradient_unit_1,
+					'overlays_image'   => $background_color_gradient_overlays_image_1,
 					'color_start'      => $background_color_gradient_start_1,
 					'color_end'        => $background_color_gradient_end_1,
 					'start_position'   => $background_color_gradient_start_position_1,
 					'end_position'     => $background_color_gradient_end_position_1,
-					'overlays_image'   => $background_color_gradient_overlays_image_1,
 				),
 				array(
 					'active'           => $use_background_color_gradient_2,
+					'repeat'           => $background_color_gradient_repeat_2,
 					'type'             => $background_color_gradient_type_2,
 					'direction'        => $background_color_gradient_direction_2,
 					'radial_direction' => $background_color_gradient_direction_radial_2,
+					'stops'            => $background_color_gradient_stops_2,
+					'unit'             => $background_color_gradient_unit_2,
+					'overlays_image'   => $background_color_gradient_overlays_image_2,
 					'color_start'      => $background_color_gradient_start_2,
 					'color_end'        => $background_color_gradient_end_2,
 					'start_position'   => $background_color_gradient_start_position_2,
 					'end_position'     => $background_color_gradient_end_position_2,
-					'overlays_image'   => $background_color_gradient_overlays_image_2,
 				),
 				array(
 					'active'           => $use_background_color_gradient_3,
+					'repeat'           => $background_color_gradient_repeat_3,
 					'type'             => $background_color_gradient_type_3,
 					'direction'        => $background_color_gradient_direction_3,
 					'radial_direction' => $background_color_gradient_direction_radial_3,
+					'stops'            => $background_color_gradient_stops_3,
+					'unit'             => $background_color_gradient_unit_3,
+					'overlays_image'   => $background_color_gradient_overlays_image_3,
 					'color_start'      => $background_color_gradient_start_3,
 					'color_end'        => $background_color_gradient_end_3,
 					'start_position'   => $background_color_gradient_start_position_3,
 					'end_position'     => $background_color_gradient_end_position_3,
-					'overlays_image'   => $background_color_gradient_overlays_image_3,
 				),
 			);
 
@@ -1955,11 +1974,15 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'background_repeat'                        => array(),
 				'background_blend'                         => array(),
 				'use_background_color_gradient'            => array(),
-				'background_color_gradient_start'          => array(),
-				'background_color_gradient_end'            => array(),
+				'background_color_gradient_repeat'         => array(),
 				'background_color_gradient_type'           => array(),
 				'background_color_gradient_direction'      => array(),
 				'background_color_gradient_direction_radial' => array(),
+				'background_color_gradient_stops'          => array(),
+				'background_color_gradient_unit'           => array(),
+				'background_color_gradient_overlays_image' => array(),
+				'background_color_gradient_start'          => array(),
+				'background_color_gradient_end'            => array(),
 				'background_color_gradient_start_position' => array(),
 				'background_color_gradient_end_position'   => array(),
 				'background_color_gradient_overlays_image' => array(),
@@ -2469,11 +2492,15 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'background_repeat'                        => array(),
 				'background_blend'                         => array(),
 				'use_background_color_gradient'            => array(),
-				'background_color_gradient_start'          => array(),
-				'background_color_gradient_end'            => array(),
+				'background_color_gradient_repeat'         => array(),
 				'background_color_gradient_type'           => array(),
 				'background_color_gradient_direction'      => array(),
 				'background_color_gradient_direction_radial' => array(),
+				'background_color_gradient_stops'          => array(),
+				'background_color_gradient_unit'           => array(),
+				'background_color_gradient_overlays_image' => array(),
+				'background_color_gradient_start'          => array(),
+				'background_color_gradient_end'            => array(),
 				'background_color_gradient_start_position' => array(),
 				'background_color_gradient_end_position'   => array(),
 				'background_color_gradient_overlays_image' => array(),
@@ -3062,26 +3089,45 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 				$default_gradient = apply_filters(
 					'et_pb_default_gradient',
 					array(
+						'repeat'           => ET_Global_Settings::get_value( 'all_background_gradient_repeat' ),
 						'type'             => ET_Global_Settings::get_value( 'all_background_gradient_type' ),
 						'direction'        => ET_Global_Settings::get_value( 'all_background_gradient_direction' ),
 						'radial_direction' => ET_Global_Settings::get_value( 'all_background_gradient_direction_radial' ),
-						'color_start'      => ET_Global_Settings::get_value( 'all_background_gradient_start' ),
-						'color_end'        => ET_Global_Settings::get_value( 'all_background_gradient_end' ),
-						'start_position'   => ET_Global_Settings::get_value( 'all_background_gradient_start_position' ),
-						'end_position'     => ET_Global_Settings::get_value( 'all_background_gradient_end_position' ),
+						'stops'            => ET_Global_Settings::get_value( 'all_background_gradient_stops' ),
+						'unit'             => ET_Global_Settings::get_value( 'all_background_gradient_unit' ),
 					)
 				);
 
 				$background_gradient = wp_parse_args( array_filter( $background_gradient ), $default_gradient );
 
-				$direction               = 'linear' === $background_gradient['type'] ? $background_gradient['direction'] : "circle at {$background_gradient['radial_direction']}";
-				$start_gradient_position = et_sanitize_input_unit( $background_gradient['start_position'], false, '%' );
-				$end_gradient_position   = et_sanitize_input_unit( $background_gradient['end_position'], false, '%' );
-				$background_images[]     = "{$background_gradient['type']}-gradient(
-					{$direction},
-					{$background_gradient['color_start']} ${start_gradient_position},
-					{$background_gradient['color_end']} ${end_gradient_position}
-				)";
+				$stops = str_replace( '|', ', ', $background_gradient['stops'] );
+
+				switch ( $background_gradient['type'] ) {
+					case 'conic':
+						$type      = 'conic';
+						$direction = "from {$background_gradient['direction']} at {$background_gradient['radial_direction']}";
+						break;
+					case 'elliptical':
+						$type      = 'radial';
+						$direction = "ellipse at {$background_gradient['radial_direction']}";
+						break;
+					case 'radial':
+					case 'circular':
+						$type      = 'radial';
+						$direction = "circle at {$background_gradient['radial_direction']}";
+						break;
+					case 'linear':
+					default:
+						$type      = 'linear';
+						$direction = $background_gradient['direction'];
+				}
+
+				// Apply gradient repeat (if set).
+				if ( 'on' === $background_gradient['repeat'] ) {
+					$type = 'repeating-' . $type;
+				}
+
+				$background_images[] = "{$type}-gradient( {$direction}, {$stops} )";
 			}
 
 			if ( '' !== $background_img && 'on' !== $parallax_method ) {

@@ -159,7 +159,7 @@ function et_is_dynamic_front_end_request() {
 			&& ! wp_is_json_request()
 			&& ! ( defined( 'REST_REQUEST' ) && REST_REQUEST )
 			&& ! ( defined( 'WP_CLI' ) && WP_CLI )
-			&& ! ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST )
+			&& ! ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
 			&& ! is_trackback()
 			&& ! is_feed()
 			&& ! get_query_var( 'sitemap' )

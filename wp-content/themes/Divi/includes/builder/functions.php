@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '4.15.1' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '4.16.0' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -11365,33 +11365,48 @@ function et_fb_add_additional_attrs( $processed_attrs, $output ) {
 	}
 
 	// A list of all the attributes that are already returned after the shortcode is processed.
-	$safe_attrs        = array_keys( $output['attrs'] );
-	$allowlisted_attrs = array();
+	$safe_attrs    = array_keys( $output['attrs'] );
+	$allowed_attrs = array();
 
 	foreach ( $processed_attrs as $attr => $value ) {
 		if ( ! preg_match( '~_hover(_enabled)?$~', $attr ) ) {
 			continue;
 		}
 
-		// If value starts with `gcid-` then it's a global color ID.
-		if ( strpos( $value, 'gcid-' ) === 0 ) {
-			$global_color_info = et_builder_get_global_color_info( $value );
+		// if color value includes `gcid-`, check for associated Global Color value.
+		if ( empty( $value ) || false === strpos( $value, 'gcid-' ) ) {
+			continue;
+		}
 
-			if ( ! empty( $global_color_info['color'] ) ) {
-				$value = esc_attr( $global_color_info['color'] );
+		$global_color_info = et_builder_get_all_global_colors();
+
+		// If there are no matching Global Colors, return null.
+		if ( ! is_array( $global_color_info ) ) {
+			continue;
+		}
+
+		foreach ( $global_color_info as $gcid => $details ) {
+			if ( false !== strpos( $value, $gcid ) ) {
+				// Match substring (needed for attrs like gradient stops).
+				$value = str_replace( $gcid, $details['color'], $value );
 			}
 		}
 
-		$allowlisted_attrs[ $attr ] = $value;
+		// Finally, escape the output.
+		if ( ! empty( $global_color_info['color'] ) ) {
+			$value = esc_attr( $value );
+		}
+
+		$allowed_attrs[ $attr ] = $value;
 	}
 
 	// Extra conversion for the case with the `font_icon__hover` option.
-	if ( ! empty( $allowlisted_attrs['font_icon__hover'] ) && et_pb_maybe_old_divi_font_icon( $allowlisted_attrs['font_icon__hover'] ) ) {
-		$allowlisted_attrs['font_icon__hover'] = et_pb_build_extended_font_icon_value( $allowlisted_attrs['font_icon__hover'], null, null, true );
+	if ( ! empty( $allowed_attrs['font_icon__hover'] ) && et_pb_maybe_old_divi_font_icon( $allowed_attrs['font_icon__hover'] ) ) {
+		$allowed_attrs['font_icon__hover'] = et_pb_build_extended_font_icon_value( $allowed_attrs['font_icon__hover'], null, null, true );
 	}
 
-	if ( $allowlisted_attrs ) {
-		$output['attrs'] = array_merge( $output['attrs'], $allowlisted_attrs );
+	if ( $allowed_attrs ) {
+		$output['attrs'] = array_merge( $output['attrs'], $allowed_attrs );
 	}
 
 	return $output;

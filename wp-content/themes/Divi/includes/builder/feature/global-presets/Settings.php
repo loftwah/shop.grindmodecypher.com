@@ -345,7 +345,7 @@ class ET_Builder_Global_Presets_Settings {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param object $custom_defaults - The previous Custom Defaults
+	 * @param object $custom_defaults - The previous Custom Defaults.
 	 *
 	 * @return object
 	 */
