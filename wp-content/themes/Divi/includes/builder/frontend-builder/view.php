@@ -71,6 +71,15 @@ function et_builder_maybe_include_bfb_template( $template ) {
 		return ET_BUILDER_DIR . 'frontend-builder/bfb-template.php';
 	}
 
+	// Load custom page template when editing Cloud Item.
+	if ( isset( $_GET['cloudItem'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
+		if ( current_user_can( 'manage_options' ) || current_user_can( 'editor' ) ) {
+			wp_admin_bar_render();
+		}
+
+		return ET_BUILDER_DIR . 'templates/block-layout-preview.php';
+	}
+
 	return $template;
 }
 add_filter( 'template_include', 'et_builder_maybe_include_bfb_template', 99 );
@@ -139,6 +148,10 @@ function et_fb_add_body_class( $classes ) {
 
 	if ( et_builder_tb_enabled() ) {
 		$classes[] = 'et-tb';
+	}
+
+	if ( isset( $_GET['cloudItem'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
+		$classes[] = 'et-cloud-item-editor';
 	}
 
 	return $classes;

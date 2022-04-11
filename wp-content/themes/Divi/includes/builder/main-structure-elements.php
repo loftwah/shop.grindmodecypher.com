@@ -3100,34 +3100,34 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 
 				$background_gradient = wp_parse_args( array_filter( $background_gradient ), $default_gradient );
 
-				$stops = str_replace( '|', ', ', $background_gradient['stops'] );
+				$gradient_stops = str_replace( '|', ', ', $background_gradient['stops'] );
 
 				switch ( $background_gradient['type'] ) {
 					case 'conic':
-						$type      = 'conic';
-						$direction = "from {$background_gradient['direction']} at {$background_gradient['radial_direction']}";
+						$gradient_type      = 'conic';
+						$gradient_direction = "from {$background_gradient['direction']} at {$background_gradient['radial_direction']}";
 						break;
 					case 'elliptical':
-						$type      = 'radial';
-						$direction = "ellipse at {$background_gradient['radial_direction']}";
+						$gradient_type      = 'radial';
+						$gradient_direction = "ellipse at {$background_gradient['radial_direction']}";
 						break;
 					case 'radial':
 					case 'circular':
-						$type      = 'radial';
-						$direction = "circle at {$background_gradient['radial_direction']}";
+						$gradient_type      = 'radial';
+						$gradient_direction = "circle at {$background_gradient['radial_direction']}";
 						break;
 					case 'linear':
 					default:
-						$type      = 'linear';
-						$direction = $background_gradient['direction'];
+						$gradient_type      = 'linear';
+						$gradient_direction = $background_gradient['direction'];
 				}
 
 				// Apply gradient repeat (if set).
 				if ( 'on' === $background_gradient['repeat'] ) {
-					$type = 'repeating-' . $type;
+					$gradient_type = 'repeating-' . $gradient_type;
 				}
 
-				$background_images[] = "{$type}-gradient( {$direction}, {$stops} )";
+				$background_images[] = "{$gradient_type}-gradient( {$gradient_direction}, {$gradient_stops} )";
 			}
 
 			if ( '' !== $background_img && 'on' !== $parallax_method ) {

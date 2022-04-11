@@ -1033,7 +1033,7 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 			5
 		);
 
-		if ( et_fb_is_computed_callback_ajax() || $is_tb ) {
+		if ( et_fb_is_computed_callback_ajax() || $is_tb || is_et_pb_preview() ) {
 			// Runs only on Builder mode.
 			add_filter(
 				'wc_get_template',
@@ -1067,7 +1067,7 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 			)
 		);
 
-		if ( et_fb_is_computed_callback_ajax() || $is_tb ) {
+		if ( et_fb_is_computed_callback_ajax() || $is_tb || is_et_pb_preview() ) {
 			remove_filter(
 				'wc_get_template',
 				array(
@@ -1149,14 +1149,15 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 			return '';
 		}
 
-		$is_tb = et_()->array_get( $conditional_tags, 'is_tb', false );
+		$is_tb              = et_()->array_get( $conditional_tags, 'is_tb', false );
+		$is_use_placeholder = $is_tb || is_et_pb_preview();
 
 		// Stop mocking Cart Products when Cart isn't empty.
 		$reset_filters = false;
 
 		self::maybe_handle_hooks( $conditional_tags );
 
-		if ( ( $is_tb || et_fb_is_computed_callback_ajax() ) && WC()->cart->is_empty() ) {
+		if ( ( $is_use_placeholder || et_fb_is_computed_callback_ajax() ) && WC()->cart->is_empty() ) {
 			add_filter(
 				'woocommerce_get_cart_contents',
 				array(
@@ -1217,7 +1218,7 @@ class ET_Builder_Module_Woocommerce_Cart_Products extends ET_Builder_Module {
 			);
 		}
 
-		if ( ( $is_tb || et_fb_is_computed_callback_ajax() ) && $reset_filters ) {
+		if ( ( $is_use_placeholder || et_fb_is_computed_callback_ajax() ) && $reset_filters ) {
 			remove_filter(
 				'woocommerce_get_cart_contents',
 				array(

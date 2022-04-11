@@ -544,11 +544,11 @@ class ET_Builder_Module_Woocommerce_Checkout_Billing extends ET_Builder_Module {
 		self::maybe_handle_hooks( $conditional_tags );
 
 		$is_cart_empty = function_exists( 'WC' ) && isset( WC()->cart ) && WC()->cart->is_empty();
-		$is_pb_mode    = et_fb_is_computed_callback_ajax();
+		$is_pb_mode    = et_fb_is_computed_callback_ajax() || is_et_pb_preview();
 		$class         = 'ET_Builder_Module_Helper_Woocommerce_Modules';
 
 		// Set dummy cart contents to output Billing when no product is in cart.
-		if ( $is_cart_empty && $is_pb_mode ) {
+		if ( ( $is_cart_empty && $is_pb_mode ) || is_et_pb_preview() ) {
 			add_filter(
 				'woocommerce_get_cart_contents',
 				// phpcs:ignore WordPress.Arrays.CommaAfterArrayItem.NoComma -- Call to a function.
@@ -557,10 +557,12 @@ class ET_Builder_Module_Woocommerce_Checkout_Billing extends ET_Builder_Module {
 		}
 
 		ob_start();
+
 		WC_Shortcode_Checkout::output( array() );
+
 		$markup = ob_get_clean();
 
-		if ( $is_cart_empty && $is_pb_mode ) {
+		if ( ( $is_cart_empty && $is_pb_mode ) || is_et_pb_preview() ) {
 			remove_filter(
 				'woocommerce_get_cart_contents',
 				// phpcs:ignore WordPress.Arrays.CommaAfterArrayItem.NoComma -- Call to a function.
@@ -656,7 +658,8 @@ class ET_Builder_Module_Woocommerce_Checkout_Billing extends ET_Builder_Module {
 		}
 
 		if ( isset( WC()->cart )
-			&& ! is_null( WC()->cart && method_exists( WC()->cart, 'check_cart_items' ) ) ) {
+			&& ! is_null( WC()->cart && method_exists( WC()->cart, 'check_cart_items' ) )
+			&& ! is_et_pb_preview() ) {
 			$return = WC()->cart->check_cart_items();
 
 			if ( wc_notice_count( 'error' ) > 0 ) {

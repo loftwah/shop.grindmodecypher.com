@@ -39,6 +39,11 @@ $post = get_post( $post_id );
 		</script>
 
 		<?php wp_head(); ?>
+
+		<style type="text/css">
+			html {margin-top: 0 !important;}
+			.entry-content {margin-top: -1.5em !important;}
+		</style>
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="page-container">

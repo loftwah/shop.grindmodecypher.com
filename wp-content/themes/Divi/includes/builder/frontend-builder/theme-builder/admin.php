@@ -156,7 +156,6 @@ function et_theme_builder_enqueue_scripts() {
 				'distPath'              => ET_BUILDER_URI . '/frontend-builder/build/',
 				'api'                   => admin_url( 'admin-ajax.php' ),
 				'apiErrors'             => ET_Theme_Builder_Api_Errors::getMap(),
-				'diviLibraryUrl'        => ET_BUILDER_DIVI_LIBRARY_URL,
 				'diviLibraryCustomTabs' => apply_filters( 'et_builder_library_modal_custom_tabs', array(), 'theme-builder' ),
 				'nonces'                => array(
 					'et_builder_library_get_layouts_data' => wp_create_nonce( 'et_builder_library_get_layouts_data' ),
@@ -193,6 +192,8 @@ function et_theme_builder_enqueue_scripts() {
 			),
 		)
 	);
+
+	ET_Cloud_App::load_js();
 }
 add_action( 'admin_enqueue_scripts', 'et_theme_builder_enqueue_scripts' );
 

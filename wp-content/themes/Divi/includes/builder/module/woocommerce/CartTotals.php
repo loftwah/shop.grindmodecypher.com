@@ -697,9 +697,10 @@ class ET_Builder_Module_Woocommerce_Cart_Totals extends ET_Builder_Module {
 	 * @param array $conditional_tags Conditional tags from AJAX callback.
 	 */
 	public static function maybe_handle_hooks( $conditional_tags ) {
-		$is_tb = et_()->array_get( $conditional_tags, 'is_tb', false );
+		$is_tb              = et_()->array_get( $conditional_tags, 'is_tb', false );
+		$is_use_placeholder = $is_tb || is_et_pb_preview();
 
-		if ( et_fb_is_computed_callback_ajax() || $is_tb ) {
+		if ( et_fb_is_computed_callback_ajax() || $is_use_placeholder ) {
 			$class = 'ET_Builder_Module_Woocommerce_Cart_Totals';
 
 			add_filter(
@@ -722,7 +723,7 @@ class ET_Builder_Module_Woocommerce_Cart_Totals extends ET_Builder_Module {
 				]
 			);
 
-			if ( WC()->cart->is_empty() ) {
+			if ( is_et_pb_preview() || WC()->cart->is_empty() ) {
 				add_filter(
 					'wc_get_template',
 					[
@@ -742,9 +743,10 @@ class ET_Builder_Module_Woocommerce_Cart_Totals extends ET_Builder_Module {
 	 * @param array $conditional_tags Conditional tags from AJAX callback.
 	 */
 	public static function maybe_reset_hooks( $conditional_tags ) {
-		$is_tb = et_()->array_get( $conditional_tags, 'is_tb', false );
+		$is_tb              = et_()->array_get( $conditional_tags, 'is_tb', false );
+		$is_use_placeholder = $is_tb || is_et_pb_preview();
 
-		if ( et_fb_is_computed_callback_ajax() || $is_tb ) {
+		if ( et_fb_is_computed_callback_ajax() || $is_use_placeholder ) {
 			$class = 'ET_Builder_Module_Woocommerce_Cart_Totals';
 
 			remove_filter(
@@ -767,7 +769,7 @@ class ET_Builder_Module_Woocommerce_Cart_Totals extends ET_Builder_Module {
 				]
 			);
 
-			if ( WC()->cart->is_empty() ) {
+			if ( is_et_pb_preview() || WC()->cart->is_empty() ) {
 				remove_filter(
 					'wc_get_template',
 					[
@@ -793,14 +795,14 @@ class ET_Builder_Module_Woocommerce_Cart_Totals extends ET_Builder_Module {
 		}
 
 		// Show nothing when the Cart is empty in FE.
-		if ( ! et_fb_is_computed_callback_ajax() && ( is_null( WC()->cart ) || WC()->cart->is_empty() ) ) {
+		if ( ! et_fb_is_computed_callback_ajax() && ! is_et_pb_preview() && ( is_null( WC()->cart ) || WC()->cart->is_empty() ) ) {
 			return '';
 		}
 
 		self::maybe_handle_hooks( $conditional_tags );
 
 		ob_start();
-		if ( ! et_fb_is_enabled() && ! is_null( WC()->cart ) ) {
+		if ( ! et_fb_is_enabled() && ! is_et_pb_preview() && ! is_null( WC()->cart ) ) {
 			wc_maybe_define_constant( 'WOOCOMMERCE_CART', true );
 			WC()->cart->calculate_totals();
 		}
@@ -995,7 +997,7 @@ class ET_Builder_Module_Woocommerce_Cart_Totals extends ET_Builder_Module {
 		$this->add_classname( 'woocommerce-cart' );
 		$this->add_classname( $this->get_text_orientation_classname() );
 
-		if ( function_exists( 'WC' ) && isset( WC()->cart ) && WC()->cart->is_empty() ) {
+		if ( ! is_et_pb_preview() && function_exists( 'WC' ) && isset( WC()->cart ) && WC()->cart->is_empty() ) {
 			$this->add_classname( 'et_pb_wc_cart_empty' );
 		}
 

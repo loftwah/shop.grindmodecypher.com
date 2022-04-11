@@ -149,9 +149,27 @@ if ( ! function_exists( 'et_builder_should_load_framework' ) ) :
 	}
 endif;
 
+if ( ! function_exists( 'et_builder_load_library' ) ) :
+	/**
+	 * Load Divi Library and Divi Cloud.
+	 *
+	 * @return void
+	 */
+	function et_builder_load_library() {
+		// Initialize the Divi Library.
+		require_once ET_BUILDER_DIR . 'feature/Library.php';
+
+		// Initialize DiviCloud.
+		if ( defined( 'ET_BUILDER_PLUGIN_ACTIVE' ) ) {
+			require_once ET_BUILDER_PLUGIN_DIR . '/cloud/cloud-app.php';
+		} else {
+			require_once get_template_directory() . '/cloud/cloud-app.php';
+		}
+	}
+endif;
+
 if ( et_builder_should_load_framework() ) {
-	// Initialize the Divi Library.
-	require_once ET_BUILDER_DIR . 'feature/Library.php';
+	et_builder_load_library();
 }
 
 if ( ! function_exists( 'et_builder_maybe_enable_inline_styles' ) ) :
@@ -1403,6 +1421,7 @@ if ( ! function_exists( 'et_pb_add_new_layout' ) ) {
 			die();
 		}
 
+		$layout_location  = et_()->array_get_sanitized( $processed_data_array, 'et_pb_template_cloud', 'local' );
 		$layout_type      = et_()->array_get_sanitized( $processed_data_array, 'new_template_type', 'layout' );
 		$layout_is_global = 'global' === et_()->array_get( $processed_data_array, 'et_pb_template_global', 'not_global' );
 		if ( 'layout' === $layout_type ) {
@@ -1413,11 +1432,14 @@ if ( ! function_exists( 'et_pb_add_new_layout' ) ) {
 		$args = array(
 			'layout_type'          => $layout_type,
 			'layout_selected_cats' => ! empty( $processed_data_array['selected_cats'] ) ? sanitize_text_field( $processed_data_array['selected_cats'] ) : '',
+			'layout_selected_tags' => ! empty( $processed_data_array['selected_tags'] ) ? sanitize_text_field( $processed_data_array['selected_tags'] ) : '',
 			'built_for_post_type'  => ! empty( $processed_data_array['et_builder_layout_built_for_post_type'] ) ? sanitize_text_field( $processed_data_array['et_builder_layout_built_for_post_type'] ) : 'page',
 			'layout_new_cat'       => ! empty( $processed_data_array['et_pb_new_cat_name'] ) ? sanitize_text_field( $processed_data_array['et_pb_new_cat_name'] ) : '',
+			'layout_new_tag'       => ! empty( $processed_data_array['et_pb_new_tag_name'] ) ? sanitize_text_field( $processed_data_array['et_pb_new_tag_name'] ) : '',
 			'columns_layout'       => ! empty( $processed_data_array['et_columns_layout'] ) ? sanitize_text_field( $processed_data_array['et_columns_layout'] ) : '0',
 			'module_type'          => ! empty( $processed_data_array['et_module_type'] ) ? sanitize_text_field( $processed_data_array['et_module_type'] ) : 'et_pb_unknown',
 			'layout_scope'         => $layout_is_global ? 'global' : 'not_global',
+			'layout_location'      => $layout_location,
 			'module_width'         => 'regular',
 			'layout_content'       => ! empty( $processed_data_array['template_shortcode'] ) ? $processed_data_array['template_shortcode'] : '',
 			'layout_name'          => ! empty( $processed_data_array['et_pb_new_template_name'] ) ? sanitize_text_field( $processed_data_array['et_pb_new_template_name'] ) : '',
@@ -1495,10 +1517,16 @@ if ( ! function_exists( 'et_pb_submit_layout' ) ) :
 		}
 
 		$layout_cats_processed = array();
+		$layout_tags_processed = array();
 
 		if ( '' !== $args['layout_selected_cats'] ) {
 			$layout_cats_array     = explode( ',', $args['layout_selected_cats'] );
 			$layout_cats_processed = array_map( 'intval', $layout_cats_array );
+		}
+
+		if ( '' !== $args['layout_selected_tags'] ) {
+			$layout_tags_array     = explode( ',', $args['layout_selected_tags'] );
+			$layout_tags_processed = array_map( 'intval', $layout_tags_array );
 		}
 
 		$meta = array();
@@ -1524,9 +1552,11 @@ if ( ! function_exists( 'et_pb_submit_layout' ) ) :
 			'layout_type'     => $args['layout_type'],
 			'module_width'    => $args['module_width'],
 			'layout_category' => $layout_cats_processed,
+			'layout_tag'      => $layout_tags_processed,
+			'layout_location' => et_()->array_get_sanitized( $args, 'layout_location', 'local' ),
 		);
 
-		$new_layout_id            = et_pb_create_layout( $args['layout_name'], $args['layout_content'], $meta, $tax_input, $args['layout_new_cat'] );
+		$new_layout_id            = et_pb_create_layout( $args['layout_name'], $args['layout_content'], $meta, $tax_input, $args['layout_new_cat'], $args['layout_new_tag'] );
 		$new_post_data['post_id'] = (int) $new_layout_id;
 
 		$new_post_data['edit_link'] = esc_url_raw( get_edit_post_link( $new_layout_id ) );
@@ -1546,11 +1576,11 @@ if ( ! function_exists( 'et_pb_create_layout' ) ) :
 	 * @param array  $tax_input  Array of taxonomy terms keyed by their taxonomy name.
 	 * @param string $new_category The layout category.
 	 */
-	function et_pb_create_layout( $name, $content, $meta = array(), $tax_input = array(), $new_category = '' ) {
+	function et_pb_create_layout( $name, $content, $meta = array(), $tax_input = array(), $new_category = '', $new_tag = '', $post_status = 'publish' ) {
 		$layout = array(
 			'post_title'   => sanitize_text_field( $name ),
 			'post_content' => $content,
-			'post_status'  => 'publish',
+			'post_status'  => $post_status,
 			'post_type'    => ET_BUILDER_LAYOUT_POST_TYPE,
 		);
 
@@ -1561,18 +1591,40 @@ if ( ! function_exists( 'et_pb_create_layout' ) ) :
 				add_post_meta( $layout_id, $meta_key, sanitize_text_field( $meta_value ) );
 			}
 		}
+
 		if ( '' !== $new_category ) {
-			$new_term_id                    = wp_insert_term( $new_category, 'layout_category' );
-			$tax_input['layout_category'][] = (int) $new_term_id['term_id'];
+			// Multiple categories could be provided.
+			$category_names = explode( ',', $new_category );
+
+			foreach ( $category_names as $term_name ) {
+				$new_term = wp_insert_term( $term_name, 'layout_category' );
+
+				if ( ! is_wp_error( $new_term ) && isset( $new_term['term_id'] ) ) {
+					$tax_input['layout_category'][] = (int) $new_term['term_id'];
+				}
+			}
+		}
+
+		if ( '' !== $new_tag ) {
+			// Multiple tags could be provided.
+			$tag_names = explode( ',', $new_tag );
+
+			foreach ( $tag_names as $term_name ) {
+				$new_term = wp_insert_term( $term_name, 'layout_tag' );
+
+				if ( ! is_wp_error( $new_term ) && isset( $new_term['term_id'] ) ) {
+					$tax_input['layout_tag'][] = (int) $new_term['term_id'];
+				}
+			}
 		}
 
 		if ( ! empty( $tax_input ) ) {
 			foreach ( $tax_input as $taxonomy => $terms ) {
 				wp_set_post_terms( $layout_id, $terms, $taxonomy );
 			}
-		}
 
-		return $layout_id;
+			return $layout_id;
+		}
 	}
 endif;
 
@@ -1597,6 +1649,7 @@ function et_pb_save_layout() {
 		'layout_selected_cats' => isset( $_POST['et_layout_cats'] ) ? sanitize_text_field( $_POST['et_layout_cats'] ) : '',
 		'built_for_post_type'  => isset( $_POST['et_post_type'] ) ? sanitize_text_field( $_POST['et_post_type'] ) : 'page',
 		'layout_new_cat'       => isset( $_POST['et_layout_new_cat'] ) ? sanitize_text_field( $_POST['et_layout_new_cat'] ) : '',
+		'layout_new_tag'       => isset( $_POST['et_layout_new_tag'] ) ? sanitize_text_field( $_POST['et_layout_new_tag'] ) : '',
 		'columns_layout'       => isset( $_POST['et_columns_layout'] ) ? sanitize_text_field( $_POST['et_columns_layout'] ) : '0',
 		'module_type'          => isset( $_POST['et_module_type'] ) ? sanitize_text_field( $_POST['et_module_type'] ) : 'et_pb_unknown',
 		'layout_scope'         => isset( $_POST['et_layout_scope'] ) ? sanitize_text_field( $_POST['et_layout_scope'] ) : 'not_global',
@@ -2479,6 +2532,9 @@ function et_fb_get_nonces() {
 		'processImportedData'             => wp_create_nonce( 'et_fb_process_imported_data_nonce' ),
 		'retrieveLibraryModules'          => wp_create_nonce( 'et_fb_retrieve_library_modules_nonce' ),
 		'saveLibraryModules'              => wp_create_nonce( 'et_fb_save_library_modules_nonce' ),
+		'clearTempPresets'                => wp_create_nonce( 'et_fb_clear_temp_presets_nonce' ),
+		'saveCloudItemContent'            => wp_create_nonce( 'et_fb_save_cloud_item_nonce' ),
+		'removeLibraryModules'            => wp_create_nonce( 'et_fb_remove_library_modules_nonce' ),
 		'preview'                         => wp_create_nonce( 'et_pb_preview_nonce' ),
 		'autosave'                        => wp_create_nonce( 'et_fb_autosave_nonce' ),
 		'moduleEmailOptinFetchLists'      => wp_create_nonce( 'et_builder_email_fetch_lists_nonce' ),
@@ -2488,7 +2544,11 @@ function et_fb_get_nonces() {
 		'abTestingReport'                 => wp_create_nonce( 'ab_testing_builder_nonce' ),
 		'libraryLayoutsData'              => wp_create_nonce( 'et_builder_library_get_layouts_data' ),
 		'libraryGetLayout'                => wp_create_nonce( 'et_builder_library_get_layout' ),
+		'libraryUpdateLayout'             => wp_create_nonce( 'et_builder_library_update_layout' ),
+		'libraryUpdateTerms'              => wp_create_nonce( 'et_builder_library_update_terms' ),
+		'libraryUpdateLocation'           => wp_create_nonce( 'et_builder_library_toggle_item_location' ),
 		'libraryUpdateAccount'            => wp_create_nonce( 'et_builder_library_update_account' ),
+		'libraryGetCloudToken'            => wp_create_nonce( 'et_builder_library_get_cloud_token' ),
 		'fetchAttachments'                => wp_create_nonce( 'et_fb_fetch_attachments' ),
 		'droploaderProcess'               => wp_create_nonce( 'et_builder_droploader_process_nonce' ),
 		'resolvePostContent'              => wp_create_nonce( 'et_fb_resolve_post_content' ),
@@ -2510,6 +2570,7 @@ function et_fb_get_nonces() {
 		'getPostMetaFields'               => wp_create_nonce( 'et_builder_ajax_get_post_meta_fields' ),
 		'globalColorsSave'                => wp_create_nonce( 'et_builder_global_colors_save' ),
 		'defaultColorsUpdate'             => wp_create_nonce( 'et_builder_default_colors_update' ),
+		'saveDomainToken'                 => wp_create_nonce( 'et_builder_ajax_save_domain_token' ),
 		'beforeAfterComponents'           => wp_create_nonce( 'et_fb_fetch_before_after_components_nonce' ),
 	);
 

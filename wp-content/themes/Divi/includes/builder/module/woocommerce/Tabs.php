@@ -339,7 +339,9 @@ class ET_Builder_Module_Woocommerce_Tabs extends ET_Builder_Module_Tabs {
 		// Check if TB is used
 		$is_tb = et_builder_tb_enabled();
 
-		if ( $is_tb ) {
+		$is_use_placeholder = $is_tb || is_et_pb_preview();
+
+		if ( $is_use_placeholder ) {
 			et_theme_builder_wc_set_global_objects();
 		} elseif ( $overwrite_global ) {
 			// Save current global variable for later reset.
@@ -366,7 +368,7 @@ class ET_Builder_Module_Woocommerce_Tabs extends ET_Builder_Module_Tabs {
 			}
 
 			if ( 'description' === $name ) {
-				if ( ! et_builder_tb_enabled() && ! et_pb_is_pagebuilder_used( $product_id ) ) {
+				if ( ! $is_use_placeholder && ! et_pb_is_pagebuilder_used( $product_id ) ) {
 					// If selected product doesn't use builder, retrieve post content.
 					if ( et_theme_builder_overrides_layout( ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE ) ) {
 						$tab_content = apply_filters( 'et_builder_wc_description', $post->post_content );
@@ -379,7 +381,7 @@ class ET_Builder_Module_Woocommerce_Tabs extends ET_Builder_Module_Tabs {
 					 * which might cause infinite loop; get Divi's long description from
 					 * post meta instead.
 					 */
-					if ( et_builder_tb_enabled() ) {
+					if ( $is_use_placeholder ) {
 						$placeholders = et_theme_builder_wc_placeholders();
 
 						$tab_content = $placeholders['description'];
@@ -416,7 +418,7 @@ class ET_Builder_Module_Woocommerce_Tabs extends ET_Builder_Module_Tabs {
 		}
 
 		// Reset overwritten global variable.
-		if ( $is_tb ) {
+		if ( $is_use_placeholder ) {
 			et_theme_builder_wc_reset_global_objects();
 		} elseif ( $overwrite_global ) {
 			$product  = $original_product;

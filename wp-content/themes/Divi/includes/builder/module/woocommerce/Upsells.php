@@ -596,7 +596,7 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 
 		// Force set product's class to ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder
 		// in TB so related product can outputs visible content based on pre-filled value in TB
-		if ( 'true' === et_()->array_get( $conditional_tags, 'is_tb', false ) ) {
+		if ( 'true' === et_()->array_get( $conditional_tags, 'is_tb', false ) || is_et_pb_preview() ) {
 			// Set upsells id; adjust it with module's arguments. This is specifically needed if
 			// the module fetched the value via computed callback due to some fields no longer uses
 			// default value

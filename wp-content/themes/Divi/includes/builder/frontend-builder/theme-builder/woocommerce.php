@@ -66,9 +66,11 @@ function et_theme_builder_wc_review_placeholder() {
  * @param array $conditional_tags evaluate conditional tags when current request is AJAX request
  */
 function et_theme_builder_wc_set_global_objects( $conditional_tags = array() ) {
-	$is_tb = et_()->array_get( $conditional_tags, 'is_tb', false );
+	$is_tb              = et_()->array_get( $conditional_tags, 'is_tb', false );
+	$is_use_placeholder = $is_tb || is_et_pb_preview();
+
 	// Check if current request is theme builder (direct page / AJAX request)
-	if ( ! et_builder_tb_enabled() && ! $is_tb ) {
+	if ( ! et_builder_tb_enabled() && ! $is_use_placeholder ) {
 		return;
 	}
 
@@ -101,7 +103,7 @@ function et_theme_builder_wc_set_global_objects( $conditional_tags = array() ) {
 	// Get placeholders
 	$placeholders = et_theme_builder_wc_placeholders();
 
-	if ( $is_tb ) {
+	if ( $is_use_placeholder ) {
 		$placeholder_src = wc_placeholder_img_src( 'full' );
 		$placeholder_id  = attachment_url_to_postid( $placeholder_src );
 
@@ -149,10 +151,11 @@ function et_theme_builder_wc_set_global_objects( $conditional_tags = array() ) {
  * @param array $conditional_tags Evaluate conditional tags when current request is AJAX request.
  */
 function et_theme_builder_wc_reset_global_objects( $conditional_tags = array() ) {
-	$is_tb = et_()->array_get( $conditional_tags, 'is_tb', false );
+	$is_tb              = et_()->array_get( $conditional_tags, 'is_tb', false );
+	$is_use_placeholder = $is_tb || is_et_pb_preview();
 
 	// Check if current request is theme builder (direct page / AJAX request).
-	if ( ! et_builder_tb_enabled() && ! $is_tb ) {
+	if ( ! et_builder_tb_enabled() && ! $is_use_placeholder ) {
 		return;
 	}
 

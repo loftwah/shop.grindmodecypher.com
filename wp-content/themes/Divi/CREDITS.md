@@ -603,22 +603,6 @@ TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 0. You just DO WHAT THE FUCK YOU WANT TO.
 ```
 
-jQuery Hashchange Event
------------------------
-
-includes/builder/scripts/
-
-```text
-jQuery hashchange event - v1.3 - 7/21/2010
-http://benalman.com/projects/jquery-hashchange-plugin/
-
-Copyright (c) 2010 "Cowboy" Ben Alman
-Dual licensed under the MIT and GPL licenses.
-http://benalman.com/about/license/
-
-See LICENSE.md for the full GPLv2 license.
-```
-
 Magnific Popup
 --------------
 

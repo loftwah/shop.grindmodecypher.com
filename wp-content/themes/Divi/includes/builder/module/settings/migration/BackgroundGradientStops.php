@@ -46,7 +46,7 @@ class ET_Builder_Module_Settings_Migration_BackgroundGradientStops extends ET_Bu
 	 *
 	 * @var bool
 	 *
-	 * @since ??
+	 * @since 4.16.1
 	 */
 	public $add_missing_fields = true;
 
@@ -62,123 +62,142 @@ class ET_Builder_Module_Settings_Migration_BackgroundGradientStops extends ET_Bu
 	 * @since 4.16.0
 	 */
 	public function get_modules( $attr = '' ) {
-		$modules = array();
+		$all_module_slugs = ET_Builder_Element::get_all_module_slugs();
+		$modules          = array();
+
+		$module_bg           = array(
+			// Structure Elements.
+			'et_pb_column_inner',
+			'et_pb_column_specialty',
+			'et_pb_column',
+			'et_pb_section_fullwidth',
+			'et_pb_section_specialty',
+			'et_pb_section',
+			'et_pb_row_inner',
+			'et_pb_row',
+			// Divi Content Modules.
+			'et_pb_accordion_item',
+			'et_pb_accordion',
+			'et_pb_audio',
+			'et_pb_blog',
+			'et_pb_blurb',
+			'et_pb_circle_counter',
+			'et_pb_code',
+			'et_pb_comments',
+			'et_pb_contact_field',
+			'et_pb_contact_form',
+			'et_pb_countdown_timer',
+			'et_pb_counter',
+			'et_pb_counters',
+			'et_pb_cta',
+			'et_pb_divider',
+			'et_pb_filterable_portfolio',
+			'et_pb_gallery',
+			'et_pb_icon',
+			'et_pb_image',
+			'et_pb_login',
+			'et_pb_map',
+			'et_pb_menu',
+			'et_pb_number_counter',
+			'et_pb_portfolio',
+			'et_pb_post_content',
+			'et_pb_post_nav',
+			'et_pb_post_slider',
+			'et_pb_post_title',
+			'et_pb_pricing_table',
+			'et_pb_pricing_tables',
+			'et_pb_search',
+			'et_pb_shop',
+			'et_pb_sidebar',
+			'et_pb_signup_custom_field',
+			'et_pb_signup',
+			'et_pb_slide_fullwidth',
+			'et_pb_slide',
+			'et_pb_slider',
+			'et_pb_social_media_follow',
+			'et_pb_tab',
+			'et_pb_tabs',
+			'et_pb_team_member',
+			'et_pb_testimonial',
+			'et_pb_text',
+			'et_pb_toggle',
+			'et_pb_video_slider',
+			'et_pb_video',
+			'et_pb_fullwidth_code',
+			'et_pb_fullwidth_header',
+			'et_pb_fullwidth_image',
+			'et_pb_fullwidth_map',
+			'et_pb_fullwidth_menu',
+			'et_pb_fullwidth_portfolio',
+			'et_pb_fullwidth_post_content',
+			'et_pb_fullwidth_post_slider',
+			'et_pb_fullwidth_post_title',
+			'et_pb_fullwidth_slider',
+			// WooCommerce Modules.
+			'et_pb_wc_add_to_cart',
+			'et_pb_wc_additional_info',
+			'et_pb_wc_breadcrumb',
+			'et_pb_wc_cart_notice',
+			'et_pb_wc_description',
+			'et_pb_wc_gallery',
+			'et_pb_wc_images',
+			'et_pb_wc_meta',
+			'et_pb_wc_price',
+			'et_pb_wc_rating',
+			'et_pb_wc_related_products',
+			'et_pb_wc_reviews',
+			'et_pb_wc_stock',
+			'et_pb_wc_tabs',
+			'et_pb_wc_title',
+			'et_pb_wc_upsells',
+		);
+		$button_bg           = array(
+			// Divi Content Modules.
+			'et_pb_button',
+			'et_pb_comments',
+			'et_pb_contact_form',
+			'et_pb_cta',
+			'et_pb_login',
+			'et_pb_post_slider',
+			'et_pb_pricing_table',
+			'et_pb_pricing_tables',
+			'et_pb_signup',
+			'et_pb_slide_fullwidth',
+			'et_pb_slide',
+			'et_pb_slider',
+			'et_pb_social_media_follow',
+			'et_pb_fullwidth_slider',
+			// WooCommerce Modules.
+			'et_pb_wc_add_to_cart',
+			'et_pb_wc_cart_notice',
+			'et_pb_wc_reviews',
+		);
+		$fw_header_button_bg = array(
+			// Divi Content Modules.
+			'et_pb_fullwidth_header',
+		);
+
+		// Any modules not caught by the preceding lists (generally this will be 3rd-party modules).
+		$module_catchall = array_diff( $all_module_slugs, $module_bg, $button_bg, $fw_header_button_bg );
 
 		// Background.
 		if ( in_array( $attr, array( '', 'module_bg' ), true ) ) {
-			// Structure Elements.
-			$modules[] = 'et_pb_column_inner';
-			$modules[] = 'et_pb_column_specialty';
-			$modules[] = 'et_pb_column';
-			$modules[] = 'et_pb_section_fullwidth';
-			$modules[] = 'et_pb_section_specialty';
-			$modules[] = 'et_pb_section';
-			$modules[] = 'et_pb_row_inner';
-			$modules[] = 'et_pb_row';
-			// Divi Content Modules.
-			$modules[] = 'et_pb_accordion_item';
-			$modules[] = 'et_pb_accordion';
-			$modules[] = 'et_pb_audio';
-			$modules[] = 'et_pb_blog';
-			$modules[] = 'et_pb_blurb';
-			$modules[] = 'et_pb_circle_counter';
-			$modules[] = 'et_pb_code';
-			$modules[] = 'et_pb_comments';
-			$modules[] = 'et_pb_contact_field';
-			$modules[] = 'et_pb_contact_form';
-			$modules[] = 'et_pb_countdown_timer';
-			$modules[] = 'et_pb_counter';
-			$modules[] = 'et_pb_counters';
-			$modules[] = 'et_pb_cta';
-			$modules[] = 'et_pb_divider';
-			$modules[] = 'et_pb_filterable_portfolio';
-			$modules[] = 'et_pb_gallery';
-			$modules[] = 'et_pb_icon';
-			$modules[] = 'et_pb_image';
-			$modules[] = 'et_pb_login';
-			$modules[] = 'et_pb_map';
-			$modules[] = 'et_pb_menu';
-			$modules[] = 'et_pb_number_counter';
-			$modules[] = 'et_pb_portfolio';
-			$modules[] = 'et_pb_post_content';
-			$modules[] = 'et_pb_post_nav';
-			$modules[] = 'et_pb_post_slider';
-			$modules[] = 'et_pb_post_title';
-			$modules[] = 'et_pb_pricing_table';
-			$modules[] = 'et_pb_pricing_tables';
-			$modules[] = 'et_pb_search';
-			$modules[] = 'et_pb_shop';
-			$modules[] = 'et_pb_sidebar';
-			$modules[] = 'et_pb_signup_custom_field';
-			$modules[] = 'et_pb_signup';
-			$modules[] = 'et_pb_slide_fullwidth';
-			$modules[] = 'et_pb_slide';
-			$modules[] = 'et_pb_slider';
-			$modules[] = 'et_pb_social_media_follow';
-			$modules[] = 'et_pb_tab';
-			$modules[] = 'et_pb_tabs';
-			$modules[] = 'et_pb_team_member';
-			$modules[] = 'et_pb_testimonial';
-			$modules[] = 'et_pb_text';
-			$modules[] = 'et_pb_toggle';
-			$modules[] = 'et_pb_video_slider';
-			$modules[] = 'et_pb_video';
-			$modules[] = 'et_pb_fullwidth_code';
-			$modules[] = 'et_pb_fullwidth_header';
-			$modules[] = 'et_pb_fullwidth_image';
-			$modules[] = 'et_pb_fullwidth_map';
-			$modules[] = 'et_pb_fullwidth_menu';
-			$modules[] = 'et_pb_fullwidth_portfolio';
-			$modules[] = 'et_pb_fullwidth_post_content';
-			$modules[] = 'et_pb_fullwidth_post_slider';
-			$modules[] = 'et_pb_fullwidth_post_title';
-			$modules[] = 'et_pb_fullwidth_slider';
-			// WooCommerce Modules.
-			$modules[] = 'et_pb_wc_add_to_cart';
-			$modules[] = 'et_pb_wc_additional_info';
-			$modules[] = 'et_pb_wc_breadcrumb';
-			$modules[] = 'et_pb_wc_cart_notice';
-			$modules[] = 'et_pb_wc_description';
-			$modules[] = 'et_pb_wc_gallery';
-			$modules[] = 'et_pb_wc_images';
-			$modules[] = 'et_pb_wc_meta';
-			$modules[] = 'et_pb_wc_price';
-			$modules[] = 'et_pb_wc_rating';
-			$modules[] = 'et_pb_wc_related_products';
-			$modules[] = 'et_pb_wc_reviews';
-			$modules[] = 'et_pb_wc_stock';
-			$modules[] = 'et_pb_wc_tabs';
-			$modules[] = 'et_pb_wc_title';
-			$modules[] = 'et_pb_wc_upsells';
+			$modules = array_merge( $modules, $module_bg, $module_catchall );
 		}
 
 		// Button BG.
 		if ( in_array( $attr, array( '', 'button_bg' ), true ) ) {
-			// Divi Content Modules.
-			$modules[] = 'et_pb_button';
-			$modules[] = 'et_pb_comments';
-			$modules[] = 'et_pb_contact_form';
-			$modules[] = 'et_pb_cta';
-			$modules[] = 'et_pb_login';
-			$modules[] = 'et_pb_post_slider';
-			$modules[] = 'et_pb_pricing_table';
-			$modules[] = 'et_pb_pricing_tables';
-			$modules[] = 'et_pb_signup';
-			$modules[] = 'et_pb_slide_fullwidth';
-			$modules[] = 'et_pb_slide';
-			$modules[] = 'et_pb_slider';
-			$modules[] = 'et_pb_social_media_follow';
-			$modules[] = 'et_pb_fullwidth_slider';
-			// WooCommerce Modules.
-			$modules[] = 'et_pb_wc_add_to_cart';
-			$modules[] = 'et_pb_wc_cart_notice';
-			$modules[] = 'et_pb_wc_reviews';
+			$modules = array_merge( $modules, $button_bg, $module_catchall );
 		}
 
 		// Fullwidth Header Button One/Two BG.
 		if ( in_array( $attr, array( '', 'fw_header_button_bg' ), true ) ) {
-			// Divi Content Modules.
-			$modules[] = 'et_pb_fullwidth_header';
+			$modules = array_merge( $modules, $fw_header_button_bg, $module_catchall );
+		}
+
+		// In the event that no match was made, pass *only* the filtered modules.
+		if ( empty( $modules ) ) {
+			$modules = $module_catchall;
 		}
 
 		return $modules;

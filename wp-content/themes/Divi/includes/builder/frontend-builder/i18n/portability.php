@@ -8,7 +8,7 @@
 return array(
 	'Allow import to override existing assignments'     => esc_html__( 'Allow import to override existing assignments', 'et_builder' ),
 	'Import Presets'                                    => esc_html__( 'Import Presets', 'et_builder' ),
-	'Download backup before importing'                  => esc_html__( 'Download backup before importing', 'et_builder' ),
+	'Download Backup Before Importing'                  => esc_html__( 'Download Backup Before Importing', 'et_builder' ),
 	'Export'                                            => esc_html__( 'Export', 'et_builder' ),
 	'Export All Templates'                              => esc_html__( 'Export All Templates', 'et_builder' ),
 	// Translators: %s: number of remaining minutes.

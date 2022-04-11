@@ -791,8 +791,9 @@ function et_theme_builder_get_template_settings_options_for_archive_pages() {
 		 * @since 4.3.3
 		 *
 		 * @param boolean $show
+		 * @param object $taxonomy
 		 */
-		$show = apply_filters( 'et_theme_builder_template_settings_options_term_pages', $taxonomy->public && $taxonomy->show_ui );
+		$show = apply_filters( 'et_theme_builder_template_settings_options_term_pages', $taxonomy->public && $taxonomy->show_ui, $taxonomy );
 
 		if ( ! $show ) {
 			continue;
@@ -1194,6 +1195,11 @@ function et_theme_builder_get_template_setting_child_options( $parent, $include 
  */
 function et_theme_builder_get_template_layouts( $request = null, $cache = true, $load_from_cache = true ) {
 	static $store = array();
+
+	// Ignore TB templates when editing cloud items.
+	if ( isset( $_GET['cloudItem'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
+		return array();
+	}
 
 	if ( null === $request ) {
 		if ( is_embed() ) {

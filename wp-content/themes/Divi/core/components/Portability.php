@@ -82,6 +82,8 @@ class ET_Core_Portability {
 		$temp_file_id           = sanitize_file_name( $timestamp );
 		$temp_file              = $this->has_temp_file( $temp_file_id, 'et_core_import' );
 		$include_global_presets = isset( $_POST['include_global_presets'] ) ? wp_validate_boolean( $_POST['include_global_presets'] ) : false;
+		$return_json            = isset( $_POST['et_cloud_return_json'] ) ? wp_validate_boolean( sanitize_text_field( $_POST['et_cloud_return_json'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification is handled earlier.
+		$temp_presets           = isset( $_POST['et_cloud_use_temp_presets'] ) ? wp_validate_boolean( sanitize_text_field( $_POST['et_cloud_use_temp_presets'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification is handled earlier.
 		$global_presets         = '';
 
 		if ( $temp_file ) {
@@ -115,6 +117,10 @@ class ET_Core_Portability {
 			$import = json_decode( $filesystem->get_contents( $temp_file ), true );
 			$import = $this->validate( $import );
 
+			if ( $return_json ) {
+				return array( 'jsonFromFile' => $import );
+			}
+
 			// Check if Import contains Google Api Settings.
 			if ( isset( $import['data']['et_google_api_settings'] ) && 'epanel' === $this->instance->context ) {
 				$et_google_api_settings = $import['data']['et_google_api_settings'];
@@ -123,7 +129,7 @@ class ET_Core_Portability {
 			$import['data'] = $this->apply_query( $import['data'], 'set' );
 
 			if ( ! isset( $import['context'] ) || ( isset( $import['context'] ) && $import['context'] !== $this->instance->context ) ) {
-				$this->delete_temp_files( 'et_core_import' );
+				$this->delete_temp_files( 'et_core_import', [ $temp_file_id => $temp_file ] );
 
 				return array( 'message' => 'importContextFail' );
 			}
@@ -144,7 +150,7 @@ class ET_Core_Portability {
 		$data = $import['data'];
 		$success = array( 'timestamp' => $timestamp );
 
-		$this->delete_temp_files( 'et_core_import' );
+		$this->delete_temp_files( 'et_core_import', [ $temp_file_id => $temp_file ] );
 
 		if ( 'options' === $this->instance->type ) {
 			// Reset all data besides excluded data.
@@ -178,7 +184,23 @@ class ET_Core_Portability {
 		// Pass the post content and let js save the post.
 		if ( 'post' === $this->instance->type ) {
 			$success['postContent'] = reset( $data );
-			do_shortcode( $success['postContent'] );
+
+			// In some cases we receive the post array instaed of shortcode string. Handle this case.
+			$shortcode_string = is_array( $success['postContent'] ) && ! empty( $success['postContent']['post_content'] ) ? $success['postContent']['post_content'] : $success['postContent'];
+
+			if ( ! empty( $import['presets'] ) ) {
+				$preset_rewrite_map = $this->prepare_to_import_layout_presets( $import['presets'] );
+				$global_presets     = $import['presets'];
+
+				$shortcode_object = et_fb_process_shortcode( $shortcode_string );
+				$this->rewrite_module_preset_ids( $shortcode_object, $import['presets'], $preset_rewrite_map );
+
+				$shortcode_string = et_fb_process_to_shortcode( $shortcode_object, array(), '', false );
+			}
+
+			do_shortcode( $shortcode_string );
+
+			$success['postContent'] = $shortcode_string;
 			$success['migrations']  = ET_Builder_Module_Settings_Migration::$migrated;
 			$success['presets']     = isset( $import['presets'] ) && is_array( $import['presets'] ) ? $import['presets'] : (object) array();
 		}
@@ -232,7 +254,9 @@ class ET_Core_Portability {
 				}
 			}
 
-			if ( ! $this->import_posts( $data ) ) {
+			$imported_posts = $this->import_posts( $data );
+
+			if ( false === $imported_posts ) {
 				/**
 				 * Filters the error message when {@see ET_Core_Portability::import()} fails.
 				 *
@@ -245,11 +269,13 @@ class ET_Core_Portability {
 				}
 
 				return $error_message;
+			} else {
+				$success['imported_posts'] = $imported_posts;
 			}
 		}
 
 		if ( ! empty( $global_presets ) ) {
-			if ( ! $this->import_global_presets( $global_presets ) ) {
+			if ( ! $this->import_global_presets( $global_presets, $temp_presets ) ) {
 				if ( $error_message = apply_filters( 'et_core_portability_import_error_message', false ) ) {
 					$error_message = array( 'message' => $error_message );
 				}
@@ -275,7 +301,7 @@ class ET_Core_Portability {
 	 *
 	 * @return null|array
 	 */
-	public function export( $return = false ) {
+	public function export( $return = false, $include_used_presets = false ) {
 		$this->prevent_failure();
 		et_core_nonce_verified_previously();
 
@@ -334,6 +360,27 @@ class ET_Core_Portability {
 					// phpcs:ignore ET.Sniffs.ValidatedSanitizedInput.InputNotSanitized -- filter_post_data() function does sanitation.
 					$post_global_colors = $this->_filter_post_data( $_POST['global_colors'] );
 					$global_colors      = json_decode( stripslashes( $post_global_colors ) );
+				}
+
+				if ( $include_used_presets ) {
+					$used_global_presets = array();
+					$used_global_colors  = array();
+
+					$shortcode_object   = et_fb_process_shortcode( $post_data['post_content'] );
+					$used_global_colors = $this->_get_used_global_colors( $shortcode_object, $used_global_colors );
+
+					$used_global_presets = array_merge(
+						$this->get_used_global_presets( $shortcode_object, $used_global_presets ),
+						$used_global_presets
+					);
+
+					if ( ! empty( $used_global_presets ) ) {
+						$global_presets = (object) $used_global_presets;
+					}
+
+					if ( ! empty( $used_global_colors ) ) {
+						$global_colors = $this->_get_global_colors_data( $used_global_colors );
+					}
 				}
 			}
 
@@ -1053,7 +1100,7 @@ class ET_Core_Portability {
 	 *
 	 * @return boolean
 	 */
-	public function import_global_presets( $presets ) {
+	public function import_global_presets( $presets, $is_temp_presets = false ) {
 		if ( ! is_array( $presets ) ) {
 			return false;
 		}
@@ -1061,6 +1108,7 @@ class ET_Core_Portability {
 		$all_modules            = ET_Builder_Element::get_modules();
 		$module_presets_manager = ET_Builder_Global_Presets_Settings::instance();
 		$global_presets         = $module_presets_manager->get_global_presets();
+		$temp_presets           = $module_presets_manager->get_temp_presets();
 		$presets_to_import      = array();
 
 		foreach ( $presets as $module_type => $module_presets ) {
@@ -1077,8 +1125,11 @@ class ET_Core_Portability {
 			$local_presets      = $global_presets->$module_type->presets;
 			$local_preset_names = array();
 
-			foreach ( $local_presets as $preset ) {
-				array_push( $local_preset_names, $preset->name );
+			foreach ( $local_presets as $preset_id => $preset ) {
+				// Skip temp presets.
+				if ( ! isset( $temp_preset[ $module_type ]['presets'][ $preset_id ] ) ) {
+					array_push( $local_preset_names, $preset->name );
+				}
 			}
 
 			foreach ( $module_presets['presets'] as $preset_id => $preset ) {
@@ -1097,6 +1148,9 @@ class ET_Core_Portability {
 			}
 		}
 
+		if ( $is_temp_presets ) {
+			et_update_option( ET_Builder_Global_Presets_Settings::GLOBAL_PRESETS_OPTION_TEMP, $presets_to_import );
+		}
 
 		// Merge existing Global Presets with imported ones
 		foreach ( $presets_to_import as $module_type => $module_presets ) {
@@ -1123,8 +1177,10 @@ class ET_Core_Portability {
 
 		et_update_option( ET_Builder_Global_Presets_Settings::GLOBAL_PRESETS_OPTION, $global_presets );
 
-		$global_presets_history = ET_Builder_Global_Presets_History::instance();
-		$global_presets_history->add_global_history_record( $global_presets );
+		if ( ! $is_temp_presets ) {
+			$global_presets_history = ET_Builder_Global_Presets_History::instance();
+			$global_presets_history->add_global_history_record( $global_presets );
+		}
 
 		return true;
 	}
@@ -1175,6 +1231,8 @@ class ET_Core_Portability {
 		 */
 		$posts = apply_filters( 'et_core_portability_import_posts', $posts );
 
+		$imported_posts = array();
+
 		if ( empty( $posts ) ) {
 			return false;
 		}
@@ -1205,6 +1263,8 @@ class ET_Core_Portability {
 					) );
 				}
 
+				$imported_posts[] = intval( $layout_exists );
+
 				continue;
 			}
 
@@ -1219,6 +1279,8 @@ class ET_Core_Portability {
 			if ( ! $post_id || is_wp_error( $post_id ) ) {
 				continue;
 			}
+
+			$imported_posts[] = $post_id;
 
 			// Insert and set terms.
 			if ( isset( $post['terms'] ) && is_array( $post['terms'] ) ) {
@@ -1292,7 +1354,7 @@ class ET_Core_Portability {
 			}
 		}
 
-		return true;
+		return $imported_posts;
 	}
 
 	/**
@@ -2295,7 +2357,11 @@ class ET_Core_Portability {
 	public function get_timestamp() {
 		et_core_nonce_verified_previously();
 
-		return isset( $_POST['timestamp'] ) && ! empty( $_POST['timestamp'] ) ? sanitize_text_field( $_POST['timestamp'] ) : (string) current_time( 'timestamp' ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested -- This is used to generate the temporary file ID so we don't need the accuracy.
+		if ( isset( $_POST['timestamp'] ) && ! empty( $_POST['timestamp'] ) ) {
+			return sanitize_text_field( $_POST['timestamp'] );
+		}
+
+		return function_exists( 'hrtime' ) ? (string) hrtime( true ) : (string) microtime( true ); // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.hrtimeFound -- Intentional use of new PHP function
 	}
 
 	/**
@@ -2518,7 +2584,7 @@ class ET_Core_Portability {
 								<input type="file">
 								<div class="et-core-clearfix"></div>
 								<?php if ( 'post_type' !== $this->instance->type ) : ?>
-									<label><input type="checkbox" name="et-core-portability-import-backup" /><?php esc_html_e( 'Download backup before importing', ET_CORE_TEXTDOMAIN ); ?></label>
+									<label><input type="checkbox" name="et-core-portability-import-backup" /><?php esc_html_e( 'Download Backup Before Importing', ET_CORE_TEXTDOMAIN ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain -- intentional use of ET_CORE_TEXTDOMAIN ?></label>
 								<?php endif; ?>
 								<?php if ( 'post_type' === $this->instance->type ) : ?>
 									<label><input type="checkbox" name="et-core-portability-import-include-global-presets" /><?php esc_html_e( 'Import Presets', ET_CORE_TEXTDOMAIN ); ?></label>

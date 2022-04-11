@@ -252,7 +252,7 @@ class ET_Builder_Module_Woocommerce_Breadcrumb extends ET_Builder_Module {
 		$layout_post_id     = ET_Builder_Element::get_layout_id();
 		$is_fb              = et_core_is_fb_enabled() && $main_query_post_id === $layout_post_id;
 
-		if ( ! et_fb_is_resolve_post_content_callback_ajax() && ( $is_fb || et_fb_is_builder_ajax() || et_fb_is_computed_callback_ajax() ) ) {
+		if ( ! et_fb_is_resolve_post_content_callback_ajax() && ( $is_fb || et_fb_is_builder_ajax() || et_fb_is_computed_callback_ajax() || is_et_pb_preview() ) ) {
 			$args = wp_parse_args(
 				array(
 					'breadcrumb_home_text' => '%HOME_TEXT%',

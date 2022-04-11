@@ -225,7 +225,7 @@ class ET_Builder_Module_Woocommerce_Gallery extends ET_Builder_Module_Gallery {
 	 * @return array
 	 */
 	public static function get_wc_gallery( $args = array(), $conditional_tags = array(), $current_page = array() ) {
-		if ( 'current' === $args['product'] && 'true' === et_()->array_get( $conditional_tags, 'is_tb', false ) ) {
+		if ( 'current' === $args['product'] && 'true' === et_()->array_get( $conditional_tags, 'is_tb', false ) || is_et_pb_preview() ) {
 			et_theme_builder_wc_set_global_objects( $conditional_tags );
 
 			global $product;

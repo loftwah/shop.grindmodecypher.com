@@ -280,7 +280,7 @@ class ET_Builder_Module_Woocommerce_Reviews extends ET_Builder_Module_Comments {
 
 		$is_tb = et_builder_tb_enabled();
 
-		if ( $is_tb ) {
+		if ( $is_tb || is_et_pb_preview() ) {
 			global $product;
 
 			et_theme_builder_wc_set_global_objects();
@@ -294,7 +294,7 @@ class ET_Builder_Module_Woocommerce_Reviews extends ET_Builder_Module_Comments {
 
 		$reviews_markup = self::get_reviews_markup( $product, $args['header_level'], true );
 
-		if ( $is_tb ) {
+		if ( $is_tb || is_et_pb_preview() ) {
 			et_theme_builder_wc_reset_global_objects();
 		}
 

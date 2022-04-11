@@ -175,7 +175,7 @@ class ET_Builder_Module_Woocommerce_Cross_Sells extends ET_Builder_Module {
 
 		$output = '';
 
-		if ( ( $is_tb || et_fb_is_computed_callback_ajax() ) ) {
+		if ( ( $is_tb || et_fb_is_computed_callback_ajax() || is_et_pb_preview() ) ) {
 			$cross_sell_items = array(
 				1001 => array(
 					'name'  => esc_html__( 'Product 4', 'et_builder' ),

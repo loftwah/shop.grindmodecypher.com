@@ -6,6 +6,7 @@ class ET_Builder_Global_Presets_Settings {
 	const CUSTOMIZER_SETTINGS_MIGRATED_FLAG = 'customizer_settings_migrated_flag';
 
 	const GLOBAL_PRESETS_OPTION         = 'builder_global_presets';
+	const GLOBAL_PRESETS_OPTION_TEMP    = 'builder_global_presets_temp';
 	const CUSTOM_DEFAULTS_MIGRATED_FLAG = 'custom_defaults_migrated_flag';
 	const MODULE_PRESET_ATTRIBUTE       = '_module_preset';
 	const MODULE_INITIAL_PRESET_ID      = '_initial';
@@ -137,6 +138,51 @@ class ET_Builder_Global_Presets_Settings {
 	 */
 	public function get_global_presets() {
 		return $this->_settings;
+	}
+
+	/**
+	 * Returns builder Temp Presets settings.
+	 *
+	 * @since ??
+	 *
+	 * @return object
+	 */
+	public function get_temp_presets() {
+		$global_presets_temp = et_get_option( self::GLOBAL_PRESETS_OPTION_TEMP, array(), '', true );
+
+		return $global_presets_temp;
+	}
+
+	/**
+	 * Remove Temp Presets settings from the database.
+	 *
+	 * @since ??
+	 *
+	 * @return object
+	 */
+	public function clear_temp_presets() {
+		$all_presets = self::get_global_presets();
+		$temp_preset = self::get_temp_presets();
+
+		if ( empty( $temp_preset ) ) {
+			return;
+		}
+
+		foreach ( $temp_preset as $module => $preset_structure ) {
+			if ( isset( $preset_structure['presets'] ) ) {
+				foreach ( $preset_structure['presets'] as $preset_id => $preset ) {
+					if ( isset( $all_presets->$module->presets->$preset_id ) ) {
+						unset( $all_presets->$module->presets->$preset_id );
+					}
+				}
+			}
+		}
+
+		// Save presets without temp.
+		et_update_option( self::GLOBAL_PRESETS_OPTION, $all_presets );
+
+		// Clean all temp presets.
+		et_update_option( self::GLOBAL_PRESETS_OPTION_TEMP, array() );
 	}
 
 	/**
@@ -569,7 +615,8 @@ class ET_Builder_Global_Presets_Settings {
 	 * @return object
 	 */
 	protected function _normalize_global_presets( $presets ) {
-		$result = (object) array();
+		$result      = (object) array();
+		$temp_preset = self::get_temp_presets();
 
 		foreach ( $presets as $module => $preset_structure ) {
 			if ( isset( $preset_structure->presets ) ) {
@@ -582,6 +629,7 @@ class ET_Builder_Global_Presets_Settings {
 					$result->$module->presets->$preset_id->created = $preset->created;
 					$result->$module->presets->$preset_id->updated = $preset->updated;
 					$result->$module->presets->$preset_id->version = $preset->version;
+					$result->$module->presets->$preset_id->is_temp = isset( $temp_preset[ $module ]['presets'][ $preset_id ] );
 
 					if ( isset( $preset->settings ) ) {
 						$result->$module->presets->$preset_id->settings = (object) array();

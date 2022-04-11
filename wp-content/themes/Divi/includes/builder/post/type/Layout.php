@@ -82,10 +82,12 @@ class ET_Builder_Post_Type_Layout extends ET_Core_Post_Type {
 			),
 			'taxonomies'         => array(
 				'layout_category',
+				'layout_tag',
 				'layout_pack',
 				'layout_type',
 				'module_width',
 				'scope',
+				'layout_location',
 			),
 		);
 	}
@@ -147,6 +149,17 @@ class ET_Builder_Post_Type_Layout extends ET_Core_Post_Type {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Whether or not a layout is Favorite.
+	 *
+	 * @param string $post_id Post ID.
+	 *
+	 * @return bool
+	 */
+	public function is_favorite( $post_id ) {
+		return 'favorite' === get_post_meta( $post_id, 'favorite_status', true );
 	}
 
 	/**

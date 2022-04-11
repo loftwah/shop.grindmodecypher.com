@@ -458,7 +458,7 @@ class ET_Builder_Module_Woocommerce_Add_To_Cart extends ET_Builder_Module {
 		$is_tb            = 'true' === et_()->array_get( $conditional_tags, 'is_tb', 'false' );
 		$is_bfb           = 'true' === et_()->array_get( $conditional_tags, 'is_bfb', 'false' );
 		$is_bfb_activated = 'true' === et_()->array_get( $conditional_tags, 'is_bfb_activated', 'false' );
-		$is_builder       = $is_tb || $is_bfb || $is_bfb_activated;
+		$is_builder       = $is_tb || $is_bfb || $is_bfb_activated || is_et_pb_preview();
 
 		if ( ! $is_builder ) {
 			add_filter(

@@ -699,7 +699,7 @@ final class ET_Core_Updates {
 			foreach ( $update_transient->response as $response_plugin_settings ) {
 				$slug = sanitize_text_field( $response_plugin_settings->slug );
 
-				$et_updated_plugins_data->changelogs[ $slug ] = esc_url( $response_plugin_settings->url . '?TB_iframe=true&width=1024&height=800' );
+				$et_updated_plugins_data->changelogs[ $slug ] = esc_url_raw( $response_plugin_settings->url . '?TB_iframe=true&width=1024&height=800' );
 			}
 
 			set_transient( 'et_updated_plugins_data', $et_updated_plugins_data );
@@ -709,7 +709,7 @@ final class ET_Core_Updates {
 			foreach ( $update_transient->no_update as $no_update_plugin_settings ) {
 				$slug = sanitize_text_field( $no_update_plugin_settings->slug );
 
-				$et_updated_plugins_data->changelogs[ $slug ] = esc_url( $no_update_plugin_settings->url . '?TB_iframe=true&width=1024&height=800' );
+				$et_updated_plugins_data->changelogs[ $slug ] = esc_url_raw( $no_update_plugin_settings->url . '?TB_iframe=true&width=1024&height=800' );
 			}
 		}
 

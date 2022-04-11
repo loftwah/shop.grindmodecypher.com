@@ -1,3 +1,97 @@
+version 4.17 ( updated 04-06-2022 )
+- Added Divi Cloud storage system for Divi layouts.
+- Launched new version of the Divi Library popup in the Visual Builder.
+- Added the ability to manage Divi Library tags and categories in the Visual Builder.
+- Added new tag view mode in the Divi Library popup, allowing layouts to be categorized into tag "folders."
+- Added the ability to edit, preview, duplicate, delete and restore Divi Library layouts in the Visual Builder.
+- Added the ability to favorite local and pre-made layouts.
+- Added new sort modes and filtering options to the layouts list in the Divi Library popup.
+- Added the ability to create new tags and categories when saving layouts in the Divi Library from the Visual Builder.
+	* core/admin/fonts/builder.eot
+	* core/admin/fonts/builder.svg
+	* core/admin/fonts/builder.ttf
+	* core/admin/fonts/builder.woff
+	* core/admin/js/portability.js
+	* core/admin/js/react-dom.production.min.js
+	* core/admin/js/react.production.min.js
+	* core/components/Portability.php
+	* css/theme-customizer-controls-styles.css
+	* functions.php
+	* includes/builder/core.php
+	* includes/builder/feature/BlockEditorIntegration.php
+	* includes/builder/feature/Library.php
+	* includes/builder/feature/et-server-frame.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/i18n.php
+	* includes/builder/frontend-builder/i18n/library.php
+	* includes/builder/frontend-builder/i18n/library/categories.php
+	* includes/builder/frontend-builder/i18n/library/layouts-long.php
+	* includes/builder/frontend-builder/i18n/library/layouts-short.php
+	* includes/builder/frontend-builder/i18n/library/packs.php
+	* includes/builder/frontend-builder/i18n/portability.php
+	* includes/builder/frontend-builder/theme-builder/admin.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/frontend-builder/theme-builder/woocommerce.php
+	* includes/builder/frontend-builder/view.php
+	* includes/builder/functions.php
+	* includes/builder/languages/et_builder-en_US-et-builder-gutenberg.po
+	* includes/builder/module/settings/migration/BackgroundGradientStops.php
+	* includes/builder/module/woocommerce/AddToCart.php
+	* includes/builder/module/woocommerce/Breadcrumb.php
+	* includes/builder/module/woocommerce/CartNotice.php
+	* includes/builder/module/woocommerce/CartProducts.php
+	* includes/builder/module/woocommerce/CartTotals.php
+	* includes/builder/module/woocommerce/CheckoutAdditionalInfo.php
+	* includes/builder/module/woocommerce/CheckoutBilling.php
+	* includes/builder/module/woocommerce/CheckoutOrderDetails.php
+	* includes/builder/module/woocommerce/CheckoutPaymentInfo.php
+	* includes/builder/module/woocommerce/CheckoutShipping.php
+	* includes/builder/module/woocommerce/CrossSells.php
+	* includes/builder/module/woocommerce/Description.php
+	* includes/builder/module/woocommerce/Gallery.php
+	* includes/builder/module/woocommerce/RelatedProducts.php
+	* includes/builder/module/woocommerce/Reviews.php
+	* includes/builder/module/woocommerce/Tabs.php
+	* includes/builder/module/woocommerce/Upsells.php
+	* includes/builder/post/taxonomy/LayoutTag.php
+	* includes/builder/post/type/Layout.php
+	* includes/builder/scripts/frontend/preview.js
+	* includes/builder/scripts/src/builder.js
+	* includes/builder/template-preview.php
+	* includes/builder/templates/block-layout-preview.php
+	* js/custom.js
+	* js/custom.unified.js
+	* package-lock.json
+	* rtl.css
+
+version 4.16.1 ( updated 04-04-2022 )
+- Fixed a problem with frontend rendering of CSS for columns in specialty sections that used background gradients.
+- Replaced jQuery hashchange library with Javascript hashchange event.
+- Fixed search module background not being set on the entire module.
+- Enhanced our options migration system to include third-party Divi Builder modules in its option updates.
+- Fixed Global Colors usage in Presets.
+- Fixed page settings bar collapsing unintentionally when clicking anywhere in the page.
+- Fixed Checkout Details module not changing price when shipping option is changed.
+- Fixed a data formatting conflict between Dynamic Content and Gradient Builder that blocked saving in some cases.
+- Hardened escaping for plugin changelog entry URL being saved to transient data.
+	* CREDITS.md
+	* core/components/Updates.php
+	* includes/builder/feature/dynamic-assets/assets/js/hash.js
+	* includes/builder/feature/dynamic-assets/assets/js/hashchange.js
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/Search.php
+	* includes/builder/module/settings/Migration.php
+	* includes/builder/module/settings/migration/BackgroundGradientStops.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/woocommerce-modules.js
+
 version 4.16 ( updated 03-30-2022 )
 - Added new advanced gradient builder control to the background option group.
 - Improved VB performance by refactoring event listener in utils/mouse.js to be more efficient.

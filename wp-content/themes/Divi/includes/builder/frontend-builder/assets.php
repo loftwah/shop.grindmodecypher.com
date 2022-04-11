@@ -295,6 +295,24 @@ function et_fb_enqueue_assets() {
 	) as $chunk ) {
 		$additional_bundles[] = "{$app}/build/" . basename( $chunk );
 	}
+
+	$cloud_build_dir = get_template_directory() . '/cloud/build';
+	$cloud_uri       = get_template_directory_uri();
+
+	// Divi Cloud bundles.
+	foreach ( array_merge(
+		glob( $cloud_build_dir . '/*.css' ),
+		glob( $cloud_build_dir . '/*.js' )
+	) as $chunk ) {
+		$additional_bundles[] = "{$cloud_uri}/cloud/build/" . basename( $chunk );
+	}
+
+	wp_localize_script(
+		'et-frontend-builder',
+		'et_cloud_data',
+		ET_Cloud_App::get_cloud_helpers()
+	);
+
 	// Pass bundle path and additional bundles to preload
 	wp_localize_script(
 		'et-frontend-builder',
@@ -324,6 +342,8 @@ function et_fb_enqueue_assets() {
 	add_action( 'wp_print_footer_scripts', 'et_fb_output_wp_auth_check_html', 5 );
 
 	do_action( 'et_fb_enqueue_assets' );
+
+	ET_Cloud_App::load_js( false );
 }
 
 function et_fb_app_src( $tag, $handle, $src ) {

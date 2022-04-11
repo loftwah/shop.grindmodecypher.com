@@ -18,6 +18,12 @@
 		document.documentElement.className = 'js';
 	</script>
 
+	<style>
+		.et-cloud-item-editor.et-bp-settings-hide-settings-modal .et-fb-modal {
+			z-index: -1 !important;
+		}
+	</style>
+
 	<?php wp_head(); ?>
 </head>
 <?php

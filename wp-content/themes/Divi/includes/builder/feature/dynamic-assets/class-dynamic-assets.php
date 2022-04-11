@@ -323,13 +323,6 @@ class ET_Dynamic_Assets {
 	private $_enqueue_jquery_mobile = array();
 
 	/**
-	 * Whether jquery hashchange should be enqueued.
-	 *
-	 * @var array
-	 */
-	private $_enqueue_jquery_hashchange = array();
-
-	/**
 	 * Whether magnific popup should be enqueued.
 	 *
 	 * @var array
@@ -2472,22 +2465,6 @@ class ET_Dynamic_Assets {
 
 			if ( $this->_enqueue_jquery_mobile || et_disable_js_on_demand() ) {
 				wp_enqueue_script( 'jquery-mobile', ET_BUILDER_URI . '/feature/dynamic-assets/assets/js/jquery.mobile.js', array( 'jquery' ), ET_CORE_VERSION, true );
-			}
-		}
-
-		// Handle jQuery hashchange script.
-		if ( ! $this->_enqueue_jquery_hashchange ) {
-			$jquery_hashchange_deps = array(
-				'et_pb_gallery',
-				'et_pb_fullwidth_header',
-				'et_pb_filterable_portfolio',
-				'et_pb_tabs',
-			);
-
-			$this->_enqueue_jquery_hashchange = $this->check_for_dependency( $jquery_hashchange_deps, $current_shortcodes );
-
-			if ( $this->_enqueue_jquery_hashchange || et_disable_js_on_demand() ) {
-				wp_enqueue_script( 'hashchange', ET_BUILDER_URI . '/feature/dynamic-assets/assets/js/hashchange.js', array( 'jquery' ), ET_CORE_VERSION, true );
 			}
 		}
 

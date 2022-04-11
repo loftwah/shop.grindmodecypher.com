@@ -1803,7 +1803,7 @@ class selective_bundle_BusinessDetails extends external_wp_element_["Component"]
       ...installedExtensions
     });
     const promises = [this.persistProfileItems({
-      business_extensions: businessExtensions
+      business_extensions: [...businessExtensions, ...alreadyActivatedExtensions]
     })];
 
     if (businessExtensions.length) {

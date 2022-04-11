@@ -61,7 +61,7 @@ class ET_Builder_Module_Search extends ET_Builder_Module {
 			),
 			'background'     => array(
 				'css' => array(
-					'main' => "{$this->main_css_element} input.et_pb_s",
+					'main' => "{$this->main_css_element} .et_pb_searchform",
 				),
 			),
 			'borders'        => array(

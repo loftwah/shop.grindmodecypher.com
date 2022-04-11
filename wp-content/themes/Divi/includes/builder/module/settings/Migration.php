@@ -421,7 +421,21 @@ abstract class ET_Builder_Module_Settings_Migration {
 	}
 
 	public static function _should_handle_render( $slug ) {
-		if ( false === strpos( $slug, 'et_pb' ) ) {
+		// Get all module slugs to compare against this slug. This way, we're
+		// not trying to process any and every shortcode, only Divi modules.
+		$all_module_slugs = ET_Builder_Element::get_all_module_slugs();
+		$slug_match       = false;
+
+		foreach ( $all_module_slugs as $module_slug ) {
+			if ( $module_slug !== $slug ) {
+				continue;
+			}
+
+			$slug_match = $module_slug;
+			break;
+		}
+
+		if ( ! $slug_match ) {
 			return false;
 		}
 
