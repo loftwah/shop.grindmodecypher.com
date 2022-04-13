@@ -95,7 +95,7 @@ switch ( $template ) {
 	default:
 		break;
 }
-if ( isset( $args['email'] ) && 'wc_sc_email_coupon' != $template && 'wc_sc_combined_email_coupon' != $template && 'wc_sc_acknowledgement_email' != $template ) {
+if ( is_object( $args['email'] ) && isset( $args['email'] ) && 'wc_sc_email_coupon' != $template && 'wc_sc_combined_email_coupon' != $template && 'wc_sc_acknowledgement_email' != $template ) {
 	$checkIsSumoTemp = strpos( get_class( $args['email'] ), 'SUMOSubscriptions' );
 	$checkIsQWCTemp  = strpos( get_class( $args['email'] ), 'QWC' );
 } else {
@@ -129,6 +129,7 @@ if ( $flag_do_action ) {
 	$updateElement        = new UpdateElement();
 	$yaymail_elements     = get_post_meta( $postID, '_yaymail_elements', true );
 	$yaymail_elements     = $updateElement->merge_new_props_to_elements( $yaymail_elements );
+	$yaymail_template     = get_post_meta( $postID, '_yaymail_template', true );
 	$yaymail_settings     = get_option( 'yaymail_settings' );
 	$emailBackgroundColor = get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : '#ECECEC';
 	$general_attrs        = array( 'tableWidth' => str_replace( 'px', '', $yaymail_settings['container_width'] ) );
@@ -145,7 +146,7 @@ if ( $flag_do_action ) {
 				</style>
 			</head>
 			<body style="background: <?php echo esc_attr( $emailBackgroundColor ); ?>">
-				<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
+				<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" class="<?php echo esc_attr( 'yaymail-template-' . $yaymail_template ); ?>">
 				<?php
 				foreach ( $yaymail_elements as $key => $element ) {
 					?>

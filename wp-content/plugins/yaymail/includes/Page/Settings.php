@@ -206,9 +206,12 @@ class Settings {
 			}
 		}
 		if ( strpos( $screenId, 'yaymail-settings' ) !== false && class_exists( 'WC_Emails' ) ) {
+			//Filter to active tinymce
+			add_filter( 'user_can_richedit', '__return_true', PHP_INT_MAX );
 			// Get list template from Woo
 			$wc_emails    = \WC_Emails::instance();
 			$this->emails = (array) $wc_emails::instance()->emails;
+			unset($this->emails["WC_TrackShip_Email_Manager"]);
 			if ( isset( $this->emails['WC_GZD_Email_Customer_Shipment'] ) ) {
 				$partial_email              = new stdClass();
 				$partial_email->id          = 'customer_partial_shipment';
@@ -1024,6 +1027,25 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-back-in-stock-notifications',
 				),
+				'WooCommerceReturnandWarrrantyPro'             => array(
+					'plugin_name'   => 'WooCommerce Return and Warrranty Pro',
+					'template_name' => array(
+						'WCRW_Send_Coupon_Email',
+						'WCRW_Send_Message_Email',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wc-return-warrranty',
+				),
+				'B2BKing'             => array(
+					'plugin_name'   => 'B2BKing',
+					'template_name' => array(
+						'b2bking_new_customer_email',
+						'b2bking_new_customer_requires_approval_email',
+						'b2bking_new_message_email',
+						'b2bking_new_offer_email',
+						'b2bking_your_account_approved_email',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-b2bking',
+				),
 			);
 
 			$list_plugin_for_pro = array();
@@ -1046,6 +1068,8 @@ class Settings {
 			);
 
 			$product_categories  = get_terms( 'product_cat', $cat_args );
+			$les_promenades_fantomes  = get_terms( 'les-promenades-fantomes', $cat_args );
+			$promas_service = get_terms( 'promas-service', $cat_args );
 			$billing_country     = WC()->countries->countries;
 			$arr_payment_methods = array();
 			$payment_methods     = WC()->payment_gateways->get_available_payment_gateways();
@@ -1115,6 +1139,8 @@ class Settings {
 					'plugins'                    => apply_filters( 'yaymail_plugins', array() ),
 					'list_email_supported'       => $list_email_supported,
 					'product_categories'         => $product_categories,
+					'les_promenades_fantomes'    => $les_promenades_fantomes,
+					'promas_service'             => $promas_service,
 					'billing_country'            => $billing_country,
 					'payment_methods'            => $arr_payment_methods,
 					'link_detail_smtp'           => self_admin_url( 'plugin-install.php?tab=plugin-information&plugin=yaysmtp&section=description&TB_iframe=true&width=600&height=800' ),

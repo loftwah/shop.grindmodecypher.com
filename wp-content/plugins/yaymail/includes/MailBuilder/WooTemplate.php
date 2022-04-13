@@ -220,12 +220,15 @@ class WooTemplate {
 		// support addon TrackShip for WooCommerce
 		if ( 'emails/tracking-info.php' == $template_name ) {
 			$this->trackShipArgs = $args;
-			$template            = 'trackship_' . $args['new_status'];
-			$postID              = CustomPostType::postIDByTemplate( $template );
-			$template_status     = get_post_meta( $postID, '_yaymail_status', true );
-			if ( $template_status ) {
-				add_filter( 'woocommerce_mail_content', array( $this, 'woocommerce_mail_content' ), 100 );
+			if (isset ($args['new_status'])) {
+				$template            = 'trackship_' . $args['new_status'];
+				$postID              = CustomPostType::postIDByTemplate( $template );
+				$template_status     = get_post_meta( $postID, '_yaymail_status', true );
+				if ( $template_status ) {
+					add_filter( 'woocommerce_mail_content', array( $this, 'woocommerce_mail_content' ), 100 );
+				}
 			}
+			
 		}
 		$this_template  = false;
 		$templateActive = file_exists( YAYMAIL_PLUGIN_PATH . 'views/templates/single-mail-template.php' ) ? YAYMAIL_PLUGIN_PATH . 'views/templates/single-mail-template.php' : false;

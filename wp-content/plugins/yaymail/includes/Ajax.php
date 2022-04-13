@@ -70,6 +70,7 @@ class Ajax {
 		$yaymail_settings     = get_option( 'yaymail_settings' );
 		$emailBackgroundColor = get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : '#ECECEC';
 		$general_attrs        = array( 'tableWidth' => str_replace( 'px', '', $yaymail_settings['container_width'] ) );
+		$yaymail_template     = get_post_meta( $postID, '_yaymail_template', true );
 		$html                 = '<!DOCTYPE html>
 			<html lang="en">
 			<head>
@@ -87,6 +88,7 @@ class Ajax {
 			cellspacing="0"
 			height="100%"
 			width="100%"
+			class="' . esc_attr( 'yaymail-template-' . $yaymail_template ) . '"
 		  >';
 		foreach ( $yaymail_elements as $key => $element ) {
 			// add shortcode params
@@ -300,31 +302,40 @@ class Ajax {
 	}
 
 	public function getSubjectEmail( $wc_emails, $template ) {
+		$subject = __('Email Test','yaymail');
 		foreach ( $wc_emails->emails as $email => $item ) {
 			if ( $item->id == $template ) {
 				if ( 'customer_invoice' == $template ) {
 					$subject = Helper::getCustomerInvoiceSubject( $wc_emails->emails[ $email ] );
-					return $subject;
-				} if ( 'new_booking' == $template ) {
-					$subject = Helper::getNewBookingSubject( $wc_emails->emails[ $email ] );
-					return $subject;
-				} if ( 'customer_payment_retry' == $template ) {
-					$subject = Helper::getNewBookingSubject( $wc_emails->emails[ $email ] );
-					return $subject;
-				} if ( 'Dokan_Email_Booking_New' == $template ) {
-					$subject = $wc_emails->emails[ $email ]->subject;
-					return $subject;
-				} else {
-					if (!empty($wc_emails->emails[ $email ]->subject)) {
-						$subject = $wc_emails->emails[ $email ]->subject;
+					if (!empty($subject) ) {
 						return $subject;
 					}
-					$subject = $wc_emails->emails[ $email ]->get_subject();
-					return $subject;
+				} else if ( 'new_booking' == $template ) {
+					$subject = Helper::getNewBookingSubject( $wc_emails->emails[ $email ] );
+					if (!empty($subject) ) {
+						return $subject;
+					}
+				} else if ( 'customer_payment_retry' == $template ) {
+					$subject = Helper::getNewBookingSubject( $wc_emails->emails[ $email ] );
+					if (!empty($subject) ) {
+						return $subject;
+					}
+				} else if ( 'Dokan_Email_Booking_New' == $template ) {
+					$subject = $wc_emails->emails[ $email ]->subject;
+					if (!empty($subject) ) {
+						return $subject;
+					}
+				} else {
+					if ( ! empty( $wc_emails->emails[ $email ]->subject ) ) {
+						$subject = $wc_emails->emails[ $email ]->subject;
+						if (!empty($subject) ) {
+							return $subject;
+						}
+					}
 				}
 			}
 		}
-		return 'Email Test';
+		return $subject;
 	}
 
 	public function sanitize( $var ) {

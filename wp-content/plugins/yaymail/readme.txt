@@ -170,6 +170,22 @@ Shhh, we offer one-time payment and unlimited sites packages, too! [Check it out
 
 == Changelog ==
 
+= Apr 8, 2022 - Version 2.9 =
+- Supported: Return and Warranty (by chilidevs) (Addon)
+- Supported: B2BKing (Addon)
+- Added: Logic for taxonomy
+- Added: Shipping email
+- Added: Shortcode order meta hook: [woocommerce_email_order_meta]
+- Added: Shortcode order count: [yaymail_orders_count]
+- Fixed: Bug in Conditional Logic Addon
+- Fixed: Bug in Addon for TrackShip for WooCommerce
+- Fixed: Bug in Addon Affiliate for WooCommerce
+- Fixed: Small bugs
+
+= Mar 21, 2022 - Version 2.8.9 =
+- Changed: Default logo
+- Changed: Hover color
+
 = Mar 18, 2022 - Version 2.8.8 =
 - Changed: Default color
 - Fixed: Image overlay in video element
