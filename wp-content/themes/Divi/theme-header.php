@@ -28,11 +28,11 @@ $show_search_icon         = ( false !== et_get_option( 'show_search_icon', true 
 		<?php if ( $et_contact_info_defined ) : ?>
 
 			<div id="et-info">
-			<?php if ( '' !== ( $et_phone_number = et_get_option( 'phone_number' ) ) ) : ?>
+			<?php if ( ! empty( $et_phone_number = et_get_option( 'phone_number' ) ) ) : ?>
 				<span id="et-info-phone"><?php echo et_core_esc_previously( et_sanitize_html_input_text( strval( $et_phone_number ) ) ); ?></span>
 			<?php endif; ?>
 
-			<?php if ( '' !== ( $et_email = et_get_option( 'header_email' ) ) ) : ?>
+			<?php if ( ! empty( $et_email = et_get_option( 'header_email' ) ) ) : ?>
 				<a href="<?php echo esc_attr( 'mailto:' . $et_email ); ?>"><span id="et-info-email"><?php echo esc_html( $et_email ); ?></span></a>
 			<?php endif; ?>
 
@@ -137,11 +137,11 @@ $show_search_icon         = ( false !== et_get_option( 'show_search_icon', true 
 		<?php if ( $et_contact_info_defined ) : ?>
 
 			<div id="et-info">
-			<?php if ( '' !== ( $et_phone_number = et_get_option( 'phone_number' ) ) ) : ?>
+			<?php if ( ! empty( $et_phone_number = et_get_option( 'phone_number' ) ) ) : ?>
 				<span id="et-info-phone"><?php echo et_core_esc_previously( et_sanitize_html_input_text( strval( $et_phone_number ) ) ); ?></span>
 			<?php endif; ?>
 
-			<?php if ( '' !== ( $et_email = et_get_option( 'header_email' ) ) ) : ?>
+			<?php if ( ! empty( $et_email = et_get_option( 'header_email' ) ) ) : ?>
 				<a href="<?php echo esc_attr( 'mailto:' . $et_email ); ?>"><span id="et-info-email"><?php echo esc_html( $et_email ); ?></span></a>
 			<?php endif; ?>
 			</div>

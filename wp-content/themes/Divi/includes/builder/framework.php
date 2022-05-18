@@ -169,11 +169,11 @@ require_once ET_BUILDER_DIR . 'feature/window.php';
 require_once ET_BUILDER_DIR . 'feature/et-server-frame.php';
 require_once ET_BUILDER_DIR . 'feature/ajax-data/AjaxData.php';
 require_once ET_BUILDER_DIR . 'feature/display-conditions/DisplayConditions.php';
-require_once ET_BUILDER_DIR . 'feature/BlockTemplates.php';
 require_once ET_BUILDER_DIR . 'feature/icon-manager/ExtendedFontIcons.php';
 require_once ET_BUILDER_DIR . 'feature/background-masks/Functions.php';
 require_once ET_BUILDER_DIR . 'feature/background-masks/PatternFields.php';
 require_once ET_BUILDER_DIR . 'feature/background-masks/MaskFields.php';
+require_once ET_BUILDER_DIR . 'feature/gutenberg/BlockTemplates.php';
 
 // Conditional Includes.
 if ( et_is_woocommerce_plugin_active() ) {

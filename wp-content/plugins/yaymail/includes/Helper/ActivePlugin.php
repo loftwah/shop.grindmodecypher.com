@@ -188,6 +188,7 @@ class ActivePlugin {
 				'image_height'                 => '30px',
 				'product_sku'                  => 1,
 				'product_des'                  => 0,
+				'product_hyper_links'          => 0,
 				'background_color_table_items' => '#e5e5e5',
 				'content_items_color'          => '#636363',
 				'title_items_color'            => '#7f54b3',

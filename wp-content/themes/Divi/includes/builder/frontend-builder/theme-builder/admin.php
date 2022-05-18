@@ -193,6 +193,9 @@ function et_theme_builder_enqueue_scripts() {
 		)
 	);
 
+	// Load Library and Cloud.
+	et_builder_load_library();
+
 	ET_Cloud_App::load_js();
 }
 add_action( 'admin_enqueue_scripts', 'et_theme_builder_enqueue_scripts' );

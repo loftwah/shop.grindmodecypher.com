@@ -120,7 +120,7 @@ add_action( 'pre_get_posts', 'et_builder_wc_pre_get_posts' );
  */
 function et_builder_wc_body_class( $classes ) {
 	if ( et_builder_used_in_wc_shop() ) {
-		$classes = array_diff( $classes, array( 'woocommerce', 'woocommerce-page' ) );
+		$classes = array_diff( $classes, array( 'woocommerce-page' ) );
 	}
 
 	return $classes;

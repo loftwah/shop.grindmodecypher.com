@@ -82,6 +82,7 @@ class Shortcodes {
 				'order_payment_method',
 				'order_payment_url',
 				'order_payment_url_string',
+				'payment_instruction',
 				'payment_method',
 				'transaction_id',
 			);
@@ -169,7 +170,7 @@ class Shortcodes {
 			$shortcodes_lists       = array_merge( $shortcodes_lists, $general_list );
 			$this->shortcodes_lists = $shortcodes_lists;
 			foreach ( $this->shortcodes_lists as $key => $shortcode_name ) {
-				if ( 'woocommerce_email_before_order_table' == $shortcode_name || 'woocommerce_email_after_order_table' == $shortcode_name  || 'woocommerce_email_order_details' == $shortcode_name || 'woocommerce_email_order_meta' == $shortcode_name) {
+				if ( 'woocommerce_email_before_order_table' == $shortcode_name || 'woocommerce_email_after_order_table' == $shortcode_name || 'woocommerce_email_order_details' == $shortcode_name || 'woocommerce_email_order_meta' == $shortcode_name ) {
 					add_shortcode( $shortcode_name, array( $this, 'shortcodeCallBack' ) );
 				} else {
 					$function_name = $this->parseShortCodeToFunctionName( 'yaymail_' . $shortcode_name );
@@ -486,7 +487,7 @@ class Shortcodes {
 						}
 					}
 
-					if ( isset( $args['set_password_url']) && ! empty( $args['set_password_url'] ) ) {
+					if ( isset( $args['set_password_url'] ) && ! empty( $args['set_password_url'] ) ) {
 						$shortcode['[yaymail_set_password_url_string]'] = $args['set_password_url'];
 					}
 
@@ -667,7 +668,21 @@ class Shortcodes {
 					$set_default_footer           = false != $yaymailSettingsDefaultFooter ? $yaymailSettingsDefaultFooter['set_default'] : '0';
 					$reviewYayMail                = get_option( 'yaymail_review' );
 
-					$result->elements                    = Helper::unsanitize_array( $updateElement->merge_new_props_to_elements( $list_elements ) );
+					$make_args['order'] = $this->order;
+					$array_element      = array();
+					foreach ( $list_elements as $key => $element ) {
+						if ( has_filter( 'yaymail_addon_for_conditional_logic' ) && ! empty( $make_args['order'] ) && isset( $element['settingRow']['arrConditionLogic'] ) && ! empty( $element['settingRow']['arrConditionLogic'] ) ) {
+							$conditional_Logic = apply_filters( 'yaymail_addon_for_conditional_logic', false, $make_args, $element['settingRow'] );
+
+							if ( $conditional_Logic ) {
+								$array_element[] = $element;
+							}
+						} else {
+							$array_element[] = $element;
+						}
+					}
+
+					$result->elements                    = Helper::unsanitize_array( $updateElement->merge_new_props_to_elements( $array_element ) );
 					$result->emailBackgroundColor        = get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : 'rgb(236, 236, 236)';
 					$result->emailTextLinkColor          = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 					$result->titleShipping               = get_post_meta( $postID, '_email_title_shipping', true ) ? get_post_meta( $postID, '_email_title_shipping', true ) : 'Shipping Address';
@@ -798,15 +813,15 @@ class Shortcodes {
 		$shortcode['[yaymail_get_heading]']          = $this->getEmailHeading( $args, $this->order, $sent_to_admin );
 
 		// WC HOOK
-		$shortcode['[woocommerce_email_order_meta]']          = $this->orderWoocommerceOrderMetaHook( $args, $sent_to_admin); // not Changed
-		$shortcode['[woocommerce_email_order_details]']  = $this->orderWoocommerceOrderDetailsHook( $args, $sent_to_admin ); // not Changed
+		$shortcode['[woocommerce_email_order_meta]']         = $this->orderWoocommerceOrderMetaHook( $args, $sent_to_admin ); // not Changed
+		$shortcode['[woocommerce_email_order_details]']      = $this->orderWoocommerceOrderDetailsHook( $args, $sent_to_admin ); // not Changed
 		$shortcode['[woocommerce_email_before_order_table]'] = $this->orderWoocommerceBeforeHook( $args, $sent_to_admin ); // not Changed
 		$shortcode['[woocommerce_email_after_order_table]']  = $this->orderWoocommerceAfterHook( $args, $sent_to_admin ); // not Changed
-		
+
 		// Define shortcode from plugin addon
 		$shortcode = apply_filters( 'yaymail_do_shortcode', $shortcode, $yaymail_informations, $this->args_email );
 
-		$shortcode['[yaymail_items]'] = $this->orderItems( $items, $sent_to_admin, '', true );
+		$shortcode['[yaymail_items]']                         = $this->orderItems( $items, $sent_to_admin, '', true );
 		$shortcode['[yaymail_items_products_quantity_price]'] = $this->orderItems( $items, $sent_to_admin, '', false );
 		if ( null != $created_date ) {
 			$shortcode['[yaymail_order_date]'] = $order->get_date_created()->date_i18n( wc_date_format() );
@@ -819,8 +834,8 @@ class Shortcodes {
 		} else {
 			$shortcode['[yaymail_order_id]'] = '';
 		}
-		$shortcode['[yaymail_order_link]'] = '<a href="' . esc_url( $order_url ) . '" style="color:' . esc_attr( $text_link_color ) . ';">' . esc_html__( 'Order', 'yaymail' ) . '</a>';
-		$shortcode['[yaymail_order_link]'] = str_replace( '[yaymail_order_id]', $order->get_id(), $shortcode['[yaymail_order_link]'] );
+		$shortcode['[yaymail_order_link]']        = '<a href="' . esc_url( $order_url ) . '" style="color:' . esc_attr( $text_link_color ) . ';">' . esc_html__( 'Order', 'yaymail' ) . '</a>';
+		$shortcode['[yaymail_order_link]']        = str_replace( '[yaymail_order_id]', $order->get_id(), $shortcode['[yaymail_order_link]'] );
 		$shortcode['[yaymail_order_link_string]'] = esc_url( $order_url );
 		if ( ! empty( $order->get_order_number() ) ) {
 			$shortcode['[yaymail_order_number]'] = $order->get_order_number();
@@ -835,7 +850,7 @@ class Shortcodes {
 		}
 		$shortcode['[yaymail_order_total]']         = wc_price( $order->get_total() );
 		$shortcode['[yaymail_order_total_numbers]'] = $order->get_total();
-		$shortcode['[yaymail_orders_count]'] = count( $order->get_items() );
+		$shortcode['[yaymail_orders_count]']        = count( $order->get_items() );
 		$shortcode['[yaymail_orders_count_double]'] = count( $order->get_items() ) * 2;
 
 		// PAYMENTS
@@ -846,6 +861,7 @@ class Shortcodes {
 		}
 		$shortcode['[yaymail_order_payment_url]']        = '<a href="' . esc_url( $order->get_checkout_payment_url() ) . '">' . esc_html__( 'Payment page', 'yaymail' ) . '</a>';
 		$shortcode['[yaymail_order_payment_url_string]'] = esc_url( $order->get_checkout_payment_url() );
+		$shortcode['[yaymail_payment_instruction]']      = $this->orderPaymentInstructions( $this->order, $sent_to_admin );
 		foreach ( $order->get_items( 'tax' ) as $item_id => $item_tax ) {
 			$tax_rate_id = $item_tax->get_rate_id();
 
@@ -895,7 +911,10 @@ class Shortcodes {
 			$shortcode['[yaymail_shipping_company]'] = '';
 		}
 		if ( ! empty( $order->get_shipping_country() ) ) {
-			$shortcode['[yaymail_shipping_country]'] = $order->get_shipping_country();
+			$country_code_bym = $order->get_shipping_country();
+			$wc_countries = WC()->countries;
+			$shipping_country_name_bym = $wc_countries->countries[$country_code_bym];
+			$shortcode['[yaymail_shipping_country]'] = $shipping_country_name_bym;
 		} else {
 			$shortcode['[yaymail_shipping_country]'] = '';
 		}
@@ -926,7 +945,7 @@ class Shortcodes {
 		} else {
 			$shortcode['[yaymail_shipping_state]'] = '';
 		}
-		if ( method_exists($order, 'get_shipping_phone') && ! empty( $order->get_shipping_phone() ) ) {
+		if ( method_exists( $order, 'get_shipping_phone' ) && ! empty( $order->get_shipping_phone() ) ) {
 			$shortcode['[yaymail_shipping_phone]'] = $order->get_shipping_phone();
 		} else {
 			$shortcode['[yaymail_shipping_phone]'] = '';
@@ -955,7 +974,10 @@ class Shortcodes {
 			$shortcode['[yaymail_billing_company]'] = '';
 		}
 		if ( ! empty( $order->get_billing_country() ) ) {
-			$shortcode['[yaymail_billing_country]'] = $order->get_billing_country();
+			$country_code_bym = $order->get_billing_country();
+			$wc_countries = WC()->countries;
+			$billing_country_name_bym = $wc_countries->countries[$country_code_bym];
+			$shortcode['[yaymail_billing_country]'] = $billing_country_name_bym;
 		} else {
 			$shortcode['[yaymail_billing_country]'] = '';
 		}
@@ -1116,6 +1138,14 @@ class Shortcodes {
 						$shortcode[ $nameShorcode ] = implode( ', ', $meta->get_data()['value'] );
 					} else {
 						$shortcode[ $nameShorcode ] = '';
+						if ( class_exists( 'WCPFC_Country' ) ) {
+							$arr_values = \wcpfc_get_value_if_set( $meta->get_data(), array( 'value', 'value' ), '' );
+							if ( is_object( $arr_values ) || is_array( $arr_values ) ) {
+								$shortcode[ $nameShorcode ] = implode( ',', $arr_values );
+							} else {
+								$shortcode[ $nameShorcode ] = $arr_values;
+							}
+						}
 					}
 				} else {
 					$shortcode[ $nameShorcode ] = $meta->get_data()['value'];
@@ -1159,26 +1189,26 @@ class Shortcodes {
 		$shortcode['[yaymail_get_heading]']          = $this->getEmailHeading( '', $this->order, $sent_to_admin );
 
 		// WC HOOK
-		$shortcode['[woocommerce_email_order_meta]']          = $this->orderWoocommerceOrderMetaHook( array(), $sent_to_admin, 'sampleOrder' ); // not Changed
-		$shortcode['[woocommerce_email_order_details]']  = $this->orderWoocommerceOrderDetailsHook( array(), $sent_to_admin, 'sampleOrder' ); // not Changed
+		$shortcode['[woocommerce_email_order_meta]']         = $this->orderWoocommerceOrderMetaHook( array(), $sent_to_admin, 'sampleOrder' ); // not Changed
+		$shortcode['[woocommerce_email_order_details]']      = $this->orderWoocommerceOrderDetailsHook( array(), $sent_to_admin, 'sampleOrder' ); // not Changed
 		$shortcode['[woocommerce_email_before_order_table]'] = $this->orderWoocommerceBeforeHook( array(), $sent_to_admin, 'sampleOrder' ); // not changed
 		$shortcode['[woocommerce_email_after_order_table]']  = $this->orderWoocommerceAfterHook( array(), $sent_to_admin, 'sampleOrder' ); // not changed
 
 		// Define shortcode from plugin addon
 		$shortcode = apply_filters( 'yaymail_do_shortcode', $shortcode, $yaymail_informations, '' );
 
-		$shortcode['[yaymail_items]']               = $this->orderItems( array(), $sent_to_admin, 'sampleOrder', true );
-		$shortcode['[yaymail_items_products_quantity_price]'] = $this->orderItems( array(), $sent_to_admin, 'sampleOrder',false );
-		$shortcode['[yaymail_order_date]']          = date_i18n( wc_date_format() );
-		$shortcode['[yaymail_order_fee]']           = 0;
-		$shortcode['[yaymail_order_id]']            = 1;
-		$shortcode['[yaymail_order_link]']          = '<a href="" style="color:' . esc_attr( $text_link_color ) . ';">' . esc_html__( 'Order', 'yaymail' ) . '</a>';
-		$shortcode['[yaymail_order_link_string]']   = esc_url( get_home_url() );
-		$shortcode['[yaymail_order_number]']        = '1';
-		$shortcode['[yaymail_order_refund]']        = 0;
-		$shortcode['[yaymail_order_sub_total]']     = wc_price( '18.00' );
-		$shortcode['[yaymail_order_total]']         = wc_price( '18.00' );
-		$shortcode['[yaymail_order_total_numbers]'] = '18.00';
+		$shortcode['[yaymail_items]']                         = $this->orderItems( array(), $sent_to_admin, 'sampleOrder', true );
+		$shortcode['[yaymail_items_products_quantity_price]'] = $this->orderItems( array(), $sent_to_admin, 'sampleOrder', false );
+		$shortcode['[yaymail_order_date]']                    = date_i18n( wc_date_format() );
+		$shortcode['[yaymail_order_fee]']                     = 0;
+		$shortcode['[yaymail_order_id]']                      = 1;
+		$shortcode['[yaymail_order_link]']                    = '<a href="" style="color:' . esc_attr( $text_link_color ) . ';">' . esc_html__( 'Order', 'yaymail' ) . '</a>';
+		$shortcode['[yaymail_order_link_string]']             = esc_url( get_home_url() );
+		$shortcode['[yaymail_order_number]']                  = '1';
+		$shortcode['[yaymail_order_refund]']                  = 0;
+		$shortcode['[yaymail_order_sub_total]']               = wc_price( '18.00' );
+		$shortcode['[yaymail_order_total]']                   = wc_price( '18.00' );
+		$shortcode['[yaymail_order_total_numbers]']           = '18.00';
 		$shortcode['[yaymail_orders_count]']                  = '1';
 		$shortcode['[yaymail_orders_count_double]']           = '2';
 
@@ -1186,6 +1216,7 @@ class Shortcodes {
 		$shortcode['[yaymail_order_payment_method]']     = esc_html__( 'Direct bank transfer', 'yaymail' );
 		$shortcode['[yaymail_order_payment_url]']        = '<a href="">' . esc_html__( 'Payment page', 'yaymail' ) . '</a>';
 		$shortcode['[yaymail_order_payment_url_string]'] = '';
+		$shortcode['[yaymail_payment_instruction]']      = __( 'Payment Instructions', 'yaymail' );
 		$shortcode['[yaymail_payment_method]']           = esc_html__( 'Check payments', 'yaymail' );
 		$shortcode['[yaymail_transaction_id]']           = 1;
 
@@ -1223,9 +1254,9 @@ class Shortcodes {
 		$shortcode['[yaymail_password_reset_url_string]'] = esc_url( get_home_url() ) . '/my-account/lost-password/?login';
 
 		// NEW USERS:
-		$shortcode['[yaymail_user_new_password]']    = esc_html__( 'G(UAM1(eIX#G', 'yaymail' );
-		$shortcode['[yaymail_set_password_url_string]']    = esc_url( get_home_url() ) . '/my-account/set-password/';
-		$shortcode['[yaymail_user_activation_link]'] = '';
+		$shortcode['[yaymail_user_new_password]']       = esc_html__( 'G(UAM1(eIX#G', 'yaymail' );
+		$shortcode['[yaymail_set_password_url_string]'] = esc_url( get_home_url() ) . '/my-account/set-password/';
+		$shortcode['[yaymail_user_activation_link]']    = '';
 
 		// GENERALS
 		$shortcode['[yaymail_customer_note]']            = esc_html__( 'note', 'yaymail' );
@@ -1274,8 +1305,8 @@ class Shortcodes {
 	}
 
 	public function ordetItemTables( $order, $default_args ) {
-		$postID               = CustomPostType::postIDByTemplate( $this->template );
-		$text_link_color      = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
+		$postID           = CustomPostType::postIDByTemplate( $this->template );
+		$text_link_color  = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 		$items            = $order->get_items();
 		$path             = YAYMAIL_PLUGIN_PATH . 'views/templates/emails/email-order-items.php';
 		$yaymail_settings = get_option( 'yaymail_settings' );
@@ -1299,7 +1330,7 @@ class Shortcodes {
 			'plain_text'                    => $default_args['plain_text'],
 			'sent_to_admin'                 => $default_args['sent_to_admin'],
 			'order_item_table_border_color' => isset( $yaymail_settings['background_color_table_items'] ) ? $yaymail_settings['background_color_table_items'] : '#dddddd',
-		    'text_link_color'               => $text_link_color,
+			'text_link_color'               => $text_link_color,
 		);
 		include $path;
 	}
@@ -1485,8 +1516,8 @@ class Shortcodes {
 	}
 
 	public function billingShippingAddressContent( $atts, $order ) {
-		$postID          = CustomPostType::postIDByTemplate( $this->template );
-	
+		$postID = CustomPostType::postIDByTemplate( $this->template );
+
 		$text_link_color = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
 		if ( null !== $order ) {
 			$shipping_address = class_exists( 'Flexible_Checkout_Fields_Disaplay_Options' ) ? $this->shipping_address : $order->get_formatted_shipping_address();
@@ -1497,15 +1528,17 @@ class Shortcodes {
 			if ( $order->get_billing_email() ) {
 				$billing_address .= "<br/><a href='mailto:" . esc_html( $order->get_billing_email() ) . "' style='color:" . esc_attr( $text_link_color ) . ";font-weight: normal; text-decoration: underline;'>" . esc_html( $order->get_billing_email() ) . '</a>';
 			}
-			
-			if ( !str_contains($shipping_address, $order->get_shipping_phone() ) ) {
-				$shipping_address .= "<br/> <a href='tel:" . esc_html( $order->get_shipping_phone() ) . "' style='color:" . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>" . esc_html( $order->get_shipping_phone() ) . '</a>';
-			}
 
-			if ( !str_contains($shipping_address, get_post_meta($order->get_id() , '_shipping_email', true ) ) ) {
-				$shipping_address .= "<br/><a href='mailto:" . esc_html( get_post_meta( $order->get_id(), '_shipping_email', true ) ) . "' style='color:" . esc_attr( $text_link_color ) . ";font-weight: normal; text-decoration: underline;'>" . esc_html( get_post_meta($order->get_id(), '_shipping_email', true ) ) . '</a>';
+			if ( method_exists( $order, 'get_shipping_phone' ) && !empty( $order->get_shipping_phone() ) ) {
+				if ( !str_contains($shipping_address, $order->get_shipping_phone() ) ) {
+					$shipping_address .= "<br/> <a href='tel:" . esc_html( $order->get_shipping_phone() ) . "' style='color:" . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>" . esc_html( $order->get_shipping_phone() ) . '</a>';
+				}
 			}
-			
+			if( metadata_exists('post', $order->get_id() , '_shipping_email') ) {
+				if ( !str_contains($shipping_address, get_post_meta( $order->get_id() , '_shipping_email', true ) ) ) {
+					$shipping_address .= "<br/><a href='mailto:" . esc_html( get_post_meta( $order->get_id(), '_shipping_email', true ) ) . "' style='color:" . esc_attr( $text_link_color ) . ";font-weight: normal; text-decoration: underline;'>" . esc_html( get_post_meta($order->get_id(), '_shipping_email', true ) ) . '</a>';
+				}
+			}
 		} else {
 			$billing_address  = "John Doe<br/>YayCommerce<br/>7400 Edwards Rd<br/>Edwards Rd<br/><a href='tel:+18587433828' style='color: " . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>(910) 529-1147</a><br/>";
 			$shipping_address = "John Doe<br/>YayCommerce<br/>755 E North Grove Rd<br/>Mayville, Michigan<br/><a href='tel:+18587433828' style='color: " . esc_attr( $text_link_color ) . "; font-weight: normal; text-decoration: underline;'>(910) 529-1147</a><br/>";
@@ -1638,5 +1671,10 @@ class Shortcodes {
 			return $html;
 		}
 
+	}
+	public function orderPaymentInstructions ( $order, $sent_to_admin = false ) {
+		$paymentGateways  = wc_get_payment_gateway_by_order( $order );
+		$html = '<p>' . wp_kses_post( isset( $paymentGateways->instructions ) ? $paymentGateways->instructions : '', 'woocommerce'  ). '</p>';
+		return $html;
 	}
 }

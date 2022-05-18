@@ -367,7 +367,6 @@ class ET_Core_Portability {
 					$used_global_colors  = array();
 
 					$shortcode_object   = et_fb_process_shortcode( $post_data['post_content'] );
-					$used_global_colors = $this->_get_used_global_colors( $shortcode_object, $used_global_colors );
 
 					$used_global_presets = array_merge(
 						$this->get_used_global_presets( $shortcode_object, $used_global_presets ),
@@ -377,6 +376,8 @@ class ET_Core_Portability {
 					if ( ! empty( $used_global_presets ) ) {
 						$global_presets = (object) $used_global_presets;
 					}
+
+					$used_global_colors = $this->_get_used_global_colors( $shortcode_object, $used_global_colors, $global_presets );
 
 					if ( ! empty( $used_global_colors ) ) {
 						$global_colors = $this->_get_global_colors_data( $used_global_colors );
@@ -412,10 +413,6 @@ class ET_Core_Portability {
 				foreach ( $data as $post ) {
 					$shortcode_object = et_fb_process_shortcode( $post->post_content );
 
-					if ( 'post_type' === $this->instance->type ) {
-						$used_global_colors = $this->_get_used_global_colors( $shortcode_object, $used_global_colors );
-					}
-
 					if ( $apply_global_presets ) {
 						$post->post_content = et_fb_process_to_shortcode( $shortcode_object, $options, '', false );
 					} else {
@@ -428,6 +425,10 @@ class ET_Core_Portability {
 
 				if ( ! empty ( $used_global_presets ) ) {
 					$global_presets = (object) $used_global_presets;
+				}
+
+				if ( 'post_type' === $this->instance->type ) {
+					$used_global_colors = $this->_get_used_global_colors( $shortcode_object, $used_global_colors, $global_presets );
 				}
 
 				if ( ! empty( $used_global_colors ) ) {
@@ -1543,13 +1544,53 @@ class ET_Core_Portability {
 					$module_preset_id = $default_preset_id;
 				}
 
+				$preset_settings = array();
+
 				if ( isset( $global_presets[ $module_type ]['presets'][ $module_preset_id ] ) ) {
-					$module['attrs'] = array_merge( $global_presets[ $module_type ]['presets'][ $module_preset_id ]['settings'], $module['attrs'] );
+					$preset_settings = $global_presets[ $module_type ]['presets'][ $module_preset_id ]['settings'];
 				} else {
 					if ( isset( $global_presets[ $module_type ]['presets'][ $default_preset_id ]['settings'] ) ) {
-						$module['attrs'] = array_merge( $global_presets[ $module_type ]['presets'][ $default_preset_id ]['settings'], $module['attrs'] );
+						$preset_settings = $global_presets[ $module_type ]['presets'][ $default_preset_id ]['settings'];
 					}
 				}
+
+				$merged_global_colors_info = array();
+
+				if ( isset( $module['attrs']['global_colors_info'] ) ) {
+					// Retrive global_colors_info from post meta, which saved as string[][].
+					$gc_info_prepared = str_replace(
+						array( '&#91;', '&#93;' ),
+						array( '[', ']' ),
+						$module['attrs']['global_colors_info']
+					);
+
+					$used_global_colors        = json_decode( $gc_info_prepared, true );
+					$merged_global_colors_info = $used_global_colors;
+				}
+
+				// Merge Global Colors from preset.
+				if ( isset( $preset_settings['global_colors_info'] ) ) {
+					$preset_global_colors = json_decode( $preset_settings['global_colors_info'], true );
+
+					if ( ! empty( $preset_global_colors ) ) {
+						foreach ( $preset_global_colors as $color_id => $settings_list ) {
+							if ( ! empty( $settings_list ) ) {
+								if ( isset( $used_global_colors[ $color_id ] ) ) {
+									$merged_global_colors_info[ $color_id ] = array_merge( $used_global_colors[ $color_id ], $settings_list );
+								} else {
+									$merged_global_colors_info[ $color_id ] = $settings_list;
+								}
+
+								foreach ( $settings_list as $setting_name ) {
+									$preset_settings[ $setting_name ] = $color_id;
+								}
+							}
+						}
+					}
+				}
+
+				$module['attrs']                       = array_merge( $preset_settings, $module['attrs'] );
+				$module['attrs']['global_colors_info'] = wp_json_encode( $merged_global_colors_info );
 			}
 
 			if ( isset( $module['content'] ) && is_array( $module['content'] ) ) {
@@ -2404,10 +2445,11 @@ class ET_Core_Portability {
 	 *
 	 * @param array $shortcode_object   The multidimensional array representing a page structure.
 	 * @param array $used_global_colors List of global colors to merge with.
+	 * @param array $presets            Object of presets.
 	 *
 	 * @return array - The list of the Global Colors.
 	 */
-	protected function _get_used_global_colors( $shortcode_object, $used_global_colors = array() ) {
+	protected function _get_used_global_colors( $shortcode_object, $used_global_colors = array(), $presets = array() ) {
 		foreach ( $shortcode_object as $module ) {
 			if ( isset( $module['attrs']['global_colors_info'] ) ) {
 				// Retrive global_colors_info from post meta, which saved as string[][].
@@ -2416,11 +2458,25 @@ class ET_Core_Portability {
 					array( '[', ']' ),
 					$module['attrs']['global_colors_info']
 				);
-				$used_global_colors = array_merge( $used_global_colors, json_decode( $gc_info_prepared, true ) );
+
+				// Make sure we pass array to array_merge to avoid Fatal Error.
+				$gc_info_array      = json_decode( $gc_info_prepared, true );
+				$gc_info_array      = is_array( $gc_info_array ) ? $gc_info_array : [];
+				$used_global_colors = array_merge( $used_global_colors, $gc_info_array );
 			}
 
 			if ( isset( $module['content'] ) && is_array( $module['content'] ) ) {
-				$used_global_colors = array_merge( $used_global_colors, $this->_get_used_global_colors( $module['content'], $used_global_colors ) );
+				$used_global_colors = array_merge( $used_global_colors, $this->_get_used_global_colors( $module['content'], $used_global_colors, $presets ) );
+			}
+		}
+
+		if ( ! empty( $presets ) ) {
+			foreach ( $presets as $module_type => $module_presets ) {
+				foreach ( $module_presets->presets as $preset_id => $preset ) {
+					if ( isset( $preset->settings->global_colors_info ) ) {
+						$used_global_colors = array_merge( $used_global_colors, json_decode( $preset->settings->global_colors_info, true ) );
+					}
+				}
 			}
 		}
 

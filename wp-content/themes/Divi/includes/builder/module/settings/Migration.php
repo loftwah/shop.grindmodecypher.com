@@ -287,6 +287,8 @@ abstract class ET_Builder_Module_Settings_Migration {
 	 * @param string $content Text/HTML content within the current module.
 	 * @param bool   $maybe_global_presets_migration Whether to include global presets.
 	 *
+	 * @since 4.17.1 If a `null` value is returned from `migrate()`, unset the attribute.
+	 *
 	 * @return array
 	 */
 	public static function maybe_override_shortcode_attributes( $attrs, $unprocessed_attrs, $module_slug, $module_address, $content = '', $maybe_global_presets_migration = false ) {
@@ -362,8 +364,14 @@ abstract class ET_Builder_Module_Settings_Migration {
 
 					$new_value = $migration->migrate( $field_name, $current_value, $module_slug, $saved_value, $affected_field, $attrs, $content, $module_address );
 
+					// If a null value was returned, then we want to unset this attribute.
+					if ( is_null( $new_value ) ) {
+						continue;
+					}
+
 					if ( $new_value !== $saved_value || ( $affected_field !== $field_name && $new_value !== $current_value ) ) {
-						$attrs[ $field_name ] = self::$migrated['value_changes'][ $module_address ][ $field_name ] = $new_value;
+						self::$migrated['value_changes'][ $module_address ][ $field_name ] = $new_value;
+						$attrs[ $field_name ] = $new_value;
 						$migrated_attrs_count++;
 					}
 				}

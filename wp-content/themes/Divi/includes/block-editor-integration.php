@@ -31,7 +31,7 @@ function et_divi_gb_content_widths( $content_widths = array() ) {
 	// Customizer value
 	$content_width     = absint( et_get_option( 'content_width', '1080' ) ); // pixel
 	$use_sidebar_width = et_get_option( 'use_sidebar_width', false );
-	$sidebar_width     = $use_sidebar_width ? intval( et_get_option( 'sidebar_width', 21 ) ) : 21; // percentage
+	$sidebar_width     = $use_sidebar_width ? intval( et_get_option( 'sidebar_width', 20.875 ) ) : 20.875; // Format percentage.
 	$sidebar_padding   = 5.5; // percentage
 
 	// Content width when no sidebar exist

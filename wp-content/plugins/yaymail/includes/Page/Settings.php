@@ -302,6 +302,7 @@ class Settings {
 				'image_height'                 => '30px',
 				'product_sku'                  => 1,
 				'product_des'                  => 0,
+				'product_hyper_links'          => 0,
 				'background_color_table_items' => '#e5e5e5',
 				'content_items_color'          => '#636363',
 				'title_items_color'            => '#7f54b3',
@@ -1045,6 +1046,20 @@ class Settings {
 						'b2bking_your_account_approved_email',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-b2bking',
+				),
+				'Domina_Shipping'                             => array(
+					'plugin_name'   => 'Domina Shipping',
+					'template_name' => array(
+						'Domina_Email_Tracking',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-departamentos-ciudades-colombia',
+				),
+				'YITH_WooCommerce_Delivery_Date_Premium'      => array(
+					'plugin_name'   => 'YITH WooCommerce Delivery Date Premium',
+					'template_name' => array(
+						'yith_advise_user_delivery_email',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-delivery-date',
 				),
 			);
 

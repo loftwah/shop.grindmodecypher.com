@@ -68,6 +68,9 @@ function et_setup_theme() {
 
 	add_theme_support( 'customize-selective-refresh-widgets' );
 
+	// Block editor supports.
+	add_theme_support( 'wp-block-styles' );
+
 	remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );
 
 	remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 );

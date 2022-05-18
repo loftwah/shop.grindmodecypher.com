@@ -376,13 +376,13 @@ if ( ! class_exists( 'WC_Facebook_Product' ) ) :
 			intval( round( $this->get_price_plus_tax( $sale_price ) * 100 ) );
 
 			$sale_start =
-			( $date     = get_post_meta( $this->id, '_sale_price_dates_from', true ) )
-			? date_i18n( 'Y-m-d', $date ) . self::MIN_TIME
+			( $date     = $this->woo_product->get_date_on_sale_from() )
+			? date_i18n( WC_DateTime::ATOM, $date->getOffsetTimestamp() )
 			: self::MIN_DATE_1 . self::MIN_TIME;
 
 			$sale_end =
-			( $date   = get_post_meta( $this->id, '_sale_price_dates_to', true ) )
-			? date_i18n( 'Y-m-d', $date ) . self::MAX_TIME
+			( $date   = $this->woo_product->get_date_on_sale_to() )
+			? date_i18n( WC_DateTime::ATOM, $date->getOffsetTimestamp() )
 			: self::MAX_DATE . self::MAX_TIME;
 
 			// check if sale is expired and sale time range is valid
@@ -564,8 +564,17 @@ if ( ! class_exists( 'WC_Facebook_Product' ) ) :
 			$categories =
 			WC_Facebookcommerce_Utils::get_product_categories( $id );
 
-			$brand = get_the_term_list( $id, 'product_brand', '', ', ' );
-			$brand = is_wp_error( $brand ) || ! $brand ? wp_strip_all_tags( WC_Facebookcommerce_Utils::get_store_name() ) : WC_Facebookcommerce_Utils::clean_string( $brand );
+			// Get brand attribute.
+			$brand = get_post_meta( $id, Products::ENHANCED_CATALOG_ATTRIBUTES_META_KEY_PREFIX . 'brand', true );
+			$brand_taxonomy = get_the_term_list( $id, 'product_brand', '', ', ' );
+
+			if ( $brand ) {
+				$brand = WC_Facebookcommerce_Utils::clean_string( $brand );
+			} elseif ( !is_wp_error( $brand_taxonomy ) && $brand_taxonomy ) {
+				$brand = WC_Facebookcommerce_Utils::clean_string( $brand_taxonomy );
+			} else {
+				$brand = wp_strip_all_tags( WC_Facebookcommerce_Utils::get_store_name() );
+			}
 
 			if ( self::PRODUCT_PREP_TYPE_ITEMS_BATCH === $type_to_prepare_for ) {
 				$product_data = array(
@@ -814,9 +823,8 @@ if ( ! class_exists( 'WC_Facebook_Product' ) ) :
 							if ( ! isset( $product_data['custom_data'] ) ) {
 								$product_data['custom_data'] = array();
 							}
-
+							$new_name                                 = wc_attribute_label( $new_name, $product );
 							$product_data['custom_data'][ $new_name ] = urldecode( $option_values[0] );
-
 							break;
 					}//end switch
 				} else {

@@ -2059,8 +2059,9 @@ if ( ! function_exists( 'et_dequeue_block_css' ) ) :
 		$post_id                 = get_the_id();
 		$is_page_builder_used    = function_exists( 'et_pb_is_pagebuilder_used' ) ? et_pb_is_pagebuilder_used( $post_id ) : false;
 		$defer_block_css_enabled = ( 'on' === et_get_option( $shortname . '_defer_block_css', 'on' ) );
+		$is_wp_template_used     = ! empty( et_builder_get_wp_editor_templates() );
 
-		if ( $is_page_builder_used && $defer_block_css_enabled ) {
+		if ( $is_page_builder_used && $defer_block_css_enabled && ! $is_wp_template_used ) {
 			wp_dequeue_style( 'wp-block-library' );
 		}
 	}

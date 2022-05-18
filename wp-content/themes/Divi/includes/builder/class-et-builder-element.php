@@ -2995,6 +2995,8 @@ class ET_Builder_Element {
 			$content = '';
 		}
 
+		$this->_original_content = et_pb_fix_shortcodes( $content, $this->use_raw_content );
+
 		if ( $et_fb_processing_shortcode_object ) {
 			$this->content = et_pb_fix_shortcodes( $content, $this->use_raw_content );
 		} else {
@@ -14531,12 +14533,14 @@ class ET_Builder_Element {
 		$mask_selector       = $this->add_suffix_to_selectors( ' > .et_pb_background_mask', $css_element );
 		$css_element_pattern = ! empty( $settings['css']['pattern'] ) ? $settings['css']['pattern'] : $pattern_selector;
 		$css_element_mask    = ! empty( $settings['css']['mask'] ) ? $settings['css']['mask'] : $mask_selector;
+		$css_element_hover   = ! empty( $settings['css']['hover'] ) ? $settings['css']['hover'] : '';
 		$args                = array(
 			'base_prop_name'                => $base_prop_name,
 			'props'                         => $this->props,
 			'selector'                      => $css_element,
 			'selector_pattern'              => $css_element_pattern,
 			'selector_mask'                 => $css_element_mask,
+			'selector_hover'                => $css_element_hover,
 			'function_name'                 => $function_name,
 			'fields_definition'             => $this->fields_unprocessed,
 			'important'                     => isset( $settings['css']['important'] ) && $settings['css']['important'] ? ' !important' : '',
@@ -14739,6 +14743,17 @@ class ET_Builder_Element {
 				} elseif ( $overflow_y ) {
 					$overflow = 'overflow-x';
 				}
+
+				/**
+				 * Filters if overflow should be set along with border radius.
+				 *
+				 * @param bool|string        $overflow      If overflow is enabled (true) or disabled (false) or -x or -y.
+				 * @param string             $function_name Module slug (e.g. et_pb_section).
+				 * @param ET_Builder_Element $this          Module object.
+				 *
+				 * @since ??
+				 */
+				$overflow = apply_filters( 'et_builder_process_advanced_borders_options_radii_overflow_enabled', $overflow, $function_name, $this );
 
 				// Render border radii for all devices.
 				foreach ( et_pb_responsive_options()->get_modes() as $device ) {
@@ -17464,7 +17479,7 @@ class ET_Builder_Element {
 				'phone'   => $is_field_focus_bg_color_responsive ? esc_attr( et_pb_responsive_options()->get_any_value( $this->props, "{$option_name}_focus_background_color_phone" ) ) : '',
 			);
 
-			$field_focus_bg_color_important = $force_global_important || in_array( 'focus_background_color', $important_list, true ) ? ' !important' : '';
+			$field_focus_bg_color_important = $force_global_important || in_array( 'focus_background_color', $important_list, true ) ? ' !important;' : '';
 
 			et_pb_responsive_options()->generate_responsive_css( $field_focus_bg_color_values, $bg_color_focus_selector, 'background-color', $function_name, $field_focus_bg_color_important, 'color' );
 
@@ -17504,7 +17519,7 @@ class ET_Builder_Element {
 				'phone'   => $is_field_text_color_responsive ? esc_attr( et_pb_responsive_options()->get_any_value( $this->props, "{$option_name}_text_color_phone" ) ) : '',
 			);
 
-			$field_text_color_important = in_array( 'form_text_color', $important_list, true ) ? ' !important' : '';
+			$field_text_color_important = in_array( 'form_text_color', $important_list, true ) ? ' !important;' : '';
 			$text_color_selector        = $placeholder_option ? "{$text_color_selector}, {$placeholder_selector}" : $text_color_selector;
 
 			et_pb_responsive_options()->generate_responsive_css( $field_text_color_values, $text_color_selector, 'color', $function_name, $field_text_color_important, 'color' );
@@ -17548,7 +17563,7 @@ class ET_Builder_Element {
 			);
 
 			$text_color_focus_selector        = $placeholder_option ? "{$text_color_focus_selector}, {$placeholder_focus_selector}" : $text_color_focus_selector;
-			$field_focus_text_color_important = in_array( 'form_text_color', $important_list, true ) ? ' !important' : '';
+			$field_focus_text_color_important = in_array( 'form_text_color', $important_list, true ) ? ' !important;' : '';
 
 			et_pb_responsive_options()->generate_responsive_css( $field_focus_text_color_values, $text_color_focus_selector, 'color', $function_name, $field_focus_text_color_important, 'color' );
 
@@ -20357,8 +20372,7 @@ class ET_Builder_Element {
 		$background_video_class_hover  = 'et_pb_section_video_bg_hover';
 
 		// Hover and Responsive Status.
-		$hover_enabled        = self::$_->array_get( $this->props, "{$base_name}__hover_enabled", 'off' );
-		$is_background_hover  = 'on' === $hover_enabled;
+		$is_background_hover  = et_pb_hover_options()->is_enabled( $base_name, $this->props );
 		$is_background_mobile = et_pb_responsive_options()->is_responsive_enabled( $this->props, $base_name );
 
 		if ( ! empty( $args ) ) {
@@ -20657,11 +20671,11 @@ class ET_Builder_Element {
 					$base_name,
 					$gradient_properties_desktop
 				);
-				$background_gradient_style   = $background_options->get_gradient_style( $gradient_properties );
 			} else {
-				$gradient_properties       = $background_options->get_gradient_properties( $props, $base_name, $suffix );
-				$background_gradient_style = $background_options->get_gradient_style( $gradient_properties );
+				$gradient_properties = $background_options->get_gradient_properties( $props, $base_name, $suffix );
 			}
+
+			$background_gradient_style = $background_options->get_gradient_style( $gradient_properties );
 
 			if ( 'on' === $use_gradient_options && 'on' === $gradient_overlays_image && 'on' === $parallax ) {
 				$is_gradient_on = '' !== $background_gradient_style;
@@ -22273,6 +22287,20 @@ class ET_Builder_Element {
 	}
 
 	/**
+	 * Public access provider for self::contains().
+	 *
+	 * @since ??
+	 *
+	 * @param string   $content Element content.
+	 * @param string[] $module_slugs Module slug to search.
+	 *
+	 * @return bool
+	 */
+	public static function module_contains( $content, $module_slugs ) {
+		return self::contains( $content, $module_slugs );
+	}
+
+	/**
 	 * Generate background field setting properties by template
 	 *
 	 * NOTE: Unless the `priority` property is used, the order that settings are listed is the order
@@ -23451,7 +23479,7 @@ class ET_Builder_Structure_Element extends ET_Builder_Element {
 					<label for="et_pb_background_color_gradient_unit_<%%= counter %%>">%1$s: </label>
 					<div class="et-pb-option-container et-pb-option-container--select">
 						<select name="et_pb_background_color_gradient_unit_<%%= counter %%>" id="et_pb_background_color_gradient_unit_<%%= counter %%>" class="et-pb-main-setting" data-default="linear">
-							<option value="%" <%%= current_background_color_gradient_unit %%>>%2$s</option>
+							<option value="%%" <%%= current_background_color_gradient_unit %%>>%2$s</option>
 							<option value="px">%3$s</option>
 							<option value="em">%4$s</option>
 							<option value="rem">%5$s</option>

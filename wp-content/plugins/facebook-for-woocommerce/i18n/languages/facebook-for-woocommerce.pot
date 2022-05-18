@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the Facebook for WooCommerce package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Facebook for WooCommerce 2.6.12\n"
+"Project-Id-Version: Facebook for WooCommerce 2.6.14\n"
 "Report-Msgid-Bugs-To: "
 "https://woocommerce.com/my-account/marketplace-ticket-form/\n"
-"POT-Creation-Date: 2022-03-08 11:07:47+00:00\n"
+"POT-Creation-Date: 2022-05-18 10:03:34+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: class-wc-facebookcommerce.php:263
+#: class-wc-facebookcommerce.php:271
 #. translators: Placeholders %1$s - opening strong HTML tag, %2$s - closing
 #. strong HTML tag, %3$s - opening link HTML tag, %4$s - closing link HTML tag
 msgid ""
@@ -21,7 +21,7 @@ msgid ""
 "Facebook for WooCommerce connection. Please %3$sclick here%4$s to reconnect!"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:284
+#: class-wc-facebookcommerce.php:292
 #. translators: Placeholders %1$s - opening link HTML tag, %2$s - closing link
 #. HTML tag
 msgid ""
@@ -29,7 +29,7 @@ msgid ""
 "under %1$sWooCommerce > Facebook%2$s."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:304
+#: class-wc-facebookcommerce.php:312
 #. translators: Placeholders %1$s - opening strong HTML tag, %2$s - closing
 #. strong HTML tag, %3$s - opening link HTML tag, %4$s - closing link HTML tag
 msgid ""
@@ -37,7 +37,7 @@ msgid ""
 "configuration, %3$scomplete the setup steps%4$s."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:336
+#: class-wc-facebookcommerce.php:344
 #. translators: Placeholders: %1$s - <strong> tag, %2$s - </strong> tag, %3$s -
 #. <a> tag, %4$s - </a> tag
 msgid ""
@@ -46,7 +46,7 @@ msgid ""
 "Connection%4$s area."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:359
+#: class-wc-facebookcommerce.php:367
 #. translators: Placeholders: %1$s - <strong> tag, %2$s - </strong> tag, %3$s -
 #. <a> tag, %4$s - </a> tag
 msgid ""
@@ -55,51 +55,51 @@ msgid ""
 "products."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:385
+#: class-wc-facebookcommerce.php:397
 #. translators: Placeholders: %1$s - opening <a> HTML link tag, %2$s - closing
 #. </a> HTML link tag
 msgid "Heads up! The Facebook menu is now located under the %1$sMarketing%2$s menu."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:467
+#: class-wc-facebookcommerce.php:479
 msgid "FB Product Sets"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:468
+#: class-wc-facebookcommerce.php:480
 msgid "FB Product Set"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:476
+#: class-wc-facebookcommerce.php:488
 #. translators: Edit item label
 msgid "Edit %s"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:478
+#: class-wc-facebookcommerce.php:490
 #. translators: Add new label
 msgid "Add new %s"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:481
+#: class-wc-facebookcommerce.php:493
 #. translators: No items found text
 msgid "No %s found."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:483
+#: class-wc-facebookcommerce.php:495
 #. translators: Search label
 msgid "Search %s."
 msgstr ""
 
-#: class-wc-facebookcommerce.php:485
+#: class-wc-facebookcommerce.php:497
 #. translators: Text label
 msgid "Separate %s with commas"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:487
+#: class-wc-facebookcommerce.php:499
 #. translators: Text label
 msgid "Choose from the most used %s"
 msgstr ""
 
-#: class-wc-facebookcommerce.php:603
+#: class-wc-facebookcommerce.php:639
 msgid "Cannot create the API instance because the access token is missing."
 msgstr ""
 
@@ -385,20 +385,20 @@ msgstr ""
 msgid "Facebook"
 msgstr ""
 
-#: includes/Admin/Settings.php:121
+#: includes/Admin/Settings.php:125
 #: includes/Admin/Settings_Screens/Connection.php:35
 #: includes/Admin/Settings_Screens/Connection.php:36
 msgid "Connection"
 msgstr ""
 
-#: includes/Admin/Settings.php:124
+#: includes/Admin/Settings.php:128
 #: includes/Admin/Settings_Screens/Messenger.php:41
 #: includes/Admin/Settings_Screens/Messenger.php:42
 #: includes/Admin/Settings_Screens/Messenger.php:148
 msgid "Messenger"
 msgstr ""
 
-#: includes/Admin/Settings.php:127
+#: includes/Admin/Settings.php:131
 #: includes/Admin/Settings_Screens/Product_Sync.php:43
 #: includes/Admin/Settings_Screens/Product_Sync.php:44
 #: includes/Admin/Settings_Screens/Product_Sync.php:181
@@ -406,21 +406,21 @@ msgstr ""
 msgid "Product sync"
 msgstr ""
 
-#: includes/Admin/Settings.php:130
+#: includes/Admin/Settings.php:134
 #: includes/Admin/Settings_Screens/Advertise.php:38
 #: includes/Admin/Settings_Screens/Advertise.php:39
 msgid "Advertise"
 msgstr ""
 
-#: includes/Admin/Settings.php:216
+#: includes/Admin/Settings.php:220
 msgid "You do not have permission to save these settings."
 msgstr ""
 
-#: includes/Admin/Settings.php:225
+#: includes/Admin/Settings.php:229
 msgid "Your settings have been saved."
 msgstr ""
 
-#: includes/Admin/Settings.php:232
+#: includes/Admin/Settings.php:236
 #. translators: Placeholders: %s - user-friendly error message
 msgid "Your settings could not be saved. %s"
 msgstr ""
@@ -988,17 +988,17 @@ msgstr ""
 msgid "Disconnection successful."
 msgstr ""
 
-#: includes/Handlers/Connection.php:456
+#: includes/Handlers/Connection.php:459
 #. translators: Placeholders: %s - API error message
 msgid "Could not retrieve page access data. %s"
 msgstr ""
 
-#: includes/Handlers/Connection.php:470
+#: includes/Handlers/Connection.php:473
 #. translators: Placeholders: %s - Facebook page ID
 msgid "Page %s not authorized."
 msgstr ""
 
-#: includes/Handlers/Connection.php:1430
+#: includes/Handlers/Connection.php:1446
 msgid "You do not have permission to finish App Store login."
 msgstr ""
 
@@ -1015,7 +1015,9 @@ msgid "Product must be in stock."
 msgstr ""
 
 #: includes/ProductSync/ProductValidator.php:234
-msgid "Product is hidden from catalog and search."
+msgid ""
+"This product cannot be synced to Facebook because it is hidden from your "
+"store catalog."
 msgstr ""
 
 #: includes/ProductSync/ProductValidator.php:249

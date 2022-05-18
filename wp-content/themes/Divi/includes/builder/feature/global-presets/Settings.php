@@ -143,7 +143,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Returns builder Temp Presets settings.
 	 *
-	 * @since ??
+	 * @since 4.17.0
 	 *
 	 * @return object
 	 */
@@ -156,7 +156,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Remove Temp Presets settings from the database.
 	 *
-	 * @since ??
+	 * @since 4.17.0
 	 *
 	 * @return object
 	 */
@@ -282,6 +282,7 @@ class ET_Builder_Global_Presets_Settings {
 	 * Returns Global Presets settings with global colors injected.
 	 *
 	 * @since 4.10.0
+	 * @since 4.17.2 Perform substring replacement (for compound settings like background gradient stops).
 	 *
 	 * @param array $attrs - The module attributes.
 	 *
@@ -294,9 +295,21 @@ class ET_Builder_Global_Presets_Settings {
 
 		$gc_info = json_decode( $attrs['global_colors_info'], true );
 
+		// Gather system-wide Global Colors info (including CSS color values and 'active' status).
+		$all_global_colors_info = et_get_option( 'et_global_colors' );
+
 		foreach ( $gc_info as $color_id => $option_names ) {
 			foreach ( $option_names as $option_name ) {
-				$attrs[ $option_name ] = $color_id;
+				// Get the CSS color value assiciated with this GCID.
+				if ( ! empty( $all_global_colors_info[ $color_id ]['color'] ) ) {
+					$gcid_color_value = $all_global_colors_info[ $color_id ]['color'];
+				} else {
+					// We can't inject the CSS color value if we don't have record of it.
+					continue;
+				}
+
+				// Replace CSS color value with GCID wherever it's found within the settings string.
+				$attrs[ $option_name ] = str_replace( $color_id, $gcid_color_value, $attrs[ $option_name ] );
 			}
 		}
 
@@ -609,8 +622,9 @@ class ET_Builder_Global_Presets_Settings {
 	 * Also used to normalize global colors
 	 *
 	 * @since 4.5.0
+	 * @since 4.17.2 Modified the global color option check to perform a substring match on multipart settings (like gradient stops).
 	 *
-	 * @param $presets - The object representing Global Presets settings
+	 * @param object|array $presets The object representing Global Presets settings.
 	 *
 	 * @return object
 	 */
@@ -642,8 +656,8 @@ class ET_Builder_Global_Presets_Settings {
 							)
 						);
 
-						// Since we still support PHP 5.2 we can't use `array_filter` with array keys
-						// So check if defaults have empty key
+						// Since we still support PHP 5.2 we can't use `array_filter`
+						// with array keys, so use this to skip any empty key that's found.
 						if ( isset( $settings_filtered[''] ) ) {
 							continue;
 						}
@@ -652,20 +666,46 @@ class ET_Builder_Global_Presets_Settings {
 							$result->$module->presets->$preset_id->settings->$setting_name = $value;
 						}
 
-						// Insert correct global color IDs for affected settings.
-						$global_colors_info = isset( $settings_filtered['global_colors_info'] ) ? json_decode( $settings_filtered['global_colors_info'], true ) : array();
+						// Look for settings in this module that use global colors.
+						if ( isset( $settings_filtered['global_colors_info'] ) ) {
+							$module_global_colors_info = json_decode( $settings_filtered['global_colors_info'], true );
+						} else {
+							// Nothing more to be done here if this module's `global_colors_info` setting is empty,
+							// so advance the `$preset_structure->presets as $preset_id => $preset` loop.
+							continue;
+						}
 
-						if ( ! empty( $global_colors_info ) ) {
-							foreach ( $global_colors_info as $color_id => $options_list ) {
-								if ( empty( $options_list ) ) {
-									continue;
-								}
+						/**
+						 * Presets: Global Color injection.
+						 *
+						 * Find GCID references and replace them with their CSS color values.
+						 */
 
-								foreach ( $options_list as $global_color_option ) {
-									if ( isset( $result->$module->presets->$preset_id->settings->$global_color_option ) ) {
-										$result->$module->presets->$preset_id->settings->$global_color_option = $color_id;
-									}
-								}
+						// Gather system-wide Global Colors info (including CSS color values and 'active' status).
+						$all_global_colors_info = et_get_option( 'et_global_colors' );
+
+						foreach ( $module_global_colors_info as $gcid => $settings_that_use_this_gcid ) {
+							if ( empty( $settings_that_use_this_gcid ) ) {
+								continue;
+							}
+
+							// Get the CSS color value assiciated with this GCID.
+							if ( ! empty( $all_global_colors_info[ $gcid ]['color'] ) ) {
+								$gcid_color_value = $all_global_colors_info[ $gcid ]['color'];
+							} else {
+								// We can't inject the CSS color value if we don't have record of it.
+								continue;
+							}
+
+							// For matching settings, replace CSS color values with their GCIDs.
+							foreach ( $settings_that_use_this_gcid as $uses_this_gcid ) {
+								$settings_match = $settings_filtered[ $uses_this_gcid ];
+
+								// Replace CSS color value with GCID wherever it's found within the settings string.
+								$injected_gcid = str_replace( $gcid, $gcid_color_value, $settings_match );
+
+								// Pass the GCID-injected string back to the preset setting.
+								$result->$module->presets->$preset_id->settings->$uses_this_gcid = $injected_gcid;
 							}
 						}
 					} else {

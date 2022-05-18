@@ -409,6 +409,7 @@
 				context: 'et_builder',
 				returnJson: false,
 				useTempPresets: false,
+				includeGlobalPresets: false,
 			}, options);
 
 			var fileSize = Math.ceil( ( file.size / ( 1024 * 1024 ) ).toFixed( 2 ) ),

@@ -7,6 +7,7 @@ $text_align         = is_rtl() ? 'right' : 'left';
 $yaymail_settings   = get_option( 'yaymail_settings' );
 $orderImagePostions = isset( $yaymail_settings['image_position'] ) && ! empty( $yaymail_settings['image_position'] ) ? $yaymail_settings['image_position'] : 'Top';
 $orderImage         = isset( $yaymail_settings['product_image'] ) && '0' != $yaymail_settings['product_image'] ? $yaymail_settings['product_image'] : '0';
+$productHyperLinks  = isset( $yaymail_settings['product_hyper_links'] ) ? $yaymail_settings['product_hyper_links'] : 0;
 
 if ( ! function_exists( 'yaymail_get_global_taxonomy_attribute_data' ) ) :
 	function yaymail_get_global_taxonomy_attribute_data( $name, $product, $single_product = null ) {
@@ -63,8 +64,15 @@ foreach ( $items as $item_id => $item ) :
 		if ( 'Bottom' == $orderImagePostions && '1' == $orderImage ) {
 			echo ( '<div class="yaymail-product-text" style="padding: 5px 0;">' );
 			// Product name
-			echo wp_kses_post( ' <a style="color:'.$text_link_color.'" target="_blank" href="'.$product->get_permalink().'"><span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span></a>' );
-
+			if ( $productHyperLinks ) {
+				if ( method_exists( $product, 'get_permalink' ) ) {
+					echo wp_kses_post( ' <a style="color:' . $text_link_color . '" target="_blank" href="' . $product->get_permalink() . '"><span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span></a>' );
+				} else {
+					echo wp_kses_post( '<span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span>' );
+				}
+			} else {
+				echo wp_kses_post( '<span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span>' );
+			}
 			// SKU
 			if ( $args['show_sku'] && is_object( $product ) && $product->get_sku() && $product ) {
 				echo wp_kses_post( '<span class="yaymail-product-sku"> (#' . $product->get_sku() . ')</span>' );
@@ -91,8 +99,15 @@ foreach ( $items as $item_id => $item ) :
 			}
 			echo ( '<div style="padding: 5px 0;">' );
 			// Product name
-			echo wp_kses_post( ' <a style="color:'.$text_link_color.'" target="_blank" href="'.$product->get_permalink().'"><span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span></a>' );
-
+			if ( $productHyperLinks ) {
+				if ( method_exists( $product, 'get_permalink' ) ) {
+					echo wp_kses_post( ' <a style="color:' . $text_link_color . '" target="_blank" href="' . $product->get_permalink() . '"><span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span></a>' );
+				} else {
+					echo wp_kses_post( '<span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span>' );
+				}
+			} else {
+				echo wp_kses_post( '<span class="yaymail-product-name">' . wp_kses_post( apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false ) ) . '</span>' );
+			}
 			// SKU
 			if ( $args['show_sku'] && is_object( $product ) && $product->get_sku() && $product ) {
 				echo wp_kses_post( '<span class="yaymail-product-sku"> (#' . $product->get_sku() . ')</span>' );
@@ -142,14 +157,15 @@ foreach ( $items as $item_id => $item ) :
 		|| 'customer_completed_order' === $this->template
 		|| 'customer_refunded_order' === $this->template
 		|| 'customer_invoice' === $this->template
-		|| 'customer_note' === $this->template )
+		|| 'customer_note' === $this->template
+		|| 'new_order' === $this->template )
 		&& isset( $args['show_purchase_note'] )
 		&& is_object( $product )
 		&& ! empty( $purchase_note )
 	) {
 		?>
 
-		<tr>
+		<tr class="yaymail-purchase-note">
 		<th colspan="3" style="text-align:<?php echo esc_attr( $text_align ); ?>;font-weight: normal;vertical-align: middle;padding: 12px;font-size: 14px;border-width: 1px;border-style: solid;<?php echo esc_attr( isset( $default_args['border_color'] ) ? $default_args['border_color'] : '' ); ?>;">
 		<?php echo wp_kses_post( wpautop( do_shortcode( $purchase_note ) ) ); ?>
 			</th>

@@ -12,7 +12,6 @@
 	  <tr>
 		<td
 		  id="web<?php echo esc_attr( $id ); ?>-space"
-		  align="<?php echo esc_attr( $attrs['align'] ); ?>"
 		  class="web-space"
 		  style="font-size: 0px; line-height: 0px;<?php echo esc_attr( 'height: ' . $attrs['height'] . 'px;' ); ?> ">
 		</td>

@@ -288,15 +288,20 @@ class ET_Builder_Module_Helper_Sticky_Options {
 	 */
 	public function add_sticky_to_order_class( $selector, $is_sticky = true ) {
 		$selectors = explode( ',', $selector );
-		$selectors = array_map( 'trim', $selectors );
+		$selectors = array_map(
+			function( $selector ) use ( $is_sticky ) {
+				$selector = trim( $selector );
 
-		// If current selector is sticky module, sticky selector is directly attached; if it isn't
-		// it is safe to assume that the sticky selector is one of its parent DOM, hence the space.
-		if ( $is_sticky ) {
-			$selectors = preg_replace( '/(%%order_class%%)/i', '.et_pb_sticky$1', $selectors, 1 );
-		} else {
-			$selectors = preg_replace( '/(%%order_class%%)/i', '.et_pb_sticky $1', $selectors, 1 );
-		}
+				// If current selector is sticky module, sticky selector is directly attached; if it isn't
+				// it is safe to assume that the sticky selector is one of its parent DOM, hence the space.
+				if ( ! $is_sticky ) {
+					$selector = ' ' . $selector;
+				}
+
+				return '.et_pb_sticky' . $selector;
+			},
+			$selectors
+		);
 
 		return implode( ', ', $selectors );
 	}

@@ -169,3 +169,30 @@ if ( ! function_exists( 'et_builder_get_wp_editor_templates' ) ) {
 		return $templates;
 	}
 }
+
+if ( ! function_exists( 'et_builder_is_block_theme' ) ) {
+	/**
+	 * Whether current theme is block theme or not.
+	 *
+	 * @since ??
+	 *
+	 * @return boolean Block theme status.
+	 */
+	function et_builder_is_block_theme() {
+		// Use `wp_is_block_theme` on WP 5.9.
+		if ( function_exists( 'wp_is_block_theme' ) ) {
+			return (bool) wp_is_block_theme();
+		}
+
+		// Use `gutenberg_is_fse_theme` on GB plugin.
+		if ( function_exists( 'gutenberg_is_fse_theme' ) ) {
+			return (bool) gutenberg_is_fse_theme();
+		}
+
+		// Use manual check on WP 5.8 below.
+		$block_templates_index_html_file = get_stylesheet_directory() . '/block-templates/index.html';
+		$templates_index_html_file       = get_stylesheet_directory() . '/templates/index.html';
+
+		return is_readable( $block_templates_index_html_file ) || is_readable( $templates_index_html_file );
+	}
+}

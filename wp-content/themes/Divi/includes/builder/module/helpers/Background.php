@@ -716,7 +716,7 @@ class ET_Builder_Module_Helper_Background {
 
 					// Size.
 					$image_size_default   = $this->get_attr_default( 'size', $base_prop_name, $fields_definition );
-					$image_size_inherit   = $this->get_attr_value( 'size', $base_prop_name, $suffix, $props, $fields_definition, $is_prev_image_active );
+					$image_size_inherit   = $this->get_attr_value( 'size', $base_prop_name, $suffix, $props, $fields_definition, false );
 					$image_width_inherit  = $this->get_attr_value( 'image_width', $base_prop_name, $suffix, $props, $fields_definition, false );
 					$image_height_inherit = $this->get_attr_value( 'image_height', $base_prop_name, $suffix, $props, $fields_definition, false );
 
@@ -1256,8 +1256,9 @@ class ET_Builder_Module_Helper_Background {
 							$base_prop_name,
 							$gradient_properties_desktop
 						);
-						$gradient_mode        = $this->get_gradient_style( $gradient_values_mode );
-						$images_mode[]        = $gradient_mode;
+
+						$gradient_mode = $this->get_gradient_style( $gradient_values_mode );
+						$images_mode[] = $gradient_mode;
 
 						$gradient_overlays_image_desktop = $responsive->get_any_value(
 							$props,
@@ -1315,6 +1316,7 @@ class ET_Builder_Module_Helper_Background {
 						$has_image_mode = true;
 
 						// Size.
+						$image_size_default = $this->get_attr_default( 'size', $base_prop_name, $fields_definition );
 						$image_size_mode    = $helper->get_raw_value( "{$base_prop_name}_size", $props );
 						$image_size_desktop = isset( $props[ "{$base_prop_name}_size" ] ) ? $props[ "{$base_prop_name}_size" ] : '';
 
@@ -1331,8 +1333,8 @@ class ET_Builder_Module_Helper_Background {
 							$image_height_mode    = $helper->get_raw_value( "{$base_prop_name}_image_height", $props, $image_height_desktop );
 
 							// Get Size CSS.
-							$image_size_style_desktop = $this->get_background_size_css( $image_size_desktop, $image_width_desktop, $image_height_desktop, 'image' );
-							$image_size_style_mode    = $this->get_background_size_css( $image_size_mode, $image_width_mode, $image_height_mode, 'image' );
+							$image_size_style_desktop = $this->get_background_size_css( $image_size_desktop, $image_width_desktop, $image_height_desktop, $image_size_default, 'image' );
+							$image_size_style_mode    = $this->get_background_size_css( $image_size_mode, $image_width_mode, $image_height_mode, $image_size_default, 'image' );
 
 							$is_same_image_size_style = $image_size_style_mode === $image_size_style_desktop;
 
@@ -1691,6 +1693,7 @@ class ET_Builder_Module_Helper_Background {
 						};
 
 						// Mask Size.
+						$mask_size_default = $this->get_attr_default( 'size', $mask_base_prop_name, $fields_definition );
 						$mask_size_mode    = $helper->get_raw_value( "{$mask_base_prop_name}_size", $props );
 						$mask_size_desktop = isset( $props[ "{$mask_base_prop_name}_size" ] ) ? $props[ "{$mask_base_prop_name}_size" ] : '';
 
@@ -1705,8 +1708,8 @@ class ET_Builder_Module_Helper_Background {
 							$mask_height_mode    = $helper->get_raw_value( "{$mask_base_prop_name}_height", $props, $mask_height_desktop );
 
 							// Get Size CSS.
-							$mask_size_style_desktop = $this->get_background_size_css( $mask_size_desktop, $mask_width_desktop, $mask_height_desktop, 'mask' );
-							$mask_size_style_mode    = $this->get_background_size_css( $mask_size_mode, $mask_width_mode, $mask_height_mode, 'mask' );
+							$mask_size_style_desktop = $this->get_background_size_css( $mask_size_desktop, $mask_width_desktop, $mask_height_desktop, $mask_size_default, 'mask' );
+							$mask_size_style_mode    = $this->get_background_size_css( $mask_size_mode, $mask_width_mode, $mask_height_mode, $mask_size_default, 'mask' );
 
 							$is_same_mask_size_style = $mask_size_style_mode === $mask_size_style_desktop;
 
@@ -1870,11 +1873,11 @@ class ET_Builder_Module_Helper_Background {
 		foreach ( $global_colors as $gcid => $details ) {
 			if ( false !== strpos( $color, $gcid ) ) {
 				// Match substring (needed for attrs like gradient stops).
-				return esc_attr( str_replace( $gcid, $details['color'], $color ) );
+				$color = str_replace( $gcid, $details['color'], $color );
 			}
 		}
 
-		return null;
+		return $color;
 	}
 
 	/**

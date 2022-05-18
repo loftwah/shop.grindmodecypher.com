@@ -1583,6 +1583,10 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 		// Remove automatically added classnames.
 		$this->remove_classname( 'et_pb_module' );
 
+		if ( self::contains( $content, array( 'et_pb_menu', 'et_pb_fullwidth_menu' ) ) ) {
+			$this->add_classname( 'et_pb_section--with-menu' );
+		}
+
 		// Save module classes into variable BEFORE processing the content with `do_shortcode()`
 		// Otherwise order classes messed up with internal sections if exist.
 		$module_classes = $this->module_classname( $function_name );
@@ -3397,7 +3401,7 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 
 				// Mask Size.
 				if ( '' !== $mask_size && $mask_size !== $mask_size_default ) {
-					$mask_size_style = $background_options->get_background_size_css( $mask_size, $mask_width, $mask_height, 'mask' );
+					$mask_size_style = $background_options->get_background_size_css( $mask_size, $mask_width, $mask_height, $mask_size_default, 'mask' );
 
 					if ( isset( $mask_size_style['size'] ) && $mask_size_style['size'] ) {
 						$style_mask .= sprintf(
@@ -3699,20 +3703,24 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		if ( $is_specialty_column ) {
 			$video_background = trim( $this->video_background( $background_video ) );
 			if ( '' !== $background_img && '' !== $parallax_method ) {
-				$parallax_gradient = sprintf(
+				$background_gradient_style = $is_gradient_on
+					? sprintf(
+						'background-image: %1$s;',
+						esc_html( $background_images[0] )
+					) : '';
+				$background_gradient_blend = '' !== $background_blend && 'normal' !== $background_blend
+					? sprintf(
+						'mix-blend-mode: %1$s;',
+						esc_html( $background_blend )
+					) : '';
+				$parallax_gradient         = sprintf(
 					'<div
 						class="et_parallax_gradient%1$s"
 						style="%2$s%3$s"
 					></div>',
 					( 'off' === $parallax_method ? ' et_pb_parallax_css' : '' ),
-					sprintf(
-						'background-image: %1$s;',
-						esc_html( $background_images[0] )
-					),
-					'' !== $background_blend && 'normal' !== $background_blend ? sprintf(
-						'mix-blend-mode: %1$s;',
-						esc_html( $background_blend )
-					) : ''
+					$background_gradient_style,
+					$background_gradient_blend
 				);
 
 				$parallax_image = sprintf(
@@ -3791,12 +3799,12 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 
 			$output = sprintf(
 				'<div class="%1$s%6$s"%4$s>
+				%3$s
 				%5$s
 				%7$s
 				%8$s
-				%3$s
 				%2$s
-			</div> <!-- .et_pb_column -->',
+			</div>',
 				$module_classname,
 				$inner_content,
 				$parallax_image,
@@ -3809,10 +3817,10 @@ class ET_Builder_Column extends ET_Builder_Structure_Element {
 		} else {
 			$output = sprintf(
 				'<div class="%1$s%6$s"%4$s>
+				%3$s
 				%5$s
 				%7$s
 				%8$s
-				%3$s
 				%2$s
 			</div>',
 				$module_classname,

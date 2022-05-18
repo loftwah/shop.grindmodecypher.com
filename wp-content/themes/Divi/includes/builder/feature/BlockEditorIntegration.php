@@ -705,8 +705,16 @@ class ET_Builder_Block_Editor_Integration {
 	 * @return void
 	 */
 	public function init_hooks() {
+		global $pagenow;
+
+		$edit_page_names = array( 'post.php', 'post-new.php', 'site-editor.php' );
+		$is_editing_page = in_array( $pagenow, $edit_page_names, true );
+
 		if ( is_admin() ) {
-			add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ), 4 );
+			// Load assets on post editing pages only.
+			if ( $is_editing_page ) {
+				add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ), 4 );
+			}
 			add_action( 'admin_print_scripts-edit.php', array( $this, 'add_new_button' ), 10 );
 			add_action( 'admin_init', array( $this, 'add_edit_link_filters' ) );
 
@@ -779,8 +787,12 @@ class ET_Builder_Block_Editor_Integration {
 		);
 		register_meta( 'post', '_et_gb_content_width', $args );
 
-		// Load Library and Cloud.
-		et_builder_load_library();
+
+
+		if ( $is_editing_page ) {
+			// Load Library and Cloud.
+			et_builder_load_library();
+		}
 	}
 }
 

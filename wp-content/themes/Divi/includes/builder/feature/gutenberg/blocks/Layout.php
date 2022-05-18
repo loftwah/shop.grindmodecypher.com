@@ -655,6 +655,17 @@ class ET_GB_Block_Layout {
 			return null;
 		}
 
+		// Bail early if TB override current layouts.
+		if ( ! empty( et_theme_builder_get_template_layouts() ) ) {
+			$override_header = et_theme_builder_overrides_layout( ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE );
+			$override_body   = et_theme_builder_overrides_layout( ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE );
+			$override_footer = et_theme_builder_overrides_layout( ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE );
+
+			if ( $override_header || $override_body || $override_footer ) {
+				return null;
+			}
+		}
+
 		// Get WP Editor template data to determine whether current Divi Layout block is
 		// rendered inside WP Editor template or not.
 		$block_to_render      = class_exists( 'WP_Block_Supports' ) && ! empty( WP_Block_Supports::$block_to_render ) ? WP_Block_Supports::$block_to_render : array();

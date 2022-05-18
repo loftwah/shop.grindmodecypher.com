@@ -22,16 +22,7 @@ class ET_Cloud_App {
 
 		add_filter( 'et_builder_load_requests', array( 'ET_Cloud_App', 'updateAjaxCallsList' ) );
 
-		add_action('pre_get_posts', array( 'ET_Cloud_App', 'hideDraftLayouts' ) );
-
 		return self::$_instance;
-	}
-
-	public static function hideDraftLayouts( $query ) {
-		// We use drafts as a temp posts for some Cloud actions and it shouldn't be visible for user.
-		if ( is_admin() && $query->is_main_query() && 'et_pb_layout' === $query->get('post_type') ) {
-			$query->set( 'post_status', array( 'publish', 'trash' ) );
-		}
 	}
 
 	public static function updateAjaxCallsList() {

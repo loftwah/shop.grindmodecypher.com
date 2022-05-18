@@ -170,6 +170,25 @@ Shhh, we offer one-time payment and unlimited sites packages, too! [Check it out
 
 == Changelog ==
 
+= May 17, 2022 - Version 2.9.3 =
+- Added: Support YITH WooCommerce Delivery Date (Addon)
+- Added: Support Shipping Domina WooCommerce (Addon)
+- Fixed: Bug of displaying Shipping address
+
+= May 4, 2022 - Version 2.9.2 =
+- Added: Shortcode Payment Instruction
+- Fixed: Display Shipping address
+
+= Apr 26, 2022 - Version 2.9.1.1 =
+Fixed: Small bugs
+
+= Apr 14, 2022 - Version 2.9.1 =
+- Updated: Addon Return and Warranty (1.1)
+- Added: Option turn on/off product hyperlink
+- Added: Show and hide element with conditional logic
+- Fixed: PHP Warning Undefined array key
+- Fixed: Small bugs
+
 = Apr 8, 2022 - Version 2.9 =
 - Supported: Return and Warranty (by chilidevs) (Addon)
 - Supported: B2BKing (Addon)

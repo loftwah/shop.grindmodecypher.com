@@ -13,7 +13,7 @@ class ET_Builder_Post_Taxonomy_LayoutTag extends ET_Core_Post_Taxonomy {
 	/**
 	 * Owner name.
 	 *
-	 * @since ??
+	 * @since 4.17.0
 	 * @var   string
 	 */
 	protected $_owner = 'builder';
@@ -21,7 +21,7 @@ class ET_Builder_Post_Taxonomy_LayoutTag extends ET_Core_Post_Taxonomy {
 	/**
 	 * Taxonomy key.
 	 *
-	 * @since ??
+	 * @since 4.17.0
 	 * @var   string
 	 */
 	public $name = 'layout_tag';

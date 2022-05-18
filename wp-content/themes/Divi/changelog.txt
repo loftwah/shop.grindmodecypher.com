@@ -1,3 +1,126 @@
+version 4.17.4 ( updated 05-12-2022 )
+- Fixed PHP 8 warning for Specialty Column Section Background Settings on Frontend for some cases.
+- Fixed Body Line Height option affects the Menu Module icons.
+- iFrame from custom field is now allowed to be embedded as Dynamic Content.
+- Fixed issue when 3P modules have custom selector for background hover, it's no longer worked and inherited main selector instead with :hover suffix.
+- Fixed Import Presets checkbox when importing items to local library using Cloud App.
+- Fixed warning MaxListenersExceededWarning printed in the console when opening global color setting field.
+- Fixed social media module sticky margin overridden by desktop value.
+- Fixed the title, description and the label name that possibly causes confusion when saving Section / Row / Module / Layout.
+- Fixed background video not properly showing up on hover.
+- Fixed a z-index ordering conflict between video backgrounds and section dividers.
+- Fixed menu overflow issue in header with video background.
+- Updated React Tooltip NPM package to the latest version.
+- Fixed a bug which caused rendering the wrong CSS for image size on front end in some cases.
+- Fixed a bug in BarCounter module to show percentage properly in VB.
+- Added missing placeholder SVGs on Theme Builder.
+- Removed unneeded help button from Save to Library Modal in some cases.
+- Fixed migration of background gradient settings for Specialty Section columns.
+- Exposed animation functionalities for third-party extensions.
+- Fixed checkout module being unable to process the checkout request when "Ship to different address ?" is selected.
+- Fixed issue where a Shop page built with Divi Builder could have some Woo Module styles broken on Front End.
+- Fixed duplicate styles tag injected into VB builder HTML head element.
+- Fix recently broken backwards compatibility in includes/builder/feature/Library.php.
+- Fixed module count label when no results found in Divi Library, rather than "0 Module" it will display "No Results".
+- Fixed Premade Items disappearing when logging out from Divi Cloud.
+- Fixed Divi Library items list rendering in WP Admin.
+- Fixed PHP error when exporting some layouts from Divi Library.
+- Fixed Global Colors exporting when item is exported from the Divi Library.
+- Added 'Update URI' plugin header check that can be used by 3rd party developers to avoid update conflicts with plugins sold on the Marketplace and the ones sold on the developer's website.
+- Fixed a PHP fatal error that occured when installing themes on older versions of WordPress (5.4.10 or older).
+- Added Template Editor support on Divi and Extra themes.
+- Fixed a bug that caused the email icon to be displayed on the top bar (default header) when no value was set for the email field in some cases.
+	* cloud/cloud-app.php
+	* core/admin/js/portability.js
+	* core/components/Portability.php
+	* core/components/Updates.php
+	* core/functions.php
+	* functions.php
+	* header.php
+	* includes/block-editor-integration.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/compat/woocommerce.php
+	* includes/builder/feature/Library.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-content.php
+	* includes/builder/feature/gutenberg/BlockTemplates.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/feature/gutenberg/utils/Editor.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/functions.php
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/field/Divider.php
+	* includes/builder/module/helpers/Background.php
+	* includes/builder/module/helpers/StickyOptions.php
+	* includes/builder/module/settings/migration/BackgroundGradientStops.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/woocommerce-modules.js
+	* theme-header.php
+	* theme.json
+
+version 4.17.3 ( updated 04-22-2022 )
+- Fixed premade items caching.
+- Fixed free items calculation in the Divi Cloud App.
+	* cloud/build/et-cloud-app.bundle.js
+
+version 4.17.2 ( updated 04-21-2022 )
+- Fixed a bug that prevented the settings modal from updating its background gradient preview when switching between view modes.
+- Improved items list refresh in the Cloud App after premade item is copied.
+- Fixed a PHP warning that occurred when attempting to edit a non-existent post from the WordPress backend.
+- Fixed flipped divider flickering in Safari browser.
+- Fixed Uncaught TypeError when Post Content module is edited in Wireframe Mode and then saved.
+- Fixed box shadow disappearing from posts in the blog module with pagination.
+- Fixed an issue where, during a woocommerce checkout, changing the country wasn't updating the shipping method .
+- Fixed a bug in Global Presets that would create malformed background gradients when processing global colors contained within a background gradient.
+- Fixed major performance issue caused by modifications to React Tooltip, which resulted in noticeable lag when interacting with the settings modal for long periods of time.
+- Fixed Library Modal styles loading in Backend Builder when Divi Builder Plugin is used.
+- Removed unsupported actions from the Divi Cloud in Theme Builder.
+- Fixed premade layouts update in the Cloud App when new layouts added.
+- Fixed large lists of Categories and Tags creation at once from the Cloud App.
+- Fixed Cloud tags icon if tag name contains uppercase letters.
+- Fixed the incorrect message that appeared when Divi Marketplace product updates failed.
+	* cloud/cloud-app.php
+	* core/components/Updates.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/frontend-builder/assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/module/helpers/Background.php
+	* includes/builder/module/settings/Migration.php
+	* includes/builder/module/settings/migration/BackgroundGradientStops.php
+	* includes/builder/scripts/frontend/scripts-dynamic.js
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/woocommerce-modules.js
+
+version 4.17.1 ( updated 04-14-2022 )
+- Fixed conflict with Events Manager plugin.
+- Fixed a bug in the background gradients migration script that prevented inherited settings from fully migrating to the new Gradient Builder format.
+- Fixed a bug in Counter Module that caused the background image to repeat with default settings on the front end.
+- Fixes an issue where the semicolon was not included after the important property on some form fields on focus.
+- Fixed issue were changing the zip code wasn't updating the shipping method for the given zip code.
+- Fixed an issue which caused background pattern/mask to not show up properly when parallax image is used for column backgrounds on the front end.
+- Fixed a text string conversion that could cause a fatal error in PHP 8.0 or later.
+- Fixed Divi Cloud App conflict with 3rd party plugins in some cases.
+- Fixed infinity resize event when FW Header fullscreen exists and the module scripts are reinitiated.
+- Fixed numeric input increment step value is incorrect when shift key is released before any other key.
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/feature/BlockEditorIntegration.php
+	* includes/builder/feature/Library.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/frontend-builder/assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/admin.php
+	* includes/builder/main-structure-elements.php
+	* includes/builder/module/CircleCounter.php
+	* includes/builder/module/settings/Migration.php
+	* includes/builder/module/settings/migration/BackgroundGradientStops.php
+	* includes/builder/post/taxonomy/LayoutTag.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/frontend/woocommerce-modules.js
+
 version 4.17 ( updated 04-06-2022 )
 - Added Divi Cloud storage system for Divi layouts.
 - Launched new version of the Divi Library popup in the Visual Builder.

@@ -201,7 +201,7 @@ if ( $flag_do_action ) {
 								$element['settingRow']['content'] = $content;
 							}
 						}
-						if ( isset( $element['settingRow']['arrConditionLogic'] ) && ! empty( $element['settingRow']['arrConditionLogic'] ) ) {
+						if ( has_filter('yaymail_addon_for_conditional_logic') && isset( $element['settingRow']['arrConditionLogic'] ) && ! empty( $element['settingRow']['arrConditionLogic'] ) ) {
 							$conditional_Logic = apply_filters( 'yaymail_addon_for_conditional_logic', false, $args, $element['settingRow'] );
 
 							if ( $conditional_Logic ) {

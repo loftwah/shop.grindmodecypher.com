@@ -63,6 +63,7 @@ class I18n {
 			'Pleaseinputimgagewidth' => __( 'Please input imgage width!', 'yaymail' ),
 			'SHOWPRODUCTSKU' => __( 'SHOWPRODUCT SKU', 'yaymail' ),
 			'SHOWPRODUCTDESCRIPTION' => __( 'SHOW PRODUCT DESCRIPTION', 'yaymail' ),
+			'SHOWPRODUCTHYPERLINKS' => __( 'SHOW PRODUCT HYPERLINKS', 'yaymail' ),
 			'CUSTOMCSS' => __( 'CUSTOM CSS', 'yaymail' ),
 			'Refresh' => __( 'Refresh', 'yaymail' ),
 			'Cancel' => __( 'Cancel', 'yaymail' ),

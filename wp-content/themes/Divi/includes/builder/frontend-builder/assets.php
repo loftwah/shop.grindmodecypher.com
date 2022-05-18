@@ -296,15 +296,20 @@ function et_fb_enqueue_assets() {
 		$additional_bundles[] = "{$app}/build/" . basename( $chunk );
 	}
 
-	$cloud_build_dir = get_template_directory() . '/cloud/build';
-	$cloud_uri       = get_template_directory_uri();
+	if ( defined( 'ET_CLOUD_PLUGIN_DIR' ) ) {
+		$cloud_build_dir = ET_CLOUD_PLUGIN_DIR . 'build';
+		$cloud_uri       = ET_CLOUD_PLUGIN_URI;
+	} else {
+		$cloud_build_dir = get_template_directory() . '/cloud/build';
+		$cloud_uri       = get_template_directory_uri() . '/cloud';
+	}
 
 	// Divi Cloud bundles.
 	foreach ( array_merge(
 		glob( $cloud_build_dir . '/*.css' ),
 		glob( $cloud_build_dir . '/*.js' )
 	) as $chunk ) {
-		$additional_bundles[] = "{$cloud_uri}/cloud/build/" . basename( $chunk );
+		$additional_bundles[] = "{$cloud_uri}/build/" . basename( $chunk );
 	}
 
 	wp_localize_script(
@@ -343,7 +348,8 @@ function et_fb_enqueue_assets() {
 
 	do_action( 'et_fb_enqueue_assets' );
 
-	ET_Cloud_App::load_js( false );
+	// Skip react loading for the Cloud app ( second param = true ) as we already did it at this point ( @see et_fb_enqueue_react() above ).
+	ET_Cloud_App::load_js( false, true );
 }
 
 function et_fb_app_src( $tag, $handle, $src ) {

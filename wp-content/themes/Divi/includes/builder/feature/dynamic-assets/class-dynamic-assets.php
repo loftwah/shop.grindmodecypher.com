@@ -1978,11 +1978,8 @@ class ET_Dynamic_Assets {
 				),
 			),
 			'et_pb_wc_checkout_payment_info'    => array(
-				'css'        => array(
+				'css' => array(
 					"{$assets_prefix}/css/woo_checkout_payment{$this->_cpt_suffix}.css",
-				),
-				'et_pb_icon' => array(
-					'css' => "{$assets_prefix}/css/icon{$this->_cpt_suffix}.css",
 				),
 			),
 		);
