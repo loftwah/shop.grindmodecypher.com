@@ -354,16 +354,13 @@ if ( ! class_exists( 'WC_Facebook_Product' ) ) :
 			return $description;
 		}
 
+		/**
+		 * @param array $product_data
+		 * @param bool $for_items_batch
+		 *
+		 * @return array
+		 */
 		public function add_sale_price( $product_data, $for_items_batch = false ) {
-
-			// initialise sale price
-			if ( $for_items_batch ) {
-				$product_data['sale_price_effective_date'] = self::MIN_DATE_1 . self::MIN_TIME . '/' . self::MIN_DATE_2 . self::MAX_TIME;
-			} else {
-				$product_data['sale_price_start_date'] = self::MIN_DATE_1 . self::MIN_TIME;
-				$product_data['sale_price_end_date']   = self::MIN_DATE_2 . self::MAX_TIME;
-			}
-			$product_data['sale_price'] = $product_data['price'];
 
 			$sale_price = $this->woo_product->get_sale_price();
 
@@ -630,7 +627,7 @@ if ( ! class_exists( 'WC_Facebook_Product' ) ) :
 				$product_data['checkout_url'] = $checkout_url;
 			}
 
-			// IF using WPML, set the product to staging unless it is in the
+			// IF using WPML, set the product to hidden unless it is in the
 			// default language. WPML >= 3.2 Supported.
 			if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
 				if ( class_exists( 'WC_Facebook_WPML_Injector' ) && WC_Facebook_WPML_Injector::should_hide( $id ) ) {
