@@ -43,6 +43,8 @@ class Settings {
 
 		add_filter( 'plugin_action_links_' . YAYMAIL_PLUGIN_BASENAME, array( $this, 'plugin_action_links' ) );
 
+		add_filter( 'plugin_row_meta', array( $this, 'add_support_and_docs_links' ), 10, 2 );
+
 		// free version
 		$optionNotice = get_option( 'yaymail_notice' );
 		if ( time() >= (int) $optionNotice ) {
@@ -104,6 +106,14 @@ class Settings {
 		);
 		$links[]      = '<a target="_blank" href="https://yaycommerce.com/yaymail-woocommerce-email-customizer/" style="color: #43B854; font-weight: bold">' . __( 'Go Pro', 'yaymail' ) . '</a>';
 		return array_merge( $action_links, $links );
+	}
+
+	public function add_support_and_docs_links( $plugin_meta, $plugin_file ) {
+		if ( YAYMAIL_PLUGIN_BASENAME === $plugin_file ) {
+			$plugin_meta[] = '<a target="_blank" href="https://docs.yaycommerce.com/yaymail/getting-started/introduction">Docs</a>';
+			$plugin_meta[] = '<a target="_blank" href="https://yaycommerce.com/support/">Support</a>';
+		}
+		return $plugin_meta;
 	}
 
 	public function registerCustomPostType() {
@@ -206,12 +216,12 @@ class Settings {
 			}
 		}
 		if ( strpos( $screenId, 'yaymail-settings' ) !== false && class_exists( 'WC_Emails' ) ) {
-			//Filter to active tinymce
+			// Filter to active tinymce
 			add_filter( 'user_can_richedit', '__return_true', PHP_INT_MAX );
 			// Get list template from Woo
 			$wc_emails    = \WC_Emails::instance();
 			$this->emails = (array) $wc_emails::instance()->emails;
-			unset($this->emails["WC_TrackShip_Email_Manager"]);
+			unset( $this->emails['WC_TrackShip_Email_Manager'] );
 			if ( isset( $this->emails['WC_GZD_Email_Customer_Shipment'] ) ) {
 				$partial_email              = new stdClass();
 				$partial_email->id          = 'customer_partial_shipment';
@@ -293,6 +303,8 @@ class Settings {
 
 			$this->emails          = apply_filters( 'YaymailCreateWCFMWooFMTemplates', $this->emails );
 			$settingEnableDisables = apply_filters( 'YaymailCreateSelectWCFMWooFMTemplates', $settingEnableDisables );
+
+			$this->emails = apply_filters( 'YaymailCreateGermanMarketTemplates', $this->emails );
 
 			$settingDefaultGenerals = array(
 				'payment'                      => 2,
@@ -379,9 +391,16 @@ class Settings {
 				$req_template['id'] = 'new_order';
 			}
 			foreach ( $this->emails as $value ) {
-				if ( $value->id == $req_template['id'] ) {
-					$req_template['title'] = $value->title;
+				if (is_array($value)) {
+					if ( $value['id'] == $req_template['id'] ) {
+						$req_template['title'] = $value['title'];
+					}
+				} else {
+					if ( $value->id == $req_template['id'] ) {
+						$req_template['title'] = $value->title;
+					}
 				}
+				
 			}
 
 			$allowed_html_tags          = wp_kses_allowed_html( 'post' );
@@ -390,7 +409,7 @@ class Settings {
 			// List email supported
 
 			$list_email_supported = array(
-				'WC_Subscription'                     => array(
+				'WC_Subscription'                          => array(
 					'plugin_name'   => 'WooCommerce Subscriptions',
 					'template_name' => array(
 						'cancelled_subscription',
@@ -415,7 +434,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-subscriptions',
 				),
-				'yith_wishlist_constructor'           => array(
+				'yith_wishlist_constructor'                => array(
 					'plugin_name'   => 'YITH WooCommerce Wishlist Premium',
 					'template_name' => array(
 						'estimate_mail',
@@ -425,7 +444,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-wishlist',
 				),
-				'SUMO_Subscription'                   => array(
+				'SUMO_Subscription'                        => array(
 					'plugin_name'   => 'SUMO Subscription',
 					'template_name' => array(
 						'subscription_new_order',
@@ -453,7 +472,7 @@ class Settings {
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-sumo-subscriptions',
 				),
 
-				'YITH_Subscription'                   => array(
+				'YITH_Subscription'                        => array(
 					'plugin_name'   => 'YITH WooCommerce Subscription Premium',
 					'template_name' => array(
 						'ywsbs_subscription_admin_mail',
@@ -471,7 +490,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-subscription',
 				),
-				'woo-b2b'                             => array(
+				'woo-b2b'                                  => array(
 					'plugin_name'   => 'WooCommerce B2B',
 					'template_name' => array(
 						'wcb2b_customer_onquote_order',
@@ -481,7 +500,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-b2b-woocommerce',
 				),
-				'YITH_Vendors'                        => array(
+				'YITH_Vendors'                             => array(
 					'plugin_name'   => 'YITH WooCommerce Multi Vendor Premium',
 					'template_name' => array(
 						'cancelled_order_to_vendor',
@@ -496,7 +515,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-multivendor',
 				),
-				'Germanized_Pro'                      => array(
+				'Germanized_Pro'                           => array(
 					'plugin_name'   => 'Germanized for WooCommerce',
 					'template_name' => array(
 						'sab_cancellation_invoice',
@@ -521,7 +540,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-germanized',
 				),
-				'WC_Bookings'                         => array(
+				'WC_Bookings'                              => array(
 					'plugin_name'   => 'WooCommerce Bookings',
 					'template_name' => array(
 						'admin_booking_cancelled',
@@ -534,7 +553,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-bookings',
 				),
-				'WooCommerce_Waitlist'                => array(
+				'WooCommerce_Waitlist'                     => array(
 					'plugin_name'   => 'WooCommerce Waitlist',
 					'template_name' => array(
 						'woocommerce_waitlist_joined_email',
@@ -544,7 +563,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-waitlist',
 				),
-				'WooCommerce_Quotes'                  => array(
+				'WooCommerce_Quotes'                       => array(
 					'plugin_name'   => 'Quotes for WooCommerce',
 					'template_name' => array(
 						'qwc_req_new_quote',
@@ -553,7 +572,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-quotes-woocommerce',
 				),
-				'YITH_Pre_Order'                      => array(
+				'YITH_Pre_Order'                           => array(
 					'plugin_name'   => 'YITH Pre-Order for WooCommerce Premium ',
 					'template_name' => array(
 						'yith_ywpo_date_end',
@@ -563,7 +582,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-pre-order',
 				),
-				'WooCommerce_Appointments'            => array(
+				'WooCommerce_Appointments'                 => array(
 					'plugin_name'   => 'WooCommerce Appointments',
 					'template_name' => array(
 						'admin_appointment_cancelled',
@@ -576,7 +595,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-appointments-woocommerce',
 				),
-				'SG_Order_Approval'                   => array(
+				'SG_Order_Approval'                        => array(
 					'plugin_name'   => 'Sg Order Approval for Woocommerce',
 					'template_name' => array(
 						'wc_admin_order_new',
@@ -590,7 +609,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-order-approval-woocommerce',
 				),
-				'YITH_Pre_Order'                      => array(
+				'YITH_Pre_Order'                           => array(
 					'plugin_name'   => 'YITH Pre-Order for WooCommerce Premium ',
 					'template_name' => array(
 						'yith_ywpo_date_end',
@@ -600,12 +619,12 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-pre-order',
 				),
-				'Follow_Up_Emails'                    => array(
+				'Follow_Up_Emails'                         => array(
 					'plugin_name'   => 'Follow Up Emails for WooCommerce ',
 					'template_name' => apply_filters( 'YaymailCreateListFollowUpNames', array() ),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-follow-ups',
 				),
-				'Order_Delivery_Date'                 => array(
+				'Order_Delivery_Date'                      => array(
 					'plugin_name'   => 'Order Delivery Date Pro for WooCommerce',
 					'template_name' => array(
 						'orddd_delivery_reminder',
@@ -614,14 +633,14 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-order-delivery-date',
 				),
-				'WC_Email_Cancelled_Customer_Order'   => array(
+				'WC_Email_Cancelled_Customer_Order'        => array(
 					'plugin_name'   => 'Order Cancellation Email to Customer',
 					'template_name' => array(
 						'wc_customer_cancelled_order',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-order-cancellation-email-customer',
 				),
-				'WC_Smart_Coupons'                    => array(
+				'WC_Smart_Coupons'                         => array(
 					'plugin_name'   => 'WooCommerce Smart Coupons',
 					'template_name' => array(
 						'wc_sc_combined_email_coupon',
@@ -630,7 +649,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-smart-coupons',
 				),
-				'Dokan'                               => array(
+				'Dokan'                                    => array(
 					'plugin_name'   => 'Dokan',
 					'template_name' => array(
 						'dokan_new_seller',
@@ -668,7 +687,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-dokan',
 				),
-				'B2B_Wholesale_Suite'                 => array(
+				'B2B_Wholesale_Suite'                      => array(
 					'plugin_name'   => 'B2B & Wholesale Suite',
 					'template_name' => array(
 						'b2bwhs_new_customer_email',
@@ -679,7 +698,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-b2b-wholesale-suite',
 				),
-				'WooCommerce_Deposits'                => array(
+				'WooCommerce_Deposits'                     => array(
 					'plugin_name'   => 'WooCommerce Deposits',
 					'template_name' => array(
 						'customer_deposit_partially_paid',
@@ -690,7 +709,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woocommerce-deposits',
 				),
-				'YITH_Booking'                        => array(
+				'YITH_Booking'                             => array(
 					'plugin_name'   => 'YITH Booking and Appointment for WooCommerce Premium',
 					'template_name' => array(
 						'yith_wcbk_admin_new_booking',
@@ -707,21 +726,21 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-booking',
 				),
-				'WooCommerce_Points_Rewards'          => array(
+				'WooCommerce_Points_Rewards'               => array(
 					'plugin_name'   => 'Points and Rewards for WooCommerce',
 					'template_name' => array(
 						'mwb_wpr_email_notification',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-points-and-rewards',
 				),
-				'PW_WooCommerce_Gift_Cards'           => array(
+				'PW_WooCommerce_Gift_Cards'                => array(
 					'plugin_name'   => 'PW WooCommerce Gift Cards',
 					'template_name' => array(
 						'pwgc_email',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-pw-gift-cards',
 				),
-				'YITH_WooCommerce_Gift_Cards_Premium' => array(
+				'YITH_WooCommerce_Gift_Cards_Premium'      => array(
 					'plugin_name'   => 'YITH WooCommerce Gift Cards Premium',
 					'template_name' => array(
 						'ywgc-email-delivered-gift-card',
@@ -729,7 +748,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-gift-cards',
 				),
-				'YITH_WooCommerce_Membership_Premium' => array(
+				'YITH_WooCommerce_Membership_Premium'      => array(
 					'plugin_name'   => 'YITH WooCommerce Membership Premium',
 					'template_name' => array(
 						'membership_cancelled',
@@ -739,7 +758,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-membership',
 				),
-				'WooCommerce_Order_Delivery'          => array(
+				'WooCommerce_Order_Delivery'               => array(
 					'plugin_name'   => 'WooCommerce Order Delivery',
 					'template_name' => array(
 						'subscription_delivery_note',
@@ -747,7 +766,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-themesquad-delivery-date',
 				),
-				'WooCommerce_Simple_Auction'          => array(
+				'WooCommerce_Simple_Auction'               => array(
 					'plugin_name'   => 'WooCommerce Simple Auction',
 					'template_name' => array(
 						'auction_buy_now',
@@ -765,7 +784,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-simple-auctions',
 				),
-				'vendors_marketplace'                 => array(
+				'vendors_marketplace'                      => array(
 					'plugin_name'   => 'Vendors marketplace',
 					'template_name' => array(
 						'admin_notify_approved',
@@ -787,7 +806,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wc-vendors',
 				),
-				'WooCommerce_Pre_Orders'              => array(
+				'WooCommerce_Pre_Orders'                   => array(
 					'plugin_name'   => 'WooCommerce Pre-Orders',
 					'template_name' => array(
 						'wc_pre_orders_new_pre_order',
@@ -798,14 +817,14 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-pre-orders',
 				),
-				'WooCommerce_Split_Orders'            => array(
+				'WooCommerce_Split_Orders'                 => array(
 					'plugin_name'   => 'WooCommerce Split Orders',
 					'template_name' => array(
 						'customer_order_split',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-split-orders',
 				),
-				'WP_Crowdfunding'                     => array(
+				'WP_Crowdfunding'                          => array(
 					'plugin_name'   => 'WP Crowdfunding',
 					'template_name' => array(
 						'wp_crowdfunding_campaign_accept',
@@ -818,14 +837,14 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wp-crowdfunding',
 				),
-				'LMFWC'                               => array(
+				'LMFWC'                                    => array(
 					'plugin_name'   => 'License Manager for WooCommerce',
 					'template_name' => array(
 						'lmfwc_email_customer_deliver_license_keys',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-license-manager-for-woo',
 				),
-				'WC_PIP_Loader'                       => array(
+				'WC_PIP_Loader'                            => array(
 					'plugin_name'   => 'Woocommerce Print Invoices & Packing lists',
 					'template_name' => array(
 						'pip_email_invoice',
@@ -834,14 +853,14 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-print-invoices-packing-lists',
 				),
-				'WooCommerce_Account_Funds'           => array(
+				'WooCommerce_Account_Funds'                => array(
 					'plugin_name'   => 'WooCommerce Account Funds',
 					'template_name' => array(
 						'wc_account_funds_increase',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-themesquad-account-funds',
 				),
-				'WooCommerce_Gift_Cards'              => array(
+				'WooCommerce_Gift_Cards'                   => array(
 					'plugin_name'   => 'WooCommerce Gift Cards',
 					'template_name' => array(
 						'gift_card_received',
@@ -849,12 +868,12 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-gift-cards-woocommerce',
 				),
-				'AutomateWoo'                         => array(
+				'AutomateWoo'                              => array(
 					'plugin_name'   => 'AutomateWoo',
 					'template_name' => apply_filters( 'YaymailCreateListAutomateWooNames', array() ),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-automatewoo',
 				),
-				'YITH_WCSTRIPE'                       => array(
+				'YITH_WCSTRIPE'                            => array(
 					'plugin_name'   => 'YITH Woocommerce Stripe',
 					'template_name' => array(
 						'renew_needs_action',
@@ -862,7 +881,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-woocommerce-stripe',
 				),
-				'WooCommerce_Stripe_Gateway'          => array(
+				'WooCommerce_Stripe_Gateway'               => array(
 					'plugin_name'   => 'WooCommerce Stripe Gateway',
 					'template_name' => array(
 						'failed_authentication_requested',
@@ -871,7 +890,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-stripe-payment-gateway',
 				),
-				'WooCommerce_Multivendor_Marketplace' => array(
+				'WooCommerce_Multivendor_Marketplace'      => array(
 					'plugin_name'   => 'WooCommerce Multivendor Marketplace',
 					'template_name' => array(
 						'new-enquiry',
@@ -880,7 +899,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wcfm-marketplace',
 				),
-				'WooCommerce_Memberships'             => array(
+				'WooCommerce_Memberships'                  => array(
 					'plugin_name'   => 'WooCommerce Memberships',
 					'template_name' => array(
 						'WC_Memberships_User_Membership_Activated_Email',
@@ -895,12 +914,12 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-memberships',
 				),
-				'TrackShip_for_WooCommerce'           => array(
+				'TrackShip_for_WooCommerce'                => array(
 					'plugin_name'   => 'TrackShip for WooCommerce',
 					'template_name' => apply_filters( 'YaymailCreateListTrackShipWooNames', array() ),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-trackship',
 				),
-				'AliDropship_Woo_Plugin'              => array(
+				'AliDropship_Woo_Plugin'                   => array(
 					'plugin_name'   => 'AliDropship Woo Plugin',
 					'template_name' => array(
 						'adsw_order_shipped_notification',
@@ -916,7 +935,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-review-discounts',
 				),
-				'SUMO_Payment_Plans'                  => array(
+				'SUMO_Payment_Plans'                       => array(
 					'plugin_name'   => 'SUMO Payment Plans',
 					'template_name' => array(
 						'_sumo_pp_deposit_balance_payment_auto_charge_reminder',
@@ -935,7 +954,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-sumo-payment-plans',
 				),
-				'TeraWallet'                          => array(
+				'TeraWallet'                               => array(
 					'plugin_name'   => 'TeraWallet',
 					'template_name' => array(
 						'new_wallet_transaction',
@@ -946,7 +965,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-terawallet',
 				),
-				'CustomFieldsforWooCommerce'          => array(
+				'CustomFieldsforWooCommerce'               => array(
 					'plugin_name'   => 'Custom Fields for WooCommerce by Addify',
 					'template_name' => array(
 						'af_email_admin_register_new_user',
@@ -956,7 +975,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-custom-fields-addify',
 				),
-				'WooCommerceMultiLocationInventory'   => array(
+				'WooCommerceMultiLocationInventory'        => array(
 					'plugin_name'   => 'WooCommerce MultiLocation Inventory & Order Routing',
 					'template_name' => array(
 						'wh_new_order',
@@ -995,7 +1014,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wcmp-marketplace',
 				),
-				'AffiliateForWooCommerce'             => array(
+				'AffiliateForWooCommerce'                  => array(
 					'plugin_name'   => 'Affiliate For WooCommerce',
 					'template_name' => array(
 						'afwc_commission_paid',
@@ -1005,7 +1024,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-affiliate-storeapps',
 				),
-				'WooCommerceProductVendors'           => array(
+				'WooCommerceProductVendors'                => array(
 					'plugin_name'   => 'WooCommerce Product Vendors',
 					'template_name' => array(
 						'vendor_approval',
@@ -1019,7 +1038,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-product-vendors/',
 				),
-				'WooCommerceBackInStockNotifications'             => array(
+				'WooCommerceBackInStockNotifications'      => array(
 					'plugin_name'   => 'WooCommerce Back In Stock Notifications',
 					'template_name' => array(
 						'bis_notification_confirm',
@@ -1028,7 +1047,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-back-in-stock-notifications',
 				),
-				'WooCommerceReturnandWarrrantyPro'             => array(
+				'WooCommerceReturnandWarrrantyPro'         => array(
 					'plugin_name'   => 'WooCommerce Return and Warrranty Pro',
 					'template_name' => array(
 						'WCRW_Send_Coupon_Email',
@@ -1036,7 +1055,7 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-wc-return-warrranty',
 				),
-				'B2BKing'             => array(
+				'B2BKing'                                  => array(
 					'plugin_name'   => 'B2BKing',
 					'template_name' => array(
 						'b2bking_new_customer_email',
@@ -1047,19 +1066,115 @@ class Settings {
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-b2bking',
 				),
-				'Domina_Shipping'                             => array(
+				'Domina_Shipping'                          => array(
 					'plugin_name'   => 'Domina Shipping',
 					'template_name' => array(
 						'Domina_Email_Tracking',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-departamentos-ciudades-colombia',
 				),
-				'YITH_WooCommerce_Delivery_Date_Premium'      => array(
+				'YITH_WooCommerce_Delivery_Date_Premium'   => array(
 					'plugin_name'   => 'YITH WooCommerce Delivery Date Premium',
 					'template_name' => array(
 						'yith_advise_user_delivery_email',
 					),
 					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-delivery-date',
+				),
+				'YITH_Advanced_Refund_System_for_WooCommerce_Premium' => array(
+					'plugin_name'   => 'YITH Advanced Refund System for WooCommerce Premium',
+					'template_name' => array(
+						'yith_ywcars_approved_user_email',
+						'yith_ywcars_coupon_user_email',
+						'yith_ywcars_new_message_admin_email',
+						'yith_ywcars_new_message_user_email',
+						'yith_ywcars_new_request_admin_email',
+						'yith_ywcars_new_request_user_email',
+						'yith_ywcars_on_hold_user_email',
+						'yith_ywcars_processing_user_email',
+						'yith_ywcars_rejected_user_email',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-refund-system',
+				),
+				'YITH_WooCommerce_Affiliates_Premium'      => array(
+					'plugin_name'   => 'YITH WooCommerce Affiliates Premium',
+					'template_name' => array(
+						'new_affiliate',
+						'payment_sent',
+						'pending_commission',
+						'affiliate_ban',
+						'affiliate_new_coupon',
+						'customer_payment_sent',
+						'customer_pending_commission',
+						'affiliate_status_changed',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-affiliates',
+				),
+				'YITH_Auctions_for_WooCommerce_Premium'    => array(
+					'plugin_name'   => 'YITH Auctions for WooCommerce Premium',
+					'template_name' => array(
+						'yith_wcact_email_auction_no_winner',
+						'yith_wcact_email_auction_rescheduled_admin',
+						'yith_wcact_email_auction_winner',
+						'yith_wcact_email_auction_winner_reminder',
+						'yith_wcact_email_better_bid',
+						'yith_wcact_email_closed_buy_now',
+						'yith_wcact_email_auction_delete_bid',
+						'yith_wcact_email_delete_bid_admin',
+						'yith_wcact_email_end_auction',
+						'yith_wcact_email_new_bid',
+						'yith_wcact_email_not_reached_reserve_price',
+						'yith_wcact_email_not_reached_reserve_price_max_bidder',
+						'yith_wcact_email_successfully_bid',
+						'yith_wcact_email_successfully_bid_admin',
+						'yith_wcact_email_successfully_follow',
+						'yith_wcact_email_winner_admin',
+						'yith_wcact_email_without_bid',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-auctions',
+				),
+				'RMA_Return_Refund_Exchange_for_WooCommerce_Pro' => array(
+					'plugin_name'   => 'RMA Return Refund & Exchange for WooCommerce Pro',
+					'template_name' => array(
+						'wps_rma_cancel_request_email',
+						'wps_rma_exchange_request_accept_email',
+						'wps_rma_exchange_request_cancel_email',
+						'wps_rma_exchange_request_email',
+						'wps_rma_order_messages_email',
+						'wps_rma_refund_email',
+						'wps_rma_refund_request_accept_email',
+						'wps_rma_refund_request_cancel_email',
+						'wps_rma_refund_request_email',
+						'wps_rma_returnship_email',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-woo-refund-and-exchange',
+				),
+				'YITH_WooCommerce_Points_and_Rewards_Premium' => array(
+					'plugin_name'   => 'YITH WooCommerce Points and Rewards Premium',
+					'template_name' => array(
+						'ywpar_expiration',
+						'ywpar_update_points',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-points-and-rewards',
+				),
+				'WooCommerce_PDF_Product_Vouchers'         => array(
+					'plugin_name'   => 'WooCommerce PDF Product Vouchers',
+					'template_name' => array(
+						'wc_pdf_product_vouchers_voucher_purchaser',
+						'wc_pdf_product_vouchers_voucher_recipient',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-pdf-product-vouchers',
+				),
+				'YITH_WooCommerce_Request_A_Quote_Premium' => array(
+					'plugin_name'   => 'YITH WooCommerce Request A Quote Premium',
+					'template_name' => array(
+						'ywraq_quote_status',
+						'ywraq_email',
+						'ywraq_email_customer',
+						'ywraq_send_quote',
+						'ywraq_send_quote_reminder',
+						'ywraq_send_quote_reminder_accept',
+					),
+					'link_upgrade'  => 'https://yaycommerce.com/yaymail-woocommerce-email-customizer/#yaymail-addon-yith-request-a-quote',
 				),
 			);
 
@@ -1070,6 +1185,9 @@ class Settings {
 			}
 			if ( class_exists( 'WC_Admin_Custom_Order_Fields' ) ) {
 				$list_plugin_for_pro[] = 'WC_Admin_Custom_Order_Fields';
+			}
+			if ( class_exists( 'Woocommerce_German_Market' ) ) {
+				$list_plugin_for_pro[] = 'Woocommerce_German_Market';
 			}
 
 			$orderby        = 'name';
@@ -1082,17 +1200,19 @@ class Settings {
 				'hide_empty' => $hide_empty,
 			);
 
-			$product_categories  = get_terms( 'product_cat', $cat_args );
-			$les_promenades_fantomes  = get_terms( 'les-promenades-fantomes', $cat_args );
-			$promas_service = get_terms( 'promas-service', $cat_args );
-			$billing_country     = WC()->countries->countries;
-			$arr_payment_methods = array();
-			$payment_methods     = WC()->payment_gateways->get_available_payment_gateways();
+			$product_categories      = get_terms( 'product_cat', $cat_args );
+			$les_promenades_fantomes = get_terms( 'les-promenades-fantomes', $cat_args );
+			$promas_service          = get_terms( 'promas-service', $cat_args );
+			$billing_country         = WC()->countries->countries;
+			$arr_payment_methods     = array();
+			$payment_methods         = WC()->payment_gateways->payment_gateways;
 			foreach ( $payment_methods as $key => $item ) {
-				$arr_payment_methods[] = array(
-					'id'           => $item->id,
-					'method_title' => $item->method_title,
-				);
+				if ( $item->enabled == 'yes' ) {
+					$arr_payment_methods[] = array(
+						'id'           => $item->id,
+						'method_title' => $item->method_title,
+					);
+				}
 			}
 
 			$get_shipping_methods = WC()->shipping->get_shipping_methods();
@@ -1108,18 +1228,19 @@ class Settings {
 
 			$shipping_methods = $data;
 
-			global $wpdb;
-			$get_coupon_codes = $wpdb->get_col("SELECT post_name FROM $wpdb->posts WHERE post_type = 'shop_coupon' AND post_status = 'publish' ORDER BY post_name ASC");
-			$data_coupon_codes            = array();
-			foreach ( $get_coupon_codes as $coupon_codes ) {
-				$item = array(
-					'id'           => $coupon_codes,
-					'coupon_codes' => $coupon_codes,
-				);
+			$data_coupon_codes = array();
+			if ( is_plugin_active( 'yaymail-addon-conditional-logic/yaymail-conditional-logic.php' ) ) {
+				global $wpdb;
+				$get_coupon_codes = $wpdb->get_col( "SELECT post_name FROM $wpdb->posts WHERE post_type = 'shop_coupon' AND post_status = 'publish' ORDER BY post_name ASC LIMIT 100" );
+				foreach ( $get_coupon_codes as $coupon_codes ) {
+					$item = array(
+						'id'           => $coupon_codes,
+						'coupon_codes' => $coupon_codes,
+					);
 
-				$data_coupon_codes[] = $item;
+					$data_coupon_codes[] = $item;
+				}
 			}
-
 			$coupon_codes = $data_coupon_codes;
 
 			$listShortCodeAddon = apply_filters( 'yaymail_list_shortcodes', array() );
@@ -1127,8 +1248,15 @@ class Settings {
 			$this->emails = array_map(
 				function( $item ) {
 					$final_item        = new stdClass();
-					$final_item->id    = $item->id;
-					$final_item->title = $item->title;
+					
+					if (is_array($item)) {
+						$final_item->id    = $item['id'];
+						$final_item->title = $item['title'];
+					} else {
+						$final_item->id    = $item->id;
+						$final_item->title = $item->title;
+					}
+				
 					return $final_item;
 				},
 				$this->emails

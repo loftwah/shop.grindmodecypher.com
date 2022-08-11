@@ -64,6 +64,7 @@ class Templates {
 			$listEmails             = array_merge( $listEmails, array( 'AutomateWoo_Referrals_Email' => $referrals_email ) );
 		}
 		$listEmails            = apply_filters( 'YaymailCreateFollowUpTemplates', $listEmails );
+    $listEmails            = apply_filters( 'YaymailCreateGermanMarketTemplates', $listEmails );
 		$listEmails            = apply_filters( 'YaymailCreateAutomateWooTemplates', $listEmails );
 		$listEmails            = apply_filters( 'YaymailCreateTrackShipWooTemplates', $listEmails );
     $listEmails            = apply_filters( 'YaymailCreateWCFMWooFMTemplates', $listEmails );
@@ -107,12 +108,22 @@ class Templates {
 		$listTemplates = array_merge( $listTemplates, $cusNewAccountArr );
 
 		foreach ( $listEmails as $key => $value ) {
-			if ( ! in_array( $value->id, $listEmailDefaultOfWoo ) ) {
-				$newTempalte = apply_filters( 'YaymailNewTempalteDefault', '', $key, $value );
-				if ( isset( $newTempalte ) && null != $newTempalte && is_array( $newTempalte ) ) {
-					$listTemplates = array_merge( $listTemplates, $newTempalte );
-				}
-			}
+      if (is_array($value)) {
+        if ( ! in_array( $value['id'], $listEmailDefaultOfWoo ) ) {
+          $newTempalte = apply_filters( 'YaymailNewTempalteDefault', '', $key, $value );
+          if ( isset( $newTempalte ) && null != $newTempalte && is_array( $newTempalte ) ) {
+            $listTemplates = array_merge( $listTemplates, $newTempalte );
+          }
+        }
+      } else {
+        if ( ! in_array( $value->id, $listEmailDefaultOfWoo ) ) {
+          $newTempalte = apply_filters( 'YaymailNewTempalteDefault', '', $key, $value );
+          if ( isset( $newTempalte ) && null != $newTempalte && is_array( $newTempalte ) ) {
+            $listTemplates = array_merge( $listTemplates, $newTempalte );
+          }
+        }
+      }
+			
 		}
 
 		return $listTemplates;

@@ -11,7 +11,7 @@ $titleColor      = isset( $atts['titlecolor'] ) && $atts['titlecolor'] ? 'color:
 $before = '<h2 style="font-weight: normal;' . esc_attr( $titleColor ) . '" class="yaymail_builder_link" href="">';
 $after  = '</h2>';
 /* translators: %s: Order ID. */
-echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . ' (<time datetime="%s">%s</time>)', 1, new WC_DateTime(), wc_format_datetime( new WC_DateTime() ) ) . $after );
+echo wp_kses_post( $before . '<span class="yaymail-underline">' . sprintf( __( '[Order #%s]', 'woocommerce' ) . '</span>' . ' (<time datetime="%s">%s</time>)', 1, new WC_DateTime(), wc_format_datetime( new WC_DateTime() ) ) . $after );
 
 
 

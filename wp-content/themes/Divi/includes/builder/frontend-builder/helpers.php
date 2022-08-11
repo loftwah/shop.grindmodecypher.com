@@ -24,9 +24,10 @@ function et_fb_prepare_library_terms( $taxonomy = 'layout_category' ) {
 	if ( is_array( $raw_terms_array ) && ! empty( $raw_terms_array ) ) {
 		foreach ( $raw_terms_array as $term ) {
 			$clean_terms_array[] = array(
-				'name' => html_entity_decode( $term->name ),
-				'id'   => $term->term_id,
-				'slug' => $term->slug,
+				'name'  => html_entity_decode( $term->name ),
+				'id'    => $term->term_id,
+				'slug'  => $term->slug,
+				'count' => $term->count,
 			);
 		}
 	}
@@ -304,6 +305,9 @@ function et_fb_get_dynamic_backend_helpers() {
 
 	$home_url = wp_parse_url( get_site_url() );
 
+	$library_capability   = et_core_portability_cap( 'et_builder_layouts' );
+	$local_import_support = current_user_can( $library_capability );
+
 	$helpers = array(
 		'site_url'                     => get_site_url(),
 		'site_domain'                  => isset( $home_url['host'] ) ? untrailingslashit( $home_url['host'] ) : '/',
@@ -329,6 +333,7 @@ function et_fb_get_dynamic_backend_helpers() {
 		'ajaxUrl'                      => is_ssl() ? admin_url( 'admin-ajax.php' ) : admin_url( 'admin-ajax.php', 'http' ),
 		'et_account'                   => et_core_get_et_account(),
 		'productTourStatus'            => et_builder_is_product_tour_enabled() ? 'on' : 'off',
+		'localLibraryImportSupport'    => $local_import_support ? 'yes' : 'no',
 		'gutterWidth'                  => (string) et_get_option( 'gutter_width', '3' ),
 		'sectionPadding'               => et_get_option( 'section_padding', 4 ),
 		'cookie_path'                  => SITECOOKIEPATH,
@@ -337,7 +342,8 @@ function et_fb_get_dynamic_backend_helpers() {
 		'currentUserDisplayName'       => $current_user->display_name,
 		'currentRole'                  => et_pb_get_current_user_role(),
 		'currentUserCapabilities'      => array(
-			'manageOptions' => current_user_can( 'manage_options' ),
+			'manageOptions'    => current_user_can( 'manage_options' ),
+			'manageCategories' => current_user_can( 'manage_categories' ),
 		),
 		'exportUrl'                    => et_fb_get_portability_export_url(),
 		'nonces'                       => et_fb_get_nonces(),
@@ -2125,6 +2131,10 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 			'includeGlobalPresets' => esc_html__( 'Include Presets', 'et_builder' ),
 			'applyGlobalPresets'   => esc_html__( 'Apply To Exported Layout', 'et_builder' ),
 			'importContextFail'    => esc_html__( 'This file should not be imported in this context.', 'et_builder' ),
+			'closeWindow'              => esc_html__( 'Close Window', 'et_builder' ),
+			'no'                       => esc_html__( 'No', 'et_builder' ),
+			'yes'                      => esc_html__( 'Yes', 'et_builder' ),
+			'closelibraryConfirmation' => esc_html__( 'Are you sure you want to cancel current request(s) and close the window?', 'et_builder' ),
 			'globalPresets'        => array(
 				'title'            => esc_html__( 'Are You Sure?', 'et_builder' ),
 				'text'             => array(
@@ -2170,6 +2180,12 @@ function et_fb_get_static_backend_helpers( $post_type ) {
 			),
 			'favoritesAdd'         => esc_html__( 'Add To Favorites', 'et_builder' ),
 			'favoritesRemove'      => esc_html__( 'Remove From Favorites', 'et_builder' ),
+		),
+		'prompts'                   => array(
+			'importWithLabel'   => esc_html__( 'Import Design Presets?', 'et_builder' ),
+			'importWithContent' => esc_html__( 'This layout contains global design presets. Check the box below to import these styles as presets, or leave it unchecked to bring them in as static styles.', 'et_builder' ),
+			'import'            => esc_html__( 'Import', 'et_builder' ),
+			'importPresets'     => esc_html__( 'Import Presets', 'et_builder' ),
 		),
 		'saveModuleLibraryAttrs'    => array(
 			'cancel'                 => et_builder_i18n( 'Cancel' ),

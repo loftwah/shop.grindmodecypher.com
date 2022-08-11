@@ -608,7 +608,7 @@ class ET_Builder_Module_Contact_Form_Item extends ET_Builder_Module {
 			case 'textarea':
 				$input_field = sprintf(
 					'<textarea name="et_pb_contact_%3$s_%2$s" id="et_pb_contact_%3$s_%2$s" class="et_pb_contact_message input" data-required_mark="%6$s" data-field_type="%4$s" data-original_id="%3$s" placeholder="%5$s"%7$s>%1$s</textarea>',
-					( isset( $_POST[ 'et_pb_contact_' . $field_id . '_' . $current_module_num ] ) ? esc_html( sanitize_text_field( $_POST[ 'et_pb_contact_' . $field_id . '_' . $current_module_num ] ) ) : '' ),
+					( isset( $_POST[ 'et_pb_contact_' . $field_id . '_' . $current_module_num ] ) ? esc_html( sanitize_textarea_field( $_POST[ 'et_pb_contact_' . $field_id . '_' . $current_module_num ] ) ) : '' ),
 					esc_attr( $current_module_num ),
 					esc_attr( $field_id ),
 					esc_attr( $field_type ),

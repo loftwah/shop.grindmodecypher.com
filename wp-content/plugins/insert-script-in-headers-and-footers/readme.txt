@@ -4,8 +4,8 @@ Donate link: https://paypal.me/rvadhel
 Tags: Insert javascript, Insert custom style,Insert Html,Insert Facebook pixel code, Add Google Analytics code
 Requires PHP: 5.2.4
 Requires at least: 3.0.1
-Tested up to: 5.9.0
-Stable tag: 2.0
+Tested up to: 6.0.1
+Stable tag: 2.1
 
 By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header, footer and body. no need to edit theme!
 
@@ -66,6 +66,9 @@ After active plugin go to Setting->Insert Script In Headers And Footers.
 
 
 == Changelog ==
+= 2.1 =
+ Tested up to wp version 6.0.1
+
 = 2.0 =
  Tested up to wp version 5.9.0
  

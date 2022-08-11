@@ -66,7 +66,7 @@ class ET_Builder_Block_Templates {
 	 * Filter specific template loaders to use theme template files if any instead of
 	 * 'wp_template' posts.
 	 *
-	 * @since ??
+	 * @since 4.17.4
 	 */
 	public static function filter_template_loaders() {
 		$template_slugs = self::get_supported_template_slugs();
@@ -296,7 +296,7 @@ class ET_Builder_Block_Templates {
 	 * - Current WordPress or Gutenberg supports block templates
 	 * - Current theme supports block templates
 	 *
-	 * @since ??
+	 * @since 4.17.4
 	 *
 	 * @return boolean Compatibility status.
 	 */
@@ -314,7 +314,7 @@ class ET_Builder_Block_Templates {
 		/**
 		 * Filters the result of the block templates compatibility check.
 		 *
-		 * @since ??
+		 * @since 4.17.4
 		 *
 		 * @param boolean $is_block_templates_compat_needed Compatibility status.
 		 */
@@ -326,7 +326,7 @@ class ET_Builder_Block_Templates {
 	 *
 	 * Those template slugs are available on TB.
 	 *
-	 * @since ??
+	 * @since 4.17.4
 	 *
 	 * @return string[] List of supported template slugs.
 	 */

@@ -48,6 +48,40 @@ class WooTemplate {
 				add_filter( 'wcfm_email_content_wrapper', array( &$this, 'wcfm_email_content_wrapper' ), 1, 2 );
 			}
 		}
+		// change german market template dir
+		$this->yaymail_get_german_market_templates();
+	}
+
+	public function yaymail_get_german_market_templates() {
+		if ( class_exists( 'Woocommerce_German_Market' ) ) {
+			add_filter(
+				'wgm_locate_template',
+				function( $template, $template_name, $template_path ) {
+					if ( 'emails/customer-confirm-order.php' === $template_name ) {
+						$postID          = CustomPostType::postIDByTemplate( 'wgm_confirm_order_email' );
+						$template_status = get_post_meta( $postID, '_yaymail_status', true );
+						if ( $template_status ) {
+							return YAYMAIL_PLUGIN_PATH . 'views/templates/emails/customer-confirm-order.php';
+						}
+					} elseif ( 'double-opt-in-customer-registration.php' === $template_name ) {
+						$postID          = CustomPostType::postIDByTemplate( 'wgm_double_opt_in_customer_registration' );
+						$template_status = get_post_meta( $postID, '_yaymail_status', true );
+						if ( $template_status ) {
+							return YAYMAIL_PLUGIN_PATH . 'views/templates/emails/double-opt-in-customer-registration.php';
+						}
+					} elseif ( 'emails/sepa-mandate.php' === $template_name ) {
+						$postID          = CustomPostType::postIDByTemplate( 'wgm_sepa' );
+						$template_status = get_post_meta( $postID, '_yaymail_status', true );
+						if ( $template_status ) {
+							return YAYMAIL_PLUGIN_PATH . 'views/templates/emails/sepa.php';
+						}
+					}
+					return $template;
+				},
+				100,
+				3
+			);
+		}
 	}
 
 	public function wcfm_email_content_wrapper( $content_body, $email_heading ) {
@@ -161,6 +195,8 @@ class WooTemplate {
 			'user_login' => $user_login,
 			'user_id'    => $user_data->ID,
 			'user_email' => $user_data->data->user_email,
+			'user_data'  => $user_data,
+			'key'        => $key
 		);
 		$args           = array(
 			'email'         => (object) $email,

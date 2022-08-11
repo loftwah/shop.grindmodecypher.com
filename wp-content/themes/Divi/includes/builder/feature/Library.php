@@ -74,6 +74,13 @@ class ET_Builder_Library {
 	public $layouts;
 
 	/**
+	 * List of submenu files to heightlight Divi menu when viwwing layout category and tag.
+	 *
+	 * @var array
+	 */
+	public static $submenu_files = array( 'edit-tags.php?taxonomy=layout_category', 'edit-tags.php?taxonomy=layout_tag' );
+
+	/**
 	 * ET_Builder_Library constructor.
 	 */
 	public function __construct() {
@@ -396,6 +403,9 @@ class ET_Builder_Library {
 		add_action( 'wp_footer', array( $this, 'render_session_expired_modal' ) );
 
 		add_filter( 'et_theme_builder_template_settings_options_term_pages', array( $this, 'tb_remove_unsupported_taxonomies' ), 10, 2 );
+		add_filter( 'parent_file', array( $this, 'wp_hook_parent_file' ), 10, 1 );
+		add_filter( 'submenu_file', array( $this, 'wp_hook_submenu_file' ), 10, 1 );
+		add_filter( 'tag_row_actions', array( $this, 'wp_filter_tag_row_actions' ), 10, 2 );
 	}
 
 	/**
@@ -479,6 +489,9 @@ class ET_Builder_Library {
 
 			setup_postdata( $post );
 
+			// check if current user can edit library item.
+			$can_edit_post = current_user_can( 'edit_post', $post->ID );
+
 			$layout->id    = $post->ID;
 			$layout->index = $index;
 			$layout->date  = $post->post_date;
@@ -545,6 +558,7 @@ class ET_Builder_Library {
 			$layout->is_landing   = ! empty( $post->post_excerpt );
 			$layout->description  = '';
 			$layout->isTrash      = 'trash' === $post->post_status; // phpcs:ignore ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase -- This is valid format for the property in the Cloud App.
+			$layout->isReadOnly   = ! $can_edit_post; // phpcs:ignore ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase -- This is valid format for the property in the Cloud App.
 			$layout->categories   = array();
 			$layout->category_ids = array();
 			$layout->tags         = array();
@@ -1309,6 +1323,15 @@ class ET_Builder_Library {
 		$item_id = (int) $payload['id'];
 
 		wp_delete_post( $item_id, true );
+
+		wp_send_json_success(
+			array(
+				'localLibraryTerms' => [
+					'layout_category' => et_fb_prepare_library_terms(),
+					'layout_tag'      => et_fb_prepare_library_terms( 'layout_tag' ),
+				],
+			)
+		);
 	}
 
 	/**
@@ -1871,6 +1894,47 @@ class ET_Builder_Library {
 		} else {
 			wp_enqueue_script( 'et-builder-failure-notice', ET_BUILDER_URI . '/scripts/failure_notice.js', array( 'jquery' ), ET_BUILDER_PRODUCT_VERSION, false );
 		}
+	}
+
+	/**
+	 * Highlight Divi menu in admin when viewing layout tag.
+	 *
+	 * @param string $parent_file The parent file.
+	 * @return string
+	 */
+	public function wp_hook_parent_file( $parent_file ) {
+		global $submenu_file;
+		if ( 'edit.php' === $parent_file && in_array( $submenu_file, self::$submenu_files, true ) ) {
+			return 'et_divi_options';
+		}
+		return $parent_file;
+	}
+
+	/**
+	 * Highlight Divi Library submenu in admin when viewing layout tag.
+	 *
+	 * @param string $submenu_file The submenu file.
+	 * @return string
+	 */
+	public function wp_hook_submenu_file( $submenu_file ) {
+		global $parent_file;
+		if ( 'et_divi_options' === $parent_file && in_array( $submenu_file, self::$submenu_files, true ) ) {
+			return 'edit.php?post_type=et_pb_layout';
+		}
+		return $submenu_file;
+	}
+
+	/**
+	 * Remove the edit action links displayed for each term in the layout_category and layout_tag list table.
+	 *
+	 * @param string[] $actions An array of action links to be displayed.
+	 * @param WP_Term  $tag     Term object.
+	 */
+	public function wp_filter_tag_row_actions( $actions, $tag ) {
+		if ( in_array( $tag->taxonomy, array( 'layout_category', 'layout_tag' ), true ) ) {
+			unset( $actions['edit'] );
+		}
+		return $actions;
 	}
 }
 

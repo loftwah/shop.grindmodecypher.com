@@ -110,7 +110,7 @@ class ET_Builder_Module_Map extends ET_Builder_Module {
 				),
 				'additional_button_type' => 'change_google_api_key',
 				'class'                  => array( 'et_pb_google_api_key', 'et-pb-helper-field' ),
-				'description'            => et_get_safe_localization( sprintf( __( 'The Maps module uses the Google Maps API and requires a valid Google API Key to function. Before using the map module, please make sure you have added your API key inside the Divi Theme Options panel. Learn more about how to create your Google API Key <a href="%1$s" target="_blank">here</a>.', 'et_builder' ), esc_url( 'http://www.elegantthemes.com/gallery/divi/documentation/map/#gmaps-api-key' ) ) ),
+				'description'            => et_get_safe_localization( sprintf( __( 'The Maps module uses the Google Maps API and requires a valid Google API Key to function. Before using the map module, please make sure you have added your API key inside the Divi Theme Options panel. Learn more about how to create your Google API Key <a href="%1$s" target="_blank">here</a>.', 'et_builder' ), esc_url( 'https://www.elegantthemes.com/documentation/divi/map/#gmaps-api-key' ) ) ),
 				'toggle_slug'            => 'map',
 			),
 			'address'                   => array(

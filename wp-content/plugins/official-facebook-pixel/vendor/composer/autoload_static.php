@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit45df9d4bf279a053c19337b2ad5cfea4
+class ComposerStaticInit53e54b384034241419d8bbb9e91ca2a1
 {
     public static $prefixLengthsPsr4 = array (
         'F' => 
@@ -36,16 +36,15 @@ class ComposerStaticInit45df9d4bf279a053c19337b2ad5cfea4
     );
 
     public static $classMap = array (
-        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'WP_Async_Task' => __DIR__ . '/..' . '/techcrunch/wp-async-task/wp-async-task.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit45df9d4bf279a053c19337b2ad5cfea4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit45df9d4bf279a053c19337b2ad5cfea4::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit45df9d4bf279a053c19337b2ad5cfea4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit53e54b384034241419d8bbb9e91ca2a1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit53e54b384034241419d8bbb9e91ca2a1::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit53e54b384034241419d8bbb9e91ca2a1::$classMap;
 
         }, null, ClassLoader::class);
     }

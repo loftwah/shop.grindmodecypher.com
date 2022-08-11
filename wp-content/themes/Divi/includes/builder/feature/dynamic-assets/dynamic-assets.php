@@ -401,3 +401,53 @@ function et_get_active_block_widgets() {
 function et_is_active_block_widget( $block_widget_name ) {
 	return in_array( $block_widget_name, et_get_active_block_widgets(), true );
 }
+
+/**
+ * Check whether Extra Home layout is being used.
+ *
+ * @since 4.17.5
+ *
+ * @return boolean whether Extra Home layout is being used.
+ */
+function et_is_extra_layout_used_as_front() {
+	return function_exists( 'et_extra_show_home_layout' ) && et_extra_show_home_layout() && is_front_page();
+}
+
+/**
+ * Check whether Extra Home layout is being used.
+ *
+ * @since 4.17.5
+ *
+ * @return boolean whether Extra Home layout is being used.
+ */
+function et_is_extra_layout_used_as_home() {
+	return function_exists( 'et_extra_show_home_layout' ) && et_extra_show_home_layout() && is_home();
+}
+
+/**
+ * Get Extra Home layout ID.
+ *
+ * @since 4.17.5
+ *
+ * @return int|null
+ */
+function et_get_extra_home_layout_id() {
+	if ( function_exists( 'extra_get_home_layout_id' ) ) {
+		return extra_get_home_layout_id();
+	}
+	return null;
+}
+
+/**
+ *  Get Extra Taxonomy layout ID.
+ *
+ * @since 4.17.5
+ *
+ * @return int|null
+ */
+function et_get_extra_tax_layout_id() {
+	if ( function_exists( 'extra_get_tax_layout_id' ) ) {
+		return extra_get_tax_layout_id();
+	}
+	return null;
+}

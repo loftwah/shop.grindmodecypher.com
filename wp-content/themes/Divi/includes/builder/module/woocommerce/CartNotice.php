@@ -376,6 +376,7 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 					'font_field'      => array(
 						'css'         => array(
 							// Required to override default WooCommerce styles.
+							'main'      => '%%order_class%% form .form-row input.input-text',
 							'important' => array( 'line-height', 'size', 'font' ),
 						),
 						'font_size'   => array(
@@ -464,7 +465,6 @@ final class ET_Builder_Module_Woocommerce_Cart_Notice extends ET_Builder_Module 
 					'toggle_priority'        => 65,
 				),
 			),
-
 			// Disable Link OG.
 			'link_options'   => false,
 			'borders'        => array(

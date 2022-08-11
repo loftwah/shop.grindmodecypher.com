@@ -36,7 +36,7 @@ if ( ! function_exists( 'et_fb_enqueue_react' ) ):
 	function et_fb_enqueue_react() {
 		$DEBUG          = defined( 'ET_DEBUG' ) && ET_DEBUG;
 		$common_scripts = ET_COMMON_URL . 'scripts';
-		$react_version  = '16.12.0';
+		$react_version  = '16.14.0';
 	
 		wp_dequeue_script( 'react' );
 		wp_dequeue_script( 'react-dom' );

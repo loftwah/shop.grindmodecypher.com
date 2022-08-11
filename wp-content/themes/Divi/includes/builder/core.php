@@ -127,7 +127,7 @@ if ( ! function_exists( 'et_builder_should_load_framework' ) ) :
 		// phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled -- `$_GET['import']` variable does not contain the 'WordPress' string.
 		$is_import_page               = 'admin.php' === $pagenow && isset( $_GET['import'] ) && 'wordpress' === $_GET['import']; // Page Builder files should be loaded on import page as well to register the et_pb_layout post type properly.
 		$is_wpml_page                 = 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'sitepress-multilingual-cms/menu/languages.php' === $_GET['page']; // Page Builder files should be loaded on WPML clone page as well to register the custom taxonomies properly.
-		$is_edit_layout_category_page = 'edit-tags.php' === $pagenow && isset( $_GET['taxonomy'] ) && ( 'layout_category' === $_GET['taxonomy'] || 'layout_pack' === $_GET['taxonomy'] );
+		$is_edit_layout_category_page = 'edit-tags.php' === $pagenow && isset( $_GET['taxonomy'] ) && in_array( $_GET['taxonomy'], array( 'layout_category', 'layout_tag', 'layout_pack' ), true );
 
 		if ( ! $is_admin || ( $is_admin && in_array( $pagenow, $required_admin_pages, true ) && ( ! in_array( $pagenow, $specific_filter_pages, true ) || $is_edit_library_page || $is_role_editor_page || $is_edit_layout_category_page || $is_import_page || $is_wpml_page || $is_edit_page_not_bfb || $is_extra_builder ) ) ) {
 			$should_load = true;
@@ -4643,15 +4643,6 @@ function et_pb_register_builder_portabilities() {
 			'view'   => ( isset( $_GET['page'] ) && "et_{$_shortname}_role_editor" === $_GET['page'] ),
 		);
 		et_core_portability_register( 'et_pb_roles', $pb_roles );
-
-		// Register the Builder Layouts Post Type portability.
-		$layouts = array(
-			'name'   => esc_html__( 'Divi Builder Layouts', 'et_builder' ),
-			'type'   => 'post_type',
-			'target' => ET_BUILDER_LAYOUT_POST_TYPE,
-			'view'   => ( isset( $_GET['post_type'] ) && ET_BUILDER_LAYOUT_POST_TYPE === $_GET['post_type'] ),
-		);
-		et_core_portability_register( 'et_builder_layouts', $layouts );
 		// phpcs:enable
 	}
 
@@ -4663,6 +4654,17 @@ function et_pb_register_builder_portabilities() {
 			'view' => ( function_exists( 'et_builder_should_load_framework' ) && et_builder_should_load_framework() ),
 		);
 		et_core_portability_register( 'et_builder', $args );
+
+		// phpcs:disable WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
+		// Register the Builder Layouts Post Type portability.
+		$layouts = array(
+			'name'   => esc_html__( 'Divi Builder Layouts', 'et_builder' ),
+			'type'   => 'post_type',
+			'target' => ET_BUILDER_LAYOUT_POST_TYPE,
+			'view'   => ( isset( $_GET['post_type'] ) && ET_BUILDER_LAYOUT_POST_TYPE === $_GET['post_type'] ),
+		);
+		et_core_portability_register( 'et_builder_layouts', $layouts );
+		// phpcs:enable
 	}
 }
 add_action( 'admin_init', 'et_pb_register_builder_portabilities' );

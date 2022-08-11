@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2017-present, Facebook, Inc.
+ * Copyright (C) 2017-present, Meta, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class FacebookPixel {
   private static $pixelId = '';
 
   private static $pixelBaseCode = "
-<!-- Facebook Pixel Code -->
+<!-- Meta Pixel Code -->
 <script type='text/javascript'>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -54,20 +54,20 @@ n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 document,'script','https://connect.facebook.net/en_US/fbevents.js');
 </script>
-<!-- End Facebook Pixel Code -->
+<!-- End Meta Pixel Code -->
 ";
 
   private static $pixelFbqCodeWithoutScript = "
   fbq('%s', '%s'%s%s);
-";
+  ";
 
   private static $pixelNoscriptCode = "
-<!-- Facebook Pixel Code -->
+<!-- Meta Pixel Code -->
 <noscript>
 <img height=\"1\" width=\"1\" style=\"display:none\" alt=\"fbpx\"
 src=\"https://www.facebook.com/tr?id=%s&ev=%s%s&noscript=1\" />
 </noscript>
-<!-- End Facebook Pixel Code -->
+<!-- End Meta Pixel Code -->
 ";
 
   public static function initialize($pixel_id = '') {
@@ -148,6 +148,45 @@ src=\"https://www.facebook.com/tr?id=%s&ev=%s%s&noscript=1\" />
       $event,
       ', ' . $param_str,
       '');
+  }
+
+  /**
+   * Loads open_bridge configs
+   */
+  public static function getOpenBridgeConfiguration() {
+    $pixelId = self::$pixelId;
+    $eventsFilter = FacebookWordpressOptions::getCapiIntegrationEventsFilter();
+    $obFilePath = plugins_url( '../js/openbridge_plugin.js', __FILE__ );
+
+    return <<<EOT
+    <script type='text/javascript'>
+
+      function updateConfig() {
+        var eventsFilter = "$eventsFilter";
+        var eventsFilterList = eventsFilter.split(',');
+        fbq.instance.pluginConfig.set("$pixelId", 'openbridge',
+          {'endpoints':
+            [{
+              'targetDomain': window.location.href,
+              'endpoint': window.location.href + '.open-bridge'
+            }],
+            'eventsFilter': {
+              'eventNames':eventsFilterList,
+              'filteringMode':'blocklist'
+            }
+          }
+        );
+        fbq.instance.configLoaded("$pixelId");
+      }
+
+      window.onload = function() {
+        var s = document.createElement('script');
+        s.setAttribute('src', "$obFilePath");
+        s.setAttribute('onload', 'updateConfig()');
+        document.body.appendChild( s );
+      }
+    </script>
+EOT;
   }
 
   /**

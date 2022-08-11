@@ -138,6 +138,7 @@ class ET_Cloud_App {
 		$response = wp_remote_post( $url, array(
 			'headers' => array(
 				'Authorization' => 'Bearer ' . $auth_token,
+				'X-ET-ORIGIN'   => site_url(),
 			),
 			'body' => $request_body,
 		) );
@@ -242,15 +243,16 @@ class ET_Cloud_App {
 				'et_builder_marketplace_api_get_layouts'           => wp_create_nonce( 'et_builder_marketplace_api_get_layouts' ),
 				'et_builder_marketplace_api_get_layout_categories' => wp_create_nonce( 'et_builder_marketplace_api_get_layout_categories' ),
 			],
-			'ajaxurl'            => is_ssl() ? admin_url( 'admin-ajax.php' ) : admin_url( 'admin-ajax.php', 'http' ),
-			'home_url'           => isset( $home_url['path'] ) ? untrailingslashit( $home_url['path'] ) : '/',
-			'website_url'        => $home_url['host'],
-			'etAccount'          => [
+			'ajaxurl'             => is_ssl() ? admin_url( 'admin-ajax.php' ) : admin_url( 'admin-ajax.php', 'http' ),
+			'home_url'            => isset( $home_url['path'] ) ? untrailingslashit( $home_url['path'] ) : '/',
+			'website_url'         => $home_url['host'],
+			'etAccount'           => [
 				'username' => $etAccount['et_username'],
 				'apiKey'   => $etAccount['et_api_key'],
 			],
-			'domainToken'        => get_option( 'et_server_domain_token', '' ),
-			'initialCloudStatus' => ET_Cloud_App::hasRefreshToken() ? 'on' : 'off',
+			'domainToken'         => get_option( 'et_server_domain_token', '' ),
+			'initialCloudStatus'  => self::hasRefreshToken() ? 'on' : 'off',
+			'localCategoriesEdit' => current_user_can( 'manage_categories' ) ? 'allowed' : 'notAllowed',
 		];
 	}
 

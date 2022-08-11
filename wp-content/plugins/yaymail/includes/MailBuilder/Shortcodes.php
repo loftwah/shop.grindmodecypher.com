@@ -121,7 +121,7 @@ class Shortcodes {
 			);
 
 			// Reset Password
-			$reset_password_list = array( 'password_reset_url', 'password_reset_url_string' );
+			$reset_password_list = array( 'password_reset_url', 'password_reset_url_string', 'wp_password_reset_url' );
 
 			// New Users
 			$new_users_list = array( 'user_new_password', 'user_activation_link', 'set_password_url_string' );
@@ -138,6 +138,8 @@ class Shortcodes {
 				'user_id',
 				'user_name',
 				'customer_username',
+				'customer_roles',
+				'additional_content',
 				'customer_name',
 				'customer_first_name',
 				'customer_last_name',
@@ -354,6 +356,10 @@ class Shortcodes {
 		$action = isset( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : '';
 		if ( empty( $this->order_id ) || ! $this->order_id ) {
 			$shortcode = $this->order_data;
+
+			if ( isset( $args['additional_content'] ) ) {
+				$shortcode['[yaymail_additional_content]'] = wp_kses_post( wpautop( wptexturize( $args['additional_content'] ) ) );
+			}
 			if ( isset( $_REQUEST['billing_email'] ) ) {
 				$shortcode['[yaymail_user_email]'] = sanitize_email( $_REQUEST['billing_email'] );
 				$user                              = get_user_by( 'email', sanitize_email( $_REQUEST['billing_email'] ) );
@@ -465,6 +471,14 @@ class Shortcodes {
 							);
 							$shortcode['[yaymail_password_reset_url]']        = '<a style="color: ' . esc_attr( $text_link_color ) . ';" href="' . esc_url( $link_reset ) . '">' . esc_html__( 'Click here to reset your password', 'woocommerce' ) . '</a>';
 							$shortcode['[yaymail_password_reset_url_string]'] = esc_url( $link_reset );
+						}
+
+						//link reset password send by wp
+						if ( isset( $args['email']->user_login ) && isset( $args['email']->user_data ) && isset( $args['email']->key )) {
+							$locale = get_user_locale( $args['email']->user_data );
+							$key = $args['email']->key;
+							$user_login = $args['email']->user_login;
+							$shortcode['[yaymail_wp_password_reset_url]'] = network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' ) . '&wp_lang=' . $locale;
 						}
 
 						$shortcode['[yaymail_site_name]'] = esc_html( get_bloginfo( 'name' ) );
@@ -1036,7 +1050,7 @@ class Shortcodes {
 		}
 
 		// GENERALS
-		$shortcode['[yaymail_customer_note]']  = strip_tags( $customerNoteHtml );
+		$shortcode['[yaymail_customer_note]']  = ( $customerNoteHtml ); // add strip_tags() to remove link
 		$shortcode['[yaymail_customer_notes]'] = $customerNoteHtmlList;
 		if ( ! empty( $order->get_customer_note() ) ) {
 			$shortcode['[yaymail_customer_provided_note]'] = $order->get_customer_note();
@@ -1061,6 +1075,9 @@ class Shortcodes {
 			$shortcode['[yaymail_customer_username]'] = $user_data->user_nicename;
 		} else {
 			$shortcode['[yaymail_customer_username]'] = $order->get_billing_first_name();
+		}
+		if ( isset( $user_data->roles ) && ! empty( $user_data->roles )  ) {
+			$shortcode['[yaymail_customer_roles]'] = implode(", ",$user_data->roles);
 		}
 		if ( isset( $user->ID ) && ! empty( $user->ID ) ) {
 			$shortcode['[yaymail_customer_name]']       = get_user_meta( $user->ID, 'first_name', true ) . ' ' . get_user_meta( $user->ID, 'last_name', true );
@@ -1126,30 +1143,40 @@ class Shortcodes {
 			foreach ( $order->get_meta_data() as $meta ) {
 				$nameField    = str_replace( ' ', '_', trim( $meta->get_data()['key'] ) );
 				$nameShorcode = '[yaymail_order_meta:' . $nameField . ']';
-				if ( is_array( $meta->get_data()['value'] ) ) {
+				if ('_local_pickup_time_select' == $nameField) {
+					$plugin = \Local_Pickup_Time::get_instance();
+					$shortcode[ $nameShorcode ] = $plugin->pickup_time_select_translatable( $meta->get_data()['value']);
+				} else {
+					if ( is_array( $meta->get_data()['value'] ) ) {
 						$checkNestedArray = false;
-					foreach ( $meta->get_data()['value'] as $value ) {
-						if ( is_object( $value ) || is_array( $value ) ) {
-							$checkNestedArray = true;
-							break;
-						}
-					}
-					if ( false == $checkNestedArray ) {
-						$shortcode[ $nameShorcode ] = implode( ', ', $meta->get_data()['value'] );
-					} else {
-						$shortcode[ $nameShorcode ] = '';
-						if ( class_exists( 'WCPFC_Country' ) ) {
-							$arr_values = \wcpfc_get_value_if_set( $meta->get_data(), array( 'value', 'value' ), '' );
-							if ( is_object( $arr_values ) || is_array( $arr_values ) ) {
-								$shortcode[ $nameShorcode ] = implode( ',', $arr_values );
-							} else {
-								$shortcode[ $nameShorcode ] = $arr_values;
+						foreach ( $meta->get_data()['value'] as $value ) {
+							if ( is_object( $value ) || is_array( $value ) ) {
+								$checkNestedArray = true;
+								break;
 							}
 						}
+						if ( false == $checkNestedArray ) {
+							$shortcode[ $nameShorcode ] = implode( ', ', $meta->get_data()['value'] );
+						} else {
+							$shortcode[ $nameShorcode ] = '';
+							if ( class_exists( 'WCPFC_Country' ) ) {
+								$arr_values = \wcpfc_get_value_if_set( $meta->get_data(), array( 'value', 'value' ), '' );
+								if ( is_object( $arr_values ) || is_array( $arr_values ) ) {
+									$shortcode[ $nameShorcode ] = implode( ',', $arr_values );
+								} else {
+									$shortcode[ $nameShorcode ] = $arr_values;
+								}
+							}
+						}
+					} else {
+						if ( is_string( $meta->get_data()['value'] ) ) {
+							$shortcode[ $nameShorcode ] = nl2br( $meta->get_data()['value'] );
+						} else {
+							$shortcode[ $nameShorcode ] = $meta->get_data()['value'];
+						}
 					}
-				} else {
-					$shortcode[ $nameShorcode ] = $meta->get_data()['value'];
 				}
+				
 			}
 		}
 
@@ -1252,7 +1279,8 @@ class Shortcodes {
 		// RESET PASSWORD:
 		$shortcode['[yaymail_password_reset_url]']        = '<a style="color:' . esc_attr( $text_link_color ) . ';" href="">' . esc_html__( 'Click here to reset your password', 'woocommerce' ) . '</a>';
 		$shortcode['[yaymail_password_reset_url_string]'] = esc_url( get_home_url() ) . '/my-account/lost-password/?login';
-
+		$shortcode['[yaymail_wp_password_reset_url]']     = esc_url( get_home_url() ) . '/my-account/lost-password/?login';
+		
 		// NEW USERS:
 		$shortcode['[yaymail_user_new_password]']       = esc_html__( 'G(UAM1(eIX#G', 'yaymail' );
 		$shortcode['[yaymail_set_password_url_string]'] = esc_url( get_home_url() ) . '/my-account/set-password/';
@@ -1268,6 +1296,7 @@ class Shortcodes {
 		$shortcode['[yaymail_user_email]']               = $current_user->data->user_email;
 		$shortcode['[yaymail_user_id]']                  = $user_id;
 		$shortcode['[yaymail_customer_username]']        = $current_user->data->user_login;
+		$shortcode['[yaymail_customer_roles]']           = implode(", ",$current_user->roles);
 		$shortcode['[yaymail_customer_name]']            = get_user_meta( $current_user->data->ID, 'first_name', true ) . ' ' . get_user_meta( $current_user->data->ID, 'last_name', true );
 		$shortcode['[yaymail_customer_first_name]']      = get_user_meta( $current_user->data->ID, 'first_name', true );
 		$shortcode['[yaymail_customer_last_name]']       = get_user_meta( $current_user->data->ID, 'last_name', true );
@@ -1375,6 +1404,16 @@ class Shortcodes {
 			ob_end_clean();
 			return $html;
 		} else {
+			if ( class_exists( 'WC_Subscription' ) ) {
+				add_filter(
+					'woocommerce_order_is_download_permitted',
+					function($value) {
+						return true;
+					},
+					100
+				);
+			}
+			
 			$items = $order->get_items();
 			ob_start();
 			$downloads = $order->get_downloadable_items();
@@ -1657,8 +1696,7 @@ class Shortcodes {
 		return $email_heading;
 	}
 	public function orderGetCouponCodes( $order ) {
-
-		if ( isset( $order ) && ! empty( $order->get_coupon_codes() ) ) {
+		if ( isset( $order ) && method_exists( $order, 'get_coupon_codes' ) && ! empty( $order->get_coupon_codes() ) ) {
 			$coupon_codes = $order->get_coupon_codes();
 			ob_start();
 			foreach ( $coupon_codes as $key => $value ) {
@@ -1673,8 +1711,15 @@ class Shortcodes {
 
 	}
 	public function orderPaymentInstructions ( $order, $sent_to_admin = false ) {
-		$paymentGateways  = wc_get_payment_gateway_by_order( $order );
-		$html = '<p>' . wp_kses_post( isset( $paymentGateways->instructions ) ? $paymentGateways->instructions : '', 'woocommerce'  ). '</p>';
-		return $html;
+		if ( null === $order ) {
+			return '';
+		} else {
+			ob_start();
+			$path = YAYMAIL_PLUGIN_PATH . 'views/templates/emails/email-order-payment-gateways.php';
+			include $path;
+			$html = ob_get_contents();
+			ob_end_clean();
+			return $html;
+		}
 	}
 }

@@ -740,7 +740,7 @@ abstract class Order_Document {
 		do_action( 'wpo_wcpdf_before_pdf', $this->get_type(), $this );
 
 		// temporarily apply filters that need to be removed again after the pdf is generated
-		$pdf_filters = apply_filters( 'wpo_wcpdf_pdf_filters', array() );
+		$pdf_filters = apply_filters( 'wpo_wcpdf_pdf_filters', array(), $this );
 		$this->add_filters( $pdf_filters );
 
 		$pdf_settings = array(
@@ -780,7 +780,7 @@ abstract class Order_Document {
 		do_action( 'wpo_wcpdf_before_html', $this->get_type(), $this );
 
 		// temporarily apply filters that need to be removed again after the html is generated
-		$html_filters = apply_filters( 'wpo_wcpdf_html_filters', array() );
+		$html_filters = apply_filters( 'wpo_wcpdf_html_filters', array(), $this );
 		$this->add_filters( $html_filters );
 
 		$default_args = array (
@@ -1068,7 +1068,7 @@ abstract class Order_Document {
 		$default_table_name = $this->get_number_store_table_default_name( $store_base_name, $method );
 		$now                = new \WC_DateTime( 'now', new \DateTimeZone( 'UTC' ) );
 		$current_year       = intval( $now->date_i18n( 'Y' ) );
-		$current_store_year = $this->get_number_store_year( $default_table_name );
+		$current_store_year = intval( $this->get_number_store_year( $default_table_name ) );
 		$requested_year     = intval( $date->date_i18n( 'Y' ) );
 
 		// nothing to retire if requested year matches current store year or if current store year is not in the past

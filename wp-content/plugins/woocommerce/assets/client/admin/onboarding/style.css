@@ -1,6 +1,6 @@
-/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ../../../node_modules/.pnpm/css-loader@3.6.0_webpack@5.70.0/node_modules/css-loader/dist/cjs.js!../../../node_modules/.pnpm/postcss-loader@3.0.0/node_modules/postcss-loader/src/index.js??ruleSet[1].rules[0].use[2]!../../../node_modules/.pnpm/sass-loader@10.2.1_webpack@5.70.0/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[0].use[3]!./src/style.scss ***!
-  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../../../node_modules/.pnpm/css-loader@3.6.0_webpack@5.70.0/node_modules/css-loader/dist/cjs.js!../../../node_modules/.pnpm/postcss-loader@3.0.0/node_modules/postcss-loader/src/index.js??ruleSet[1].rules[0].use[2]!../../../node_modules/.pnpm/sass-loader@10.2.1_sass@1.49.9+webpack@5.70.0/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[0].use[3]!./src/style.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /**
  * Colors
  */
@@ -253,6 +253,89 @@ body.admin-color-sunrise {
 }
 .woocommerce-task-payments .woocommerce-task-payment-wcpay .woocommerce-task-payment-wcpay__accepted h3 {
   color: #40464d;
+}
+
+.woocommerce-recommended-payments-banner {
+  margin: 0 15px 10px 0;
+  min-width: 750px;
+  -webkit-animation: isLoaded;
+          animation: isLoaded;
+  -webkit-animation-duration: 250ms;
+          animation-duration: 250ms;
+}
+.woocommerce-recommended-payments-banner.components-card {
+  box-shadow: none;
+  border: 1px solid #e2e4e7;
+  border-radius: 2px;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 0;
+  padding: 30px 0 0 0;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments__header-title {
+  color: #1d2327;
+  line-height: 32px;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments__header-heading {
+  color: #50575e;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__image_container {
+  display: flex;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__text_container {
+  width: 46%;
+  margin-inline: 24px;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__text_container a {
+  margin-top: 0;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__text_container * {
+  margin-block: 1rem;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0 30px 0;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__footer p {
+  color: #757575;
+  font-style: normal;
+  font-weight: 400;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__footer_icon_container {
+  display: flex;
+  align-items: center;
+}
+.woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__footer_icon_container > svg {
+  height: 28px;
+  width: 51px;
+}
+
+.woocommerce-wcpay-benefits {
+  background-color: #fff;
+  border: 1px solid #e2e4e7;
+  border-radius: 2px;
+  padding: 40px 30px 30px;
+  width: 680px;
+  height: 344px;
+}
+.woocommerce-wcpay-benefits .woocommerce-wcpay-benefits-benefit {
+  flex-direction: column;
+  justify-content: start;
+  margin-left: 0;
+  width: 186px;
+}
+.woocommerce-wcpay-benefits p {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  color: #1d2327;
 }
 
 .woocommerce-task-payment__recommended-ribbon {

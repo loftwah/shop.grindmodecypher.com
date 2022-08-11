@@ -4,9 +4,9 @@ Donate link: https://paypal.me/rvadhel
 Tags: WooCommerce Donation, WooCommerce Donation Campaign, WooCommerce Cart Page Donation, Woocommerce Checkout Page Donation, Woocommerce Donation on Pages,covid19
 Requires PHP: 5.2.4
 Requires at least: 3.0.1
-Tested up to: 5.9
-Stable tag: 2.6
-WC tested up to: 6.2.1
+Tested up to: 6.0.1
+Stable tag: 2.7
+WC tested up to: 6.7.0
 
 This Plugin provide you options to accept donations in woocommerce with amount specified by the end user, so they can donate any amount they wish to donate.
 
@@ -73,27 +73,24 @@ Also works with WordPress Multisite installs (each blog from the network has itâ
 <a href="https://geekcodelab.com/wordpress-plugins/woo-donation-pro/" target="_blank"> BUY NOW </a> 
 
 == Pro Version Preview ==
-[youtube https://www.youtube.com/watch?v=P8Y8NUAHQuI&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=1]
+[youtube https://youtu.be/w16IRtYqmIs]
 <ol>
-	<li><strong>General Setting </strong>(Pro only) <a href="https://www.youtube.com/watch?v=P8Y8NUAHQuI&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=1" target="_blank">See Video</a></li>
-	<li><strong>Predefine Price </strong> (Pro only) <a href="https://www.youtube.com/watch?v=VNj-14iTK54&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=2" target="_blank">See Video</a></li>
-	<li><strong>Manage Campaign </strong> (Pro only) <a href="https://www.youtube.com/watch?v=Q1Mcjq6IcX4&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=3" target="_blank">See Video</a></li>
-	<li><strong>Label Setting </strong> (Pro only) <a href="https://www.youtube.com/watch?v=th8T-wBqEdY&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=4" target="_blank">See Video</a></li>
-	<li><strong>Popup Setting </strong> (Pro only) <a href="https://www.youtube.com/watch?v=TBPopL0Z6_s&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=5" target="_blank">See Video</a></li>
-	<li><strong>Sticky Button </strong> (Pro only) <a href="https://www.youtube.com/watch?v=WzsCD_5KOuA&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=6" target="_blank">See Video</a></li>
-	<li><strong>Email Setting </strong> (Pro only) <a href="https://www.youtube.com/watch?v=SaIwxYe0aMY&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=7" target="_blank">See Video</a></li>
-	<li><strong>Shortcode &  widgets </strong> (Pro only) <a href="https://www.youtube.com/watch?v=6qoxhOmtNlo&list=PL57ehHeF_0aO0rI67Qd5irnpipbUlzW5a&index=8" target="_blank">See Video</a></li>
+	<li><strong>General Setting </strong>(Pro only) <a href="https://youtu.be/w16IRtYqmIs" target="_blank">See Video</a></li>
+	<li><strong>Predefine Price </strong> (Pro only) <a href="https://youtu.be/K1dPyffYw_k" target="_blank">See Video</a></li>
+	<li><strong>Manage Campaign </strong> (Pro only) <a href="https://youtu.be/ZN9EWZhXKCM" target="_blank">See Video</a></li>
+	<li><strong>Label Setting </strong> (Pro only) <a href="https://youtu.be/xHpntBSFY_Y" target="_blank">See Video</a></li>
+	<li><strong>Popup Setting </strong> (Pro only) <a href="https://youtu.be/3gxWzzjEVf8" target="_blank">See Video</a></li>
+	<li><strong>Sticky Button </strong> (Pro only) <a href="https://youtu.be/wa-KQHc6M-M" target="_blank">See Video</a></li>
+	<li><strong>Email Setting </strong> (Pro only) <a href="https://youtu.be/KsCYIraRDLU" target="_blank">See Video</a></li>
+	<li><strong>Shortcode &  widgets </strong> (Pro only) <a href="https://youtu.be/ssKT4CepMl8" target="_blank">See Video</a></li>
 </ol>
 
 
 == You can use shortcodes ==
 
-<code>
-[wdgk_donation]
-
-== Here is Template code ==
-
-<?php echo do_shortcode('[wdgk_donation]'); ?></code>
+<code>[wdgk_donation]</code>
+<h4>Here is Template code</h4>
+<code> <?php echo do_shortcode('[wdgk_donation]'); ?></code>
 
 **Free Version Preview**
 [youtube https://youtu.be/S4U2twhQgpg]
@@ -127,6 +124,9 @@ After Plugin Active go to WooCommerce-> Donation.
 
 
 == Changelog ==
+
+= 2.7=
+ Tested up to wp version 6.0.1
 
 = 2.6=
 Tested Up to wp version 5.9
@@ -165,34 +165,25 @@ Fixed Design bug and add pro plugin details.
  Fixed bug.
 
 = 1.5=
-
  Fixed bug.
  
  
 = 1.4=
-
  Fixed bug.
  
 = 1.3 =
-
  Fixed bug.
  
  
 = 1.2 =
-
  Fixed bug.
  Added 'Donation' column in woocommerce order list.
  
  
 = 1.1 =
-
  Fixed bug.
  Added donation note option.
 
 
 = 1.0 =
-
  Initial release
-
-
-

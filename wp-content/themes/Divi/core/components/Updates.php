@@ -112,7 +112,7 @@ final class ET_Core_Updates {
 		}
 
 		$message = empty( $custom_message = $this->get_custom_update_notification_message( $plugin_data['url'] ) )
-			? et_get_safe_localization( __( 'For all Elegant Themes products, please <a href="http://www.elegantthemes.com/gallery/divi/documentation/update/" target="_blank">authenticate your subscription</a> via the Updates tab in your theme & plugin settings to enable product updates. Make sure that your Username and API Key have been entered correctly.', 'et-core' ) )
+			? et_get_safe_localization( __( 'For all Elegant Themes products, please <a href="https://www.elegantthemes.com/documentation/divi/update-divi/" target="_blank">authenticate your subscription</a> via the Updates tab in your theme & plugin settings to enable product updates. Make sure that your Username and API Key have been entered correctly.', 'et-core' ) )
 			: $custom_message;
 		echo "</p><p>{$message}";
 	}
@@ -148,7 +148,7 @@ final class ET_Core_Updates {
 		if ( false !== strpos( $update_message, 'Automatic update is unavailable for this theme' ) ) {
 			return 'expired' === $this->account_status
 				? et_get_safe_localization( __( '<em>Your Elegant Themes subscription has expired. You must <a href="https://www.elegantthemes.com/members-area/renew/" target="_blank">renew your account</a> to regain access to product updates and support.</em>', 'et-core' ) )
-				: et_get_safe_localization( __( '<em>Before you can receive product updates, you must first authenticate your Elegant Themes subscription. To do this, you need to enter both your Elegant Themes Username and your Elegant Themes API Key into the Updates Tab in your theme and plugin settings. To locate your API Key, <a href="https://www.elegantthemes.com/members-area/api/" target="_blank">log in</a> to your Elegant Themes account and navigate to the <strong>Account > API Key</strong> page. <a href="http://www.elegantthemes.com/gallery/divi/documentation/update/" target="_blank">Learn more here</a></em>. If you still get this message, please make sure that your Username and API Key have been entered correctly', 'et-core' ) );
+				: et_get_safe_localization( __( '<em>Before you can receive product updates, you must first authenticate your Elegant Themes subscription. To do this, you need to enter both your Elegant Themes Username and your Elegant Themes API Key into the Updates Tab in your theme and plugin settings. To locate your API Key, <a href="https://www.elegantthemes.com/members-area/api/" target="_blank">log in</a> to your Elegant Themes account and navigate to the <strong>Account > API Key</strong> page. <a href="https://www.elegantthemes.com/documentation/divi/update-divi/" target="_blank">Learn more here</a></em>. If you still get this message, please make sure that your Username and API Key have been entered correctly', 'et-core' ) );
 		}
 
 		return '';
@@ -209,7 +209,7 @@ final class ET_Core_Updates {
 		} else {
 			$error_message = 'expired' === $this->account_status
 				? et_get_safe_localization( __( '<em>Your Elegant Themes subscription has expired. You must <a href="https://www.elegantthemes.com/members-area/renew/" target="_blank">renew your account</a> to regain access to product updates and support.</em>', 'et-core' ) )
-				: et_get_safe_localization( __( '<em>Before you can receive product updates, you must first authenticate your Elegant Themes subscription. To do this, you need to enter both your Elegant Themes Username and your Elegant Themes API Key into the Updates Tab in your theme and plugin settings. To locate your API Key, <a href="https://www.elegantthemes.com/members-area/api/" target="_blank">log in</a> to your Elegant Themes account and navigate to the <strong>Account > API Key</strong> page. <a href="http://www.elegantthemes.com/gallery/divi/documentation/update/" target="_blank">Learn more here</a></em>. If you still get this message, please make sure that your Username and API Key have been entered correctly', 'et-core' ) );
+				: et_get_safe_localization( __( '<em>Before you can receive product updates, you must first authenticate your Elegant Themes subscription. To do this, you need to enter both your Elegant Themes Username and your Elegant Themes API Key into the Updates Tab in your theme and plugin settings. To locate your API Key, <a href="https://www.elegantthemes.com/members-area/api/" target="_blank">log in</a> to your Elegant Themes account and navigate to the <strong>Account > API Key</strong> page. <a href="https://www.elegantthemes.com/documentation/divi/update-divi/" target="_blank">Learn more here</a></em>. If you still get this message, please make sure that your Username and API Key have been entered correctly', 'et-core' ) );
 		}
 
 		// output custom error message for ET Products if package is empty

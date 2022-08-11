@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2017-present, Facebook, Inc.
+ * Copyright (C) 2017-present, Meta, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@ namespace FacebookPixelPlugin\Core;
 defined('ABSPATH') or die('Direct access not allowed');
 
 class FacebookPluginConfig {
-  const PLUGIN_VERSION = '3.0.6';
+  const PLUGIN_VERSION = '3.0.7';
   const SOURCE = 'wordpress';
   const TEXT_DOMAIN = 'official-facebook-pixel';
-  const PLUGIN_NAME = 'Facebook for WordPress';
+  const PLUGIN_NAME = 'Meta for WordPress';
   const PLUGIN_REVIEW_PAGE = 'https://wordpress.org/plugins/official-facebook-pixel/#reviews';
 
   const ADMIN_CAPABILITY = 'manage_options';
@@ -40,9 +40,9 @@ class FacebookPluginConfig {
   const ADMIN_IGNORE_PLUGIN_REVIEW_NOTICE =
     'ignore_plugin_review_notice';
   const ADMIN_MENU_SLUG = 'facebook_pixel_options';
-  const ADMIN_MENU_TITLE = 'Facebook';
+  const ADMIN_MENU_TITLE = 'Meta';
   const ADMIN_OPTION_GROUP = 'facebook_option_group';
-  const ADMIN_PAGE_TITLE = 'Facebook Pixel Settings';
+  const ADMIN_PAGE_TITLE = 'Meta Pixel Settings';
   const ADMIN_PRIVACY_URL = 'https://developers.facebook.com/docs/privacy/';
   const ADMIN_S2S_URL = 'https://developers.facebook.com/docs/marketing-api/conversions-api';
   const ADMIN_SECTION_ID = 'facebook_settings_section';
@@ -70,6 +70,28 @@ class FacebookPluginConfig {
 
   const IS_PIXEL_RENDERED = 'is_pixel_rendered';
   const IS_NOSCRIPT_RENDERED = 'is_noscript_rendered';
+
+  // OPEN_BRIDGE_PATH must match the value in cloudbridge-post -> b.host
+  // found in js/openbridge_plugin.js
+  const OPEN_BRIDGE_PATH = '/open-bridge/events';
+  const CAPI_INTEGRATION_DIV_TOP = 500;
+  const CAPI_INTEGRATION_STATUS = 'facebook_capi_integration_status';
+  // Default CAPI integration status: Enabled
+  const CAPI_INTEGRATION_STATUS_DEFAULT = '1';
+  const CAPI_INTEGRATION_EVENTS_FILTER =
+    'facebook_capi_integration_events_filter';
+  const CAPI_INTEGRATION_EVENTS_FILTER_DEFAULT =
+    'Microdata,SubscribedButtonClick';
+  const CAPI_INTEGRATION_STATUS_UPDATE_ERROR =
+    'Status could not be saved, please refresh the page and continue.';
+  const CAPI_INTEGRATION_EVENTS_FILTER_UPDATE_ERROR =
+    'Filter could not be saved, please refresh the page and continue.';
+  const SAVE_CAPI_INTEGRATION_STATUS_ACTION_NAME =
+    'save_capi_integration_status';
+  const SAVE_CAPI_INTEGRATION_EVENTS_FILTER_ACTION_NAME =
+    'save_capi_integration_events_filter';
+  const CAPI_INTEGRATION_FILTER_PAGE_VIEW_EVENT = '1';
+  const CAPI_INTEGRATION_KEEP_PAGE_VIEW_EVENT = '0';
 
   // integration config: INTEGRATION_KEY => PLUGIN_CLASS
   public static function integrationConfig() {

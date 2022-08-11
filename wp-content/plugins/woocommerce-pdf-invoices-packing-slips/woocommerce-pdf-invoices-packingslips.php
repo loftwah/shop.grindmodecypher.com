@@ -3,14 +3,14 @@
  * Plugin Name: WooCommerce PDF Invoices & Packing Slips
  * Plugin URI: https://wpovernight.com/downloads/woocommerce-pdf-invoices-packing-slips-bundle/
  * Description: Create, print & email PDF invoices & packing slips for WooCommerce orders.
- * Version: 2.14.5
+ * Version: 3.0.1
  * Author: WP Overnight
  * Author URI: https://www.wpovernight.com
  * License: GPLv2 or later
  * License URI: https://opensource.org/licenses/gpl-license.php
  * Text Domain: woocommerce-pdf-invoices-packing-slips
  * WC requires at least: 2.2.0
- * WC tested up to: 6.5
+ * WC tested up to: 6.7
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +21,7 @@ if ( !class_exists( 'WPO_WCPDF' ) ) :
 
 class WPO_WCPDF {
 
-	public $version = '2.14.5';
+	public $version = '3.0.1';
 	public $plugin_basename;
 	public $legacy_mode;
 	public $legacy_textdomain;
@@ -189,7 +189,7 @@ class WPO_WCPDF {
 		$this->documents = include_once( $this->plugin_path() . '/includes/class-wcpdf-documents.php' );
 		$this->main = include_once( $this->plugin_path() . '/includes/class-wcpdf-main.php' );
 		include_once( $this->plugin_path() . '/includes/class-wcpdf-assets.php' );
-		include_once( $this->plugin_path() . '/includes/class-wcpdf-admin.php' );
+		$this->admin = include_once( $this->plugin_path() . '/includes/class-wcpdf-admin.php' );
 		include_once( $this->plugin_path() . '/includes/class-wcpdf-frontend.php' );
 		include_once( $this->plugin_path() . '/includes/class-wcpdf-install.php' );
 		include_once( $this->plugin_path() . '/includes/class-wcpdf-font-synchronizer.php' );
@@ -262,7 +262,7 @@ class WPO_WCPDF {
 	/**
 	 * WooCommerce not active notice.
 	 *
-	 * @return string Fallack notice.
+	 * @return void
 	 */
 	public function need_woocommerce() {
 		/* translators: <a> tags */
@@ -334,7 +334,7 @@ class WPO_WCPDF {
 			$current_version_parts = explode( '.', $this->version );
 
 			if ( 3 !== sizeof( $notice_version_parts ) ) {
-				return;
+				return $upgrade_notice;
 			}
 
 			$notice_version  = $notice_version_parts[0] . '.' . $notice_version_parts[1];

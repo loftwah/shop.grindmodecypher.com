@@ -2830,17 +2830,20 @@ if ( ! function_exists( 'et_core_portability_ajax_export' ) ) :
  */
 function et_core_portability_ajax_export() {
 	if ( ! isset( $_POST['context'] ) ) {
-		et_core_die();
+			wp_send_json_error();
+			return;
 	}
 
 	$context = sanitize_text_field( $_POST['context'] );
 
 	if ( ! $capability = et_core_portability_cap( $context ) ) {
-		et_core_die();
+			wp_send_json_error();
+			return;
 	}
 
 	if ( ! et_core_security_check_passed( $capability, 'et_core_portability_export', 'nonce' ) ) {
-		et_core_die();
+			wp_send_json_error();
+			return;
 	}
 
 	et_core_portability_load( $context )->export();
@@ -2915,7 +2918,6 @@ function et_core_portability_cap( $context ) {
 	$capability       = '';
 	$options_contexts = array(
 		'et_pb_roles',
-		'et_builder_layouts',
 		'epanel',
 		'et_divi_mods',
 		'et_extra_mods',
@@ -2923,6 +2925,7 @@ function et_core_portability_cap( $context ) {
 	$post_contexts    = array(
 		'et_builder',
 		'et_theme_builder',
+		'et_builder_layouts',
 	);
 
 	if ( in_array( $context, $options_contexts, true ) ) {

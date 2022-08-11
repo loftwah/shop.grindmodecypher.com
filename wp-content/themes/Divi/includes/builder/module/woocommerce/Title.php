@@ -166,7 +166,7 @@ class ET_Builder_Module_Woocommerce_Title extends ET_Builder_Module {
 		$title    = et_builder_wc_render_module_template(
 			'the_title',
 			$args,
-			array( 'post' )
+			array( 'post', 'product' )
 		);
 
 		return $title;

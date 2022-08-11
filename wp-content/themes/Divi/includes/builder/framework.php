@@ -208,6 +208,7 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 			'et_fb_ajax_render_shortcode',
 			'et_fb_ajax_save',
 			'et_fb_get_shortcode_from_fb_object',
+			'et_fb_get_html_from_shortcode',
 			'et_fb_ajax_drop_autosave',
 			'et_fb_get_saved_layouts',
 			'et_fb_save_layout',
@@ -232,6 +233,7 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 			'save_epanel',                      // ePanel (global builder settings)
 			'et_builder_library_get_layout',
 			'et_builder_library_update_terms',
+			'et_builder_toggle_cloud_status',
 			'et_builder_library_save_temp_layout',
 			'et_builder_library_remove_temp_layout',
 			'et_builder_library_clear_temp_presets',

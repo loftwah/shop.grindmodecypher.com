@@ -329,6 +329,7 @@ class ET_Builder_Module_Woocommerce_Tabs extends ET_Builder_Module_Tabs {
 			'product' => 'current',
 		);
 		$args     = wp_parse_args( $args, $defaults );
+		$tabs     = array();
 
 		// Get actual product id based on given `product` attribute.
 		$product_id = ET_Builder_Module_Helper_Woocommerce_Modules::get_product_id( $args['product'] );
@@ -355,10 +356,13 @@ class ET_Builder_Module_Woocommerce_Tabs extends ET_Builder_Module_Tabs {
 			$wp_query = new WP_Query( array( 'p' => $product_id ) );
 		}
 
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			return $tabs;
+		}
+
 		// Get product tabs.
 		$all_tabs    = apply_filters( 'woocommerce_product_tabs', array() );
 		$active_tabs = isset( $args['include_tabs'] ) ? explode( '|', $args['include_tabs'] ) : false;
-		$tabs        = array();
 
 		// Get product tabs data.
 		foreach ( $all_tabs as $name => $tab ) {

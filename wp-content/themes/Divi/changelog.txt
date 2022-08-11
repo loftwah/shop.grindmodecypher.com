@@ -1,3 +1,92 @@
+version 4.17.6 ( updated 07-13-2022 )
+- Fixed row width and max width issues on the builder. Introduced new {module_type}.processed.css.selector filter to allow third-party modules to modify the module selector after processing.
+	* includes/builder/frontend-builder/bundle.js
+
+version 4.17.5 ( updated 07-12-2022 )
+- Relocated module selector filter to be fired after selector is processed and pass module slug as 2nd parameter.
+- Fixed Woo Title module not showing up when selecting another product.
+- Fixed the animation for the tooltip modal not working properly in some cases.
+- Fixed issue with the form validation from the Sellsy plugin.
+- Fixed extra padding on Vimeo videos with unusual aspect ratios.
+- Introduced module info as 2nd parameter of static css method of custom module component.
+- Exposed generateStyles util method for Divi Builder API.
+- Fixed incorrect Portability modal reposition when users switch between Export and Import tabs.
+- Fixed styling issue with buttons on the settings modal in RTL.
+- Fixed tooltip modal not closing properly when clicking outside the modal area.
+- Fixed a bug in Woo Cart Totals module which was causing shipping address to not update in some cases.
+- Fixed content analysis for Yoast and RankMath plugins in GB.
+- Fixed fatal error on Background component when some of its features are disabled.
+- Fixed the inability to type into email optin form with background pattern.
+- Updated NPM packages dependencies to the highest version.
+- Fixes for the color selector position while saving in the background color picker.
+- Added user permissions check to manage access to Divi library items.
+- Fixed "invalid taxonomy" error which occurred when opening Divi > Divi Library > Manage Tags from the admin.
+- Fixed error when saving big items to the Divi Cloud.
+- Added presets import confirmation modal when importing items from the Cloud.
+- Fixed Input Field's Style option in the Woo Notice Module. Fixed Conflict between Title Styles and Input Field Styles.
+- Fixed Local categories and tags count update when moving item to the Cloud.
+- Fixed a bug with the Visual Builder when adding a Number Counter module and using a comma as separator.
+- Fixed woo products showing in one column on mobile when dynamic css is disabled.
+- Fixed issue with Contact Form module textarea incorrectly stripping newlines in some cases.
+- Improved Cloud categories and Tags saving.
+- Fixed an issue where post-dependent Dynamic Fields (ex: Post Date, Post Comments, etc.) would output the data from the latest post on archive pages where it should not output anything.
+- Fixed a PHP deprecation warning that occurred in some cases when disabling Product Tour.
+- Fixed wrong text direction in multi-column row when equal 'Equalize Column Heights' option is on.
+- Fixed product save issue when Rank Math is active and Add To Cart module is located before Price module.
+- Fixed Checkbox checkmark styling to ensure its in properly centered position.
+- Introduces new hooks which are fired when settings modal is open or close.
+- Fixed the issue where using Extra Layouts as Homepage would break Homepage styles.
+- Fixed incorrect display of loading icon on library item.
+- Fixed History Modal labels in Theme Builder.
+- Improved screenshots generating system for Cloud Items.
+- Fixed issue where user were not able to deselect the category/tag after removing all items from selected category/tag.
+- Added ability to remain logged into the Cloud Account on multiple websites simultaneously.
+- Fixed issue where select all checkbox was rendering even when there is no items to select in Library modal.
+- Added function to bulk trash layouts from list view mode.
+- Changed the default order of cloud items to sort from new to old.
+- Fixed Library freezing when viewing an item containing hundreds of items.
+- Display screenshots grid of first 6 layouts in tag folder.
+- Fixed spacing issues in Tags input field.
+- Fixed accordion toggle icon showing on the right in RTL.
+- Fixed a bug with the Fullwidth Header that enables the horizontal scroll on the page.
+	* cloud/cloud-app.php
+	* cloud/i18n/library.php
+	* common/init.php
+	* common/scripts/react-dom.production.min.js
+	* common/scripts/react.production.min.js
+	* core/admin/js/portability.js
+	* core/components/Portability.php
+	* core/components/Updates.php
+	* core/cypress-perf.json
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-post-feature-base.php
+	* includes/builder/core.php
+	* includes/builder/feature/BlockEditorIntegration.php
+	* includes/builder/feature/Library.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-assets/dynamic-assets.php
+	* includes/builder/feature/dynamic-content.php
+	* includes/builder/feature/gutenberg/BlockTemplates.php
+	* includes/builder/feature/gutenberg/utils/Editor.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/functions.php
+	* includes/builder/languages/en_US.po
+	* includes/builder/module/ContactFormItem.php
+	* includes/builder/module/FullwidthMap.php
+	* includes/builder/module/Map.php
+	* includes/builder/module/woocommerce/CartNotice.php
+	* includes/builder/module/woocommerce/Tabs.php
+	* includes/builder/module/woocommerce/Title.php
+	* includes/builder/plugin-compat/sellsy.php
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/src/builder.js
+	* includes/builder/scripts/src/library_category.js
+	* lang/en_US.po
+	* options_divi.php
+
 version 4.17.4 ( updated 05-12-2022 )
 - Fixed PHP 8 warning for Specialty Column Section Background Settings on Frontend for some cases.
 - Fixed Body Line Height option affects the Menu Module icons.

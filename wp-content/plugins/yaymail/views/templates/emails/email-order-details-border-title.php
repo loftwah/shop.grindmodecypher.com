@@ -13,10 +13,10 @@ if ( $sent_to_admin ) {
 	$before = '<a style="font-weight: normal;' . esc_attr( $titleColor ) . '" class="yaymail_builder_link" href="' . esc_url( $order->get_edit_order_url() ) . '">';
 	$after  = '</a>';
 	/* translators: %s: Order ID. */
-	echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . $after . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) );
+	echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . $after . ' (<span class="yaymail-datetime"><time datetime="%s">%s</time></span>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) );
 } else {
 	$before = '<h2 style="font-weight: normal;font-size: 18px;' . esc_attr( $titleColor ) . '" class="yaymail_builder_link" >';
 	$after  = '</h2>';
 	/* translators: %s: Order ID. */
-	echo wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) . $after );
+	echo wp_kses_post( $before . '<span class="yaymail-underline">' . sprintf( __( '[Order #%s]', 'woocommerce' ) . '</span>' . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) . $after );
 }

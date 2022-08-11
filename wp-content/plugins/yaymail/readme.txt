@@ -2,8 +2,8 @@
 Contributors: YayCommerce
 Tags: woocommerce emails, email designer, woocommerce email templates, woocommerce email customizer, email template, woo mail, new order email, email customizer,
 Requires at least: 3.0
-Tested up to: 5.9
-Stable tag: 2.1.9
+Tested up to: 6.0.1
+Stable tag: 3.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -169,6 +169,49 @@ Shhh, we offer one-time payment and unlimited sites packages, too! [Check it out
 3. A WC email template designed with YayMail
 
 == Changelog ==
+
+= Aug 1, 2022 - Version 3.0.1 =
+- Fixed: CSS on preview function for mobile
+- Fixed: YayMail Addon for YITH Request a Quote v1.2
+
+= Jul 20, 2022 - Version 3.0 =
+- Fixed: Load data error in YayMail Addon for WooCommerce Follow-up Emails v1.5
+- Fixed: Bug in YayMail Addon for TrackShip for WooCommerce v1.2
+- Fixed: Uncaught TypeError: nl2br()
+
+= Jul 13, 2022 - Version 2.9.9 =
+- Added: Shortcode to display Payment Instruction
+- Fixed: Small bugs
+
+= Jun 28, 2022 - Version 2.9.8 =
+- Released: YayMail Addon for YITH WooCommerce Request a Quote v1.0
+- Added: Allow placeholder of custom meta field have second line
+- Fixed: Custom for customer Jake - $shortcode['[yaymail_customer_note]'] = ( $customerNoteHtml );')
+
+= Jun 27, 2022 - Version 2.9.7 = 
+- Released: YayMail Addon RMA Return Refund and Exchange For WooCommerce (by WPSwings) v1.0
+- Released: YayMail Addon YITH Points and Rewards v1.0
+- Released: YayMail Addon WooCommerce PDF Product Vouchers (SkyVerge) v1.0
+- Added: Items shipped in AST (PRO)
+- Fixed: Small bugs
+
+= Jun 16, 2022 - Version 2.9.6 =
+- Released: YayMail Addon for YITH WooCommerce Affiliates v1.0
+- Released: YayMail Addon for YITH Auctions for WooCommerce v1.0
+- Added: Customer role shortcode ([yaymail_customer_roles])
+- Fixed: Set as default (header, footer)
+
+= Jun 9, 2022 - Version 2.9.5 =
+- Released: YayMail Addon for B2BKing v1.1
+- Released: Conditional Logic for YayMail v1.9
+- Added: Shortcode [yaymail_addon_template_new_message_request] (Addon B2BKing 1.1)
+- Fixed: Bug conflict with WooCommerce Subscription
+- Fixed: Support WooCommerce Local Pickup Time Select plugin
+- Fixed: Add new logic for Coupon codes (Addon Conditional Logic 1.9)
+
+= May 24, 2022 - Version 2.9.4 =
+- Released: YayMail Addon for YITH Advanced Refund System for WooCommerce Premium v1.0
+- Fixed: Verification link in New account template
 
 = May 17, 2022 - Version 2.9.3 =
 - Added: Support YITH WooCommerce Delivery Date (Addon)

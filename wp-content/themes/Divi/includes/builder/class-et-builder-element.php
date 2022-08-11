@@ -14751,7 +14751,7 @@ class ET_Builder_Element {
 				 * @param string             $function_name Module slug (e.g. et_pb_section).
 				 * @param ET_Builder_Element $this          Module object.
 				 *
-				 * @since ??
+				 * @since 4.17.4
 				 */
 				$overflow = apply_filters( 'et_builder_process_advanced_borders_options_radii_overflow_enabled', $overflow, $function_name, $this );
 
@@ -22289,7 +22289,7 @@ class ET_Builder_Element {
 	/**
 	 * Public access provider for self::contains().
 	 *
-	 * @since ??
+	 * @since 4.17.4
 	 *
 	 * @param string   $content Element content.
 	 * @param string[] $module_slugs Module slug to search.

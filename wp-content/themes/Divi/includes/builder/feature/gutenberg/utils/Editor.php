@@ -174,7 +174,7 @@ if ( ! function_exists( 'et_builder_is_block_theme' ) ) {
 	/**
 	 * Whether current theme is block theme or not.
 	 *
-	 * @since ??
+	 * @since 4.17.4
 	 *
 	 * @return boolean Block theme status.
 	 */

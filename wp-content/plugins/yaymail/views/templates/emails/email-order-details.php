@@ -137,16 +137,16 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 <?php } ?>
 
 <!-- Table Items has Border -->
-<table class="yaymail_builder_table_items_content" cellspacing="0" cellpadding="6" border="1" style="border-collapse: separate; color: #636363; border: 1px solid #e5e5e5; font-family: Helvetica,Roboto,Arial,sans-serif;" width="100%">
+<table class="yaymail_builder_table_items_content yaymail-list-order-item" cellspacing="0" cellpadding="6" border="1" style="border-collapse: separate; color: #636363; border: 1px solid #e5e5e5; font-family: Helvetica,Roboto,Arial,sans-serif;" width="100%">
 	<thead>
 		<tr style="word-break: normal">
-			<th class="td" scope="col" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit;">
+			<th class="td yaymail-title-item-product" scope="col" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit;">
 				<?php esc_html_e( 'Product', 'woocommerce' ); ?>
 			</th>
-			<th class="td" scope="col" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit;">
+			<th class="td yaymail-title-item-quanty" scope="col" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit;">
 				<?php esc_html_e( 'Quantity', 'woocommerce' ); ?>
 			</th>
-			<th class="td" scope="col" style="text-align:left; width: 30%;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit;">
+			<th class="td yaymail-title-item-price" scope="col" style="text-align:left; width: 30%;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit;">
 				<?php esc_html_e( 'Price', 'woocommerce' ); ?>
 			</th>
 		</tr>

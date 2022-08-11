@@ -1,6 +1,6 @@
 <?php
 /*
-* Copyright (C) 2017-present, Facebook, Inc.
+* Copyright (C) 2017-present, Meta, Inc.
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ class FacebookWordpressPixelInjection {
 
   public function inject() {
     $pixel_id = FacebookWordpressOptions::getPixelId();
+    $capiIntegrationStatus =
+      FacebookWordpressOptions::getCapiIntegrationStatus();
     if (FacebookPluginUtils::isPositiveInteger($pixel_id)) {
       add_action(
         'wp_head',
@@ -34,7 +36,11 @@ class FacebookWordpressPixelInjection {
       add_action(
         'wp_head',
         array($this, 'injectPixelNoscriptCode'));
-
+      if ($capiIntegrationStatus === '1') {
+        add_action(
+          'wp_body_open',
+          array($this, 'injectOpenBridgeCode'));
+      }
       foreach (FacebookPluginConfig::integrationConfig() as $key => $value) {
         $class_name = 'FacebookPixelPlugin\\Integration\\'.$value;
         $class_name::injectPixelCode();
@@ -73,6 +79,14 @@ class FacebookWordpressPixelInjection {
       FacebookWordpressOptions::getAgentString(),
       FacebookWordpressOptions::getUserInfo()));
     echo(FacebookPixel::getPixelPageViewCode());
+  }
+
+  public function injectOpenBridgeCode() {
+    $pixel_id = FacebookPixel::getPixelId();
+    if (empty($pixel_id)) {
+      return;
+    }
+    echo(FacebookPixel::getOpenBridgeConfiguration());
   }
 
   public function injectPixelNoscriptCode() {

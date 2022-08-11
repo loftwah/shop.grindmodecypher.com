@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2017-present, Facebook, Inc.
+ * Copyright (C) 2017-present, Meta, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,5 +55,13 @@ class FacebookPluginUtils {
   // https://wordpress.org/support/article/roles-and-capabilities
   public static function isInternalUser() {
     return current_user_can('edit_posts') || current_user_can('upload_files');
+  }
+
+  public static function endsWith( $haystack, $needle ) {
+    $length = strlen( $needle );
+    if( !$length ) {
+      return false;
+    }
+    return substr( $haystack, -$length ) === $needle;
   }
 }

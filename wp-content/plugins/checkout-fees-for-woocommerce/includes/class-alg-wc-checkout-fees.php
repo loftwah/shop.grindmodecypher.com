@@ -979,7 +979,7 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 		public function renewals_set_fees_recurring( $recurring, $fees, $cart ) {
 
 			// If it's fees which have been added from our plugin, return true else return as is.
-			$recurring = ( 0 != $fees->total && ( in_array( $fees->name, $this->fees_added || in_array( $fees->name, $this->fees_added_2 ) ) ) ) ? true : $recurring; //phpcs:ignore
+			$recurring = ( 0 != $fees->total && ( in_array( $fees->name, $this->fees_added ) || in_array( $fees->name, $this->fees_added_2 ) ) ) ? true : $recurring; //phpcs:ignore
 			return $recurring;
 
 		}
@@ -1008,7 +1008,9 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 		 * @param array $stripe_params Array of parameters for Stripe payment plugin.
 		 */
 		public function modify_stripe_params( $stripe_params ) {
-			$stripe_params['is_checkout'] = 'yes';
+			if ( is_checkout() ) {
+				$stripe_params['is_checkout'] = 'yes';
+			}
 			return $stripe_params;
 		}
 	}

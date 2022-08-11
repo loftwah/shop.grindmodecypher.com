@@ -35,6 +35,18 @@ class Settings_Callbacks {
 	public function custom_fields_section() {
 		echo wp_kses_post( __( 'These are used for the (optional) footer columns in the <em>Modern (Premium)</em> template, but can also be used for other elements in your custom template' , 'woocommerce-pdf-invoices-packing-slips' ) );
 	}
+	
+	/**
+	 * HTML section callback.
+	 *
+	 * @return void.
+	 */
+	public function html_section( $args ) {
+		extract( $this->normalize_settings_args( $args ) );
+		
+		// output HTML	
+		echo wp_kses_post( $html );
+	}
 
 	/**
 	 * Checkbox callback.
@@ -195,7 +207,7 @@ class Settings_Callbacks {
 	 *
 	 * @param  array $args Field arguments.
 	 *
-	 * @return string	  Select field.
+	 * @return void
 	 */
 	public function select( $args ) {
 		extract( $this->normalize_settings_args( $args ) );
@@ -293,7 +305,7 @@ class Settings_Callbacks {
 	/**
 	 * Multiple text element callback.
 	 * @param  array $args Field arguments.
-	 * @return string	   Text input field.
+	 * @return void
 	 */
 	public function multiple_text_input( $args ) {
 		extract( $this->normalize_settings_args( $args ) );
@@ -340,7 +352,7 @@ class Settings_Callbacks {
 	/**
 	 * Multiple text element callback.
 	 * @param  array $args Field arguments.
-	 * @return string	   Text input field.
+	 * @return void
 	 */
 	public function multiple_checkboxes( $args ) {
 		extract( $this->normalize_settings_args( $args ) );
@@ -369,8 +381,7 @@ class Settings_Callbacks {
 	 * Media upload callback.
 	 *
 	 * @param  array $args Field arguments.
-	 *
-	 * @return string	  Media upload button & preview.
+	 * @return void
 	 */
 	public function media_upload( $args ) {
 		extract( $this->normalize_settings_args( $args ) );
@@ -474,9 +485,8 @@ class Settings_Callbacks {
 
 	/**
 	 * Wrapper function to create tabs for settings in different languages
-	 * @param  [type] $args     [description]
-	 * @param  [type] $callback [description]
-	 * @return [type]           [description]
+	 * @param  array $args
+	 * @return void
 	 */
 	public function i18n_wrap ( $args ) {
 		extract( $this->normalize_settings_args( $args ) );

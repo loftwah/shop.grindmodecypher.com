@@ -44,18 +44,21 @@ function et_builder_handle_shipping_calculator_update_btn_click() {
 		return;
 	}
 
+	$nonce_verified = false;
+
+	// phpcs:ignore ET.Sniffs.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification is handled by WordPress.
+	if ( wp_verify_nonce( $_POST['woocommerce-shipping-calculator-nonce'], 'woocommerce-shipping-calculator' ) ) { // WPCS: input var ok.
+		// We can safely move forward.
+		$nonce_verified = true;
+	}
+
 	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification is handled by WooCommerce plugin.
 	$referrer         = esc_url_raw( $_POST['_wp_http_referer'] );
 	$referrer_page_id = url_to_postid( $referrer );
 	$cart_page_id     = wc_get_page_id( 'cart' );
 
-	if ( $cart_page_id !== $referrer_page_id ) {
-		return;
-	}
-
-	$post_content = get_post_field( 'post_content', $referrer_page_id );
-
-	if ( has_shortcode( $post_content, 'woocommerce_cart' ) ) {
+	// Bail when nonce failed, and $referrer_page_id isn't equal to $cart_page_id.
+	if ( ! $nonce_verified && $cart_page_id !== $referrer_page_id ) {
 		return;
 	}
 
@@ -999,50 +1002,51 @@ function et_builder_wc_render_module_template( $function_name, $args = array(), 
 			);
 			break;
 		case 'woocommerce_show_product_images':
-			// WC Images module needs to modify global variable's property. Thus it is performed
-			// here instead at module's class since the $product global might be modified.
-			$gallery_ids     = $product->get_gallery_image_ids();
-			$image_id        = $product->get_image_id();
-			$show_image      = 'on' === $args['show_product_image'];
-			$show_gallery    = 'on' === $args['show_product_gallery'];
-			$show_sale_badge = 'on' === $args['show_sale_badge'];
+			if ( is_a( $product, 'WC_Product' ) ) {
+				// WC Images module needs to modify global variable's property. Thus it is performed
+				// here instead at module's class since the $product global might be modified.
+				$gallery_ids     = $product->get_gallery_image_ids();
+				$image_id        = $product->get_image_id();
+				$show_image      = 'on' === $args['show_product_image'];
+				$show_gallery    = 'on' === $args['show_product_gallery'];
+				$show_sale_badge = 'on' === $args['show_sale_badge'];
 
-			// If featured image is disabled, replace it with first gallery image's id (if gallery
-			// is enabled) or replaced it with empty string (if gallery is disabled as well).
-			if ( ! $show_image ) {
-				if ( $show_gallery && isset( $gallery_ids[0] ) ) {
-					$product->set_image_id( $gallery_ids[0] );
+				// If featured image is disabled, replace it with first gallery image's id (if gallery
+				// is enabled) or replaced it with empty string (if gallery is disabled as well).
+				if ( ! $show_image ) {
+					if ( $show_gallery && isset( $gallery_ids[0] ) ) {
+						$product->set_image_id( $gallery_ids[0] );
 
-					// Remove first image from the gallery because it'll be added as thumbnail and will be duplicated.
-					unset( $gallery_ids[0] );
+						// Remove first image from the gallery because it'll be added as thumbnail and will be duplicated.
+						unset( $gallery_ids[0] );
+						$product->set_gallery_image_ids( $gallery_ids );
+					} else {
+						$product->set_image_id( '' );
+					}
+				}
+
+				// Replaced gallery image ids with empty array.
+				if ( ! $show_gallery ) {
+					$product->set_gallery_image_ids( array() );
+				}
+
+				if ( $show_sale_badge && function_exists( 'woocommerce_show_product_sale_flash' ) ) {
+					woocommerce_show_product_sale_flash();
+				}
+
+				// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Using for consistency.
+				call_user_func( $function_name );
+
+				// Reset product's actual featured image id.
+				if ( ! $show_image ) {
+					$product->set_image_id( $image_id );
+				}
+
+				// Reset product's actual gallery image id.
+				if ( ! $show_gallery ) {
 					$product->set_gallery_image_ids( $gallery_ids );
-				} else {
-					$product->set_image_id( '' );
 				}
 			}
-
-			// Replaced gallery image ids with empty array.
-			if ( ! $show_gallery ) {
-				$product->set_gallery_image_ids( array() );
-			}
-
-			if ( $show_sale_badge && function_exists( 'woocommerce_show_product_sale_flash' ) ) {
-				woocommerce_show_product_sale_flash();
-			}
-
-			// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
-			call_user_func( $function_name );
-
-			// Reset product's actual featured image id.
-			if ( ! $show_image ) {
-				$product->set_image_id( $image_id );
-			}
-
-			// Reset product's actual gallery image id.
-			if ( ! $show_gallery ) {
-				$product->set_gallery_image_ids( $gallery_ids );
-			}
-
 			break;
 		case 'wc_get_stock_html':
 			echo wc_get_stock_html( $product ); // phpcs:ignore WordPress.Security.EscapeOutput -- `wc_get_stock_html` include woocommerce's `single-product/stock.php` template.
@@ -1100,9 +1104,9 @@ function et_builder_wc_render_module_template( $function_name, $args = array(), 
 				WC()->session->set( 'wc_notices', $et_wc_cached_notices );
 			}
 			break;
+		case 'woocommerce_template_single_price':
 		case 'woocommerce_template_single_meta':
 			if ( is_a( $product, 'WC_Product' ) ) {
-
 				/*
 				 * Variable functions.
 				 * @see https://www.php.net/manual/en/functions.variable-functions.php
@@ -1111,8 +1115,11 @@ function et_builder_wc_render_module_template( $function_name, $args = array(), 
 			}
 			break;
 		default:
-			// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
-			call_user_func( $function_name );
+			// Only whitelisted functions shall be allowed until this point of execution.
+			if ( is_a( $product, 'WC_Product' ) ) {
+				// @phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Only whitelisted functions reach here.
+				call_user_func( $function_name );
+			}
 	}
 
 	$output = ob_get_clean();

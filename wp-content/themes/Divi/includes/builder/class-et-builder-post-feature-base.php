@@ -79,7 +79,17 @@ class ET_Builder_Post_Feature_Base {
 	 */
 	public function __construct() {
 		if ( self::enabled() ) {
+			global $shortname;
+
 			$this->_post_id = ET_Builder_Element::get_current_post_id();
+
+			if ( 'extra' === $shortname ) {
+				if ( ( et_is_extra_layout_used_as_home() || et_is_extra_layout_used_as_front() ) && ! is_null( et_get_extra_home_layout_id() ) ) {
+					$this->_post_id = et_get_extra_home_layout_id();
+				} elseif ( ( is_category() || is_tag() ) && ! is_null( et_get_extra_tax_layout_id() ) ) {
+					$this->_post_id = et_get_extra_tax_layout_id();
+				}
+			}
 
 			$this->cache_prime();
 

@@ -43,6 +43,7 @@ class WC_Admin_Meta_Boxes {
 		add_action( 'add_meta_boxes', array( $this, 'remove_meta_boxes' ), 10 );
 		add_action( 'add_meta_boxes', array( $this, 'rename_meta_boxes' ), 20 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 30 );
+		add_action( 'add_meta_boxes', array( $this, 'add_product_boxes_sort_order' ), 40 );
 		add_action( 'save_post', array( $this, 'save_meta_boxes' ), 1, 2 );
 
 		/**
@@ -167,6 +168,28 @@ class WC_Admin_Meta_Boxes {
 	}
 
 	/**
+	 * Add default sort order for meta boxes on product page.
+	 */
+	public function add_product_boxes_sort_order() {
+		$current_value = get_user_meta( get_current_user_id(), 'meta-box-order_product', true );
+
+		if ( $current_value ) {
+			return;
+		}
+
+		update_user_meta(
+			get_current_user_id(),
+			'meta-box-order_product',
+			array(
+				'side'     => 'submitdiv,postimagediv,woocommerce-product-images,product_catdiv,tagsdiv-product_tag',
+				'normal'   => 'woocommerce-product-data,postcustom,slugdiv,postexcerpt',
+				'advanced' => '',
+			)
+		);
+
+	}
+
+	/**
 	 * Remove bloat.
 	 */
 	public function remove_meta_boxes() {
@@ -276,7 +299,7 @@ class WC_Admin_Meta_Boxes {
 				get_block_template( $theme . '//' . $template_key );
 
 			// If the block template has the product post type specified, include it.
-			if ( $block_template && in_array( 'product', $block_template->post_types ) ) {
+			if ( $block_template && is_array( $block_template->post_types ) && in_array( 'product', $block_template->post_types ) ) {
 				$filtered_templates[ $template_key ] = $template_name;
 			}
 		}

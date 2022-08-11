@@ -1,6 +1,6 @@
-/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ../../../node_modules/.pnpm/css-loader@3.6.0_webpack@5.70.0/node_modules/css-loader/dist/cjs.js!../../../node_modules/.pnpm/postcss-loader@3.0.0/node_modules/postcss-loader/src/index.js??ruleSet[1].rules[0].use[2]!../../../node_modules/.pnpm/sass-loader@10.2.1_webpack@5.70.0/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[0].use[3]!./src/style.scss ***!
-  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../../../node_modules/.pnpm/css-loader@3.6.0_webpack@5.70.0/node_modules/css-loader/dist/cjs.js!../../../node_modules/.pnpm/postcss-loader@3.0.0/node_modules/postcss-loader/src/index.js??ruleSet[1].rules[0].use[2]!../../../node_modules/.pnpm/sass-loader@10.2.1_sass@1.49.9+webpack@5.70.0/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[0].use[3]!./src/style.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 @charset "UTF-8";
 /**
  * Colors
@@ -223,6 +223,25 @@ body.admin-color-sunrise {
  */
 /* stylelint-disable block-closing-brace-newline-after */
 /* stylelint-enable */
+.customer-feedback-simple__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.customer-feedback-simple__container .components-button {
+  line-height: 32px;
+  font-size: 20px;
+  border-radius: 3px;
+  padding: 6px;
+}
+.customer-feedback-simple__container .components-button:hover {
+  background-color: #f0f0f0;
+}
+
+.customer-feedback-simple__selection {
+  margin-right: 12px;
+}
+
 .woocommerce-customer-effort-score__selection {
   margin: 1em 0;
 }
@@ -281,13 +300,13 @@ body.admin-color-sunrise {
   content: "🙁";
 }
 .woocommerce-customer-effort-score__selection .components-radio-control__option input[value="3"] + label::before {
-  content: "😐";
+  content: "😑";
 }
 .woocommerce-customer-effort-score__selection .components-radio-control__option input[value="4"] + label::before {
   content: "🙂";
 }
 .woocommerce-customer-effort-score__selection .components-radio-control__option input[value="5"] + label::before {
-  content: "😁";
+  content: "😍";
 }
 
 .woocommerce-customer-effort-score__comments label {

@@ -43,18 +43,14 @@ if ( isset( $args['yith_wc_email'] ) && isset( $args['yith_wc_email']->id ) && !
 		$template = 'wp_crowdfunding_withdraw_request';
 	}
 	if ( class_exists( 'WC_Smart_Coupons' ) ) {
-		if ( version_compare( WC_VERSION, '5.5', '>=' ) ) {
-			$cache_path = wc_untokenize_path( $cache_path, wc_get_path_define_tokens() );
-		}
-		if ( isset( $args['email'] ) && strpos( $cache_path, plugin_dir_path( WC_SC_PLUGIN_FILE ) ) !== false ) {
-			$templateName = str_replace( plugin_dir_path( WC_SC_PLUGIN_FILE ) . 'templates/', '', $cache_path );
-			if ( 'email.php' == $templateName ) {
+		if ( isset( $args['email'] ) && strpos( $default_path, plugin_dir_path( WC_SC_PLUGIN_FILE ) ) !== false ) {
+			if ( 'email.php' === $template_name ) {
 				$template = 'wc_sc_email_coupon';
 			}
-			if ( 'combined-email.php' == $templateName ) {
+			if ( 'combined-email.php' === $template_name ) {
 				$template = 'wc_sc_combined_email_coupon';
 			}
-			if ( 'acknowledgement-email.php' == $templateName ) {
+			if ( 'acknowledgement-email.php' === $template_name ) {
 				$template = 'wc_sc_acknowledgement_email';
 			}
 		}
@@ -116,7 +112,7 @@ if ( ( false === $checkIsSumoTemp ) && ( false === $checkIsQWCTemp ) && isset( $
 	}
 } elseif ( $template ) {
 	$flag_do_action = true;
-	if ( 'customer_new_account' === $args['email']->id || 'customer_new_account_activation' === $args['email']->id || 'customer_reset_password' === $args['email']->id ) {
+	if ( isset( $args['email'] ) && isset( $args['email']->id ) && ( 'customer_new_account' === $args['email']->id || 'customer_new_account_activation' === $args['email']->id || 'customer_reset_password' === $args['email']->id ) ) {
 		$custom_shortcode->setOrderId( 0, $args['sent_to_admin'], $args );
 		$custom_shortcode->shortCodesOrderDefined( $args['sent_to_admin'], $args );
 	} else {
