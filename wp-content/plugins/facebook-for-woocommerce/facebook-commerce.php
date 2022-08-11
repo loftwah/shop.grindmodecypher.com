@@ -360,14 +360,10 @@ class WC_Facebookcommerce_Integration extends WC_Integration {
 
 				add_action( 'before_delete_post', array( $this, 'on_product_delete' ) );
 
-				add_action( 'add_meta_boxes', 'SkyVerge\WooCommerce\Facebook\Admin\Product_Sync_Meta_Box::register', 10, 1 );
+				// Ensure product is deleted from FB when moved to trash.
+				add_action( 'wp_trash_post', array( $this, 'on_product_delete' ) );
 
-				add_action(
-					'transition_post_status',
-					array( $this, 'fb_change_product_published_status' ),
-					10,
-					3
-				);
+				add_action( 'add_meta_boxes', 'SkyVerge\WooCommerce\Facebook\Admin\Product_Sync_Meta_Box::register', 10, 1 );
 
 				add_action(
 					'wp_ajax_ajax_fb_toggle_visibility',
@@ -418,6 +414,16 @@ class WC_Facebookcommerce_Integration extends WC_Integration {
 				'facebook_jssdk_version' => $this->get_js_sdk_version(),
 			)
 		);
+
+		// Update products on change of status.
+		add_action(
+			'transition_post_status',
+			array( $this, 'fb_change_product_published_status' ),
+			10,
+			3
+		);
+
+		add_action( 'untrashed_post', array( $this, 'fb_restore_untrashed_variable_product' ) );
 
 		// Product Set hooks.
 		add_action( 'fb_wc_product_set_sync', array( $this, 'create_or_update_product_set_item' ), 99, 2 );
@@ -1000,12 +1006,14 @@ class WC_Facebookcommerce_Integration extends WC_Integration {
 		}
 
 		/**
-		 * bail if not enabled for sync, except if explicitly deleting from the metabox
+		 * Bail if not enabled for sync, except if explicitly deleting from the metabox or when deleting the
+		 * parent product ( Products::published_product_should_be_synced( $product ) will fail for the parent product
+		 * when deleting a variable product. This causes the fb_group_id to remain on the DB. )
 		 *
 		 * @see ajax_delete_fb_product()
 		 */
 		if ( ( ! wp_doing_ajax() || ! isset( $_POST['action'] ) || 'ajax_delete_fb_product' !== $_POST['action'] )
-			 && ! Products::published_product_should_be_synced( $product ) ) {
+			 && ! Products::published_product_should_be_synced( $product ) && ! $product->is_type( 'variable' ) ) {
 
 			return;
 		}
@@ -1061,6 +1069,7 @@ class WC_Facebookcommerce_Integration extends WC_Integration {
 		// clear out both item and group IDs
 		delete_post_meta( $product_id, self::FB_PRODUCT_ITEM_ID );
 		delete_post_meta( $product_id, self::FB_PRODUCT_GROUP_ID );
+
 	}
 
 
@@ -1083,8 +1092,6 @@ class WC_Facebookcommerce_Integration extends WC_Integration {
 			return;
 		}
 
-		$visibility = $new_status === 'publish' ? self::FB_SHOP_PRODUCT_VISIBLE : self::FB_SHOP_PRODUCT_HIDDEN;
-
 		$product = wc_get_product( $post->ID );
 
 		// bail if we couldn't retrieve a valid product object or the product isn't enabled for sync
@@ -1093,11 +1100,50 @@ class WC_Facebookcommerce_Integration extends WC_Integration {
 		// variations before it gets called with the variable product. As a result, Products::product_should_be_synced()
 		// always returns false for the variable product (since all children are in the trash at that point).
 		// This causes update_fb_visibility() to be called on simple products and product variations only.
-		if ( ! $product instanceof \WC_Product || ! Products::published_product_should_be_synced( $product ) ) {
+		if ( ! $product instanceof \WC_Product || ( ! Products::published_product_should_be_synced( $product ) ) ) {
 			return;
 		}
 
-		$this->update_fb_visibility( $product, $visibility );
+		// Exclude variants. Product variables visibility is handled separately.
+		// @See fb_restore_untrashed_variable_product.
+		if ( $product->is_type( 'variant' ) ) {
+			return;
+		}
+
+		$visibility = $product->is_visible() ? self::FB_SHOP_PRODUCT_VISIBLE : self::FB_SHOP_PRODUCT_HIDDEN;
+
+		if ( $visibility === self::FB_SHOP_PRODUCT_VISIBLE ) {
+			// - new status is 'publish' regardless of old status, sync to Facebook
+			$this->on_product_publish( $product->get_id() );
+		} else {
+			$this->update_fb_visibility( $product, $visibility );
+		}
+	}
+
+	/**
+	 * Re-publish restored variable product.
+	 *
+	 * @internal
+	 *
+	 * @param int $post_id
+	 */
+	public function fb_restore_untrashed_variable_product ( $post_id ) {
+		$product = wc_get_product( $post_id );
+
+		if ( ! $product instanceof \WC_Product  ) {
+			return;
+		}
+
+		if ( ! $product->is_type( 'variable' ) ) {
+			return;
+		}
+
+		$visibility = $product->is_visible() ? self::FB_SHOP_PRODUCT_VISIBLE : self::FB_SHOP_PRODUCT_HIDDEN;
+
+		if ( $visibility === self::FB_SHOP_PRODUCT_VISIBLE ) {
+			// - new status is 'publish' regardless of old status, sync to Facebook
+			$this->on_product_publish( $product->get_id() );
+		}
 	}
 
 
@@ -1116,7 +1162,7 @@ class WC_Facebookcommerce_Integration extends WC_Integration {
 	 */
 	private function should_update_visibility_for_product_status_change( $new_status, $old_status ) {
 
-		return ( $old_status === 'publish' && $new_status !== 'publish' ) || ( $old_status === 'trash' && $new_status === 'publish' );
+		return ( $old_status === 'publish' && $new_status !== 'publish' ) || ( $old_status === 'trash' && $new_status === 'publish' ) || ( $old_status === 'future' && $new_status === 'publish' );
 	}
 
 
