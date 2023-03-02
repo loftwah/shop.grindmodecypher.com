@@ -10,6 +10,13 @@ $options = wdgk_get_wc_donation_setting();
 
 if (isset($_POST['wdgk_add_form'])) {
 
+
+    // echo "<pre>";
+    // print_r($_POST);
+    // echo "</pre>";
+
+    // die;
+
 	$product_name		= "";
 	$cart_product		= "";
 	$checkout_product	= "";
@@ -144,21 +151,24 @@ if (isset($options['Noteplaceholder'])) {
 						<tr valign="top">
 							<th scope="row"><?php _e('Select Donation Product', 'woo-donations'); ?></th>
 							<td>
-								<select name="wdgk_product" id="wdgk-product">
-									<option value="">--Select--</option>
-									<?php
-									$wdgk_get_page = get_posts(array(
-										'post_type'     => 'product',
-										'post_status' => 'publish',
-										'posts_per_page' => -1
+                                <div class="wdgk-select-box">
+                                <?php 
+                                $post_7 = get_post( $product );
+                                $product_title = $post_7->post_title;                                
+                                ?>
 
-									));
-
-									foreach ($wdgk_get_page as $wdgk_product) {
-										printf('<option value="' . $wdgk_product->ID . '"' . selected($wdgk_product->ID, $product, false) . '>' . $wdgk_product->post_title . ' (' . $wdgk_product->ID . ')</option>');
-									}
-									?>
-								</select>
+                                <select name="wdgk_product" class="wdgk_select_product">
+                                    <?php 
+                                    if(isset($product) && !empty($product)){
+                                        ?>
+                                        <option selected="selected" value="<?php echo $product; ?>"><?php echo $product_title; ?></option>
+                                        <?php
+                                    }
+                                    ?>
+                 
+                                </select>
+                                </div>
+							
 								<span class="wdgk_note"><?php _e('Select woocommerce products for donation.', 'woo-donations'); ?></span>
 							</td>
 						</tr>

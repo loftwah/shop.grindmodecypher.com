@@ -4,9 +4,9 @@ Donate link: https://paypal.me/rvadhel
 Tags: WooCommerce Donation, WooCommerce Donation Campaign, WooCommerce Cart Page Donation, Woocommerce Checkout Page Donation, Woocommerce Donation on Pages,covid19
 Requires PHP: 5.2.4
 Requires at least: 3.0.1
-Tested up to: 6.0.1
-Stable tag: 2.7
-WC tested up to: 6.7.0
+Tested up to: 6.1
+Stable tag: 3.0
+WC tested up to: 7.0.1
 
 This Plugin provide you options to accept donations in woocommerce with amount specified by the end user, so they can donate any amount they wish to donate.
 
@@ -124,7 +124,18 @@ After Plugin Active go to WooCommerce-> Donation.
 
 
 == Changelog ==
-
+= 3.0=
+ Improve serach product feature in admin side.
+ 
+= 2.9=
+ Added: Replaced dropdown to search product option in selection product for donation.
+ 
+= 2.8=
+ Fixed issue.
+ 
+= 2.7=
+ Fixed issue of donation price format
+ 
 = 2.7=
  Tested up to wp version 6.0.1
 

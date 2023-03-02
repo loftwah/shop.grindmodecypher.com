@@ -3,9 +3,9 @@
 Plugin Name: Woo Donations
 Description: Woo Donation is a plugin that is used to collect donations on your websites based on Woocommerce. You can add donation functionality in your site to ask your visitors/users community for financial support for the charity or non-profit programs, products, and organisation.
 Author: Geek Code Lab
-Version: 2.7
+Version: 3.0
 Author URI: https://geekcodelab.com/
-WC tested up to: 6.7.0
+WC tested up to: 7.1
 Text Domain : woo-donations
 */
 
@@ -19,7 +19,7 @@ if (!defined("wdgk_PLUGIN_URL"))
 
 	define("wdgk_PLUGIN_URL", plugins_url() . '/' . basename(dirname(__FILE__)));
 
-define("wdgk_BUILD", '2.7');
+define("wdgk_BUILD", '3.0');
 
 
 require_once(wdgk_PLUGIN_DIR_PATH . 'functions.php');
@@ -92,6 +92,14 @@ function wdgk_admin_style(){
 		wp_enqueue_style('wdgk_admin_style', $css, '',wdgk_BUILD);
 		wp_enqueue_style('wp-color-picker');
 		wp_enqueue_script('wp-color-picker');
+
+
+        wp_enqueue_style("wdgk_front_select2", wdgk_PLUGIN_URL . "/assets/css/select2.min.css", '',wdgk_BUILD);
+	
+	    wp_enqueue_script('wdgk_donation_select2', wdgk_PLUGIN_URL.'/assets/js/select2.min.js', array('jquery'),wdgk_BUILD);
+	    wp_enqueue_script('wdgk-admin-custom-js', wdgk_PLUGIN_URL.'/assets/js/custom.js', array('jquery'),wdgk_BUILD);
+        wp_localize_script( 'wdgk-admin-custom-js', 'custom_call', [ 'ajaxurl' => admin_url('admin-ajax.php') ] );
+
 	}
 }
 function wdgk_admin_menu_donation_setting_page(){
@@ -177,7 +185,7 @@ function wdgk_donation_form_front_html($redurl){
 				foreach ($cartitems as $item => $values) {
 					$product_id =  $values['product_id'];
 					if ($product_id == $product) {
-						$donation_price     = $values['donation_price'];
+						$donation_price = isset($_COOKIE['wdgk_product_display_price']) ? $_COOKIE['wdgk_product_display_price'] : $values['donation_price'];
 						$donation_note      = $values['donation_note'];
 					}
 				}
@@ -266,7 +274,7 @@ function wdgk_donation_form_shortcode_html($redurl){
 				foreach ($cartitems as $item => $values) {
 					$product_id =  $values['product_id'];
 					if ($product_id == $product) {
-						$donation_price     = $values['donation_price'];
+						$donation_price = isset($_COOKIE['wdgk_product_display_price']) ? $_COOKIE['wdgk_product_display_price'] : $values['donation_price'];
 						$donation_note      = $values['donation_note'];
 					}
 				}
@@ -497,4 +505,34 @@ function wdgk_order_items_column_cnt($colname){
 				
 		}
 	}
+}
+
+add_action('wp_ajax_wdgk_product_select_ajax','wdgk_product_select_ajax_callback');
+add_action( 'wp_ajax_nopriv_wdgk_product_select_ajax', 'wdgk_product_select_ajax_callback' );
+
+function wdgk_product_select_ajax_callback() {	
+    
+    $result = array();
+    $search = $_POST['search'];
+
+    $wdgk_get_page = get_posts(array(
+        's'           => $search,
+        'post_type'     => 'product',
+        'post_status' => 'publish',
+        'posts_per_page' => -1 ));
+
+
+        // $count_pro = count($wdgk_get_page);
+	foreach ($wdgk_get_page as $wdgk_product) {		
+
+        $result[] = array(
+            'id' => $wdgk_product->ID,
+            'title' => $wdgk_product->post_title 
+        );
+	}
+
+
+    echo json_encode($result);
+
+    die;
 }

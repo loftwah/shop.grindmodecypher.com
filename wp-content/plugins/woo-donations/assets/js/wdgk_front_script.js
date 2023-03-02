@@ -1,11 +1,15 @@
-jQuery(document).ready(function($) {
+jQuery(document).ready(function ($) {
 
-    jQuery(".wdgk_donation").on('keyup', function(e) {
+    jQuery(".wdgk_donation").on('keyup', function (e) {
         if (e.keyCode == 13) {
             jQuery(this).closest('.wdgk_donation_content').find(".wdgk_add_donation").trigger("click");
         }
     });
-    jQuery('body').on("click", ".wdgk_add_donation", function() {
+    jQuery(".wdgk_donation").on('keypress', function (e) {
+        if (e.which == 44) return true;
+        if (((e.keyCode != 46 || (e.keyCode == 46 && jQuery(this).val() == '')) || jQuery(this).val().indexOf('.') != -1) && (e.keyCode < 48 || e.keyCode > 57)) e.preventDefault();
+    });
+    jQuery('body').on("click", ".wdgk_add_donation", function () {
 
         var note = "";
 
@@ -28,13 +32,19 @@ jQuery(document).ready(function($) {
                 return false;
             }
         }
-        if (!jQuery.isNumeric(price)) {
+        // update function for allow comma in donation price
+        if (isNumber(price)) {
             jQuery(this).closest('.wdgk_donation_content').find(".wdgk_error_front").text("Please enter numeric value!!");
             return false;
         }
+
         jQuery(this).closest('.wdgk_donation_content').find('.wdgk_loader').removeClass("wdgk_loader_img");
-        setCookie('wdgk_product_price', price, 1);
-        setCookie('wdgk_donation_note', note, 2);
+        // set new cookie for display price with comma
+        setCookie('wdgk_product_display_price', price, 1);
+        price = price.replace(/,/g, '');
+
+        setCookie('wdgk_product_price', price, 2);
+        setCookie('wdgk_donation_note', note, 3);
 
         jQuery.ajax({
             url: ajaxurl,
@@ -46,7 +56,7 @@ jQuery(document).ready(function($) {
                 redirect_url: redirect_url
             },
             type: 'POST',
-            success: function(data) {
+            success: function (data) {
                 var redirect = jQuery.parseJSON(data);
                 if (redirect.error == "true") {
                     jQuery(this).closest('.wdgk_donation_content').find(".wdgk_error_front").text("Please enter valid value!!");
@@ -83,4 +93,9 @@ function getCookie(cname) {
         }
     }
     return "";
+}
+// 
+function isNumber(price) {
+    var regex = /^[0-9.,\b]+$/;
+    if (!regex.test(price)) return false;
 }
