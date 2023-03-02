@@ -46,6 +46,56 @@ class ET_Builder_Plugin_Compat_The_Events_Calendar extends ET_Builder_Plugin_Com
 		add_action( 'loop_start', array( $this, 'maybe_disable_post_spoofing' ), 1001 );
 		add_filter( 'wp_insert_post_empty_content', array( $this, 'maybe_allow_save_empty_content' ), 10, 2 );
 		add_filter( 'et_builder_enable_jquery_body', array( $this, 'maybe_disable_jquery_body' ) );
+		add_action( 'parse_query', array( $this, 'maybe_exclude_post_type' ), 51 );
+	}
+
+	/**
+	 * Maybe modify the query to exclude The Events Calendar post type when TB post is
+	 * being fetched.
+	 *
+	 * This method mimic conditional statements of Tribe__Events__Query::parse_query to
+	 * avoid unexpected issues.
+	 *
+	 * @since 4.19.0
+	 *
+	 * @param WP_Query $query The WP_Query instance (passed by reference).
+	 */
+	public function maybe_exclude_post_type( $query ) {
+		// Bail early if current page is admin area.
+		if ( is_admin() ) {
+			return;
+		}
+
+		// Bail early if The Events Calendar suppress query filters or query is not home.
+		if ( $query->get( 'tribe_suppress_query_filters' ) || ! $query->is_home() ) {
+			return;
+		}
+
+		// Bail early if current context is the main query and tec_post_type.
+		$context = tribe_context();
+		if ( $context->is( 'is_main_query' ) && $context->is( 'tec_post_type' ) ) {
+			return;
+		}
+
+		// Bail early if showEventsInMainLoop disabled or global query is events front page.
+		if ( ! tribe_get_option( 'showEventsInMainLoop', false ) || get_query_var( 'tribe_events_front_page' ) ) {
+			return;
+		}
+
+		// We need to identify whether current query has:
+		// - Meta Keys  : _et_library_theme_builder. Only used by TB to get post ID.
+		// - Post Types : et_theme_builder, tribe_events.
+		$query_post_types = (array) $query->get( 'post_type', array() );
+		$query_meta_key   = (array) $query->get( 'meta_key', array() );
+		$flip_post_types  = array_flip( $query_post_types );
+		if (
+			in_array( '_et_library_theme_builder', $query_meta_key, true )
+			&& isset( $flip_post_types[ ET_THEME_BUILDER_THEME_BUILDER_POST_TYPE ] )
+			&& isset( $flip_post_types[ Tribe__Events__Main::POSTTYPE ] )
+		) {
+			unset( $flip_post_types[ Tribe__Events__Main::POSTTYPE ] );
+			$query->set( 'post_type', array_keys( $flip_post_types ) );
+		}
 	}
 
 	/**

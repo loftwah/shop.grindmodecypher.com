@@ -144,14 +144,18 @@ add_action( 'wp_ajax_et_theme_builder_api_get_layout_url', 'et_theme_builder_api
 function et_theme_builder_api_save() {
 	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_api_save', 'nonce' );
 
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce is done in `et_builder_security_check`.
 	$_                = et_();
 	$live             = '1' === $_->array_get( $_POST, 'live', '0' );
-	$first_request    = '1' === $_->array_get( $_POST, 'first_request', '1' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is done in `et_builder_security_check`.
-	$last_request     = '1' === $_->array_get( $_POST, 'last_request', '1' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is done in `et_builder_security_check`.
+	$first_request    = '1' === $_->array_get( $_POST, 'first_request', '1' );
+	$last_request     = '1' === $_->array_get( $_POST, 'last_request', '1' );
 	$templates        = wp_unslash( $_->array_get( $_POST, 'templates', array() ) );
-	$theme_builder_id = et_theme_builder_get_theme_builder_post_id( $live, true );
+	$library_tb_id    = (int) $_->array_get( $_POST, 'library_theme_builder_id', 0 );
+	$library_item_id  = (int) $_->array_get( $_POST, 'library_item_id', 0 );
+	$theme_builder_id = $library_tb_id ? $library_tb_id : et_theme_builder_get_theme_builder_post_id( $live, true );
 	$has_default      = false;
 	$updated_ids      = array();
+	// phpcs:enable
 
 	// Always reset the cached templates on first request.
 	if ( $first_request ) {
@@ -232,6 +236,11 @@ function et_theme_builder_api_save() {
 		ET_Core_PageResource::remove_static_resources( 'all', 'all', false, 'dynamic' );
 	}
 
+	// Edit Template and Edit Preset: Save the templates into local library.
+	if ( $library_tb_id && $library_item_id ) {
+		et_theme_builder_update_library_item( $library_item_id, $templates );
+	}
+
 	wp_send_json_success(
 		array(
 			'updatedTemplateIds' => (object) $updated_ids,
@@ -290,7 +299,7 @@ function et_theme_builder_api_reset() {
 
 	$live_id = et_theme_builder_get_theme_builder_post_id( true, false );
 
-	if ( $live_id > 0 ) {
+	if ( $live_id > 0 && current_user_can( 'delete_others_posts' ) ) {
 		wp_trash_post( $live_id );
 		// Reset cache when theme builder is reset.
 		ET_Core_PageResource::remove_static_resources( 'all', 'all', true );
@@ -339,6 +348,23 @@ function et_theme_builder_api_export_theme_builder() {
 				)
 			)
 		);
+
+		$template_item_id = isset( $template['item_id'] ) ? absint( $template['item_id'] ) : 0;
+		if ( $template_item_id > 0 ) {
+			$sanitized = array_merge(
+				$sanitized,
+				[
+					'description' => et_theme_builder_library_get_item_description( $template['item_id'], $is_default ),
+				]
+			);
+		} else {
+			$sanitized = array_merge(
+				$sanitized,
+				[
+					'description' => et_theme_builder_library_get_item_description_from_payload( $template ),
+				]
+			);
+		}
 
 		$steps[] = array(
 			'type' => 'template',
@@ -493,6 +519,10 @@ add_action( 'wp_ajax_et_theme_builder_api_export_theme_builder_download', 'et_th
  * @param string              $temp_group  Temporary Group.
  */
 function et_theme_builder_api_import_theme_builder_save_layout( $portability, $template_id, $layout_id, $layout, $temp_id, $temp_group ) {
+	if ( ! current_user_can( 'edit_others_posts' ) ) {
+		wp_send_json_error();
+	}
+
 	if ( ! empty( $layout['images'] ) ) {
 		// Split up images into individual temporary files
 		// to avoid hitting the memory limit.
@@ -535,6 +565,10 @@ function et_theme_builder_api_import_theme_builder_save_layout( $portability, $t
  * @return array
  */
 function et_theme_builder_api_import_theme_builder_load_layout( $portability, $temp_id, $temp_group ) {
+	if ( ! current_user_can( 'edit_others_posts' ) ) {
+		wp_send_json_error();
+	}
+
 	$import = $portability->get_temp_file_contents( $temp_id, $temp_group );
 	$import = ! empty( $import ) ? json_decode( $import, true ) : array();
 	$images = et_()->array_get( $import, array( 'data', 'images' ), array() );
@@ -548,6 +582,10 @@ function et_theme_builder_api_import_theme_builder_load_layout( $portability, $t
 }
 
 function et_theme_builder_api_import_theme_builder() {
+	if ( ! current_user_can( 'edit_others_posts' ) ) {
+		wp_send_json_error();
+	}
+
 	$i18n = array_merge(
 		require ET_BUILDER_DIR . 'frontend-builder/i18n/generic.php',
 		require ET_BUILDER_DIR . 'frontend-builder/i18n/portability.php',
@@ -620,19 +658,24 @@ function et_theme_builder_api_import_theme_builder() {
 		);
 	}
 
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verfied in `et_builder_security_check`.
 	$override_default_website_template = '1' === $_->array_get( $_POST, 'override_default_website_template', '0' );
 	$import_presets                    = '1' === $_->array_get( $_POST, 'import_presets', '0' );
+	$library_template_import           = '1' === $_->array_get( $_POST, 'library_template_import', '0' );
 	$has_default_template              = $_->array_get( $export, 'has_default_template', false );
 	$has_global_layouts                = $_->array_get( $export, 'has_global_layouts', false );
 	$presets                           = $_->array_get( $export, 'presets', array() );
 	$presets_rewrite_map               = array();
 	$incoming_layout_duplicate         = false;
+	$uploaded_file_name                = substr( sanitize_file_name( $_FILES['file']['name'] ), 0, -5 );
+	$cloud_item_editor                 = $_->array_get( $_POST, 'cloud_item_editor', '' );
+	$temp_import                       = '1' === $_->array_get( $_POST, 'temp_import', '0' );
 
 	// Maybe ask the user to make a decision on how to deal with global layouts.
 	if ( ( ! $override_default_website_template || ! $has_default_template ) && $has_global_layouts ) {
 		$incoming_layout_duplicate_decision = $_->array_get( $_POST, 'incoming_layout_duplicate_decision', '' );
 
-		if ( 'duplicate' === $incoming_layout_duplicate_decision ) {
+		if ( 'duplicate' === $incoming_layout_duplicate_decision || $library_template_import ) {
 			$incoming_layout_duplicate = true;
 		} elseif ( 'relink' === $incoming_layout_duplicate_decision ) {
 			$incoming_layout_duplicate = false;
@@ -645,6 +688,7 @@ function et_theme_builder_api_import_theme_builder() {
 			);
 		}
 	}
+	// phpcs:enable
 
 	// Make imported preset overrides to avoid collisions with local presets.
 	if ( $import_presets && is_array( $presets ) && ! empty( $presets ) ) {
@@ -699,6 +743,7 @@ function et_theme_builder_api_import_theme_builder() {
 	set_transient(
 		$transient,
 		array(
+			'file_name'                         => $uploaded_file_name,
 			'ready'                             => false,
 			'steps'                             => $steps_files,
 			'templates'                         => $export['templates'],
@@ -707,7 +752,10 @@ function et_theme_builder_api_import_theme_builder() {
 			'layout_id_map'                     => $layout_id_map,
 			'presets'                           => $presets,
 			'import_presets'                    => $import_presets,
+			'library_template_import'           => $library_template_import,
 			'presets_rewrite_map'               => $presets_rewrite_map,
+			'cloud_item_editor'                 => $cloud_item_editor,
+			'temp_import'                       => $temp_import,
 		),
 		60 * 60 * 24
 	);
@@ -744,24 +792,34 @@ function et_theme_builder_api_import_theme_builder_step() {
 		wp_send_json_error();
 	}
 
-	$layout_keys         = array( 'header', 'body', 'footer' );
-	$portability         = et_core_portability_load( 'et_theme_builder' );
-	$steps               = $export['steps'];
-	$ready               = empty( $steps );
-	$layout_id_map       = $export['layout_id_map'];
-	$presets             = $export['presets'];
-	$presets_rewrite_map = $export['presets_rewrite_map'];
-	$import_presets      = $export['import_presets'];
-	$templates           = array();
-	$template_settings   = array();
-	$chunks              = 1;
+	$layout_keys             = array( 'header', 'body', 'footer' );
+	$portability             = et_core_portability_load( 'et_theme_builder' );
+	$steps                   = $export['steps'];
+	$ready                   = empty( $steps );
+	$layout_id_map           = $export['layout_id_map'];
+	$presets                 = $export['presets'];
+	$presets_rewrite_map     = $export['presets_rewrite_map'];
+	$import_presets          = $export['import_presets'];
+	$library_template_import = $export['library_template_import'];
+	$file_name               = $export['file_name'];
+	$cloud_item_editor       = $export['cloud_item_editor'];
+	$temp_import             = $export['temp_import'];
+	$templates               = array();
+	$template_settings       = array();
+	$chunks                  = 1;
+	$preset_id               = 0;
 
 	if ( ! $ready ) {
 		$import_step                   = et_theme_builder_api_import_theme_builder_load_layout( $portability, $steps[ $step ]['id'], $steps[ $step ]['group'] );
 		$import_step                   = array_merge( $import_step, array( 'presets' => $presets ) );
 		$import_step                   = array_merge( $import_step, array( 'presets_rewrite_map' => $presets_rewrite_map ) );
 		$import_step['import_presets'] = $import_presets;
-		$result                        = $portability->import_theme_builder( $id, $import_step, count( $steps ), $step, $chunk );
+
+		if ( $temp_import ) {
+			$import_step['data']['post_status'] = 'draft';
+		}
+
+		$result = $portability->import_theme_builder( $id, $import_step, count( $steps ), $step, $chunk );
 
 		if ( false === $result ) {
 			wp_send_json_error();
@@ -796,10 +854,12 @@ function et_theme_builder_api_import_theme_builder_step() {
 
 		$portability->delete_temp_files( $transient );
 
-		$conditions = array();
+		$conditions     = array();
+		$global_layouts = array();
 
 		foreach ( $export['templates'] as $index => $template ) {
-			$sanitized = et_theme_builder_sanitize_template( $template );
+			$sanitized  = et_theme_builder_sanitize_template( $template );
+			$is_default = $_->array_get( $sanitized, 'default', false );
 
 			foreach ( $layout_keys as $key ) {
 				$old_layout_id = (int) $_->array_get( $sanitized, array( 'layouts', $key, 'id' ), 0 );
@@ -807,9 +867,14 @@ function et_theme_builder_api_import_theme_builder_step() {
 				$layout_id     = ! empty( $layout_id ) ? $layout_id : 0;
 
 				$_->array_set( $sanitized, array( 'layouts', $key, 'id' ), $layout_id );
+
+				if ( $is_default ) {
+					$global_layouts[ $key ]['id'] = $layout_id;
+				}
 			}
 
 			$conditions = array_merge( $conditions, $sanitized['use_on'], $sanitized['exclude_from'] );
+			$_->array_set( $sanitized, array( 'global_layouts' ), $global_layouts );
 
 			$templates[] = $sanitized;
 		}
@@ -827,6 +892,43 @@ function et_theme_builder_api_import_theme_builder_step() {
 			$templates[ $index ]['use_on']       = array_values( array_intersect( $template['use_on'], $valid_settings ) );
 			$templates[ $index ]['exclude_from'] = array_values( array_intersect( $template['exclude_from'], $valid_settings ) );
 		}
+
+		if ( $library_template_import ) {
+			$is_multi_template = count( $templates ) > 1;
+
+			if ( $is_multi_template || 'set' === $cloud_item_editor ) {
+				$template_settings['set_name'] = $file_name;
+
+				foreach ( $templates as $key => $template ) {
+					foreach ( array( 'body', 'header', 'footer' ) as $layout_type ) {
+						$layout_id = $_->array_get( $template, array( 'layouts', $layout_type, 'id' ) );
+						if ( 'use_global' === $layout_id && isset( $global_layouts[ $layout_type ] ) ) {
+							$global_layout_id = $_->array_get( $global_layouts, array( $layout_type, 'id' ) );
+							$_->array_set( $templates, array( $key, 'layouts', $layout_type, 'id' ), $global_layout_id );
+						}
+					}
+				}
+
+				if ( $temp_import ) {
+					$template_settings['post_status'] = 'draft';
+				}
+
+				$preset_id = et_theme_builder_save_preset_to_library( $templates, $template_settings );
+			} else {
+				$first_template = $templates[0];
+				if ( 'template' === $cloud_item_editor ) {
+					$template_settings['template_name'] = $first_template['title'];
+				} else {
+					$template_settings['template_name'] = $file_name;
+				}
+
+				if ( $temp_import ) {
+					$first_template['status'] = 'draft';
+				}
+
+				$templates[0]['template_id'] = et_theme_builder_save_template_to_library( $first_template, $template_settings );
+			}
+		}
 	} else {
 		set_transient(
 			$transient,
@@ -842,6 +944,7 @@ function et_theme_builder_api_import_theme_builder_step() {
 
 	wp_send_json_success(
 		array(
+			'presetId'         => $preset_id,
 			'chunks'           => $chunks,
 			'templates'        => $templates,
 			'templateSettings' => $template_settings,
@@ -849,3 +952,543 @@ function et_theme_builder_api_import_theme_builder_step() {
 	);
 }
 add_action( 'wp_ajax_et_theme_builder_api_import_theme_builder_step', 'et_theme_builder_api_import_theme_builder_step' );
+
+/**
+ * Ajax action: save template into the local library.
+ */
+function et_theme_builder_api_save_template_to_library() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_api_save_template_to_library', 'nonce' );
+
+	$_ = et_();
+
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in `et_builder_security_check`.
+	$raw_templates = wp_unslash( $_->array_get( $_POST, 'template', array() ) );
+	$preferences   = wp_unslash( $_->array_get( $_POST, 'preferences', array() ) );
+	// phpcs:enable
+
+	$post_id = et_theme_builder_save_template_to_library( $raw_templates, $preferences );
+
+	if ( $post_id ) {
+		wp_send_json_success(
+			array(
+				'post_id' => $post_id,
+			)
+		);
+	} else {
+		wp_send_json_error();
+	}
+}
+
+add_action( 'wp_ajax_et_theme_builder_api_save_template_to_library', 'et_theme_builder_api_save_template_to_library' );
+
+/**
+ * Ajax action: save preset into the local library.
+ */
+function et_theme_builder_api_save_preset_to_library() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_api_save_preset_to_library', 'nonce' );
+
+	$_             = et_();
+	$preferences   = wp_unslash( $_->array_get( $_POST, 'preferences', [] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in `et_builder_security_check`.
+	$raw_templates = wp_unslash( $_->array_get( $_POST, 'templates', [] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in `et_builder_security_check`.
+
+	$post_id = et_theme_builder_save_preset_to_library( $raw_templates, $preferences );
+
+	if ( $post_id ) {
+		wp_send_json_success(
+			array(
+				'post_id' => $post_id,
+			)
+		);
+	} else {
+		wp_send_json_error();
+	}
+}
+
+add_action( 'wp_ajax_et_theme_builder_api_save_preset_to_library', 'et_theme_builder_api_save_preset_to_library' );
+
+/**
+ * Ajax action: Retrieve terms for the given taxonomy.
+ */
+function et_theme_builder_api_get_terms() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_api_get_terms', 'nonce' );
+
+	$_   = et_();
+	$tax = sanitize_text_field( $_->array_get( $_POST, 'tax', '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in `et_builder_security_check`.
+
+	if ( ! in_array( $tax, array( 'layout_category', 'layout_tag' ), true ) ) {
+		wp_send_json_error();
+	}
+
+	$terms_by_id = et_theme_builder_get_terms( $tax );
+
+	wp_send_json_success( $terms_by_id );
+}
+
+add_action( 'wp_ajax_et_theme_builder_api_get_terms', 'et_theme_builder_api_get_terms' );
+
+/**
+ * Ajax action: Use local library item.
+ */
+function et_theme_builder_api_use_library_item() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_api_use_library_item', 'nonce' );
+
+	$i18n = array_merge(
+		require ET_BUILDER_DIR . 'frontend-builder/i18n/generic.php',
+		require ET_BUILDER_DIR . 'frontend-builder/i18n/portability.php',
+		require ET_BUILDER_DIR . 'frontend-builder/i18n/theme-builder.php'
+	);
+
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in `et_builder_security_check`.
+	$_                                  = et_();
+	$item_id                            = (int) $_->array_get( $_POST, 'item_id', 0 );
+	$override_default_website_template  = '1' === $_->array_get( $_POST, 'override_default_website_template', '0' );
+	$override_assignments               = '1' === $_->array_get( $_POST, 'override_assignments', '0' );
+	$download_backup                    = '1' === $_->array_get( $_POST, 'download_backup', '0' );
+	$incoming_layout_duplicate_decision = $_->array_get( $_POST, 'incoming_layout_duplicate_decision', '' );
+	$item_id                            = (int) $_->array_get( $_POST, 'item_id', 0 );
+	// phpcs:enable
+
+	$args = [
+		'override_default_website_template'  => $override_default_website_template,
+		'override_assignments'               => $override_assignments,
+		'download_backup'                    => $download_backup,
+		'incoming_layout_duplicate_decision' => $incoming_layout_duplicate_decision,
+	];
+
+	$return_additional_args = [];
+	$library_item           = new ET_Theme_Builder_Local_Library_Item( $item_id );
+
+	if ( ET_THEME_BUILDER_ITEM_SET === $library_item->get_item_type() ) {
+		$has_global_layouts   = $library_item->has_global_layouts();
+		$has_default_template = $library_item->has_default_template();
+		$show_layout_decision = ( ! $override_default_website_template || ! $has_default_template ) && $has_global_layouts;
+
+		if ( $show_layout_decision && empty( $incoming_layout_duplicate_decision ) ) {
+			wp_send_json_error(
+				array(
+					'code'  => ET_Theme_Builder_Api_Errors::PORTABILITY_REQUIRE_INCOMING_LAYOUT_DUPLICATE_DECISION,
+					'error' => $i18n['This import contains references to global layouts.'],
+				)
+			);
+		}
+
+		$return_additional_args = [
+			'override_default_website_template'  => $override_default_website_template,
+			'override_assignments'               => $override_assignments,
+			'download_backup'                    => $download_backup,
+			'incoming_layout_duplicate_decision' => $incoming_layout_duplicate_decision,
+		];
+	}
+
+	$item_data = $library_item->use_library_item( $args );
+
+	if ( is_wp_error( $item_data ) ) {
+		wp_send_json_error();
+	}
+
+	$data = array_merge(
+		array(
+			'item_type' => $library_item->item_type,
+			'item_data' => $item_data,
+		),
+		$return_additional_args
+	);
+
+	wp_send_json_success( $data );
+}
+
+add_action( 'wp_ajax_et_theme_builder_api_use_library_item', 'et_theme_builder_api_use_library_item' );
+
+/**
+ * Ajax action: Trash interim library editor posts.
+ */
+function et_theme_builder_trash_theme_builder() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_trash_theme_builder', 'nonce' );
+
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in `et_builder_security_check`.
+	$_                = et_();
+	$theme_builder_id = (int) $_->array_get( $_POST, 'theme_builder_id', 0 );
+	$template_ids     = et_theme_builder_get_theme_builder_template_ids( true, $theme_builder_id );
+	$item_id          = (int) $_->array_get( $_POST, 'item_id' );
+	$cloud_item_id    = (int) $_->array_get( $_POST, 'cloud_item_id' );
+	$used_posts       = array();
+	// phpcs:enable
+
+	foreach ( $template_ids as $template_id ) {
+		foreach ( array( 'header', 'body', 'footer' ) as $layout_type ) {
+			$layout_id = get_post_meta( $template_id, "_et_{$layout_type}_layout_id", true );
+
+			// Clean layouts.
+			if ( $layout_id ) {
+				$used_posts[] = $layout_id;
+			}
+		}
+
+		// Clean template.
+		$used_posts[] = $template_id;
+	}
+
+	$used_posts[] = $theme_builder_id;
+
+	$used_posts = array_map( 'intval', $used_posts );
+	foreach ( $used_posts as $used_post ) {
+		if ( current_user_can( 'delete_others_posts' ) ) {
+			wp_trash_post( $used_post );
+		}
+	}
+
+	// Delete local library item.
+	if ( $cloud_item_id ) {
+		if ( current_user_can( 'delete_others_posts' ) ) {
+			wp_delete_post( $item_id );
+		}
+	}
+}
+
+add_action( 'wp_ajax_et_theme_builder_trash_theme_builder', 'et_theme_builder_trash_theme_builder' );
+
+/**
+ * AJAX action: Gets items data for the theme builder's library UI.
+ */
+function et_theme_builder_library_get_items_data() {
+	if ( ! et_pb_is_allowed( 'theme_builder' ) ) {
+		wp_send_json_error();
+	}
+
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_library_get_items_data', 'nonce' );
+
+	$item_type = isset( $_POST['et_item_type'] ) ? (string) sanitize_text_field( $_POST['et_item_type'] ) : 'template';
+
+	if ( ! in_array( $item_type, array( 'set', 'template' ), true ) ) {
+		wp_send_json_error( 'Error: Wrong item type provided.' );
+	}
+
+	wp_send_json_success(
+		et_theme_builder_library_get_library_items_data( $item_type )
+	);
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_get_items_data', 'et_theme_builder_library_get_items_data' );
+
+
+/**
+ * AJAX action: Add/Remove/Rename Library terms for taxonomies.
+ */
+function et_theme_builder_library_update_terms() {
+	et_builder_security_check( 'theme_builder', 'manage_categories', 'et_theme_builder_library_update_terms', 'nonce' );
+
+	$payload = isset( $_POST['payload'] ) ? (array) $_POST['payload'] : array(); // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput -- $_POST['payload'] is an array, it's value sanitization is done at the time of accessing value.
+
+	$et_library_taxonomy = isset( $_POST['et_library_taxonomy'] ) ? (string) $_POST['et_library_taxonomy'] : ''; // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput -- $_POST['et_library_taxonomy'] is a string, it's value sanitization is done at the time of accessing value.
+
+	$response = et_theme_builder_library_update_taxonomy_terms( $payload, $et_library_taxonomy );
+
+	if ( ! $response ) {
+		wp_send_json_error( 'Error: Please provide valid payload and taxonomy' );
+	}
+
+	return wp_send_json_success( $response );
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_update_terms', 'et_theme_builder_library_update_terms' );
+
+/**
+ * AJAX action: Update the theme builder library item.
+ */
+function et_theme_builder_library_update_item() {
+	if ( ! et_pb_is_allowed( 'theme_builder' ) ) {
+		wp_send_json_error();
+	}
+
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_library_update_item', 'nonce' );
+
+	$payload = isset( $_POST['payload'] ) ? (array) $_POST['payload'] : array(); // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput -- $_POST['payload'] is an array, it's value sanitization is done  at the time of accessing value.
+
+	if ( empty( $payload ) ) {
+		wp_send_json_error( 'Error: Payload is empty.' );
+	}
+
+	$response = et_theme_builder_library_update_item_data( $payload );
+
+	if ( ! $response ) {
+		wp_send_json_error( 'Error: Provide valid data.' );
+	}
+
+	return wp_send_json_success( $response );
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_update_item', 'et_theme_builder_library_update_item' );
+
+/**
+ * AJAX action: Save the theme builder library temporary item.
+ */
+function et_theme_builder_library_save_temp_layout() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_library_save_temp_layout', 'nonce' );
+
+	// phpcs:disable -- Sanitization will be handled inside the method.
+	$local_content = isset( $_POST['localContent'] ) ? (array) $_POST['localContent'] : array();
+	$cloud_content = isset( $_POST['cloudContent'] ) ? (array) $_POST['cloudContent'] : array();
+	// phpcs:enable
+
+	$templates      = array();
+	$global_layouts = array();
+	$is_cloud_item  = ! empty( $cloud_content['layouts'] );
+	$data           = $is_cloud_item ? $cloud_content['templates'] : $local_content;
+
+	foreach ( $data as $template ) :
+		if ( $is_cloud_item ) {
+			$is_default = filter_var( $template['default'], FILTER_VALIDATE_BOOLEAN );
+
+			$template = array_merge(
+				$template,
+				et_theme_builder_library_save_temp_cloud_layout_data( $template, $cloud_content['layouts'], $global_layouts )
+			);
+		} else {
+			$post = get_post( $template['id'] );
+
+			if ( ! $post ) {
+				continue;
+			}
+
+			$content    = json_decode( $post->post_content );
+			$is_default = get_post_meta( $post->ID, '_et_default', true );
+
+			$template = array_merge(
+				$template,
+				et_theme_builder_library_save_temp_local_layout_data( $post->ID, $content, $global_layouts )
+			);
+		}
+
+		// Set global references.
+		$layouts      = $template['layouts'];
+		$layout_types = array( 'header', 'body', 'footer' );
+
+		foreach ( $layout_types as $layout_type ) {
+			if ( ! isset( $layouts[ $layout_type ] ) ) {
+				continue;
+			}
+
+			if ( $is_cloud_item ) {
+				$global_info = et_()->array_get( $template, $layout_type . '_layout_global', false );
+				$is_global   = filter_var( $global_info, FILTER_VALIDATE_BOOLEAN );
+			} else {
+				$is_global = get_post_meta( $post->ID, '_et_' . $layout_type . '_layout_global', true );
+			}
+
+			if ( $is_default || $is_global ) {
+				$global_layouts[ $layout_type ] = $layouts[ $layout_type ]['id'];
+			}
+		}
+
+		array_push( $templates, $template );
+	endforeach;
+
+	$response = array(
+		'templates'      => $templates,
+		'global_layouts' => $global_layouts,
+	);
+
+	wp_send_json_success( $response );
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_save_temp_layout', 'et_theme_builder_library_save_temp_layout' );
+
+/**
+ * AJAX action: Remove the theme builder library temporary item.
+ */
+function et_theme_builder_library_remove_temp_layout() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_library_remove_temp_layout', 'nonce' );
+
+	$payload = isset( $_POST['payload'] ) ? (array) $_POST['payload'] : array(); // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput -- $_POST['payload'] is an array, it's value sanitization is done  at the time of accessing value.
+
+	foreach ( $payload as $template ) {
+		et_theme_builder_library_remove_temp_layout_data( $template );
+	}
+
+	wp_send_json_success();
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_remove_temp_layout', 'et_theme_builder_library_remove_temp_layout' );
+
+/**
+ * AJAX action: Gets an item by ID.
+ */
+function et_theme_builder_library_get_item() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_library_get_item', 'nonce' );
+
+	$id        = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+	$item_type = isset( $_POST['itemType'] ) ? (string) sanitize_text_field( $_POST['itemType'] ) : 'template';
+
+	if ( empty( $id ) || ! in_array( $item_type, array( 'set', 'template' ), true ) ) {
+		wp_send_json_error( 'Error: Please provide an ID and a valid item type.' );
+	}
+
+	$result   = array();
+	$items_id = array( $id );
+
+	if ( ET_THEME_BUILDER_ITEM_SET === $item_type ) {
+		$items_id            = array();
+		$callback            = 'et_theme_builder_library_get_' . ET_THEME_BUILDER_ITEM_SET . '_items_data';
+		$items               = $callback( $id );
+		$default_template_id = (int) get_post_meta( $id, '_et_default_template_id', true );
+
+		foreach ( $items as $item ) {
+			array_push( $items_id, $item->id );
+		}
+	}
+
+	// Continue processing for both set and template.
+
+	$result['exported'] = et_theme_builder_library_get_exported_content( $items_id );
+
+	if (
+		! isset( $result['exported']['context'] ) ||
+		! isset( $result['exported']['templates'] ) ||
+		! isset( $result['exported']['layouts'] )
+	) {
+		wp_send_json_error( 'Error: Invalid data.' );
+	}
+
+	$response = wp_json_encode(
+		array(
+			'success' => true,
+			'data'    => $result,
+		)
+	);
+
+	if ( ! $response ) {
+		wp_send_json_error( 'Error: Invalid response.' );
+	}
+
+	$tmp_dir = function_exists( 'sys_get_temp_dir' ) ? sys_get_temp_dir() : '/tmp';
+
+	$tmp_file = tempnam( $tmp_dir, 'et' );
+
+	et_()->WPFS()->put_contents( $tmp_file, $response );
+
+	// Remove any previous buffered content since we're setting `Content-Length` header
+	// based on $response value only.
+	while ( ob_get_level() ) {
+		ob_end_clean();
+	}
+
+	header( 'Content-Length: ' . @filesize( $tmp_file ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- `filesize` may fail due to the permissions denied error.
+
+	@unlink( $tmp_file ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- `unlink` may fail due to the permissions denied error.
+
+	// Charset has to be explicitly mentioned when it is other than UTF-8.
+	header( 'Content-Type: application/json; charset=' . esc_attr( get_option( 'blog_charset' ) ) );
+
+	die( et_core_intentionally_unescaped( $response, 'html' ) );
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_get_item', 'et_theme_builder_library_get_item' );
+
+
+/**
+ * AJAX action: Get the theme builder library preset items.
+ */
+function et_theme_builder_library_get_set_items() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_library_get_set_items', 'nonce' );
+
+	$item_id = isset( $_POST['itemId'] ) ? intval( $_POST['itemId'] ) : 0;
+
+	if ( empty( $item_id ) ) {
+		wp_send_json_error();
+	}
+
+	$items = et_theme_builder_library_get_set_items_data( $item_id );
+
+	wp_send_json_success( $items );
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_get_set_items', 'et_theme_builder_library_get_set_items' );
+
+/**
+ * Ajax action: Get default template id of the preset.
+ */
+function et_theme_builder_get_preset_default_template_id() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_get_preset_default_template_id', 'nonce' );
+
+	$_                   = et_();
+	$item_id             = (int) $_->array_get( $_POST, 'item_id', 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in `et_builder_security_check`.
+	$default_template_id = (int) get_post_meta( $item_id, '_et_default_template_id', true );
+
+	if ( $default_template_id > 0 ) {
+		wp_send_json_success( array( 'default_template_id' => $default_template_id ) );
+	} else {
+		wp_send_json_error( array( 'default_template_id' => 0 ) );
+	}
+}
+
+add_action( 'wp_ajax_et_theme_builder_get_preset_default_template_id', 'et_theme_builder_get_preset_default_template_id' );
+
+/**
+ * Ajax action: Remove the Library item after it is moved to the Cloud.
+ */
+function et_theme_builder_library_toggle_cloud_status() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_library_toggle_cloud_status', 'nonce' );
+
+	$post_id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in `et_builder_security_check`.
+
+	if ( ! $post_id ) {
+		wp_send_json_error( 'Error: ID is required.' );
+	}
+
+	$post_type = get_post_type( $post_id );
+
+	if ( ! current_user_can( 'edit_post', $post_id ) || ET_TB_ITEM_POST_TYPE !== $post_type ) {
+		wp_send_json_error( 'You do not have permission.' );
+	}
+
+	wp_send_json_success( wp_delete_post( $post_id, true ) );
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_toggle_cloud_status', 'et_theme_builder_library_toggle_cloud_status' );
+
+
+/**
+ * Ajax action: Remove temp layouts, templates theme builder.
+ */
+function et_theme_builder_library_clear_temp_data() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_library_clear_temp_data', 'nonce' );
+
+	$args = array(
+		'post_status'   => 'draft',
+		'post_type'     => array( 'et_tb_item', 'et_header_layout', 'et_body_layout', 'et_footer_layout' ),
+		'author'        => get_current_user_id(),
+		'fields'        => 'ids',
+		'no_found_rows' => true,
+		'nopaging'      => true,
+	);
+
+	$draft_query = new WP_Query( $args );
+
+	foreach ( $draft_query->posts as $draft_post_id ) {
+		$post_type = get_post_type( $draft_post_id );
+
+		if ( current_user_can( 'edit_post', $draft_post_id ) && ET_TB_ITEM_POST_TYPE === $post_type ) {
+			wp_delete_post( $draft_post_id );
+		}
+	}
+
+	wp_send_json_success();
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_clear_temp_data', 'et_theme_builder_library_clear_temp_data' );
+
+
+/**
+ * AJAX action: Gets Cloud access token from DB and send it to client.
+ */
+function et_theme_builder_library_get_cloud_token() {
+	et_builder_security_check( 'theme_builder', 'edit_others_posts', 'et_theme_builder_library_get_cloud_token', 'nonce' );
+
+	wp_send_json_success(
+		array(
+			'accessToken' => get_transient( 'et_cloud_access_token' ),
+		)
+	);
+}
+
+add_action( 'wp_ajax_et_theme_builder_library_get_cloud_token', 'et_theme_builder_library_get_cloud_token' );

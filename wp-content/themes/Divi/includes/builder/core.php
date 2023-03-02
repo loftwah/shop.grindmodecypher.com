@@ -35,10 +35,12 @@ add_filter( 'et_builder_render_layout', 'shortcode_unautop' );
 add_filter( 'et_builder_render_layout', 'prepend_attachment' );
 add_filter( 'et_builder_render_layout', 'do_shortcode', 11 ); // AFTER wpautop().
 
-// Run et_builder_filter_content_image_tags() after do_shortcode() to fill any
+// Temporarily remove wp_filter_content_tags() from the_content, then call it again by
+// running et_builder_filter_content_image_tags() after do_shortcode() to fill any
 // missing height and width attributes on the image. Those attributes are required
 // to add loading "lazy" attribute on the image. In this case, we set the order as
 // 12 because TB runs do_shortcode() on order 11.
+remove_filter( 'the_content', 'wp_filter_content_tags' );
 add_filter( 'the_content', 'et_builder_filter_content_image_tags', 12 );
 add_filter( 'et_builder_render_layout', 'et_builder_filter_content_image_tags', 12 );
 
@@ -120,16 +122,18 @@ if ( ! function_exists( 'et_builder_should_load_framework' ) ) :
 		$is_bfb       = et_pb_is_allowed( 'use_visual_builder' ) && isset( $bfb_settings['enable_bfb'] ) && 'on' === $bfb_settings['enable_bfb'];
 		$is_bfb_used  = 'on' === get_post_meta( $post_id, '_et_pb_use_builder', true ) && $is_bfb;
 
-		$is_edit_library_page         = in_array( $pagenow, array( 'edit.php', 'post.php', 'post-new.php' ), true ) && ( ( isset( $_GET['post_type'] ) && 'et_pb_layout' === $_GET['post_type'] ) || ( $post_id && 'et_pb_layout' === get_post_type( $post_id ) ) );
-		$is_extra_builder             = $post_id && 'layout' === get_post_type( $post_id );
-		$is_edit_page_not_bfb         = in_array( $pagenow, array( 'post-new.php', 'post.php' ), true ) && ! $is_bfb_used;
-		$is_role_editor_page          = 'admin.php' === $pagenow && isset( $_GET['page'] ) && apply_filters( 'et_divi_role_editor_page', 'et_divi_role_editor' ) === $_GET['page'];
+		$is_edit_library_page  = in_array( $pagenow, array( 'edit.php', 'post.php', 'post-new.php' ), true ) && ( ( isset( $_GET['post_type'] ) && 'et_pb_layout' === $_GET['post_type'] ) || ( $post_id && 'et_pb_layout' === get_post_type( $post_id ) ) );
+		$is_extra_builder      = $post_id && 'layout' === get_post_type( $post_id );
+		$is_edit_page_not_bfb  = in_array( $pagenow, array( 'post-new.php', 'post.php' ), true ) && ! $is_bfb_used;
+		$is_role_editor_page   = 'admin.php' === $pagenow && isset( $_GET['page'] ) && apply_filters( 'et_divi_role_editor_page', 'et_divi_role_editor' ) === $_GET['page'];
+		$is_theme_builder_page = 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'et_theme_builder' === $_GET['page'];
+
 		// phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled -- `$_GET['import']` variable does not contain the 'WordPress' string.
 		$is_import_page               = 'admin.php' === $pagenow && isset( $_GET['import'] ) && 'wordpress' === $_GET['import']; // Page Builder files should be loaded on import page as well to register the et_pb_layout post type properly.
 		$is_wpml_page                 = 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'sitepress-multilingual-cms/menu/languages.php' === $_GET['page']; // Page Builder files should be loaded on WPML clone page as well to register the custom taxonomies properly.
 		$is_edit_layout_category_page = 'edit-tags.php' === $pagenow && isset( $_GET['taxonomy'] ) && in_array( $_GET['taxonomy'], array( 'layout_category', 'layout_tag', 'layout_pack' ), true );
 
-		if ( ! $is_admin || ( $is_admin && in_array( $pagenow, $required_admin_pages, true ) && ( ! in_array( $pagenow, $specific_filter_pages, true ) || $is_edit_library_page || $is_role_editor_page || $is_edit_layout_category_page || $is_import_page || $is_wpml_page || $is_edit_page_not_bfb || $is_extra_builder ) ) ) {
+		if ( ! $is_admin || ( $is_admin && in_array( $pagenow, $required_admin_pages, true ) && ( ! in_array( $pagenow, $specific_filter_pages, true ) || $is_edit_library_page || $is_role_editor_page || $is_edit_layout_category_page || $is_import_page || $is_wpml_page || $is_edit_page_not_bfb || $is_extra_builder || $is_theme_builder_page ) ) ) {
 			$should_load = true;
 		} else {
 			$should_load = false;
@@ -212,8 +216,38 @@ function et_pb_video_get_oembed_thumbnail() {
 		add_filter( 'oembed_dataparse', 'et_pb_video_oembed_data_parse', 10, 3 );
 		// Save thumbnail.
 		$image_src = wp_oembed_get( $video_url );
+
+		// If the image src is empty try making a remote call with domain referer in case it's domain-restricted vimeo video.
+		// Ref: https://developer.vimeo.com/api/oembed/videos#embedding-videos-with-domain-privacy .
+		$is_vimeo_url = false !== strpos( $video_url, 'vimeo.com' );
+
+		if ( $is_vimeo_url && ! $image_src ) {
+			$vimeo_url      = add_query_arg( 'url', $video_url, 'https://vimeo.com/api/oembed.json' );
+			$vimeo_response = wp_remote_get(
+				$vimeo_url,
+				array(
+					'headers' => array(
+						'Referer' => get_site_url(),
+					),
+				)
+			);
+
+			if ( $vimeo_response ) {
+				$vimeo_response_body = wp_remote_retrieve_body( $vimeo_response );
+
+				if ( $vimeo_response_body ) {
+					$vimeo_response_body = (array) json_decode( $vimeo_response_body );
+
+					if ( ! empty( $vimeo_response_body['thumbnail_url'] ) ) {
+						$image_src = $vimeo_response_body['thumbnail_url'];
+					}
+				}
+			}
+		}
+
 		// Set back to normal.
 		remove_filter( 'oembed_dataparse', 'et_pb_video_oembed_data_parse', 10, 3 );
+
 		if ( '' === $image_src ) {
 			die( -1 );
 		}
@@ -2569,6 +2603,7 @@ function et_fb_get_nonces() {
 		'getDisplayConditionsStatus'      => wp_create_nonce( 'et_builder_ajax_get_display_conditions_status' ),
 		'getPostMetaFields'               => wp_create_nonce( 'et_builder_ajax_get_post_meta_fields' ),
 		'globalColorsSave'                => wp_create_nonce( 'et_builder_global_colors_save' ),
+		'globalColorsGet'                 => wp_create_nonce( 'et_builder_global_colors_get' ),
 		'defaultColorsUpdate'             => wp_create_nonce( 'et_builder_default_colors_update' ),
 		'saveDomainToken'                 => wp_create_nonce( 'et_builder_ajax_save_domain_token' ),
 		'beforeAfterComponents'           => wp_create_nonce( 'et_fb_fetch_before_after_components_nonce' ),
@@ -4637,6 +4672,7 @@ function et_pb_register_builder_portabilities() {
 		// phpcs:disable WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
 		// Register the Roles Editor portability.
 		$pb_roles = array(
+			'title'  => esc_html__( 'Import & Export Roles', 'et_builder' ),
 			'name'   => esc_html__( 'Divi Role Editor Settings', 'et_builder' ),
 			'type'   => 'options',
 			'target' => 'et_pb_role_settings',
@@ -4649,15 +4685,17 @@ function et_pb_register_builder_portabilities() {
 	if ( current_user_can( 'edit_posts' ) ) {
 		// Register the Builder individual layouts portability.
 		$args = array(
-			'name' => esc_html__( 'Divi Builder Layout', 'et_builder' ),
-			'type' => 'post',
-			'view' => ( function_exists( 'et_builder_should_load_framework' ) && et_builder_should_load_framework() ),
+			'title' => esc_html__( 'Import & Export Layouts', 'et_builder' ),
+			'name'  => esc_html__( 'Divi Builder Layout', 'et_builder' ),
+			'type'  => 'post',
+			'view'  => ( function_exists( 'et_builder_should_load_framework' ) && et_builder_should_load_framework() ),
 		);
 		et_core_portability_register( 'et_builder', $args );
 
 		// phpcs:disable WordPress.Security.NonceVerification -- This function does not change any state, and is therefore not susceptible to CSRF.
 		// Register the Builder Layouts Post Type portability.
 		$layouts = array(
+			'title'  => esc_html__( 'Import & Export Layouts', 'et_builder' ),
 			'name'   => esc_html__( 'Divi Builder Layouts', 'et_builder' ),
 			'type'   => 'post_type',
 			'target' => ET_BUILDER_LAYOUT_POST_TYPE,
@@ -6497,8 +6535,8 @@ function et_builder_get_builder_content_opening_wrapper() {
  *
  * @return string
  */
-function et_builder_get_layout_opening_wrapper() {
-	$post_type    = get_post_type();
+function et_builder_get_layout_opening_wrapper( $post_type = '' ) {
+	$post_type    = ! empty( $post_type ) ? $post_type : get_post_type();
 	$layout_class = array( 'et-l' );
 	$el           = 'div';
 	$layout_id    = '';
@@ -6548,8 +6586,8 @@ function et_builder_get_layout_opening_wrapper() {
  *
  * @return string
  */
-function et_builder_get_layout_closing_wrapper() {
-	$post_type = get_post_type();
+function et_builder_get_layout_closing_wrapper( $post_type = '' ) {
+	$post_type = ! empty( $post_type ) ? $post_type : get_post_type();
 	$el        = 'div';
 
 	switch ( $post_type ) {

@@ -76,11 +76,16 @@ class ET_Core_API_Email_SendinBlue extends ET_Core_API_Email_Provider {
 			return $args;
 		}
 
-		$fields = $args['custom_fields'];
+		$fields      = $args['custom_fields'];
+		$fileds_info = $args['fileds_info'];
 
 		unset( $args['custom_fields'] );
 
 		foreach ( $fields as $field_id => $value ) {
+			if ( ! isset( $fileds_info[ $field_id ] ) ) {
+				continue;
+			}
+
 			if ( is_array( $value ) && $value ) {
 				// This is a multiple choice field (eg. checkbox, radio, select)
 				$value = array_values( $value );
@@ -88,7 +93,10 @@ class ET_Core_API_Email_SendinBlue extends ET_Core_API_Email_Provider {
 				if ( count( $value ) > 1 ) {
 					$value = implode( ',', $value );
 				} else {
-					$value = array_pop( $value );
+					$type = self::$_->array_get( $fileds_info, "{$field_id}.native_type" );
+
+					// User checked the checkbox, when native type is Boolean.
+					$value = 'boolean' === $type ? true : array_pop( $value );
 				}
 			}
 
@@ -128,8 +136,9 @@ class ET_Core_API_Email_SendinBlue extends ET_Core_API_Email_Provider {
 				'updateEnabled' => 'updateEnabled',
 			),
 			'custom_field' => array(
-				'field_id' => 'name',
-				'name'     => 'name',
+				'native_type' => 'type',
+				'field_id'    => 'name',
+				'name'        => 'name',
 			),
 		);
 
@@ -173,6 +182,7 @@ class ET_Core_API_Email_SendinBlue extends ET_Core_API_Email_Provider {
 			);
 		} else {
 			$this->response_data_key = 'lists';
+			$params                  = array();
 		}
 
 		/**
@@ -254,6 +264,8 @@ class ET_Core_API_Email_SendinBlue extends ET_Core_API_Email_Provider {
 
 			$args = $this->transform_data_to_provider_format( $args, 'subscriber' );
 			if ( $this->custom_fields ) {
+				$args['fileds_info'] = $this->_fetch_custom_fields();
+
 				$args = $this->_process_custom_fields( $args );
 			}
 			$this->prepare_request( $this->SUBSCRIBE_URL, 'POST', false, $args, true ); // @phpcs:ignore ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase -- Keep the variable name.

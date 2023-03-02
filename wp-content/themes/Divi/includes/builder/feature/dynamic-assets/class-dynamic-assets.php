@@ -2020,10 +2020,15 @@ class ET_Dynamic_Assets {
 		 * This filter can be used to force loading of a certain Divi module in case their custom one relies on its styles.
 		 *
 		 * @since 4.10.0
+		 * @since 4.18.1
+		 *
+		 * @param array  $required_assets Custom required module slugs.
+		 * @param string $all_content     All content.
 		 */
 		$required_assets = apply_filters(
 			'et_required_module_assets',
-			array()
+			array(),
+			$this->_all_content
 		);
 
 		if ( $used_shortcodes ) {
@@ -2220,8 +2225,17 @@ class ET_Dynamic_Assets {
 	 * @since 4.10.0
 	 */
 	public function get_late_attributes( $detected_attributes = array() ) {
+		global $post;
+
 		$attributes = array();
 		if ( ! $this->_early_attributes ) {
+			if ( post_password_required() ) {
+				// If a password is required to view the current post, the main content shortcode will not run,
+				// therefor, ET_Builder_Module_Use_Detection->_module_attr_values_used would have incomplete values,
+				// to fix this and any other problems caused by not running the main content shortcode, it is run here.
+				do_shortcode( $post->post_content );
+			}
+
 			$late_attributes = ET_Builder_Module_Use_Detection::instance()->get_module_attr_values_used();
 
 			if ( empty( $this->_presets_attributes ) ) {
@@ -2607,7 +2621,7 @@ class ET_Dynamic_Assets {
 	 * @since 4.10.0
 	 */
 	public function get_preset_attributes( $content ) {
-		$all_builder_presets = et_get_option( 'builder_global_presets', (object) array(), '', true );
+		$all_builder_presets = et_get_option( 'builder_global_presets_ng', (object) array(), '', true, false, '', '', true );
 		$presets_attributes  = array();
 
 		foreach ( $all_builder_presets as $module => $module_presets ) {

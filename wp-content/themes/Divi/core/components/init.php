@@ -214,9 +214,19 @@ function et_core_clear_wp_cache( $post_id = '' ) {
 
 		// GoDaddy.
 		if ( class_exists( '\WPaaS\Cache' ) ) {
-			if ( ! \WPaaS\Cache::has_ban() ) {
-				remove_action( 'shutdown', array( '\WPaaS\Cache', 'purge' ), PHP_INT_MAX );
-				add_action( 'shutdown', array( '\WPaaS\Cache', 'ban' ), PHP_INT_MAX );
+			global $wpaas_cache_class;
+
+			// Since GD System Plugin 4.51.1 the cache class instance can be accessed
+			// with $wpaas_cache_class global. In addition to this, the 'has_ban' method
+			// is no longer static. To cover both static and non-static versions we
+			// can test if $wpaas_cache_class exists and use the correct type accordingly.
+			$has_ban = $wpaas_cache_class ? $wpaas_cache_class->has_ban() : \WPaaS\Cache::has_ban();
+
+			if ( ! $has_ban ) {
+				$gd_cache_class = $wpaas_cache_class ? $wpaas_cache_class : '\WPaaS\Cache';
+
+				remove_action( 'shutdown', array( $gd_cache_class, 'purge' ), PHP_INT_MAX );
+				add_action( 'shutdown', array( $gd_cache_class, 'ban' ), PHP_INT_MAX );
 			}
 		}
 

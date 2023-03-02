@@ -9,10 +9,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 /* Admin scripts + ajax jquery code */
 if ( ! function_exists( 'et_epanel_admin_js' ) ) {
 
-	function et_epanel_admin_js(){
+	/**
+	 * Enqueue Admin scripts.
+	 *
+	 * @return void
+	 */
+	function et_epanel_admin_js() {
 		global $themename;
 
-		$epanel_jsfolder = get_template_directory_uri() . '/epanel/js';
+		if ( ! defined( 'ET_EPANEL_URI' ) ) {
+			define( 'ET_EPANEL_URI', get_template_directory_uri() . '/epanel' );
+		}
+
+		if ( ! defined( 'ET_EPANEL_DIR' ) ) {
+			define( 'ET_EPANEL_DIR', get_template_directory() . '/epanel' );
+		}
+
+		$epanel_jsfolder = ET_EPANEL_URI . '/js';
+		$core_version    = defined( 'ET_CORE_VERSION' ) ? ET_CORE_VERSION : '';
+		$et_debug        = defined( 'ET_DEBUG' ) && ET_DEBUG;
 
 		et_core_load_main_fonts();
 
@@ -27,11 +42,21 @@ if ( ! function_exists( 'et_epanel_admin_js' ) ) {
 		wp_enqueue_script( 'wp-color-picker-alpha', $wp_color_picker_alpha_uri, array( 'jquery', 'wp-color-picker' ), et_get_theme_version(), true );
 
 		wp_enqueue_script( 'epanel_functions_init', $epanel_jsfolder . '/functions-init.js', array( 'jquery', 'jquery-ui-tabs', 'jquery-form', 'epanel_colorpicker', 'epanel_eye', 'epanel_checkbox', 'wp-color-picker-alpha' ), et_get_theme_version() );
+
 		wp_localize_script( 'epanel_functions_init', 'ePanelSettings', array(
 			'clearpath'      => get_template_directory_uri() . '/epanel/images/empty.png',
 			'epanel_nonce'   => wp_create_nonce( 'epanel_nonce' ),
 			'help_label'     => esc_html__( 'Help', $themename ),
 			'et_core_nonces' => et_core_get_nonces(),
+			'allowedCaps'    => array(
+				'portability' => et_pb_is_allowed( 'portability' ) ? et_pb_is_allowed( 'et_code_snippets_portability' ) : false,
+				'addLibrary'  => et_pb_is_allowed( 'divi_library' ) ? et_pb_is_allowed( 'add_library' ) : false,
+				'saveLibrary' => et_pb_is_allowed( 'divi_library' ) ? et_pb_is_allowed( 'save_library' ) : false,
+			),
+			'i18n'           => [
+				// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain -- Following the standard.
+				'Code Snippet' => esc_html__( 'Code Snippet', $themename ),
+			],
 		) );
 
 		// Use WP 4.9 CodeMirror Editor for some fields
@@ -45,6 +70,9 @@ if ( ! function_exists( 'et_epanel_admin_js' ) ) {
 			wp_enqueue_script( 'jshint' );
 			wp_enqueue_script( 'htmlhint' );
 		}
+
+		et_builder_load_library();
+		ET_Cloud_App::load_js();
 	}
 
 }
@@ -333,8 +361,11 @@ if ( ! function_exists( 'et_build_epanel' ) ) {
 														<?php
 
 															if ( 'et_automatic_updates_options' === $global_setting_main_name ) {
-																if ( ! $setting = get_site_option( $global_setting_main_name ) ) {
-																	$setting = get_option( $global_setting_main_name, array() );
+																$setting = array();
+
+																// phpcs:ignore Generic.WhiteSpace.ScopeIndent.IncorrectExact -- Indentation is correct.
+																if ( is_array( get_site_option( $global_setting_main_name ) ) ) {
+																	$setting = get_option( $global_setting_main_name );
 																}
 
 																$et_input_value = isset( $setting[ $global_setting_sub_name ] ) ? $setting[ $global_setting_sub_name ] : '';
@@ -785,8 +816,10 @@ if ( ! function_exists( 'epanel_save_data' ) ) {
 			if ( 'save_epanel' === $_POST['action'] ) {
 				if ( 'ajax' !== $source ) check_admin_referer( 'epanel_nonce' );
 
-				if ( ! $updates_options = get_site_option( 'et_automatic_updates_options' ) ) {
-					$updates_options = get_option( 'et_automatic_updates_options', array() );
+				$updates_options = array();
+
+				if ( is_array( get_site_option( 'et_automatic_updates_options' ) ) ) {
+					$updates_options = get_option( 'et_automatic_updates_options' );
 				}
 
 				// Network Admins can edit options like Super Admins but content will be filtered
@@ -1061,6 +1094,7 @@ function et_epanel_register_portability() {
 
 	// Register the portability.
 	et_core_portability_register( 'epanel', array(
+		'title'   => esc_html__( 'Import & Export Theme Options', $themename ), // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain -- intentional use of $themename
 		'name'    => sprintf(
 			esc_html__( '%s Theme Options', $themename ),
 			$themename

@@ -1552,7 +1552,7 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 		case 'post_meta_key':
 			$meta_key = $_->array_get( $settings, 'meta_key' );
 			$content  = get_post_meta( $post_id, $meta_key, true );
-			$is_fe    = 'fe' === et_builder_get_current_builder_type() ? true : false;
+			$is_fe    = 'fe' === et_builder_get_current_builder_type() && ! is_et_theme_builder_template_preview() ? true : false;
 
 			if ( ( $is_fe && empty( $content ) ) || empty( $meta_key ) ) {
 				$content = '';

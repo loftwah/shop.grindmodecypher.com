@@ -160,8 +160,8 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				'image'     => array(
 					'css'          => array(
 						'main' => array(
-							'border_radii'  => '%%order_class%% .et_pb_post .entry-featured-image-url img, %%order_class%% .et_pb_post .et_pb_slides, %%order_class%% .et_pb_post .et_pb_video_overlay',
-							'border_styles' => '%%order_class%% .et_pb_post .entry-featured-image-url img, %%order_class%% .et_pb_post .et_pb_slides, %%order_class%% .et_pb_post .et_pb_video_overlay',
+							'border_radii'  => '%%order_class%% .et_pb_post .entry-featured-image-url, %%order_class%% .et_pb_post .et_pb_slides, %%order_class%% .et_pb_post .et_pb_video_overlay',
+							'border_styles' => '%%order_class%% .et_pb_post .entry-featured-image-url, %%order_class%% .et_pb_post .et_pb_slides, %%order_class%% .et_pb_post .et_pb_video_overlay',
 						),
 					),
 					'label_prefix' => et_builder_i18n( 'Image' ),
@@ -177,7 +177,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					'tab_slug'          => 'advanced',
 					'toggle_slug'       => 'image',
 					'css'               => array(
-						'main'    => '%%order_class%% .entry-featured-image-url, %%order_class%% img, %%order_class%% .et_pb_slides, %%order_class%% .et_pb_video_overlay',
+						'main'    => '%%order_class%% .et_pb_post .entry-featured-image-url, %%order_class%% .et_pb_post img, %%order_class%% .et_pb_post .et_pb_slides, %%order_class%% .et_pb_post .et_pb_video_overlay',
 						'overlay' => 'inset',
 					),
 					'default_on_fronts' => array(

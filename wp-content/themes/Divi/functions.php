@@ -26,6 +26,7 @@ function et_setup_theme() {
 	}
 
 	require_once $template_directory . '/epanel/custom_functions.php';
+	require_once $template_directory . '/core/code-snippets/code-snippets.php';
 
 	require_once $template_directory . '/includes/functions/choices.php';
 
@@ -361,17 +362,20 @@ add_action( 'wp_enqueue_scripts', 'et_divi_load_scripts_styles' );
  * import the Divi style.css file in their child theme .css file, which won't work.
  */
 function et_divi_enqueue_stylesheet() {
-	$theme_version          = et_get_theme_version();
-	$template_directory_uri = preg_quote( get_template_directory_uri(), '/' );
-	$styles                 = wp_styles();
-	$divi_style_enqueued    = '';
+	$theme_version = et_get_theme_version();
+	$styles        = wp_styles();
 
-	foreach ( $styles->registered as $handle => $style ) {
-		if ( preg_match( '/' . $template_directory_uri . '.*/', $style->src ) ) {
-			$divi_style_enqueued = true;
-			break;
-		}
-	}
+	// Filter the $styles array and determine if the Divi stylesheet is enqueued.
+	$divi_style_enqueued = ! empty(
+		array_filter(
+			$styles->registered,
+			function( $style ) {
+				$template_directory_uri = preg_quote( get_template_directory_uri(), '/' );
+
+				return preg_match( '/' . $template_directory_uri . '\/style.*\.css/', $style->src );
+			}
+		)
+	);
 
 	if ( ! is_child_theme() ) {
 		// If no child theme is active, we enqueue the Divi style.css located in the template dir.
@@ -5566,8 +5570,12 @@ function et_divi_add_customizer_css() {
 		<?php if ( $primary_nav_dropdown_line_color !== $accent_color ) { ?>
 			<?php echo $css( '.nav li ul' ); ?> { border-color: <?php echo esc_html( $primary_nav_dropdown_line_color ); ?>; }
 		<?php } ?>
-		<?php if ( $secondary_nav_bg !== '#2ea3f2' ) { ?>
-			#top-header,
+		<?php if ( '#2ea3f2' === $secondary_nav_bg && '#2ea3f2' !== $accent_color ) { ?>
+			#page-container #top-header { background-color: <?php echo esc_html( $accent_color ) . ' !important'; ?>; }
+			#et-secondary-nav li ul { background-color: <?php echo esc_html( $accent_color ); ?>; }
+		<?php } ?>
+		<?php if ( '#2ea3f2' !== $secondary_nav_bg ) { ?>
+			.et_secondary_nav_enabled #page-container #top-header { background-color: <?php echo esc_html( $secondary_nav_bg ) . ' !important'; ?>; }
 			#et-secondary-nav li ul { background-color: <?php echo esc_html( $secondary_nav_bg ); ?>; }
 		<?php } ?>
 		<?php if ( $secondary_nav_dropdown_bg !== $secondary_nav_bg ) { ?>
@@ -6226,7 +6234,8 @@ function et_divi_add_customizer_css() {
 
 			<?php } ?>
 			<?php if ( $fixed_secondary_nav_bg !== '#2ea3f2' ) { ?>
-				.et-fixed-header#top-header, .et-fixed-header#top-header #et-secondary-nav li ul { background-color: <?php echo esc_html( $fixed_secondary_nav_bg ); ?>; }
+				.et_fixed_nav #page-container .et-fixed-header#top-header { background-color: <?php echo esc_html( $fixed_secondary_nav_bg ); ?> !important; }
+				.et_fixed_nav #page-container .et-fixed-header#top-header #et-secondary-nav li ul { background-color: <?php echo esc_html( $fixed_secondary_nav_bg ); ?>; }
 			<?php } ?>
 			<?php if ( $fixed_primary_nav_bg !== $primary_nav_bg ) { ?>
 				.et-fixed-header#main-header, .et-fixed-header#main-header .nav li ul, .et-fixed-header .et-search-form { background-color: <?php echo esc_html( $fixed_primary_nav_bg ); ?>; }
@@ -8387,7 +8396,7 @@ function et_divi_maybe_change_frontend_locale( $locale ) {
 
 	return $locale;
 }
-add_filter( 'locale', 'et_divi_maybe_change_frontend_locale' );
+add_filter( 'theme_locale', 'et_divi_maybe_change_frontend_locale' );
 
 /**
  * Enable Divi gallery override if user activates it
@@ -8435,6 +8444,7 @@ function et_divi_register_customizer_portability() {
 
 	// Register the portability.
 	et_core_portability_register( 'et_divi_mods', array(
+		'title'   => esc_html__( 'Import & Export Customizer', 'Divi' ),
 		'name'    => esc_html__( 'Divi Customizer Settings', 'Divi' ),
 		'type'    => 'options',
 		'target'  => 'et_divi',

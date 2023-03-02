@@ -1,28 +1,33 @@
 <?php
 
-if ( ! function_exists( 'et_common_setup' ) ) :
-/**
- * Setup Common const.
- *
- * @since ??
- *
- */
-function et_common_setup() {
-	if ( defined( 'ET_COMMON_URL' ) ) {
-		return;
-	}
-
-	$common_path = _et_core_normalize_path( trailingslashit( dirname( __FILE__ ) ) );
-	$theme_dir = _et_core_normalize_path( trailingslashit( realpath( get_template_directory() ) ) );
-
-	if ( 0 === strpos( $common_path, $theme_dir ) ) {
-		$url = get_template_directory_uri() . '/common/';
-	} else {
-		$url = plugin_dir_url( __FILE__ );
-	}
-
-	define( 'ET_COMMON_URL', $url );
+if ( ! defined( 'ET_COMMON_DIR' ) ) {
+	define( 'ET_COMMON_DIR', get_template_directory() . '/common/' );
 }
+
+if ( ! function_exists( 'et_common_setup' ) ) :
+	/**
+	 * Setup Common const.
+	 *
+	 * @since ??
+	 */
+	function et_common_setup() {
+		if ( defined( 'ET_COMMON_URL' ) ) {
+			return;
+		}
+
+		$common_path = _et_core_normalize_path( trailingslashit( dirname( __FILE__ ) ) );
+		$theme_dir   = _et_core_normalize_path( trailingslashit( realpath( get_template_directory() ) ) );
+
+		if ( 0 === strpos( $common_path, $theme_dir ) ) {
+			$url = get_template_directory_uri() . '/common/';
+		} else {
+			$url = plugin_dir_url( __FILE__ );
+		}
+
+		define( 'ET_COMMON_URL', $url );
+
+		require_once ET_COMMON_DIR . 'admin.php';
+	}
 endif;
 
 

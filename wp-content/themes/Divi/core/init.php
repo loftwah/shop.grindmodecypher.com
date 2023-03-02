@@ -177,4 +177,27 @@ function _et_core_normalize_path( $path ) {
 endif;
 
 
+if ( ! function_exists( 'register_portability_for_code_snippets' ) ) :
+	/**
+	 * Register portability which is needed to import/export saved Snippet via Divi Library.
+	 *
+	 * @since 4.19.0
+	 */
+	function register_portability_for_code_snippets() {
+		// No permission, can't load library UI in the first place.
+		if ( et_pb_is_allowed( 'divi_library' ) ) {
+			// Register portability.
+			et_core_portability_register(
+				'et_code_snippets',
+				array(
+					'name' => esc_html__( 'Divi Code Snippets', 'et_builder' ),
+				)
+			);
+		}
+	}
+
+	add_action( 'admin_init', 'register_portability_for_code_snippets' );
+endif;
+
+
 _et_core_load_latest();

@@ -187,21 +187,25 @@ function et_epanel_handle_custom_css_output( $css, $stylesheet ) {
 add_filter( 'wp_get_custom_css', 'et_epanel_handle_custom_css_output', 999, 2 );
 endif;
 
-/**
- * Gets option value from the single theme option, stored as an array in the database
- * if all options stored in one row.
- * Stores the serialized array with theme options into the global variable on the first function run on the page.
- *
- * If options are stored as separate rows in database, it simply uses get_option() function.
- *
- * @param string $option_name Theme option name.
- * @param string $default_value Default value that should be set if the theme option isn't set.
- * @param string $used_for_object "Object" name that should be translated into corresponding "object" if WPML is activated.
- * @return mixed Theme option value or false if not found.
- */
 if ( ! function_exists( 'et_get_option' ) ) {
-
-	function et_get_option( $option_name, $default_value = '', $used_for_object = '', $force_default_value = false, $is_global_setting = false, $global_setting_main_name = '', $global_setting_sub_name = '' ){
+	/**
+	 * Gets option value from the single theme option, stored as an array in the database
+	 * if all options stored in one row.
+	 * Stores the serialized array with theme options into the global variable on the first function run on the page.
+	 *
+	 * If options are stored as separate rows in database, it simply uses get_option() function.
+	 *
+	 * @param string $option_name Theme option name.
+	 * @param string $default_value Default value that should be set if the theme option isn't set.
+	 * @param string $used_for_object "Object" name that should be translated into corresponding "object" if WPML is activated.
+	 * @param bool   $force_default_value Is return provided default.
+	 * @param bool   $is_global_setting Is Global Setting.
+	 * @param string $global_setting_main_name Global Setting name.
+	 * @param string $global_setting_sub_name Global Setting sub name.
+	 * @param bool   $is_product_setting Product setting flag.
+	 * @return mixed Theme option value or false if not found.
+	 */
+	function et_get_option( $option_name, $default_value = '', $used_for_object = '', $force_default_value = false, $is_global_setting = false, $global_setting_main_name = '', $global_setting_sub_name = '', $is_product_setting = false ) {
 		global $et_theme_options, $shortname;
 
 		$et_one_row_option_name = '';
@@ -214,7 +218,11 @@ if ( ! function_exists( 'et_get_option' ) ) {
 			if ( false !== $et_global_setting && isset( $et_global_setting[ $global_setting_sub_name ] ) ) {
 				$option_value = $et_global_setting[ $global_setting_sub_name ];
 			}
-		} else if ( et_options_stored_in_one_row() ) {
+		} elseif ( $is_product_setting ) {
+			$et_product_setting_name = 'et_' . $shortname . '_' . $option_name;
+
+			$option_value = $force_default_value ? get_option( $et_product_setting_name, $default_value ) : get_option( $et_product_setting_name );
+		} elseif ( et_options_stored_in_one_row() ) {
 			$et_theme_options_name = 'et_' . $shortname;
 
 			if ( ! isset( $et_theme_options ) || is_customize_preview() ) {
@@ -228,7 +236,7 @@ if ( ! function_exists( 'et_get_option' ) ) {
 		}
 
 		// option value might be equal to false, so check if the option is not set in the database
-		if ( et_options_stored_in_one_row() && ! isset( $et_theme_options[ $option_name ] ) && ( ! empty( $default_value ) || $force_default_value ) ) {
+		if ( et_options_stored_in_one_row() && ! $is_product_setting && ! isset( $et_theme_options[ $option_name ] ) && ( ! empty( $default_value ) || $force_default_value ) ) {
 			$option_value = $default_value;
 		}
 
@@ -245,8 +253,20 @@ if ( ! function_exists( 'et_get_option' ) ) {
 }
 
 if ( ! function_exists( 'et_update_option' ) ) {
-
-	function et_update_option( $option_name, $new_value, $is_new_global_setting = false, $global_setting_main_name = '', $global_setting_sub_name = '' ){
+	/**
+	 * Update option value in theme option, stored as an array in the database
+	 * if all options stored in one row.
+	 *
+	 * If options are stored as separate rows in database, it simply uses update_option() function.
+	 *
+	 * @param string $option_name Theme option name.
+	 * @param string $new_value Theme option value.
+	 * @param bool   $is_new_global_setting Global setting flag.
+	 * @param string $global_setting_main_name Global setting name.
+	 * @param string $global_setting_sub_name Global setting sub name.
+	 * @param bool   $is_product_setting Product setting flag.
+	 */
+	function et_update_option( $option_name, $new_value, $is_new_global_setting = false, $global_setting_main_name = '', $global_setting_sub_name = '', $is_product_setting = false ) {
 		global $et_theme_options, $shortname;
 
 		if ( $is_new_global_setting && '' !== $global_setting_main_name && '' !== $global_setting_sub_name ) {
@@ -262,7 +282,12 @@ if ( ! function_exists( 'et_update_option' ) ) {
 
 			update_option( $global_setting_main_name, $global_setting );
 
-		} else if ( et_options_stored_in_one_row() ) {
+		} elseif ( $is_product_setting ) {
+			$et_product_setting_name = 'et_' . $shortname . '_' . $option_name;
+
+			// Update option and disable autoload of this option.
+			update_option( $et_product_setting_name, $new_value, false );
+		} elseif ( et_options_stored_in_one_row() ) {
 			$et_theme_options_name = 'et_' . $shortname;
 
 			if ( ! isset( $et_theme_options ) || is_customize_preview() ) {
@@ -1313,6 +1338,11 @@ if ( ! function_exists( 'elegant_keywords' ) ) {
 if ( ! function_exists( 'elegant_canonical' ) ) {
 
 	function elegant_canonical() {
+		// Don't use ePanel SEO if 'rel_canonical' is registered for `wp_head`.
+		if ( has_action( 'embed_head', 'rel_canonical' ) && is_singular() ) {
+			return;
+		}
+
 		// Don't use ePanel SEO if a SEO plugin is active.
 		if ( et_is_seo_plugin_active() ) {
 			return;

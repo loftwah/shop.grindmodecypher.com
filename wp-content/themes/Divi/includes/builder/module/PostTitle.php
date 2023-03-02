@@ -479,7 +479,7 @@ class ET_Builder_Module_Post_Title extends ET_Builder_Module {
 
 		if ( $post_id && $multi_view->has_value( 'featured_image', 'on' ) && ( 'above' === $featured_placement || 'below' === $featured_placement ) ) {
 			$post_thumbnail_id    = get_post_thumbnail_id( $post_id );
-			$featured_image_src   = et_()->array_get( wp_get_attachment_image_src( $post_thumbnail_id, 'full' ), 0 );
+			$featured_image_src   = is_et_theme_builder_template_preview() ? ET_BUILDER_PLACEHOLDER_LANDSCAPE_IMAGE_DATA : et_()->array_get( wp_get_attachment_image_src( $post_thumbnail_id, 'full' ), 0 );
 			$featured_image_alt   = get_post_meta( $post_thumbnail_id, '_wp_attachment_image_alt', true );
 			$featured_image_title = get_the_title( $post_thumbnail_id );
 			$featured_image_class = et_pb_media_options()->get_image_attachment_class( $this->props, '', $post_thumbnail_id );

@@ -174,6 +174,7 @@ require_once ET_BUILDER_DIR . 'feature/background-masks/Functions.php';
 require_once ET_BUILDER_DIR . 'feature/background-masks/PatternFields.php';
 require_once ET_BUILDER_DIR . 'feature/background-masks/MaskFields.php';
 require_once ET_BUILDER_DIR . 'feature/gutenberg/BlockTemplates.php';
+require_once ET_BUILDER_DIR . 'feature/local-library.php';
 
 // Conditional Includes.
 if ( et_is_woocommerce_plugin_active() ) {
@@ -238,9 +239,17 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 			'et_builder_library_remove_temp_layout',
 			'et_builder_library_clear_temp_presets',
 			'et_builder_library_update_item',
+			'et_theme_builder_library_update_item',
+			'et_theme_builder_library_save_temp_layout',
+			'et_theme_builder_library_remove_temp_layout',
+			'et_theme_builder_library_get_preset_items',
+			'et_theme_builder_library_get_set_items',
 			'et_builder_library_upload_thumbnail',
 			'et_builder_library_get_cloud_token',
 			'et_builder_library_get_layouts_data',
+			'et_theme_builder_library_get_items_data',
+			'et_theme_builder_library_update_terms',
+			'et_theme_builder_library_get_item',
 			'et_fb_fetch_attachments',
 			'et_pb_get_saved_templates',
 			'et_builder_resolve_post_content',
@@ -256,6 +265,7 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 			'et_builder_migrate_module_customizer_phase_two',
 			'et_builder_save_global_presets_history',
 			'et_builder_retrieve_global_presets_history',
+			'et_theme_builder_api_export_theme_builder_step',
 			'et_theme_builder_api_import_theme_builder_step',
 			'et_pb_submit_subscribe_form',
 			'et_builder_get_woocommerce_tabs',
@@ -263,6 +273,8 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 			'et_builder_default_colors_update',
 			'et_builder_ajax_save_domain_token',
 			'et_fb_fetch_before_after_components',
+			'et_code_snippets_library_get_items',
+			'et_builder_global_colors_get',
 		),
 	);
 
@@ -472,6 +484,7 @@ function et_builder_load_modules_styles() {
 		'is_cache_plugin_active' => false === et_pb_detect_cache_plugins() ? 'no' : 'yes',
 		'is_shortcode_tracking'  => get_post_meta( $current_page_id, '_et_pb_enable_shortcode_tracking', true ),
 		'tinymce_uri'            => defined( 'ET_FB_ASSETS_URI' ) ? ET_FB_ASSETS_URI . '/vendors' : '',
+		'accent_color'           => et_builder_accent_color(),
 		/**
 		 * Filters Waypoints options for client side rendering.
 		 *

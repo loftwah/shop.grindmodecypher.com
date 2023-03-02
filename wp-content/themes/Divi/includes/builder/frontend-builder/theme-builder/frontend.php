@@ -619,6 +619,10 @@ function et_theme_builder_frontend_render_post_content() {
 	static $__prevent_recursion = false;
 	global $wp_query;
 
+	if ( is_et_theme_builder_template_preview() ) {
+		return et_theme_builder_get_post_content_placeholder();
+	}
+
 	if ( ET_Builder_Element::get_theme_builder_layout_type() !== ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE ) {
 		// Prevent usage on non-body layouts.
 		return '';

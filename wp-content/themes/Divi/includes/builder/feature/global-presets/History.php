@@ -1,13 +1,16 @@
 <?php
 
 class ET_Builder_Global_Presets_History {
-	const CUSTOM_DEFAULTS_HISTORY_OPTION = 'builder_custom_defaults_history';
-	const GLOBAL_PRESETS_HISTORY_OPTION  = 'builder_global_presets_history';
-	const GLOBAL_PRESETS_HISTORY_LENGTH  = 100;
+	const CUSTOM_DEFAULTS_HISTORY_OPTION       = 'builder_custom_defaults_history';
+	const GLOBAL_PRESETS_HISTORY_OPTION_LEGACY = 'builder_global_presets_history';
+	const GLOBAL_PRESETS_HISTORY_OPTION        = 'builder_global_presets_history_ng';
+	const HISTORY_STORAGE_MIGRATED_FLAG        = 'builder_global_presets_history_migrated';
+	const GLOBAL_PRESETS_HISTORY_LENGTH        = 100;
 
 	private static $instance;
 
 	private function __construct() {
+		$this->_migrate_history_storage();
 		$this->_register_ajax_callbacks();
 		$this->_register_hooks();
 	}
@@ -45,6 +48,8 @@ class ET_Builder_Global_Presets_History {
 	}
 
 	private function _register_hooks() {
+		add_action( 'et_after_version_rollback', array( $this, 'after_version_rollback' ), 10, 3 );
+
 		// If migration is needed, ensure that all modules get fully loaded.
 		// phpcs:disable PEAR.Functions.FunctionCallSignature -- Anonymous functions.
 		add_action( 'et_builder_framework_loaded', function() {
@@ -75,16 +80,26 @@ class ET_Builder_Global_Presets_History {
 			);
 		}
 
-		$history = json_decode( stripslashes( $_POST['history'] ) );
+		$history = self::_get_global_presets_history();
 
-		if ( empty( $history->history ) ) {
+		$history_update = empty( $_POST['history'] ) ? (object) array() : json_decode( stripslashes( $_POST['history'] ) ); // phpcs:ignore ET.Sniffs.ValidatedSanitizedInput.InputNotSanitized -- self::sanitize_and_validate function does sanitization.
+
+		if ( empty( $history_update->current_state ) ) {
 			et_core_die( esc_html__( 'Global History data is empty.', 'et_builder' ) );
+		}
+
+		$history->index = $history_update->index;
+
+		if ( $history_update->is_new_record ) {
+			$history->history[ $history->index ] = $history_update->current_state;
 		}
 
 		if ( self::sanitize_and_validate( $history ) ) {
 			$current_settings = $history->history[ $history->index ];
-			et_update_option( ET_Builder_Global_Presets_Settings::GLOBAL_PRESETS_OPTION, $current_settings->settings );
-			et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, $history );
+			// Update option for product setting (last attr in args list).
+			et_update_option( ET_Builder_Global_Presets_Settings::GLOBAL_PRESETS_OPTION, $current_settings->settings, false, '', '', true );
+			et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, $history, false, '', '', true );
+
 			ET_Core_PageResource::remove_static_resources( 'all', 'all' );
 
 			if ( et_get_option( ET_Builder_Global_Presets_Settings::CUSTOM_DEFAULTS_UNMIGRATED_OPTION, false ) ) {
@@ -149,7 +164,8 @@ class ET_Builder_Global_Presets_History {
 			$history->index   = min( $history->index, self::GLOBAL_PRESETS_HISTORY_LENGTH - 1 );
 		}
 
-		et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, $history );
+		et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, $history, false, '', '', true );
+
 		ET_Core_PageResource::remove_static_resources( 'all', 'all' );
 	}
 
@@ -235,6 +251,39 @@ class ET_Builder_Global_Presets_History {
 	}
 
 	/**
+	 * Handles History Storage Rollback.
+	 *
+	 * @since 4.19.3
+	 *
+	 * @param string $product_name - The short name of the product rolling back.
+	 * @param string $rollback_from_version - Rollback from version.
+	 * @param string $rollback_to_version - Rollback to version.
+	 */
+	public function rollback_history_storage( $product_name, $rollback_from_version, $rollback_to_version ) {
+		if ( ! isset( ET_Builder_Global_Presets_Settings::$allowed_products['storage_migration'][ $product_name ] ) ) {
+			return;
+		}
+
+		if ( 0 > version_compare( $rollback_to_version, ET_Builder_Global_Presets_Settings::$allowed_products['storage_migration'][ $product_name ] ) ) {
+			// Get option from product setting (last attr in args list).
+			$global_history_ng = et_get_option( self::GLOBAL_PRESETS_HISTORY_OPTION, array(), '', true, false, '', '', true );
+
+			// Nothing to rollback, just reset the flag.
+			if ( empty( $global_history_ng ) ) {
+				et_update_option( self::HISTORY_STORAGE_MIGRATED_FLAG, false );
+				return;
+			}
+
+			// Remove data from the new storage and reset flag.
+			et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, array(), false, '', '', true );
+			et_update_option( self::HISTORY_STORAGE_MIGRATED_FLAG, false );
+
+			// Save history to legacy setting.
+			et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION_LEGACY, $global_history_ng );
+		}
+	}
+
+	/**
 	 * Handles theme version rollback.
 	 *
 	 * @since 4.5.0
@@ -244,12 +293,15 @@ class ET_Builder_Global_Presets_History {
 	 * @param string $rollback_to_version
 	 */
 	public function after_version_rollback( $product_name, $rollback_from_version, $rollback_to_version ) {
-		if ( ! isset( ET_Builder_Global_Presets_Settings::$allowed_products[ $product_name ] ) ) {
+		// Rollback starage migration.
+		self::rollback_history_storage( $product_name, $rollback_from_version, $rollback_to_version );
+
+		if ( ! isset( ET_Builder_Global_Presets_Settings::$allowed_products['customizer_settings'][ $product_name ] ) ) {
 			return;
 		}
 
-		if ( 0 > version_compare( $rollback_to_version, ET_Builder_Global_Presets_Settings::$allowed_products[ $product_name ] ) ) {
-			et_delete_option( self::GLOBAL_PRESETS_HISTORY_OPTION );
+		if ( 0 > version_compare( $rollback_to_version, ET_Builder_Global_Presets_Settings::$allowed_products['customizer_settings'][ $product_name ] ) ) {
+			et_delete_option( self::GLOBAL_PRESETS_HISTORY_OPTION_LEGACY );
 		}
 	}
 
@@ -261,7 +313,7 @@ class ET_Builder_Global_Presets_History {
 	 * @return object
 	 */
 	private function _get_global_presets_history() {
-		$history = et_get_option( self::GLOBAL_PRESETS_HISTORY_OPTION, false );
+		$history = et_get_option( self::GLOBAL_PRESETS_HISTORY_OPTION, false, '', false, false, '', '', true );
 		if ( ! $history ) {
 			$history = (object) array(
 				'history' => array(),
@@ -275,6 +327,107 @@ class ET_Builder_Global_Presets_History {
 		$this->_apply_attribute_migrations( $history );
 
 		return $history;
+	}
+
+	/**
+	 * Migrates global presets history into a separate setting.
+	 *
+	 * @since 4.19.3
+	 *
+	 * @return void
+	 */
+	protected function _migrate_history_storage() {
+		if ( self::_is_history_storage_migrated() ) {
+			return;
+		}
+
+		$global_history_legacy = et_get_option( self::GLOBAL_PRESETS_HISTORY_OPTION_LEGACY, array(), '', true );
+		// Get option from product setting (last attr in args list).
+		$global_history_ng = et_get_option( self::GLOBAL_PRESETS_HISTORY_OPTION, array(), '', true, false, '', '', true );
+
+		// Nothing to migrate or history already exist in new storage.
+		if ( empty( $global_history_legacy ) || ! empty( $global_history_ng ) ) {
+			et_update_option( self::HISTORY_STORAGE_MIGRATED_FLAG, true );
+			return;
+		}
+
+		$global_history_legacy_fixed = self::_fix_presets_history_before_migration( $global_history_legacy );
+
+		// Update option for product setting (last attr in args list).
+		et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, $global_history_legacy_fixed, false, '', '', true );
+
+		$global_history_ng_migrated = et_get_option( self::GLOBAL_PRESETS_HISTORY_OPTION, array(), '', true, false, '', '', true );
+
+		// Remove old option if presets migrated.
+		if ( ! empty( $global_history_ng_migrated ) ) {
+			et_update_option( self::HISTORY_STORAGE_MIGRATED_FLAG, true );
+			// Remove legacy history from settings.
+			et_delete_option( self::GLOBAL_PRESETS_HISTORY_OPTION_LEGACY );
+		}
+	}
+
+	/**
+	 * Fix global colors in Global Presets History.
+	 * Clean up global_colors_info array which may contain duplicates.
+	 *
+	 * @since 4.19.3
+	 *
+	 * @param object|array $history The object representing Global Presets History.
+	 *
+	 * @return object
+	 */
+	protected function _fix_presets_history_before_migration( $history ) {
+		$result = $history;
+
+		if ( isset( $history->history ) ) {
+			foreach ( $history->history as $history_index => $presets_settings ) {
+				foreach ( $presets_settings->settings as $module => $preset_structure ) {
+					if ( isset( $preset_structure->presets ) ) {
+						foreach ( $preset_structure->presets as $preset_id => $preset ) {
+							if ( isset( $preset->settings ) ) {
+								// Look for settings in this module that use global colors.
+								if ( isset( $preset->settings->global_colors_info ) ) {
+									$module_global_colors_info = json_decode( $preset->settings->global_colors_info, true );
+								} else {
+									// Nothing more to be done here if this module's `global_colors_info` setting is empty,
+									// so advance the `$preset_structure->presets as $preset_id => $preset` loop.
+									continue;
+								}
+
+								$fixed_global_colors_info = array();
+
+								foreach ( $module_global_colors_info as $gcid => $settings_that_use_this_gcid_raw ) {
+									if ( empty( $settings_that_use_this_gcid_raw ) ) {
+										continue;
+									}
+
+									// Fix possible issue with duplicated gc in global_colors_info field.
+									$settings_that_use_this_gcid       = array_values( array_unique( $settings_that_use_this_gcid_raw ) );
+									$fixed_global_colors_info[ $gcid ] = $settings_that_use_this_gcid;
+								}
+
+								// Insert fixed global_colors_info into preset settings.
+								if ( ! empty( $fixed_global_colors_info ) ) {
+									$result->history[ $history_index ]->settings->$module->presets->$preset_id->settings->global_colors_info = wp_json_encode( $fixed_global_colors_info );
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Checks whether history storage migrated or not.
+	 *
+	 * @since 4.19.3
+	 *
+	 * @return bool
+	 */
+	protected function _is_history_storage_migrated() {
+		return et_get_option( self::HISTORY_STORAGE_MIGRATED_FLAG, false );
 	}
 
 	/**
@@ -317,7 +470,7 @@ class ET_Builder_Global_Presets_History {
 
 		$migrated_history->index = $history->index;
 
-		et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, $migrated_history );
+		et_update_option( self::GLOBAL_PRESETS_HISTORY_OPTION, $migrated_history, false, '', '', true );
 	}
 
 	/**

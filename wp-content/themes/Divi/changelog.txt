@@ -1,3 +1,438 @@
+version 4.20 ( updated 02-16-2023 )
+- Introduced Divi Cloud Sharing, allowing team members to share their Divi Cloud libraries.
+- Improved Divi Library popup responsiveness.
+	* cloud/cloud-app.php
+	* cloud/i18n/library.php
+	* common/i18n/library.php
+	* common/lib/local-library.js
+	* core/code-snippets/app/boot.js
+	* core/code-snippets/app/store/code-snippets-library/sequences.js
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/i18n/theme-builder.php
+
+version 4.19.5 ( updated 01-25-2023 )
+- Fixed order of icon font loading as .woff should be loaded before .ttf as it's a better format and is supported across modern browsers.
+- Fixed unexpected behavior of Global Colors when using undo/redo buttons in Visual Builder.
+- Fixed Global Colors rendering for Specialty Columns in Visual Builder.
+- Fixed issue where global colors not working in VB for button.
+- Fixed Global Colors usage in fields borders settings.
+- Fixed Social Media Follow module text being shown in the excerpt inside Blog Module, when excerpt is empty and Blog module is using content as excerpt.
+- Fixed issue where countdown timer title margin remains visible when the title is empty.
+- Fixed an issue where sticky elements would not work due to a JavaScript error that occurred in some rare cases.
+- Fixed nested list bullets styling issue for ol and ul list types.
+- Improved presets saving performance in Visual Builder.
+- Fixed modal not closing after clicking use this layout on Theme Builder.
+- Fixed Global Colors preview in Edit mode.
+- Fixed bug where backup exists popup shows every time when opening Theme Builder.
+- Fixed an issue where the canonical link would get duplicated in some cases.
+- Fixed illegal string offset user and API key when saving on the Updates tab.
+- Fixed Global Colors not properly exporting from the Divi Library in some cases.
+- Fixed BOM character included file can not be imported.
+- Fixed an issue where the Divi parent style would not be correctly enqueued in some cases when child themes were used.
+	* core/components/Portability.php
+	* epanel/core_functions.php
+	* epanel/custom_functions.php
+	* functions.php
+	* includes/builder/feature/dynamic-assets/assets/js/src/sticky-element.js
+	* includes/builder/feature/global-presets/History.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/functions.php
+	* includes/builder/scripts/utils/sticky.js
+
+version 4.19.4 ( updated 12-16-2022 )
+- Fixed a bug that was causing Theme Builder Templates to be deleted unintentionally.
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+
+version 4.19.3 ( updated 12-13-2022 )
+- Improved Presets storage and performance.
+- Fixed issue where you could not remove or restore items from Local VB Library.
+- Fixed server errors when uploading items to the Cloud Server in some cases.
+- Fixed a PHP fatal error that occurred on GoDaddy websites due to a change in the GD System plugin's cache class.
+	* core/components/Portability.php
+	* core/components/init.php
+	* epanel/custom_functions.php
+	* includes/builder/feature/Library.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/global-presets/History.php
+	* includes/builder/feature/global-presets/Settings.php
+	* includes/builder/frontend-builder/bundle.js
+
+version 4.19.2 ( updated 11-29-2022 )
+- Fixed issue where presets where not importing when tb library item is duplicated from cloud to local.
+- Fixed divider view always being 100% in phone view in VB.
+- Fixed issue with image border styles in Blog module images that were not applying properly in some cases.
+- Fixed bug where backup exists popup shows every time when opening Theme Builder.
+- Fixed Replace Existing Content option in Layouts Library.
+- Fixed server error when deleting items too quickly from Divi Cloud.
+- Fixed issue where the code snippet library was not closing on ESC keyboard shortcut.
+- Fixed JS error that occurs on saving empty content to the cloud from code snippet editor modal.
+	* core/code-snippets/app/store/code-snippets-library/sequences.js
+	* core/code-snippets/app/store/edit/sequences.js
+	* includes/builder/class-et-builder-google-fonts-feature.php
+	* includes/builder/core.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/theme-builder-library.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/functions.php
+	* includes/builder/module/Blog.php
+
+version 4.19.1 ( updated 11-17-2022 )
+- Fixed the issue when user cannot drag and drop files into Code Snippets Import Modal in some cases.
+- Fixed the issue when user could exceed the free items limit on the Cloud during bulk upload.
+- Show disabled cursor on save snippet button when save action is not allowed.
+- Introduced new filters 'et_builder_google_fonts_is_enabled', 'et_builder_google_fonts_fetch_url' and 'et_builder_google_fonts_fetch' to manage Google Fonts.
+- Hardened divi cloud library visual builder security checks.
+- Fixed content contains HTML image tag is not rendered on the front end.
+- Fixed js error which may potentially appear in console.log when Snippets screenshot is updating.
+- Fixed clearing trash that gets stuck for Divi cloud library items.
+- Improved Edit Tags And Categories label by replacing "And" with "&".
+- Fixed blank sceen from showing when the Cloud login modal is closed.
+- Added Cancel button to the Save To Library modal.
+- Fixed misaligned label in Code Snippets Portability modal.
+- Added line break when appending code from Snippets Library.
+- Fixed unwanted back button after logging into the Cloud from Code Snippets Library.
+- Fixed Code Snippets portability modal title.
+- Added spinner when preloading code snippets on details page.
+- Fixed Global Colors exporting from the Divi Library page.
+- Fixed PHP Fatal error when trying to activate Divi Builder plugin with Divi theme at the same time.
+- Fixed a compatibility issue with WordPress 6.1 that may cause the performance to degrade in some cases when various languages were used.
+	* cloud/i18n/library.php
+	* core/code-snippets/app/store/code-snippets-library/actions.js
+	* core/code-snippets/app/store/code-snippets-library/sequences.js
+	* core/code-snippets/code-snippets.php
+	* core/components/Portability.php
+	* core/i18n/library.php
+	* epanel/css/panel.css
+	* functions.php
+	* includes/builder/class-et-builder-google-fonts-feature.php
+	* includes/builder/core.php
+	* includes/builder/feature/Library.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/theme-builder/api.php
+	* includes/builder/frontend-builder/theme-builder/local-library.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder-library.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/functions.php
+
+version 4.19 ( updated 11-03-2022 )
+- Added Divi Code Snippets Library with Divi Cloud support.
+- Fixed issue with Theme Builder templates not working when The Events Calendar plugin is active.
+- Fixed some issues related to Secondary Navigation menu in Customizer and Frontend.
+- Fixed Global Colors import and export in Theme Builder.
+	* cloud/cloud-app.php
+	* cloud/i18n/library.php
+	* common/admin.php
+	* common/i18n/library.php
+	* common/init.php
+	* common/lib/config.js
+	* common/lib/i18n.js
+	* common/lib/local-library.js
+	* common/lib/request.js
+	* core/admin/css/core.css
+	* core/admin/fonts/epanel/code-snippet.svg
+	* core/admin/fonts/epanel/code-snippet.ttf
+	* core/admin/fonts/epanel/code-snippet.woff
+	* core/code-snippets/CodeSnippetsLibrary.php
+	* core/code-snippets/api.php
+	* core/code-snippets/app/boot.js
+	* core/code-snippets/app/lib/capabilities.js
+	* core/code-snippets/app/lib/code-snippets-library.js
+	* core/code-snippets/app/lib/config.js
+	* core/code-snippets/app/lib/constants.js
+	* core/code-snippets/app/lib/i18n.js
+	* core/code-snippets/app/lib/request.js
+	* core/code-snippets/app/store/code-snippets-library/actions.js
+	* core/code-snippets/app/store/code-snippets-library/computed.js
+	* core/code-snippets/app/store/code-snippets-library/factories.js
+	* core/code-snippets/app/store/code-snippets-library/module.js
+	* core/code-snippets/app/store/code-snippets-library/providers.js
+	* core/code-snippets/app/store/code-snippets-library/sequences.js
+	* core/code-snippets/app/store/edit/actions.js
+	* core/code-snippets/app/store/edit/module.js
+	* core/code-snippets/app/store/edit/sequences.js
+	* core/code-snippets/app/store/index.js
+	* core/code-snippets/code-snippets-app.php
+	* core/code-snippets/code-snippets-library.php
+	* core/code-snippets/code-snippets.php
+	* core/code-snippets/constants.php
+	* core/code-snippets/post/taxonomy/CodeSnippetType.php
+	* core/code-snippets/post/type/CodeSnippet.php
+	* core/components/Portability.php
+	* core/components/api/email/HubSpot.php
+	* core/components/cache/Directory.php
+	* core/functions.php
+	* core/i18n/library.php
+	* core/init.php
+	* core/webpack.config.js
+	* epanel/core_functions.php
+	* epanel/css/panel.css
+	* epanel/js/functions-init.js
+	* functions.php
+	* includes/builder/core.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/gutenberg/blocks/Layout.php
+	* includes/builder/feature/local-library.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/i18n/portability.php
+	* includes/builder/frontend-builder/i18n/theme-builder.php
+	* includes/builder/frontend-builder/theme-builder/constants.php
+	* includes/builder/frontend-builder/theme-builder/local-library.php
+	* includes/builder/plugin-compat/the-events-calendar.php
+	* includes/builder/plugin-compat/yith-woocommerce-dynamic-pricing-and-discounts-premium.php
+	* js/src/theme-customizer.js
+
+version 4.18.1 ( updated 10-27-2022 )
+- Introduced confirmation modal before user clear Divi Layout block content.
+- Fixed errors on Divi Layout block when opening Site Editor page.
+- VB Video Module Refused to Connect is Fixed.
+- Fixed a bug in the settings field mini modal where the max height was not calculated correctly.
+- Fixed a bug where default position on sections using section divider(s) was set to static instead of relative.
+- Added Cart Quantity option to the Menu and Fullwidth Menu modules.
+- Added compatibility with the YITH WooCommerce Discounts & Pricing plugin.
+- Enables copy/paste style via right-click and keyboard shortcuts in edit preset mode.
+- Fixed issue in theme builder where error message modal appears after importing template or set.
+- Removed unsupported Help button from Import Templates modal.
+- Fixed padding not removed from Login module without background.
+- Updated Divi Builder translation strings.
+- Introduced new filter to override Product Tour status from the client side.
+- Fixed audio module's progress handle being white when text is dark.
+- Fixed video module being unable to retrieve thumbnail from domain-restricted vimeo videos.
+- Fixed disappeared Split Testing module when switching between subjects via next or prev buttons.
+- Fixed PHP error regarding incorrect use of trim function.
+- Introduced processed shortcode as second parameter of et_required_module_assets filter.
+- Fixed borders to show up on Sections that have borders of 1 or 2px as well as Dividers on them.
+- Fixed issue where dropdown menu reappears after it closes if we move the cursor back to the coordinate where submenu was showing previously.
+- Fixed issue where sticky columns shrink sometimes if Equalize Column Heights option enabled.
+- Fixed a bug in Video Slider module which was causing video to disappear in some cases.
+- Fixed Download backup option in Import Templates modal for Cloud items.
+- Adding context menu with new actions to Existing pages tab.
+- Fixed incorrect position after scrolling to anchor if header has fixed sections with negative top offset.
+- Fixed a bug that occurred in the Visual Builder (Extra only) where users were unable to drag & drop modules when the Post Content module was used in the Body area.
+- Fixed missing margin for social media follow module last icon in RTL.
+- Fixed anchor scroll position in Chrome browser when navigating from different pages.
+- Added functionality to select a range of saved items on Shift + Click in the Divi Library modal.
+- Video Slider Module Tests are updated.
+- Fixed MailPoet subscribers not being added to lists when a Form has required custom fileds .
+- Updated Google Fonts list.
+- Introduced Private App Access Token as API Key replacement for HubSpot authentication.
+- Fixed a PHP error that may occur in some cases when responsive images are used.
+- Added new filter hook for WP_Filesystem connection arguments.
+- Improved i18n translations to better handle some special keywords from being translated.
+- Fixed Email Optin type error with Convertkit when PHP 8 is in use.
+- Fixed custom color scheme overriding bar counter color.
+- Fixed Customizer preview for Secondary Menu background color not working.
+- Fixed menu module dropdown items not aligning to the right.
+	* cloud/i18n/library.php
+	* core/components/api/email/ConvertKit.php
+	* core/components/api/email/HubSpot.php
+	* core/components/api/email/_MailPoet3.php
+	* core/components/cache/Directory.php
+	* core/functions.php
+	* core/json-data/google-fonts.json
+	* core/languages/ar.po
+	* core/languages/bg_BG.po
+	* core/languages/cs_CZ.po
+	* core/languages/da_DK.po
+	* core/languages/de_DE.po
+	* core/languages/el.po
+	* core/languages/en_US.po
+	* core/languages/es_ES.po
+	* core/languages/fi.po
+	* core/languages/fr_FR.po
+	* core/languages/he_IL.po
+	* core/languages/hu_HU.po
+	* core/languages/id_ID.po
+	* core/languages/it_IT.po
+	* core/languages/ja.po
+	* core/languages/ko_KR.po
+	* core/languages/ms_MY.po
+	* core/languages/nb_NO.po
+	* core/languages/nl_NL.po
+	* core/languages/pl_PL.po
+	* core/languages/pt_BR.po
+	* core/languages/ro_RO.po
+	* core/languages/ru_RU.po
+	* core/languages/sk_SK.po
+	* core/languages/sr_RS.po
+	* core/languages/sv_SE.po
+	* core/languages/th.po
+	* core/languages/tl.po
+	* core/languages/tr_TR.po
+	* core/languages/uk.po
+	* core/languages/vi.po
+	* core/languages/zh_CN.po
+	* core/ui/utils/property-resolver.js
+	* functions.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/core.php
+	* includes/builder/feature/BlockEditorIntegration.php
+	* includes/builder/feature/Library.php
+	* includes/builder/feature/dynamic-assets/assets/js/src/sticky-element.js
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/gutenberg/EditorTypography.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/i18n/generic.php
+	* includes/builder/functions.php
+	* includes/builder/languages/ar.po
+	* includes/builder/languages/bg_BG.po
+	* includes/builder/languages/cs_CZ.po
+	* includes/builder/languages/da_DK.po
+	* includes/builder/languages/de_DE.po
+	* includes/builder/languages/el.po
+	* includes/builder/languages/en_US.po
+	* includes/builder/languages/es_ES.po
+	* includes/builder/languages/et_builder-ar-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-bg_BG-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-cs_CZ-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-da_DK-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-de_DE-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-el-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-es_ES-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-fi-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-fr_FR-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-he_IL-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-hu_HU-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-id_ID-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-it_IT-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-ja-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-ko_KR-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-ms_MY-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-nb_NO-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-nl_NL-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-pl_PL-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-pt_BR-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-ro_RO-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-ru_RU-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-sk_SK-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-sr_RS-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-sv_SE-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-th-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-tl-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-tr_TR-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-uk-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-vi-et-builder-gutenberg.po
+	* includes/builder/languages/et_builder-zh_CN-et-builder-gutenberg.po
+	* includes/builder/languages/fi.po
+	* includes/builder/languages/fr_FR.po
+	* includes/builder/languages/he_IL.po
+	* includes/builder/languages/hu_HU.po
+	* includes/builder/languages/id_ID.po
+	* includes/builder/languages/it_IT.po
+	* includes/builder/languages/ja.po
+	* includes/builder/languages/ko_KR.po
+	* includes/builder/languages/ms_MY.po
+	* includes/builder/languages/nb_NO.po
+	* includes/builder/languages/nl_NL.po
+	* includes/builder/languages/pl_PL.po
+	* includes/builder/languages/pt_BR.po
+	* includes/builder/languages/ro_RO.po
+	* includes/builder/languages/ru_RU.po
+	* includes/builder/languages/sk_SK.po
+	* includes/builder/languages/sr_RS.po
+	* includes/builder/languages/sv_SE.po
+	* includes/builder/languages/th.po
+	* includes/builder/languages/tl.po
+	* includes/builder/languages/tr_TR.po
+	* includes/builder/languages/uk.po
+	* includes/builder/languages/vi.po
+	* includes/builder/languages/zh_CN.po
+	* includes/builder/module/BarCountersItem.php
+	* includes/builder/module/FullwidthMenu.php
+	* includes/builder/module/Login.php
+	* includes/builder/module/Menu.php
+	* includes/builder/module/Video.php
+	* includes/builder/module/VideoSliderItem.php
+	* includes/builder/module/field/Position.php
+	* includes/builder/plugin-compat/styles/yith-woocommerce-dynamic-pricing-and-discounts-premium.css
+	* includes/builder/plugin-compat/yith-woocommerce-dynamic-pricing-and-discounts-premium.php
+	* includes/builder/scripts/frontend/global-functions.js
+	* includes/builder/scripts/frontend/scripts-dynamic.js
+	* includes/builder/scripts/frontend/scripts.js
+	* includes/builder/scripts/utils/sticky.js
+	* js/src/theme-customizer.js
+	* lang/ar.po
+	* lang/bg_BG.po
+	* lang/cs_CZ.po
+	* lang/da_DK.po
+	* lang/de_DE.po
+	* lang/el.po
+	* lang/en_US.po
+	* lang/es_ES.po
+	* lang/fi.po
+	* lang/fr_FR.po
+	* lang/he_IL.po
+	* lang/hu_HU.po
+	* lang/id_ID.po
+	* lang/it_IT.po
+	* lang/ja.po
+	* lang/ko_KR.po
+	* lang/ms_MY.po
+	* lang/nb_NO.po
+	* lang/nl_NL.po
+	* lang/pl_PL.po
+	* lang/pt_BR.po
+	* lang/ro_RO.po
+	* lang/ru_RU.po
+	* lang/sk_SK.po
+	* lang/sr_RS.po
+	* lang/sv_SE.po
+	* lang/th.po
+	* lang/tl.po
+	* lang/tr_TR.po
+	* lang/uk.po
+	* lang/vi.po
+	* lang/zh_CN.po
+
+version 4.18 ( updated 08-10-2022 )
+- Introduced the Theme Builder Library including Divi Cloud support.
+- Fixed issues with Portability system when using Droploader in Visual Builder.
+- Removed excess padding from contact form radio button and checkbox in RTL.
+- Fixed password protected content missing styles.
+- Fixed undefined HtmlEntities object when module with partial support loaded on the builder.
+- Fixed boolean custom fields value not getting added when subscribing with Sendinblue.
+	* cloud/i18n/library.php
+	* core/admin/fonts/builder.eot
+	* core/admin/fonts/builder.svg
+	* core/admin/fonts/builder.ttf
+	* core/admin/fonts/builder.woff
+	* core/components/Portability.php
+	* core/components/api/email/SendinBlue.php
+	* includes/builder/core.php
+	* includes/builder/feature/dynamic-assets/class-dynamic-assets.php
+	* includes/builder/feature/dynamic-content.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/i18n/portability.php
+	* includes/builder/frontend-builder/i18n/theme-builder.php
+	* includes/builder/frontend-builder/theme-builder/LocalLibraryItem.php
+	* includes/builder/frontend-builder/theme-builder/LocalLibraryItemEditor.php
+	* includes/builder/frontend-builder/theme-builder/TBItemLibrary.php
+	* includes/builder/frontend-builder/theme-builder/admin.php
+	* includes/builder/frontend-builder/theme-builder/api.php
+	* includes/builder/frontend-builder/theme-builder/constants.php
+	* includes/builder/frontend-builder/theme-builder/dynamic-content.php
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/frontend-builder/theme-builder/local-library.php
+	* includes/builder/frontend-builder/theme-builder/post/query/TBItems.php
+	* includes/builder/frontend-builder/theme-builder/post/taxonomy/TBItemCategory.php
+	* includes/builder/frontend-builder/theme-builder/post/taxonomy/TBItemTag.php
+	* includes/builder/frontend-builder/theme-builder/post/taxonomy/TBItemType.php
+	* includes/builder/frontend-builder/theme-builder/post/type/TBItem.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder-library.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/module/PostTitle.php
+	* includes/builder/module/PostsNavigation.php
+	* includes/builder/template-preview.php
+
 version 4.17.6 ( updated 07-13-2022 )
 - Fixed row width and max width issues on the builder. Introduced new {module_type}.processed.css.selector filter to allow third-party modules to modify the module selector after processing.
 	* includes/builder/frontend-builder/bundle.js

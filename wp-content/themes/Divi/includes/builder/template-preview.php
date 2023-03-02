@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 et_core_security_check( 'edit_posts', 'et_pb_preview_nonce', '', '_GET' );
 
-$container_style = isset( $_POST['is_fb_preview'] ) ? 'max-width: none; padding: 0;' : '';
+$container_style = isset( $_POST['is_fb_preview'] ) || isset( $_GET['item_id'] ) ? 'max-width: none; padding: 0;' : '';
 $post_id         = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
 
 if ( ! current_user_can( 'edit_post', $post_id ) ) {
@@ -53,7 +53,11 @@ $post = get_post( $post_id );
 					<div class="<?php echo esc_attr( apply_filters( 'et_pb_preview_wrap_class', 'entry-content post-content entry content' ) ); ?>">
 
 					<?php
-					if ( isset( $_POST['shortcode'] ) ) {
+					if ( isset( $_GET['item_id'] ) ) {
+						$item_id           = (int) $_GET['item_id'];
+						$rendered_template = et_theme_builder_render_library_template_preview( $item_id );
+						echo et_core_intentionally_unescaped( $rendered_template, 'html' );
+					} elseif ( isset( $_POST['shortcode'] ) ) {
 						if ( $post ) {
 							// Setup postdata so post-dependent data like dynamic content
 							// can be resolved.

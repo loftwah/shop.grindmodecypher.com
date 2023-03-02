@@ -4,8 +4,10 @@ class ET_Builder_Global_Presets_Settings {
 	const CUSTOM_DEFAULTS_OPTION            = 'builder_custom_defaults';
 	const CUSTOM_DEFAULTS_UNMIGRATED_OPTION = 'builder_custom_defaults_unmigrated';
 	const CUSTOMIZER_SETTINGS_MIGRATED_FLAG = 'customizer_settings_migrated_flag';
+	const PRESETS_STORAGE_MIGRATED_FLAG     = 'presets_storage_migrated_flag';
 
-	const GLOBAL_PRESETS_OPTION         = 'builder_global_presets';
+	const GLOBAL_PRESETS_OPTION_LEGACY  = 'builder_global_presets';
+	const GLOBAL_PRESETS_OPTION         = 'builder_global_presets_ng';
 	const GLOBAL_PRESETS_OPTION_TEMP    = 'builder_global_presets_temp';
 	const CUSTOM_DEFAULTS_MIGRATED_FLAG = 'custom_defaults_migrated_flag';
 	const MODULE_PRESET_ATTRIBUTE       = '_module_preset';
@@ -15,8 +17,15 @@ class ET_Builder_Global_Presets_Settings {
 	 * @var array - The list of the product short names we allowing to do a Module Customizer settings migration rollback.
 	 */
 	public static $allowed_products = array(
-		'divi'  => '4.5',
-		'extra' => '4.5',
+		'customizer_settings' => array(
+			'divi'  => '4.5',
+			'extra' => '4.5',
+		),
+		'storage_migration'   => array(
+			'divi'         => '4.19.2',
+			'extra'        => '4.19.2',
+			'divi-builder' => '4.19.2',
+		),
 	);
 
 	// Migration phase two settings
@@ -73,11 +82,101 @@ class ET_Builder_Global_Presets_Settings {
 	protected $_settings;
 
 	protected function __construct() {
-		$global_presets = et_get_option( self::GLOBAL_PRESETS_OPTION, (object) array(), '', true );
+		$this->_migrate_presets_storage();
+
+		// Get option from product setting (last attr in args list).
+		$global_presets = et_get_option( self::GLOBAL_PRESETS_OPTION, (object) array(), '', true, false, '', '', true );
 
 		$this->_settings = $this->_normalize_global_presets( $global_presets );
 
 		$this->_register_hooks();
+	}
+
+	/**
+	 * Migrates global presets into a separate setting.
+	 *
+	 * @since 4.19.3
+	 *
+	 * @return void
+	 */
+	protected function _migrate_presets_storage() {
+		if ( self::is_presets_storage_migrated() ) {
+			return;
+		}
+
+		$global_presets_legacy = et_get_option( self::GLOBAL_PRESETS_OPTION_LEGACY, array(), '', true );
+		// Get option from product setting (last attr in args list).
+		$global_presets_ng = et_get_option( self::GLOBAL_PRESETS_OPTION, array(), '', true, false, '', '', true );
+
+		// Nothing to migrate or presets already exist in new storage.
+		if ( empty( $global_presets_legacy ) || ! empty( $global_presets_ng ) ) {
+			et_update_option( self::PRESETS_STORAGE_MIGRATED_FLAG, true );
+			return;
+		}
+
+		$global_presets_legacy_fixed = self::_fix_presets_before_migration( $global_presets_legacy );
+
+		// Update option for product setting (last attr in args list).
+		et_update_option( self::GLOBAL_PRESETS_OPTION, (object) $global_presets_legacy_fixed, false, '', '', true );
+
+		$global_presets_ng_migrated = et_get_option( self::GLOBAL_PRESETS_OPTION, array(), '', true, false, '', '', true );
+
+		// Remove old option if presets migrated.
+		if ( ! empty( $global_presets_ng_migrated ) ) {
+			et_update_option( self::PRESETS_STORAGE_MIGRATED_FLAG, true );
+			// Remove legacy presets from settings.
+			et_delete_option( self::GLOBAL_PRESETS_OPTION_LEGACY );
+		}
+	}
+
+	/**
+	 * Fix global colors in Global Presets.
+	 * Clean up global_colors_info array which may contain duplicates.
+	 *
+	 * @since 4.19.3
+	 *
+	 * @param object|array $presets The object representing Global Presets settings.
+	 *
+	 * @return object
+	 */
+	protected function _fix_presets_before_migration( $presets ) {
+		$result = $presets;
+
+		foreach ( $presets as $module => $preset_structure ) {
+			if ( isset( $preset_structure->presets ) ) {
+				foreach ( $preset_structure->presets as $preset_id => $preset ) {
+					if ( isset( $preset->settings ) ) {
+						// Look for settings in this module that use global colors.
+						if ( isset( $preset->settings->global_colors_info ) ) {
+							$module_global_colors_info = json_decode( $preset->settings->global_colors_info, true );
+						} else {
+							// Nothing more to be done here if this module's `global_colors_info` setting is empty,
+							// so advance the `$preset_structure->presets as $preset_id => $preset` loop.
+							continue;
+						}
+
+						$fixed_global_colors_info = array();
+
+						foreach ( $module_global_colors_info as $gcid => $settings_that_use_this_gcid_raw ) {
+							if ( empty( $settings_that_use_this_gcid_raw ) ) {
+								continue;
+							}
+
+							// Fix possible issue with duplicated gc in global_colors_info field.
+							$settings_that_use_this_gcid       = array_values( array_unique( $settings_that_use_this_gcid_raw ) );
+							$fixed_global_colors_info[ $gcid ] = $settings_that_use_this_gcid;
+						}
+
+						// Insert fixed global_colors_info into preset settings.
+						if ( ! empty( $fixed_global_colors_info ) ) {
+							$result->$module->presets->$preset_id->settings->global_colors_info = wp_json_encode( $fixed_global_colors_info );
+						}
+					}
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	protected function _register_hooks() {
@@ -179,7 +278,7 @@ class ET_Builder_Global_Presets_Settings {
 		}
 
 		// Save presets without temp.
-		et_update_option( self::GLOBAL_PRESETS_OPTION, $all_presets );
+		et_update_option( self::GLOBAL_PRESETS_OPTION, $all_presets, false, '', '', true );
 
 		// Clean all temp presets.
 		et_update_option( self::GLOBAL_PRESETS_OPTION_TEMP, array() );
@@ -301,7 +400,7 @@ class ET_Builder_Global_Presets_Settings {
 		foreach ( $gc_info as $color_id => $option_names ) {
 			foreach ( $option_names as $option_name ) {
 				// Get the CSS color value assiciated with this GCID.
-				if ( ! empty( $all_global_colors_info[ $color_id ]['color'] ) ) {
+				if ( ! empty( $all_global_colors_info[ $color_id ]['color'] ) && isset( $attrs[ $option_name ] ) ) {
 					$gcid_color_value = $all_global_colors_info[ $color_id ]['color'];
 				} else {
 					// We can't inject the CSS color value if we don't have record of it.
@@ -336,6 +435,17 @@ class ET_Builder_Global_Presets_Settings {
 	 */
 	public static function are_custom_defaults_migrated() {
 		return et_get_option( self::CUSTOM_DEFAULTS_MIGRATED_FLAG, false );
+	}
+
+	/**
+	 * Checks whether presets storage migrated or not.
+	 *
+	 * @since 4.19.3
+	 *
+	 * @return bool
+	 */
+	public static function is_presets_storage_migrated() {
+		return et_get_option( self::PRESETS_STORAGE_MIGRATED_FLAG, false );
 	}
 
 	/**
@@ -449,7 +559,7 @@ class ET_Builder_Global_Presets_Settings {
 
 		$global_presets = self::migrate_custom_defaults_to_global_presets( $custom_defaults );
 
-		et_update_option( self::GLOBAL_PRESETS_OPTION, $global_presets );
+		et_update_option( self::GLOBAL_PRESETS_OPTION, $global_presets, false, '', '', true );
 		$this->_settings = $global_presets;
 
 		et_update_option( self::CUSTOM_DEFAULTS_MIGRATED_FLAG, true );
@@ -497,6 +607,39 @@ class ET_Builder_Global_Presets_Settings {
 	}
 
 	/**
+	 * Handles Presets Storage Rollback.
+	 *
+	 * @since 4.19.3
+	 *
+	 * @param string $product_name - The short name of the product rolling back.
+	 * @param string $rollback_from_version - Rollback from version.
+	 * @param string $rollback_to_version - Rollback to version.
+	 */
+	public function rollback_presets_storage( $product_name, $rollback_from_version, $rollback_to_version ) {
+		if ( ! isset( self::$allowed_products['storage_migration'][ $product_name ] ) ) {
+			return;
+		}
+
+		if ( 0 > version_compare( $rollback_to_version, self::$allowed_products['storage_migration'][ $product_name ] ) ) {
+			// Get option from product setting (last attr in args list).
+			$global_presets_ng = et_get_option( self::GLOBAL_PRESETS_OPTION, array(), '', true, false, '', '', true );
+
+			// Nothing to rollback, just reset the flag.
+			if ( empty( $global_presets_ng ) ) {
+				et_update_option( self::PRESETS_STORAGE_MIGRATED_FLAG, false );
+				return;
+			}
+
+			// Remove data from the new storage and reset flag.
+			et_update_option( self::GLOBAL_PRESETS_OPTION, array(), false, '', '', true );
+			et_update_option( self::PRESETS_STORAGE_MIGRATED_FLAG, false );
+
+			// Save presets to legacy setting.
+			et_update_option( self::GLOBAL_PRESETS_OPTION_LEGACY, (object) $global_presets_ng );
+		}
+	}
+
+	/**
 	 * Handles theme version rollback.
 	 *
 	 * @since 4.5.0
@@ -506,11 +649,14 @@ class ET_Builder_Global_Presets_Settings {
 	 * @param string $rollback_to_version
 	 */
 	public function after_version_rollback( $product_name, $rollback_from_version, $rollback_to_version ) {
-		if ( ! isset( self::$allowed_products[ $product_name ] ) ) {
+		// Rollback starage migration.
+		self::rollback_presets_storage( $product_name, $rollback_from_version, $rollback_to_version );
+
+		if ( ! isset( self::$allowed_products['customizer_settings'][ $product_name ] ) ) {
 			return;
 		}
 
-		if ( 0 > version_compare( $rollback_to_version, self::$allowed_products[ $product_name ] ) ) {
+		if ( 0 > version_compare( $rollback_to_version, self::$allowed_products['customizer_settings'][ $product_name ] ) ) {
 			et_delete_option( self::CUSTOM_DEFAULTS_MIGRATED_FLAG );
 		}
 	}
@@ -684,10 +830,16 @@ class ET_Builder_Global_Presets_Settings {
 						// Gather system-wide Global Colors info (including CSS color values and 'active' status).
 						$all_global_colors_info = et_get_option( 'et_global_colors' );
 
-						foreach ( $module_global_colors_info as $gcid => $settings_that_use_this_gcid ) {
-							if ( empty( $settings_that_use_this_gcid ) ) {
+						$fixed_global_colors_info = array();
+
+						foreach ( $module_global_colors_info as $gcid => $settings_that_use_this_gcid_raw ) {
+							if ( empty( $settings_that_use_this_gcid_raw ) ) {
 								continue;
 							}
+
+							// Fix possible issue with duplicated gc in global_colors_info field.
+							$settings_that_use_this_gcid       = array_values( array_unique( $settings_that_use_this_gcid_raw ) );
+							$fixed_global_colors_info[ $gcid ] = $settings_that_use_this_gcid;
 
 							// Get the CSS color value assiciated with this GCID.
 							if ( ! empty( $all_global_colors_info[ $gcid ]['color'] ) ) {
@@ -699,14 +851,21 @@ class ET_Builder_Global_Presets_Settings {
 
 							// For matching settings, replace CSS color values with their GCIDs.
 							foreach ( $settings_that_use_this_gcid as $uses_this_gcid ) {
-								$settings_match = $settings_filtered[ $uses_this_gcid ];
+								if ( isset( $settings_filtered[ $uses_this_gcid ] ) ) {
+									$settings_match = $settings_filtered[ $uses_this_gcid ];
 
-								// Replace CSS color value with GCID wherever it's found within the settings string.
-								$injected_gcid = str_replace( $gcid, $gcid_color_value, $settings_match );
+									// Replace CSS color value with GCID wherever it's found within the settings string.
+									$injected_gcid = str_replace( $gcid, $gcid_color_value, $settings_match );
 
-								// Pass the GCID-injected string back to the preset setting.
-								$result->$module->presets->$preset_id->settings->$uses_this_gcid = $injected_gcid;
+									// Pass the GCID-injected string back to the preset setting.
+									$result->$module->presets->$preset_id->settings->$uses_this_gcid = $injected_gcid;
+								}
 							}
+						}
+
+						// Insert fixed global_colors_info into preset settings.
+						if ( ! empty( $fixed_global_colors_info ) ) {
+							$result->$module->presets->$preset_id->settings->global_colors_info = wp_json_encode( $fixed_global_colors_info );
 						}
 					} else {
 						$result->$module->presets->$preset->settings = (object) array();
