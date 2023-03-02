@@ -1,9 +1,9 @@
 <?php 
 if( !defined( 'ABSPATH' ) ) exit;
 if(current_user_can('manage_options') && isset($_POST['submit_option'])){
-	$header_script = sanitize_textarea_field(htmlentities($_POST['header_script']));
-	$body_script = sanitize_textarea_field(htmlentities($_POST['body_script']));
-	$footer_script = sanitize_textarea_field(htmlentities($_POST['footer_script']));
+	$header_script = htmlspecialchars($_POST['header_script']);
+	$body_script = htmlspecialchars($_POST['body_script']);
+	$footer_script = htmlspecialchars($_POST['footer_script']);
 	$nonce=sanitize_text_field($_POST['insert_script_wpnonce']);
 
 	if(wp_verify_nonce( $nonce, 'insert_script_option_nonce' ))
@@ -49,17 +49,17 @@ $footer_script=ishf_get_option_footer_script();
 			<form method="post">
 				<p>
 					<label for="script_in_header"> <?php _e('Scripts in Header','insert-script-in-headers-and-footers'); ?> </label>
-					<textarea name="header_script" rows="8" class="ishf-header-footer-textarea" ><?php esc_html_e($header_script); ?></textarea>
+					<textarea name="header_script" rows="8" class="ishf-header-footer-textarea" ><?php _e($header_script); ?></textarea>
 					<?php _e('These scripts will be printed in the <code>&lt;head&gt;</code> section.','insert-script-in-headers-and-footers'); ?>
 				</p>
 				<p>
 					<label for="script_in_body"> <?php _e('Scripts in Body','insert-script-in-headers-and-footers'); ?> </label>
-					<textarea name="body_script" rows="8" class="ishf-header-footer-textarea" ><?php esc_html_e($body_script); ?></textarea>
+					<textarea name="body_script" rows="8" class="ishf-header-footer-textarea" ><?php _e($body_script); ?></textarea>
 					<?php _e('These scripts will be printed below the <code>&lt;body&gt;</code> section.','insert-script-in-headers-and-footers'); ?>
 				</p>
 				<p>
 					<label for="script_in_footer"> <?php _e('Scripts in Footer','insert-script-in-headers-and-footers'); ?> </label>
-					<textarea name="footer_script" rows="8" class="ishf-header-footer-textarea" ><?php esc_html_e($footer_script); ?></textarea>
+					<textarea name="footer_script" rows="8" class="ishf-header-footer-textarea" ><?php _e($footer_script); ?></textarea>
 					<?php _e('These scripts will be printed above the <code>&lt;body&gt;</code> section.','insert-script-in-headers-and-footers'); ?>
 				</p>
 				<input type="hidden" name="insert_script_wpnonce" value="<?php esc_attr_e($nonce); ?>">

@@ -1,19 +1,19 @@
-=== Insert Script In Headers And Footers  === 
+=== Insert Script In Headers And Footers === 
 Contributors: rajkakadiya, rvadhel
 Donate link: https://paypal.me/rvadhel
-Tags: Insert javascript, Insert custom style,Insert Html,Insert Facebook pixel code, Add Google Analytics code
+Tags: Insert javascript, Insert custom style, Insert Html, Insert Facebook pixel code, Add Google Analytics code
 Requires PHP: 5.2.4
 Requires at least: 3.0.1
 Tested up to: 6.0.1
-Stable tag: 2.1
+Stable tag: 2.2
 
-By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header, footer and body. no need to edit theme!
+Using this smart plugin, allows you to insert Google analytics code, Facebook pixel code, custom style, javascript and more in your WordPress header, footer and body. no need to edit the theme!
 
 == Description ==
 
-By using this smart plugin, allows you to insert google analytic code, facebook pixel code, custom style, javascript and more in your wordpress header,footer and body. no need to edit theme!
+Using this smart plugin, allows you to insert Google analytics code, Facebook pixel code, custom style, javascript and more in your WordPress header, footer and body. no need to edit the theme!
 
-you can add custom script easily from admin side 
+you can add custom scripts easily from the admin side 
 
 **Plugin Features**
 <ul>
@@ -32,8 +32,8 @@ you can add custom script easily from admin side
 **Pro Plugin Features** 
 <ul>
 	<li>Add script to single page priority of loading script.</li>
-	<li>Add header script to single post, custom post and page.</li>
-	<li>Add Footer script to single post, custom Post and page.</li>
+	<li>Add header script to a single post, custom post and page.</li>
+	<li>Add Footer script to a single post, custom Post and page.</li>
 	<li>Give Priority to Script(At Beginning or At End)</li>
 	<li>Select where to Show Script - Admin or Front Side</li>
 	<li>Add Script to Post, Custom Post and Page</li>
@@ -56,9 +56,17 @@ you can add custom script easily from admin side
 
 == Installation ==
 
-Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
+= Automatic Installation =
+This process is safe and easy to install the plugin on your WordPress installation. First, login to your WordPress dashboard, then go to the <strong>Plugin</strong> menu then click on the <strong>Add New</strong> option.
 
-After active plugin go to Setting->Insert Script In Headers And Footers. 
+Here plugin list page will open, on this page in the search box write the name of the plugin <strong>Insert Script In Headers And Footers</strong> and press the <strong>Search</strong> button. After this, you can find our plugin name at the top of the list now just click on the <strong>Install</strong> button.
+
+<strong>Admin Dashboard > Plugins > Add New > </strong>Search for <strong>Insert Script In Headers And Footers</strong> plugin.
+
+= Manual Installation =
+In the manual installation, you have to download our plugin first. Extract the .zip and put the whole contents in the <strong>wp-content/plugins/</strong> directory of your WordPress installation and then activate the plugin from the <strong>Plugins page</strong>.
+
+After activating the plugin, go to <strong>Setting > Insert Script In Headers And Footers</strong>.
 
 
 == Screenshots ==
@@ -66,6 +74,9 @@ After active plugin go to Setting->Insert Script In Headers And Footers.
 
 
 == Changelog ==
+= 2.2 =
+ Fixed Bug.
+
 = 2.1 =
  Tested up to wp version 6.0.1
 
@@ -85,13 +96,13 @@ After active plugin go to Setting->Insert Script In Headers And Footers.
  Fixed security bugs.
  
 = 1.5 =
- Change pro version link
+ Change the pro version link
  
 = 1.4 =
  Added pro version descriptions and link
  
 = 1.3 =
- Added Option:Add Script in Body
+ Added Option: Add Script in Body
  
 = 1.2 =
  Fix bug
@@ -100,23 +111,4 @@ After active plugin go to Setting->Insert Script In Headers And Footers.
  Fix bug
  
 = 1.0 =
- Inital release
-
-
- 
-
-
-
- 
-
- 
-
-
-
- 
-
- 
-
- 
- 
- 
+ Initial release
