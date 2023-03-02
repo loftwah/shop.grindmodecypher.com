@@ -1,8 +1,44 @@
 *** Changelog ***
 
-= 6.5.1 - 2022-08-01 =
+= 7.1.0 - 2023-02-08 =
+* Fix - Replace some post meta methods with equivalent methods compatible with HPOS.
+* Fix - Rare cases of payment processing failing when webhooks arrive before customer is redirected when UPE is enabled will no longer occur.
+* Tweak - Update minimum supported versions for WordPress, WooCommerce, and PHP.
+* Update – Declare this plugin compatible with High-Performance Order Storage (HPOS).
 
-= 6.5.1 - 2022-xx-xx =
+= 7.0.2 - 2023-01-11 =
+* Fix - Expand charges object from incoming webhooks using Stripe API version 2022-11-15.
+* Fix - Expand refunds on charge object from incoming webhooks using Stripe API version 2022-11-15.
+* Fix - Fix critical error on PHP 8+ when php_uname() is disabled
+
+= 7.0.1 - 2022-11-11 =
+* Fix - Issue where subscription renewal payments were being charged twice no longer present.
+
+= 7.0.0 - 2022-11-10 =
+* Add - Update Express Checkout section UI.
+* Add - Auto-complete first and last name on checkout form when using Link payment method.
+* Add - Allow subscription orders to be paid with Link payment method.
+* Add - Add inbox notification for Link payment method.
+* Tweak - Adjust texts and links in WC admin advanced settings.
+* Add - Restrict the Link payment method only for US merchants.
+
+= 6.9.0 - 2022-10-19 =
+* Tweak - Remove remaining traces of old Stripe settings.
+* Add - Add Boleto expiration setting.
+* Add - Declare incompatibility with HPOS.
+
+= 6.8.0 - 2022-09-28 =
+* Fix - Minor adjustments for Custom Order Tables compatibility.
+* Fix - Upgrade from Payment Element beta.
+
+= 6.7.0 - 2022-09-06 =
+* Fix - Check payment method before updating payment method title.
+* Fix - Use the eslint config at the root of the repo.
+
+= 6.6.0 - 2022-08-17 =
+* Fix - Fix "Pending" text instead of numeric amount on Payment Request button on iOS.
+
+= 6.5.1 - 2022-08-01 =
 * Fix - Stripe Link missing styles and logo for email trigger button.
 * Fix - Stripe Link fatal error on `get_upe_enabled_payment_method_ids` method.
 * Fix - Remove Link beta headers on checkout.
