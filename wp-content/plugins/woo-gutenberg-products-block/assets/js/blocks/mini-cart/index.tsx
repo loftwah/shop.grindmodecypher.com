@@ -38,6 +38,7 @@ const settings: BlockConfiguration = {
 			fontSize: true,
 			...( isFeaturePluginBuild() && {
 				__experimentalFontFamily: true,
+				__experimentalFontWeight: true,
 			} ),
 		},
 	},
@@ -50,11 +51,14 @@ const settings: BlockConfiguration = {
 		isPreview: {
 			type: 'boolean',
 			default: false,
-			save: false,
 		},
 		addToCartBehaviour: {
 			type: 'string',
 			default: 'none',
+		},
+		hasHiddenPrice: {
+			type: 'boolean',
+			default: false,
 		},
 	},
 

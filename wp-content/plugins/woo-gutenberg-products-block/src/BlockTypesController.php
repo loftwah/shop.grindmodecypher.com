@@ -82,6 +82,8 @@ final class BlockTypesController {
 		 *
 		 * This hook defines which block namespaces should have block name and attribute `data-` attributes appended on render.
 		 *
+		 * @since 5.9.0
+		 *
 		 * @param array $allowed_namespaces List of namespaces.
 		 */
 		$allowed_namespaces = array_merge( [ 'woocommerce', 'woocommerce-checkout' ], (array) apply_filters( '__experimental_woocommerce_blocks_add_data_attributes_to_namespace', [] ) );
@@ -90,6 +92,8 @@ final class BlockTypesController {
 		 * Filters the list of allowed Block Names
 		 *
 		 * This hook defines which block names should have block name and attribute data- attributes appended on render.
+		 *
+		 * @since 5.9.0
 		 *
 		 * @param array $allowed_namespaces List of namespaces.
 		 */
@@ -148,7 +152,8 @@ final class BlockTypesController {
 			'woocommerce_product_tag_cloud',
 			'woocommerce_price_filter',
 			'woocommerce_layered_nav',
-			'woocommerce_layered_nav_filters'
+			'woocommerce_layered_nav_filters',
+			'woocommerce_rating_filter'
 		);
 
 		return $widget_types;
@@ -163,41 +168,53 @@ final class BlockTypesController {
 		global $pagenow;
 
 		$block_types = [
+			'ActiveFilters',
+			'AddToCartForm',
+			'AllProducts',
 			'AllReviews',
+			'AttributeFilter',
+			'Breadcrumbs',
+			'CatalogSorting',
+			'ClassicTemplate',
+			'CustomerAccount',
 			'FeaturedCategory',
 			'FeaturedProduct',
+			'FilterWrapper',
 			'HandpickedProducts',
+			'MiniCart',
+			'MiniCartContents',
+			'StoreNotices',
+			'PriceFilter',
+			'ProductAddToCart',
 			'ProductBestSellers',
+			'ProductButton',
 			'ProductCategories',
 			'ProductCategory',
-			'ProductNew',
-			'ProductOnSale',
-			'ProductsByAttribute',
-			'ProductTopRated',
-			'ReviewsByProduct',
-			'ReviewsByCategory',
-			'ProductSearch',
-			'ProductTag',
-			'AllProducts',
-			'PriceFilter',
-			'AttributeFilter',
-			'StockFilter',
-			'ActiveFilters',
-			'ClassicTemplate',
-			'ProductAddToCart',
-			'ProductButton',
 			'ProductCategoryList',
 			'ProductImage',
+			'ProductImageGallery',
+			'ProductNew',
+			'ProductOnSale',
 			'ProductPrice',
+			'ProductQuery',
 			'ProductRating',
+			'ProductResultsCount',
 			'ProductSaleBadge',
+			'ProductSearch',
 			'ProductSKU',
 			'ProductStockIndicator',
 			'ProductSummary',
+			'ProductTag',
 			'ProductTagList',
 			'ProductTitle',
-			'MiniCart',
-			'MiniCartContents',
+			'ProductTopRated',
+			'ProductsByAttribute',
+			'RatingFilter',
+			'ReviewsByCategory',
+			'ReviewsByProduct',
+			'RelatedProducts',
+			'ProductDetails',
+			'StockFilter',
 		];
 
 		$block_types = array_merge( $block_types, Cart::get_cart_block_types(), Checkout::get_checkout_block_types() );
@@ -241,7 +258,13 @@ final class BlockTypesController {
 			$block_types = array_diff(
 				$block_types,
 				[
+					'AddToCartForm',
+					'Breadcrumbs',
+					'CatalogSorting',
 					'ClassicTemplate',
+					'ProductResultsCount',
+					'ProductDetails',
+					'StoreNotices',
 				]
 			);
 		}
