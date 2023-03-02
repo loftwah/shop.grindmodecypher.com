@@ -8,8 +8,8 @@ add_action(
 			?>
 				<div class="notice notice-error is-dismissible">
 				<p>
-					<strong><?php _e('It looks like you have another YayMail version installed, please delete it before activating this new version. All current settings and data are still preserved.', 'yaymail' ); ?>
-					<a href="https://docs.yaycommerce.com/yaymail/getting-started/how-to-update-yaymail"><?php _e( 'Read more details.', 'yaymail' ); ?></a>
+					<strong><?php esc_html_e( 'It looks like you have another YayMail version installed, please delete it before activating this new version. All current settings and data are still preserved.', 'yaymail' ); ?>
+					<a href="https://docs.yaycommerce.com/yaymail/getting-started/how-to-update-yaymail"><?php esc_html_e( 'Read more details.', 'yaymail' ); ?></a>
 					</strong>
 				</p>
 				</div>

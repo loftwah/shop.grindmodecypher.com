@@ -1,38 +1,52 @@
 <?php
 namespace YayMail\Page\Source;
 
+use YayMail\Helper\Helper;
+
 defined( 'ABSPATH' ) || exit;
 /**
  * Plugin activate/deactivate logic
  */
 class CustomPostType {
 
-	public static function checkEmailTemplateExist( $args = false ) {
+	public static function checkEmailTemplateExist( $args = false, $order = null ) {
 		if ( false != $args ) {
-			$default = array(
-				'post_type'   => 'yaymail_template',
-				'post_status' => array( 'publish', 'pending', 'future' ),
-				'meta_query'  => array(
-					'relation' => 'AND',
-					array(
-						'key'     => '_yaymail_template',
-						'value'   => $args['email_template'],
-						'compare' => '=',
+			if ( ! isset( $GLOBALS[ 'yaymail_template_' . $args['email_template'] ] ) ) {
+				$default = array(
+					'post_type'      => 'yaymail_template',
+					'post_status'    => array( 'publish', 'pending', 'future' ),
+					'posts_per_page' => '1',
+					'meta_query'     => array(
+						'relation' => 'AND',
+						array(
+							'key'     => '_yaymail_template',
+							'value'   => $args['email_template'],
+							'compare' => '=',
+						),
+						array(
+							'key'     => '_yaymail_template_language',
+							'compare' => 'NOT EXISTS',
+							'value'   => '',
+						),
 					),
-					array(
-						'key'     => '_yaymail_template_language',
-						'compare' => 'NOT EXISTS',
-						'value'   => '',
-					),
-				),
-			);
-			$posts   = new \WP_Query( $default );
-			if ( $posts->have_posts() ) {
-				return $posts->post->ID;
+				);
+				$res     = false;
+				$query   = new \WP_Query( $default );
+				if ( $query->have_posts() ) {
+					$posts = $query->get_posts();
+					foreach ( $posts as $post ) {
+						$res = $post->ID;
+						break;
+					}
+				}
+				wp_reset_postdata();
+				$GLOBALS[ 'yaymail_template_' . $args['email_template'] ] = $res;
 			}
+			return $GLOBALS[ 'yaymail_template_' . $args['email_template'] ];
 		}
 		return false;
 	}
+
 	public static function getListPostTemplate() {
 
 		$posts = get_posts(
@@ -83,6 +97,11 @@ class CustomPostType {
 			);
 			$insert_id = wp_insert_post( $arr );
 			if ( 'yaymail_template' == $args['post_type'] ) {
+				$orderItemsTitle          = Helper::OrderItemsTitle();
+				$orderItemsDownloadsTitle = Helper::OrderItemsDownloadsTitle();
+
+				update_post_meta( $insert_id, '_yaymail_email_order_item_title', $orderItemsTitle );
+				update_post_meta( $insert_id, '_yaymail_email_order_item_download_title', $orderItemsDownloadsTitle );
 				update_post_meta( $insert_id, '_yaymail_template', $args['_yaymail_template'] );
 				if ( isset( $args['_yaymail_template_language'] ) ) {
 					update_post_meta( $insert_id, '_yaymail_template_language', $args['_yaymail_template_language'] );

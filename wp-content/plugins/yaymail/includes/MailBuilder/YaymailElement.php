@@ -77,7 +77,7 @@ class YaymailElement {
 		ob_end_clean();
 		$html = do_shortcode( $html );
 		// Replace shortcode cannot do_shortcode
-		$reg  = '/\[yaymail.*?\]/m';
+		$reg                        = '/\[yaymail.*?\]/m';
 		$html                       = preg_replace( $reg, '', $html );
 		$allowed_html_tags          = wp_kses_allowed_html( 'post' );
 		$allowed_html_tags['style'] = array();
@@ -162,11 +162,11 @@ class YaymailElement {
 		ob_end_clean();
 		$html = do_shortcode( $html );
 		// Replace shortcode cannot do_shortcode
-		$reg  = '/\[yaymail.*?\]/m';
-		$html = preg_replace( $reg, '', $html );
-		$allowed_html_tags = wp_kses_allowed_html('post');
+		$reg                        = '/\[yaymail.*?\]/m';
+		$html                       = preg_replace( $reg, '', $html );
+		$allowed_html_tags          = wp_kses_allowed_html( 'post' );
 		$allowed_html_tags['style'] = array();
-		echo wp_kses($html, $allowed_html_tags);
+		echo wp_kses( $html, $allowed_html_tags );
 	}
 
 	public function yaymail_html_code( $args, $attrs, $general_attrs, $id, $postID = '', $isInColumns = false ) {
@@ -236,7 +236,7 @@ class YaymailElement {
 		ob_end_clean();
 		$html = do_shortcode( $html );
 		// Replace shortcode cannot do_shortcode
-		$reg  = '/\[yaymail.*?\]/m';
+		$reg                        = '/\[yaymail.*?\]/m';
 		$html                       = preg_replace( $reg, '', $html );
 		$allowed_html_tags          = wp_kses_allowed_html( 'post' );
 		$allowed_html_tags['style'] = array();
@@ -274,7 +274,7 @@ class YaymailElement {
 		ob_end_clean();
 		$html = do_shortcode( $html );
 		// Replace shortcode cannot do_shortcode
-		$reg  = '/\[yaymail.*?\]/m';
+		$reg                        = '/\[yaymail.*?\]/m';
 		$html                       = preg_replace( $reg, '', $html );
 		$allowed_html_tags          = wp_kses_allowed_html( 'post' );
 		$allowed_html_tags['style'] = array();

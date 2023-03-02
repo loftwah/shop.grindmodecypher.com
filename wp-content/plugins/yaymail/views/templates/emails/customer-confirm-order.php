@@ -7,7 +7,7 @@ use YayMail\Page\Source\CustomPostType;
 use YayMail\Page\Source\UpdateElement;
 
 $postID           = CustomPostType::postIDByTemplate( 'wgm_confirm_order_email' );
-$custom_shortcode = new YayMail\MailBuilder\Shortcodes( 'wgm_confirm_order_email' );
+$custom_shortcode = new YayMail\MailBuilder\Shortcodes( 'wgm_confirm_order_email', '', false );
 $args             = array(
 	'order'         => $order,
 	'sent_to_admin' => false,
@@ -93,7 +93,15 @@ $general_attrs        = array( 'tableWidth' => str_replace( 'px', '', $yaymail_s
 								$element['settingRow']['content'] = $content;
 							}
 						}
-						do_action( 'Yaymail' . $element['type'], $args, $element['settingRow'], $general_attrs, $element['id'], $postID, $isInColumns = false );
+						if ( has_filter( 'yaymail_addon_for_conditional_logic' ) && isset( $element['settingRow']['arrConditionLogic'] ) && ! empty( $element['settingRow']['arrConditionLogic'] ) ) {
+							$conditional_Logic = apply_filters( 'yaymail_addon_for_conditional_logic', false, $args, $element['settingRow'] );
+
+							if ( $conditional_Logic ) {
+								do_action( 'Yaymail' . $element['type'], $args, $element['settingRow'], $general_attrs, $element['id'], $postID, $isInColumns = false );
+							}
+						} else {
+							do_action( 'Yaymail' . $element['type'], $args, $element['settingRow'], $general_attrs, $element['id'], $postID, $isInColumns = false );
+						}
 						?>
 					 </td></tr> 
 					 <?php

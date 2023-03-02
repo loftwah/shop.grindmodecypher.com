@@ -18,7 +18,7 @@ if ( isset( $args['yith_wc_email'] ) && isset( $args['yith_wc_email']->id ) && !
 	if ( 'emails/admin-notify-approved.php' === $template_name ) {
 		$template = 'admin_notify_approved';
 	}
-	if ( $template === 'customer_partially_refunded_order' ) {
+	if ( 'customer_partially_refunded_order' === $template ) {
 		$template = 'customer_refunded_order';
 	}
 	if ( 'new-user-registration.php' == $template_name ) {
@@ -77,7 +77,18 @@ if ( isset( $args['yith_wc_email'] ) && isset( $args['yith_wc_email']->id ) && !
 if ( isset( $args['email'] ) && isset( $args['email']->id ) && false !== strpos( get_class( $args['email'] ), 'ORDDD_Email_Delivery_Reminder' ) ) {
 	$template .= '_customer';
 }
-$custom_shortcode = new YayMail\MailBuilder\Shortcodes( $template );
+
+if ( isset( $check_YWCES ) && $check_YWCES ) {
+	$template = 'YWCES_' . $email_template_type;
+}
+
+if ( ( 'ywgc-email-send-gift-card' === $template || 'ywgc-email-delivered-gift-card' === $template ) && isset( $args['gift_card'] ) ) {
+	if ( ! empty( $args['gift_card']->order_id ) ) {
+		$args['order'] = wc_get_order( $args['gift_card']->order_id );
+	}
+}
+
+$custom_shortcode = new YayMail\MailBuilder\Shortcodes( $template, '', false );
 if ( CustomPostType::postIDByTemplate( $template ) ) {
 	$postID = CustomPostType::postIDByTemplate( $template );
 }
@@ -197,7 +208,7 @@ if ( $flag_do_action ) {
 								$element['settingRow']['content'] = $content;
 							}
 						}
-						if ( has_filter('yaymail_addon_for_conditional_logic') && isset( $element['settingRow']['arrConditionLogic'] ) && ! empty( $element['settingRow']['arrConditionLogic'] ) ) {
+						if ( has_filter( 'yaymail_addon_for_conditional_logic' ) && isset( $element['settingRow']['arrConditionLogic'] ) && ! empty( $element['settingRow']['arrConditionLogic'] ) ) {
 							$conditional_Logic = apply_filters( 'yaymail_addon_for_conditional_logic', false, $args, $element['settingRow'] );
 
 							if ( $conditional_Logic ) {

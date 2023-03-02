@@ -173,37 +173,40 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 	<tfoot>
 		<?php
 		if ( $is_display ) {
-		$totalItem = $order->get_order_item_totals();
-		$i         = 0;
-		foreach ( $totalItem as $key => $total ) {
-			$i++;
-			?>
+			$totalItem = $order->get_order_item_totals();
+			$i         = 0;
+			foreach ( $totalItem as $key => $total ) {
+				$i++;
+				?>
 
 		<tr>
 			<th class="td" scope="row" colspan="2" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
-			<?php echo esc_html( $total['label'] ); ?>
+				<?php echo esc_html( $total['label'] ); ?>
 			</th>
 			<td class="td" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
-			<?php echo wp_kses_post( $total['value'] ); ?>
+				<?php echo wp_kses_post( $total['value'] ); ?>
 			</td>
 		</tr>
 
-			<?php
-		}
+				<?php
+			}
 
-		if ( ! empty( $order->get_customer_note() ) ) {
-			$note = $order->get_customer_note();
-			?>
+			if ( ! empty( $order->get_customer_note() ) ) {
+				$note = $order->get_customer_note();
+				?>
 
 			<tr>
 				<th class="td" scope="row" colspan="2" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
-			<?php esc_html_e( 'Note:', 'woocommerce' ); ?>
+				<?php esc_html_e( 'Note:', 'woocommerce' ); ?>
 				</th>
 				<td class="td" style="text-align:left;vertical-align: middle;padding: 12px;font-size: 14px;border: 1px solid;border-color: inherit; <?php echo esc_attr( ( 1 === $i ) ? 'border-top-width: 4px;' : '' ); ?>">
-			<?php echo esc_html( $note ); ?>
+				<?php echo esc_html( $note ); ?>
 				</td>
 			</tr>
 
-		<?php } } ?>
+				<?php
+			}
+		}
+		?>
 	</tfoot>
 </table>

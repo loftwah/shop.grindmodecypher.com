@@ -29,11 +29,11 @@ class WooTemplate {
 
 	private function doHooks() {
 		$this->templateAccount         = array( 'customer_new_account', 'customer_new_account_activation', 'customer_reset_password' );
-		$this->templateGermanizedForWC = array( 'sab_simple_invoice', 'sab_cancellation_invoice', 'sab_packing_slip','sab_document_admin','sab_document' );
+		$this->templateGermanizedForWC = array( 'sab_simple_invoice', 'sab_cancellation_invoice', 'sab_packing_slip', 'sab_document_admin', 'sab_document' );
 		add_filter( 'storeabill_get_template', array( $this, 'storeabill_get_template' ), 100, 5 );
 		add_filter( 'wc_get_template', array( $this, 'getTemplateMail' ), 100, 5 );
 		add_filter( 'fue_before_sending_email', array( $this, 'getFollowUpTemplates' ), 100, 3 );
-		if ( class_exists( 'WC_PIP_Loader' ) && class_exists( 'DefaultInvoice' ) && class_exists( 'DefaultPickList' ) ) {
+		if ( class_exists( 'WC_PIP_Loader' ) && class_exists( 'YayMailWooPrintInvoices\\templateDefault\\DefaultInvoice' ) && class_exists( 'YayMailWooPrintInvoices\\templateDefault\\DefaultPickList' ) ) {
 			PIPTemplate::handle_trigger();
 		}
 		add_filter( 'retrieve_password_message', array( $this, 'admin_reset_password' ), 100, 4 );
@@ -44,12 +44,38 @@ class WooTemplate {
 			$WCFMWooFM_Template = CustomPostType::postIDByTemplate( 'WCFMWooFM_Template' );
 			if ( get_post_meta( $WCFMWooFM_Template, '_yaymail_status', true ) ) {
 				global $WCFM;
-				remove_action( 'wcfm_email_content_wrapper', array( $WCFM, 'wcfm_email_content_wrapper' ),10 );
+				remove_action( 'wcfm_email_content_wrapper', array( $WCFM, 'wcfm_email_content_wrapper' ), 10 );
 				add_filter( 'wcfm_email_content_wrapper', array( &$this, 'wcfm_email_content_wrapper' ), 1, 2 );
 			}
 		}
+
+		add_filter( 'wpml_translate_single_string', array( $this, 'yaymail_ywces_new_template' ), 1, 3 );
 		// change german market template dir
 		$this->yaymail_get_german_market_templates();
+	}
+
+	public function yaymail_ywces_new_template( $mail_body_content, $admin_mail_body_text, $mail_body_text ) {
+		if ( class_exists( 'YayMailYITHWooCouponEmailSystem\templateDefault\DefaultCouponEmailSystem' ) && class_exists( 'YITH_WC_Coupon_Email_System' ) && false !== strpos( $mail_body_text, 'ywces_mailbody_' ) ) {
+			$mail_body_text_explode = explode( 'ywces_mailbody_', $mail_body_text );
+			$email_template_type    = $mail_body_text_explode[1];
+			$template               = 'YWCES_' . $email_template_type;
+			$postID                 = CustomPostType::postIDByTemplate( $template );
+			if ( $postID ) {
+				if ( get_post_meta( $postID, '_yaymail_status', true ) && ! empty( get_post_meta( $postID, '_yaymail_elements', true ) ) ) {
+					$check_YWCES    = true;
+					$templateActive = file_exists( YAYMAIL_PLUGIN_PATH . 'views/templates/single-mail-template.php' ) ? YAYMAIL_PLUGIN_PATH . 'views/templates/single-mail-template.php' : false;
+					ob_start();
+					include $templateActive;
+					$template_body = ob_get_contents();
+					// Replace newline (\n) in a string to YAYMAIL_YWCES_YAY
+					$template_body = str_replace( "\n", 'YAYMAIL_YWCES_YAY', $template_body );
+					ob_end_clean();
+					return $template_body;
+				}
+			}
+		}
+
+		return $mail_body_content;
 	}
 
 	public function yaymail_get_german_market_templates() {
@@ -89,9 +115,9 @@ class WooTemplate {
 		$postID         = CustomPostType::postIDByTemplate( 'WCFMWooFM_Template' );
 		$templateActive = file_exists( YAYMAIL_PLUGIN_PATH . 'views/templates/single-follow-up-mail-template.php' ) ? YAYMAIL_PLUGIN_PATH . 'views/templates/single-follow-up-mail-template.php' : false;
 		$args           = array(
-			'order'    => null,
-			'content_body'    => $content_body,
-			'email_heading'    => $email_heading,
+			'order'         => null,
+			'content_body'  => $content_body,
+			'email_heading' => $email_heading,
 		);
 		ob_start();
 		include $templateActive;
@@ -99,9 +125,9 @@ class WooTemplate {
 		ob_end_clean();
 		return $template_body;
 	}
-	
+
 	public function automatewoo_invite_email( $mailer, $invite_email ) {
-		if ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) || is_plugin_active( 'email-customizer-automatewoo/yaymail-automatewoo.php' ) ) {
+		if ( defined( 'YAYMAIL_ADDON_AUTOMATEWOO' ) && ! empty( YAYMAIL_ADDON_AUTOMATEWOO ) ) {
 			$template        = 'AutomateWoo_Referrals_Email';
 			$postID          = CustomPostType::postIDByTemplate( $template );
 			$template_status = get_post_meta( $postID, '_yaymail_status', true );
@@ -128,7 +154,7 @@ class WooTemplate {
 		return $mailer;
 	}
 	public function automatewoo_before_action_run( $action ) {
-		if ( is_plugin_active( 'yaymail-addon-for-automatewoo/yaymail-automatewoo.php' ) || is_plugin_active( 'email-customizer-automatewoo/yaymail-automatewoo.php' ) ) {
+		if ( defined( 'YAYMAIL_ADDON_AUTOMATEWOO' ) && ! empty( YAYMAIL_ADDON_AUTOMATEWOO ) ) {
 			$this->automatewoo_info = $action;
 			$template               = 'AutomateWoo_' . $action->workflow->get_id();
 			$postID                 = CustomPostType::postIDByTemplate( $template );
@@ -143,9 +169,10 @@ class WooTemplate {
 						$templateActive = file_exists( YAYMAIL_PLUGIN_PATH . 'views/templates/single-follow-up-mail-template.php' ) ? YAYMAIL_PLUGIN_PATH . 'views/templates/single-follow-up-mail-template.php' : false;
 						$raw_data       = $workflow->data_layer()->get_raw_data();
 						$args           = array(
-							'order'    => isset( $raw_data['order'] ) ? $raw_data['order'] : null,
-							'email'    => '',
-							'workflow' => $workflow,
+							'order'        => isset( $raw_data['order'] ) ? $raw_data['order'] : null,
+							'subscription' => isset( $raw_data['subscription'] ) ? $raw_data['subscription'] : null,
+							'email'        => '',
+							'workflow'     => $workflow,
 						);
 
 						ob_start();
@@ -154,6 +181,13 @@ class WooTemplate {
 						ob_end_clean();
 						if ( '' !== $template_body ) {
 							$template_body = $workflow->variable_processor()->process_field( $template_body, true );
+							$email         = new \AutomateWoo\Workflow_Email( $workflow, '', '', $template_body );
+							$get_mailer    = $email->get_mailer();
+							if ( $workflow->is_tracking_enabled() ) {
+								$template_body = $get_mailer->inject_tracking_pixel( $template_body );
+								$template_body = $get_mailer->replace_urls_in_content( $template_body );
+							}
+							$template_body = $get_mailer->style_inline( $template_body );
 							return $template_body;
 						}
 						return $html;
@@ -196,7 +230,7 @@ class WooTemplate {
 			'user_id'    => $user_data->ID,
 			'user_email' => $user_data->data->user_email,
 			'user_data'  => $user_data,
-			'key'        => $key
+			'key'        => $key,
 		);
 		$args           = array(
 			'email'         => (object) $email,
@@ -214,13 +248,14 @@ class WooTemplate {
 		}
 		$template_path = '';
 		$template_name = 'emails/customer-reset-password.php';
-		if ( $this_template !== false ) {
+		if ( false !== $this_template ) {
 			ob_start();
 			include $this_template;
 			$message = ob_get_contents();
 			ob_end_clean();
 			$site_name = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-			$title     = sprintf( __( '[%s] Password Reset' ), $site_name );
+			// translators: none.
+			$title = sprintf( __( '[%s] Password Reset', 'yaymail' ), $site_name );
 			wc_mail( $email['user_email'], $title, $message );
 			$message = false;
 		}
@@ -256,15 +291,14 @@ class WooTemplate {
 		// support addon TrackShip for WooCommerce
 		if ( 'emails/tracking-info.php' == $template_name ) {
 			$this->trackShipArgs = $args;
-			if (isset ($args['new_status'])) {
-				$template            = 'trackship_' . $args['new_status'];
-				$postID              = CustomPostType::postIDByTemplate( $template );
-				$template_status     = get_post_meta( $postID, '_yaymail_status', true );
+			if ( isset( $args['new_status'] ) ) {
+				$template        = 'trackship_' . $args['new_status'];
+				$postID          = CustomPostType::postIDByTemplate( $template );
+				$template_status = get_post_meta( $postID, '_yaymail_status', true );
 				if ( $template_status ) {
 					add_filter( 'woocommerce_mail_content', array( $this, 'woocommerce_mail_content' ), 100 );
 				}
 			}
-			
 		}
 		$this_template  = false;
 		$templateActive = file_exists( YAYMAIL_PLUGIN_PATH . 'views/templates/single-mail-template.php' ) ? YAYMAIL_PLUGIN_PATH . 'views/templates/single-mail-template.php' : false;
@@ -340,7 +374,7 @@ class WooTemplate {
 		}
 
 		// can't load tempalte email-delivery-date.php because it will has error when check out, with plugin WooCommerce Order Delivery
-		if ( $template && 'emails/email-delivery-date.php' != $template_name && 'emails/email-order-details.php' != $template_name) {
+		if ( $template && 'emails/email-delivery-date.php' != $template_name && 'emails/email-order-details.php' != $template_name ) {
 
 			// Yith Stripe
 

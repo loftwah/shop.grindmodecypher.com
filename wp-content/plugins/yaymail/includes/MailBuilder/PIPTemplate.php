@@ -41,9 +41,12 @@ class PIPTemplate {
 		if ( ! $object || 0 === $object->get_items_count() ) {
 			return;
 		}
-		$template      = 'pip_email_packing_list';
-		$address_email = get_option( 'admin_email' );
-		if ( ! isset( $object->order ) || ! $object->order || ! $address_email ) {
+		$template           = 'pip_email_packing_list';
+		$get_mails          = \WC()->mailer()->get_emails();
+		$packing_list_email = $get_mails[ $template ];
+		$recipients         = $packing_list_email->recipient;
+		$recipients         = array_map( 'trim', explode( ',', $recipients ) );
+		if ( ! isset( $object->order ) || ! $object->order || ! $recipients ) {
 			return;
 		}
 
@@ -114,16 +117,23 @@ class PIPTemplate {
 			include YAYMAIL_PLUGIN_PATH . 'views/templates/pip-mail-template.php';
 			$html = ob_get_contents();
 			ob_end_clean();
-			wc_mail( $address_email, $email_subject, $html );
+			if ( is_array( $recipients ) ) {
+				foreach ( $recipients as $recipient ) {
+					wc_mail( $recipient, $email_subject, $html );
+				}
+			}
 		}
 	}
 	public function pip_pick_list_email( $object ) {
 		global $wp_filter;
-		$address_email = get_option( 'admin_email' );
-		if ( ! $object || ! isset( $object->order_ids ) || ! $object->order_ids || ! is_array( $object->order_ids ) || ! $address_email ) {
+		$template        = 'pip_email_pick_list';
+		$get_mails       = \WC()->mailer()->get_emails();
+		$pick_list_email = $get_mails[ $template ];
+		$recipients      = $pick_list_email->recipient;
+		$recipients      = array_map( 'trim', explode( ',', $recipients ) );
+		if ( ! $object || ! isset( $object->order_ids ) || ! $object->order_ids || ! is_array( $object->order_ids ) || ! $recipients ) {
 			return;
 		}
-		$template = 'pip_email_pick_list';
 
 		$postID          = CustomPostType::postIDByTemplate( $template );
 		$template_status = get_post_meta( $postID, '_yaymail_status', true );
@@ -143,7 +153,7 @@ class PIPTemplate {
 			$site_title   = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 			$orders_count = count( $object->order_ids );
 			// translators: woocommerce-pip.
-			$orders       = sprintf( _n( '%d order', '%d orders', $orders_count, 'woocommerce-pip' ), $orders_count );
+			$orders = sprintf( _n( '%d order', '%d orders', $orders_count, 'woocommerce-pip' ), $orders_count );
 
 			// translators: woocommerce-pip.
 			$email_subject  = sprintf( __( '[%1$s] Pick List for %2$s', 'woocommerce-pip' ), $site_title, $orders );
@@ -153,7 +163,11 @@ class PIPTemplate {
 			include YAYMAIL_PLUGIN_PATH . 'views/templates/pip-mail-template.php';
 			$html = ob_get_contents();
 			ob_end_clean();
-			wc_mail( $address_email, $email_subject, $html );
+			if ( is_array( $recipients ) ) {
+				foreach ( $recipients as $recipient ) {
+					wc_mail( $recipient, $email_subject, $html );
+				}
+			}
 		}
 	}
 	public function pip_invoice_email( $object ) {

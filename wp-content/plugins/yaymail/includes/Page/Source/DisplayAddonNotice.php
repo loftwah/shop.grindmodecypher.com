@@ -140,6 +140,10 @@
 			'plugin_name'  => 'YITH_Vendors',
 			'plugin_title' => 'YITH WooCommerce Multi Vendor Premium',
 		),
+		'YITH_WC_Coupon_Email_System'           => array(
+			'plugin_name'  => 'YITH_WooCommerce_Coupon_Email_System_Premium',
+			'plugin_title' => 'YITH WooCommerce Coupon Email System Premium',
+		),
 	);
 
 	$list_support_plugins_function = array(

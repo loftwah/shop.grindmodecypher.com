@@ -33,7 +33,8 @@ if ( false != $paymentGateways && isset( $paymentGateways->account_details ) ) {
 		'bic'            => 'BIC',
 	);
 	$direct_bank_transfer = esc_html__( 'Direct bank transfer', 'woocommerce' );
-	if ( $direct_bank_transfer == $paymentGateways->method_title ) { ?>
+	if ( $direct_bank_transfer == $paymentGateways->method_title ) {
+		?>
 
 		<section style="text-align: ' . $text_align . '" class="yaymail_builder_wrap_account">
 		<h2 style="color: inherit;" class="yaymail_builder_bank_details">

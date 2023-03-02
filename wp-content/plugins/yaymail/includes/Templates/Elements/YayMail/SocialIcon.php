@@ -25,10 +25,10 @@ $direction_rtl    = $yaymail_settings['direction_rtl'];
 		<div style="min-height: 4px"></div>
 			<?php
 			if ( isset( $attrs['iconSocialsArr'] ) ) {
-			foreach ( $attrs['iconSocialsArr'] as $key => $el ) {
-				$imgUrl      = YAYMAIL_PLUGIN_URL . 'assets/dist/images/SocialIcons/' . $attrs['styleTheme'] . '/' . $el['icon'] . '.png';
-				$margin_left = ( 'rtl' === $direction_rtl ? ( $attrs['iconSpacing'] . 'px' ) : ( ( 0 == $key ) ? '0px' : $attrs['iconSpacing'] . 'px' ) );
-				?>
+				foreach ( $attrs['iconSocialsArr'] as $key => $el ) {
+					$imgUrl      = YAYMAIL_PLUGIN_URL . 'assets/dist/images/SocialIcons/' . $attrs['styleTheme'] . '/' . $el['icon'] . '.png';
+					$margin_left = ( 'rtl' === $direction_rtl ? ( $attrs['iconSpacing'] . 'px' ) : ( ( 0 == $key ) ? '0px' : $attrs['iconSpacing'] . 'px' ) );
+					?>
 				<a 
 					class="nta-web-icon-socials-wrap"
 					href="<?php echo esc_attr( $el['pathLink'] ); ?>"
@@ -46,7 +46,10 @@ $direction_rtl    = $yaymail_settings['direction_rtl'];
 					/>
 				</a>
 
-			<?php } } ?>
+					<?php
+				}
+			}
+			?>
 		</td>
 	  </tr>
 	</tbody>

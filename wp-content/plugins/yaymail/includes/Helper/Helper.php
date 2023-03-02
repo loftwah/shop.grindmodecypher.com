@@ -218,4 +218,104 @@ class Helper {
 		}
 		return $yaymail_elements;
 	}
+
+	public static function isPreview( $is_preview = true ) {
+		if ( $is_preview ) {
+			return true;
+		}
+		return false;
+	}
+
+	public static function OrderItemsTitle() {
+		$orderTitle = array(
+			'order_title'                   => '',
+			'product_title'                 => __( 'Product', 'yaymail' ),
+			'quantity_title'                => __( 'Quantity', 'yaymail' ),
+			'price_title'                   => __( 'Price', 'yaymail' ),
+			'subtoltal_title'               => __( 'Subtotal:', 'yaymail' ),
+			'discount_title'                => __( 'Discount:', 'yaymail' ),
+			'shipping_title'                => __( 'Shipping:', 'yaymail' ),
+			'payment_method_title'          => __( 'Payment method:', 'yaymail' ),
+			'fully_refunded'                => __( 'Order fully refunded.', 'yaymail' ),
+			'customer_note'                 => __( 'Note:', 'yaymail' ),
+			'total_title'                   => __( 'Total:', 'yaymail' ),
+			'subscript_id'                  => __( 'ID', 'yaymail' ),
+			'subscript_start_date'          => __( 'Start date', 'yaymail' ),
+			'subscript_end_date'            => __( 'End date', 'yaymail' ),
+			'subscript_recurring_total'     => __( 'Recurring total', 'yaymail' ),
+			'subscript_subscription'        => __( 'Subscription', 'yaymail' ),
+			'subscript_price'               => __( 'Price', 'yaymail' ),
+			'subscript_last_order_date'     => __( 'Last Order Date', 'yaymail' ),
+			'subscript_end_of_prepaid_term' => __( 'End of Prepaid Term', 'yaymail' ),
+			'subscript_date_suspended'      => __( 'Date Suspended', 'yaymail' ),
+		);
+		return $orderTitle;
+	}
+
+	public static function OrderItemsDownloadsTitle() {
+		$orderTitle = array(
+			'items_download_header_title'   => __( 'Downloads', 'yaymail' ),
+			'items_download_product_title'  => __( 'Product', 'yaymail' ),
+			'items_download_expires_title'  => __( 'Expires', 'yaymail' ),
+			'items_download_download_title' => __( 'Download', 'yaymail' ),
+		);
+		return $orderTitle;
+	}
+
+	public static function inforShortcode( $postID, $template, $order ) {
+		$yaymail_settings     = get_option( 'yaymail_settings' );
+		$yaymail_informations = array(
+			'post_id'          => $postID,
+			'template'         => $template,
+			'order'            => $order,
+			'yaymail_elements' => get_post_meta( $postID, '_yaymail_elements', true ),
+			'general_settings' => array(
+				'tableWidth'           => $yaymail_settings['container_width'],
+				'emailBackgroundColor' => get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : '#ECECEC',
+				'textLinkColor'        => get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3',
+			),
+		);
+		return $yaymail_informations;
+	}
+
+	/**
+	 * It takes an array of custom HTML tags and attributes, and merges them with the default allowed HTML
+	 * tags and attributes
+	 *
+	 * @param cusTags An array of custom tags to be added to the allowed tags list.
+	 *
+	 * @return an array of arrays.
+	 */
+	public static function customAllowedHTMLTags( $cusTags = array() ) {
+		$customs_html_attr = array( 'yaymail-style' => true );
+		$allowed_html_tags = wp_kses_allowed_html( 'post' );
+		return array_map(
+			function ( $item ) use ( $customs_html_attr ) {
+				return array_merge( $item, $customs_html_attr );
+			},
+			$allowed_html_tags
+		);
+	}
+
+	/**
+	 * It replaces the string 'yaymail-style' with ':style' in all the values of an array
+	 *
+	 * @param value The value to be sanitized.
+	 *
+	 * @return The value of the array.
+	 */
+	public static function replaceCustomAllowedHTMLTags( $value ) {
+		if ( is_string( $value ) ) {
+			return str_replace( ':style', 'yaymail-style', $value );
+		} else {
+			array_walk_recursive(
+				$value,
+				function ( &$item, $key ) {
+					$item = str_replace( 'yaymail-style', ':style', $item );
+				}
+			);
+			return $value;
+		}
+	}
+
 }

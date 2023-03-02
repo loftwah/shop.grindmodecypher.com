@@ -21,7 +21,7 @@
 		>
 		  <div class="yaymail_items_border_custom" style="<?php echo esc_attr( 'color: ' . $attrs['titleColor'] ); ?>">
 			<h2 style='margin: 13px 0px;<?php echo esc_attr( 'color: ' . $attrs['titleColor'] ); ?>;font-family: <?php echo wp_kses_post( $attrs['family'] ); ?>;' >
-			Additional Order Details
+			<?php echo wp_kses_post( $attrs['titleText'] ); ?>
 			</h2>
 		  </div>
 		  <div

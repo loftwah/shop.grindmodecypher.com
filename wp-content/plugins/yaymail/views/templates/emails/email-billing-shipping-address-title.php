@@ -1,4 +1,6 @@
 <?php
+use YayMail\Helper\Helper;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -7,9 +9,9 @@ if ( ! empty( $billing_address ) && ! empty( $shipping_address ) ) {
 } else {
 		$width = '100%';
 }
-
-$title_shipping = get_post_meta( $postID, '_email_title_shipping', true ) ? get_post_meta( $postID, '_email_title_shipping', true ) : 'Shipping address';
-$title_billing  = get_post_meta( $postID, '_email_title_billing', true ) ? get_post_meta( $postID, '_email_title_billing', true ) : 'Billing address';
+$is_preview     = Helper::isPreview( $this->preview_mail );
+$title_shipping = $is_preview ? '{{titleShipping}}' : ( get_post_meta( $postID, '_email_title_shipping', true ) ? get_post_meta( $postID, '_email_title_shipping', true ) : __( 'Shipping Address', 'woocommerce' ) );
+$title_billing  = $is_preview ? '{{titleBilling}}' : ( get_post_meta( $postID, '_email_title_billing', true ) ? get_post_meta( $postID, '_email_title_billing', true ) : __( 'Billing Address', 'woocommerce' ) );
 $fontFamily     = isset( $atts['fontfamily'] ) && $atts['fontfamily'] ? 'font-family:' . html_entity_decode( $atts['fontfamily'], ENT_QUOTES, 'UTF-8' ) : 'font-family:inherit';
 ?>
 	<tr>

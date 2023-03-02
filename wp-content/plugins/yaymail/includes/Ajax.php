@@ -255,7 +255,7 @@ class Ajax {
 					}
 					if ( CustomPostType::postIDByTemplate( $template ) ) {
 						update_user_meta( get_current_user_id(), 'yaymail_default_email_test', $email_address );
-						$customShortcode = new Shortcodes( $template, sanitize_text_field( $_POST['order_id'] ) );
+						$customShortcode = new Shortcodes( $template, sanitize_text_field( $_POST['order_id'] ), false );
 						if ( sanitize_text_field( $_POST['order_id'] ) !== 'sampleOrder' ) {
 							$order_id = intval( sanitize_text_field( $_POST['order_id'] ) );
 							$WC_order = new \WC_Order( $order_id );
@@ -302,33 +302,33 @@ class Ajax {
 	}
 
 	public function getSubjectEmail( $wc_emails, $template ) {
-		$subject = __('Email Test','yaymail');
+		$subject = __( 'Email Test', 'yaymail' );
 		foreach ( $wc_emails->emails as $email => $item ) {
 			if ( $item->id == $template ) {
 				if ( 'customer_invoice' == $template ) {
 					$subject = Helper::getCustomerInvoiceSubject( $wc_emails->emails[ $email ] );
-					if (!empty($subject) ) {
+					if ( ! empty( $subject ) ) {
 						return $subject;
 					}
-				} else if ( 'new_booking' == $template ) {
+				} elseif ( 'new_booking' == $template ) {
 					$subject = Helper::getNewBookingSubject( $wc_emails->emails[ $email ] );
-					if (!empty($subject) ) {
+					if ( ! empty( $subject ) ) {
 						return $subject;
 					}
-				} else if ( 'customer_payment_retry' == $template ) {
+				} elseif ( 'customer_payment_retry' == $template ) {
 					$subject = Helper::getNewBookingSubject( $wc_emails->emails[ $email ] );
-					if (!empty($subject) ) {
+					if ( ! empty( $subject ) ) {
 						return $subject;
 					}
-				} else if ( 'Dokan_Email_Booking_New' == $template ) {
+				} elseif ( 'Dokan_Email_Booking_New' == $template ) {
 					$subject = $wc_emails->emails[ $email ]->subject;
-					if (!empty($subject) ) {
+					if ( ! empty( $subject ) ) {
 						return $subject;
 					}
 				} else {
 					if ( ! empty( $wc_emails->emails[ $email ]->subject ) ) {
 						$subject = $wc_emails->emails[ $email ]->subject;
-						if (!empty($subject) ) {
+						if ( ! empty( $subject ) ) {
 							return $subject;
 						}
 					}
@@ -352,15 +352,16 @@ class Ajax {
 			} else {
 				if ( isset( $_POST['template'] ) ) {
 					// Helper::checkNonce();
-					$emailBackgroundColor = isset( $_POST['emailBackgroundColor'] ) ? sanitize_text_field( $_POST['emailBackgroundColor'] ) : 'rgb(236, 236, 236)';
-					$emailTextLinkColor   = isset( $_POST['emailTextLinkColor'] ) ? sanitize_text_field( $_POST['emailTextLinkColor'] ) : '#7f54b3';
-					$titleShipping        = isset( $_POST['titleShipping'] ) ? sanitize_text_field( $_POST['titleShipping'] ) : 'Shipping Address';
-					$titleBilling         = isset( $_POST['titleBilling'] ) ? sanitize_text_field( $_POST['titleBilling'] ) : 'Billing Address';
-					$orderTitle           = ( isset( $_POST['orderTitle'] ) && is_array( $_POST['orderTitle'] ) ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['orderTitle'] ) ) : array();
-					$template             = sanitize_text_field( $_POST['template'] );
-					$updateElement        = new UpdateElement();
-					$setDefaultLogo       = isset( $_POST['setDefaultLogo'] ) ? 'true' == sanitize_text_field( $_POST['setDefaultLogo'] ) ? true : false : false;
-					$setDefaultFooter     = isset( $_POST['setDefaultFooter'] ) ? 'true' == sanitize_text_field( $_POST['setDefaultFooter'] ) ? true : false : false;
+					$emailBackgroundColor    = isset( $_POST['emailBackgroundColor'] ) ? sanitize_text_field( $_POST['emailBackgroundColor'] ) : 'rgb(236, 236, 236)';
+					$emailTextLinkColor      = isset( $_POST['emailTextLinkColor'] ) ? sanitize_text_field( $_POST['emailTextLinkColor'] ) : '#7f54b3';
+					$titleShipping           = isset( $_POST['titleShipping'] ) ? sanitize_text_field( $_POST['titleShipping'] ) : 'Shipping Address';
+					$titleBilling            = isset( $_POST['titleBilling'] ) ? sanitize_text_field( $_POST['titleBilling'] ) : 'Billing Address';
+					$orderTitle              = ( isset( $_POST['orderTitle'] ) && is_array( $_POST['orderTitle'] ) ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['orderTitle'] ) ) : array();
+					$orderItemsDownloadTitle = ( isset( $_POST['orderItemsDownloadTitle'] ) && is_array( $_POST['orderItemsDownloadTitle'] ) ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['orderItemsDownloadTitle'] ) ) : array();
+					$template                = sanitize_text_field( $_POST['template'] );
+					$updateElement           = new UpdateElement();
+					$setDefaultLogo          = isset( $_POST['setDefaultLogo'] ) ? 'true' == sanitize_text_field( $_POST['setDefaultLogo'] ) ? true : false : false;
+					$setDefaultFooter        = isset( $_POST['setDefaultFooter'] ) ? 'true' == sanitize_text_field( $_POST['setDefaultFooter'] ) ? true : false : false;
 					if ( isset( $_POST['emailContents'] ) ) {
 						$emailContents = $this->sanitize( $_POST );
 						$emailContents = $updateElement->merge_new_props_to_elements( $emailContents );
@@ -385,12 +386,22 @@ class Ajax {
 					}
 					if ( CustomPostType::postIDByTemplate( $template ) ) {
 						$postID = CustomPostType::postIDByTemplate( $template );
+
+						if ( empty( $orderTitle ) ) {
+							$orderTitle = Helper::OrderItemsTitle();
+						}
+
+						if ( empty( $orderItemsDownloadTitle ) ) {
+							$orderItemsDownloadTitle = Helper::OrderItemsDownloadsTitle();
+						}
+
 						update_post_meta( $postID, '_yaymail_elements', $emailContents );
 						update_post_meta( $postID, '_email_backgroundColor_settings', $emailBackgroundColor );
 						update_post_meta( $postID, '_yaymail_email_textLinkColor_settings', $emailTextLinkColor );
 						update_post_meta( $postID, '_email_title_shipping', $titleShipping );
 						update_post_meta( $postID, '_email_title_billing', $titleBilling );
 						update_post_meta( $postID, '_yaymail_email_order_item_title', $orderTitle );
+						update_post_meta( $postID, '_yaymail_email_order_item_download_title', $orderItemsDownloadTitle );
 						// Change default logo
 						$default_logo = array(
 							'set_default' => (bool) $setDefaultLogo,
@@ -444,7 +455,13 @@ class Ajax {
 						}
 						update_option( 'yaymail_settings_default_footer', $default_footer );
 
-						wp_send_json_success( array( 'mess' => __( 'Email has been saved.', 'yaymail' ) ) );
+						wp_send_json_success(
+							array(
+								'mess'                    => __( 'Email has been saved.', 'yaymail' ),
+								'orderTitle'              => $orderTitle,
+								'orderItemsDownloadTitle' => $orderItemsDownloadTitle,
+							)
+						);
 					} else {
 						wp_send_json_error( array( 'mess' => __( 'Template not Exists!.', 'yaymail' ) ) );
 					}
@@ -469,13 +486,14 @@ class Ajax {
 					$copyTo   = sanitize_text_field( $_POST['copy_to'] );
 					$copyFrom = sanitize_text_field( $_POST['copy_from'] );
 					if ( CustomPostType::postIDByTemplate( $copyFrom ) ) {
-						$postID               = CustomPostType::postIDByTemplate( $copyFrom );
-						$emailContentsFrom    = get_post_meta( $postID, '_yaymail_elements', true );
-						$emailBackgroundColor = get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : 'rgb(236, 236, 236)';
-						$emailTextLinkColor   = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
-						$titleShipping        = isset( $_POST['titleShipping'] ) ? sanitize_text_field( $_POST['titleShipping'] ) : 'Shipping Address';
-						$titleBilling         = isset( $_POST['titleBilling'] ) ? sanitize_text_field( $_POST['titleBilling'] ) : 'Billing Address';
-						$orderTitle           = isset( $_POST['orderTitle'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['orderTitle'] ) ) : array();
+						$postID                  = CustomPostType::postIDByTemplate( $copyFrom );
+						$emailContentsFrom       = get_post_meta( $postID, '_yaymail_elements', true );
+						$emailBackgroundColor    = get_post_meta( $postID, '_email_backgroundColor_settings', true ) ? get_post_meta( $postID, '_email_backgroundColor_settings', true ) : 'rgb(236, 236, 236)';
+						$emailTextLinkColor      = get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) ? get_post_meta( $postID, '_yaymail_email_textLinkColor_settings', true ) : '#7f54b3';
+						$titleShipping           = isset( $_POST['titleShipping'] ) ? sanitize_text_field( $_POST['titleShipping'] ) : 'Shipping Address';
+						$titleBilling            = isset( $_POST['titleBilling'] ) ? sanitize_text_field( $_POST['titleBilling'] ) : 'Billing Address';
+						$orderTitle              = isset( $_POST['orderTitle'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['orderTitle'] ) ) : array();
+						$orderItemsDownloadTitle = ( isset( $_POST['orderItemsDownloadTitle'] ) && is_array( $_POST['orderItemsDownloadTitle'] ) ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['orderItemsDownloadTitle'] ) ) : array();
 						if ( CustomPostType::postIDByTemplate( $copyTo ) ) {
 							$idTo = CustomPostType::postIDByTemplate( $copyTo );
 							update_post_meta( $idTo, '_yaymail_elements', $emailContentsFrom );
@@ -484,6 +502,7 @@ class Ajax {
 							update_post_meta( $idTo, '_email_title_shipping', $titleShipping );
 							update_post_meta( $idTo, '_email_title_billing', $titleBilling );
 							update_post_meta( $idTo, '_yaymail_email_order_item_title', $orderTitle );
+							update_post_meta( $idTo, '_yaymail_email_order_item_download_title', $orderItemsDownloadTitle );
 							wp_send_json_success(
 								array(
 									'mess' => __( 'Copied Template successfully.', 'yaymail' ),
@@ -538,28 +557,11 @@ class Ajax {
 			} else {
 				if ( isset( $_POST['template'] ) ) {
 					// Helper::checkNonce();
-					$reset         = sanitize_text_field( $_POST['template'] );
-					$templateEmail = \YayMail\Templates\Templates::getInstance();
-					$templates     = $templateEmail::getList();
-					$orderTitle    = array(
-						'order_title'                   => '',
-						'product_title'                 => __( 'Product', 'yaymail' ),
-						'quantity_title'                => __( 'Quantity', 'yaymail' ),
-						'price_title'                   => __( 'Price', 'yaymail' ),
-						'subtoltal_title'               => __( 'Subtotal:', 'yaymail' ),
-						'payment_method_title'          => __( 'Payment method:', 'yaymail' ),
-						'fully_refunded'                => __( 'Order fully refunded.', 'yaymail' ),
-						'total_title'                   => __( 'Total:', 'yaymail' ),
-						'subscript_id'                  => __( 'ID', 'yaymail' ),
-						'subscript_start_date'          => __( 'Start date', 'yaymail' ),
-						'subscript_end_date'            => __( 'End date', 'yaymail' ),
-						'subscript_recurring_total'     => __( 'Recurring total', 'yaymail' ),
-						'subscript_subscription'        => __( 'Subscription', 'yaymail' ),
-						'subscript_price'               => __( 'Price', 'yaymail' ),
-						'subscript_last_order_date'     => __( 'Last Order Date', 'yaymail' ),
-						'subscript_end_of_prepaid_term' => __( 'End of Prepaid Term', 'yaymail' ),
-						'subscript_date_suspended'      => __( 'Date Suspended', 'yaymail' ),
-					);
+					$reset                    = sanitize_text_field( $_POST['template'] );
+					$templateEmail            = \YayMail\Templates\Templates::getInstance();
+					$templates                = $templateEmail::getList();
+					$orderItemsTitle          = Helper::OrderItemsTitle();
+					$orderItemsDownloadsTitle = Helper::OrderItemsDownloadsTitle();
 					if ( 'all' == $reset ) {
 						foreach ( $templates as $key => $template ) {
 							if ( CustomPostType::postIDByTemplate( $key ) ) {
@@ -569,7 +571,8 @@ class Ajax {
 								update_post_meta( $postID, '_yaymail_email_textLinkColor_settings', '#7f54b3' );
 								update_post_meta( $postID, '_email_title_shipping', __( 'Shipping Address', 'yaymail' ) );
 								update_post_meta( $postID, '_email_title_billing', __( 'Billing Address', 'yaymail' ) );
-								update_post_meta( $postID, '_yaymail_email_order_item_title', $orderTitle );
+								update_post_meta( $postID, '_yaymail_email_order_item_title', $orderItemsTitle );
+								update_post_meta( $postID, '_yaymail_email_order_item_download_title', $orderItemsDownloadsTitle );
 							}
 						}
 
@@ -589,7 +592,8 @@ class Ajax {
 							update_post_meta( $postID, '_yaymail_email_textLinkColor_settings', '#7f54b3' );
 							update_post_meta( $postID, '_email_title_shipping', __( 'Shipping Address', 'yaymail' ) );
 							update_post_meta( $postID, '_email_title_billing', __( 'Billing Address', 'yaymail' ) );
-							update_post_meta( $postID, '_yaymail_email_order_item_title', $orderTitle );
+							update_post_meta( $postID, '_yaymail_email_order_item_title', $orderItemsTitle );
+							update_post_meta( $postID, '_yaymail_email_order_item_download_title', $orderItemsDownloadsTitle );
 							wp_send_json_success( array( 'mess' => __( 'Template reset successfully.', 'yaymail' ) ) );
 						} else {
 							wp_send_json_error( array( 'mess' => __( 'Template not Exists!.', 'yaymail' ) ) );

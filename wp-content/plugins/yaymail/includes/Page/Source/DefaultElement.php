@@ -689,6 +689,7 @@ class DefaultElement {
 					'nameElement' => 'Additional Order Details',
 					'settingRow'  => array(
 						'content'         => '[yaymail_order_meta:_wc_additional_order_details]',
+						'titleText'       => __( 'Additional Order Details', 'yaymail' ),
 						'backgroundColor' => '#fff',
 						'titleColor'      => '#7f54b3',
 						'textColor'       => '#636363',

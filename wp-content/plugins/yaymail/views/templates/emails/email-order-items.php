@@ -3,11 +3,13 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-$text_align         = is_rtl() ? 'right' : 'left';
-$yaymail_settings   = get_option( 'yaymail_settings' );
-$orderImagePostions = isset( $yaymail_settings['image_position'] ) && ! empty( $yaymail_settings['image_position'] ) ? $yaymail_settings['image_position'] : 'Top';
-$orderImage         = isset( $yaymail_settings['product_image'] ) && '0' != $yaymail_settings['product_image'] ? $yaymail_settings['product_image'] : '0';
-$productHyperLinks  = isset( $yaymail_settings['product_hyper_links'] ) ? $yaymail_settings['product_hyper_links'] : 0;
+$text_align          = is_rtl() ? 'right' : 'left';
+$yaymail_settings    = get_option( 'yaymail_settings' );
+$yaymail_template    = get_post_meta( $postID, '_yaymail_template', true );
+$orderImagePostions  = isset( $yaymail_settings['image_position'] ) && ! empty( $yaymail_settings['image_position'] ) ? $yaymail_settings['image_position'] : 'Top';
+$orderImage          = isset( $yaymail_settings['product_image'] ) && '0' != $yaymail_settings['product_image'] ? $yaymail_settings['product_image'] : '0';
+$productHyperLinks   = isset( $yaymail_settings['product_hyper_links'] ) ? $yaymail_settings['product_hyper_links'] : 0;
+$productRegularPrice = isset( $yaymail_settings['product_regular_price'] ) ? $yaymail_settings['product_regular_price'] : 0;
 
 if ( ! function_exists( 'yaymail_get_global_taxonomy_attribute_data' ) ) :
 	function yaymail_get_global_taxonomy_attribute_data( $name, $product, $single_product = null ) {
@@ -58,7 +60,7 @@ foreach ( $items as $item_id => $item ) :
 						$result_attributes = array();
 		?>
 		<tr class="<?php echo esc_attr( apply_filters( 'woocommerce_order_item_class', 'order_item', $item, $order ) ); ?>">
-		<th class="td" style="text-align:<?php echo esc_attr( $text_align ); ?>;font-weight: normal;word-wrap:break-word;vertical-align: middle;padding: 12px;font-size: 14px;border-width: 1px;border-style: solid;<?php echo esc_attr( isset( $default_args['border_color'] ) ? $default_args['border_color'] : '' ); ?>;">
+		<th colspan="<?php echo wp_kses_post( apply_filters( 'yaymail_order_item_product_title_colspan', 1, $yaymail_template ) ); ?>" class="td" style="text-align:<?php echo esc_attr( $text_align ); ?>;font-weight: normal;word-wrap:break-word;vertical-align: middle;padding: 12px;font-size: 14px;border-width: 1px;border-style: solid;<?php echo esc_attr( isset( $default_args['border_color'] ) ? $default_args['border_color'] : '' ); ?>;">
 		<?php
 
 		if ( 'Bottom' == $orderImagePostions && '1' == $orderImage ) {
@@ -90,12 +92,12 @@ foreach ( $items as $item_id => $item ) :
 				echo ( '</div>' );
 			// Show title/image etc
 			if ( $args['show_image'] && is_object( $product ) ) {
-				echo wp_kses_post( apply_filters( 'woocommerce_order_item_thumbnail', '<div class="yaymail-product-image" style="margin-bottom: 5px"><img src="' . ( $product->get_image_id() ? current( wp_get_attachment_image_src( $product->get_image_id(), $args['image_size'][2] ) ) : wc_placeholder_img_src() ) . '" alt="' . esc_attr__( 'Product image', 'woocommerce' ) . '" height="' . esc_attr( str_replace( 'px', '', $args['image_size'][1] ) ) . '" width="' . esc_attr( str_replace( 'px', '', $args['image_size'][0] ) ) . '" style="vertical-align:middle; margin-' . ( is_rtl() ? 'left' : 'right' ) . ': 10px;" /></div>', $item ) );
+				echo wp_kses_post( apply_filters( 'woocommerce_order_item_thumbnail', '<div class="yaymail-product-image" style="margin-bottom: 5px"><img src="' . ( $product->get_image_id() ? ( false !== wp_get_attachment_image_src( $product->get_image_id(), $args['image_size'][2] ) ? wp_get_attachment_image_src( $product->get_image_id(), $args['image_size'][2] )[0] : wc_placeholder_img_src() ) : wc_placeholder_img_src() ) . '" alt="' . esc_attr__( 'Product image', 'woocommerce' ) . '" height="' . esc_attr( str_replace( 'px', '', $args['image_size'][1] ) ) . '" width="' . esc_attr( str_replace( 'px', '', $args['image_size'][0] ) ) . '" style="vertical-align:middle; margin-' . ( is_rtl() ? 'left' : 'right' ) . ': 10px;" /></div>', $item ) );
 			}
 		} else {
 			// Show title/image etc
 			if ( $args['show_image'] && is_object( $product ) ) {
-				echo wp_kses_post( apply_filters( 'woocommerce_order_item_thumbnail', '<div class="yaymail-product-image" style="margin-bottom: 5px"><img src="' . ( $product->get_image_id() ? current( wp_get_attachment_image_src( $product->get_image_id(), $args['image_size'][2] ) ) : wc_placeholder_img_src() ) . '" alt="' . esc_attr__( 'Product image', 'woocommerce' ) . '" height="' . esc_attr( str_replace( 'px', '', $args['image_size'][1] ) ) . '" width="' . esc_attr( str_replace( 'px', '', $args['image_size'][0] ) ) . '" style="vertical-align:middle; margin-' . ( is_rtl() ? 'left' : 'right' ) . ': 10px;" /></div>', $item ) );
+				echo wp_kses_post( apply_filters( 'woocommerce_order_item_thumbnail', '<div class="yaymail-product-image" style="margin-bottom: 5px"><img src="' . ( $product->get_image_id() ? ( false !== wp_get_attachment_image_src( $product->get_image_id(), $args['image_size'][2] ) ? wp_get_attachment_image_src( $product->get_image_id(), $args['image_size'][2] )[0] : wc_placeholder_img_src() ) : wc_placeholder_img_src() ) . '" alt="' . esc_attr__( 'Product image', 'woocommerce' ) . '" height="' . esc_attr( str_replace( 'px', '', $args['image_size'][1] ) ) . '" width="' . esc_attr( str_replace( 'px', '', $args['image_size'][0] ) ) . '" style="vertical-align:middle; margin-' . ( is_rtl() ? 'left' : 'right' ) . ': 10px;" /></div>', $item ) );
 			}
 			echo ( '<div class="yaymail-product-texts" style="padding: 5px 0;">' );
 			// Product name
@@ -136,11 +138,18 @@ foreach ( $items as $item_id => $item ) :
 		?>
 
 			</th>
-			<th class="td yaymail_item_quantity_content" style="text-align:<?php echo esc_attr( $text_align ); ?>;font-weight: normal; vertical-align:middle;padding: 12px;font-size: 14px;border-width: 1px;border-style: solid;<?php echo esc_attr( isset( $default_args['border_color'] ) ? $default_args['border_color'] : '' ); ?>;">
+			<th colspan="<?php echo wp_kses_post( apply_filters( 'yaymail_order_item_quantity_colspan', 1, $yaymail_template ) ); ?>" class="td yaymail_item_quantity_content" style="text-align:<?php echo esc_attr( $text_align ); ?>;font-weight: normal; vertical-align:middle;padding: 12px;font-size: 14px;border-width: 1px;border-style: solid;<?php echo esc_attr( isset( $default_args['border_color'] ) ? $default_args['border_color'] : '' ); ?>;">
 		<?php echo wp_kses_post( apply_filters( 'woocommerce_email_order_item_quantity', $item->get_quantity(), $item ) ); ?>
 			</th>
-			<th class="td yaymail_item_price_content" style="text-align:<?php echo esc_attr( $text_align ); ?>;font-weight: normal;vertical-align: middle;padding: 12px;font-size: 14px;border-width: 1px;border-style: solid;<?php echo esc_attr( isset( $default_args['border_color'] ) ? $default_args['border_color'] : '' ); ?>; word-break: break-all;">
-		<?php echo wp_kses_post( $order->get_formatted_line_subtotal( $item ) ); ?>
+			<th colspan="<?php echo wp_kses_post( apply_filters( 'yaymail_order_item_price_colspan', 1, $yaymail_template ) ); ?>" class="td yaymail_item_price_content" style="text-align:<?php echo esc_attr( $text_align ); ?>;font-weight: normal;vertical-align: middle;padding: 12px;font-size: 14px;border-width: 1px;border-style: solid;<?php echo esc_attr( isset( $default_args['border_color'] ) ? $default_args['border_color'] : '' ); ?>; word-break: break-all;">
+			<?php
+			if ( $productRegularPrice && is_object( $product ) ) {
+				$product_regular_price = isset( $product->get_data()['regular_price'] ) ? (float) $product->get_data()['regular_price'] : null;
+				if ( (float) $product_regular_price !== $order->get_line_subtotal( $item ) ) {
+					echo wp_kses_post( '<del>' . wc_price( $product_regular_price ) . '</del>  ' );
+				}
+			} echo wp_kses_post( $order->get_formatted_line_subtotal( $item ) );
+			?>
 			</th>
 		</tr>
 		<?php
