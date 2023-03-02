@@ -3,7 +3,7 @@ Contributors: tychesoftwares
 Donate link: https://www.paypal.me/TycheSoftwares
 Tags: woocommerce, payment, gateway, fee, discount
 Requires at least: 4.4
-Tested up to: 5.9
+Tested up to: 6.1
 Stable tag: trunk
 Requires PHP: 5.6
 License: GNU General Public License v3.0
@@ -98,6 +98,13 @@ Plugin requires **minimum setup**: after enabling the fee/discount for selected 
 3. Go to "WooCommerce > Settings > Payment Gateway Based Fees and Discounts".
 
 == Changelog ==
+
+= 2.9.0 - 17/01/2023 =
+* Fix - Fatal Errors on the checkout page with PHP 8.
+* Fix - Fees are getting multiplied when we try to repay the subscription order.
+
+= 2.8.0 - 15/11/2022 =
+* Enhancement - Introduced compatibility with WooCommerce High Performance Order Storage.
 
 = 2.7.0 - 12/07/2022 =
 * Fix - Plugin strings are not getting translated according to the User's selected language.

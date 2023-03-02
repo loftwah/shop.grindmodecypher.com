@@ -12,6 +12,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+use Automattic\WooCommerce\Utilities\OrderUtil;
 
 if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 	/**
@@ -127,6 +128,20 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 			}
 			return apply_filters( 'wc_aelia_cs_convert', $amount, $this->base_currency, $this->current_currency );
 		}
+		/**
+		 * Check if HPOS is enabled or not.
+		 *
+		 * @since 2.8.0
+		 * return boolean true if enabled else false
+		 */
+		public function pgbf_wc_hpos_enabled() {
+			if ( class_exists( '\Automattic\WooCommerce\Utilities\OrderUtil' ) ) {
+				if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+					return true;
+				}
+			}
+			return false;
+		}
 
 		/**
 		 * Get_max_ranges.
@@ -139,6 +154,9 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 			$this->max_total_all_fees      = $this->convert_currency( get_option( 'alg_woocommerce_checkout_fees_range_max_total_fees', 0 ) );
 			if ( 0 == $this->max_total_all_discounts ) {
 				$this->max_total_all_discounts = false;
+			}
+			if ( '' === $this->max_total_all_fees ) {
+				$this->max_total_all_fees = 0;
 			}
 			if ( 0 == $this->max_total_all_fees ) {
 				$this->max_total_all_fees = false;
@@ -178,7 +196,13 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 			if ( '' !== $fee_num ) {
 				$fee_num = $fee_num . '_';
 			}
-			$customer_country  = ( version_compare( get_option( 'woocommerce_version', null ), '3.0.0', '<' ) ? WC()->customer->get_country() : WC()->customer->get_billing_country() );
+			if ( null === WC()->customer ) {
+				if ( isset( $_POST['post_type'] ) && 'shop_order' === $_POST['post_type'] && isset( $_POST['_billing_country'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+					$customer_country = sanitize_text_field( wp_unslash( $_POST['_billing_country'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+				}
+			} else {
+				$customer_country = ( version_compare( get_option( 'woocommerce_version', null ), '3.0.0', '<' ) ? WC()->customer->get_country() : WC()->customer->get_billing_country() );
+			}
 			$include_countries = $this->replace_country_sets(
 				apply_filters(
 					'alg_wc_checkout_fees_option',
@@ -210,7 +234,13 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 				return false;
 			}
 			if ( '' !== $fee_num ) {
-				$customer_state = ( version_compare( get_option( 'woocommerce_version', null ), '3.0.0', '<' ) ? WC()->customer->get_state() : WC()->customer->get_billing_state() );
+				if ( null === WC()->customer ) { // phpcs:ignore WordPress.Security.NonceVerification
+					if ( isset( $_POST['post_type'] ) && 'shop_order' === $_POST['post_type'] && isset( $_POST['_billing_state'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+						$customer_state = sanitize_text_field( wp_unslash( $_POST['_billing_state'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+					}
+				} else {
+					$customer_state = ( version_compare( get_option( 'woocommerce_version', null ), '3.0.0', '<' ) ? WC()->customer->get_state() : WC()->customer->get_billing_state() );
+				}
 				$include_states = apply_filters(
 					'alg_wc_checkout_fees_option',
 					'',
@@ -286,7 +316,16 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 				if ( isset( $wp->query_vars['order-pay'] ) && absint( $wp->query_vars['order-pay'] ) > 0 ) {
 					$order_id = absint( $wp->query_vars['order-pay'] ); // The order ID.
 				}
-				$payment_method = get_post_meta( $order_id, '_payment_method', true );
+				if ( $this->pgbf_wc_hpos_enabled() ) {
+					$order = wc_get_order( $order_id );
+					if ( $order->meta_exists( '_payment_method' ) ) {
+						$payment_method = $order->get_meta( '_payment_method' );
+					} else {
+						$payment_method = $order->get_payment_method();
+					}
+				} else {
+					$payment_method = get_post_meta( $order_id, '_payment_method', true );
+				}
 				if ( '' !== get_query_var( 'order-pay' ) ) {
 					wp_localize_script(
 						'alg-payment-gateways-checkout',
@@ -353,6 +392,10 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 			}
 			// This function is being called twice for carts that contain Subscription products, hence if it's the second time, return.
 			if ( in_array( 'woocommerce-subscriptions/woocommerce-subscriptions.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
+				if ( did_action( 'woocommerce_cart_calculate_fees' ) > 1 ) {
+					return;
+				}
+				WC()->cart->fees_api()->set_fees();
 				$cart_contains_subscription = WC_Subscriptions_Cart::cart_contains_subscription();
 				// if cart contains subscriptions & fees have already been added & we're not yet processing the order.
 				if ( $cart_contains_subscription && ( count( $this->fees_added ) > 0 || count( $this->fees_added_2 ) > 0 ) && ( ( is_checkout() && ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ) || is_cart() ) ) { // phpcs:ignore WordPress.Security.NonceVerification
@@ -472,14 +515,23 @@ if ( ! class_exists( 'Alg_WC_Checkout_Fees' ) ) :
 					break;
 			}
 			// Min fee.
-			if ( 0 != $min_fee && $new_fee < $min_fee ) {
+			if ( 0 != $min_fee && $new_fee < $min_fee ) { //phpcs:ignore
 				$new_fee = $min_fee;
 			}
+			if ( '' === $max_fee ) {
+				$max_fee = 0;
+			}
 			// Max fee.
-			if ( 0 != $max_fee && $new_fee > $max_fee ) {
+			if ( 0 != $max_fee && $new_fee > $max_fee ) { //phpcs:ignore
 				$new_fee = $max_fee;
 			}
 			// Max total discount.
+			if ( '' === $this->max_total_all_discounts ) {
+				$this->max_total_all_discounts = 0;
+			}
+			if ( '' === $this->max_total_all_fees ) {
+				$this->max_total_all_fees = 0;
+			}
 			if ( false !== $this->max_total_all_discounts ) {
 				if ( $new_fee < $this->max_total_all_discounts ) {
 					$new_fee = $this->max_total_all_discounts;
