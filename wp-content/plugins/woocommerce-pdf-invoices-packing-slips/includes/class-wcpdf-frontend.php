@@ -1,10 +1,6 @@
 <?php
 namespace WPO\WC\PDF_Invoices;
 
-use WPO\WC\PDF_Invoices\Compatibility\WC_Core as WCX;
-use WPO\WC\PDF_Invoices\Compatibility\Order as WCX_Order;
-use WPO\WC\PDF_Invoices\Compatibility\Product as WCX_Product;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -28,12 +24,7 @@ class Frontend {
 
 		$invoice = wcpdf_get_invoice( $order );
 		if ( $invoice && $invoice->is_enabled() ) {
-			$pdf_url = wp_nonce_url( add_query_arg( array(
-				'action'        => 'generate_wpo_wcpdf',
-				'document_type' => 'invoice',
-				'order_ids'     => WCX_Order::get_id( $order ),
-				'my-account'    => true,
-			), admin_url( 'admin-ajax.php' ) ), 'generate_wpo_wcpdf' );
+			$pdf_url = WPO_WCPDF()->endpoint->get_document_link( $order, 'invoice', array( 'my-account' => 'true' ) );
 
 			// check my account button settings
 			$button_setting = $invoice->get_setting( 'my_account_buttons', 'available' );
@@ -49,7 +40,7 @@ class Frontend {
 					break;
 				case 'custom':
 					$allowed_statuses = $button_setting = $invoice->get_setting( 'my_account_restrict', array() );
-					if ( !empty( $allowed_statuses ) && in_array( WCX_Order::get_status( $order ), array_keys( $allowed_statuses ) ) ) {
+					if ( !empty( $allowed_statuses ) && in_array( $order->get_status(), array_keys( $allowed_statuses ) ) ) {
 						$invoice_allowed = true;
 					} else {
 						$invoice_allowed = false;
@@ -58,7 +49,7 @@ class Frontend {
 			}
 
 			// Check if invoice has been created already or if status allows download (filter your own array of allowed statuses)
-			if ( $invoice_allowed || in_array( WCX_Order::get_status( $order ), apply_filters( 'wpo_wcpdf_myaccount_allowed_order_statuses', array() ) ) ) {
+			if ( $invoice_allowed || in_array( $order->get_status(), apply_filters( 'wpo_wcpdf_myaccount_allowed_order_statuses', array() ) ) ) {
 				$actions['invoice'] = array(
 					'url'  => esc_url( $pdf_url ),
 					'name' => apply_filters( 'wpo_wcpdf_myaccount_button_text', $invoice->get_title(), $invoice )
@@ -79,6 +70,10 @@ class Frontend {
 					$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 					if ( function_exists( 'file_get_contents' ) && $script = file_get_contents( WPO_WCPDF()->plugin_path() . '/assets/js/my-account-link'.$suffix.'.js' ) ) {
+
+						if ( WPO_WCPDF()->endpoint->is_enabled() ) {
+							$script = str_replace( 'generate_wpo_wcpdf', WPO_WCPDF()->endpoint->get_identifier(), $script );
+						}
 						
 						wp_add_inline_script( 'jquery', $script );
 					}
@@ -151,25 +146,9 @@ class Frontend {
 			$link_text = __( 'Download invoice (PDF)', 'woocommerce-pdf-invoices-packing-slips' );
 		}
 
-		// Basic query args for PDF	
-		$query_args = array(
-			'action'        => 'generate_wpo_wcpdf',
-			'document_type' => 'invoice',
-			'order_ids'     => $order->get_id(),
-		);
-		
-		// Add query args based on user permissions and guest access setting
-		$debug_settings = get_option( 'wpo_wcpdf_settings_debug', array() );
-		if( is_user_logged_in() ) {
-			$query_args['my-account'] = true;
-		} elseif( ! is_user_logged_in() && isset( $debug_settings['guest_access'] ) ) {
-			$query_args['order_key'] = $order->get_order_key();
-		} else {
-			return; // no business here
-		}
-	
-		$pdf_url = esc_url( wp_nonce_url( add_query_arg( $query_args, admin_url( 'admin-ajax.php' ) ), 'generate_wpo_wcpdf' ) );
-		$text = sprintf( '<p><a href="%s" target="_blank">%s</a></p>', esc_attr( $pdf_url ), esc_html( $link_text ) );
+		$pdf_url = WPO_WCPDF()->endpoint->get_document_link( $order, 'invoice', array( 'shortcode' => 'true' ) );
+
+		$text = sprintf( '<p><a href="%s" target="_blank">%s</a></p>', esc_url( $pdf_url ), esc_html( $link_text ) );
 
 		return $text;
 	}

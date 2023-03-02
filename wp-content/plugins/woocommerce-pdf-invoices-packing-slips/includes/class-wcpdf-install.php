@@ -1,10 +1,6 @@
 <?php
 namespace WPO\WC\PDF_Invoices;
 
-use WPO\WC\PDF_Invoices\Compatibility\WC_Core as WCX;
-use WPO\WC\PDF_Invoices\Compatibility\Order as WCX_Order;
-use WPO\WC\PDF_Invoices\Compatibility\Product as WCX_Product;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -13,7 +9,7 @@ if ( !class_exists( '\\WPO\\WC\\PDF_Invoices\\Install' ) ) :
 
 class Install {
 	
-	function __construct()	{
+	public function __construct() {
 		// run lifecycle methods
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 			add_action( 'wp_loaded', array( $this, 'do_install' ) );
@@ -166,6 +162,7 @@ class Install {
 				// 'reset_number_yearly'		=> '',
 				// 'my_account_buttons'		=> '',
 				// 'invoice_number_column'		=> '',
+				// 'invoice_date_column'		=> '',
 				// 'disable_free'				=> '',
 			),
 			'wpo_wcpdf_documents_settings_packing-slip' => array(
@@ -189,6 +186,11 @@ class Install {
 
 		// set transient for wizard notification
 		set_transient( 'wpo_wcpdf_new_install', 'yes', DAY_IN_SECONDS * 2 );
+
+		// schedule the yearly reset number action
+		if ( ! empty( WPO_WCPDF()->settings ) && is_callable( array( WPO_WCPDF()->settings, 'schedule_yearly_reset_numbers' ) ) ) {
+			WPO_WCPDF()->settings->schedule_yearly_reset_numbers();
+		}
 	}
 
 	/**
@@ -287,6 +289,7 @@ class Install {
 					'reset_number_yearly'		=> array( 'wpo_wcpdf_template_settings' => 'yearly_reset_invoice_number' ),
 					'my_account_buttons'		=> array( 'wpo_wcpdf_general_settings' => 'my_account_buttons' ),
 					'invoice_number_column'		=> array( 'wpo_wcpdf_general_settings' => 'invoice_number_column' ),
+					'invoice_date_column'		=> array( 'wpo_wcpdf_general_settings' => 'invoice_date_column' ),
 					'disable_free'				=> array( 'wpo_wcpdf_general_settings' => 'disable_free' ),
 				),
 				'wpo_wcpdf_documents_settings_packing-slip' => array(
@@ -412,6 +415,13 @@ class Install {
 			if ( ! empty( $debug_settings['use_html5_parser'] ) ) {
 				unset( $debug_settings['use_html5_parser'] );
 				update_option( 'wpo_wcpdf_settings_debug', $debug_settings );
+			}
+		}
+		
+		// 3.3.0-dev-1: schedule the yearly reset number action
+		if ( version_compare( $installed_version, '3.3.0-dev-1', '<' ) ) {
+			if ( ! empty( WPO_WCPDF()->settings ) && is_callable( array( WPO_WCPDF()->settings, 'schedule_yearly_reset_numbers' ) ) ) {
+				WPO_WCPDF()->settings->schedule_yearly_reset_numbers();
 			}
 		}
 	}

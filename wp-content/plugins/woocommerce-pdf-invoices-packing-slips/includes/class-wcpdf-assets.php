@@ -28,7 +28,7 @@ class Assets {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		global $wp_version;
-		if( $this->is_order_page() ) {
+		if ( WPO_WCPDF()->admin->is_order_page() ) {
 
 			// STYLES
 			wp_enqueue_style( 'thickbox' );
@@ -40,17 +40,7 @@ class Assets {
 				WPO_WCPDF_VERSION
 			);
 
-			$wc_version = defined( 'WC_VERSION' ) ? WC_VERSION : WOOCOMMERCE_VERSION;
-
-			if ( version_compare( $wc_version, '2.1', '<' ) ) {
-				// legacy WC2.0 styles
-				wp_enqueue_style(
-					'wpo-wcpdf-order-styles-buttons',
-					WPO_WCPDF()->plugin_url() . '/assets/css/order-styles-buttons-wc20'.$suffix.'.css',
-					array(),
-					WPO_WCPDF_VERSION
-				);
-			} elseif ( version_compare( $wc_version, '2.1', '>=' ) && version_compare( $wp_version, '5.3', '<' ) ) {
+			if ( version_compare( $wp_version, '5.3', '<' ) ) {
 				// WC2.1 - WC3.2 (MP6) is used: bigger buttons
 				// also applied to WC3.3+ but without affect due to .column-order_actions class being deprecated in 3.3+
 				wp_enqueue_style(
@@ -78,8 +68,8 @@ class Assets {
 			);
 
 			$bulk_actions = array();
-			$documents = WPO_WCPDF()->documents->get_documents();
-			foreach ($documents as $document) {
+			$documents    = WPO_WCPDF()->documents->get_documents();
+			foreach ( $documents as $document ) {
 				$bulk_actions[$document->get_type()] = "PDF " . $document->get_title();
 			}
 			$bulk_actions = apply_filters( 'wpo_wcpdf_bulk_actions', $bulk_actions );
@@ -116,13 +106,19 @@ class Assets {
 				background-repeat: no-repeat !important;
 				background-position: right 10px center !important;
 			}" );
+			wp_add_inline_style( 'wpo-wcpdf-settings-styles', "#wpo-wcpdf-preview-wrapper .slider.slide-left:after {
+					content: '".__( 'Preview', 'woocommerce-pdf-invoices-packing-slips' )."';
+				}
+				#wpo-wcpdf-preview-wrapper .slider.slide-right:after {
+					content: '".__( 'Settings', 'woocommerce-pdf-invoices-packing-slips' )."';
+			}" );
 
 			// SCRIPTS
 			wp_enqueue_script( 'wc-enhanced-select' );
 			wp_enqueue_script(
 				'wpo-wcpdf-admin',
 				WPO_WCPDF()->plugin_url() . '/assets/js/admin-script'.$suffix.'.js',
-				array( 'jquery', 'wc-enhanced-select', 'jquery-blockui' ),
+				array( 'jquery', 'wc-enhanced-select', 'jquery-blockui', 'jquery-tiptip' ),
 				WPO_WCPDF_VERSION
 			);
 			wp_localize_script(
@@ -145,6 +141,7 @@ class Assets {
 						'reset_number_yearly',
 						'my_account_buttons',
 						'invoice_number_column',
+						'invoice_date_column',
 						'disable_free',
 						'use_latest_settings',
 					) ),
@@ -165,6 +162,7 @@ class Assets {
 						),
 					),
 					'dismissed_pointers'        => get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ),
+					'mysql_int_size_limit'      => __( 'The number should be smaller than 2147483647. Please note you should add your next document number without prefix, suffix or padding.', 'woocommerce-pdf-invoices-packing-slips' ),
 				)
 			);
 
@@ -185,19 +183,34 @@ class Assets {
 			}
 
 		}
-	}
-
-	/**
-	 * Check if this is a shop_order page (edit or list)
-	 */
-	public function is_order_page() {
-		global $post_type;
-		if( $post_type == 'shop_order' ) {
-			return true;
-		} else {
-			return false;
+		
+		// status/debug page scripts
+		if ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] == 'wpo_wcpdf_options_page' && isset( $_REQUEST['tab'] ) && $_REQUEST['tab'] == 'debug' ) {
+			
+			wp_enqueue_style(
+				'wpo-wcpdf-debug-tools-styles',
+				WPO_WCPDF()->plugin_url() . '/assets/css/debug-tools'.$suffix.'.css',
+				WPO_WCPDF_VERSION
+			);
+			wp_enqueue_script(
+				'wpo-wcpdf-debug',
+				WPO_WCPDF()->plugin_url() . '/assets/js/debug-script'.$suffix.'.js',
+				[ 'jquery', 'jquery-blockui' ],
+				WPO_WCPDF_VERSION
+			);
+			wp_localize_script(
+				'wpo-wcpdf-debug',
+				'wpo_wcpdf_debug',
+				[
+					'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+					'nonce'          => wp_create_nonce( 'wpo_wcpdf_debug_nonce' ),
+					'download_label' => __( 'Download', 'woocommerce-pdf-invoices-packing-slips' ),
+				]
+			);
+			
 		}
 	}
+
 }
 
 endif; // class_exists

@@ -224,7 +224,7 @@ class Settings_Callbacks {
 			$title = ! empty( $title ) ? esc_attr( $title ) : '';
 			$class = 'wc-enhanced-select wpo-wcpdf-enhanced-select';
 			$css = 'width:400px';
-			printf( '<select id="%1$s" name="%2$s" data-placeholder="%3$s" title="%4$s" class="%5$s" style="%6$s" %7$s>', esc_attr( $id ), esc_attr( $setting_name ), esc_attr( $placeholder ), esc_attr( $title ), esc_attr( $class ), esc_attr( $css ), $multiple );
+			printf( '<select id="%1$s" name="%2$s" data-placeholder="%3$s" title="%4$s" class="%5$s" style="%6$s" %7$s>', esc_attr( $id ), esc_attr( $setting_name ), esc_attr( $placeholder ), esc_attr( $title ), esc_attr( $class ), esc_attr( $css ), esc_attr( $multiple ) );
 		} else {
 			printf( '<select id="%1$s" name="%2$s">', esc_attr( $id ), esc_attr( $setting_name ) );
 		}
@@ -236,9 +236,9 @@ class Settings_Callbacks {
 		foreach ( $options as $key => $label ) {
 			if ( ! empty( $multiple ) && is_array( $current ) ) {
 				$selected = in_array( $key, $current ) ? ' selected="selected"' : '';
-				printf( '<option value="%s"%s>%s</option>', esc_attr( $key ), $selected, esc_html( $label ) );
+				printf( '<option value="%s"%s>%s</option>', esc_attr( $key ), esc_attr( $selected ), esc_html( $label ) );
 			} else {
-				printf( '<option value="%s"%s>%s</option>', esc_attr( $key ), selected( $current, $key, false ), esc_html( $label ) );
+				printf( '<option value="%s"%s>%s</option>', esc_attr( $key ), esc_attr( selected( $current, $key, false ) ), esc_html( $label ) );
 			}
 		}
 
@@ -255,19 +255,19 @@ class Settings_Callbacks {
 			?>
 			<script type="text/javascript">
 			jQuery(document).ready(function($) {
-				function check_<?php echo $id; ?>_custom() {
-					var custom = $('#<?php echo $id; ?>').val();
+				function check_<?php echo esc_attr( $id ); ?>_custom() {
+					var custom = $('#<?php echo esc_attr( $id ); ?>').val();
 					if (custom == '<?php echo $custom_option; ?>') {
-						$( '.<?php echo $id; ?>_custom').show();
+						$( '.<?php echo esc_attr( $id ); ?>_custom').show();
 					} else {
-						$( '.<?php echo $id; ?>_custom').hide();
+						$( '.<?php echo esc_attr( $id ); ?>_custom').hide();
 					}
 				}
 
-				check_<?php echo $id; ?>_custom();
+				check_<?php echo esc_attr( $id ); ?>_custom();
 
-				$( '#<?php echo $id; ?>' ).on( 'change', function() {
-					check_<?php echo $id; ?>_custom();
+				$( '#<?php echo esc_attr( $id ); ?>' ).on( 'change', function() {
+					check_<?php echo esc_attr( $id ); ?>_custom();
 				});
 
 			});
@@ -314,36 +314,40 @@ class Settings_Callbacks {
 			$fields = isset( $fields_callback_args ) ? call_user_func_array( $fields_callback, $fields_callback_args ) : call_user_func( $fields_callback );
 		}
 
+		printf( '<table class="%s multiple-text-input">', esc_attr( $id ) );
 		if ( ! empty( $header ) ) {
-			echo wp_kses_post( "<p><strong>{$header}</strong>:</p>" );
+			echo wp_kses_post( "<tr><td><strong>{$header}</strong>:</td></tr>" );
 		}
-
-		printf('<p class="%s multiple-text-input">', esc_attr( $id ) );
 		foreach ($fields as $name => $field) {
+			echo '<tr>';
 			$size = $field['size'];
 			$placeholder = isset( $field['placeholder'] ) ? $field['placeholder'] : '';
 
-			if ( isset( $field['label_width'] ) ) {
-				$style = sprintf( 'style="display:inline-block; width:%1$s;"', $field['label_width'] );
-			} else {
-				$style = '';
-			}
-
-			$field_description = ! empty( $field['description'] ) ? '<span style="font-style:italic;">'.$field['description'].'</span>' : '';
+			$field_description = ! empty( $field['description'] ) ? $field['description']: '';
 
 			// output field label
 			if ( isset( $field['label'] ) ) {
-				printf( '<label for="%1$s_%2$s" %3$s>%4$s:</label>', esc_attr( $id ), esc_attr( $name ), esc_attr( $style ), esc_html( $field['label'] ) );
+				printf( '<td class="label"><label for="%1$s_%2$s">%3$s:</label></td>', esc_attr( $id ), esc_attr( $name ), esc_html( $field['label'] ) );
+			} else {
+				echo '<td></td>';
 			}
 
 			// output field
 			$field_current = isset( $current[$name] ) ? $current[$name] : '';
 			$type = isset( $field['type'] ) ? $field['type'] : 'text';
-			printf( '<input type="%1$s" id="%2$s_%4$s" name="%3$s[%4$s]" value="%5$s" size="%6$s" placeholder="%7$s"/> %8$s<br/>', esc_attr( $type ), esc_attr( $id ), esc_attr( $setting_name ), esc_attr( $name ), esc_attr( $field_current ), esc_attr( $size ), esc_attr( $placeholder ), wp_kses_post( $field_description ) );
+			printf( '<td><input type="%1$s" id="%2$s_%4$s" name="%3$s[%4$s]" value="%5$s" size="%6$s" placeholder="%7$s"/></td>', esc_attr( $type ), esc_attr( $id ), esc_attr( $setting_name ), esc_attr( $name ), esc_attr( $field_current ), esc_attr( $size ), esc_attr( $placeholder ) );
+
+			// field description.
+			if ( ! empty( $field_description ) ) {
+				echo '<td>' . wc_help_tip( $field_description, true ) . '</td>';
+			} else {
+				echo '<td></td>';
+			}
+			echo '</tr>';
 		}
-		echo "</p>";
-	
-		// output description.
+		echo "</table>";
+		
+		// group description.
 		if ( ! empty( $description ) ) {
 			printf( '<p class="description">%s</p>', wp_kses_post( $description ) );
 		}
@@ -470,7 +474,7 @@ class Settings_Callbacks {
 
 		$nonce = wp_create_nonce( "wpo_wcpdf_next_{$store}" );
 		printf(
-			'<input id="next_%1$s" class="next-number-input" type="text" size="%2$s" value="%3$s" disabled="disabled" data-store="%1$s" data-nonce="%4$s"/> <span class="edit-next-number dashicons dashicons-edit"></span><span class="save-next-number button secondary" style="display:none;">%5$s</span>',
+			'<input id="next_%1$s" class="next-number-input" type="number" size="%2$s" value="%3$s" disabled="disabled" data-store="%1$s" data-nonce="%4$s"/> <span class="edit-next-number dashicons dashicons-edit"></span><span class="save-next-number button secondary" style="display:none;">%5$s</span>',
 			esc_attr( $store ),
 			esc_attr( $size ),
 			esc_attr( $next_number ),

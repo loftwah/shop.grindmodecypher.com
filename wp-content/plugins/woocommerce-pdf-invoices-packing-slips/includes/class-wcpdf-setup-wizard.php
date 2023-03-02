@@ -16,7 +16,7 @@ class Setup_Wizard {
 	private $steps  = array();
 	
 	public function __construct() {
-		if ( current_user_can( 'manage_woocommerce' ) ) {
+		if ( WPO_WCPDF()->settings->user_can_manage_settings() ) {
 			add_action( 'admin_menu', array( $this, 'admin_menus' ) );
 			add_action( 'admin_init', array( $this, 'setup_wizard' ) );
 		}
@@ -131,7 +131,7 @@ class Setup_Wizard {
 		<head>
 			<meta name="viewport" content="width=device-width" />
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-			<title><?php esc_html_e( 'WooCommerce PDF Invoices & Packing Slips &rsaquo; Setup Wizard', 'woocommerce-pdf-invoices-packing-slips' ); ?></title>
+			<title><?php esc_html_e( 'PDF Invoices & Packing Slips for WooCommerce &rsaquo; Setup Wizard', 'woocommerce-pdf-invoices-packing-slips' ); ?></title>
 			<?php wp_print_scripts( 'wpo-wcpdf-setup' ); ?>
 			<?php wp_print_scripts( 'wpo-wcpdf-setup-confetti' ); ?>
 			<?php do_action( 'admin_print_styles' ); ?>

@@ -46,6 +46,7 @@ class Legacy_Settings {
 				'reset_number_yearly'		=> array( 'wpo_wcpdf_template_settings' => 'yearly_reset_invoice_number' ),
 				'my_account_buttons'		=> array( 'wpo_wcpdf_general_settings' => 'my_account_buttons' ),
 				'invoice_number_column'		=> array( 'wpo_wcpdf_general_settings' => 'invoice_number_column' ),
+				'invoice_date_column'		=> array( 'wpo_wcpdf_general_settings' => 'invoice_date_column' ),
 				'disable_free'				=> array( 'wpo_wcpdf_general_settings' => 'disable_free' ),
 			),
 			'wpo_wcpdf_documents_settings_packing-slip' => array(
@@ -130,10 +131,10 @@ class Legacy_Settings {
 
 			$title = $field['title'];
 			$size = $field['size'];
-			$description = isset( $field['description'] ) ? '<span style="font-style:italic;">'.$field['description'].'</span>' : '';
+			$description = isset( $field['description'] ) ? '<span style="font-style:italic;">'.esc_html( $field['description'] ).'</span>' : '';
 
 			echo '<tr>';
-			printf( '<td style="padding:0 1em 0 0; ">%1$s:</td><td style="padding:0;"><input type="text" id="%2$s" name="%3$s[%2$s]" value="%4$s" size="%5$s"/></td><td style="padding:0 0 0 1em;">%6$s</td>', $title, $id, $menu, $current, $size, $description );
+			printf( '<td style="padding:0 1em 0 0; ">%1$s:</td><td style="padding:0;"><input type="text" id="%2$s" name="%3$s[%2$s]" value="%4$s" size="%5$s"/></td><td style="padding:0 0 0 1em;">%6$s</td>', esc_html( $title ), esc_attr( $id ), esc_attr( $menu ), esc_attr( $current ), esc_attr( $size ), esc_html( $description ) );
 			echo '</tr>';
 		}
 		echo '</table>';
@@ -141,7 +142,7 @@ class Legacy_Settings {
 	
 		// Displays option description.
 		if ( isset( $args['description'] ) ) {
-			printf( '<p class="description">%s</p>', $args['description'] );
+			printf( '<p class="description">%s</p>', esc_html( $args['description'] ) );
 		}
 	
 		// echo $html;
