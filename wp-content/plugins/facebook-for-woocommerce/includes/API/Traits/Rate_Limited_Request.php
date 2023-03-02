@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 /**
  * Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
  *
@@ -9,9 +8,9 @@
  * @package FacebookCommerce
  */
 
-namespace SkyVerge\WooCommerce\Facebook\API\Traits;
+namespace WooCommerce\Facebook\API\Traits;
 
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Rate limited request trait.
@@ -19,7 +18,6 @@ defined( 'ABSPATH' ) or exit;
  * @since 2.0.0
  */
 trait Rate_Limited_Request {
-
 
 	/**
 	 * Gets the ID of this request for rate limiting purposes.
@@ -29,9 +27,6 @@ trait Rate_Limited_Request {
 	 * @return string
 	 */
 	public static function get_rate_limit_id() {
-
 		return 'graph_api_request';
 	}
-
-
 }

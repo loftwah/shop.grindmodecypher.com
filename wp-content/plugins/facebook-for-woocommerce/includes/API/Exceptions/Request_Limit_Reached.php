@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 /**
  * Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
  *
@@ -9,23 +8,21 @@
  * @package FacebookCommerce
  */
 
-namespace SkyVerge\WooCommerce\Facebook\API\Exceptions;
+namespace WooCommerce\Facebook\API\Exceptions;
 
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
-use SkyVerge\WooCommerce\PluginFramework\v5_10_0 as Framework;
+use WooCommerce\Facebook\Framework\Api\Exception as ApiException;
 
 /**
  * Exception thrown in response to a rate limiting error.
  *
  * @since 2.0.0
  */
-class Request_Limit_Reached extends Framework\SV_WC_API_Exception {
-
+class Request_Limit_Reached extends ApiException {
 
 	/** @var \DateTime date & time representing when the request limit will be lifted */
 	protected $throttle_end;
-
 
 	/**
 	 * Gets the estimated throttle end.
@@ -35,10 +32,8 @@ class Request_Limit_Reached extends Framework\SV_WC_API_Exception {
 	 * @return \DateTime|null
 	 */
 	public function get_throttle_end() {
-
 		return $this->throttle_end;
 	}
-
 
 	/**
 	 * Sets the estimated throttle end.
@@ -48,9 +43,6 @@ class Request_Limit_Reached extends Framework\SV_WC_API_Exception {
 	 * @param \DateTime $date_time date time object representing when the throttle will end
 	 */
 	public function set_throttle_end( \DateTime $date_time ) {
-
 		$this->throttle_end = $date_time;
 	}
-
-
 }

@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 /**
  * Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
  *
@@ -9,9 +8,9 @@
  * @package FacebookCommerce
  */
 
-namespace SkyVerge\WooCommerce\Facebook\API\Traits;
+namespace WooCommerce\Facebook\API\Traits;
 
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Idempotent request trait.

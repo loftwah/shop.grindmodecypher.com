@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 /**
  * Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
  *
@@ -9,11 +8,11 @@
  * @package FacebookCommerce
  */
 
-namespace SkyVerge\WooCommerce\Facebook\Admin;
+namespace WooCommerce\Facebook\Admin;
 
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
-use SkyVerge\WooCommerce\Facebook\Products as Products_Handler;
+use WooCommerce\Facebook\Products as Products_Handler;
 
 /**
  * Enhanced Catalog attribute fields.
@@ -44,7 +43,7 @@ class Enhanced_Catalog_Attribute_Fields {
 	}
 
 	private function extract_attribute( &$attributes, $key ) {
-		$index     = array_search( $key, array_column( $attributes, 'key' ) );
+		$index     = array_search( $key, array_column( $attributes, 'key' ), true );
 		$extracted = false === $index ? array() : array_splice( $attributes, $index, 1 );
 		return empty( $extracted ) ? null : array_shift( $extracted );
 	}
@@ -132,7 +131,7 @@ class Enhanced_Catalog_Attribute_Fields {
 		if ( ! is_null( $this->product ) ) {
 			$value = Products_Handler::get_enhanced_catalog_attribute( $attribute_key, $this->product );
 		} elseif ( ! is_null( $this->term ) ) {
-			$meta_key = \SkyVerge\WooCommerce\Facebook\Products::ENHANCED_CATALOG_ATTRIBUTES_META_KEY_PREFIX . $attribute_key;
+			$meta_key = \WooCommerce\Facebook\Products::ENHANCED_CATALOG_ATTRIBUTES_META_KEY_PREFIX . $attribute_key;
 			$value    = get_term_meta( $this->term->term_id, $meta_key, true );
 		}
 
@@ -157,7 +156,7 @@ class Enhanced_Catalog_Attribute_Fields {
 				$classes[] = 'hidden';
 			}
 		}
-			// style="display: <?php echo $optional && ! $is_showing_optional ? 'none' : 'table-row'; ? >"
+
 		if ( self::PAGE_TYPE_EDIT_PRODUCT === $this->page_type ) {
 			?>
 			<p
@@ -184,7 +183,7 @@ class Enhanced_Catalog_Attribute_Fields {
 	private function render_label( $attr_id, $attribute ) {
 		$label = ucwords( str_replace( '_', ' ', $attribute['key'] ) );
 		?>
-		<label for="<?php echo $attr_id; ?>">
+		<label for="<?php echo esc_attr( $attr_id ); ?>">
 			<?php echo esc_html( $label ); ?>
 			<span class="woocommerce-help-tip" data-tip="<?php echo esc_attr( $attribute['description'] ); ?>"></span>
 		</label>

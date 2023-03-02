@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 /**
  * Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
  *
@@ -9,11 +8,11 @@
  * @package FacebookCommerce
  */
 
-namespace SkyVerge\WooCommerce\Facebook\API\Catalog\Product_Group\Products\Read;
+namespace WooCommerce\Facebook\API\Catalog\Product_Group\Products\Read;
 
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
-use SkyVerge\WooCommerce\Facebook\API;
+use WooCommerce\Facebook\API;
 
 /**
  * Response object for the API endpoint that returns a list of Product Items in a particular Product Group.

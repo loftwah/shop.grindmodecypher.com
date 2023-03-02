@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 /**
  * Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
  *
@@ -9,11 +8,11 @@
  * @package FacebookCommerce
  */
 
-namespace SkyVerge\WooCommerce\Facebook\API\FBE\Installation;
+namespace WooCommerce\Facebook\API\FBE\Installation;
 
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
-use SkyVerge\WooCommerce\Facebook\API;
+use WooCommerce\Facebook\API;
 
 /**
  * FBE API request object.
@@ -21,7 +20,6 @@ use SkyVerge\WooCommerce\Facebook\API;
  * @since 2.0.0
  */
 class Request extends API\Request {
-
 
 	/**
 	 * API request constructor.
@@ -32,9 +30,6 @@ class Request extends API\Request {
 	 * @param string $method request method
 	 */
 	public function __construct( $path, $method ) {
-
 		parent::__construct( "/fbe_business/{$path}", $method );
 	}
-
-
 }

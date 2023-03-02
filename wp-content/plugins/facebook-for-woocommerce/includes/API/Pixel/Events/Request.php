@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 /**
  * Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
  *
@@ -9,12 +8,12 @@
  * @package FacebookCommerce
  */
 
-namespace SkyVerge\WooCommerce\Facebook\API\Pixel\Events;
+namespace WooCommerce\Facebook\API\Pixel\Events;
 
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
-use SkyVerge\WooCommerce\Facebook\API;
-use SkyVerge\WooCommerce\Facebook\Events\Event;
+use WooCommerce\Facebook\API;
+use WooCommerce\Facebook\Events\Event;
 
 /**
  * Base S2S API request object.

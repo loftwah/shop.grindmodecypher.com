@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 /**
  * Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
  *
@@ -9,11 +8,11 @@
  * @package FacebookCommerce
  */
 
-namespace SkyVerge\WooCommerce\Facebook\API\Catalog\Send_Item_Updates;
+namespace WooCommerce\Facebook\API\Catalog\Send_Item_Updates;
 
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
-use SkyVerge\WooCommerce\Facebook\API;
+use WooCommerce\Facebook\API;
 
 /**
  * Request object for the Send Item Updates API request.
