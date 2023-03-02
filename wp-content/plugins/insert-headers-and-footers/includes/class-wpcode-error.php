@@ -27,6 +27,7 @@ class WPCode_Error {
 	 */
 	public function add_error( $error ) {
 		$this->errors[] = $error;
+		$this->write_error_to_log( $error );
 	}
 
 	/**
@@ -48,8 +49,20 @@ class WPCode_Error {
 		$this->errors = array();
 	}
 
-	private function store_error() {
+	/**
+	 * Store the error in the logs.
+	 *
+	 * @param array|Exception $error The error object.
+	 *
+	 * @return void
+	 */
+	private function write_error_to_log( $error ) {
+		$handle = 'error';
+		if ( is_array( $error ) && isset( $error['snippet'] ) ) {
+			$handle = 'snippet-' . $error['snippet'];
+		}
 
+		wpcode()->logger->handle( time(), $this->get_error_message( $error ), $handle );
 	}
 
 	/**
@@ -63,12 +76,23 @@ class WPCode_Error {
 		}
 		$last_error = end( $this->errors );
 
-		if ( method_exists( $last_error, 'getMessage' ) ) {
-			return $last_error->getMessage();
+		return $this->get_error_message( $last_error );
+	}
+
+	/**
+	 * Get the error message from the error object, either an array or an Exception object.
+	 *
+	 * @param array|Exception $error The error object.
+	 *
+	 * @return string
+	 */
+	public function get_error_message( $error ) {
+		if ( is_array( $error ) && isset( $error['message'] ) ) {
+			return $error['message'];
 		}
 
-		if ( is_array( $last_error ) && isset( $last_error['message'] ) ) {
-			return $last_error['message'];
+		if ( ! is_array( $error ) && method_exists( $error, 'getMessage' ) ) {
+			return $error->getMessage();
 		}
 
 		return '';

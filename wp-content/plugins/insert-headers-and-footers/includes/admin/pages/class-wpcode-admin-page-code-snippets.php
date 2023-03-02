@@ -119,9 +119,30 @@ class WPCode_Admin_Page_Code_Snippets extends WPCode_Admin_Page {
 				wp_delete_post( $id );
 			}
 		}
+		$failed = 0;
+		if ( 'enable' === $action ) {
+			foreach ( $ids as $key => $id ) {
+				$snippet = new WPCode_Snippet( $id );
+				$snippet->activate();
+				if ( ! $snippet->active ) {
+					// If failed to activate don't count it.
+					unset( $ids[ $key ] );
+					$failed ++;
+				}
+			}
+		}
+		if ( 'disable' === $action ) {
+			foreach ( $ids as $id ) {
+				$snippet = new WPCode_Snippet( $id );
+				$snippet->deactivate();
+			}
+		}
 		$message = array(
 			rtrim( $action, 'e' ) . 'ed' => count( $ids ),
 		);
+		if ( $failed ) {
+			$message['error'] = $failed;
+		}
 
 		wpcode()->cache->cache_all_loaded_snippets();
 
@@ -227,9 +248,37 @@ class WPCode_Admin_Page_Code_Snippets extends WPCode_Admin_Page {
 				$count
 			);
 		}
+
+		if ( isset( $_GET['enabled'] ) ) {
+			$count  = absint( $_GET['enabled'] );
+			$notice = '';
+			if ( $count > 0 ) {
+				$notice = sprintf( /* translators: %d - Activated snippets count. */
+					_n( '%d snippet was successfully activated.', '%d snippets were successfully activated.', $count, 'insert-headers-and-footers' ),
+					$count
+				);
+			}
+			if ( isset( $_GET['error'] ) ) {
+				$error_count = absint( $_GET['error'] );
+				$notice      .= ' ' . sprintf( /* translators: %d - Failed to activate snippets count. */
+						_n( '%d snippet was not activated due to an error.', '%d snippets were not activated due to errors.', $error_count, 'insert-headers-and-footers' ),
+						$error_count
+					);
+			}
+		}
+
+		if ( ! empty( $_GET['disabled'] ) ) {
+			$count  = absint( $_GET['disabled'] );
+			$notice = sprintf( /* translators: %d - Deactivated snippets count. */
+				_n( '%d snippet was successfully deactivated.', '%d snippets were successfully deactivated.', $count, 'insert-headers-and-footers' ),
+				$count
+			);
+		}
 		// phpcs:enable WordPress.Security.NonceVerification
 
-		if ( isset( $notice ) ) {
+		if ( isset( $error_count ) && isset( $notice ) ) {
+			$this->set_error_message( $notice );
+		} elseif ( isset( $notice ) ) {
 			$this->set_success_message( $notice );
 		}
 	}

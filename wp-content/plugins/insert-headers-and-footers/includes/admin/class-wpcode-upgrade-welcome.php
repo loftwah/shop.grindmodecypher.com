@@ -51,17 +51,24 @@ class WPCode_Upgrade_Welcome {
 		}
 
 		add_action( 'admin_menu', array( $this, 'register' ) );
-		add_action( 'admin_head', array( $this, 'hide_menu' ) );
+		add_filter( 'parent_file', array( $this, 'hide_menu' ), 1020 );
 		add_action( 'admin_init', array( $this, 'redirect' ), 9999 );
 		add_action( 'admin_body_class', array( $this, 'body_class' ) );
 	}
 
 	/**
 	 * Remove the dashboard page from the admin menu.
+	 * We're using the parent_file filter to improve compatibility with admin-menu-editor.
+	 *
+	 * @param string $parent_file The parent file.
+	 *
+	 * @return string
 	 */
-	public function hide_menu() {
+	public function hide_menu( $parent_file ) {
 
 		remove_submenu_page( 'index.php', self::SLUG );
+
+		return $parent_file;
 	}
 
 	/**
@@ -256,9 +263,21 @@ class WPCode_Upgrade_Welcome {
 			<div class="wpcode-welcome-box">
 				<div class="wpcode-welcome-highlight">
 					<div class="wpcode-welcome-highlight-column">
-						<h3><?php esc_html_e( 'Store Snippets in Cloud (Coming Soon)', 'insert-headers-and-footers' ); ?></h3>
+						<h3><?php esc_html_e( 'Store Snippets in Cloud', 'insert-headers-and-footers' ); ?></h3>
 						<p><?php esc_html_e( 'A lot of you requested the ability to save and re-use snippets on multiple websites.', 'insert-headers-and-footers' ); ?></p>
-						<p><?php esc_html_e( 'We\'re working on this feature to help you save time when managing multiple projects.', 'insert-headers-and-footers' ); ?></p>
+						<p>
+							<?php
+							printf(
+							// Translators: Placeholders add a link to the suggestions page.
+								esc_html__(
+									'This feature is now available in the %1$sPRO version of the plugin%2$s along with other powerful features.',
+									'insert-headers-and-footers'
+								),
+								'<a href="' . esc_url( wpcode_utm_url( 'https://wpcode.com/lite/', 'upgrade-welcome', 'cloud-snippets' ) ) . '" target="_blank">',
+								'</a>'
+							);
+							?>
+						</p>
 						<p>
 							<?php
 							printf(

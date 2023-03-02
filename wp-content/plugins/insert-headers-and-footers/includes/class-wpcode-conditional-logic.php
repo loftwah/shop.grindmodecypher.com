@@ -34,9 +34,17 @@ class WPCode_Conditional_Logic {
 		require_once WPCODE_PLUGIN_PATH . 'includes/conditional-logic/class-wpcode-conditional-type.php';
 		require_once WPCODE_PLUGIN_PATH . 'includes/conditional-logic/class-wpcode-conditional-user.php';
 		require_once WPCODE_PLUGIN_PATH . 'includes/conditional-logic/class-wpcode-conditional-page.php';
+	}
 
-		$this->types['user'] = new WPCode_Conditional_User();
-		$this->types['page'] = new WPCode_Conditional_Page();
+	/**
+	 * Register an auto-insert type.
+	 *
+	 * @param WPCode_Conditional_Type $type The type to add to the available types.
+	 *
+	 * @return void
+	 */
+	public function register_type( $type ) {
+		$this->types[ $type->name ] = $type;
 	}
 
 	/**
@@ -47,6 +55,7 @@ class WPCode_Conditional_Logic {
 	public function get_all_admin_options() {
 		$options = array();
 		foreach ( $this->types as $type ) {
+			$type->load_type_options(); // Reload the options in case a global snippet made them get loaded before some post types were registered, for example.
 			$options[ $type->get_name() ] = array(
 				'label'   => $type->get_label(),
 				'name'    => $type->get_name(),

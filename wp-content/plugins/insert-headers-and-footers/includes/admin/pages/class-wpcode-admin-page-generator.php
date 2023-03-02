@@ -46,6 +46,13 @@ class WPCode_Admin_Page_Generator extends WPCode_Admin_Page {
 	public $header_title;
 
 	/**
+	 * Snippet if editing an existing, generated snippet.
+	 *
+	 * @var WPCode_Snippet
+	 */
+	public $snippet;
+
+	/**
 	 * Call this just to set the page title translatable.
 	 */
 	public function __construct() {
@@ -69,9 +76,27 @@ class WPCode_Admin_Page_Generator extends WPCode_Admin_Page {
 				$this->generator = $generator;
 			}
 		}
+
+		$snippet_id = isset( $_GET['snippet'] ) ? absint( $_GET['snippet'] ) : false;
+		if ( $snippet_id ) {
+			$this->snippet = new WPCode_Snippet( $snippet_id );
+			if ( $this->snippet->get_post_data() ) {
+				WPCode_Notice::add(
+					sprintf(
+							// Translators: gets replaced with the snippet title.
+						__( 'You are now editing the generated snippet: "%s". Updating the snippet will override any edits you made to the code.', 'insert-headers-and-footers' ),
+						$this->snippet->get_title()
+					),
+					'warning'
+				);
+			} else {
+				unset( $this->snippet );
+			}
+		}
+
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		if ( $this->generator ) {
-			// Translators: gets replace with the generator name.
+			// Translators: gets replaced with the generator name.
 			$this->header_title = sprintf( __( '%s Generator', 'insert-headers-and-footers' ), $this->generators[ $this->generator ]->get_title() );
 		}
 	}
@@ -103,14 +128,19 @@ class WPCode_Admin_Page_Generator extends WPCode_Admin_Page {
 				<ul class="wpcode-items-list-category">
 					<?php
 					foreach ( $this->generators as $generator ) {
-						$url = add_query_arg(
+						$url      = add_query_arg(
 							array(
 								'page'      => $this->page_slug,
 								'generator' => $generator->get_name(),
 							),
 							admin_url( 'admin.php' )
 						);
-						$this->get_list_item( $generator->get_name(), $generator->get_title(), $generator->get_description(), $url, __( 'Generate', 'insert-headers-and-footers' ), $generator->get_categories() );
+						$button_1 = array(
+							'tag'  => 'a',
+							'url'  => $url,
+							'text' => __( 'Generate', 'insert-headers-and-footers' ),
+						);
+						$this->get_list_item( $generator->get_name(), $generator->get_title(), $generator->get_description(), $button_1, array(), $generator->get_categories() );
 					}
 					?>
 				</ul>
@@ -125,8 +155,12 @@ class WPCode_Admin_Page_Generator extends WPCode_Admin_Page {
 	 * @return void
 	 */
 	public function show_generator() {
-		$generator = $this->generators[ $this->generator ];
-		$tabs      = $generator->get_tabs();
+		$generator    = $this->generators[ $this->generator ];
+		$tabs         = $generator->get_tabs();
+		$snippet_data = array();
+		if ( isset( $this->snippet ) ) {
+			$snippet_data = $this->snippet->get_generator_data();
+		}
 		?>
 		<form id="wpcode_generator_form">
 			<div class="wpcode-items-metabox wpcode-metabox">
@@ -149,7 +183,7 @@ class WPCode_Admin_Page_Generator extends WPCode_Admin_Page {
 						$style = $selected === $tab_id ? '' : 'display:none;';
 						?>
 						<div class="wpcode-form-tab" data-tab="<?php echo esc_attr( $tab_id ); ?>" style="<?php echo esc_attr( $style ); ?>">
-							<?php $generator->render_tab( $tab_id ); ?>
+							<?php $generator->render_tab( $tab_id, $snippet_data ); ?>
 						</div>
 					<?php } ?>
 					<div class="wpcode-generator-actions">
@@ -157,6 +191,9 @@ class WPCode_Admin_Page_Generator extends WPCode_Admin_Page {
 						<input type="hidden" name="type" value="<?php echo esc_attr( $this->generator ); ?>"/>
 						<input type="hidden" name="action" value="wpcode_generate_snippet"/>
 						<button type="submit" class="wpcode-button wpcode-button-secondary" id="wpcode-generator-update-code"><?php esc_html_e( 'Update code', 'insert-headers-and-footers' ); ?></button>
+						<?php if ( ! empty( $this->snippet ) ) { ?>
+							<input type="hidden" name="snippet_id" value="<?php echo absint( $this->snippet->get_id() ); ?>"/>
+						<?php } ?>
 					</div>
 				</div>
 			</div>
@@ -164,14 +201,19 @@ class WPCode_Admin_Page_Generator extends WPCode_Admin_Page {
 		<div class="wpcode-generator-preview">
 			<div class="wpcode-generator-preview-header">
 				<h2><?php esc_html_e( 'Code Preview', 'insert-headers-and-footers' ); ?></h2>
-				<button type="button" class="wpcode-button" id="wpcode-generator-use-snippet"><?php esc_html_e( 'Use Snippet', 'insert-headers-and-footers' ); ?></button>
+				<?php
+				if ( ! empty( $this->snippet ) ) {
+					?>
+					<button type="button" class="wpcode-button" id="wpcode-generator-use-snippet"><?php esc_html_e( 'Update Snippet', 'insert-headers-and-footers' ); ?></button>
+				<?php } else { ?>
+					<button type="button" class="wpcode-button" id="wpcode-generator-use-snippet"><?php esc_html_e( 'Use Snippet', 'insert-headers-and-footers' ); ?></button>
+				<?php } ?>
 				<button class="wpcode-button wpcode-button-icon wpcode-button-secondary wpcode-copy-target" data-target="#wpcode_generator_code_preview" type="button">
 					<span class="wpcode-default-icon"><?php wpcode_icon( 'copy', 16, 16 ); ?></span><span class="wpcode-success-icon"><?php wpcode_icon( 'check', 16, 13 ); ?></span> <?php echo esc_html_x( 'Copy Code', 'Copy to clipboard', 'insert-headers-and-footers' ); ?>
 				</button>
 			</div>
 			<textarea id="wpcode_generator_code_preview"><?php echo $generator->get_snippet_code(); ?></textarea>
 		</div>
-		<span class="wpcode-loading-spinner" id="wpcode-generator-spinner"></span>
 		<script type="text/template" id="wpcode-generator-repeater-row">
 			<?php $this->repeater_group_template(); ?>
 		</script>
@@ -213,10 +255,10 @@ class WPCode_Admin_Page_Generator extends WPCode_Admin_Page {
 		if ( ! $this->generator ) {
 			return;
 		}
-		$settings = $this->load_code_mirror();
-
-		$settings['codemirror']['readOnly'] = 'nocursor';
-		wp_add_inline_script( 'code-editor', sprintf( 'jQuery( function() { window.wpcode_editor = wp.codeEditor.initialize( "wpcode_generator_code_preview", %s ); } );', wp_json_encode( $settings ) ) );
+		$editor = new WPCode_Code_Editor( $this->code_type );
+		$editor->set_setting( 'readOnly', 'nocursor' );
+		$editor->register_editor( 'wpcode_generator_code_preview' );
+		$editor->init_editor();
 
 		wp_enqueue_script( 'jquery-ui-autocomplete' );
 	}

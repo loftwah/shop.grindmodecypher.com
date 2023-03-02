@@ -12,11 +12,18 @@
 class WPCode_File_Cache {
 
 	/**
-	 * Name of the folder in the Uploads folder.
+	 * Name of the base folder in the Uploads folder.
 	 *
 	 * @var string
 	 */
-	private $dirname = 'wpcode/cache';
+	private $basedir = 'wpcode';
+
+	/**
+	 * Name of the module-specific folder in the base folder.
+	 *
+	 * @var string
+	 */
+	private $dirname = 'cache';
 
 	/**
 	 * Full upload path, created form the WP uploads folder.
@@ -63,6 +70,19 @@ class WPCode_File_Cache {
 	}
 
 	/**
+	 * Delete a cached file by its key.
+	 *
+	 * @param string $key The key to find the file by.
+	 *
+	 * @return void
+	 */
+	public function delete( $key ) {
+		$file = $this->get_directory_path( $this->get_cache_filename_by_key( $key ) );
+
+		wp_delete_file( $file );
+	}
+
+	/**
 	 * Basically just adds JSON to the end of the key but we should use this
 	 * to also make sure it's a proper filename.
 	 *
@@ -97,12 +117,15 @@ class WPCode_File_Cache {
 	private function get_directory_path( $filename ) {
 		if ( ! isset( $this->upload_path ) ) {
 			$uploads           = wp_upload_dir();
-			$this->upload_path = trailingslashit( $uploads['basedir'] ) . $this->dirname;
+			$base_path         = trailingslashit( $uploads['basedir'] ) . $this->basedir;
+			$this->upload_path = $base_path . '/' . $this->dirname;
 
 			if ( ! file_exists( $this->upload_path ) || ! wp_is_writable( $this->upload_path ) ) {
 				wp_mkdir_p( $this->upload_path );
 				$this->create_index_html_file( $this->upload_path );
 			}
+			// Ensure the base path has an index file.
+			$this->create_index_html_file( $base_path );
 		}
 
 		$filepath  = trailingslashit( $this->upload_path ) . $filename;
@@ -111,6 +134,8 @@ class WPCode_File_Cache {
 			wp_mkdir_p( $directory );
 			$this->create_index_html_file( $directory );
 		}
+
+		$this->create_index_html_file( $this->upload_path );
 
 		return $filepath;
 	}
@@ -136,5 +161,28 @@ class WPCode_File_Cache {
 
 		// Create empty index.html.
 		return file_put_contents( $index_file, '' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	}
+
+	/**
+	 * Create .htaccess file in the specified directory if it doesn't exist.
+	 *
+	 * @param string $path The path to the directory.
+	 *
+	 * @return false|int
+	 */
+	public static function create_htaccess_file( $path ) {
+		if ( ! is_dir( $path ) || is_link( $path ) ) {
+			return false;
+		}
+
+		$htaccess_file = wp_normalize_path( trailingslashit( $path ) . '.htaccess' );
+
+		// Do nothing if index.html exists in the directory.
+		if ( file_exists( $htaccess_file ) ) {
+			return false;
+		}
+
+		// Create empty index.html.
+		return file_put_contents( $htaccess_file, 'deny from all' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 	}
 }

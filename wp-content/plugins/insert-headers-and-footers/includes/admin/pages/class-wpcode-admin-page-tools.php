@@ -63,6 +63,10 @@ class WPCode_Admin_Page_Tools extends WPCode_Admin_Page {
 		add_action( 'admin_init', array( $this, 'submit_listener' ) );
 		add_action( 'admin_print_scripts', array( $this, 'importer_templates' ) );
 		add_filter( 'wpcode_admin_js_data', array( $this, 'add_tools_data' ) );
+		// Listen for log delete requests.
+		add_action( 'admin_init', array( $this, 'maybe_delete_log' ) );
+		// Localize script data.
+		add_filter( 'wpcode_admin_js_data', array( $this, 'add_tools_strings' ) );
 	}
 
 
@@ -481,6 +485,7 @@ class WPCode_Admin_Page_Tools extends WPCode_Admin_Page {
 			'export'   => __( 'Export', 'insert-headers-and-footers' ),
 			'info'     => __( 'System Info', 'insert-headers-and-footers' ),
 			'importer' => __( 'Importer', 'insert-headers-and-footers' ),
+			'logs'     => __( 'Logs', 'insert-headers-and-footers' ),
 		);
 	}
 
@@ -553,12 +558,16 @@ class WPCode_Admin_Page_Tools extends WPCode_Admin_Page {
 		$snippets = get_posts( $query_args );
 
 		foreach ( $snippets as $snippet ) {
-			$snippet              = new WPCode_Snippet( $snippet );
-			$snippet_data         = $snippet->get_data_for_caching();
-			$snippet_data['tags'] = $snippet->get_tags();
-			$snippet_data['note'] = $snippet->get_note();
-			$export[]             = $snippet_data;
+			$snippet                          = new WPCode_Snippet( $snippet );
+			$snippet_data                     = $snippet->get_data_for_caching();
+			$snippet_data['tags']             = $snippet->get_tags();
+			$snippet_data['note']             = $snippet->get_note();
+			$snippet_data['cloud_id']         = $snippet->get_cloud_id();
+			$snippet_data['custom_shortcode'] = $snippet->get_custom_shortcode();
+			$export[]                         = $snippet_data;
 		}
+
+		$export = array_reverse( $export );
 
 		ignore_user_abort( true );
 
@@ -616,7 +625,8 @@ class WPCode_Admin_Page_Tools extends WPCode_Admin_Page {
 				// We don't want to update existing snippets/posts.
 				unset( $snippet['id'] );
 			}
-			$new_snippet = new WPCode_Snippet( $snippet );
+			$snippet['code'] = wp_slash( $snippet['code'] );
+			$new_snippet     = new WPCode_Snippet( $snippet );
 			$new_snippet->save();
 		}
 
@@ -932,6 +942,128 @@ class WPCode_Admin_Page_Tools extends WPCode_Admin_Page {
 			$data .= 'Use Cookies:              ' . ( ini_get( 'session.use_cookies' ) ? 'On' : 'Off' ) . "\n";
 			$data .= 'Use Only Cookies:         ' . ( ini_get( 'session.use_only_cookies' ) ? 'On' : 'Off' ) . "\n";
 		}
+
+		return $data;
+	}
+
+	/**
+	 * Output the log viewer.
+	 *
+	 * @return void
+	 */
+	public function output_view_logs() {
+
+		if ( ! current_user_can( 'wpcode_activate_snippets' ) ) {
+			echo '<p>' . esc_html__( 'You do not have sufficient permissions to view logs.', 'insert-headers-and-footers' ) . '</p>';
+
+			return;
+		}
+
+		$logs = wpcode()->logger->get_logs();
+
+		if ( empty( $logs ) ) {
+			echo '<p>';
+			printf(
+			// translators: %1$s: opening anchor tag, %2$s: closing anchor tag.
+				esc_html__( 'No logs found. You can enable logging from the %1$ssettings panel%2$s.', 'insert-headers-and-footers' ),
+				'<a href="' . esc_url( admin_url( 'admin.php?page=wpcode-settings' ) ) . '">',
+				'</a>'
+			);
+			echo '</p>';
+
+			return;
+		}
+		$selected_log      = $logs[0]['path'];
+		$selected_log_name = $logs[0]['filename'];
+
+		if ( isset( $_POST['log'] ) && isset( $_POST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ), 'wpcode_view_log' ) ) {
+			$selected_log_name = sanitize_text_field( wp_unslash( $_POST['log'] ) );
+			// Find the log file path.
+			foreach ( $logs as $log ) {
+				if ( $log['filename'] === $selected_log_name ) {
+					$selected_log = $log['path'];
+					break;
+				}
+			}
+		}
+		// Load the selected log.
+		$log_content = file_get_contents( $selected_log ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+		$delete_log_url = wp_nonce_url(
+			add_query_arg(
+				array(
+					'wpcode_action' => 'delete_log',
+					'log'           => str_replace( '.log', '', $selected_log_name ),
+				),
+				$this->get_page_action_url()
+			),
+			'wpcode_delete_log'
+		);
+		// Log picker form.
+		?>
+		<div class="alignleft">
+			<h2><?php echo esc_html( $selected_log_name ); ?>
+				<a class="wpcode-button wpcode-button-secondary wpcode-delete-log" href="<?php echo esc_url( $delete_log_url ); ?>"><?php esc_html_e( 'Delete log', 'insert-headers-and-footers' ); ?></a>
+			</h2>
+		</div>
+		<div class="alignright">
+			<form method="post" action="<?php echo esc_url( $this->get_page_action_url() ); ?>">
+				<select name="log">
+					<?php foreach ( $logs as $log ) : ?>
+						<option value="<?php echo esc_attr( $log['filename'] ); ?>" <?php selected( $selected_log_name, $log['filename'] ); ?>><?php echo esc_html( $log['filename'] ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<button type="submit" class="wpcode-button"><?php esc_html_e( 'View', 'insert-headers-and-footers' ); ?></button>
+				<?php wp_nonce_field( 'wpcode_view_log' ); ?>
+			</form>
+		</div>
+		<div class="clear"></div>
+
+		<div id="wpcode-log-data">
+			<?php if ( empty( $log_content ) ) : ?>
+				<p><?php esc_html_e( 'Log is empty.', 'insert-headers-and-footers' ); ?></p>
+			<?php endif; ?>
+			<pre><?php echo esc_html( $log_content ); ?></pre>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Delete a log file.
+	 *
+	 * @return void
+	 */
+	public function maybe_delete_log() {
+
+		// Check nonce.
+		if ( isset( $_GET['wpcode_action'] ) && isset( $_GET['_wpnonce'] ) && ! wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ), 'wpcode_delete_log' ) ) {
+			wp_die( esc_html__( 'Link expired. Please refresh the page and retry.', 'insert-headers-and-footers' ) );
+		}
+		if ( ! isset( $_GET['wpcode_action'] ) || 'delete_log' !== $_GET['wpcode_action'] || ! isset( $_GET['log'] ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'wpcode_activate_snippets' ) ) {
+			echo '<p>' . esc_html__( 'You do not have sufficient permissions to delete logs.', 'insert-headers-and-footers' ) . '</p>';
+
+			return;
+		}
+
+		wpcode()->logger->delete_log( sanitize_text_field( wp_unslash( $_GET['log'] ) ) );
+
+		wp_safe_redirect( $this->get_page_action_url() );
+		exit;
+	}
+
+	/**
+	 * Add tools-specific strings to the JS strings object.
+	 *
+	 * @param array $data The strings object.
+	 *
+	 * @return array
+	 */
+	public function add_tools_strings( $data ) {
+		$data['confirm_delete_log'] = __( 'Are you sure you want to delete this log?', 'insert-headers-and-footers' );
 
 		return $data;
 	}

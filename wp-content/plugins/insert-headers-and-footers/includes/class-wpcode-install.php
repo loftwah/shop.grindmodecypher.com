@@ -28,6 +28,9 @@ class WPCode_Install {
 		// but the option used in the `maybe_run_install` method below is not
 		// removed so the capabilities are not added back.
 		WPCode_Capabilities::add_capabilities();
+
+		// Use an action to have a single activation hook plugin-wide.
+		do_action( 'wpcode_plugin_activation' );
 	}
 
 	/**
@@ -40,7 +43,15 @@ class WPCode_Install {
 	 * @return void
 	 */
 	public function maybe_run_install() {
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		$activated = get_option( 'ihaf_activated', array() );
+
+		if ( ! is_array( $activated ) ) {
+			$activated = array();
+		}
 
 		if ( empty( $activated['wpcode'] ) ) {
 			$activated['wpcode'] = time();
@@ -59,6 +70,42 @@ class WPCode_Install {
 			}
 
 			do_action( 'wpcode_install' );
+		}
+
+		// Maybe run manually just one time.
+		$install = get_option( 'wpcode_install', false );
+
+		if ( ! empty( $install ) ) {
+			$this->activate();
+			delete_option( 'wpcode_install' );
+		}
+
+		// Let's run an upgrade routine.
+		if ( empty( $activated['version'] ) ) {
+			$this->update_2_1_0();
+		}
+
+		if ( isset( $activated['version'] ) && version_compare( $activated['version'], WPCODE_VERSION, '=' ) ) {
+			// If the version is identical just skip.
+			return;
+		}
+
+		// Give other plugins a chance to run an upgrade routine.
+		do_action( 'wpcode_before_version_update', $activated );
+
+		$activated['version'] = WPCODE_VERSION;
+		update_option( 'ihaf_activated', $activated );
+	}
+
+	/**
+	 * Upgrade routine for 2.1.0.
+	 * Empty the library cache to get the new snippets.
+	 *
+	 * @return void
+	 */
+	public function update_2_1_0() {
+		if ( isset( wpcode()->library ) ) {
+			wpcode()->library->delete_cache();
 		}
 	}
 

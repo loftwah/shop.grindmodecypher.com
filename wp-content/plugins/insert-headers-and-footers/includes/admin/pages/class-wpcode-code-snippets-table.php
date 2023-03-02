@@ -167,6 +167,7 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 		$markup = '<label class="wpcode-checkbox-toggle">';
 		$markup .= '<input data-id=' . absint( $snippet_id ) . ' type="checkbox" ' . checked( $active, true, false ) . ' class="wpcode-status-toggle" />';
 		$markup .= '<span class="wpcode-checkbox-toggle-slider"></span>';
+		$markup .= '<span class="screen-reader-text">' . esc_html__( 'Toggle Snippet Status', 'insert-headers-and-footers' ) . '</span>';
 		$markup .= '</label>';
 
 		return $markup;
@@ -323,7 +324,9 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 		}
 
 		return array(
-			'trash' => __( 'Trash', 'insert-headers-and-footers' ),
+			'trash'   => __( 'Trash', 'insert-headers-and-footers' ),
+			'enable'  => __( 'Activate', 'insert-headers-and-footers' ),
+			'disable' => __( 'Deactivate', 'insert-headers-and-footers' ),
 		);
 	}
 
@@ -366,15 +369,14 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 		$is_filtered = false;
 
 		$args = array(
-			'orderby'          => $orderby,
-			'order'            => $order,
-			'nopaging'         => false,
-			'posts_per_page'   => $per_page,
-			'paged'            => $page,
-			'no_found_rows'    => false,
-			'post_status'      => array( 'publish', 'draft' ),
-			'post_type'        => 'wpcode',
-			'suppress_filters' => true,
+			'orderby'        => $orderby,
+			'order'          => $order,
+			'nopaging'       => false,
+			'posts_per_page' => $per_page,
+			'paged'          => $page,
+			'no_found_rows'  => false,
+			'post_status'    => array( 'publish', 'draft' ),
+			'post_type'      => 'wpcode',
 		);
 
 		if ( ! empty( $_GET['location'] ) ) {
@@ -410,6 +412,12 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 				'field'    => 'slug',
 			);
 		}
+
+		if ( ! empty( $_GET['s'] ) ) {
+			$args['s'] = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			// This is a search so let's extend it to meta too.
+			$this->add_meta_search();
+		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		if ( 'all' !== $this->view ) {
@@ -425,6 +433,8 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 
 		$items_query = new WP_Query( $args );
 		$this->items = $items_query->get_posts();
+		// Remove filters to avoid conflicts.
+		$this->remove_meta_search();
 
 		$per_page = isset( $args['posts_per_page'] ) ? $args['posts_per_page'] : $this->get_items_per_page( 'wpcode_snippets_per_page', $this->per_page );
 
@@ -465,6 +475,28 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 		}
 
 		return apply_filters( 'wpcode_code_snippets_table_columns', $columns );
+	}
+
+	/**
+	 * Dynamically add filters to extend search to meta fields.
+	 *
+	 * @return void
+	 */
+	public function add_meta_search() {
+		add_filter( 'posts_join', array( $this, 'meta_search_join' ) );
+		add_filter( 'posts_where', array( $this, 'meta_search_where' ) );
+		add_filter( 'posts_distinct', array( $this, 'meta_search_distinct' ) );
+	}
+
+	/**
+	 * Remove dynamically added filters to avoid spilling to other queries.
+	 *
+	 * @return void
+	 */
+	public function remove_meta_search() {
+		remove_filter( 'posts_join', array( $this, 'meta_search_join' ) );
+		remove_filter( 'posts_where', array( $this, 'meta_search_where' ) );
+		remove_filter( 'posts_distinct', array( $this, 'meta_search_distinct' ) );
 	}
 
 	/**
@@ -535,6 +567,58 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Extend the search to meta fields by joining the post meta table.
+	 *
+	 * @param string $join Join clause in the query.
+	 *
+	 * @return string
+	 */
+	public function meta_search_join( $join ) {
+		global $wpdb;
+
+		if ( is_admin() && isset( $_GET['s'] ) ) {
+			$join .= ' LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
+		}
+
+		return $join;
+	}
+
+	/**
+	 * Extend the where clause to include the post meta values.
+	 *
+	 * @param string $where Where clause in the query.
+	 *
+	 * @return string
+	 */
+	public function meta_search_where( $where ) {
+		global $wpdb;
+
+		if ( is_admin() && isset( $_GET['s'] ) ) {
+			$where = preg_replace(
+				"/\(\s*" . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
+				"(" . $wpdb->posts . ".post_title LIKE $1) OR (" . $wpdb->postmeta . ".meta_value LIKE $1)", $where );
+		}
+
+		return $where;
+	}
+
+	/**
+	 * Add distinct to the query to avoid duplicate results.
+	 *
+	 * @param string $distinct The distinct clause in the query.
+	 *
+	 * @return string
+	 */
+	public function meta_search_distinct( $distinct ) {
+
+		if ( is_admin() && isset( $_GET['s'] ) ) {
+			return "DISTINCT";
+		}
+
+		return $distinct;
+	}
+
+	/**
 	 * Extending the `display_rows()` method in order to add hooks.
 	 *
 	 * @since 1.5.6
@@ -546,16 +630,6 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 		parent::display_rows();
 
 		do_action( 'wpcode_code_snippets_table_after_rows', $this );
-	}
-
-	/**
-	 * Snippets search markup.
-	 *
-	 * @param string $text The 'submit' button label.
-	 * @param string $input_id ID attribute value for the search input field.
-	 */
-	public function search_box( $text, $input_id ) {
-
 	}
 
 	/**
@@ -719,6 +793,9 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 				'trashed',
 				'untrashed',
 				'deleted',
+				'enabled',
+				'disabled',
+				's',
 			)
 		);
 		$url      = 'all' === $slug ? remove_query_arg( 'view', $base_url ) : add_query_arg( 'view', $slug, $base_url );

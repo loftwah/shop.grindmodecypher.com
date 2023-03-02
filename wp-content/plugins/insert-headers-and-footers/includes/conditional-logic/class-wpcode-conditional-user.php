@@ -31,7 +31,7 @@ class WPCode_Conditional_User extends WPCode_Conditional_Type {
 	 *
 	 * @return void
 	 */
-	protected function load_type_options() {
+	public function load_type_options() {
 		$this->options = array(
 			'logged_in' => array(
 				'label'    => __( 'Logged-in', 'insert-headers-and-footers' ),
@@ -86,3 +86,5 @@ class WPCode_Conditional_User extends WPCode_Conditional_Type {
 		return $user->roles;
 	}
 }
+
+new WPCode_Conditional_User();

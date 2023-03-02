@@ -26,6 +26,7 @@ function wpcode_maybe_enable_safe_mode() {
 	add_action( 'admin_footer', 'wpcode_keep_safe_mode_admin_menu' );
 	// Show a notice informing the user we're in safe mode and offer a way to get out.
 	add_action( 'admin_notices', 'wpcode_safe_mode_notice' );
+	add_action( 'wpcode_admin_notices', 'wpcode_safe_mode_notice' );
 }
 
 /**

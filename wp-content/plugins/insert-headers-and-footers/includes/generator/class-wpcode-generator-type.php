@@ -167,18 +167,56 @@ abstract class WPCode_Generator_Type {
 	 * Takes a tab id and renders the form items.
 	 *
 	 * @param string $tab_id The tab id.
+	 * @param array  $snippet_data Data to prefill the form with from a generated snippet.
 	 *
 	 * @return void
 	 */
-	public function render_tab( $tab_id ) {
+	public function render_tab( $tab_id, $snippet_data ) {
 		$tab_info = $this->tabs[ $tab_id ];
 
 		foreach ( $tab_info['columns'] as $column_fields ) {
+			$repeater_groups_fields = array();
+			$repeater_groups_values = array();
 			?>
 			<div class="wpcode-generator-column">
 				<?php
 				foreach ( $column_fields as $field ) {
+					if ( isset( $field['id'] ) && isset( $snippet_data[ $field['id'] ] ) ) {
+						if ( isset( $field['repeater'] ) ) {
+							$repeater_groups_fields[ $field['repeater'] ][ $field['id'] ] = $field;
+							$repeater_groups_values[ $field['repeater'] ][ $field['id'] ] = $snippet_data[ $field['id'] ];
+							$field['value']                                               = $snippet_data[ $field['id'] ][0];
+						} else {
+							$field['value'] = $snippet_data[ $field['id'] ];
+						}
+					}
 					$this->render_field( $field );
+				}
+				// Render repeater fields values.
+				if ( ! empty( $repeater_groups_values ) ) {
+					$i = 0;
+					foreach ( $repeater_groups_values as $repeater_id => $repeater_values ) {
+						foreach ( $repeater_values as $field_id => $field_values ) {
+							foreach ( $field_values as $key => $field_value ) {
+								if ( 0 === $key ) {
+									// This one was already rendered.
+									continue;
+								}
+								?>
+								<div class="wpcode-repeater-group" data-id="<?php echo absint( $i ); ?>">
+									<?php foreach ( $repeater_groups_fields[ $repeater_id ] as $repeater_field_id => $repeater_groups_field ) {
+										$repeater_groups_field['value'] = $repeater_values[ $repeater_field_id ][ $key ];
+										$this->render_field( $repeater_groups_field );
+									}
+									?>
+									<button type="button" class="wpcode-button wpcode-button-secondary wpcode-remove-row" data-target="<?php echo absint( $i ); ?>"><?php esc_html_e( 'Remove Row', 'insert-headers-and-footers' ); ?></button>
+								</div>
+								<?php
+								$i ++;
+							}
+							continue 2;
+						}
+					}
 				}
 				?>
 			</div>
@@ -321,8 +359,9 @@ abstract class WPCode_Generator_Type {
 		$id          = $field['id'];
 		$placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
 		$name        = empty( $field['name'] ) ? $id : $field['name'];
+		$value       = isset( $field['value'] ) ? $field['value'] : $this->get_default_value( $field['id'] );
 		?>
-		<input type="text" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" placeholder="<?php echo esc_attr( $placeholder ); ?>" value="<?php echo esc_attr( $this->get_default_value( $field['id'] ) ); ?>" class="wpcode-input-text"/>
+		<input type="text" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" placeholder="<?php echo esc_attr( $placeholder ); ?>" value="<?php echo esc_attr( $value ); ?>" class="wpcode-input-text"/>
 		<?php
 		if ( ! empty( $field['description'] ) ) {
 			$this->input_field_description( $field['description'] );
@@ -395,7 +434,11 @@ abstract class WPCode_Generator_Type {
 		$name = empty( $field['name'] ) ? $id : $field['name'];
 		if ( ! empty( $field['options'] ) && is_array( $field['options'] ) ) {
 			reset( $field['options'] );
-			$selected = isset( $field['default'] ) ? $field['default'] : key( $field['options'] );
+			if ( isset( $field['value'] ) ) {
+				$selected = $field['value'];
+			} else {
+				$selected = isset( $field['default'] ) ? $field['default'] : key( $field['options'] );
+			}
 			?>
 			<select name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>">
 				<?php
@@ -423,6 +466,9 @@ abstract class WPCode_Generator_Type {
 			return;
 		}
 		$checked = empty( $field['default'] ) ? array() : $field['default'];
+		if ( isset( $field['value'] ) ) {
+			$checked = $field['value'];
+		}
 
 		foreach ( $field['options'] as $value => $label ) {
 			?>
@@ -760,8 +806,9 @@ abstract class WPCode_Generator_Type {
 		if ( ! empty( $field['code'] ) ) {
 			$classes[] = 'wpcode-generator-code';
 		}
+		$value = isset( $field['value'] ) ? $field['value'] : '';
 		?>
-		<textarea name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"></textarea>
+		<textarea name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"><?php echo esc_html( $value ); ?></textarea>
 		<?php
 		if ( ! empty( $field['description'] ) ) {
 			$this->input_field_description( $field['description'] );
