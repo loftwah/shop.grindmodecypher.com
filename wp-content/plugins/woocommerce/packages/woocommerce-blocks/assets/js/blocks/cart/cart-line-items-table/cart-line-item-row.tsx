@@ -19,18 +19,15 @@ import {
 	ProductMetadata,
 	ProductSaleBadge,
 } from '@woocommerce/base-components/cart-checkout';
-import {
-	getCurrencyFromPriceResponse,
-	Currency,
-} from '@woocommerce/price-format';
+import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import {
 	__experimentalApplyCheckoutFilter,
 	mustContain,
 } from '@woocommerce/blocks-checkout';
 import Dinero from 'dinero.js';
 import { forwardRef, useMemo } from '@wordpress/element';
-import type { CartItem } from '@woocommerce/type-defs/cart';
-import { objectHasProp } from '@woocommerce/types';
+import type { CartItem } from '@woocommerce/types';
+import { objectHasProp, Currency } from '@woocommerce/types';
 import { getSetting } from '@woocommerce/settings';
 
 /**
@@ -47,7 +44,8 @@ const getAmountFromRawPrice = (
 	return priceObject.convertPrecision( currency.minorUnit ).getAmount();
 };
 
-const productPriceValidation = ( value ) => mustContain( value, '<price/>' );
+const productPriceValidation = ( value: string ) =>
+	mustContain( value, '<price/>' );
 
 interface CartLineItemRowProps {
 	lineItem: CartItem | Record< string, never >;
@@ -58,9 +56,11 @@ interface CartLineItemRowProps {
 /**
  * Cart line item table row component.
  */
-const CartLineItemRow = forwardRef< HTMLTableRowElement, CartLineItemRowProps >(
+const CartLineItemRow: React.ForwardRefExoticComponent<
+	CartLineItemRowProps & React.RefAttributes< HTMLTableRowElement >
+> = forwardRef< HTMLTableRowElement, CartLineItemRowProps >(
 	(
-		{ lineItem, onRemove = () => void null, tabIndex = null },
+		{ lineItem, onRemove = () => void null, tabIndex },
 		ref
 	): JSX.Element => {
 		const {
@@ -195,6 +195,13 @@ const CartLineItemRow = forwardRef< HTMLTableRowElement, CartLineItemRowProps >(
 			validation: productPriceValidation,
 		} );
 
+		const showRemoveItemLink = __experimentalApplyCheckoutFilter( {
+			filterName: 'showRemoveItemLink',
+			defaultValue: true,
+			extensions,
+			arg,
+		} );
+
 		return (
 			<tr
 				className={ classnames(
@@ -301,33 +308,46 @@ const CartLineItemRow = forwardRef< HTMLTableRowElement, CartLineItemRowProps >(
 										itemName={ name }
 									/>
 								) }
-							<button
-								className="wc-block-cart-item__remove-link"
-								onClick={ () => {
-									onRemove();
-									removeItem();
-									dispatchStoreEvent( 'cart-remove-item', {
-										product: lineItem,
-										quantity,
-									} );
-									speak(
-										sprintf(
-											/* translators: %s refers to the item name in the cart. */
-											__(
-												'%s has been removed from your cart.',
-												'woo-gutenberg-products-block'
-											),
-											name
-										)
-									);
-								} }
-								disabled={ isPendingDelete }
-							>
-								{ __(
-									'Remove item',
-									'woo-gutenberg-products-block'
-								) }
-							</button>
+							{ showRemoveItemLink && (
+								<button
+									className="wc-block-cart-item__remove-link"
+									aria-label={ sprintf(
+										/* translators: %s refers to the item's name in the cart. */
+										__(
+											'Remove %s from cart',
+											'woo-gutenberg-products-block'
+										),
+										name
+									) }
+									onClick={ () => {
+										onRemove();
+										removeItem();
+										dispatchStoreEvent(
+											'cart-remove-item',
+											{
+												product: lineItem,
+												quantity,
+											}
+										);
+										speak(
+											sprintf(
+												/* translators: %s refers to the item name in the cart. */
+												__(
+													'%s has been removed from your cart.',
+													'woo-gutenberg-products-block'
+												),
+												name
+											)
+										);
+									} }
+									disabled={ isPendingDelete }
+								>
+									{ __(
+										'Remove item',
+										'woo-gutenberg-products-block'
+									) }
+								</button>
+							) }
 						</div>
 					</div>
 				</td>
@@ -355,5 +375,4 @@ const CartLineItemRow = forwardRef< HTMLTableRowElement, CartLineItemRowProps >(
 		);
 	}
 );
-
 export default CartLineItemRow;

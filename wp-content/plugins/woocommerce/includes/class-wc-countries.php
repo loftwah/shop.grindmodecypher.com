@@ -410,7 +410,7 @@ class WC_Countries {
 	public function shipping_to_prefix( $country_code = '' ) {
 		$country_code = $country_code ? $country_code : WC()->customer->get_shipping_country();
 		$countries    = array( 'AE', 'CZ', 'DO', 'GB', 'NL', 'PH', 'US', 'USAF' );
-		$return       = in_array( $country_code, $countries, true ) ? __( 'to the', 'woocommerce' ) : __( 'to', 'woocommerce' );
+		$return       = in_array( $country_code, $countries, true ) ? _x( 'to the', 'shipping country prefix', 'woocommerce' ) : _x( 'to', 'shipping country prefix', 'woocommerce' );
 
 		return apply_filters( 'woocommerce_countries_shipping_to_prefix', $return, $country_code );
 	}
@@ -1037,6 +1037,12 @@ class WC_Countries {
 							'hidden'   => true,
 						),
 					),
+					'GG' => array(
+ 						'state' => array(
+ 							'required' => false,
+ 							'label' => __( 'Parish', 'woocommerce' ),
+ 						),
+ 					),
 					'GH' => array(
 						'postcode' => array(
 							'required' => false,
@@ -1227,6 +1233,12 @@ class WC_Countries {
 						),
 					),
 					'LB' => array(
+						'state' => array(
+							'required' => false,
+							'hidden'   => true,
+						),
+					),
+					'MF' => array(
 						'state' => array(
 							'required' => false,
 							'hidden'   => true,

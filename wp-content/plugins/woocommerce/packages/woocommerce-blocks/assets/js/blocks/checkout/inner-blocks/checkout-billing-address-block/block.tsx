@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { useMemo, useEffect, Fragment } from '@wordpress/element';
+import { useMemo, useEffect, Fragment, useState } from '@wordpress/element';
 import {
 	useCheckoutAddress,
 	useStoreEvents,
 	useEditorContext,
+	noticeContexts,
 } from '@woocommerce/base-context';
 import { AddressForm } from '@woocommerce/base-components/cart-checkout';
 import Noninteractive from '@woocommerce/base-components/noninteractive';
@@ -14,6 +15,7 @@ import type {
 	AddressField,
 	AddressFields,
 } from '@woocommerce/settings';
+import { StoreNoticesContainer } from '@woocommerce/blocks-checkout';
 
 /**
  * Internal dependencies
@@ -37,17 +39,37 @@ const Block = ( {
 		defaultAddressFields,
 		billingAddress,
 		setBillingAddress,
+		setShippingAddress,
 		setBillingPhone,
+		setShippingPhone,
+		useBillingAsShipping,
 	} = useCheckoutAddress();
 	const { dispatchCheckoutEvent } = useStoreEvents();
 	const { isEditor } = useEditorContext();
-
 	// Clears data if fields are hidden.
 	useEffect( () => {
 		if ( ! showPhoneField ) {
 			setBillingPhone( '' );
 		}
 	}, [ showPhoneField, setBillingPhone ] );
+
+	const [ addressesSynced, setAddressesSynced ] = useState( false );
+
+	// Syncs shipping address with billing address if "Force shipping to the customer billing address" is enabled.
+	useEffect( () => {
+		if ( addressesSynced ) {
+			return;
+		}
+		if ( useBillingAsShipping ) {
+			setShippingAddress( billingAddress );
+		}
+		setAddressesSynced( true );
+	}, [
+		addressesSynced,
+		setShippingAddress,
+		billingAddress,
+		useBillingAsShipping,
+	] );
 
 	const addressFieldsConfig = useMemo( () => {
 		return {
@@ -69,11 +91,16 @@ const Block = ( {
 
 	return (
 		<AddressFormWrapperComponent>
+			<StoreNoticesContainer context={ noticeContexts.BILLING_ADDRESS } />
 			<AddressForm
 				id="billing"
 				type="billing"
 				onChange={ ( values: Partial< BillingAddress > ) => {
 					setBillingAddress( values );
+					if ( useBillingAsShipping ) {
+						setShippingAddress( values );
+						dispatchCheckoutEvent( 'set-shipping-address' );
+					}
 					dispatchCheckoutEvent( 'set-billing-address' );
 				} }
 				values={ billingAddress }
@@ -93,6 +120,12 @@ const Block = ( {
 						dispatchCheckoutEvent( 'set-phone-number', {
 							step: 'billing',
 						} );
+						if ( useBillingAsShipping ) {
+							setShippingPhone( value );
+							dispatchCheckoutEvent( 'set-phone-number', {
+								step: 'shipping',
+							} );
+						}
 					} }
 				/>
 			) }
